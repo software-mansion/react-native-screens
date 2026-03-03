@@ -2,7 +2,6 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-
 // Minimal IComponentProps implementation for Fabric components whose native
 // Windows props are not yet implemented.
 //
@@ -19,15 +18,16 @@ namespace winrt::RNScreens::implementation {
 //       SetProp delegates to ReadProp for field dispatch. BaseProps::SetProp is
 //       a deliberate no-op, so no reflection metadata needs to be generated.
 struct BaseProps
-    : winrt::implements<BaseProps, winrt::Microsoft::ReactNative::IComponentProps> {
+    : implements<BaseProps, Microsoft::ReactNative::IComponentProps> {
   BaseProps(
-      winrt::Microsoft::ReactNative::ViewProps /*props*/,
-      winrt::Microsoft::ReactNative::IComponentProps const& /*cloneFrom*/) noexcept {}
+      Microsoft::ReactNative::ViewProps /*props*/,
+      const Microsoft::ReactNative::IComponentProps & /*cloneFrom*/) noexcept {
+  }
 
   void SetProp(
       uint32_t /*hash*/,
-      winrt::hstring /*propName*/,
-      winrt::Microsoft::ReactNative::IJSValueReader /*value*/) noexcept {}
+      hstring /*propName*/,
+      Microsoft::ReactNative::IJSValueReader /*value*/) noexcept {
+  }
 };
-
 } // namespace winrt::RNScreens::implementation

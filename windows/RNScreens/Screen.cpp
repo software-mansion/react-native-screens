@@ -22,11 +22,11 @@ namespace {
 // of which are exactly representable as IEEE 754 float, so a direct cast is
 // safe. Out-of-range values are clamped to Unset rather than producing an
 // invalid enum value.
-ActivityState ToActivityState(std::optional<float> const &value) noexcept {
+ActivityState ToActivityState(const std::optional<float> &value) noexcept {
   if (!value.has_value())
     return ActivityState::Unset;
 
-  if (const auto v = static_cast<int32_t>(value.value()); v >= 0 && v <= 2)
+  if (const auto v = static_cast<int8_t>(value.value()); v >= 0 && v <= 2)
     return static_cast<ActivityState>(v);
 
   return ActivityState::Unset;
@@ -39,10 +39,10 @@ ActivityState ToActivityState(std::optional<float> const &value) noexcept {
 
 REACT_STRUCT(ScreenProps)
 
-struct ScreenProps : winrt::implements<ScreenProps, IComponentProps> {
-  ScreenProps(ViewProps /*props*/, IComponentProps const &cloneFrom) noexcept {
+struct ScreenProps : implements<ScreenProps, IComponentProps> {
+  ScreenProps(ViewProps /*props*/, const IComponentProps &cloneFrom) noexcept {
     if (cloneFrom) {
-      auto const *src = winrt::get_self<ScreenProps>(cloneFrom);
+      const auto *src = winrt::get_self<ScreenProps>(cloneFrom);
       stackAnimation = src->stackAnimation;
       stackPresentation = src->stackPresentation;
       gestureEnabled = src->gestureEnabled;
@@ -53,9 +53,9 @@ struct ScreenProps : winrt::implements<ScreenProps, IComponentProps> {
 
   void SetProp(
       uint32_t hash,
-      winrt::hstring propName,
+      hstring propName,
       IJSValueReader value) noexcept {
-    winrt::Microsoft::ReactNative::ReadProp(hash, propName, value, *this);
+    ReadProp(hash, propName, value, *this);
   }
 
   REACT_FIELD(stackAnimation)
@@ -79,7 +79,7 @@ struct ScreenProps : winrt::implements<ScreenProps, IComponentProps> {
 // ---------------------------------------------------------------------------
 
 struct ScreenEventEmitter {
-  explicit ScreenEventEmitter(EventEmitter const &emitter) noexcept
+  explicit ScreenEventEmitter(const EventEmitter &emitter) noexcept
     : m_emitter(emitter) {
     assert(
         emitter != nullptr &&
@@ -103,12 +103,12 @@ struct ScreenEventEmitter {
   }
 
 private:
-  void Dispatch(winrt::hstring const &eventName) const noexcept {
+  void Dispatch(const hstring &eventName) const noexcept {
     if (!m_emitter)
       return;
     m_emitter.DispatchEvent(
         eventName,
-        [](IJSValueWriter const &writer) noexcept {
+        [](const IJSValueWriter &writer) noexcept {
           writer.WriteObjectBegin();
           writer.WriteObjectEnd();
         });
@@ -122,8 +122,8 @@ private:
 // ---------------------------------------------------------------------------
 
 struct ScreenUserData
-    : winrt::implements<ScreenUserData,
-                        winrt::Windows::Foundation::IInspectable> {
+    : implements<ScreenUserData,
+                 IInspectable> {
   // Subscribe to Fabric ComponentView lifecycle events.
   //
   // Thread safety: all Fabric lifecycle callbacks are dispatched on the UI
@@ -135,9 +135,9 @@ struct ScreenUserData
   // m_unmountedRevoker) are RAII handles. Their destructors revoke the event
   // subscriptions before 'this' is destroyed, making a dangling [this] capture
   // impossible.
-  void Initialize(ComponentView const &view) noexcept {
+  void Initialize(const ComponentView &view) noexcept {
     m_mountedRevoker = view.Mounted(
-        winrt::auto_revoke,
+        auto_revoke,
         [this](auto &&, auto &&) noexcept {
           if (m_eventEmitter) {
             m_eventEmitter->onWillAppear();
@@ -146,7 +146,7 @@ struct ScreenUserData
         });
 
     m_unmountedRevoker = view.Unmounted(
-        winrt::auto_revoke,
+        auto_revoke,
         [this](auto &&, auto &&) noexcept {
           if (m_eventEmitter) {
             m_eventEmitter->onWillDisappear();
@@ -156,10 +156,10 @@ struct ScreenUserData
   }
 
   void UpdateProps(
-      ComponentView const & /*view*/,
-      IComponentProps const &newProps,
-      IComponentProps const & /*oldProps*/) noexcept {
-    auto const *next = winrt::get_self<ScreenProps>(newProps);
+      const ComponentView & /*view*/,
+      const IComponentProps &newProps,
+      const IComponentProps & /*oldProps*/) noexcept {
+    const auto *next = winrt::get_self<ScreenProps>(newProps);
     const auto newState = ToActivityState(next->activityState);
     if (newState == m_activityState)
       return;
@@ -167,12 +167,12 @@ struct ScreenUserData
     ApplyVisibility();
   }
 
-  void UpdateEventEmitter(EventEmitter const &emitter) noexcept {
+  void UpdateEventEmitter(const EventEmitter &emitter) noexcept {
     m_eventEmitter.emplace(emitter);
   }
 
   void SetVisual(
-      winrt::Microsoft::UI::Composition::ContainerVisual const &visual)
+      const Microsoft::UI::Composition::ContainerVisual &visual)
     noexcept {
     assert(!m_visual && "Visual already assigned");
     m_visual = visual;
@@ -195,7 +195,7 @@ private:
   std::optional<ScreenEventEmitter> m_eventEmitter;
   ComponentView::Mounted_revoker m_mountedRevoker;
   ComponentView::Unmounted_revoker m_unmountedRevoker;
-  winrt::Microsoft::UI::Composition::ContainerVisual m_visual{nullptr};
+  Microsoft::UI::Composition::ContainerVisual m_visual{nullptr};
   ActivityState m_activityState{ActivityState::Unset};
 };
 
@@ -204,14 +204,14 @@ private:
 // ---------------------------------------------------------------------------
 
 void RegisterScreenLike(
-    IReactPackageBuilderFabric const &fabricBuilder,
-    winrt::hstring const &componentName) noexcept {
-  namespace Comp = winrt::Microsoft::ReactNative::Composition;
+    const IReactPackageBuilderFabric &fabricBuilder,
+    const hstring &componentName) noexcept {
+  namespace Comp = Composition;
   fabricBuilder.AddViewComponent(
       componentName,
-      [](IReactViewComponentBuilder const &builder) noexcept {
+      [](const IReactViewComponentBuilder &builder) noexcept {
         builder.SetComponentViewInitializer(
-            [](ComponentView const &view) noexcept {
+            [](const ComponentView &view) noexcept {
               auto ud = winrt::make_self<ScreenUserData>();
               ud->Initialize(view);
               view.UserData(*ud);
@@ -220,24 +220,24 @@ void RegisterScreenLike(
         builder.SetCreateProps(
             [](
             ViewProps props,
-            IComponentProps const &cloneFrom) noexcept
+            const IComponentProps &cloneFrom) noexcept
           -> IComponentProps {
               return winrt::make<ScreenProps>(props, cloneFrom);
             });
 
         builder.SetUpdatePropsHandler(
             [](
-            ComponentView const &view,
-            IComponentProps const &newProps,
-            IComponentProps const &oldProps) noexcept {
+            const ComponentView &view,
+            const IComponentProps &newProps,
+            const IComponentProps &oldProps) noexcept {
               winrt::get_self<ScreenUserData>(view.UserData())
                   ->UpdateProps(view, newProps, oldProps);
             });
 
         builder.SetUpdateEventEmitterHandler(
             [](
-            ComponentView const &view,
-            EventEmitter const &emitter) noexcept {
+            const ComponentView &view,
+            const EventEmitter &emitter) noexcept {
               winrt::get_self<ScreenUserData>(view.UserData())
                   ->UpdateEventEmitter(emitter);
             });
@@ -249,8 +249,8 @@ void RegisterScreenLike(
           Comp::IReactCompositionViewComponentBuilder>()) {
           compBuilder.SetCreateVisualHandler(
               [](
-              ComponentView const &view) noexcept ->
-            winrt::Microsoft::UI::Composition::Visual {
+              const ComponentView &view) noexcept ->
+            Microsoft::UI::Composition::Visual {
                 const auto compView = view.try_as<Comp::IComponentView>();
                 assert(
                     compView &&
@@ -265,7 +265,7 @@ void RegisterScreenLike(
 }
 
 void RegisterRNSScreen(
-    IReactPackageBuilderFabric const &fabricBuilder) noexcept {
+    const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   RegisterScreenLike(fabricBuilder, L"RNSScreen");
 }
 } // namespace winrt::RNScreens::implementation

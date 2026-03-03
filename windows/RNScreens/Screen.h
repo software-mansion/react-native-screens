@@ -6,11 +6,11 @@ namespace winrt::RNScreens::implementation {
 // have identical native behavior on Windows. Centralizing the logic here
 // prevents silent divergence from copy-paste duplication.
 void RegisterScreenLike(
-    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const &
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &
     fabricBuilder,
-    winrt::hstring const &componentName) noexcept;
+    const hstring &componentName) noexcept;
 
 void RegisterRNSScreen(
-    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const &
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &
     fabricBuilder) noexcept;
 } // namespace winrt::RNScreens::implementation

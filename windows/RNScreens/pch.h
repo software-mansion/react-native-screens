@@ -19,9 +19,10 @@
 // WinRT Header Files
 #include <winrt/base.h>
 #include <CppWinRTIncludes.h>
-#include <winrt/Microsoft.ReactNative.h>
 #include <JSValueComposition.h>
+#include <winrt/Microsoft.ReactNative.h>
 #include <winrt/Microsoft.ReactNative.Composition.h>
+#include <winrt/Microsoft.UI.Composition.h>
 
 // C RunTime Header Files
 #include <malloc.h>
