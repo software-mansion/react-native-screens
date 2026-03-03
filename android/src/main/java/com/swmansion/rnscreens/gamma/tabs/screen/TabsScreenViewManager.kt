@@ -16,6 +16,7 @@ import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateAppearance
 import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager.Companion.TAG
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenWillAppearEvent
@@ -296,37 +297,37 @@ class TabsScreenViewManager :
         )
     }
 
-    private fun ReadableMap.getOptionalBoolean(key: String): Boolean? {
-        if (!hasKey(key) || isNull(key)) return null
-        return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
-    }
-
-    private fun ReadableMap.getOptionalString(key: String): String? {
-        if (!hasKey(key) || isNull(key)) return null
-        return if (getType(key) == ReadableType.String) getString(key) else null
-    }
-
-    private fun ReadableMap.getOptionalFloat(key: String): Float? {
-        if (!hasKey(key) || isNull(key)) return null
-        return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
-    }
-
-    private fun ReadableMap.getOptionalColor(key: String): Int? {
-        if (!hasKey(key) || isNull(key)) return null
-        return try {
-            when (getType(key)) {
-                ReadableType.Number -> getInt(key)
-                ReadableType.String -> getString(key)?.toColorInt()
-                else -> null
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
-            null
-        }
-    }
-
     companion object {
         const val REACT_CLASS = "RNSTabsScreen"
         const val TAG = "TabsScreenViewManager"
+    }
+}
+
+private fun ReadableMap.getOptionalBoolean(key: String): Boolean? {
+    if (!hasKey(key) || isNull(key)) return null
+    return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
+}
+
+private fun ReadableMap.getOptionalString(key: String): String? {
+    if (!hasKey(key) || isNull(key)) return null
+    return if (getType(key) == ReadableType.String) getString(key) else null
+}
+
+private fun ReadableMap.getOptionalFloat(key: String): Float? {
+    if (!hasKey(key) || isNull(key)) return null
+    return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
+}
+
+private fun ReadableMap.getOptionalColor(key: String): Int? {
+    if (!hasKey(key) || isNull(key)) return null
+    return try {
+        when (getType(key)) {
+            ReadableType.Number -> getInt(key)
+            ReadableType.String -> getString(key)?.toColorInt()
+            else -> null
+        }
+    } catch (e: Exception) {
+        Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
+        null
     }
 }
