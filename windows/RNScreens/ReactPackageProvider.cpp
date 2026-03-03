@@ -22,7 +22,8 @@ void ReactPackageProvider::CreatePackage(
     const IReactPackageBuilder &packageBuilder) noexcept {
   AddAttributedModules(packageBuilder, true);
 
-  auto fabricBuilder = packageBuilder.try_as<IReactPackageBuilderFabric>();
+  const auto fabricBuilder = packageBuilder.try_as<
+    IReactPackageBuilderFabric>();
   if (!fabricBuilder)
     return;
 

@@ -3,20 +3,9 @@
 #include "BaseProps.h"
 
 namespace winrt::RNScreens::implementation {
-using namespace winrt::Microsoft::ReactNative;
-
 void RegisterScreenStackHeaderSubview(
-    const IReactPackageBuilderFabric &fabricBuilder) noexcept {
-  fabricBuilder.AddViewComponent(
-      L"RNSScreenStackHeaderSubview",
-      [](const IReactViewComponentBuilder &builder) noexcept {
-        builder.SetCreateProps(
-            [](
-            ViewProps props,
-            const IComponentProps &cloneFrom) noexcept
-          -> IComponentProps {
-              return winrt::make<BaseProps>(props, cloneFrom);
-            });
-      });
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
+  noexcept {
+  RegisterStubComponent(fabricBuilder, L"RNSScreenStackHeaderSubview");
 }
 } // namespace winrt::RNScreens::implementation

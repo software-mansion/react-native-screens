@@ -81,9 +81,6 @@ struct ScreenProps : implements<ScreenProps, IComponentProps> {
 struct ScreenEventEmitter {
   explicit ScreenEventEmitter(const EventEmitter &emitter) noexcept
     : m_emitter(emitter) {
-    assert(
-        emitter != nullptr &&
-        "ScreenEventEmitter constructed with a null EventEmitter handle");
   }
 
   void onWillAppear() const noexcept {
@@ -121,9 +118,7 @@ private:
 // ScreenUserData
 // ---------------------------------------------------------------------------
 
-struct ScreenUserData
-    : implements<ScreenUserData,
-                 IInspectable> {
+struct ScreenUserData : implements<ScreenUserData, IInspectable> {
   // Subscribe to Fabric ComponentView lifecycle events.
   //
   // Thread safety: all Fabric lifecycle callbacks are dispatched on the UI
@@ -172,22 +167,21 @@ struct ScreenUserData
   }
 
   void SetVisual(
-      const Microsoft::UI::Composition::ContainerVisual &visual)
-    noexcept {
-    assert(!m_visual && "Visual already assigned");
+      const Microsoft::UI::Composition::ContainerVisual &visual) noexcept {
     m_visual = visual;
     ApplyVisibility();
   }
 
 private:
   // Applies the current m_activityState to the DComp visual. Called from both
-  // UpdateProps (state change) and SetVisual (late visual creation reconciliation).
+  // UpdateProps (state change) and SetVisual (late visual creation
+  // reconciliation) to handle whichever arrives first.
   void ApplyVisibility() const noexcept {
     if (m_visual) {
       // Only Inactive (0) hides the screen; Unset, Transitioning, and Active
       // all keep it visible. The setter is unconditional — DComp ignores
       // redundant no-op sets, and the m_activityState guard upstream already
-      // prevents calls when state has not changed.
+      // prevents calls when the state has not changed.
       m_visual.IsVisible(m_activityState != ActivityState::Inactive);
     }
   }
@@ -210,7 +204,10 @@ void RegisterScreenLike(
   fabricBuilder.AddViewComponent(
       componentName,
       [](const IReactViewComponentBuilder &builder) noexcept {
-        builder.SetComponentViewInitializer(
+        const auto compBuilder =
+            builder.as<Comp::IReactCompositionViewComponentBuilder>();
+
+        compBuilder.SetViewComponentViewInitializer(
             [](const ComponentView &view) noexcept {
               auto ud = winrt::make_self<ScreenUserData>();
               ud->Initialize(view);
@@ -220,8 +217,7 @@ void RegisterScreenLike(
         builder.SetCreateProps(
             [](
             ViewProps props,
-            const IComponentProps &cloneFrom) noexcept
-          -> IComponentProps {
+            const IComponentProps &cloneFrom) noexcept -> IComponentProps {
               return winrt::make<ScreenProps>(props, cloneFrom);
             });
 
@@ -242,25 +238,19 @@ void RegisterScreenLike(
                   ->UpdateEventEmitter(emitter);
             });
 
-        // Capture the root ContainerVisual so UpdateProps can toggle IsVisible
-        // when activityState changes. SetComponentViewInitializer is expected
-        // to run before SetCreateVisualHandler; SetVisual asserts that invariant.
-        if (const auto compBuilder = builder.try_as<
-          Comp::IReactCompositionViewComponentBuilder>()) {
-          compBuilder.SetCreateVisualHandler(
-              [](
-              const ComponentView &view) noexcept ->
-            Microsoft::UI::Composition::Visual {
-                const auto compView = view.try_as<Comp::IComponentView>();
-                assert(
-                    compView &&
-                    "ComponentView must implement IComponentView on a Composition builder");
-                auto visual = compView.Compositor().CreateContainerVisual();
-                winrt::get_self<ScreenUserData>(view.UserData())->SetVisual(
-                    visual);
-                return visual;
-              });
-        }
+        // SetViewComponentViewInitializer guarantees the view is a
+        // Composition::ViewComponentView, so as<> is unconditional.
+        compBuilder.SetCreateVisualHandler(
+            [](
+            const ComponentView &view) noexcept
+          -> Microsoft::UI::Composition::Visual {
+              auto visual = view.as<Comp::ComponentView>()
+                                .Compositor()
+                                .CreateSpriteVisual();
+              winrt::get_self<ScreenUserData>(view.UserData())
+                  ->SetVisual(visual);
+              return visual;
+            });
       });
 }
 
