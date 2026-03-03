@@ -17,7 +17,7 @@ internal fun resolveColorAttr(
     val resolved = context.theme.resolveAttribute(attr, typedValue, true)
 
     if (!resolved) {
-        Log.w(TAG, "[RNScreens] Failed to resolve color attribute. Falling back to Color.TRANSPARENT.")
+        Log.w(TAG, "[RNScreens] Failed to resolve color attribute. Falling back to $defaultColor.")
         return defaultColor
     }
 
