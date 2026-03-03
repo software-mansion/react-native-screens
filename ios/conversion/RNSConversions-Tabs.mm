@@ -496,6 +496,7 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostColorSch
       return UIUserInterfaceStyleDark;
     default:
       RCTLogError(@"[RNScreens] unsupported color scheme");
+      return UIUserInterfaceStyleUnspecified;
   }
 }
 

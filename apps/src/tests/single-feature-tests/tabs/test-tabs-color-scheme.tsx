@@ -43,7 +43,7 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text>
           There are 3 sources of color scheme, in ascending order of precedence:
-          system, React Native and our propery on TabsHost.
+          system, React Native and our property on TabsHost.
         </Text>
       </View>
 
