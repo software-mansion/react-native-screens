@@ -4,10 +4,12 @@ import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
 import TabBarHiddenScenario from './tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
+import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 
 const scenarios = {
   BottomAccessoryScenario,
   OverrideScrollViewContentInsetScenario,
+  TabBarAppearanceDefinedBySelectedTabScenario,
   TabBarHiddenScenario,
   TabsScreenOrientationScenario,
 };
