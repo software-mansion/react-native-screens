@@ -63,7 +63,7 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text>
           There are 3 sources of layout direction: system, React Native and our
-          propery on TabsHost.
+          property on TabsHost.
         </Text>
       </View>
 
