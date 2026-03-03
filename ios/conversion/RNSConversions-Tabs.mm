@@ -497,7 +497,7 @@ UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostC
       return UITraitEnvironmentLayoutDirectionRightToLeft;
     default:
       RCTLogError(@"[RNScreens] unsupported layout direction");
-      break;
+      return UITraitEnvironmentLayoutDirectionUnspecified;
   }
 }
 

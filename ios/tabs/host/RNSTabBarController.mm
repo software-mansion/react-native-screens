@@ -38,6 +38,8 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
+  [super didMoveToParentViewController:parent];
+
   if (parent != nil) {
     [self updateLayoutDirectionBelowIOS17IfNeeded];
   }
