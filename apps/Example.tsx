@@ -36,23 +36,10 @@ import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// react-native-gesture-handler is not supported on Windows
-// see https://github.com/software-mansion/react-native-gesture-handler/issues/3723
-const GestureHandlerRootView: React.ComponentType<{
-  style?: object;
-  children: React.ReactNode;
-}> =
-  Platform.OS === 'windows'
-    ? ({ children }) => <React.Fragment>{children}</React.Fragment>
-    : require('react-native-gesture-handler').GestureHandlerRootView;
-
-const GestureDetectorProvider: React.ComponentType<{
-  children: React.ReactNode;
-}> =
-  Platform.OS === 'windows'
-    ? ({ children }) => <React.Fragment>{children}</React.Fragment>
-    : require('react-native-screens/gesture-handler').GestureDetectorProvider;
+import {
+  GestureHandlerRootView,
+  GestureDetectorProvider,
+} from './gesture-handler-interop';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
