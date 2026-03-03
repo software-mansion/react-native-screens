@@ -2,21 +2,6 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-// Minimal IComponentProps implementation for Fabric components whose native
-// Windows props are not yet implemented.
-//
-// Satisfies the SetCreateProps contract so the framework does not crash when
-// delivering base ViewProps (layout, style, etc.) to stub components.
-// The SetProp override intentionally ignores all custom props until a full
-// implementation is written per component.
-//
-// TODO: Replace with a component-specific props struct for each stub once
-//       native implementations of HeaderConfig, HeaderSubview, and SearchBar
-//       are developed.
-//
-// NOTE: REACT_STRUCT is intentionally absent. That macro is only required when
-//       SetProp delegates to ReadProp for field dispatch. BaseProps::SetProp is
-//       a deliberate no-op, so no reflection metadata needs to be generated.
 struct BaseProps
     : implements<BaseProps, Microsoft::ReactNative::IComponentProps> {
   BaseProps(
@@ -24,10 +9,31 @@ struct BaseProps
       const Microsoft::ReactNative::IComponentProps & /*cloneFrom*/) noexcept {
   }
 
-  void SetProp(
+  static void SetProp(
       uint32_t /*hash*/,
       hstring /*propName*/,
       Microsoft::ReactNative::IJSValueReader /*value*/) noexcept {
   }
 };
+
+inline void RegisterStubComponent(
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder,
+    const hstring &componentName) noexcept {
+  using namespace Microsoft::ReactNative;
+  fabricBuilder.AddViewComponent(
+      componentName,
+      [](const IReactViewComponentBuilder &builder) noexcept {
+        builder.SetCreateProps(
+            [](
+            ViewProps props,
+            const IComponentProps &cloneFrom) noexcept -> IComponentProps {
+              return winrt::make<BaseProps>(props, cloneFrom);
+            });
+        builder
+            .as<Composition::IReactCompositionViewComponentBuilder>()
+            .SetViewComponentViewInitializer(
+                [](const ComponentView &) noexcept {
+                });
+      });
+}
 } // namespace winrt::RNScreens::implementation
