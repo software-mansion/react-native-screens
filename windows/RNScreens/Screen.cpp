@@ -5,10 +5,6 @@
 namespace winrt::RNScreens::implementation {
 using namespace winrt::Microsoft::ReactNative;
 
-// ---------------------------------------------------------------------------
-// Enums & Utilities
-// ---------------------------------------------------------------------------
-
 enum class ActivityState : int8_t {
   Unset = -1,
   Inactive = 0,
@@ -17,11 +13,10 @@ enum class ActivityState : int8_t {
 };
 
 namespace {
-// Converts the JS activityState float prop to the typed enum.
-// activityState is always set from integer literals in JS (-1, 0, 1, 2), all
-// of which are exactly representable as IEEE 754 float, so a direct cast is
-// safe. Out-of-range values are clamped to Unset rather than producing an
-// invalid enum value.
+// activityState arrives from JS as an integer in {-1, 0, 1, 2}, all exactly
+// representable as IEEE 754 float, so the cast to int8_t is lossless. -1 is
+// the JS-side "not yet assigned" sentinel; any value outside [0, 2] maps to
+// Unset rather than producing an out-of-range enum value.
 ActivityState ToActivityState(const std::optional<float> &value) noexcept {
   if (!value.has_value())
     return ActivityState::Unset;
@@ -32,10 +27,6 @@ ActivityState ToActivityState(const std::optional<float> &value) noexcept {
   return ActivityState::Unset;
 }
 } // namespace
-
-// ---------------------------------------------------------------------------
-// ScreenProps
-// ---------------------------------------------------------------------------
 
 REACT_STRUCT(ScreenProps)
 
@@ -74,32 +65,18 @@ struct ScreenProps : implements<ScreenProps, IComponentProps> {
   std::optional<float> activityState{};
 };
 
-// ---------------------------------------------------------------------------
-// ScreenEventEmitter
-// ---------------------------------------------------------------------------
-
 struct ScreenEventEmitter {
   explicit ScreenEventEmitter(const EventEmitter &emitter) noexcept
-    : m_emitter(emitter) {
-  }
+    : m_emitter(emitter) {}
 
-  void onWillAppear() const noexcept {
-    Dispatch(L"topWillAppear");
-  }
-
-  void onAppear() const noexcept {
-    Dispatch(L"topAppear");
-  }
-
-  void onWillDisappear() const noexcept {
-    Dispatch(L"topWillDisappear");
-  }
-
-  void onDisappear() const noexcept {
-    Dispatch(L"topDisappear");
-  }
+  void onWillAppear() const noexcept { Dispatch(L"topWillAppear"); }
+  void onAppear() const noexcept { Dispatch(L"topAppear"); }
+  void onWillDisappear() const noexcept { Dispatch(L"topWillDisappear"); }
+  void onDisappear() const noexcept { Dispatch(L"topDisappear"); }
 
 private:
+  // The framework supplies a null EventEmitter between view creation and the
+  // first UpdateEventEmitter call; guard before every dispatch.
   void Dispatch(const hstring &eventName) const noexcept {
     if (!m_emitter)
       return;
@@ -114,26 +91,21 @@ private:
   EventEmitter m_emitter{nullptr};
 };
 
-// ---------------------------------------------------------------------------
-// ScreenUserData
-// ---------------------------------------------------------------------------
-
 struct ScreenUserData : implements<ScreenUserData, IInspectable> {
-  // Subscribe to Fabric ComponentView lifecycle events.
+  // Thread safety: Fabric dispatches all lifecycle callbacks on the UI thread;
+  // m_eventEmitter is written only from UpdateEventEmitter (also UI thread) and
+  // read only from the Mounted/Unmounted lambdas, so no synchronisation is
+  // needed.
   //
-  // Thread safety: all Fabric lifecycle callbacks are dispatched on the UI
-  // thread. m_eventEmitter is only written from UpdateEventEmitter (also UI
-  // thread) and read from the Mounted/Unmounted lambdas below — no explicit
-  // synchronization is required.
-  //
-  // Lifetime safety: the revoker members (m_mountedRevoker,
-  // m_unmountedRevoker) are RAII handles. Their destructors revoke the event
-  // subscriptions before 'this' is destroyed, making a dangling [this] capture
-  // impossible.
+  // Lifetime: revokers are RAII handles whose destructors call Revoke() before
+  // ScreenUserData is destroyed, so the [this] captures below cannot dangle.
   void Initialize(const ComponentView &view) noexcept {
     m_mountedRevoker = view.Mounted(
         auto_revoke,
         [this](auto &&, auto &&) noexcept {
+          // No native transition animation on Windows, so WillAppear and Appear
+          // fire together. If native animations are added, split into
+          // begin-transition / end-transition callbacks.
           if (m_eventEmitter) {
             m_eventEmitter->onWillAppear();
             m_eventEmitter->onAppear();
@@ -173,15 +145,13 @@ struct ScreenUserData : implements<ScreenUserData, IInspectable> {
   }
 
 private:
-  // Applies the current m_activityState to the DComp visual. Called from both
-  // UpdateProps (state change) and SetVisual (late visual creation
-  // reconciliation) to handle whichever arrives first.
+  // Called from both UpdateProps (activityState change) and SetVisual (late
+  // visual assignment); whichever fires second applies the definitive state.
   void ApplyVisibility() const noexcept {
     if (m_visual) {
-      // Only Inactive (0) hides the screen; Unset, Transitioning, and Active
-      // all keep it visible. The setter is unconditional — DComp ignores
-      // redundant no-op sets, and the m_activityState guard upstream already
-      // prevents calls when the state has not changed.
+      // Only Inactive hides the screen. Unset, Transitioning, and Active are
+      // all visible; the navigator sets Inactive on off-stack screens to
+      // prevent them compositing into the scene.
       m_visual.IsVisible(m_activityState != ActivityState::Inactive);
     }
   }
@@ -192,10 +162,6 @@ private:
   Microsoft::UI::Composition::ContainerVisual m_visual{nullptr};
   ActivityState m_activityState{ActivityState::Unset};
 };
-
-// ---------------------------------------------------------------------------
-// Registration
-// ---------------------------------------------------------------------------
 
 void RegisterScreenLike(
     const IReactPackageBuilderFabric &fabricBuilder,
@@ -238,8 +204,10 @@ void RegisterScreenLike(
                   ->UpdateEventEmitter(emitter);
             });
 
-        // SetViewComponentViewInitializer guarantees the view is a
-        // Composition::ViewComponentView, so as<> is unconditional.
+        // SetViewComponentViewInitializer guarantees a Composition::ViewComponentView,
+        // so the QI cannot fail in practice. try_as is not a safe alternative:
+        // the framework calls InsertAt(visual, 0) without a null check, so a
+        // null return crashes there instead.
         compBuilder.SetCreateVisualHandler(
             [](
             const ComponentView &view) noexcept
