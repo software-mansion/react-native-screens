@@ -11,7 +11,7 @@ import {
 function ScenarioSelect(props: { scenarios: Scenario[] }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {props.scenarios.map(({ name, key, details, platforms }) => (
+      {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
         <ScenarioButton
           title={name}
           details={details}
@@ -43,7 +43,7 @@ export default function ScenarioSelectionScreen(props: {
             }}>
             {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
           </Stack.Screen>
-          {props.scenarioGroup.scenarios.map(({ key, AppComponent }) => (
+          {Object.values(props.scenarioGroup.scenarios).map(({ key, AppComponent }) => (
             <Stack.Screen name={key} key={key} component={AppComponent} />
           ))}
         </Stack.Navigator>
