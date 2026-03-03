@@ -4,6 +4,7 @@ import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
 import TabBarHiddenScenario from './tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
+import TestTabsLayoutDirection from './test-tabs-layout-direction';
 
 const TabsScenarioGroup: ScenarioGroup = {
   name: 'Tabs',
@@ -13,6 +14,7 @@ const TabsScenarioGroup: ScenarioGroup = {
     OverrideScrollViewContentInsetScenario,
     TabBarHiddenScenario,
     TabsScreenOrientationScenario,
+    TestTabsLayoutDirection,
   ],
 };
 
