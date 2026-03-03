@@ -2,7 +2,6 @@
 #include "ScreenStack.h"
 
 namespace winrt::RNScreens::implementation {
-
 using namespace winrt::Microsoft::ReactNative;
 
 // ---------------------------------------------------------------------------
@@ -16,23 +15,25 @@ using namespace winrt::Microsoft::ReactNative;
 // implementation — no other scaffolding changes are needed.
 
 struct ScreenStackEventEmitter {
-  explicit ScreenStackEventEmitter(EventEmitter const& emitter) noexcept
-      : m_emitter(emitter) {
-    assert(emitter != nullptr &&
-           "ScreenStackEventEmitter constructed with a null EventEmitter handle");
+  explicit ScreenStackEventEmitter(const EventEmitter &emitter) noexcept
+    : m_emitter(emitter) {
+    assert(
+        emitter != nullptr &&
+        "ScreenStackEventEmitter constructed with a null EventEmitter handle");
   }
 
   void onFinishTransitioning() const noexcept {
-    if (!m_emitter) return;
+    if (!m_emitter)
+      return;
     m_emitter.DispatchEvent(
         L"topFinishTransitioning",
-        [](IJSValueWriter const& writer) noexcept {
+        [](const IJSValueWriter &writer) noexcept {
           writer.WriteObjectBegin();
           writer.WriteObjectEnd();
         });
   }
 
- private:
+private:
   EventEmitter m_emitter{nullptr};
 };
 
@@ -41,8 +42,8 @@ struct ScreenStackEventEmitter {
 // ---------------------------------------------------------------------------
 
 struct ScreenStackUserData
-    : winrt::implements<ScreenStackUserData, winrt::Windows::Foundation::IInspectable> {
-  void UpdateEventEmitter(EventEmitter const& emitter) noexcept {
+    : implements<ScreenStackUserData, IInspectable> {
+  void UpdateEventEmitter(const EventEmitter &emitter) noexcept {
     m_eventEmitter.emplace(emitter);
   }
 
@@ -58,7 +59,7 @@ struct ScreenStackUserData
   // SetMountChildComponentViewHandler, with the vector encapsulated behind
   // accessor methods rather than exposed as a public field.
 
- private:
+private:
   std::optional<ScreenStackEventEmitter> m_eventEmitter;
 };
 
@@ -66,21 +67,23 @@ struct ScreenStackUserData
 // Registration
 // ---------------------------------------------------------------------------
 
-void RegisterRNSScreenStack(IReactPackageBuilderFabric const& fabricBuilder) noexcept {
+void RegisterRNSScreenStack(
+    const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   fabricBuilder.AddViewComponent(
       L"RNSScreenStack",
-      [](IReactViewComponentBuilder const& builder) noexcept {
+      [](const IReactViewComponentBuilder &builder) noexcept {
         builder.SetComponentViewInitializer(
-            [](ComponentView const& view) noexcept {
+            [](const ComponentView &view) noexcept {
               view.UserData(*winrt::make_self<ScreenStackUserData>());
             });
 
         builder.SetUpdateEventEmitterHandler(
-            [](ComponentView const& view, EventEmitter const& emitter) noexcept {
+            [](
+            const ComponentView &view,
+            const EventEmitter &emitter) noexcept {
               winrt::get_self<ScreenStackUserData>(view.UserData())
                   ->UpdateEventEmitter(emitter);
             });
       });
 }
-
 } // namespace winrt::RNScreens::implementation
