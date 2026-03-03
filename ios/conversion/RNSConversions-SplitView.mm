@@ -22,7 +22,8 @@ UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
   }
 }
 
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(facebook::react::RNSSplitHostPrimaryEdge primaryEdge)
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
+    facebook::react::RNSSplitHostPrimaryEdge primaryEdge)
 {
   using enum facebook::react::RNSSplitHostPrimaryEdge;
 
@@ -164,7 +165,8 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
 
 #pragma mark SplitScreen props
 
-RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(facebook::react::RNSSplitScreenColumnType columnType)
+RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(
+    facebook::react::RNSSplitScreenColumnType columnType)
 {
   using enum facebook::react::RNSSplitScreenColumnType;
 
