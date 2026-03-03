@@ -11,19 +11,10 @@
 #include "NativeModules.h"
 
 namespace winrt::ReactNativeScreens {
-
-REACT_MODULE(RnScreens)
+// "RNSModule" must match TurboModuleRegistry.get('RNSModule') in src/fabric/NativeScreensModule.ts.
+REACT_MODULE(RnScreens, L"RNSModule")
 
 struct RnScreens {
   using ModuleSpec = ReactNativeScreensCodegen::ScreensModuleSpec;
-
-  REACT_INIT(Initialize)
-  void Initialize(const React::ReactContext &reactContext) noexcept;
-
-  REACT_SYNC_METHOD(multiply)
-  double multiply(double a, double b) noexcept;
-
-private:
-  React::ReactContext m_context;
 };
 } // namespace winrt::ReactNativeScreens

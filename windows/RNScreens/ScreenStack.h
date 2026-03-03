@@ -2,7 +2,6 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-
 // RNSScreenStack - stub. Child ordering and screen transitions are managed
 // entirely by JS and the Fabric reconciler.
 //

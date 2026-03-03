@@ -67,12 +67,24 @@ struct ScreenProps : implements<ScreenProps, IComponentProps> {
 
 struct ScreenEventEmitter {
   explicit ScreenEventEmitter(const EventEmitter &emitter) noexcept
-    : m_emitter(emitter) {}
+    : m_emitter(emitter) {
+  }
 
-  void onWillAppear() const noexcept { Dispatch(L"topWillAppear"); }
-  void onAppear() const noexcept { Dispatch(L"topAppear"); }
-  void onWillDisappear() const noexcept { Dispatch(L"topWillDisappear"); }
-  void onDisappear() const noexcept { Dispatch(L"topDisappear"); }
+  void onWillAppear() const noexcept {
+    Dispatch(L"topWillAppear");
+  }
+
+  void onAppear() const noexcept {
+    Dispatch(L"topAppear");
+  }
+
+  void onWillDisappear() const noexcept {
+    Dispatch(L"topWillDisappear");
+  }
+
+  void onDisappear() const noexcept {
+    Dispatch(L"topDisappear");
+  }
 
 private:
   // The framework supplies a null EventEmitter between view creation and the
