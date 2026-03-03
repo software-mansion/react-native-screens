@@ -67,7 +67,7 @@ private:
 // Registration
 // ---------------------------------------------------------------------------
 
-void RegisterRNSScreenStack(
+void RegisterScreenStack(
     const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   fabricBuilder.AddViewComponent(
       L"RNSScreenStack",

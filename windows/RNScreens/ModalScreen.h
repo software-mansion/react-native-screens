@@ -2,7 +2,7 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-void RegisterRNSModalScreen(
+void RegisterModalScreen(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
   noexcept;
 } // namespace winrt::RNScreens::implementation

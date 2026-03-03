@@ -5,7 +5,7 @@
 namespace winrt::RNScreens::implementation {
 using namespace winrt::Microsoft::ReactNative;
 
-void RegisterRNSScreenStackHeaderConfig(
+void RegisterScreenStackHeaderConfig(
     const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   fabricBuilder.AddViewComponent(
       L"RNSScreenStackHeaderConfig",

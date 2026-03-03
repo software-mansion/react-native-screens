@@ -5,7 +5,7 @@
 namespace winrt::RNScreens::implementation {
 using namespace winrt::Microsoft::ReactNative;
 
-void RegisterRNSSearchBar(
+void RegisterSearchBar(
     const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   fabricBuilder.AddViewComponent(
       L"RNSSearchBar",
