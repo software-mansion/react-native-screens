@@ -12,7 +12,7 @@ RCT_EXPORT_MODULE(RNSTabsBottomAccessoryManager)
 
 - (UIView *)view
 {
-  // For Paper, we need to initialize TabsAccessory with bridge
+  // For Paper, we need to initialize TabsBottomAccessory with bridge
   return [[RNSTabsBottomAccessoryComponentView alloc] initWithFrame:CGRectZero bridge:self.bridge];
 }
 

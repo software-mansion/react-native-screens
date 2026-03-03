@@ -5,10 +5,10 @@ import type {
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
-import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
+import type { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
 
-export type TabAccessoryComponentFactory = (
-  environment: TabsAccessoryEnvironment,
+export type TabsBottomAccessoryComponentFactory = (
+  environment: TabsBottomAccessoryEnvironment,
 ) => ReactNode;
 
 export type NativeFocusChangeEvent = {
@@ -251,7 +251,7 @@ export interface TabsHostProps {
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: TabAccessoryComponentFactory;
+  bottomAccessory?: TabsBottomAccessoryComponentFactory;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
