@@ -39,7 +39,7 @@
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
   if (parent != nil) {
-    [self updateLayoutDirectionIfNeeded];
+    [self updateLayoutDirectionBelowIOS17IfNeeded];
   }
 }
 
@@ -93,9 +93,9 @@
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
-- (void)setNeedsLayoutDirectionUpdate:(bool)needsLayoutDirectionUpdate
+- (void)setNeedsLayoutDirectionUpdateBelowIOS17:(bool)needsLayoutDirectionUpdate
 {
-  _needsLayoutDirectionUpdate = needsLayoutDirectionUpdate;
+  _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
 #pragma mark-- RNSReactTransactionObserving
@@ -268,16 +268,16 @@
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
-- (void)updateLayoutDirectionIfNeeded
+- (void)updateLayoutDirectionBelowIOS17IfNeeded
 {
-  if (_needsLayoutDirectionUpdate) {
-    [self updateLayoutDirection];
+  if (_needsLayoutDirectionUpdateBelowIOS17) {
+    [self updateLayoutDirectionBelowIOS17];
   }
 }
 
-- (void)updateLayoutDirection
+- (void)updateLayoutDirectionBelowIOS17
 {
-  _needsLayoutDirectionUpdate = false;
+  _needsLayoutDirectionUpdateBelowIOS17 = false;
   if (@available(iOS 17.0, *)) {
     // no-op
   } else {

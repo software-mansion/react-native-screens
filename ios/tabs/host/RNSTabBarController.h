@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This method is necessary only on iOS versions prior to 17.
  * On iOS 17+, use `traitOverrides.layoutDirection` on the controller directly.
  */
-- (void)updateLayoutDirectionIfNeeded;
+- (void)updateLayoutDirectionBelowIOS17IfNeeded;
 
 /**
  * Updates the layout direction based on property on host view.
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * This method can only be called when `parentViewController` is not nil.
  */
-- (void)updateLayoutDirection;
+- (void)updateLayoutDirectionBelowIOS17;
 @end
 
 #pragma mark - Signals
@@ -191,7 +191,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This flag is necessary only on iOS versions prior to 17.
  * On iOS 17+, use `traitOverrides.layoutDirection` on the controller directly.
  */
-@property (nonatomic, readwrite) bool needsLayoutDirectionUpdate;
+@property (nonatomic, readwrite) bool needsLayoutDirectionUpdateBelowIOS17;
 
 @end
 
