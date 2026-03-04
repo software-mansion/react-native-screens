@@ -36,10 +36,12 @@ import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 import {
   GestureHandlerRootView,
   GestureDetectorProvider,
 } from './gesture-handler-interop';
+import RNRestart from './react-native-restart-interop';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -167,6 +169,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           value={I18nManager.isRTL}
           onValueChange={() => {
             I18nManager.forceRTL(!I18nManager.isRTL);
+            RNRestart.Restart();
           }}
           testID="root-screen-switch-rtl"
         />

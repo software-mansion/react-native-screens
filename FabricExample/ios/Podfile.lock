@@ -1319,6 +1319,8 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+  - react-native-restart (0.0.27):
+    - React-Core
   - react-native-safe-area-context (5.6.0):
     - hermes-engine
     - RCTRequired
@@ -1987,6 +1989,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
@@ -2104,6 +2107,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-restart:
+    :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -2223,6 +2228,7 @@ SPEC CHECKSUMS:
   React-logger: b1c4c3e7a630acee64e51d98e5e8a7c372547b18
   React-Mapbuffer: 40542231d12eed0cd5791aaaf49076ca7320a3ac
   React-microtasksnativemodule: 1dc2ff33a5c8ee3cfbc7ec876ede9b4f3d9164d8
+  react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 55df20cbf4ef728cfaf6e5d2a01cb4f5d73893b1
   React-NativeModulesApple: 0cd765e0e3362ef1a87b70022c8d66a0fabd1ba2
   React-networking: 70bb0b03da8146fbe750d39efab2722bc7df3b34

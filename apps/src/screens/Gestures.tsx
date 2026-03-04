@@ -13,6 +13,8 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
+
+import RNRestart from '../../react-native-restart-interop';
 import { Button, SettingsSwitch } from '../shared';
 import { SettingsMultiInput } from '../shared/SettingsMultiInput';
 
@@ -94,6 +96,7 @@ const DetailsScreen = ({
         value={I18nManager.isRTL}
         onValueChange={() => {
           I18nManager.forceRTL(!I18nManager.isRTL);
+          RNRestart.Restart();
         }}
       />
       <SettingsSwitch
