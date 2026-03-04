@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
-import { ColorValue } from 'react-native';
+import type { ColorValue } from 'react-native';
 
 export type TabsBottomAccessoryComponentFactory = (
   environment: TabsBottomAccessoryEnvironment,
