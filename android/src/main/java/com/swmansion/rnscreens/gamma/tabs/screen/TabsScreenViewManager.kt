@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.gamma.tabs.screen
 
 import android.util.Log
 import androidx.core.graphics.toColorInt
-import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
@@ -169,8 +168,8 @@ class TabsScreenViewManager :
         }
     }
 
-    @ReactProp(name = "standardAppearanceAndroid")
-    override fun setStandardAppearanceAndroid(
+    @ReactProp(name = "standardAppearance")
+    override fun setStandardAppearance(
         view: TabsScreen,
         value: ReadableMap?,
     ) {
