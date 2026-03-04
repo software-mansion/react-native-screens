@@ -48,17 +48,17 @@ function TabsHost(props: TabsHostProps) {
     <TabsHostIOSNativeComponent
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
-      controlNavigationStateInJS={controlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
-      layoutDirection={direction}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredBaseProps}
       // iOS-specific
-      tabBarTintColor={ios?.tabBarTintColor}
-      tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
+      colorScheme={ios?.colorScheme}
+      controlNavigationStateInJS={controlNavigationStateInJS}
+      layoutDirection={direction}
       tabBarControllerMode={ios?.tabBarControllerMode}
-      colorScheme={ios?.colorScheme}>
+      tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
+      tabBarTintColor={ios?.tabBarTintColor}>
       {baseProps.children}
       {ios?.bottomAccessory &&
         isIOS26OrHigher &&
