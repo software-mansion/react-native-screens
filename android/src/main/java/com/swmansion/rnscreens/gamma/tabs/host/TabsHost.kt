@@ -228,7 +228,7 @@ class TabsHost(
             true
         }
 
-        colorSchemeCoordinator.onColorSchemeChanged = { uiNightMode ->
+        colorSchemeCoordinator.onUiNightModeResolved = { uiNightMode ->
             applyDayNightUiMode(uiNightMode)
         }
     }

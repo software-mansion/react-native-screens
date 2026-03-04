@@ -18,7 +18,7 @@ internal class ColorSchemeCoordinator :
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
 
-    internal var onColorSchemeChanged: ((Int) -> Unit)? = null
+    internal var onUiNightModeResolved: ((Int) -> Unit)? = null
 
     override val resolvedUiNightMode: Int
         get() =
@@ -47,7 +47,7 @@ internal class ColorSchemeCoordinator :
         applyResolvedColorScheme()
     }
 
-    override fun onResolvedColorSchemeChanged() {
+    override fun onParentUiNightModeChanged() {
         if (colorScheme == ColorScheme.INHERIT) {
             applyResolvedColorScheme()
         }
@@ -66,8 +66,8 @@ internal class ColorSchemeCoordinator :
         if (resolved == lastAppliedUiNightMode) return
         lastAppliedUiNightMode = resolved
 
-        onColorSchemeChanged?.invoke(resolved)
-        childListeners.forEach { it.onResolvedColorSchemeChanged() }
+        onUiNightModeResolved?.invoke(resolved)
+        childListeners.forEach { it.onParentUiNightModeChanged() }
     }
 
     private fun findParentColorSchemeProvider(hostView: View): ColorSchemeProviding? {
