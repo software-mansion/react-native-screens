@@ -181,7 +181,6 @@ function parseIconsToNativeProps(
     parsedIcon.iconType === undefined &&
     parsedSelectedIcon.iconType !== undefined
   ) {
-    // iOS-specific: UIKit requirement
     throw new Error(
       '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
     );
