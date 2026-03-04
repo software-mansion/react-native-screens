@@ -128,7 +128,7 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
     private val specialEffectsHandler = SpecialEffectsHandler()
-    private val colorSchemeCoordinator = ColorSchemeCoordinator(this)
+    private val colorSchemeCoordinator = ColorSchemeCoordinator()
 
     private val wrappedContext =
         ContextThemeWrapper(
@@ -240,7 +240,7 @@ class TabsHost(
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
             }
-        colorSchemeCoordinator.onAttachedToWindow()
+        colorSchemeCoordinator.onAttachedToWindow(this)
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // On Paper the children are not yet attached here.
             containerUpdateCoordinator.let {
@@ -408,7 +408,7 @@ class TabsHost(
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        colorSchemeCoordinator.onConfigurationChanged()
+        colorSchemeCoordinator.onConfigurationChanged(newConfig)
     }
 
     private fun applyDayNightUiMode(uiMode: Int) {

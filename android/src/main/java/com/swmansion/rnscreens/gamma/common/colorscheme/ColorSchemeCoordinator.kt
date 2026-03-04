@@ -5,9 +5,8 @@ import android.view.View
 import android.view.ViewParent
 import kotlin.properties.Delegates
 
-class ColorSchemeCoordinator(
-    private val hostView: View,
-) : ColorSchemeProviding,
+class ColorSchemeCoordinator :
+    ColorSchemeProviding,
     ColorSchemeListener {
     internal var colorScheme: ColorScheme by Delegates.observable(ColorScheme.INHERIT) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -15,6 +14,7 @@ class ColorSchemeCoordinator(
         }
     }
     private var parentProvider: ColorSchemeProviding? = null
+    private var systemUiNightMode: Int = Configuration.UI_MODE_NIGHT_NO
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
 
@@ -27,11 +27,12 @@ class ColorSchemeCoordinator(
                 ColorScheme.DARK -> Configuration.UI_MODE_NIGHT_YES
                 ColorScheme.INHERIT ->
                     parentProvider?.resolvedUiNightMode
-                        ?: (hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+                        ?: systemUiNightMode
             }
 
-    fun onAttachedToWindow() {
-        parentProvider = findParentColorSchemeProvider()
+    fun onAttachedToWindow(hostView: View) {
+        systemUiNightMode = hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        parentProvider = findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
         applyResolvedColorScheme()
     }
@@ -41,7 +42,8 @@ class ColorSchemeCoordinator(
         parentProvider = null
     }
 
-    fun onConfigurationChanged() {
+    fun onConfigurationChanged(configuration: Configuration?) {
+        systemUiNightMode = configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) ?: Configuration.UI_MODE_NIGHT_UNDEFINED
         applyResolvedColorScheme()
     }
 
@@ -68,7 +70,7 @@ class ColorSchemeCoordinator(
         childListeners.forEach { it.onResolvedColorSchemeChanged() }
     }
 
-    private fun findParentColorSchemeProvider(): ColorSchemeProviding? {
+    private fun findParentColorSchemeProvider(hostView: View): ColorSchemeProviding? {
         var current: ViewParent? = hostView.parent
         while (current != null) {
             if (current is ColorSchemeProviding) return current
