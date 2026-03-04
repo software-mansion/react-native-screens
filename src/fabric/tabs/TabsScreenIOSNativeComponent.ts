@@ -142,7 +142,7 @@ export interface NativeProps extends ViewProps {
     };
   };
 
-  // IOS-specific props
+  // iOS-specific props
   // Tab config
   isTitleUndefined?: CT.WithDefault<boolean, true>;
   orientation?: CT.WithDefault<Orientation, 'inherit'>;
