@@ -6,8 +6,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSTabsHostManagerDelegate
-import com.facebook.react.viewmanagers.RNSTabsHostManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostNativeFocusChangeEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
@@ -15,8 +15,8 @@ import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
     ViewGroupManager<TabsHost>(),
-    RNSTabsHostManagerInterface<TabsHost> {
-    private val delegate: ViewManagerDelegate<TabsHost> = RNSTabsHostManagerDelegate<TabsHost, TabsHostViewManager>(this)
+    RNSTabsHostAndroidManagerInterface<TabsHost> {
+    private val delegate: ViewManagerDelegate<TabsHost> = RNSTabsHostAndroidManagerDelegate<TabsHost, TabsHostViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -67,33 +67,13 @@ class TabsHostViewManager :
 
     // These should be ignored or another component, dedicated for Android should be used
 
-    override fun setTabBarTintColor(
-        view: TabsHost,
-        value: Int?,
-    ) = Unit
-
     override fun setControlNavigationStateInJS(
         view: TabsHost?,
         value: Boolean,
     ) = Unit
 
-    override fun setTabBarMinimizeBehavior(
-        view: TabsHost,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarControllerMode(
-        view: TabsHost,
-        value: String?,
-    ) = Unit
-
     override fun setLayoutDirection(
         view: TabsHost,
-        value: String?,
-    ) = Unit
-
-    override fun setColorScheme(
-        view: TabsHost?,
         value: String?,
     ) = Unit
 
@@ -114,6 +94,6 @@ class TabsHostViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSTabsHost"
+        const val REACT_CLASS = "RNSTabsHostAndroid"
     }
 }
