@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Scenario } from '../../shared/helpers';
 import {
-  TabsScreenAppearance,
-  TabsScreenAppearanceAndroid,
+  TabsScreenPropsAndroid,
+  TabsScreenPropsIOS,
 } from 'react-native-screens';
 import Colors from '../../../shared/styling/Colors';
 
@@ -17,7 +17,7 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
+const DEFAULT_APPEARANCE_ANDROID: TabsScreenPropsAndroid.TabsScreenAppearance = {
   tabBarBackgroundColor: Colors.NavyLight100,
   tabBarItemRippleColor: Colors.WhiteTransparentDark,
   tabBarItemLabelVisibilityMode: 'auto',
@@ -44,7 +44,7 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarItemBadgeBackgroundColor: Colors.RedDark40,
 };
 
-const DEFAULT_APPEARANCE_IOS: TabsScreenAppearance = {
+const DEFAULT_APPEARANCE_IOS: TabsScreenPropsIOS.TabsScreenAppearance = {
   tabBarBackgroundColor: Colors.NavyLight100,
   tabBarBlurEffect: 'systemDefault',
   stacked: {

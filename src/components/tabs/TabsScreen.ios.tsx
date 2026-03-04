@@ -18,8 +18,8 @@ import type {
   TabsScreenAppearance,
   TabsScreenItemAppearance,
   TabsScreenItemStateAppearance,
-  TabsScreenProps,
-} from './TabsScreen.types';
+} from './TabsScreen.ios.types';
+import type { TabsScreenProps } from './TabsScreen.types';
 import type { PlatformIconIOS } from '../../types';
 import { useTabsScreen } from './useTabsScreen';
 

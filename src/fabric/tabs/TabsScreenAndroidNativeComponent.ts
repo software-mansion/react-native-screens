@@ -106,7 +106,7 @@ export interface NativeProps extends ViewProps {
   selectedImageIconResource?: ImageSource;
 
   // Appearance
-  standardAppearanceAndroid?: Appearance;
+  standardAppearance?: Appearance;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenAndroid', {
