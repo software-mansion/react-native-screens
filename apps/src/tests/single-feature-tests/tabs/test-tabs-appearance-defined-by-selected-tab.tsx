@@ -85,29 +85,29 @@ export function App() {
           tabScreenProps: {
             tabKey: 'Tab1',
             title: 'Tab1',
-            icon: {
-              ios: {
+            ios: {
+              icon: {
                 type: 'sfSymbol',
                 name: 'house.fill',
               },
-              android: {
+              selectedIcon: {
+                type: 'sfSymbol',
+                name: 'house.fill',
+              },
+              standardAppearance: DEFAULT_APPEARANCE_IOS,
+              scrollEdgeAppearance: DEFAULT_APPEARANCE_IOS,
+            },
+            android: {
+              icon: {
                 type: 'imageSource',
                 imageSource: require('../../../../assets/variableIcons/icon.png'),
               },
-            },
-            selectedIcon: {
-              ios: {
-                type: 'sfSymbol',
-                name: 'house.fill',
-              },
-              android: {
+              selectedIcon: {
                 type: 'imageSource',
                 imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
               },
+              standardAppearance: DEFAULT_APPEARANCE_ANDROID,
             },
-            standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
-            standardAppearance: DEFAULT_APPEARANCE_IOS,
-            scrollEdgeAppearance: DEFAULT_APPEARANCE_IOS,
           },
         },
         {
@@ -115,76 +115,78 @@ export function App() {
           tabScreenProps: {
             tabKey: 'Tab2',
             title: 'Tab2',
-            icon: {
-              ios: {
+            ios: {
+              icon: {
                 type: 'templateSource',
                 templateSource: require('../../../../assets/variableIcons/icon.png'),
               },
-              android: {
+              standardAppearance: {
+                ...DEFAULT_APPEARANCE_IOS,
+                tabBarBackgroundColor: Colors.PurpleDark100,
+                stacked: {
+                  ...DEFAULT_APPEARANCE_IOS.stacked,
+                  normal: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                    tabBarItemIconColor: Colors.YellowDark100,
+                    tabBarItemTitleFontColor: Colors.YellowDark40,
+                  },
+                  selected: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
+                    tabBarItemIconColor: Colors.RedDark100,
+                    tabBarItemTitleFontColor: Colors.RedDark40,
+                  },
+                  focused: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
+                    tabBarItemIconColor: Colors.RedLight100,
+                    tabBarItemTitleFontColor: Colors.RedLight40,
+                  },
+                },
+              },
+              scrollEdgeAppearance: {
+                ...DEFAULT_APPEARANCE_IOS,
+                tabBarBackgroundColor: Colors.PurpleDark100,
+                stacked: {
+                  ...DEFAULT_APPEARANCE_IOS.stacked,
+                  normal: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                    tabBarItemIconColor: Colors.YellowDark100,
+                    tabBarItemTitleFontColor: Colors.YellowDark40,
+                  },
+                  selected: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
+                    tabBarItemIconColor: Colors.RedDark100,
+                    tabBarItemTitleFontColor: Colors.RedDark40,
+                  },
+                  focused: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
+                    tabBarItemIconColor: Colors.RedLight100,
+                    tabBarItemTitleFontColor: Colors.RedLight40,
+                  },
+                },
+              },
+            },
+            android: {
+              icon: {
                 type: 'drawableResource',
                 name: 'sym_call_missed',
               },
-            },
-            standardAppearanceAndroid: {
-              ...DEFAULT_APPEARANCE_ANDROID,
-              tabBarBackgroundColor: Colors.PurpleDark100,
-              tabBarItemRippleColor: Colors.PurpleDark40,
-              normal: {
-                tabBarItemIconColor: Colors.YellowDark100,
-                tabBarItemTitleFontColor: Colors.YellowDark40,
-              },
-              selected: {
-                tabBarItemIconColor: Colors.RedDark100,
-                tabBarItemTitleFontColor: Colors.RedDark40,
-              },
-              focused: {
-                tabBarItemIconColor: Colors.RedLight100,
-                tabBarItemTitleFontColor: Colors.RedLight40,
-              },
-              tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
-            },
-            standardAppearance: {
-              ...DEFAULT_APPEARANCE_IOS,
-              tabBarBackgroundColor: Colors.PurpleDark100,
-              stacked: {
-                ...DEFAULT_APPEARANCE_IOS.stacked,
+              standardAppearance: {
+                ...DEFAULT_APPEARANCE_ANDROID,
+                tabBarBackgroundColor: Colors.PurpleDark100,
+                tabBarItemRippleColor: Colors.PurpleDark40,
                 normal: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
                   tabBarItemIconColor: Colors.YellowDark100,
                   tabBarItemTitleFontColor: Colors.YellowDark40,
                 },
                 selected: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
                   tabBarItemIconColor: Colors.RedDark100,
                   tabBarItemTitleFontColor: Colors.RedDark40,
                 },
                 focused: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
                   tabBarItemIconColor: Colors.RedLight100,
                   tabBarItemTitleFontColor: Colors.RedLight40,
                 },
-              },
-            },
-            scrollEdgeAppearance: {
-              ...DEFAULT_APPEARANCE_IOS,
-              tabBarBackgroundColor: Colors.PurpleDark100,
-              stacked: {
-                ...DEFAULT_APPEARANCE_IOS.stacked,
-                normal: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                  tabBarItemIconColor: Colors.YellowDark100,
-                  tabBarItemTitleFontColor: Colors.YellowDark40,
-                },
-                selected: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
-                  tabBarItemIconColor: Colors.RedDark100,
-                  tabBarItemTitleFontColor: Colors.RedDark40,
-                },
-                focused: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
-                  tabBarItemIconColor: Colors.RedLight100,
-                  tabBarItemTitleFontColor: Colors.RedLight40,
-                },
+                tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
               },
             },
           },
@@ -194,39 +196,41 @@ export function App() {
           tabScreenProps: {
             tabKey: 'Tab3',
             title: 'Tab3',
-            icon: {
-              ios: {
+            ios: {
+              icon: {
                 type: 'templateSource',
                 templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
               },
-              android: {
-                type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
-              }
-            },
-            standardAppearanceAndroid: {
-              ...DEFAULT_APPEARANCE_ANDROID,
-              tabBarItemBadgeTextColor: Colors.GreenDark120,
-              tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
-            },
-            standardAppearance: {
-              ...DEFAULT_APPEARANCE_IOS,
-              stacked: {
-                ...DEFAULT_APPEARANCE_IOS.stacked,
-                normal: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                  tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+              standardAppearance: {
+                ...DEFAULT_APPEARANCE_IOS,
+                stacked: {
+                  ...DEFAULT_APPEARANCE_IOS.stacked,
+                  normal: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                    tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+                  },
+                },
+              },
+              scrollEdgeAppearance: {
+                ...DEFAULT_APPEARANCE_IOS,
+                stacked: {
+                  ...DEFAULT_APPEARANCE_IOS.stacked,
+                  normal: {
+                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                    tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+                  },
                 },
               },
             },
-            scrollEdgeAppearance: {
-              ...DEFAULT_APPEARANCE_IOS,
-              stacked: {
-                ...DEFAULT_APPEARANCE_IOS.stacked,
-                normal: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                  tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
-                },
+            android: {
+              icon: {
+                type: 'imageSource',
+                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+              },
+              standardAppearance: {
+                ...DEFAULT_APPEARANCE_ANDROID,
+                tabBarItemBadgeTextColor: Colors.GreenDark120,
+                tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
               },
             },
           },

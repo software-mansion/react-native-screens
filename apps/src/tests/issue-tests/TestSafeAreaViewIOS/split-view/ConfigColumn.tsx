@@ -22,8 +22,8 @@ export default function ConfigColumn({
         tabScreenProps: {
           tabKey: 'column' + index,
           title: 'Column ' + index,
-          icon: {
-            ios: {
+          ios: {
+            icon: {
               type: 'sfSymbol',
               name: index + '.circle',
             },

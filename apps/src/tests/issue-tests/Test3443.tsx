@@ -21,8 +21,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab1',
       title: 'Tab 1',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
@@ -37,14 +37,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       title: 'Tab 2',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
-      },
-      selectedIcon: {
-        ios: {
+        selectedIcon: {
           type: 'xcasset',
           name: 'custom-icon-fill',
         },
