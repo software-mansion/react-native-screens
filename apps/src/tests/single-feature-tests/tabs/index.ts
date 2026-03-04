@@ -5,6 +5,7 @@ import OverrideScrollViewContentInsetScenario from './override-scroll-view-conte
 import TabBarHiddenScenario from './tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
+import TestTabsColorScheme from './test-tabs-color-scheme';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -12,6 +13,7 @@ const scenarios = {
   TabBarAppearanceDefinedBySelectedTabScenario,
   TabBarHiddenScenario,
   TabsScreenOrientationScenario,
+  TestTabsColorScheme,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
