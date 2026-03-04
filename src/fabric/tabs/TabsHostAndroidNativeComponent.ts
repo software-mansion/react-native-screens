@@ -23,11 +23,6 @@ export interface NativeProps extends ViewProps {
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue;
-
-  // Control
-
-  // Experimental support
-  controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostAndroid', {

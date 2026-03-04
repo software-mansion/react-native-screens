@@ -65,13 +65,6 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    // These should be ignored or another component, dedicated for Android should be used
-
-    override fun setControlNavigationStateInJS(
-        view: TabsHost?,
-        value: Boolean,
-    ) = Unit
-
     @ReactProp(name = "tabBarHidden")
     override fun setTabBarHidden(
         view: TabsHost,

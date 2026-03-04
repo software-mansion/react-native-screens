@@ -30,7 +30,7 @@ function TabsHost(props: TabsHostProps) {
   const componentNodeRef =
     React.useRef<React.Component<TabsHostAndroidNativeComponentProps>>(null);
 
-  const { controlNavigationStateInJS, onNativeFocusChangeCallback } =
+  const { onNativeFocusChangeCallback } =
     useTabsHost<TabsHostAndroidNativeComponentProps>({
       componentNodeRef,
       controlNavigationStateInJS: experimentalControlNavigationStateInJS,
@@ -41,7 +41,6 @@ function TabsHost(props: TabsHostProps) {
     <TabsHostAndroidNativeComponent
       style={[styles.fillParent, { direction }]}
       onNativeFocusChange={onNativeFocusChangeCallback}
-      controlNavigationStateInJS={controlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
