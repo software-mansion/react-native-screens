@@ -5,7 +5,7 @@ import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../fab
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
-type PlatformNativeProps =
+type TabsScreenPlatformNativeComponentProps =
   | TabsScreenAndroidNativeComponentProps
   | TabsScreenIOSNativeComponentProps;
 
@@ -19,7 +19,9 @@ interface TabsScreenConfig<T> {
   tabKey: string;
 }
 
-export function useTabsScreen<T extends PlatformNativeProps>({
+export function useTabsScreen<
+  T extends TabsScreenPlatformNativeComponentProps,
+>({
   componentNodeRef,
   onDidAppear,
   onDidDisappear,

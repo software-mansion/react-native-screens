@@ -6,7 +6,7 @@ import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeFocusChangeEvent } from './TabsHost.types';
 
-type PlatformNativeProps =
+type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
   | TabsHostIOSNativeComponentProps;
 
@@ -18,7 +18,7 @@ interface TabsHostConfig<T> {
   ) => void;
 }
 
-export function useTabsHost<T extends PlatformNativeProps>({
+export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   componentNodeRef,
   controlNavigationStateInJS,
   onNativeFocusChange,
