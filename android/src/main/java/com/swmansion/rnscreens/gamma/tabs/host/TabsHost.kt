@@ -19,6 +19,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -37,6 +39,7 @@ class TabsHost(
 ) : FrameLayout(reactContext),
     TabsScreenDelegate,
     SafeAreaProvider,
+    ColorSchemeProviding,
     View.OnLayoutChangeListener {
     /**
      * All container updates should go through instance of this class.
@@ -426,6 +429,13 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(wrappedContext, this)
     }
+
+    override val resolvedUiNightMode
+        get() = colorSchemeCoordinator.resolvedUiNightMode
+
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
+
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
