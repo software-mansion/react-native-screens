@@ -2,9 +2,25 @@ import { ReactNode } from 'react';
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
 
+// #region iOS-specific helpers
+
 export type TabsBottomAccessoryComponentFactory = (
   environment: TabsBottomAccessoryEnvironment,
 ) => ReactNode;
+
+export type TabBarMinimizeBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+
+export type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+
+// #endregion iOS-specific helpers
+
+// #region General helpers
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
@@ -12,16 +28,6 @@ export type NativeFocusChangeEvent = {
 };
 
 export type TabsHostDirection = 'inherit' | 'ltr' | 'rtl';
-
-// iOS-specific
-export type TabBarMinimizeBehavior =
-  | 'automatic'
-  | 'never'
-  | 'onScrollDown'
-  | 'onScrollUp';
-
-// iOS-specific
-export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export type TabsHostNativeContainerStyleProps = {
   /**
@@ -32,69 +38,11 @@ export type TabsHostNativeContainerStyleProps = {
   backgroundColor?: ColorValue;
 };
 
-export type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+// #endregion General helpers
 
-export interface TabsHostProps {
-  // #region Events
-  /**
-   * A callback that gets invoked when user requests change of focused tab screen.
-   *
-   * @platform android, ios
-   */
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
-  // #endregion Events
+// #region Platform interfaces
 
-  // #region General
-  children?: ViewProps['children'];
-  /**
-   * @summary Hides the tab bar.
-   *
-   * @default false
-   *
-   * @platform android, ios
-   */
-  tabBarHidden?: boolean;
-  /**
-   * @summary Allows for native container view customization.
-   *
-   * On Android, style is applied to `FrameLayout` that wraps currently focused screen
-   * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
-   * view.
-   *
-   * @platform android, ios
-   */
-  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
-  /**
-   * @summary Specifies the layout direction of the native container, its views and child containers.
-   *
-   * The following values are currently supported:
-   *
-   * - `inherit` - uses parent's layout direction,
-   * - `ltr` - forces left-to-right layout direction,
-   * - `rtl` - forces right-to-left layout direction.
-   *
-   * On Android, this property relies on `react-native`'s `style.direction`
-   * (which sets native Android `layoutDirection` View property). Property is
-   * propagated via the view hierarchy. The value will fallback to direction
-   * set on one of the parent views.
-   *
-   * On iOS, this property sets `layoutDirection` trait override for the
-   * native tab bar controller. Property is propagated via the native trait
-   * system. The value will fallback to direction of the **native** app
-   * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
-   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
-   * `ltr`/`rtl` to this property depending on the value of `I18nManager.isRTL`.
-   *
-   * @default inherit
-   *
-   * @platform android, ios
-   */
-  direction?: TabsHostDirection;
-  // #endregion General
-
-  // #region iOS-only
+export interface TabsHostPropsIOS {
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
@@ -194,9 +142,63 @@ export interface TabsHostProps {
    * @platform ios
    */
   colorScheme?: TabsHostColorScheme;
-  // #endregion iOS-only
+}
 
-  // #region Experimental support
+// Predefined for the future use-cases.
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TabsHostPropsAndroid {}
+
+// #endregion Platform interfaces
+
+export interface TabsHostPropsBase {
+  // TabsHostPropsBase - General
+  children?: ViewProps['children'];
+  /**
+   * @summary Hides the tab bar.
+   *
+   * @default false
+   *
+   * @platform android, ios
+   */
+  tabBarHidden?: boolean;
+  /**
+   * @summary Allows for native container view customization.
+   *
+   * On Android, style is applied to `FrameLayout` that wraps currently focused screen
+   * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
+   * view.
+   *
+   * @platform android, ios
+   */
+  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
+  /**
+   * @summary Specifies the layout direction of the native container, its views and child containers.
+   *
+   * The following values are currently supported:
+   *
+   * - `inherit` - uses parent's layout direction,
+   * - `ltr` - forces left-to-right layout direction,
+   * - `rtl` - forces right-to-left layout direction.
+   *
+   * On Android, this property relies on `react-native`'s `style.direction`
+   * (which sets native Android `layoutDirection` View property). Property is
+   * propagated via the view hierarchy. The value will fallback to direction
+   * set on one of the parent views.
+   *
+   * On iOS, this property sets `layoutDirection` trait override for the
+   * native tab bar controller. Property is propagated via the native trait
+   * system. The value will fallback to direction of the **native** app
+   * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
+   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
+   * `ltr`/`rtl` to this property depending on the value of `I18nManager.isRTL`.
+   *
+   * @default inherit
+   *
+   * @platform android, ios
+   */
+  direction?: TabsHostDirection;
+
+  // TabsHostPropsBase - Experimental support
   /**
    * @summary Experimental prop for changing container control.
    *
@@ -214,5 +216,19 @@ export interface TabsHostProps {
    * @platform android, ios
    */
   experimentalControlNavigationStateInJS?: boolean;
-  // #endregion Experimental support
+
+  // TabsHostPropsBase - Events
+  /**
+   * A callback that gets invoked when user requests change of focused tab screen.
+   *
+   * @platform android, ios
+   */
+  onNativeFocusChange?: (
+    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
+  ) => void;
+}
+
+export interface TabsHostProps extends TabsHostPropsBase {
+  ios?: TabsHostPropsIOS;
+  android?: TabsHostPropsAndroid;
 }

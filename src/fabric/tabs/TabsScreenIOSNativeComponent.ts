@@ -10,8 +10,7 @@ import type {
 
 import { UnsafeMixed } from './codegenUtils';
 
-// iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
+// #region General helpers
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -20,6 +19,13 @@ type LifecycleStateChangeEvent = Readonly<{
   previousState: CT.Int32;
   newState: CT.Int32;
 }>;
+
+// #endregion General helpers
+
+// #region iOS-specific helpers
+
+// iOS-specific: SFSymbol, image as a template usage
+export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string;
@@ -50,54 +56,6 @@ export type Appearance = {
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarShadowColor?: ProcessedColorValue | null;
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
-};
-
-// Note: temporary, will be renamed on splitting tabs components
-type TabBarItemLabelVisibilityMode =
-  | 'auto'
-  | 'selected'
-  | 'labeled'
-  | 'unlabeled';
-
-// Note: temporary, will be renamed on splitting tabs components
-export type ItemStateAppearanceAndroid = {
-  tabBarItemTitleFontColor?: ProcessedColorValue | null;
-  tabBarItemIconColor?: ProcessedColorValue | null;
-};
-
-export type AppearanceAndroid = {
-  // TabBar - Appearance
-  tabBarBackgroundColor?: ProcessedColorValue | null;
-
-  // TabBarItem - Ripple
-  tabBarItemRippleColor?: ProcessedColorValue | null;
-
-  // TabBarItem - Label layout
-  tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityMode,
-    'auto'
-  >;
-
-  // TabBarItem - State-dependent appearance
-  normal?: ItemStateAppearanceAndroid;
-  selected?: ItemStateAppearanceAndroid;
-  focused?: ItemStateAppearanceAndroid;
-  disabled?: ItemStateAppearanceAndroid;
-
-  // TabBarItem - Active Indicator
-  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null;
-  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
-
-  // TabBarItem - Label
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleSmallLabelFontSize?: CT.Float;
-  tabBarItemTitleLargeLabelFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-
-  // TabBarItem - Badge
-  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
-  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
 };
 
 type BlurEffect =
@@ -154,6 +112,8 @@ type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+// #endregion iOS-specific helpers
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: CT.DirectEventHandler<LifecycleStateChangeEvent>;
@@ -168,41 +128,13 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
-  isTitleUndefined?: CT.WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Accessibility
   tabBarItemTestID?: string;
   tabBarItemAccessibilityLabel?: string;
 
-  // Currently iOS-only
-  orientation?: CT.WithDefault<Orientation, 'inherit'>;
-
-  // Android-specific image handling
-  drawableIconResourceName?: string;
-  imageIconResource?: ImageSource;
-
-  selectedDrawableIconResourceName?: string;
-  selectedImageIconResource?: ImageSource;
-
-  // Android-specific appearance
-  // Note: temporary standardAppearanceAndroid, suffix will be dropped after splitting components
-  standardAppearanceAndroid?: AppearanceAndroid;
-
-  // iOS-specific appearance
-  standardAppearance?: UnsafeMixed<Appearance>;
-  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
-
-  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
-
-  iconImageSource?: ImageSource;
-  iconResourceName?: string;
-
-  selectedIconImageSource?: ImageSource;
-  selectedIconResourceName?: string;
-
-  systemItem?: CT.WithDefault<SystemItem, 'none'>;
-
+  // Effects
   specialEffects?: {
     repeatedTabSelection?: {
       popToRoot?: CT.WithDefault<boolean, true>;
@@ -210,11 +142,28 @@ export interface NativeProps extends ViewProps {
     };
   };
 
+  // IOS-specific props
+  // Tab config
+  isTitleUndefined?: CT.WithDefault<boolean, true>;
+  orientation?: CT.WithDefault<Orientation, 'inherit'>;
+  systemItem?: CT.WithDefault<SystemItem, 'none'>;
+
+  // Appearance
+  standardAppearance?: UnsafeMixed<Appearance>;
+  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
+
+  // Icons
+  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
+  iconImageSource?: ImageSource;
+  iconResourceName?: string;
+  selectedIconImageSource?: ImageSource;
+  selectedIconResourceName?: string;
+
+  // ScrollView interactions
   overrideScrollViewContentInsetAdjustmentBehavior?: CT.WithDefault<
     boolean,
     true
   >;
-
   bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
@@ -224,4 +173,6 @@ export interface NativeProps extends ViewProps {
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSTabsScreen', {});
+export default codegenNativeComponent<NativeProps>('RNSTabsScreenIOS', {
+  excludedPlatforms: ['android'],
+});
