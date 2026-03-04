@@ -8,7 +8,7 @@
 
 @implementation RNSTabsScreenEventEmitter {
 #if RCT_NEW_ARCH_ENABLED
-  std::shared_ptr<const react::RNSTabsScreenEventEmitter> _reactEventEmitter;
+  std::shared_ptr<const react::RNSTabsScreenIOSEventEmitter> _reactEventEmitter;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
@@ -97,7 +97,7 @@
 }
 
 #if RCT_NEW_ARCH_ENABLED
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsScreenEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsScreenIOSEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }

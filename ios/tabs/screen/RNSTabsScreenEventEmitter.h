@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if RCT_NEW_ARCH_ENABLED
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsScreenEventEmitter> &)emitter;
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsScreenIOSEventEmitter> &)emitter;
 
 #else
 #pragma mark - LEGACY Event emitting blocks

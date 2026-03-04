@@ -41,7 +41,7 @@ typedef struct {
 
 #if RCT_NEW_ARCH_ENABLED
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostEventEmitter> &)emitter;
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostIOSEventEmitter> &)emitter;
 
 #else
 #pragma mark - LEGACY Event emitter blocks
