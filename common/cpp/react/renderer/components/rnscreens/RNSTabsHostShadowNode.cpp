@@ -4,9 +4,9 @@ namespace facebook::react {
 
 #if !defined(ANDROID)
 extern const char RNSTabsHostComponentName[] = "RNSTabsHostIOS";
-#else
+#else // !defined(ANDROID)
 extern const char RNSTabsHostComponentName[] = "RNSTabsHostAndroid";
-#endif
+#endif // !defined(ANDROID)
 
 #if !defined(ANDROID)
 void RNSTabsHostShadowNode::setImageLoader(std::weak_ptr<void> imageLoader) {
@@ -19,5 +19,5 @@ RNSTabsHostShadowNode::StateData &RNSTabsHostShadowNode::getStateDataMutable() {
   ensureUnsealed();
   return const_cast<RNSTabsHostShadowNode::StateData &>(getStateData());
 }
-#endif // !ANDROID
+#endif // !defined(ANDROID)
 } // namespace facebook::react
