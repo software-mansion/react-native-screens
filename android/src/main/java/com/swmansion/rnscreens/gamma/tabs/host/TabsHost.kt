@@ -17,6 +17,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -123,6 +125,7 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
     private val specialEffectsHandler = SpecialEffectsHandler()
+    private val colorSchemeCoordinator = ColorSchemeCoordinator(this)
 
     private val wrappedContext =
         ContextThemeWrapper(
@@ -161,8 +164,6 @@ class TabsHost(
     internal val currentFocusedTab: TabsScreenFragment
         get() = checkNotNull(tabsScreenFragments.find { it.tabsScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
-    private var lastAppliedUiMode: Int? = null
-
     private var isLayoutEnqueued: Boolean = false
 
     private var interfaceInsetsChangeListener: SafeAreaView? = null
@@ -184,6 +185,8 @@ class TabsHost(
             background = newValue?.toDrawable()
         }
     }
+
+    internal var colorScheme: ColorScheme by colorSchemeCoordinator::colorScheme
 
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
@@ -221,6 +224,10 @@ class TabsHost(
             )
             true
         }
+
+        colorSchemeCoordinator.onColorSchemeChanged = { uiNightMode ->
+            applyDayNightUiMode(uiNightMode)
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -230,6 +237,7 @@ class TabsHost(
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
             }
+        colorSchemeCoordinator.onAttachedToWindow()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // On Paper the children are not yet attached here.
             containerUpdateCoordinator.let {
@@ -237,6 +245,11 @@ class TabsHost(
                 it.runContainerUpdate()
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        colorSchemeCoordinator.onDetachedFromWindow()
     }
 
     internal fun mountReactSubviewAt(
@@ -392,32 +405,26 @@ class TabsHost(
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-
-        newConfig?.let {
-            applyDayNightUiModeIfNeeded(it.uiMode and Configuration.UI_MODE_NIGHT_MASK)
-        }
+        colorSchemeCoordinator.onConfigurationChanged()
     }
 
-    private fun applyDayNightUiModeIfNeeded(uiMode: Int) {
-        if (uiMode != lastAppliedUiMode) {
-            // update the appearance when user toggles between dark/light mode
-            when (uiMode) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    wrappedContext.setTheme(R.style.Theme_Material3_Dark_NoActionBar)
-                }
-
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    wrappedContext.setTheme(R.style.Theme_Material3_Light_NoActionBar)
-                }
-
-                else -> {
-                    wrappedContext.setTheme(R.style.Theme_Material3_DayNight_NoActionBar)
-                }
+    private fun applyDayNightUiMode(uiMode: Int) {
+        // update the appearance when user toggles between dark/light mode
+        when (uiMode) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                wrappedContext.setTheme(R.style.Theme_Material3_Dark_NoActionBar)
             }
 
-            appearanceCoordinator.updateTabAppearance(wrappedContext, this)
-            lastAppliedUiMode = uiMode
+            Configuration.UI_MODE_NIGHT_NO -> {
+                wrappedContext.setTheme(R.style.Theme_Material3_Light_NoActionBar)
+            }
+
+            else -> {
+                wrappedContext.setTheme(R.style.Theme_Material3_DayNight_NoActionBar)
+            }
         }
+
+        appearanceCoordinator.updateTabAppearance(wrappedContext, this)
     }
 
     private fun forceSubtreeMeasureAndLayoutPass() {
