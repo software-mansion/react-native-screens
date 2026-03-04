@@ -62,15 +62,15 @@ function TabsScreen(props: TabsScreenProps) {
       collapsable={false}
       style={[style, styles.fillParent]}
       isFocused={isFocused}
-      isTitleUndefined={
-        baseProps.title === null || baseProps.title === undefined
-      }
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...lifecycleCallbacks}
       {...iconProps}
       {...filteredBaseProps}
       // iOS-specific
+      isTitleUndefined={
+        baseProps.title === null || baseProps.title === undefined
+      }
       standardAppearance={mapAppearanceToNativeProp(ios?.standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(
         ios?.scrollEdgeAppearance,
