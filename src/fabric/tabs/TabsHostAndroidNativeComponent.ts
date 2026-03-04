@@ -10,8 +10,6 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
-type LayoutDirection = 'inherit' | 'ltr' | 'rtl';
-
 // #endregion General helpers
 
 // #region Android-specific helpers
@@ -25,10 +23,6 @@ export interface NativeProps extends ViewProps {
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue;
-
-  // We can't use `direction` name for this prop as it's also used by
-  // direction style View prop.
-  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
   // Control
 
