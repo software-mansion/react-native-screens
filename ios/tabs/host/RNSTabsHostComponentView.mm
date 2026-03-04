@@ -113,6 +113,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
@@ -353,6 +354,11 @@ namespace react = facebook::react;
       }
   }
 
+  if (newComponentProps.layoutDirection != oldComponentProps.layoutDirection) {
+    [self setLayoutDirection:rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+                                 newComponentProps.layoutDirection)];
+  }
+
   if (newComponentProps.colorScheme != oldComponentProps.colorScheme) {
     _colorScheme = rnscreens::conversion::UIUserInterfaceStyleFromHostProp(newComponentProps.colorScheme);
     _controller.overrideUserInterfaceStyle = _colorScheme;
@@ -585,6 +591,25 @@ RNS_IGNORE_SUPER_CALL_END
     [_reactSubviews insertObject:subview atIndex:index];
   } else {
     [_reactSubviews removeObject:subview];
+  }
+}
+
+- (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
+{
+  _layoutDirection = layoutDirection;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    _controller.traitOverrides.layoutDirection = _layoutDirection;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  {
+    _controller.needsLayoutDirectionUpdateBelowIOS17 = YES;
+
+    // If controller is already attached to parent VC, we should update layout direction
+    // immediately as controller updates layoutDirection only on `didMoveToParentViewController`.
+    if (_controller.parentViewController != nil) {
+      [_controller updateLayoutDirectionBelowIOS17IfNeeded];
+    }
   }
 }
 

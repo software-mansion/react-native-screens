@@ -118,6 +118,30 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateOrientation;
 
+/**
+ * Updates the layout direction based on property on host view.
+ *
+ * This method does nothing if the update has not been previously requested.
+ * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
+ * appropriate invalidation signal & let the controller decide when to flush the updates.
+ *
+ * This method is necessary only on iOS versions prior to 17.
+ * On iOS 17+, use `traitOverrides.layoutDirection` on the controller directly.
+ */
+- (void)updateLayoutDirectionBelowIOS17IfNeeded;
+
+/**
+ * Updates the layout direction based on property on host view.
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ *
+ * This method is necessary only on iOS versions prior to 17.
+ * On iOS 17+, use `traitOverrides.layoutDirection` on the controller directly.
+ *
+ * This method can only be called when `parentViewController` is not nil.
+ */
+- (void)updateLayoutDirectionBelowIOS17;
 @end
 
 #pragma mark - Signals
@@ -160,6 +184,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Tell the controller that some configuration regarding interface orientation has changed & it requires update.
  */
 @property (nonatomic, readwrite) bool needsOrientationUpdate;
+
+/**
+ * Tell the controller that some configuration regarding layout direction has changed & it requires update.
+ *
+ * This flag is necessary only on iOS versions prior to 17.
+ * On iOS 17+, use `traitOverrides.layoutDirection` on the controller directly.
+ */
+@property (nonatomic, readwrite) bool needsLayoutDirectionUpdateBelowIOS17;
 
 @end
 

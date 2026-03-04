@@ -16,6 +16,8 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+type LayoutDirection = 'inherit' | 'ltr' | 'rtl';
+
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
@@ -25,6 +27,10 @@ export interface NativeProps extends ViewProps {
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue;
+
+  // We can't use `direction` name for this prop as it's also used by
+  // direction style View prop.
+  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
   // iOS-specific
   tabBarTintColor?: ColorValue;

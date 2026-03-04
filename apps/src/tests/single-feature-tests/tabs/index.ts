@@ -6,6 +6,7 @@ import TabBarHiddenScenario from './tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsColorScheme from './test-tabs-color-scheme';
+import TestTabsLayoutDirection from './test-tabs-layout-direction';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -14,6 +15,7 @@ const scenarios = {
   TabBarHiddenScenario,
   TabsScreenOrientationScenario,
   TestTabsColorScheme,
+  TestTabsLayoutDirection,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

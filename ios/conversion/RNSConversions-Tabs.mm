@@ -484,6 +484,23 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
   }
 }
 
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostLayoutDirection layoutDirection)
+{
+  using enum facebook::react::RNSTabsHostLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+    case Ltr:
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
+    case Rtl:
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
+    default:
+      RCTLogError(@"[RNScreens] unsupported layout direction");
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+  }
+}
+
 UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostColorScheme colorScheme)
 {
   using enum facebook::react::RNSTabsHostColorScheme;

@@ -34,6 +34,17 @@
   return self;
 }
 
+#pragma mark - UIKit callbacks
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+
+  if (parent != nil) {
+    [self updateLayoutDirectionBelowIOS17IfNeeded];
+  }
+}
+
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
   RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
@@ -82,6 +93,11 @@
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
+}
+
+- (void)setNeedsLayoutDirectionUpdateBelowIOS17:(bool)needsLayoutDirectionUpdate
+{
+  _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
 #pragma mark-- RNSReactTransactionObserving
@@ -252,6 +268,32 @@
 {
   _needsOrientationUpdate = false;
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+}
+
+- (void)updateLayoutDirectionBelowIOS17IfNeeded
+{
+  if (_needsLayoutDirectionUpdateBelowIOS17) {
+    [self updateLayoutDirectionBelowIOS17];
+  }
+}
+
+- (void)updateLayoutDirectionBelowIOS17
+{
+  _needsLayoutDirectionUpdateBelowIOS17 = false;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    return;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+
+  RCTAssert(
+      self.parentViewController != nil,
+      @"[RNScreens] Expected non-null parent view controller for layout direction update.");
+  [self.parentViewController
+      setOverrideTraitCollection:[UITraitCollection
+                                     traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]
+          forChildViewController:self];
 }
 
 #pragma mark - RNSOrientationProviding

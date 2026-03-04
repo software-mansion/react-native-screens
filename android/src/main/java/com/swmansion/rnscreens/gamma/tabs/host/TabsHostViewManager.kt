@@ -87,6 +87,11 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    override fun setLayoutDirection(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     override fun setColorScheme(
         view: TabsHost?,
         value: String?,

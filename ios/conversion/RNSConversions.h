@@ -108,6 +108,9 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
 #endif // !TARGET_OS_TV
 
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostLayoutDirection layoutDirection);
+
 UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostColorScheme colorScheme);
 
 #pragma mark SplitHost props

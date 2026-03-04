@@ -16,6 +16,7 @@ import { bottomTabsDebugLog } from '../../private/logging';
 import TabsBottomAccessory from './TabsBottomAccessory';
 import { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
 import TabsBottomAccessoryContent from './TabsBottomAccessoryContent';
+import { isIOS26OrHigher } from '../helpers/PlatformUtils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -29,6 +30,7 @@ function TabsHost(props: TabsHostProps) {
       .controlledBottomTabs,
     bottomAccessory,
     nativeContainerStyle,
+    direction,
     ...filteredProps
   } = props;
 
@@ -62,17 +64,18 @@ function TabsHost(props: TabsHostProps) {
 
   return (
     <TabsHostNativeComponent
-      style={styles.fillParent}
+      style={[styles.fillParent, Platform.OS === 'android' && { direction }]}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      // `layoutDirection` is iOS-only
+      layoutDirection={direction}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
       {bottomAccessory &&
-        Platform.OS === 'ios' &&
-        parseInt(Platform.Version, 10) >= 26 &&
+        isIOS26OrHigher &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <TabsBottomAccessory>
             <TabsBottomAccessoryContent environment="regular">
