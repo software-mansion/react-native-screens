@@ -114,6 +114,7 @@ namespace react = facebook::react;
 #endif
   _tabBarTintColor = nil;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
+  _colorScheme = UIUserInterfaceStyleUnspecified;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -356,6 +357,11 @@ namespace react = facebook::react;
   if (newComponentProps.layoutDirection != oldComponentProps.layoutDirection) {
     [self setLayoutDirection:rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
                                  newComponentProps.layoutDirection)];
+  }
+
+  if (newComponentProps.colorScheme != oldComponentProps.colorScheme) {
+    _colorScheme = rnscreens::conversion::UIUserInterfaceStyleFromHostProp(newComponentProps.colorScheme);
+    _controller.overrideUserInterfaceStyle = _colorScheme;
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.

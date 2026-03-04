@@ -54,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
 
+@property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
+
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 @property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;

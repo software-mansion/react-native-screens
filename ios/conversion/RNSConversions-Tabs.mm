@@ -501,4 +501,20 @@ UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostC
   }
 }
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostColorScheme colorScheme)
+{
+  using enum facebook::react::RNSTabsHostColorScheme;
+  switch (colorScheme) {
+    case Inherit:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported color scheme");
+      return UIUserInterfaceStyleUnspecified;
+  }
+}
+
 }; // namespace rnscreens::conversion

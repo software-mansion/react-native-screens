@@ -111,6 +111,8 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientati
 UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
     react::RNSTabsHostLayoutDirection layoutDirection);
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostColorScheme colorScheme);
+
 #pragma mark SplitHost props
 
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
