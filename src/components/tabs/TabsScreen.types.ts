@@ -24,7 +24,7 @@ export type LifecycleStateChangeEvent = Readonly<{
 // #endregion General helpers
 
 export interface TabsScreenPropsBase {
-  // TabsScreenPropsBase - Control
+  // Control
   /**
    * @summary Determines selected tab.
    *
@@ -45,7 +45,7 @@ export interface TabsScreenPropsBase {
    */
   tabKey: string;
 
-  // TabsScreenPropsBase - General
+  // General
   children?: ViewProps['children'];
   style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
@@ -98,7 +98,7 @@ export interface TabsScreenPropsBase {
     };
   };
 
-  // TabsScreenPropsBase - Accessibility
+  // Accessibility
   /**
    * @summary testID for the TabsScreen
    */
@@ -118,7 +118,7 @@ export interface TabsScreenPropsBase {
    */
   tabBarItemAccessibilityLabel?: string;
 
-  // TabsScreenPropsBase - Events
+  // Events
   /**
    * @summary A callback that gets invoked when the tab screen will appear.
    * This is called as soon as the transition begins.

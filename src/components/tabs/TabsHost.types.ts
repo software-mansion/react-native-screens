@@ -23,7 +23,7 @@ export type TabsHostNativeContainerStyleProps = {
 // #endregion General helpers
 
 export interface TabsHostPropsBase {
-  // TabsHostPropsBase - General
+  // General
   children?: ViewProps['children'];
   /**
    * @summary Hides the tab bar.
@@ -70,7 +70,7 @@ export interface TabsHostPropsBase {
    */
   direction?: TabsHostDirection;
 
-  // TabsHostPropsBase - Experimental support
+  // Experimental support
   /**
    * @summary Experimental prop for changing container control.
    *
@@ -89,7 +89,7 @@ export interface TabsHostPropsBase {
    */
   experimentalControlNavigationStateInJS?: boolean;
 
-  // TabsHostPropsBase - Events
+  // Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
    *
