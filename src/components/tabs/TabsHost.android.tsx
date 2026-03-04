@@ -18,11 +18,12 @@ function TabsHost(props: TabsHostProps) {
   // android props (even if unused for now) are extracted - these should be handled separately from base props
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { android, ios, nativeContainerStyle, ...baseProps } = props;
+  const { android, ios, ...baseProps } = props;
 
   const {
     direction,
     experimentalControlNavigationStateInJS,
+    nativeContainerStyle,
     onNativeFocusChange,
     ...filteredBaseProps
   } = baseProps;

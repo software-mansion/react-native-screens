@@ -21,11 +21,12 @@ function TabsHost(props: TabsHostProps) {
 
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { ios, android, nativeContainerStyle, ...baseProps } = props;
+  const { ios, android, ...baseProps } = props;
 
   const {
     direction,
     experimentalControlNavigationStateInJS,
+    nativeContainerStyle,
     onNativeFocusChange,
     ...filteredBaseProps
   } = baseProps;
