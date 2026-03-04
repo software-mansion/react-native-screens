@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewParent
 import kotlin.properties.Delegates
 
-class ColorSchemeCoordinator :
+internal class ColorSchemeCoordinator :
     ColorSchemeProviding,
     ColorSchemeListener {
     internal var colorScheme: ColorScheme by Delegates.observable(ColorScheme.INHERIT) { _, oldValue, newValue ->
@@ -18,7 +18,7 @@ class ColorSchemeCoordinator :
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
 
-    var onColorSchemeChanged: ((Int) -> Unit)? = null
+    internal var onColorSchemeChanged: ((Int) -> Unit)? = null
 
     override val resolvedUiNightMode: Int
         get() =
@@ -30,19 +30,19 @@ class ColorSchemeCoordinator :
                         ?: systemUiNightMode
             }
 
-    fun onAttachedToWindow(hostView: View) {
+    internal fun onAttachedToWindow(hostView: View) {
         systemUiNightMode = hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         parentProvider = findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
         applyResolvedColorScheme()
     }
 
-    fun onDetachedFromWindow() {
+    internal fun onDetachedFromWindow() {
         parentProvider?.removeColorSchemeListener(this)
         parentProvider = null
     }
 
-    fun onConfigurationChanged(configuration: Configuration?) {
+    internal fun onConfigurationChanged(configuration: Configuration?) {
         systemUiNightMode = configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) ?: Configuration.UI_MODE_NIGHT_UNDEFINED
         applyResolvedColorScheme()
     }

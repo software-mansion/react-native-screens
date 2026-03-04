@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.common.colorscheme
 
-enum class ColorScheme {
+internal enum class ColorScheme {
     INHERIT,
     LIGHT,
     DARK,
