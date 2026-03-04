@@ -324,6 +324,7 @@ namespace react = facebook::react;
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
+  [self resignFirstResponder];
   [self emitOnBlurEvent];
   [self hideCancelButton];
 }

@@ -40,13 +40,30 @@ function Home({ navigation }: StackNavigationProp) {
         hideWhenScrolling: false,
         onChangeText: event => setSearchQuery(event.nativeEvent.text),
       },
-      headerRight: () => (
-        <Button
-          title="Menu"
-          onPress={() => Alert.alert('Menu', 'Header button pressed')}
-          testID="home-header-right-button"
-        />
-      ),
+      // @ts-ignore – unstable API
+      unstable_headerRightItems: () => [
+        {
+          type: 'menu',
+          label: 'Menu',
+          icon: { type: 'sfSymbol', name: 'ellipsis.circle' },
+          menu: {
+            items: [
+              {
+                label: 'Settings',
+                type: 'action',
+                icon: { type: 'sfSymbol', name: 'gear' },
+                onPress: () => Alert.alert('Settings', 'Settings pressed'),
+              },
+              {
+                label: 'Refresh',
+                type: 'action',
+                icon: { type: 'sfSymbol', name: 'arrow.triangle.2.circlepath' },
+                onPress: () => Alert.alert('Refresh', 'Refresh pressed'),
+              },
+            ],
+          },
+        },
+      ],
     });
   }, [navigation]);
 
@@ -59,8 +76,9 @@ function Home({ navigation }: StackNavigationProp) {
           Steps to reproduce:{'\n'}
           1. Tap the search bar to focus it{'\n'}
           2. Dismiss the keyboard (tap Cancel or tap away){'\n'}
-          3. Tap the "Menu" button in the header{'\n'}
-          4. Expected: The keyboard should remain dismissed and only the button press should be handled (previously, the keyboard would reopen)
+          3. Tap the menu button (ellipsis icon) in the header{'\n'}
+          4. Expected: The keyboard should remain dismissed and the menu should
+          appear without the keyboard reopening
         </Text>
         <Button
           title="Open Second"
