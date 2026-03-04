@@ -15,10 +15,10 @@ class JSI_EXPORT RNSTabsHostShadowNode final : public ConcreteViewShadowNode<
 #if !defined(ANDROID)
                                                    RNSTabsHostIOSProps,
                                                    RNSTabsHostIOSEventEmitter,
-#else
+#else // !defined(ANDROID)
                                                    RNSTabsHostAndroidProps,
                                                    RNSTabsHostAndroidEventEmitter,
-#endif
+#endif // !defined(ANDROID)
                                                    RNSTabsHostState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
