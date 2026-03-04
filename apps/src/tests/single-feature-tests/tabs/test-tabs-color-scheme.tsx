@@ -18,7 +18,7 @@ const SCENARIO: Scenario = {
   name: 'Color Scheme',
   key: 'test-tabs-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
-  platforms: ['ios'],
+  platforms: ['android', 'ios'],
   AppComponent: App,
 };
 
@@ -33,6 +33,21 @@ function ConfigScreen() {
   const [config, dispatch] = useTabsConfigState<TabsParamList>();
   const [reactColorScheme, setReactColorScheme] =
     useState<ColorSchemeName>('unspecified');
+
+  // TODO: Tabs.Autoconfig should allow initial prop configuration.
+  useEffect(() => {
+    dispatch({
+      type: 'tabScreen',
+      tabKey: 'Config',
+      config: {
+        safeAreaConfiguration: {
+          edges: {
+            bottom: true,
+          },
+        },
+      },
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     Appearance.setColorScheme(reactColorScheme);
@@ -119,6 +134,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    paddingTop: Platform.OS === 'android' ? 60 : undefined,
   },
   heading: {
     fontSize: 24,
