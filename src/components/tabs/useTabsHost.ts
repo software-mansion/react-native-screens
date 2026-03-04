@@ -25,6 +25,7 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
 }: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
+   
   React.useEffect(() => {
     if (componentNodeRef.current != null) {
       componentNodeHandle.current =
