@@ -36,6 +36,7 @@ function TabsScreen(props: TabsScreenProps) {
     onDidDisappear,
     onWillAppear,
     onWillDisappear,
+    children,
     isFocused = false,
     style,
     ...filteredBaseProps
@@ -71,7 +72,7 @@ function TabsScreen(props: TabsScreenProps) {
       standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
-      {baseProps.children}
+      {children}
     </TabsScreenAndroidNativeComponent>
   );
 }

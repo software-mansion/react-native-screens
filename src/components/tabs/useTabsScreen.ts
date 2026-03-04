@@ -32,7 +32,6 @@ export function useTabsScreen<
 }: TabsScreenConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
-   
   React.useEffect(() => {
     if (componentNodeRef.current != null) {
       componentNodeHandle.current =

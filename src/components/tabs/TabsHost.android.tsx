@@ -21,6 +21,7 @@ function TabsHost(props: TabsHostProps) {
   const { android, ios, ...baseProps } = props;
 
   const {
+    children,
     direction,
     experimentalControlNavigationStateInJS,
     nativeContainerStyle,
@@ -46,7 +47,7 @@ function TabsHost(props: TabsHostProps) {
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredBaseProps}>
-      {baseProps.children}
+      {children}
     </TabsHostAndroidNativeComponent>
   );
 }

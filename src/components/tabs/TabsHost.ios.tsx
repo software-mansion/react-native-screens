@@ -24,6 +24,7 @@ function TabsHost(props: TabsHostProps) {
   const { ios, android, ...baseProps } = props;
 
   const {
+    children,
     direction,
     experimentalControlNavigationStateInJS,
     nativeContainerStyle,
@@ -59,7 +60,7 @@ function TabsHost(props: TabsHostProps) {
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
       tabBarTintColor={ios?.tabBarTintColor}>
-      {baseProps.children}
+      {children}
       {ios?.bottomAccessory &&
         isIOS26OrHigher &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (

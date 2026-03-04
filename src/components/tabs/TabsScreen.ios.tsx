@@ -39,6 +39,7 @@ function TabsScreen(props: TabsScreenProps) {
     onDidDisappear,
     onWillAppear,
     onWillDisappear,
+    children,
     isFocused = false,
     style,
     ...filteredBaseProps
@@ -85,7 +86,7 @@ function TabsScreen(props: TabsScreenProps) {
       overrideScrollViewContentInsetAdjustmentBehavior={
         ios?.overrideScrollViewContentInsetAdjustmentBehavior
       }>
-      {baseProps.children}
+      {children}
     </TabsScreenIOSNativeComponent>
   );
 }
