@@ -1,6 +1,7 @@
 import {
   Appearance,
   ColorSchemeName,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
