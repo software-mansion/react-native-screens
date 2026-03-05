@@ -969,7 +969,7 @@ RNS_IGNORE_SUPER_CALL_END
     auto strongSelf = weakSelf;
     if (strongSelf) {
       strongSelf->_controller = nil;
-      [strongSelf->_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+      [strongSelf->_sheetsScrollView removeObserver:strongSelf forKeyPath:@"bounds" context:nil];
     }
   });
 }
