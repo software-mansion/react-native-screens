@@ -11,6 +11,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		4DB2E7972E3283815C3211C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		B0C89BC02F5991A10061708B /* RNSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C89BBF2F5991A10061708B /* RNSLog.swift */; };
 		EB6C9AB62D6639D300378B82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6C9AB52D6639D300378B82 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		5709B34CF0A7D63546082F79 /* Pods-TVOSExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TVOSExample.release.xcconfig"; path = "Target Support Files/Pods-TVOSExample/Pods-TVOSExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-TVOSExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TVOSExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TVOSExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B0C89BBF2F5991A10061708B /* RNSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNSLog.swift; sourceTree = "<group>"; };
 		EB6C9AB42D6639D300378B82 /* TVOSExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TVOSExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EB6C9AB52D6639D300378B82 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -90,6 +92,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				B0C89BBE2F5991870061708B /* Utils */,
 				13B07FAE1A68108700A75B9A /* TVOSExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -108,6 +111,14 @@
 				00E356EE1AD99517003FC87E /* TVOSExampleTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B0C89BBE2F5991870061708B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				B0C89BBF2F5991A10061708B /* RNSLog.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -304,6 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0C89BC02F5991A10061708B /* RNSLog.swift in Sources */,
 				EB6C9AB62D6639D300378B82 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -581,6 +593,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				TVOS_DEPLOYMENT_TARGET = 15.1;
 				USE_HERMES = true;

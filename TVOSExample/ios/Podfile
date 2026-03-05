@@ -5,6 +5,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
+
 platform :tvos, min_ios_version_supported
 prepare_react_native_project!
 
@@ -30,5 +32,27 @@ target 'TVOSExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    project_path = File.join(__dir__, 'TVOSExample.xcodeproj')
+
+    flags_to_clear = ['RNS_DEBUG_LOGGING_ENABLED', 'RNS_DEBUG_LOGGING_DISABLED']
+    flags_to_clear.each do |flag|
+      rns_unset_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: flag
+      )
+    end
+
+    if ENV['RNS_DEBUG_LOGGING'] == '1'
+      rns_set_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_DEBUG_LOGGING_ENABLED'
+      )
+    elsif ENV['RNS_DEBUG_LOGGING'] == '0'
+      rns_set_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_DEBUG_LOGGING_DISABLED'
+      )
+    end
   end
 end
