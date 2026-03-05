@@ -9,9 +9,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSTabsHostComponentDescriptor.h>
-#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
-#import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSConversions.h"
@@ -49,10 +47,6 @@ namespace react = facebook::react;
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
   RCTImageLoader *_Nullable _imageLoader;
-
-#if RCT_NEW_ARCH_ENABLED
-  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
-#endif // RCT_NEW_ARCH_ENABLED
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -97,10 +91,6 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSTabsHostEventEmitter new];
 
-#if RCT_NEW_ARCH_ENABLED
-  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
-#endif // RCT_NEW_ARCH_ENABLED
-
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
@@ -122,16 +112,20 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
 }
 
-#pragma mark - UIView methods
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
+- (void)invalidateImpl
 {
-#if RCT_NEW_ARCH_ENABLED
-  if (newWindow == nil) {
-    [_invalidatedComponentsRegistry flushInvalidViews];
-  }
-#endif // RCT_NEW_ARCH_ENABLED
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
+
+#pragma mark - UIView methods
 
 - (void)didMoveToWindow
 {
@@ -229,20 +223,7 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
-#if RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
-{
-  _controller = nil;
-}
-
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
-}
-#else
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
@@ -255,7 +236,7 @@ namespace react = facebook::react;
   for (UIView<RCTInvalidating> *subview in _reactSubviews) {
     [subview invalidate];
   }
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -408,24 +389,17 @@ namespace react = facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   [_controller reactMountingTransactionWillMount];
-
-#if RCT_NEW_ARCH_ENABLED
-  for (const auto &mutation : transaction.getMutations()) {
-    if ([self shouldInvalidateOnMutation:mutation]) {
-      for (UIView<RNSViewControllerInvalidating> *childView in _reactSubviews) {
-        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
-      }
-
-      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
-    }
-  }
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
