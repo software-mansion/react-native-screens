@@ -57,6 +57,11 @@ class ScreenStackHeaderSubviewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setPreventScrollToTopEnabled(
+        view: ScreenStackHeaderSubview?,
+        value: Boolean,
+    ) = Unit
+
     override fun updateState(
         view: ScreenStackHeaderSubview,
         props: ReactStylesDiffMap?,
