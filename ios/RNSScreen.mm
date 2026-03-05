@@ -968,8 +968,8 @@ RNS_IGNORE_SUPER_CALL_END
   dispatch_async(dispatch_get_main_queue(), ^{
     auto strongSelf = weakSelf;
     if (strongSelf) {
-      strongSelf->_controller = nil;
       [strongSelf->_sheetsScrollView removeObserver:strongSelf forKeyPath:@"bounds" context:nil];
+      strongSelf->_controller = nil;
     }
   });
 }
