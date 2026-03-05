@@ -90,7 +90,9 @@ function ConfigScreen() {
   useEffect(() => {
     dispatch({
       type: 'tabBar',
-      config: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
+      config: {
+        ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
