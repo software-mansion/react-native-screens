@@ -962,8 +962,16 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+      [strongSelf->_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    }
+  });
 }
 
 #ifndef RCT_NEW_ARCH_ENABLED
@@ -1355,6 +1363,11 @@ RNS_IGNORE_SUPER_CALL_END
 + (BOOL)shouldBeRecycled
 {
   return NO;
+}
+
+- (void)invalidate
+{
+  [self invalidateImpl];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
