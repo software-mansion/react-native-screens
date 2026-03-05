@@ -149,7 +149,7 @@ namespace react = facebook::react;
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
 
   // Workaround for iPadOS 26+ header subviews. For left and right subviews, we apply this to wrapper view.
-  if (_type != RNSScreenStackHeaderSubviewTypeLeft && _type != RNSScreenStackHeaderSubviewTypeRight &&
+  if ((_type == RNSScreenStackHeaderSubviewTypeTitle || _type == RNSScreenStackHeaderSubviewTypeCenter) &&
       self.gestureRecognizers.count == 0) {
     [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:self];
   }
