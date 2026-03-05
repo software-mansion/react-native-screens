@@ -146,10 +146,12 @@ namespace react = facebook::react;
 {
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
 
+  [self setPreventScrollToTopEnabled:newHeaderSubviewProps.preventScrollToTopEnabled];
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
 
   // Workaround for iPadOS 26+ header subviews. For left and right subviews, we apply this to wrapper view.
-  if ((_type == RNSScreenStackHeaderSubviewTypeTitle || _type == RNSScreenStackHeaderSubviewTypeCenter) &&
+  if (_preventScrollToTopEnabled &&
+      (_type == RNSScreenStackHeaderSubviewTypeTitle || _type == RNSScreenStackHeaderSubviewTypeCenter) &&
       self.gestureRecognizers.count == 0) {
     [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:self];
   }
@@ -272,7 +274,9 @@ RNS_IGNORE_SUPER_CALL_END
 
       // Workaround for iPadOS 26+ header subviews. For center subview, we apply this directly to header subview
       // in updateProps.
-      [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:wrapperView];
+      if (_preventScrollToTopEnabled) {
+        [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:wrapperView];
+      }
 
       wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
 
