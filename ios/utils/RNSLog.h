@@ -1,10 +1,6 @@
 #pragma once
 
-#if (                                                 \
-    !defined(NDEBUG) && defined(RNS_DEBUG_LOGGING) && \
-    RNS_DEBUG_LOGGING == 0) ||                        \
-    (defined(NDEBUG) &&                               \
-     (!defined(RNS_DEBUG_LOGGING) || RNS_DEBUG_LOGGING == 0))
+#ifndef RNS_DEBUG_LOGGING
 // Replace with NOOP
 #define RNSLog(...) \
   do {              \
