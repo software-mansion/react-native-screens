@@ -13,7 +13,6 @@
 		4338CA5B47FD1D3579126EBC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 06C4D147D69C731B2F1541AC /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		837C91B4642520B4D152E2A1 /* libPods-FabricExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67EDC5A0C3417BC3A60E3943 /* libPods-FabricExample.a */; };
-		B0146CEF2F58580D0006EE4A /* RNSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0146CEE2F58580D0006EE4A /* RNSLog.swift */; };
 		EBA0179C2D12EF04006DCC81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA0179B2D12EF04006DCC81 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,7 +27,6 @@
 		5709B34CF0A7D63546082F79 /* Pods-FabricExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FabricExample.release.xcconfig"; path = "Target Support Files/Pods-FabricExample/Pods-FabricExample.release.xcconfig"; sourceTree = "<group>"; };
 		67EDC5A0C3417BC3A60E3943 /* libPods-FabricExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FabricExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FabricExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		B0146CEE2F58580D0006EE4A /* RNSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNSLog.swift; sourceTree = "<group>"; };
 		EB76649F2D13010D00B432B5 /* FabricExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FabricExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EBA0179B2D12EF04006DCC81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -80,7 +78,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				B0146CED2F5857F80006EE4A /* Utils */,
 				13B07FAE1A68108700A75B9A /* FabricExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -98,14 +95,6 @@
 				13B07F961A680F5B00A75B9A /* FabricExample.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		B0146CED2F5857F80006EE4A /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				B0146CEE2F58580D0006EE4A /* RNSLog.swift */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -265,7 +254,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0146CEF2F58580D0006EE4A /* RNSLog.swift in Sources */,
 				250EA4012EBCE93E0008841A /* ReactNativeDelegate.swift in Sources */,
 				EBA0179C2D12EF04006DCC81 /* AppDelegate.swift in Sources */,
 				250EA3FF2EBCE9090008841A /* SceneDelegate.swift in Sources */,
@@ -432,7 +420,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG RNS_DEBUG_LOGGING";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				USE_HERMES = true;
 			};

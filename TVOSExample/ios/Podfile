@@ -32,19 +32,5 @@ target 'TVOSExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-
-    project_path = File.join(__dir__, 'TVOSExample.xcodeproj')
-
-    if ENV['RNS_DEBUG_LOGGING'] == '1'
-      rns_set_swift_active_compilation_flag(
-        project_path: project_path,
-        flag: 'RNS_DEBUG_LOGGING'
-      )
-    else
-      rns_unset_swift_active_compilation_flag(
-        project_path: project_path,
-        flag: 'RNS_DEBUG_LOGGING'
-      )
-    end
   end
 end

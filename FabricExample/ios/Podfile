@@ -57,17 +57,5 @@ target 'FabricExample' do
         flag: 'RNS_USE_SCENE_DELEGATE'
       )
     end
-
-    if ENV['RNS_DEBUG_LOGGING'] == '1'
-      rns_set_swift_active_compilation_flag(
-        project_path: project_path,
-        flag: 'RNS_DEBUG_LOGGING'
-      )
-    else
-      rns_unset_swift_active_compilation_flag(
-        project_path: project_path,
-        flag: 'RNS_DEBUG_LOGGING'
-      )
-    end
   end
 end
