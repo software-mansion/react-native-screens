@@ -4,7 +4,8 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
-debug_logging = ENV['RNS_DEBUG_LOGGING'] == '1'
+debug_logging_enabled = ENV['RNS_DEBUG_LOGGING'] == '1'
+
 
 source_files_exts = new_arch_enabled ? '{h,m,mm,cpp,swift}' : '{h,m,mm,swift}'
 source_files = ["ios/**/*.#{source_files_exts}"]
@@ -18,12 +19,15 @@ min_supported_tvos_version = "15.1"
 min_supported_visionos_version = "1.0"
 
 rnscreens_cpp_flags = []
+rnscreens_swift_flags = []
 
-rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1" if debug_logging
+rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1" if debug_logging_enabled
+rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING" if debug_logging_enabled
 rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
 
 rnscreens_config  =  {
-  'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" ")
+  'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" "),
+  'OTHER_SWIFT_FLAGS' => rnscreens_swift_flags.join(" ")
 }
 
 if gamma_project_enabled
