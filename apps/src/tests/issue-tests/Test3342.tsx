@@ -71,13 +71,13 @@ function Screen2(stackNavProp: StackNavigationProp) {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house',
           },
+          experimental_userInterfaceStyle: 'light',
         },
-        experimental_userInterfaceStyle: 'light',
       },
       component: () => TabScreen(stackNavProp),
     },
@@ -85,8 +85,8 @@ function Screen2(stackNavProp: StackNavigationProp) {
       tabScreenProps: {
         tabKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'rectangle.stack',
           },

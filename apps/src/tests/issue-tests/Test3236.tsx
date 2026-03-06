@@ -56,12 +56,14 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'sunny',
           },
@@ -73,12 +75,14 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'mode_cool',
           },
@@ -96,7 +100,9 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

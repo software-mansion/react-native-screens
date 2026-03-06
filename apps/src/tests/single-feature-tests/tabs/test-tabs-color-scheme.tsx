@@ -11,7 +11,7 @@ import { Scenario } from '../../shared/helpers';
 import { createAutoConfiguredTabs } from '../../shared/tabs';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker } from '../../../shared';
-import { TabsHostProps } from 'react-native-screens';
+import type { TabsHostPropsIOS } from 'react-native-screens';
 import useTabsConfigState from '../../shared/hooks/tabs-config';
 
 const SCENARIO: Scenario = {
@@ -69,14 +69,18 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>TabsHost color scheme</Text>
-        <SettingsPicker<NonNullable<TabsHostProps['colorScheme']>>
+        <SettingsPicker<NonNullable<TabsHostPropsIOS.TabsHostColorScheme>>
           label={'colorScheme'}
-          value={config.colorScheme ?? 'inherit'}
-          onValueChange={function (value: TabsHostProps['colorScheme']): void {
+          value={config.ios?.colorScheme ?? 'inherit'}
+          onValueChange={function (
+            value: TabsHostPropsIOS.TabsHostColorScheme,
+          ): void {
             dispatch({
               type: 'tabBar',
               config: {
-                colorScheme: value,
+                ios: {
+                  colorScheme: value,
+                },
               },
             });
           }}
