@@ -345,17 +345,17 @@ function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
   selectedIcon: PlatformIcon | undefined,
 ): {
-  imageIconResource?: ImageResolvedAssetSource;
-  drawableIconResourceName?: string;
-  iconType?: IconType;
-  iconImageSource?: ImageSourcePropType;
-  iconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource | undefined;
+  drawableIconResourceName?: string | undefined;
+  iconType?: IconType | undefined;
+  iconImageSource?: ImageSourcePropType | undefined;
+  iconResourceName?: string | undefined;
   // android
-  selectedImageIconResource?: ImageSourcePropType;
-  selectedDrawableIconResourceName?: string;
+  selectedImageIconResource?: ImageSourcePropType | undefined;
+  selectedDrawableIconResourceName?: string | undefined;
   // iOS
-  selectedIconImageSource?: ImageSourcePropType;
-  selectedIconResourceName?: string;
+  selectedIconImageSource?: ImageSourcePropType | undefined;
+  selectedIconResourceName?: string | undefined;
 } {
   if (Platform.OS === 'android') {
     const { imageIconResource, drawableIconResourceName } =

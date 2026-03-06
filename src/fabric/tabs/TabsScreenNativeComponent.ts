@@ -22,33 +22,36 @@ type LifecycleStateChangeEvent = Readonly<{
 }>;
 
 export type ItemStateAppearance = {
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ProcessedColorValue | null;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: CT.Float;
-    vertical?: CT.Float;
-  };
-  tabBarItemIconColor?: ProcessedColorValue | null;
-  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
+  tabBarItemTitleFontFamily?: string | undefined;
+  tabBarItemTitleFontSize?: CT.Float | undefined;
+  tabBarItemTitleFontWeight?: string | undefined;
+  tabBarItemTitleFontStyle?: string | undefined;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
+  tabBarItemTitlePositionAdjustment?:
+    | {
+        horizontal?: CT.Float;
+        vertical?: CT.Float;
+      }
+    | undefined;
+  tabBarItemIconColor?: ProcessedColorValue | null | undefined;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null | undefined;
 };
 
 export type ItemAppearance = {
-  normal?: ItemStateAppearance;
-  selected?: ItemStateAppearance;
-  focused?: ItemStateAppearance;
-  disabled?: ItemStateAppearance;
+  normal?: ItemStateAppearance | undefined;
+  selected?: ItemStateAppearance | undefined;
+  focused?: ItemStateAppearance | undefined;
+  disabled?: ItemStateAppearance | undefined;
 };
 
 export type Appearance = {
-  stacked?: ItemAppearance;
-  inline?: ItemAppearance;
-  compactInline?: ItemAppearance;
+  stacked?: ItemAppearance | undefined;
+  inline?: ItemAppearance | undefined;
+  compactInline?: ItemAppearance | undefined;
 
-  tabBarBackgroundColor?: ProcessedColorValue | null;
-  tabBarShadowColor?: ProcessedColorValue | null;
+  tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
+  tabBarShadowColor?: ProcessedColorValue | null | undefined;
+  // Note: WithDefault types are NOT modified — adding | undefined crashes codegen
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
 };
 
@@ -61,43 +64,45 @@ type TabBarItemLabelVisibilityMode =
 
 // Note: temporary, will be renamed on splitting tabs components
 export type ItemStateAppearanceAndroid = {
-  tabBarItemTitleFontColor?: ProcessedColorValue | null;
-  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
+  tabBarItemIconColor?: ProcessedColorValue | null | undefined;
 };
 
 export type AppearanceAndroid = {
   // TabBar - Appearance
-  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Ripple
-  tabBarItemRippleColor?: ProcessedColorValue | null;
+  tabBarItemRippleColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Label layout
+  // Note: WithDefault types are NOT modified — adding | undefined crashes codegen
   tabBarItemLabelVisibilityMode?: CT.WithDefault<
     TabBarItemLabelVisibilityMode,
     'auto'
   >;
 
   // TabBarItem - State-dependent appearance
-  normal?: ItemStateAppearanceAndroid;
-  selected?: ItemStateAppearanceAndroid;
-  focused?: ItemStateAppearanceAndroid;
-  disabled?: ItemStateAppearanceAndroid;
+  normal?: ItemStateAppearanceAndroid | undefined;
+  selected?: ItemStateAppearanceAndroid | undefined;
+  focused?: ItemStateAppearanceAndroid | undefined;
+  disabled?: ItemStateAppearanceAndroid | undefined;
 
   // TabBarItem - Active Indicator
-  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null;
+  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
+  // Note: WithDefault types are NOT modified — adding | undefined crashes codegen
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
 
   // TabBarItem - Label
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleSmallLabelFontSize?: CT.Float;
-  tabBarItemTitleLargeLabelFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontFamily?: string | undefined;
+  tabBarItemTitleSmallLabelFontSize?: CT.Float | undefined;
+  tabBarItemTitleLargeLabelFontSize?: CT.Float | undefined;
+  tabBarItemTitleFontWeight?: string | undefined;
+  tabBarItemTitleFontStyle?: string | undefined;
 
   // TabBarItem - Badge
-  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
-  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null | undefined;
+  tabBarItemBadgeTextColor?: ProcessedColorValue | null | undefined;
 };
 
 type BlurEffect =
