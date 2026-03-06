@@ -102,7 +102,7 @@ buildscript {
 
 ### Windows
 
-Installation on Windows should be completely handled with auto-linking when using React Native Windows 0.63+. For earlier versions, you must [manually link](https://microsoft.github.io/react-native-windows/docs/native-modules-using) the native module.
+Installation on Windows is handled with auto-linking. The Windows implementation targets the [New Architecture](https://reactnative.dev/architecture/landing-page) (Fabric) only and requires React Native Windows 0.81 or higher.
 
 ## How can I take advantage of that?
 

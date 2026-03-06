@@ -78,7 +78,7 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": ">=0.82.0"
+    "react-native": ">=0.81.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -86,10 +86,10 @@
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
     "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.84.0",
-    "@react-native/eslint-config": "0.84.0",
-    "@react-native/metro-config": "0.84.0",
-    "@react-native/typescript-config": "0.84.0",
+    "@react-native/babel-preset": "0.81.5",
+    "@react-native/eslint-config": "0.81.5",
+    "@react-native/metro-config": "0.81.5",
+    "@react-native/typescript-config": "0.81.5",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^29.5.13",
@@ -112,12 +112,12 @@
     "prettier": "^2.8.8",
     "react": "19.2.3",
     "react-dom": "^19.1.0",
-    "react-native": "0.84.0",
+    "react-native": "0.81.5",
     "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^2.28.0",
     "react-native-reanimated": "^3.19.0",
     "react-native-safe-area-context": "5.6.0",
-    "react-native-windows": "^0.64.8",
+    "react-native-windows": "^0.81.4",
     "react-test-renderer": "19.2.3",
     "release-it": "^15.6.0",
     "shelljs": "^0.9.2",
@@ -225,7 +225,19 @@
           "className": "RNSScrollViewMarkerComponentView"
         }
       }
+    },
+    "windows": {
+      "namespace": "ReactNativeScreensCodegen",
+      "outputDirectory": "windows/RNScreens/codegen",
+      "separateDataTypes": true
     }
   },
-  "packageManager": "yarn@4.1.1"
+  "packageManager": "yarn@4.1.1",
+  "react-native-windows": {
+    "init-windows": {
+      "name": "ReactNativeScreens",
+      "namespace": "ReactNativeScreens",
+      "template": "cpp-lib"
+    }
+  }
 }
