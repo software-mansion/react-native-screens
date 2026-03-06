@@ -62,19 +62,27 @@ type ReplaceAnimation = 'pop' | 'push';
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
-  onAppear?: CT.DirectEventHandler<ScreenEvent>;
-  onDisappear?: CT.DirectEventHandler<ScreenEvent>;
-  onDismissed?: CT.DirectEventHandler<ScreenDismissedEvent>;
-  onNativeDismissCancelled?: CT.DirectEventHandler<ScreenDismissedEvent>;
-  onWillAppear?: CT.DirectEventHandler<ScreenEvent>;
-  onWillDisappear?: CT.DirectEventHandler<ScreenEvent>;
-  onHeaderHeightChange?: CT.DirectEventHandler<HeaderHeightChangeEvent>;
-  onTransitionProgress?: CT.DirectEventHandler<TransitionProgressEvent>;
-  onGestureCancel?: CT.DirectEventHandler<ScreenEvent>;
-  onHeaderBackButtonClicked?: CT.DirectEventHandler<ScreenEvent>;
-  onSheetDetentChanged?: CT.DirectEventHandler<SheetDetentChangedEvent>;
+  onAppear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onDisappear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onDismissed?: CT.DirectEventHandler<ScreenDismissedEvent> | undefined;
+  onNativeDismissCancelled?:
+    | CT.DirectEventHandler<ScreenDismissedEvent>
+    | undefined;
+  onWillAppear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onHeaderHeightChange?:
+    | CT.DirectEventHandler<HeaderHeightChangeEvent>
+    | undefined;
+  onTransitionProgress?:
+    | CT.DirectEventHandler<TransitionProgressEvent>
+    | undefined;
+  onGestureCancel?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onHeaderBackButtonClicked?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onSheetDetentChanged?:
+    | CT.DirectEventHandler<SheetDetentChangedEvent>
+    | undefined;
   screenId?: CT.WithDefault<string, ''>;
-  sheetAllowedDetents?: number[];
+  sheetAllowedDetents?: number[] | undefined;
   sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
   sheetGrabberVisible?: CT.WithDefault<boolean, false>;
   sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
