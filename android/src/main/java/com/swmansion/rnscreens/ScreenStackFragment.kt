@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -306,8 +307,16 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animation? {
-        // Ensure onCreateAnimator is called
-        return null
+        if (screen.usesFormSheetPresentation()) {
+            return null
+        }
+
+        if (nextAnim == 0 || screen.stackAnimation == Screen.StackAnimation.NONE || screen.transitionDuration < 0) {
+            return null
+        }
+        return AnimationUtils.loadAnimation(requireContext(), nextAnim).apply {
+            duration = screen.transitionDuration.toLong()
+        }
     }
 
     override fun onCreateAnimator(

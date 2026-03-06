@@ -68,6 +68,7 @@ class Screen(
     var stackPresentation = StackPresentation.PUSH
     var replaceAnimation = ReplaceAnimation.POP
     var stackAnimation = StackAnimation.DEFAULT
+    var transitionDuration: Int = -1
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
