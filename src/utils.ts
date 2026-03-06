@@ -1,4 +1,5 @@
 import { BackHandler, Platform } from 'react-native';
+import { featureFlags } from './flags';
 
 export const isSearchBarAvailableForCurrentPlatform = [
   'ios',
@@ -27,3 +28,26 @@ export function parseBooleanToOptionalBooleanNativeProp(
       return 'false';
   }
 }
+
+export const RNSLog = {
+  log: (message?: any, ...args: any[]) => {
+    if (featureFlags.stable.debugLogging) {
+      console.log(message, ...args);
+    }
+  },
+  warn: (message?: any, ...args: any[]) => {
+    if (featureFlags.stable.debugLogging) {
+      console.warn(message, ...args);
+    }
+  },
+  error: (message?: any, ...args: any[]) => {
+    if (featureFlags.stable.debugLogging) {
+      console.error(message, ...args);
+    }
+  },
+  info: (message?: any, ...args: any[]) => {
+    if (featureFlags.stable.debugLogging) {
+      console.info(message, ...args);
+    }
+  },
+};
