@@ -21,6 +21,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 import kotlin.math.max
+import kotlin.properties.Delegates
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -31,7 +32,13 @@ class ScreenStackHeaderConfig(
 
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
-    var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
+
+    // named this way to avoid conflict with platform's isHidden
+    var isHeaderHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            requestApplyInsets()
+        }
+    }
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
     private var title: String? = null

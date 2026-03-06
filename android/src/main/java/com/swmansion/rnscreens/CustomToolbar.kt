@@ -4,14 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.Choreographer
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.Insets
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.utils.InsetsCompat
-import com.swmansion.rnscreens.utils.resolveInsetsOrZero
+import com.swmansion.rnscreens.utils.InsetUtils
 import kotlin.math.max
 
 /**
@@ -24,19 +27,17 @@ import kotlin.math.max
 open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
-) : Toolbar(context) {
-    // Due to edge-to-edge enforcement starting from Android SDK 35, isTopInsetEnabled prop has been
-    // removed. Previously, shouldAvoidDisplayCutout, shouldApplyTopInset would directly return the
-    // value of isTopInsetEnabled. Now, the values of shouldAvoidDisplayCutout, shouldApplyTopInse
-    // are hard-coded to true (which was the value used previously for isTopInsetEnabled when
-    // edge-to-edge was enabled: https://github.com/software-mansion/react-native-screens/pull/2464/files#diff-bd1164595b04f44490738b8183f84a625c0e7552a4ae70bfefcdf3bca4d37fc7R34).
-    private val shouldAvoidDisplayCutout = true
+) : Toolbar(context),
+    OnApplyWindowInsetsListener,
+    View.OnApplyWindowInsetsListener {
+    private var lastInsets = Insets.NONE
 
-    private val shouldApplyTopInset = true
+    // As CustomToolbar is responsible for handling insets in Stack, we store what insets should
+    // be passed to Screen in this property. It's used by ScreensCoordinatorLayout in overridden
+    // dispatchApplyWindowInsets.
+    internal var screenInsets = WindowInsetsCompat.CONSUMED
 
     private var shouldApplyLayoutCorrectionForTopInset = false
-
-    private var lastInsets = InsetsCompat.NONE
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
@@ -56,7 +57,20 @@ open class CustomToolbar(
         // By referencing the menu here, we trigger `ensureMenu`, which creates and attaches ActionMenuView early.
         // This guarantees that all size-dependent children are present during the first layout pass,
         // resulting in correct height determination from the beginning.
+        // More details: https://github.com/software-mansion/react-native-screens-labs/issues/564.
         menu
+
+        // In order to consume display cutout insets on API 27-29, we can't use root window insets
+        // aware WindowInsetsCompat because they always return display cutout insets from root view.
+        // That's why we manually convert platform WindowInsets to WindowInsetsCompat (without
+        // supplying information about the view that is used by WindowInsetsCompat to find the root
+        // view) in View's OnApplyWindowInsetsListener, use ViewCompat listener and return insets
+        // converted back to platform WindowInsets.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+            setOnApplyWindowInsetsListener(this)
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        }
     }
 
     private val layoutCallback: Choreographer.FrameCallback =
@@ -113,8 +127,24 @@ open class CustomToolbar(
         }
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        val unhandledInsets = super.onApplyWindowInsets(insets)
+    // Wrapper used on API < 30 to correctly handle consuming display cutout insets.
+    // More details in the comment above setting the listener.
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsets,
+    ): WindowInsets {
+        val rootViewUnawareInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
+        return this
+            .onApplyWindowInsets(this, rootViewUnawareInsets)
+            .toWindowInsets() ?: InsetUtils.CONSUMED_PLATFORM_WINDOW_INSETS
+    }
+
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsetsCompat,
+    ): WindowInsetsCompat {
+        val unhandledInsets =
+            WindowInsetsCompat.toWindowInsetsCompat(super.onApplyWindowInsets(insets.toWindowInsets()))
 
         // There are few UI modes we could be running in
         //
@@ -123,16 +153,14 @@ open class CustomToolbar(
         // 3. edge-to-edge with translucent navigation buttons bar.
         //
         // Additionally we need to gracefully handle possible display cutouts.
-        val cutoutInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), unhandledInsets)
-        val systemBarInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
+        val cutoutInsets = unhandledInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+        val systemBarInsets = unhandledInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
         // any insets twice.
         val horizontalInsets =
-            InsetsCompat.of(
+            Insets.of(
                 cutoutInsets.left + systemBarInsets.left,
                 0,
                 cutoutInsets.right + systemBarInsets.right,
@@ -143,14 +171,14 @@ open class CustomToolbar(
         // If there are no cutout displays, we want to apply the additional padding to
         // respect the status bar.
         val verticalInsets =
-            InsetsCompat.of(
+            Insets.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
+                max(cutoutInsets.top, systemBarInsets.top),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
 
-        val newInsets = InsetsCompat.add(horizontalInsets, verticalInsets)
+        val newInsets = Insets.add(horizontalInsets, verticalInsets)
 
         if (lastInsets != newInsets) {
             lastInsets = newInsets
@@ -160,9 +188,61 @@ open class CustomToolbar(
                 lastInsets.right,
                 lastInsets.bottom,
             )
+
+            // Insets for Screen component.
+            screenInsets =
+                WindowInsetsCompat
+                    .Builder(unhandledInsets)
+                    .setInsets(
+                        WindowInsetsCompat.Type.displayCutout(),
+                        Insets.of(
+                            cutoutInsets.left,
+                            0,
+                            cutoutInsets.right,
+                            cutoutInsets.bottom,
+                        ),
+                    ).setInsets(
+                        WindowInsetsCompat.Type.systemBars(),
+                        Insets.of(
+                            systemBarInsets.left,
+                            0,
+                            systemBarInsets.right,
+                            systemBarInsets.bottom,
+                        ),
+                    ).build()
+
+            // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+            // does not work. We need to use previous API.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                screenInsets = screenInsets.consumeDisplayCutout()
+            }
         }
 
-        return unhandledInsets
+        var consumedInsets =
+            WindowInsetsCompat
+                .Builder(unhandledInsets)
+                .setInsets(
+                    WindowInsetsCompat.Type.displayCutout(),
+                    Insets.NONE,
+                ).setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(
+                        0,
+                        0,
+                        0,
+                        systemBarInsets.bottom,
+                    ),
+                ).build()
+
+        // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+        // does not work. We need to use previous API.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            consumedInsets = consumedInsets.consumeDisplayCutout()
+        }
+
+        // Technically, we don't need those returned insets anywhere but for consistency's sake
+        // I decided to return the correct value.
+        return consumedInsets
     }
 
     override fun onLayout(
@@ -198,6 +278,6 @@ open class CustomToolbar(
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
-        isForceShadowStateUpdateOnLayoutRequested = shouldAvoidDisplayCutout
+        isForceShadowStateUpdateOnLayoutRequested = true
     }
 }
