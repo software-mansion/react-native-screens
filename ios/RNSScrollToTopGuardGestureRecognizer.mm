@@ -7,15 +7,11 @@
 
 - (instancetype)init
 {
-  if (self = [super initWithTarget:self action:@selector(_noop)]) {
+  if (self = [super initWithTarget:self action:nil]) {
     self.cancelsTouchesInView = NO;
     self.delegate = self;
   }
   return self;
-}
-
-- (void)_noop
-{
 }
 
 #pragma mark - UIGestureRecognizerDelegate
