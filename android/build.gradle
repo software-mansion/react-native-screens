@@ -38,11 +38,7 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
-def areDebugLogsEnabledDebugMode() {
-    return !project.hasProperty("rnsDebugLogsEnabled") || project.rnsDebugLogsEnabled == "true"
-}
-
-def areDebugLogsEnabledReleaseMode() {
+def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
 }
 
@@ -140,6 +136,7 @@ android {
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
         buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
+        buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
@@ -149,14 +146,6 @@ android {
                         "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}",
                         "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
             }
-        }
-    }
-    buildTypes {
-        debug {
-            buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabledDebugMode().toString()
-        }
-        release {
-            buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabledReleaseMode().toString()
         }
     }
     buildFeatures {

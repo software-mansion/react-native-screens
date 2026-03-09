@@ -7,6 +7,7 @@ const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
 const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
 const RNS_IPADOS_26_PREVENT_SCROLL_TO_TOP_FOR_HEADER_SUBVIEWS = true;
+const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
 
@@ -64,10 +65,13 @@ const _featureFlags = {
     ipados26PreventScrollToTopForHeaderSubviews:
       RNS_IPADOS_26_PREVENT_SCROLL_TO_TOP_FOR_HEADER_SUBVIEWS,
   },
-  stable: {},
+  stable: {
+    debugLogging: RNS_DEBUG_LOGGING,
+  },
 };
 
 type EXPERIMENTAL_FF = keyof typeof _featureFlags.experiment;
+type STABLE_FF = keyof typeof _featureFlags.stable;
 
 const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
   key: T,
@@ -87,6 +91,28 @@ const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
         );
       }
       _featureFlags.experiment[key] = value;
+    },
+  };
+};
+
+const createStableFeatureFlagAccessor = <T extends STABLE_FF>(
+  key: T,
+  defaultValue: (typeof _featureFlags.stable)[T],
+) => {
+  return {
+    get() {
+      return _featureFlags.stable[key];
+    },
+    set(value: (typeof _featureFlags.stable)[T]) {
+      if (
+        value !== _featureFlags.stable[key] &&
+        _featureFlags.stable[key] !== defaultValue
+      ) {
+        console.error(
+          `[RNScreens] ${key} feature flag modified for a second time; this might lead to unexpected effects`,
+        );
+      }
+      _featureFlags.stable[key] = value;
     },
   };
 };
@@ -124,6 +150,10 @@ const ios26AllowInteractionsDuringTransitionAccessor =
     'ios26AllowInteractionsDuringTransition',
     RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   );
+const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
+  'debugLogging',
+  RNS_DEBUG_LOGGING,
+);
 
 const ipados26PreventScrollToTopForHeaderSubviewsAccessor =
   createExperimentalFeatureFlagAccessor(
@@ -211,7 +241,14 @@ export const featureFlags = {
   /**
    * Section for stable flags, which can be used to configure library behaviour.
    */
-  stable: {},
+  stable: {
+    get debugLogging() {
+      return rnsDebugLoggingAccessor.get();
+    },
+    set debugLogging(value: boolean) {
+      rnsDebugLoggingAccessor.set(value);
+    },
+  },
 };
 
 export default featureFlags;
