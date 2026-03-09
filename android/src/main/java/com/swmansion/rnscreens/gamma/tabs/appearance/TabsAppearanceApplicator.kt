@@ -284,7 +284,7 @@ class TabsAppearanceApplicator(
 
     private fun ColorStateList.matchesColors(colors: IntArray): Boolean {
         // To correctly read the evaluated color, we must query it with proper state constructed
-        val disabledQuery = intArrayOf()
+        val disabledQuery = intArrayOf(-android.R.attr.state_enabled)
         val selectedQuery = intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected)
         val focusedQuery = intArrayOf(android.R.attr.state_enabled, android.R.attr.state_focused)
         val normalQuery = intArrayOf(android.R.attr.state_enabled)
