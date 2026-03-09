@@ -65,6 +65,10 @@ Pod::Spec.new do |s|
     Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
   end
 
+  if debug_logging_enabled
+    Pod::UI.puts "[RNScreens] Debug logging enabled."
+  end
+
   s.pod_target_xcconfig = rnscreens_config
 
   install_modules_dependencies(s)
