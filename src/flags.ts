@@ -230,5 +230,3 @@ export const featureFlags = {
     },
   },
 };
-
-export default featureFlags;

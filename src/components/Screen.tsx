@@ -29,7 +29,7 @@ import {
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
 import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
-import featureFlags from '../flags';
+import { featureFlags } from '../flags';
 import warnOnce from 'warn-once';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
