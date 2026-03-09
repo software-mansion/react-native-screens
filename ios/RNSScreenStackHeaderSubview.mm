@@ -152,13 +152,23 @@ namespace react = facebook::react;
   // Workaround for iPadOS 26+ header subviews. For left and right subviews, we apply this to wrapper view.
   if (_preventScrollToTopEnabled &&
       (_type == RNSScreenStackHeaderSubviewTypeTitle || _type == RNSScreenStackHeaderSubviewTypeCenter) &&
-      self.gestureRecognizers.count == 0) {
+      ![self hasScrollToTopGuardGestureRecognizer]) {
     [RNSScrollToTopGuardGestureRecognizer applyToViewIfNecessary:self];
   }
 
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
   [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.synchronousShadowStateUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
+}
+
+- (BOOL)hasScrollToTopGuardGestureRecognizer
+{
+  for (UIGestureRecognizer *recognizer in self.gestureRecognizers) {
+    if ([recognizer isKindOfClass:[RNSScrollToTopGuardGestureRecognizer class]]) {
+      return YES;
+    }
+  }
+  return NO;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
