@@ -213,13 +213,6 @@ namespace react = facebook::react;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
   UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
-#ifdef RCT_NEW_ARCH_ENABLED
-  /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
-  /// in current transaction. This vector should be populated when we receive notification via
-  /// `RCTMountingObserving` protocol, that a transaction will be performed, and should
-  /// be cleaned up when we're notified that the transaction has been completed.
-  std::vector<__strong RNSScreenView *> _toBeDeletedScreens;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1451,7 +1444,6 @@ RNS_IGNORE_SUPER_CALL_END
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
       if (toBeRemovedChild != nil) {
         [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
-        _toBeDeletedScreens.push_back(toBeRemovedChild);
       }
     }
   }
@@ -1475,25 +1467,6 @@ RNS_IGNORE_SUPER_CALL_END
       });
       break;
     }
-  }
-
-  if (!self->_toBeDeletedScreens.empty()) {
-    __weak RNSScreenStackView *weakSelf = self;
-    // We want to run after container updates are performed (transitions etc.)
-    dispatch_async(dispatch_get_main_queue(), ^{
-      RNSScreenStackView *_Nullable strongSelf = weakSelf;
-      if (strongSelf == nil) {
-        return;
-      }
-      for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
-#ifdef RCT_NEW_ARCH_ENABLED
-        [screenRef invalidateImpl];
-#else
-        [screenRef invalidate];
-#endif
-      }
-      strongSelf->_toBeDeletedScreens.clear();
-    });
   }
 }
 
