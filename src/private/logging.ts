@@ -1,19 +1,5 @@
 import { featureFlags } from 'react-native-screens';
 
-let isDetailedLoggingEnabled = false;
-
-export function bottomTabsDebugLog(
-  ...args: Parameters<(typeof console)['log']>
-) {
-  if (isDetailedLoggingEnabled) {
-    console.log(...args);
-  }
-}
-
-export function internalEnableDetailedBottomTabsLogging() {
-  isDetailedLoggingEnabled = true;
-}
-
 export const RNSLog = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   log: (message?: any, ...args: any[]) => {

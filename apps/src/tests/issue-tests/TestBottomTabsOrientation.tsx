@@ -10,7 +10,6 @@ import {
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import Colors from '../../shared/styling/Colors';
-import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
   NavigationContainer,
@@ -20,7 +19,6 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 enableFreeze(true);
-internalEnableDetailedBottomTabsLogging();
 
 function ScreenComponent() {
   return (

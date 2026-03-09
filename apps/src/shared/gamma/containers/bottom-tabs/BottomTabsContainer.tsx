@@ -9,6 +9,7 @@ import {
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
 import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import ConfigWrapperContext from './ConfigWrapperContext';
+import { RNSLog } from 'react-native-screens/private';
 
 export interface TabConfiguration {
   tabScreenProps: TabsScreenProps;
@@ -21,12 +22,12 @@ export type BottomTabsContainerProps = TabsHostProps & {
 };
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
-  console.info('BottomTabsContainer render');
+  RNSLog.info('BottomTabsContainer render');
 
   const { tabConfigs, ...restProps } = props;
 
   const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
-    console.log('BottomTabsContainer focusedStateKey initial state computed');
+    RNSLog.log('BottomTabsContainer focusedStateKey initial state computed');
 
     if (props.tabConfigs.length === 0) {
       throw new Error('There must be at least one tab defined');
@@ -67,7 +68,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       // };
 
       transitionFn(() => {
-        console.info(`Starting transition to ${screenKey}`);
+        RNSLog.info(`Starting transition to ${screenKey}`);
         setFocusedScreenKey(screenKey);
       });
     },
@@ -85,8 +86,9 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       {...restProps}>
       {tabConfigs.map(tabConfig => {
         const screenKey = tabConfig.tabScreenProps.screenKey;
-        const isFocused = tabConfig.tabScreenProps.screenKey === focusedScreenKey;
-        console.info(
+        const isFocused =
+          tabConfig.tabScreenProps.screenKey === focusedScreenKey;
+        RNSLog.info(
           `BottomTabsContainer map to component -> ${screenKey} ${
             isFocused ? '(focused)' : ''
           }`,
