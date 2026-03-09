@@ -129,6 +129,7 @@ export interface NativeProps extends ViewProps {
   // General
   title?: string | undefined | null;
   badgeValue?: string;
+  orientation?: CT.WithDefault<Orientation, 'inherit'>;
 
   // Accessibility
   tabBarItemTestID?: string;
@@ -145,7 +146,6 @@ export interface NativeProps extends ViewProps {
   // iOS-specific props
   // Tab config
   isTitleUndefined?: CT.WithDefault<boolean, true>;
-  orientation?: CT.WithDefault<Orientation, 'inherit'>;
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
 
   // Appearance

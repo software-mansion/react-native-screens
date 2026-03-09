@@ -81,7 +81,6 @@ function TabsScreen(props: TabsScreenProps) {
       rightScrollEdgeEffect={ios?.scrollEdgeEffects?.right}
       topScrollEdgeEffect={ios?.scrollEdgeEffects?.top}
       userInterfaceStyle={ios?.experimental_userInterfaceStyle}
-      orientation={ios?.orientation}
       systemItem={ios?.systemItem}
       overrideScrollViewContentInsetAdjustmentBehavior={
         ios?.overrideScrollViewContentInsetAdjustmentBehavior

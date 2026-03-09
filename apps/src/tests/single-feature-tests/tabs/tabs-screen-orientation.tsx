@@ -32,8 +32,8 @@ function ConfigScreen() {
         label="orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          findTabScreenOptions(config, 'Tab1')?.tabScreenProps?.ios
-            ?.orientation ?? 'undefined'
+          findTabScreenOptions(config, 'Tab1')?.tabScreenProps.orientation ??
+          'undefined'
         }
         onValueChange={value =>
           dispatch({
@@ -41,9 +41,7 @@ function ConfigScreen() {
             tabKey: 'Tab1',
             config: {
               tabScreenProps: {
-                ios: {
-                  orientation: value === 'undefined' ? undefined : value,
-                },
+                orientation: value === 'undefined' ? undefined : value,
               },
             },
           })

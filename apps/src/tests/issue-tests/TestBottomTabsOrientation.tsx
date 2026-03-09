@@ -81,6 +81,7 @@ function makeTabConfigs(
         tabKey: 'Auto',
         title: 'Auto',
         isFocused: true,
+        orientation: tabsOrientations.home.tabScreen,
         ios: {
           icon: {
             type: 'sfSymbol',
@@ -90,7 +91,6 @@ function makeTabConfigs(
             type: 'sfSymbol',
             name: 'house.fill',
           },
-          orientation: tabsOrientations.home.tabScreen,
         },
         android: {
           icon: {
@@ -142,6 +142,7 @@ function makeTabConfigs(
       tabScreenProps: {
         tabKey: 'Landscape',
         title: 'Landscape',
+        orientation: tabsOrientations.landscape.tabScreen,
         ios: {
           icon: {
             type: 'imageSource',
@@ -151,7 +152,6 @@ function makeTabConfigs(
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon_fill.png'),
           },
-          orientation: tabsOrientations.landscape.tabScreen,
         },
         android: {
           icon: {
