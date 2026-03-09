@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs.screen
 
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
@@ -82,11 +83,15 @@ class TabsScreen(
 
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
+        cachedIcon = null
     }
 
     var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
+        cachedIcon = null
     }
+
+    private var cachedIcon: Drawable? = null
 
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
@@ -144,6 +149,28 @@ class TabsScreen(
         config: Configuration,
     ) {
         tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
+    }
+
+    /**
+     * Get the cached StateListDrawable, or generates a new one
+     * if the underlying icons have changed since the last call.
+     */
+    internal fun getMenuIcon(): Drawable? {
+        cachedIcon?.let { return it }
+
+        val currentIcon = icon
+        val currentSelected = selectedIcon
+
+        cachedIcon = if (currentSelected != null && currentIcon != null) {
+            StateListDrawable().apply {
+                addState(intArrayOf(android.R.attr.state_checked), currentSelected.mutate())
+                addState(intArrayOf(), currentIcon.mutate())
+            }
+        } else {
+            currentIcon
+        }
+
+        return cachedIcon
     }
 
     companion object {
