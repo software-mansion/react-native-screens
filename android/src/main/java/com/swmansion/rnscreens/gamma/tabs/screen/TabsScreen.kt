@@ -161,14 +161,15 @@ class TabsScreen(
         val currentIcon = icon
         val currentSelected = selectedIcon
 
-        cachedIcon = if (currentSelected != null && currentIcon != null) {
-            StateListDrawable().apply {
-                addState(intArrayOf(android.R.attr.state_checked), currentSelected.mutate())
-                addState(intArrayOf(), currentIcon.mutate())
+        cachedIcon =
+            if (currentSelected != null && currentIcon != null) {
+                StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_checked), currentSelected.mutate())
+                    addState(intArrayOf(), currentIcon.mutate())
+                }
+            } else {
+                currentIcon
             }
-        } else {
-            currentIcon
-        }
 
         return cachedIcon
     }
