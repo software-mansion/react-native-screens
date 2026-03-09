@@ -83,15 +83,16 @@ class TabsScreen(
 
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
-        cachedIcon = null
+        resetIconCacheIfNeeded(oldValue, newValue)
     }
 
     var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
-        cachedIcon = null
+        resetIconCacheIfNeeded(oldValue, newValue)
     }
 
     private var cachedIcon: Drawable? = null
+    private var isIconCached: Boolean = false
 
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
@@ -102,6 +103,16 @@ class TabsScreen(
     ) {
         if (newValue != oldValue) {
             onMenuItemAttributesChange()
+        }
+    }
+
+    private fun <T> resetIconCacheIfNeeded(
+        oldValue: T,
+        newValue: T,
+    ) {
+        if (newValue != oldValue) {
+            cachedIcon = null
+            isIconCached = false
         }
     }
 
@@ -156,7 +167,7 @@ class TabsScreen(
      * if the underlying icons have changed since the last call.
      */
     internal fun getMenuIcon(): Drawable? {
-        cachedIcon?.let { return it }
+        if (isIconCached) return cachedIcon
 
         val currentIcon = icon
         val currentSelected = selectedIcon
@@ -171,6 +182,7 @@ class TabsScreen(
                 currentIcon
             }
 
+        isIconCached = true
         return cachedIcon
     }
 
