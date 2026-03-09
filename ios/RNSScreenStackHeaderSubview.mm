@@ -2,7 +2,7 @@
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
-#import "RNSScrollToTopGuardRecognizer.h"
+#import "RNSScrollToTopGuardGestureRecognizer.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <cxxreact/ReactNativeVersion.h>
@@ -153,7 +153,7 @@ namespace react = facebook::react;
   if (_preventScrollToTopEnabled &&
       (_type == RNSScreenStackHeaderSubviewTypeTitle || _type == RNSScreenStackHeaderSubviewTypeCenter) &&
       self.gestureRecognizers.count == 0) {
-    [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:self];
+    [RNSScrollToTopGuardGestureRecognizer applyToViewIfNecessary:self];
   }
 
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
@@ -275,7 +275,7 @@ RNS_IGNORE_SUPER_CALL_END
       // Workaround for iPadOS 26+ header subviews. For center subview, we apply this directly to header subview
       // in updateProps.
       if (_preventScrollToTopEnabled) {
-        [RNSScrollToTopGuardRecognizer applyToViewIfNecessary:wrapperView];
+        [RNSScrollToTopGuardGestureRecognizer applyToViewIfNecessary:wrapperView];
       }
 
       wrapperView.translatesAutoresizingMaskIntoConstraints = NO;

@@ -1,7 +1,7 @@
-#import "RNSScrollToTopGuardRecognizer.h"
+#import "RNSScrollToTopGuardGestureRecognizer.h"
 #import "RNSDefines.h"
 
-@implementation RNSScrollToTopGuardRecognizer
+@implementation RNSScrollToTopGuardGestureRecognizer
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
@@ -46,7 +46,7 @@
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-      [view addGestureRecognizer:[RNSScrollToTopGuardRecognizer new]];
+      [view addGestureRecognizer:[RNSScrollToTopGuardGestureRecognizer new]];
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)

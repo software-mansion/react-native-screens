@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
  * on iPadOS 26+. Otherwise, clicking a custom view will result in scroll to top action even if
  * there is a pressable inside the custom view.
  */
-@interface RNSScrollToTopGuardRecognizer : UITapGestureRecognizer <UIGestureRecognizerDelegate>
+@interface RNSScrollToTopGuardGestureRecognizer : UITapGestureRecognizer <UIGestureRecognizerDelegate>
 
 /**
  * This method creates and adds the scroll to top guard gesture recognizer on iPadOS 26+.
