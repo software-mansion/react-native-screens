@@ -5,6 +5,7 @@ export type * from './types';
 export {
   internalEnableDetailedBottomTabsLogging,
   bottomTabsDebugLog,
+  RNSLog,
 } from './logging';
 
 // Hooks
