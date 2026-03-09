@@ -48,7 +48,7 @@ class TabsAppearanceApplicator(
         updateTabBarItemLabelVisibilityModeIfNeeded(tabBarAppearance)
         updateTabBarItemRippleColorIfNeeded(context, tabBarAppearance)
         updateTabBarItemActiveIndicatorColorIfNeeded(context, tabBarAppearance)
-        updateTabBarItemActiveIndicatorEnabledNeeded(tabBarAppearance)
+        updateTabBarItemActiveIndicatorEnabledIfNeeded(tabBarAppearance)
     }
 
     fun updateFontStyles(
@@ -191,7 +191,7 @@ class TabsAppearanceApplicator(
         }
     }
 
-    private fun updateTabBarItemActiveIndicatorEnabledNeeded(appearance: TabsAppearance?) {
+    private fun updateTabBarItemActiveIndicatorEnabledIfNeeded(appearance: TabsAppearance?) {
         val targetActiveIndicatorEnabled = appearance?.tabBarItemActiveIndicatorEnabled ?: true
         if (bottomNavigationView.isItemActiveIndicatorEnabled != targetActiveIndicatorEnabled) {
             bottomNavigationView.isItemActiveIndicatorEnabled = targetActiveIndicatorEnabled
