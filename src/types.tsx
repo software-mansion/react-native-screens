@@ -606,7 +606,7 @@ export interface ScreenProps extends ViewProps {
    * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
    * For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
    *
-   * On Android, sets the duration of all stack animations. When not set (default), the system default animation duration is used.
+   * On Android, sets the duration of all stack animations. Uses default animation duration when unset.
    */
   transitionDuration?: number;
   /**
