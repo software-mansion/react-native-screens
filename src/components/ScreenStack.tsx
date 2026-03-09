@@ -15,7 +15,7 @@ import warnOnce from 'warn-once';
 import ScreenStackNativeComponent, {
   NativeProps,
 } from '../fabric/ScreenStackNativeComponent';
-import featureFlags from '../flags';
+import { featureFlags } from '../flags';
 
 const assertGHProvider = (
   ScreenGestureDetector: (

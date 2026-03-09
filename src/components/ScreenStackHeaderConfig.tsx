@@ -16,7 +16,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import featureFlags from '../flags';
+import { featureFlags } from '../flags';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';

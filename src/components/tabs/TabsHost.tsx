@@ -10,7 +10,7 @@ import {
 import TabsHostNativeComponent, {
   type NativeProps as TabsHostNativeComponentProps,
 } from '../../fabric/tabs/TabsHostNativeComponent';
-import featureFlags from '../../flags';
+import { featureFlags } from '../../flags';
 import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import TabsBottomAccessory from './TabsBottomAccessory';
