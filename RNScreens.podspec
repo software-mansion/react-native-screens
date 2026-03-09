@@ -21,8 +21,10 @@ min_supported_visionos_version = "1.0"
 rnscreens_cpp_flags = []
 rnscreens_swift_flags = []
 
-rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1" if debug_logging_enabled
-rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING" if debug_logging_enabled
+if debug_logging_enabled
+  rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1"
+  rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING"
+end
 rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
 
 rnscreens_config  =  {
