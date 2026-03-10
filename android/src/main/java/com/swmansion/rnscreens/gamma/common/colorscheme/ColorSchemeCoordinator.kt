@@ -19,6 +19,7 @@ internal class ColorSchemeCoordinator :
     private var systemUiNightMode: Int = Configuration.UI_MODE_NIGHT_NO
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
+    private var isSetUp = false
 
     /**
      * Callback invoked when color scheme changes. It should be used to adapt
@@ -42,14 +43,27 @@ internal class ColorSchemeCoordinator :
                     ?: systemUiNightMode
         }
 
+    /**
+     * Initializes the color scheme resolution for the given [hostView]
+     * with [onUiNightModeResolvedCallback].
+     *
+     * Must be called after the view is attached to the window.
+     * Must not be called again without calling [teardown] first.
+     */
     internal fun setup(
         hostView: View,
         onUiNightModeResolvedCallback: OnUiNightModeResolvedCallback?,
     ) {
-        systemUiNightMode = hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        check(!isSetUp) {
+            "[RNScreens] ColorSchemeCoordinator's setup method must not be called again without calling teardown() first."
+        }
+
+        systemUiNightMode =
+            hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         parentProvider = findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
         onUiNightModeResolved = onUiNightModeResolvedCallback
+        isSetUp = true
 
         // Reset last applied value so the initial callback is always invoked after setup.
         // This is necessary because `colorScheme` could've been set before `setup` method
@@ -64,6 +78,7 @@ internal class ColorSchemeCoordinator :
         onUiNightModeResolved = null
         parentProvider = null
         lastAppliedUiNightMode = null
+        isSetUp = false
     }
 
     internal fun onConfigurationChanged(configuration: Configuration?) {
