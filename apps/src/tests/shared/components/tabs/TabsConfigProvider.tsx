@@ -61,8 +61,14 @@ function makeInitialConfig(
       tabScreenProps: {
         tabKey: k,
         title: k,
-        icon: {
-          shared: {
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../../../assets/variableIcons/icon.png'),
+          },
+        },
+        ios: {
+          icon: {
             type: 'imageSource',
             imageSource: require('../../../../../assets/variableIcons/icon.png'),
           },
