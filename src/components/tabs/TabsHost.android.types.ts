@@ -1,6 +1,6 @@
 export interface TabsHostPropsAndroid {
   /**
-   * @summary Determines whether `BottomNavigationView` applies the inset for IME (i.e. keybaord).
+   * @summary Determines whether `BottomNavigationView` applies the inset for IME (i.e. keyboard).
    *
    * This prop should be used with `android:windowSoftInputMode="adjustResize"`.
    *
