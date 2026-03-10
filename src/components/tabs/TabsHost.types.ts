@@ -9,6 +9,8 @@ export type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+export type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+
 export type TabsHostDirection = 'inherit' | 'ltr' | 'rtl';
 
 export type TabsHostNativeContainerStyleProps = {
@@ -69,6 +71,19 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   direction?: TabsHostDirection;
+  /**
+   * @summary Specifies the color scheme used by the container and any child containers.
+   *
+   * The following values are currently supported:
+   * - `inherit` - the interface style from parent,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
+   * @default inherit
+   *
+   * @platform android, ios
+   */
+  colorScheme?: TabsHostColorScheme;
 
   // Experimental support
   /**

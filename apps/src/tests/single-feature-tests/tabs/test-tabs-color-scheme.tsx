@@ -1,6 +1,7 @@
 import {
   Appearance,
   ColorSchemeName,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,14 +12,14 @@ import { Scenario } from '../../shared/helpers';
 import { createAutoConfiguredTabs } from '../../shared/tabs';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker } from '../../../shared';
-import type { TabsHostPropsIOS } from 'react-native-screens';
+import type { TabsHostProps } from 'react-native-screens';
 import useTabsConfigState from '../../shared/hooks/tabs-config';
 
 const SCENARIO: Scenario = {
   name: 'Color Scheme',
   key: 'test-tabs-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
-  platforms: ['ios'],
+  platforms: ['android', 'ios'],
   AppComponent: App,
 };
 
@@ -33,6 +34,21 @@ function ConfigScreen() {
   const [config, dispatch] = useTabsConfigState<TabsParamList>();
   const [reactColorScheme, setReactColorScheme] =
     useState<ColorSchemeName>('unspecified');
+
+  // TODO: Tabs.Autoconfig should allow initial prop configuration.
+  useEffect(() => {
+    dispatch({
+      type: 'tabScreen',
+      tabKey: 'Config',
+      config: {
+        safeAreaConfiguration: {
+          edges: {
+            bottom: true,
+          },
+        },
+      },
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     Appearance.setColorScheme(reactColorScheme);
@@ -69,18 +85,14 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>TabsHost color scheme</Text>
-        <SettingsPicker<NonNullable<TabsHostPropsIOS.TabsHostColorScheme>>
+        <SettingsPicker<NonNullable<TabsHostProps['colorScheme']>>
           label={'colorScheme'}
-          value={config.ios?.colorScheme ?? 'inherit'}
-          onValueChange={function (
-            value: TabsHostPropsIOS.TabsHostColorScheme,
-          ): void {
+          value={config.colorScheme ?? 'inherit'}
+          onValueChange={function (value: TabsHostProps['colorScheme']): void {
             dispatch({
               type: 'tabBar',
               config: {
-                ios: {
-                  colorScheme: value,
-                },
+                colorScheme: value,
               },
             });
           }}
@@ -123,6 +135,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    paddingTop: Platform.OS === 'android' ? 60 : undefined,
   },
   heading: {
     fontSize: 24,

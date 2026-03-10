@@ -54,7 +54,6 @@ function TabsHost(props: TabsHostProps) {
       ref={componentNodeRef}
       {...filteredBaseProps}
       // iOS-specific
-      colorScheme={ios?.colorScheme}
       controlNavigationStateInJS={controlNavigationStateInJS}
       layoutDirection={direction}
       tabBarControllerMode={ios?.tabBarControllerMode}
