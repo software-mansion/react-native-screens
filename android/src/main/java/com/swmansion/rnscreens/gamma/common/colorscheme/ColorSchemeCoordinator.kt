@@ -50,6 +50,12 @@ internal class ColorSchemeCoordinator :
         parentProvider = findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
         onUiNightModeResolved = onUiNightModeResolvedCallback
+
+        // Reset last applied value so the initial callback is always invoked after setup.
+        // This is necessary because `colorScheme` could've been set before `setup` method
+        // is called.
+        lastAppliedUiNightMode = null
+
         applyResolvedColorScheme()
     }
 
@@ -57,6 +63,7 @@ internal class ColorSchemeCoordinator :
         parentProvider?.removeColorSchemeListener(this)
         onUiNightModeResolved = null
         parentProvider = null
+        lastAppliedUiNightMode = null
     }
 
     internal fun onConfigurationChanged(configuration: Configuration?) {
