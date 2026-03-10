@@ -1,6 +1,6 @@
 export { default as TabsHost } from './TabsHost';
 
-export * from './TabsHost.types';
+export type * from './TabsHost.types';
 
 // Namespace the Host platform-specific types
 export type * as TabsHostPropsAndroid from './TabsHost.android.types';
