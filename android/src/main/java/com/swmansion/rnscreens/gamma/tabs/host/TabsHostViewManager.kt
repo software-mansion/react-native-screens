@@ -83,7 +83,7 @@ class TabsHostViewManager :
 
     override fun setTabBarRespectsIMEInsets(
         view: TabsHost,
-        value: Boolean
+        value: Boolean,
     ) {
         view.tabBarRespectsIMEInsets = value
     }
