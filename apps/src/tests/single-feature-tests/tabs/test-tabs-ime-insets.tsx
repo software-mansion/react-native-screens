@@ -61,7 +61,6 @@ function ConfigScreen() {
           label={'safeAreaViewBottomEdgeEnabled'}
           value={safeAreaViewBottomEdgeEnabled}
           onValueChange={function (value: boolean): void {
-            console.log(value);
             setSafeAreaViewBottomEdgeEnabled(value);
           }}
         />
