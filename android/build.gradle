@@ -181,23 +181,16 @@ android {
                 // Some of above lib* names could be removed after we remove support for 0.76.
                 // https://github.com/facebook/react-native/pull/43909
                 // https://github.com/facebook/react-native/pull/46059
-                "**/libfbjni.so", 
+                "**/libfbjni.so",
                 "**/libreactnative.so"
         ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         java {
-            // Architecture specific
-            if (IS_NEW_ARCHITECTURE_ENABLED) {
-                srcDirs += [
-                    "src/fabric/java",
-                ]
-            } else {
-                srcDirs += [
-                    "src/paper/java",
-                ]
-            }
+            srcDirs += [
+                "src/fabric/java",
+            ]
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
