@@ -138,8 +138,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab1',
       title: 'Config',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'sfSymbol',
           name: 'gear',
         },
@@ -151,8 +151,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       title: 'Test',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'sfSymbol',
           name: 'rectangle.stack',
         },
@@ -228,13 +228,13 @@ function Tabs() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarMinimizeBehavior={bottomAccessoryConfig.tabBarMinimizeBehavior}
-        bottomAccessory={
-          bottomAccessoryConfig.shown
+        ios={{
+          tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,
+          bottomAccessory: bottomAccessoryConfig.shown
             ? environment =>
                 getBottomAccessory(environment, bottomAccessoryConfig)
-            : undefined
-        }
+            : undefined,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );
