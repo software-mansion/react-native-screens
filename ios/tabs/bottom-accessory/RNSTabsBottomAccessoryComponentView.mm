@@ -74,11 +74,7 @@ namespace react = facebook::react;
   if (self.window != nil) {
     [_helper registerForAccessoryFrameChanges];
   } else {
-#if RCT_NEW_ARCH_ENABLED
-    [self invalidateController];
-#else // RCT_NEW_ARCH_ENABLED
     [self invalidate];
-#endif // RCT_NEW_ARCH_ENABLED
   }
 }
 
@@ -119,22 +115,14 @@ namespace react = facebook::react;
   return NO;
 }
 
-- (facebook::react::RNSTabsBottomAccessoryShadowNode::ConcreteState::Shared)state
-{
-  return _state;
-}
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
+- (void)invalidate
 {
   [self invalidateImpl];
 }
 
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+- (facebook::react::RNSTabsBottomAccessoryShadowNode::ConcreteState::Shared)state
 {
-  // For tabs, Host is responsible for invalidating children.
-  return NO;
+  return _state;
 }
 
 #else // RCT_NEW_ARCH_ENABLED

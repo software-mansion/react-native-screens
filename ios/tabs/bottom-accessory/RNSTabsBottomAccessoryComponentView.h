@@ -4,9 +4,7 @@
 #import "RNSTabsBottomAccessoryEventEmitter.h"
 #import "RNSTabsHostComponentView.h"
 
-#if RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTBridge.h>
 #import <React/RCTInvalidating.h>
 #endif
@@ -24,13 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-@interface RNSTabsBottomAccessoryComponentView : RNSReactBaseView <
-#if RCT_NEW_ARCH_ENABLED
-                                                     RNSViewControllerInvalidating
-#else // RCT_NEW_ARCH_ENABLED
-                                                     RCTInvalidating
+@interface RNSTabsBottomAccessoryComponentView : RNSReactBaseView
+#if !RCT_NEW_ARCH_ENABLED
+                                                 <RCTInvalidating>
 #endif // RCT_NEW_ARCH_ENABLED
-                                                     >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge;

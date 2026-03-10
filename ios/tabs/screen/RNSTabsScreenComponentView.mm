@@ -113,28 +113,26 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
+- (void)invalidateImpl
 {
-  _controller = nil;
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  // For tabs, Host is responsible for invalidating children.
-  return NO;
-}
-
-#else
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
 - (void)invalidate
 {
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -496,6 +494,11 @@ RNS_IGNORE_SUPER_CALL_END
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)invalidate
+{
+  [self invalidateImpl];
 }
 
 #else
