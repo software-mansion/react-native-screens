@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewParent
 import kotlin.properties.Delegates
 
+internal typealias OnUiNightModeResolvedCallback = (nightMode: Int) -> Unit
+
 internal class ColorSchemeCoordinator :
     ColorSchemeProviding,
     ColorSchemeListener {
@@ -29,7 +31,7 @@ internal class ColorSchemeCoordinator :
      * This callback is invoked only if the value has changed. The change is propagated
      * in top-down order.
      */
-    internal var onUiNightModeResolved: ((Int) -> Unit)? = null
+    internal var onUiNightModeResolved: OnUiNightModeResolvedCallback? = null
 
     override fun getResolvedUiNightMode(): Int =
         when (colorScheme) {
@@ -40,15 +42,20 @@ internal class ColorSchemeCoordinator :
                     ?: systemUiNightMode
         }
 
-    internal fun onAttachedToWindow(hostView: View) {
+    internal fun setup(
+        hostView: View,
+        onUiNightModeResolvedCallback: OnUiNightModeResolvedCallback?,
+    ) {
         systemUiNightMode = hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         parentProvider = findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
+        onUiNightModeResolved = onUiNightModeResolvedCallback
         applyResolvedColorScheme()
     }
 
-    internal fun onDetachedFromWindow() {
+    internal fun teardown() {
         parentProvider?.removeColorSchemeListener(this)
+        onUiNightModeResolved = null
         parentProvider = null
     }
 
