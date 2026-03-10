@@ -25,7 +25,7 @@ export interface NativeProps extends ViewProps {
   nativeContainerBackgroundColor?: ColorValue;
 
   // Android-specific props
-  // No props specified so far, but marking the place where these should land.
+  tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostAndroid', {

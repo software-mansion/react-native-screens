@@ -81,6 +81,13 @@ class TabsHostViewManager :
         view.nativeContainerBackgroundColor = value
     }
 
+    override fun setTabBarRespectsIMEInsets(
+        view: TabsHost,
+        value: Boolean
+    ) {
+        view.tabBarRespectsIMEInsets = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSTabsHostAndroid"
     }
