@@ -3,10 +3,7 @@ import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../../fabric/tabs/TabsScreenIOSNativeComponent';
 import { bottomTabsDebugLog } from '../../../private/logging';
-import type {
-  EmptyObject,
-  TabsScreenEventHandler,
-} from '../screen/TabsScreen.types';
+import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
 type TabsScreenPlatformNativeComponentProps =
   | TabsScreenAndroidNativeComponentProps

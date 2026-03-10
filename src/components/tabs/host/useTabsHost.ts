@@ -4,7 +4,7 @@ import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../.
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import featureFlags from '../../../flags';
 import { bottomTabsDebugLog } from '../../../private/logging';
-import type { NativeFocusChangeEvent } from '../host/TabsHost.types';
+import type { NativeFocusChangeEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
