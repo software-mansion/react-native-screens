@@ -6,15 +6,12 @@ import TabsHostAndroidNativeComponent, {
   type NativeProps as TabsHostAndroidNativeComponentProps,
 } from '../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../private/logging';
 import { useTabsHost } from './useTabsHost';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function TabsHost(props: TabsHostProps) {
-  bottomTabsDebugLog(`TabsHost render`);
-
   // android props (even if unused for now) are extracted - these should be handled separately from base props
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
