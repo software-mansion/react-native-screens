@@ -24,22 +24,25 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
 }: TabsHostConfig) {
   const componentNodeRef = useRenderDebugInfo<React.Component<T>>('TabsHost');
 
-  const getComponentNodeHandle = React.useCallback(() => {
-    return componentNodeRef.current
-      ? findNodeHandle(componentNodeRef.current) ?? -1
-      : -1;
-  }, [componentNodeRef]);
+  const componentNodeHandleRef = React.useRef<number>(-1);
+
+  React.useEffect(() => {
+    if (componentNodeHandleRef.current === -1 && componentNodeRef.current) {
+      componentNodeHandleRef.current =
+        findNodeHandle(componentNodeRef.current) ?? -1;
+    }
+  });
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
       bottomTabsDebugLog(
-        `TabsHost [${getComponentNodeHandle()}] onNativeFocusChange: ${JSON.stringify(
-          event.nativeEvent,
-        )}`,
+        `TabsHost [${
+          componentNodeHandleRef.current
+        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
       );
       onNativeFocusChange?.(event);
     },
-    [getComponentNodeHandle, onNativeFocusChange],
+    [onNativeFocusChange],
   );
 
   return {

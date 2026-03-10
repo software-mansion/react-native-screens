@@ -33,54 +33,57 @@ export function useTabsScreen<
     `TabsScreen (${tabKey})`,
   );
 
-  const getComponentNodeHandle = React.useCallback(() => {
-    return componentNodeRef.current
-      ? findNodeHandle(componentNodeRef.current) ?? -1
-      : -1;
-  }, [componentNodeRef]);
+  const componentNodeHandleRef = React.useRef<number>(-1);
+
+  React.useEffect(() => {
+    if (componentNodeHandleRef.current === -1 && componentNodeRef.current) {
+      componentNodeHandleRef.current =
+        findNodeHandle(componentNodeRef.current) ?? -1;
+    }
+  });
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${getComponentNodeHandle()}] onWillAppear received`,
+        `TabsScreen [${componentNodeHandleRef.current}] onWillAppear received`,
       );
       onWillAppear?.(event);
     },
-    [onWillAppear, getComponentNodeHandle],
+    [onWillAppear],
   );
 
   const onDidAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${getComponentNodeHandle()}] onDidAppear received`,
+        `TabsScreen [${componentNodeHandleRef.current}] onDidAppear received`,
       );
       onDidAppear?.(event);
     },
-    [onDidAppear, getComponentNodeHandle],
+    [onDidAppear],
   );
 
   const onWillDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${getComponentNodeHandle()}] onWillDisappear received`,
+        `TabsScreen [${componentNodeHandleRef.current}] onWillDisappear received`,
       );
       onWillDisappear?.(event);
     },
-    [onWillDisappear, getComponentNodeHandle],
+    [onWillDisappear],
   );
 
   const onDidDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${getComponentNodeHandle()}] onDidDisappear received`,
+        `TabsScreen [${componentNodeHandleRef.current}] onDidDisappear received`,
       );
       onDidDisappear?.(event);
     },
-    [onDidDisappear, getComponentNodeHandle],
+    [onDidDisappear],
   );
 
   bottomTabsDebugLog(
-    `TabsScreen [${getComponentNodeHandle()}] render; tabKey: ${tabKey}, isFocused: ${isFocused}`,
+    `TabsScreen [${componentNodeHandleRef.current}] render; tabKey: ${tabKey}, isFocused: ${isFocused}`,
   );
 
   return {
