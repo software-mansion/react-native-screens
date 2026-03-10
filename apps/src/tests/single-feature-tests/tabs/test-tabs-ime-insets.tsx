@@ -30,8 +30,10 @@ type TabsParamList = {
 };
 
 function ConfigScreen() {
-  const [_, dispatch] = useTabsConfigState<TabsParamList>();
+  const [config, dispatch] = useTabsConfigState<TabsParamList>();
   const [tabBarRespectsIMEInsets, setTabBarRespectsIMEInsets] = useState(false);
+  const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
+    useState(config.tabConfigs[0].safeAreaConfiguration?.edges?.bottom ?? true);
 
   useEffect(() => {
     dispatch({
@@ -42,8 +44,33 @@ function ConfigScreen() {
     });
   }, [dispatch, tabBarRespectsIMEInsets]);
 
+  useEffect(() => {
+    dispatch({
+      type: 'tabScreen',
+      tabKey: 'Config',
+      config: {
+        safeAreaConfiguration: {
+          edges: {
+            bottom: safeAreaViewBottomEdgeEnabled,
+          },
+        },
+      },
+    });
+  }, [dispatch, safeAreaViewBottomEdgeEnabled]);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <View style={[styles.container, styles.content]}>
+      <View style={styles.section}>
+        <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
+        <SettingsSwitch
+          label={'safeAreaViewBottomEdgeEnabled'}
+          value={safeAreaViewBottomEdgeEnabled}
+          onValueChange={function (value: boolean): void {
+            console.log(value);
+            setSafeAreaViewBottomEdgeEnabled(value);
+          }}
+        />
+      </View>
       <View style={styles.section}>
         <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
         <SettingsSwitch
@@ -61,7 +88,10 @@ function ConfigScreen() {
           style={styles.textInput}
         />
       </View>
-    </ScrollView>
+      <View style={styles.end}>
+        <Text>TabsScreen bottom</Text>
+      </View>
+    </View>
   );
 }
 
@@ -93,6 +123,11 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 10,
+  },
+  end: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   textInput: {
     borderColor: 'gray',
