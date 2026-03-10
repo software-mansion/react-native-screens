@@ -465,23 +465,17 @@ class TabsHost(
 
     override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
-    private fun getInsetsForBottomNavigationView(insets: WindowInsets?): WindowInsets? {
+    private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
         if (tabBarRespectsIMEInsets) {
             return insets
         }
 
-        val compatInsets =
-            WindowInsetsCompat.toWindowInsetsCompat(
-                insets ?: WindowInsetsCompat.CONSUMED.toWindowInsets() as WindowInsets,
-                this,
-            )
+        val compatInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
 
         return WindowInsetsCompat
             .Builder(compatInsets)
-            .setInsets(
-                WindowInsetsCompat.Type.ime(),
-                Insets.NONE,
-            ).build()
+            .setInsets(WindowInsetsCompat.Type.ime(), Insets.NONE)
+            .build()
             .toWindowInsets()
     }
 
@@ -491,14 +485,13 @@ class TabsHost(
         // correct implementation. To simplify it, we skip the call to TabsHost's
         // onApplyWindowInsets. We also use this method to dispatch different insets to
         // BottomNavigationView so that IME inset can be controlled via prop.
-        val insetsForBottomNavigationView = getInsetsForBottomNavigationView(insets)
-
         if (insets?.isConsumed ?: true) {
             return insets
         }
 
         for (child in children) {
             if (child === bottomNavigationView) {
+                val insetsForBottomNavigationView = getInsetsForBottomNavigationView(insets)
                 child.dispatchApplyWindowInsets(insetsForBottomNavigationView)
             } else {
                 child.dispatchApplyWindowInsets(insets)
