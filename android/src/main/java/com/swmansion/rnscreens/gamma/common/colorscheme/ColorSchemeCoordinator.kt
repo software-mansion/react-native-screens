@@ -18,6 +18,17 @@ internal class ColorSchemeCoordinator :
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
 
+    /**
+     * Callback invoked when color scheme changes. It should be used to adapt
+     * view's appearance to the current mode.
+     *
+     * The [Int] parameter represents the resolved night mode value. It can be
+     * one of [Configuration.UI_MODE_NIGHT_UNDEFINED], [Configuration.UI_MODE_NIGHT_NO]
+     * or [Configuration.UI_MODE_NIGHT_YES].
+     *
+     * This callback is invoked only if the value has changed. The change is propagated
+     * in top-down order.
+     */
     internal var onUiNightModeResolved: ((Int) -> Unit)? = null
 
     override fun getResolvedUiNightMode(): Int =
