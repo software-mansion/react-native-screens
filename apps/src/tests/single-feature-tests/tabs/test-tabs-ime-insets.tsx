@@ -1,11 +1,4 @@
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Scenario } from '../../shared/helpers';
 import { createAutoConfiguredTabs } from '../../shared/tabs';
 import React, { useEffect, useState } from 'react';
@@ -39,7 +32,9 @@ function ConfigScreen() {
     dispatch({
       type: 'tabBar',
       config: {
-        tabBarRespectsIMEInsets: tabBarRespectsIMEInsets,
+        android: {
+          tabBarRespectsIMEInsets: tabBarRespectsIMEInsets,
+        },
       },
     });
   }, [dispatch, tabBarRespectsIMEInsets]);
