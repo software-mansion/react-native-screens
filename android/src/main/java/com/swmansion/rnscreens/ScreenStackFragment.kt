@@ -13,6 +13,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -306,8 +308,31 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animation? {
-        // Ensure onCreateAnimator is called
-        return null
+        if (screen.usesFormSheetPresentation()) {
+            return null
+        }
+
+        if (nextAnim == 0 || screen.stackAnimation == Screen.StackAnimation.NONE || screen.transitionDuration < 0) {
+            return null
+        }
+        return AnimationUtils.loadAnimation(requireContext(), nextAnim).apply {
+            scaleAnimationDuration(this, screen.transitionDuration.toLong())
+        }
+    }
+
+    private fun scaleAnimationDuration(animation: Animation, targetDuration: Long) {
+        if (animation is AnimationSet) {
+            val naturalDuration = animation.computeDurationHint()
+            if (naturalDuration > 0) {
+                val scale = targetDuration.toDouble() / naturalDuration.toDouble()
+                for (child in animation.animations) {
+                    child.startOffset = (child.startOffset * scale).toLong()
+                    scaleAnimationDuration(child, (child.duration * scale).toLong())
+                }
+            }
+        } else {
+            animation.duration = targetDuration
+        }
     }
 
     override fun onCreateAnimator(

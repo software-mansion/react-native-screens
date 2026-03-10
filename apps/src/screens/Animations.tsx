@@ -20,16 +20,22 @@ type StackAnimation = Exclude<
   undefined
 >;
 
+type TransitionDurationOption = 'default' | '10' | '100' | '500' | '1000';
+
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
   stackAnimation: StackAnimation;
   setStackAnimation: (value: StackAnimation) => void;
+  transitionDuration: TransitionDurationOption;
+  setTransitionDuration: (value: TransitionDurationOption) => void;
 }
 
 const MainScreen = ({
   navigation,
   stackAnimation,
   setStackAnimation,
+  transitionDuration,
+  setTransitionDuration,
 }: MainScreenProps): React.JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -56,6 +62,12 @@ const MainScreen = ({
           'ios_from_left',
           'none',
         ]}
+      />
+      <SettingsPicker<TransitionDurationOption>
+        label="Transition duration (ms)"
+        value={transitionDuration}
+        onValueChange={setTransitionDuration}
+        items={['default', '10', '100', '500', '1000']}
       />
       <Button
         title="Replace with pop animation"
@@ -124,10 +136,16 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): React.JSX.Element => {
   const [stackAnimation, setStackAnimation] =
     useState<StackAnimation>('default');
+  const [transitionDuration, setTransitionDuration] =
+    useState<TransitionDurationOption>('default');
   return (
     <Stack.Navigator
       screenOptions={{
         headerBackVisible: false,
+        animationDuration:
+          transitionDuration === 'default'
+            ? undefined
+            : Number(transitionDuration),
       }}>
       <Stack.Screen name="Main" options={{ title: 'Animations' }}>
         {({ navigation }) => (
@@ -135,6 +153,8 @@ const App = (): React.JSX.Element => {
             navigation={navigation}
             stackAnimation={stackAnimation}
             setStackAnimation={setStackAnimation}
+            transitionDuration={transitionDuration}
+            setTransitionDuration={setTransitionDuration}
           />
         )}
       </Stack.Screen>
