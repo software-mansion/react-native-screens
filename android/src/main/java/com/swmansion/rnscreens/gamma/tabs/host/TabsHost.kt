@@ -186,7 +186,7 @@ class TabsHost(
         }
     }
 
-    var tabBarRespectsIMEInsets: Boolean = true
+    var tabBarRespectsIMEInsets: Boolean = false
 
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
