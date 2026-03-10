@@ -1,5 +1,5 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { PlatformIconAndroid } from '../../types';
+import type { PlatformIconAndroid } from '../../../types';
 
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -7,7 +7,7 @@ export type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
-export interface TabsScreenItemStateAppearance {
+export interface TabsScreenItemStateAppearanceAndroid {
   /**
    * @summary Specifies the font color used for the title of each tab bar item.
    *
@@ -23,7 +23,7 @@ export interface TabsScreenItemStateAppearance {
 }
 
 // Note: will be renamed in components split follow-up PR
-export interface TabsScreenAppearance {
+export interface TabsScreenAppearanceAndroid {
   /**
    * @summary Specifies the background color for the entire tab bar.
    *
@@ -61,7 +61,7 @@ export interface TabsScreenAppearance {
    *
    * @platform android
    */
-  normal?: TabsScreenItemStateAppearance;
+  normal?: TabsScreenItemStateAppearanceAndroid;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
@@ -69,7 +69,7 @@ export interface TabsScreenAppearance {
    *
    * @platform android
    */
-  selected?: TabsScreenItemStateAppearance;
+  selected?: TabsScreenItemStateAppearanceAndroid;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
@@ -77,7 +77,7 @@ export interface TabsScreenAppearance {
    *
    * @platform android
    */
-  focused?: TabsScreenItemStateAppearance;
+  focused?: TabsScreenItemStateAppearanceAndroid;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
@@ -85,7 +85,7 @@ export interface TabsScreenAppearance {
    *
    * @platform android
    */
-  disabled?: TabsScreenItemStateAppearance;
+  disabled?: TabsScreenItemStateAppearanceAndroid;
   /**
    * @summary Specifies the background color of the active indicator.
    *
@@ -158,7 +158,7 @@ export interface TabsScreenPropsAndroid {
    *
    * @platform android
    */
-  standardAppearance?: TabsScreenAppearance;
+  standardAppearance?: TabsScreenAppearanceAndroid;
   /**
    * @summary Specifies the icon for the tab bar item.
    *

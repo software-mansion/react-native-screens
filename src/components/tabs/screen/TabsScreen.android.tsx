@@ -11,13 +11,13 @@ import TabsScreenAndroidNativeComponent, {
   type Appearance,
   type ItemStateAppearance,
   type NativeProps as TabsScreenAndroidNativeComponentProps,
-} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
+} from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
-  TabsScreenAppearance,
-  TabsScreenItemStateAppearance,
+  TabsScreenAppearanceAndroid,
+  TabsScreenItemStateAppearanceAndroid,
 } from './TabsScreen.android.types';
-import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconAndroid } from '../../types';
+import type { TabsScreenProps } from '../screen/TabsScreen.types';
+import type { PlatformIconAndroid } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
 
 /**
@@ -78,7 +78,7 @@ function TabsScreen(props: TabsScreenProps) {
 }
 
 function mapAppearanceToNativeProps(
-  appearance?: TabsScreenAppearance,
+  appearance?: TabsScreenAppearanceAndroid,
 ): Appearance | undefined {
   if (!appearance) return undefined;
 
@@ -119,7 +119,7 @@ function mapAppearanceToNativeProps(
 }
 
 function mapItemStateAppearanceToNativeProp(
-  itemStateAppearance?: TabsScreenItemStateAppearance,
+  itemStateAppearance?: TabsScreenItemStateAppearanceAndroid,
 ): ItemStateAppearance | undefined {
   if (!itemStateAppearance) return undefined;
 

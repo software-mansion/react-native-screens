@@ -4,9 +4,9 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import TabsHostAndroidNativeComponent, {
   type NativeProps as TabsHostAndroidNativeComponentProps,
-} from '../../fabric/tabs/TabsHostAndroidNativeComponent';
+} from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../private/logging';
+import { bottomTabsDebugLog } from '../../../private/logging';
 import { useTabsHost } from './useTabsHost';
 
 /**

@@ -3,7 +3,7 @@ import type {
   UserInterfaceStyle,
   ScrollEdgeEffect,
   PlatformIconIOS,
-} from '../../types';
+} from '../../../types';
 
 export type TabsScreenBlurEffect =
   | 'none'
@@ -43,7 +43,7 @@ export type TabsSystemItem =
   | 'search'
   | 'topRated';
 
-export interface TabsScreenAppearance {
+export interface TabsScreenAppearanceIOS {
   /**
    * @summary Specifies the appearance of tab bar items when they are in stacked layout.
    *
@@ -52,7 +52,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  stacked?: TabsScreenItemAppearance;
+  stacked?: TabsScreenItemAppearanceIOS;
   /**
    * @summary Specifies the appearance of tab bar items when they are in inline layout.
    *
@@ -64,7 +64,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  inline?: TabsScreenItemAppearance;
+  inline?: TabsScreenItemAppearanceIOS;
   /**
    * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
    *
@@ -76,7 +76,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  compactInline?: TabsScreenItemAppearance;
+  compactInline?: TabsScreenItemAppearanceIOS;
 
   /**
    * @summary Specifies the background color for the entire tab bar when tab screen is selected.
@@ -121,39 +121,39 @@ export interface TabsScreenAppearance {
 }
 
 // iOS-specific
-export interface TabsScreenItemAppearance {
+export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines appearance for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  normal?: TabsScreenItemStateAppearance;
+  normal?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines appearance for the tab bar item that is currently active.
    * The appearance is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
-  selected?: TabsScreenItemStateAppearance;
+  selected?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines appearance for a tab bar item when it receives focus.
    * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  focused?: TabsScreenItemStateAppearance;
+  focused?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines appearance for tab bar items when they are disabled.
    * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  disabled?: TabsScreenItemStateAppearance;
+  disabled?: TabsScreenItemStateAppearanceIOS;
 }
 
 // iOS-specific
-export interface TabsScreenItemStateAppearance {
+export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
    * when tab screen is selected.
@@ -237,7 +237,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  standardAppearance?: TabsScreenAppearance;
+  standardAppearance?: TabsScreenAppearanceIOS;
   /**
    * @summary Specifies the tab bar appearace when edge of scrollable content aligns
    * with the edge of the tab bar.
@@ -250,7 +250,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  scrollEdgeAppearance?: TabsScreenAppearance;
+  scrollEdgeAppearance?: TabsScreenAppearanceIOS;
   /**
    * @summary Specifies the icon for the tab bar item.
    *

@@ -1,5 +1,5 @@
 import React from 'react';
-import TabsBottomAccessoryNativeComponent from '../../fabric/tabs/TabsBottomAccessoryNativeComponent';
+import TabsBottomAccessoryNativeComponent from '../../../fabric/tabs/TabsBottomAccessoryNativeComponent';
 import { TabsBottomAccessoryProps } from './TabsBottomAccessory.types';
 import { StyleSheet } from 'react-native';
 

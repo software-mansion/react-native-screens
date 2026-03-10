@@ -1,9 +1,9 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
-import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../fabric/tabs/TabsHostAndroidNativeComponent';
-import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../fabric/tabs/TabsHostIOSNativeComponent';
-import featureFlags from '../../flags';
-import { bottomTabsDebugLog } from '../../private/logging';
+import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
+import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
+import featureFlags from '../../../flags';
+import { bottomTabsDebugLog } from '../../../private/logging';
 import type { NativeFocusChangeEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
