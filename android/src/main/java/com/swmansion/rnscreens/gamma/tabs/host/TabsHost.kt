@@ -430,8 +430,7 @@ class TabsHost(
         appearanceCoordinator.updateTabAppearance(wrappedContext, this)
     }
 
-    override val resolvedUiNightMode
-        get() = colorSchemeCoordinator.resolvedUiNightMode
+    override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
     override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
 

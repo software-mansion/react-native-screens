@@ -20,15 +20,14 @@ internal class ColorSchemeCoordinator :
 
     internal var onUiNightModeResolved: ((Int) -> Unit)? = null
 
-    override val resolvedUiNightMode: Int
-        get() =
-            when (colorScheme) {
-                ColorScheme.LIGHT -> Configuration.UI_MODE_NIGHT_NO
-                ColorScheme.DARK -> Configuration.UI_MODE_NIGHT_YES
-                ColorScheme.INHERIT ->
-                    parentProvider?.resolvedUiNightMode
-                        ?: systemUiNightMode
-            }
+    override fun getResolvedUiNightMode(): Int =
+        when (colorScheme) {
+            ColorScheme.LIGHT -> Configuration.UI_MODE_NIGHT_NO
+            ColorScheme.DARK -> Configuration.UI_MODE_NIGHT_YES
+            ColorScheme.INHERIT ->
+                parentProvider?.getResolvedUiNightMode()
+                    ?: systemUiNightMode
+        }
 
     internal fun onAttachedToWindow(hostView: View) {
         systemUiNightMode = hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -62,7 +61,7 @@ internal class ColorSchemeCoordinator :
     }
 
     private fun applyResolvedColorScheme() {
-        val resolved = resolvedUiNightMode
+        val resolved = getResolvedUiNightMode()
         if (resolved == lastAppliedUiNightMode) return
         lastAppliedUiNightMode = resolved
 
