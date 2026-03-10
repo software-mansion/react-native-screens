@@ -12,7 +12,7 @@ namespace react = facebook::react;
 
 @implementation RNSTabsHostEventEmitter {
 #if RCT_NEW_ARCH_ENABLED
-  std::shared_ptr<const react::RNSTabsHostEventEmitter> _reactEventEmitter;
+  std::shared_ptr<const react::RNSTabsHostIOSEventEmitter> _reactEventEmitter;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
@@ -27,7 +27,7 @@ namespace react = facebook::react;
 }
 
 #if RCT_NEW_ARCH_ENABLED
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostIOSEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }

@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSDefines.h"
+#import "RNSLog.h"
 
 #import "RNSStackScreenComponentView.h"
 #import "Swift-Bridging.h"
@@ -100,7 +101,7 @@ RNS_IGNORE_SUPER_CALL_END
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 
-  NSLog(
+  RNSLog(
       @"StackHost [%ld] mount: StackScreen [%ld] (%@) at %ld",
       self.tag,
       childComponentView.tag,
@@ -121,7 +122,7 @@ RNS_IGNORE_SUPER_CALL_END
   childScreen.stackHost = nil;
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 
-  NSLog(
+  RNSLog(
       @"StackHost [%ld] unmount: StackScreen [%ld] (%@) at %ld",
       self.tag,
       childComponentView.tag,
@@ -176,5 +177,5 @@ static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *r
                                                 screen.screenKey,
                                                 screen.activityMode]];
   }
-  NSLog(@"%@", descs);
+  RNSLog(@"%@", descs);
 }

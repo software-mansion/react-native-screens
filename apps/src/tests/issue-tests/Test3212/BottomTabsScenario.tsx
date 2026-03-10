@@ -42,7 +42,9 @@ export function BottomTabsScenario() {
                 tabScreenProps: {
                   tabKey: 'stack',
                   title: 'Scroll',
-                  scrollEdgeEffects: config,
+                  ios: {
+                    scrollEdgeEffects: config,
+                  }
                 },
               },
             ]}

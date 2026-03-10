@@ -81,27 +81,27 @@ function makeTabConfigs(
         tabKey: 'Auto',
         title: 'Auto',
         isFocused: true,
-        icon: {
-          ios: {
-            type: 'sfSymbol',
-            name: 'house.fill',
-          },
-          android: {
-            type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          },
-        },
-        selectedIcon: {
-          ios: {
-            type: 'sfSymbol',
-            name: 'house.fill',
-          },
-          android: {
-            type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          },
-        },
         orientation: tabsOrientations.home.tabScreen,
+        ios: {
+          icon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
+          },
+          selectedIcon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
+          },
+        },
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+        },
       },
       component: tabsOrientations.home.stackScreen
         ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
@@ -142,19 +142,27 @@ function makeTabConfigs(
       tabScreenProps: {
         tabKey: 'Landscape',
         title: 'Landscape',
-        icon: {
-          shared: {
+        orientation: tabsOrientations.landscape.tabScreen,
+        ios: {
+          icon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon.png'),
           },
-        },
-        selectedIcon: {
-          shared: {
+          selectedIcon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          }
+          },
         },
-        orientation: tabsOrientations.landscape.tabScreen,
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon.png'),
+          },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+        },
       },
       component: () => (
         <TabElement orientation={tabsOrientations.landscape.stackScreen} />
