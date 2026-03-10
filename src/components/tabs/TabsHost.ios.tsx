@@ -6,7 +6,6 @@ import TabsHostIOSNativeComponent, {
   type NativeProps as TabsHostIOSNativeComponentProps,
 } from '../../fabric/tabs/TabsHostIOSNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../private/logging';
 import TabsBottomAccessory from './TabsBottomAccessory';
 import { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
 import TabsBottomAccessoryContent from './TabsBottomAccessoryContent';
@@ -17,8 +16,6 @@ import { useTabsHost } from './useTabsHost';
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function TabsHost(props: TabsHostProps) {
-  bottomTabsDebugLog(`TabsHost render`);
-
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...baseProps } = props;
