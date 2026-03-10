@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import TabsHostIOSNativeComponent, {
   type NativeProps as TabsHostIOSNativeComponentProps,
-} from '../../fabric/tabs/TabsHostIOSNativeComponent';
+} from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../private/logging';
-import TabsBottomAccessory from './TabsBottomAccessory';
-import { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
-import TabsBottomAccessoryContent from './TabsBottomAccessoryContent';
-import { isIOS26OrHigher } from '../helpers/PlatformUtils';
+import { bottomTabsDebugLog } from '../../../private/logging';
+import TabsBottomAccessory from '../bottom-accessory/TabsBottomAccessory';
+import { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
+import TabsBottomAccessoryContent from '../bottom-accessory/TabsBottomAccessoryContent';
+import { isIOS26OrHigher } from '../../helpers/PlatformUtils';
 import { useTabsHost } from './useTabsHost';
 
 /**

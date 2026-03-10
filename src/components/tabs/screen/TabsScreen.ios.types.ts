@@ -3,7 +3,7 @@ import type {
   UserInterfaceStyle,
   ScrollEdgeEffect,
   PlatformIconIOS,
-} from '../../types';
+} from '../../../types';
 
 export type TabsScreenBlurEffect =
   | 'none'

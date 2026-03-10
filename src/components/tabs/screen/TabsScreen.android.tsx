@@ -11,13 +11,13 @@ import TabsScreenAndroidNativeComponent, {
   type Appearance,
   type ItemStateAppearance,
   type NativeProps as TabsScreenAndroidNativeComponentProps,
-} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
+} from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
   TabsScreenAppearance,
   TabsScreenItemStateAppearance,
 } from './TabsScreen.android.types';
-import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconAndroid } from '../../types';
+import type { TabsScreenProps } from '../screen/TabsScreen.types';
+import type { PlatformIconAndroid } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
 
 /**

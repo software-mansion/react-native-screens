@@ -13,14 +13,14 @@ import TabsScreenIOSNativeComponent, {
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/tabs/TabsScreenIOSNativeComponent';
+} from '../../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
   TabsScreenAppearance,
   TabsScreenItemAppearance,
   TabsScreenItemStateAppearance,
 } from './TabsScreen.ios.types';
 import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconIOS } from '../../types';
+import type { PlatformIconIOS } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
 
 /**

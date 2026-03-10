@@ -1,9 +1,12 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
-import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
-import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
-import { bottomTabsDebugLog } from '../../private/logging';
-import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
+import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
+import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../../fabric/tabs/TabsScreenIOSNativeComponent';
+import { bottomTabsDebugLog } from '../../../private/logging';
+import type {
+  EmptyObject,
+  TabsScreenEventHandler,
+} from '../screen/TabsScreen.types';
 
 type TabsScreenPlatformNativeComponentProps =
   | TabsScreenAndroidNativeComponentProps

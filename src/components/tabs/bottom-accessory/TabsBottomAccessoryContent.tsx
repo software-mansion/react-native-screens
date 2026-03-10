@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TabsBottomAccessoryContentProps } from './TabsBottomAccessoryContent.types';
-import TabsBottomAccessoryContentNativeComponent from '../../fabric/tabs/TabsBottomAccessoryContentNativeComponent';
+import TabsBottomAccessoryContentNativeComponent from '../../../fabric/tabs/TabsBottomAccessoryContentNativeComponent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
