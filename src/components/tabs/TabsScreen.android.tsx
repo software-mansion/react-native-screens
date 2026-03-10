@@ -28,9 +28,6 @@ function TabsScreen(props: TabsScreenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
 
-  const componentNodeRef =
-    React.useRef<React.Component<TabsScreenAndroidNativeComponentProps>>(null);
-
   const {
     onDidAppear,
     onDidDisappear,
@@ -42,9 +39,8 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { lifecycleCallbacks } =
+  const { componentNodeRef, lifecycleCallbacks } =
     useTabsScreen<TabsScreenAndroidNativeComponentProps>({
-      componentNodeRef,
       onDidAppear,
       onDidDisappear,
       onWillAppear,

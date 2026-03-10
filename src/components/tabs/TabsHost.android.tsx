@@ -29,12 +29,8 @@ function TabsHost(props: TabsHostProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const componentNodeRef =
-    React.useRef<React.Component<TabsHostAndroidNativeComponentProps>>(null);
-
-  const { onNativeFocusChangeCallback } =
+  const { componentNodeRef, onNativeFocusChangeCallback } =
     useTabsHost<TabsHostAndroidNativeComponentProps>({
-      componentNodeRef,
       controlNavigationStateInJS: experimentalControlNavigationStateInJS,
       onNativeFocusChange,
     });

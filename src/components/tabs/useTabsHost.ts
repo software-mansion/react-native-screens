@@ -5,13 +5,13 @@ import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../fabri
 import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeFocusChangeEvent } from './TabsHost.types';
+import { useRenderDebugInfo } from '../../private/hooks/useRenderDebugInfo';
 
 type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
   | TabsHostIOSNativeComponentProps;
 
-interface TabsHostConfig<T> {
-  componentNodeRef: React.RefObject<React.Component<T> | null>;
+interface TabsHostConfig {
   controlNavigationStateInJS?: boolean;
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
@@ -19,34 +19,31 @@ interface TabsHostConfig<T> {
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
-  componentNodeRef,
   controlNavigationStateInJS,
   onNativeFocusChange,
-}: TabsHostConfig<T>) {
-  const componentNodeHandle = React.useRef<number>(-1);
+}: TabsHostConfig) {
+  const componentNodeRef = useRenderDebugInfo<React.Component<T>>('TabsHost');
 
-  React.useEffect(() => {
-    if (componentNodeRef.current != null) {
-      componentNodeHandle.current =
-        findNodeHandle(componentNodeRef.current) ?? -1;
-    } else {
-      componentNodeHandle.current = -1;
-    }
-  }, []);
+  const getComponentNodeHandle = React.useCallback(() => {
+    return componentNodeRef.current
+      ? findNodeHandle(componentNodeRef.current) ?? -1
+      : -1;
+  }, [componentNodeRef]);
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
       bottomTabsDebugLog(
-        `TabsHost [${
-          componentNodeHandle.current ?? -1
-        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
+        `TabsHost [${getComponentNodeHandle()}] onNativeFocusChange: ${JSON.stringify(
+          event.nativeEvent,
+        )}`,
       );
       onNativeFocusChange?.(event);
     },
-    [onNativeFocusChange],
+    [getComponentNodeHandle, onNativeFocusChange],
   );
 
   return {
+    componentNodeRef,
     controlNavigationStateInJS:
       controlNavigationStateInJS ??
       featureFlags.experiment.controlledBottomTabs,

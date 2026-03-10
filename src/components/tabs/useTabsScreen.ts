@@ -4,13 +4,13 @@ import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../..
 import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
+import { useRenderDebugInfo } from '../../private/hooks/useRenderDebugInfo';
 
 type TabsScreenPlatformNativeComponentProps =
   | TabsScreenAndroidNativeComponentProps
   | TabsScreenIOSNativeComponentProps;
 
-interface TabsScreenConfig<T> {
-  componentNodeRef: React.RefObject<React.Component<T> | null>;
+interface TabsScreenConfig {
   onDidAppear?: TabsScreenEventHandler<EmptyObject>;
   onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
   onWillAppear?: TabsScreenEventHandler<EmptyObject>;
@@ -22,69 +22,65 @@ interface TabsScreenConfig<T> {
 export function useTabsScreen<
   T extends TabsScreenPlatformNativeComponentProps,
 >({
-  componentNodeRef,
   onDidAppear,
   onDidDisappear,
   onWillAppear,
   onWillDisappear,
   isFocused = false,
   tabKey,
-}: TabsScreenConfig<T>) {
-  const componentNodeHandle = React.useRef<number>(-1);
+}: TabsScreenConfig) {
+  const componentNodeRef = useRenderDebugInfo<React.Component<T>>(
+    `TabsScreen (${tabKey})`,
+  );
 
-  React.useEffect(() => {
-    if (componentNodeRef.current != null) {
-      componentNodeHandle.current =
-        findNodeHandle(componentNodeRef.current) ?? -1;
-    } else {
-      componentNodeHandle.current = -1;
-    }
-  }, []);
+  const getComponentNodeHandle = React.useCallback(() => {
+    return componentNodeRef.current
+      ? findNodeHandle(componentNodeRef.current) ?? -1
+      : -1;
+  }, [componentNodeRef]);
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
+        `TabsScreen [${getComponentNodeHandle()}] onWillAppear received`,
       );
       onWillAppear?.(event);
     },
-    [onWillAppear],
+    [onWillAppear, getComponentNodeHandle],
   );
 
   const onDidAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
+        `TabsScreen [${getComponentNodeHandle()}] onDidAppear received`,
       );
       onDidAppear?.(event);
     },
-    [onDidAppear],
+    [onDidAppear, getComponentNodeHandle],
   );
 
   const onWillDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
+        `TabsScreen [${getComponentNodeHandle()}] onWillDisappear received`,
       );
       onWillDisappear?.(event);
     },
-    [onWillDisappear],
+    [onWillDisappear, getComponentNodeHandle],
   );
 
   const onDidDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
-        `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
+        `TabsScreen [${getComponentNodeHandle()}] onDidDisappear received`,
       );
       onDidDisappear?.(event);
     },
-    [onDidDisappear],
+    [onDidDisappear, getComponentNodeHandle],
   );
 
   bottomTabsDebugLog(
-    `TabsScreen [${
-      componentNodeHandle.current ?? -1
-    }] render; tabKey: ${tabKey}, isFocused: ${isFocused}`,
+    `TabsScreen [${getComponentNodeHandle()}] render; tabKey: ${tabKey}, isFocused: ${isFocused}`,
   );
 
   return {
