@@ -6,7 +6,6 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
@@ -67,7 +66,6 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    @ReactProp(name = "tabBarHidden")
     override fun setTabBarHidden(
         view: TabsHost,
         value: Boolean,
@@ -75,7 +73,6 @@ class TabsHostViewManager :
         view.tabBarHidden = value
     }
 
-    @ReactProp(name = "nativeContainerBackgroundColor", customType = "Color")
     override fun setNativeContainerBackgroundColor(
         view: TabsHost,
         value: Int?,

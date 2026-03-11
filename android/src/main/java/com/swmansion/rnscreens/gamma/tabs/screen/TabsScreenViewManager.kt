@@ -8,7 +8,6 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
@@ -55,8 +54,6 @@ class TabsScreenViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    // Annotation is Paper only
-    @ReactProp(name = "isFocused")
     override fun setIsFocused(
         view: TabsScreen,
         value: Boolean,
@@ -65,7 +62,6 @@ class TabsScreenViewManager :
         view.isFocusedTab = value
     }
 
-    @ReactProp(name = "tabKey")
     override fun setTabKey(
         view: TabsScreen,
         value: String?,
@@ -73,7 +69,6 @@ class TabsScreenViewManager :
         view.tabKey = value
     }
 
-    @ReactProp(name = "badgeValue")
     override fun setBadgeValue(
         view: TabsScreen,
         value: String?,
@@ -81,7 +76,6 @@ class TabsScreenViewManager :
         view.badgeValue = value
     }
 
-    @ReactProp(name = "title")
     override fun setTitle(
         view: TabsScreen,
         value: String?,
@@ -89,7 +83,6 @@ class TabsScreenViewManager :
         view.tabTitle = value
     }
 
-    @ReactProp(name = "specialEffects")
     override fun setSpecialEffects(
         view: TabsScreen,
         value: ReadableMap?,
@@ -112,7 +105,6 @@ class TabsScreenViewManager :
         view.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = scrollToTop
     }
 
-    @ReactProp(name = "tabBarItemTestID")
     override fun setTabBarItemTestID(
         view: TabsScreen,
         value: String?,
@@ -120,7 +112,6 @@ class TabsScreenViewManager :
         view.tabBarItemTestID = value
     }
 
-    @ReactProp(name = "tabBarItemAccessibilityLabel")
     override fun setTabBarItemAccessibilityLabel(
         view: TabsScreen,
         value: String?,
@@ -130,7 +121,6 @@ class TabsScreenViewManager :
 
     // Android specific
 
-    @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
         view: TabsScreen,
         value: String?,
@@ -138,7 +128,6 @@ class TabsScreenViewManager :
         view.drawableIconResourceName = value
     }
 
-    @ReactProp(name = "selectedDrawableIconResourceName")
     override fun setSelectedDrawableIconResourceName(
         view: TabsScreen,
         value: String?,
@@ -146,7 +135,6 @@ class TabsScreenViewManager :
         view.selectedDrawableIconResourceName = value
     }
 
-    @ReactProp(name = "imageIconResource")
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
@@ -157,7 +145,6 @@ class TabsScreenViewManager :
         }
     }
 
-    @ReactProp(name = "selectedImageIconResource")
     override fun setSelectedImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
@@ -168,7 +155,6 @@ class TabsScreenViewManager :
         }
     }
 
-    @ReactProp(name = "standardAppearance")
     override fun setStandardAppearance(
         view: TabsScreen,
         value: ReadableMap?,

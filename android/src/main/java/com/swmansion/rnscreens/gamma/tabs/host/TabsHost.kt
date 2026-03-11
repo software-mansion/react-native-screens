@@ -16,7 +16,6 @@ import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeListener
@@ -241,12 +240,9 @@ class TabsHost(
             applyDayNightUiMode(uiNightMode)
         }
 
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // On Paper the children are not yet attached here.
-            containerUpdateCoordinator.let {
-                it.invalidateAll()
-                it.runContainerUpdate()
-            }
+        containerUpdateCoordinator.let {
+            it.invalidateAll()
+            it.runContainerUpdate()
         }
     }
 
