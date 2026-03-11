@@ -25,7 +25,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
   const { tabConfigs, ...restProps } = props;
 
-  const [focusedTabKey, setFocusedTabKey] = React.useState<string>(() => {
+  const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
     console.log('BottomTabsContainer focusedStateKey initial state computed');
 
     if (props.tabConfigs.length === 0) {
@@ -34,21 +34,21 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
     const maybeUserRequestedFocusedTab = tabConfigs.find(
       tabConfig => tabConfig.tabScreenProps.isFocused === true,
-    )?.tabScreenProps.tabKey;
+    )?.tabScreenProps.screenKey;
 
     if (maybeUserRequestedFocusedTab != null) {
       return maybeUserRequestedFocusedTab;
     }
 
     // Default to first tab
-    return tabConfigs[0].tabScreenProps.tabKey;
+    return tabConfigs[0].tabScreenProps.screenKey;
   });
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      const tabKey = event.nativeEvent.tabKey;
+      const screenKey = event.nativeEvent.screenKey;
 
       // Use `startTransition` only if the state is controlled in JS
       // const transitionFn = !configWrapper.config.controlledBottomTabs
@@ -67,8 +67,8 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       // };
 
       transitionFn(() => {
-        console.info(`Starting transition to ${tabKey}`);
-        setFocusedTabKey(tabKey);
+        console.info(`Starting transition to ${screenKey}`);
+        setFocusedScreenKey(screenKey);
       });
     },
     [],
@@ -84,17 +84,17 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabConfigs.map(tabConfig => {
-        const tabKey = tabConfig.tabScreenProps.tabKey;
-        const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
+        const screenKey = tabConfig.tabScreenProps.screenKey;
+        const isFocused = tabConfig.tabScreenProps.screenKey === focusedScreenKey;
         console.info(
-          `BottomTabsContainer map to component -> ${tabKey} ${
+          `BottomTabsContainer map to component -> ${screenKey} ${
             isFocused ? '(focused)' : ''
           }`,
         );
 
         return (
           <Tabs.Screen
-            key={tabKey}
+            key={screenKey}
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >

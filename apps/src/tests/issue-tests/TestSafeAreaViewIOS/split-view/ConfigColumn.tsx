@@ -20,7 +20,7 @@ export default function ConfigColumn({
     .map(index => {
       const configuration: TabConfiguration = {
         tabScreenProps: {
-          tabKey: 'column' + index,
+          screenKey: 'column' + index,
           title: 'Column ' + index,
           ios: {
             icon: {

@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import ConfigWrapperContext from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 
 export interface TabConfigurationSummaryProps {
-  tabKey: string;
+  screenKey: string;
 }
 
 export function TabConfigurationSummary(props: TabConfigurationSummaryProps) {
@@ -11,7 +11,7 @@ export function TabConfigurationSummary(props: TabConfigurationSummaryProps) {
 
   return (
     <>
-      <Text>tabKey: {props.tabKey}</Text>
+      <Text>screenKey: {props.screenKey}</Text>
       <Text>
         heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
       </Text>

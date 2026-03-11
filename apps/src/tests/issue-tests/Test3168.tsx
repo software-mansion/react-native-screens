@@ -202,7 +202,7 @@ function TabsStackComponent() {
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
-        tabKey: 'main',
+        screenKey: 'main',
         title: 'Main',
         ios: {
           icon: {
@@ -215,7 +215,7 @@ function TabsStackComponent() {
     },
     {
       tabScreenProps: {
-        tabKey: 'another',
+        screenKey: 'another',
         title: 'Another',
         ios: {
           icon: {
@@ -228,7 +228,7 @@ function TabsStackComponent() {
     },
     {
       tabScreenProps: {
-        tabKey: 'examples',
+        screenKey: 'examples',
         title: 'Search',
         ios: {
           icon: {

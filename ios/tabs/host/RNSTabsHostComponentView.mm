@@ -254,7 +254,7 @@ namespace react = facebook::react;
 {
   return [_reactEventEmitter
       emitOnNativeFocusChange:OnNativeFocusChangePayload{
-                                  .tabKey = tabScreen.tabKey,
+                                  .screenKey = tabScreen.screenKey,
                                   .repeatedSelectionHandledBySpecialEffect = repeatedSelectionHandledBySpecialEffect}];
 }
 

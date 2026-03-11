@@ -38,7 +38,7 @@ function ConfigScreen() {
         onValueChange={value =>
           dispatch({
             type: 'tabScreen',
-            tabKey: 'Tab1',
+            screenKey: 'Tab1',
             config: {
               tabScreenProps: {
                 orientation: value === 'undefined' ? undefined : value,

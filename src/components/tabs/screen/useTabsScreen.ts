@@ -16,7 +16,7 @@ interface TabsScreenConfig<T> {
   onWillAppear?: TabsScreenEventHandler<EmptyObject>;
   onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
   isFocused?: boolean;
-  tabKey: string;
+  screenKey: string;
 }
 
 export function useTabsScreen<
@@ -28,7 +28,7 @@ export function useTabsScreen<
   onWillAppear,
   onWillDisappear,
   isFocused = false,
-  tabKey,
+  screenKey,
 }: TabsScreenConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -84,7 +84,7 @@ export function useTabsScreen<
   bottomTabsDebugLog(
     `TabsScreen [${
       componentNodeHandle.current ?? -1
-    }] render; tabKey: ${tabKey}, isFocused: ${isFocused}`,
+    }] render; screenKey: ${screenKey}, isFocused: ${isFocused}`,
   );
 
   return {

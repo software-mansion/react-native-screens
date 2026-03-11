@@ -35,12 +35,12 @@ export function BottomTabsScenario() {
             tabConfigs={[
               {
                 component: ConfigComponent,
-                tabScreenProps: { tabKey: 'config', title: 'Config' },
+                tabScreenProps: { screenKey: 'config', title: 'Config' },
               },
               {
                 component: ScrollViewTemplate,
                 tabScreenProps: {
-                  tabKey: 'stack',
+                  screenKey: 'stack',
                   title: 'Scroll',
                   ios: {
                     scrollEdgeEffects: config,

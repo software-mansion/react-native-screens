@@ -4,8 +4,8 @@ import { TabsHostProps } from 'react-native-screens';
 
 type StaticTabScreenProps<S extends KeyList> = Omit<
   TabConfiguration['tabScreenProps'],
-  'tabKey'
-> & { tabKey: Extract<keyof S, string> };
+  'screenKey'
+> & { screenKey: Extract<keyof S, string> };
 
 export type StaticTabConfiguration<S extends KeyList> = Omit<
   TabConfiguration,
@@ -21,7 +21,7 @@ export type StaticTabsContainerProps<S extends KeyList> = TabsHostProps & {
 export type TabConfigUpdate<S extends KeyList> =
   | {
       type: 'tabScreen';
-      tabKey: Extract<keyof S, string>;
+      screenKey: Extract<keyof S, string>;
       config: Partial<
         Omit<StaticTabConfiguration<S>, 'tabScreenProps'> & {
           tabScreenProps: Partial<StaticTabScreenProps<S>>;

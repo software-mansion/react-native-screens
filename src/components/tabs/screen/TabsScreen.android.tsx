@@ -50,7 +50,7 @@ function TabsScreen(props: TabsScreenProps) {
       onWillAppear,
       onWillDisappear,
       isFocused,
-      tabKey: filteredBaseProps.tabKey,
+      screenKey: filteredBaseProps.screenKey,
     });
 
   const iconProps = parseIconsToNativeProps(

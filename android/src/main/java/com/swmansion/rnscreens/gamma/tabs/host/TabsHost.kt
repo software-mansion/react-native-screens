@@ -218,9 +218,9 @@ class TabsHost(
             val fragment = getFragmentForMenuItemId(item.itemId)
             val repeatedSelectionHandledBySpecialEffect =
                 if (fragment == currentFocusedTab) specialEffectsHandler.handleRepeatedTabSelection() else false
-            val tabKey = fragment?.tabsScreen?.tabKey ?: "undefined"
+            val screenKey = fragment?.tabsScreen?.screenKey ?: "undefined"
             eventEmitter.emitOnNativeFocusChange(
-                tabKey,
+                screenKey,
                 item.itemId,
                 repeatedSelectionHandledBySpecialEffect,
             )

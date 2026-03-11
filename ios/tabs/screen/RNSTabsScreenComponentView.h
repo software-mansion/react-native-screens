@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 // architecture is dropped.
 
 @property (nonatomic) BOOL isSelectedScreen;
-@property (nonatomic, nullable) NSString *tabKey;
+@property (nonatomic, nullable) NSString *screenKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
 @property (nonatomic, nullable) NSString *tabBarItemTestID;

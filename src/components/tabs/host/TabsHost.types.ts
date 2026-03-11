@@ -5,7 +5,7 @@ import type { TabsHostPropsIOS } from './TabsHost.ios.types';
 // #region General helpers
 
 export type NativeFocusChangeEvent = {
-  tabKey: string;
+  screenKey: string;
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 

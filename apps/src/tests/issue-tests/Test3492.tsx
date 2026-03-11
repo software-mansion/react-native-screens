@@ -27,7 +27,7 @@ import ConfigWrapperContext, {
 import LongText from '../../shared/LongText';
 import { someExtensiveComputation } from './TestBottomTabs/utils';
 
-type TabKey = 'Tab2' | 'Tab3' | 'Tab4';
+type ScreenKey = 'Tab2' | 'Tab3' | 'Tab4';
 
 type ContentType = 'view' | 'scrollViewWithText' | 'scrollViewWithRects';
 
@@ -46,7 +46,7 @@ type SingleTabConfig = {
 
 type AppConfig = {
   containerBackground: string;
-  tabs: Record<TabKey, SingleTabConfig>;
+  tabs: Record<ScreenKey, SingleTabConfig>;
 };
 
 type BackgroundContextType = {
@@ -270,9 +270,9 @@ const RectsGenerator = ({ config }: { config: RectConfig }) => {
   );
 };
 
-const TestScreenRenderer = ({ tabKey }: { tabKey: TabKey }) => {
+const TestScreenRenderer = ({ screenKey }: { screenKey: ScreenKey }) => {
   const { config } = useBackgroundTestContext();
-  const tabConfig = config.tabs[tabKey];
+  const tabConfig = config.tabs[screenKey];
 
   const Container = tabConfig.contentType === 'view' ? View : ScrollView;
 
@@ -290,7 +290,7 @@ const TestScreenRenderer = ({ tabKey }: { tabKey: TabKey }) => {
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
-            Hello {tabKey}
+            Hello {screenKey}
           </Text>
           <Text>Bg: {tabConfig.reactBackground}</Text>
         </View>
@@ -308,7 +308,7 @@ const TestScreenRenderer = ({ tabKey }: { tabKey: TabKey }) => {
 function ConfigScreen() {
   const { config, setConfig, applyPreset } = useBackgroundTestContext();
 
-  const updateTab = (key: TabKey, update: Partial<SingleTabConfig>) => {
+  const updateTab = (key: ScreenKey, update: Partial<SingleTabConfig>) => {
     setConfig(prev => ({
       ...prev,
       tabs: {
@@ -318,7 +318,7 @@ function ConfigScreen() {
     }));
   };
 
-  const updateRects = (key: TabKey, update: Partial<RectConfig>) => {
+  const updateRects = (key: ScreenKey, update: Partial<RectConfig>) => {
     setConfig(prev => ({
       ...prev,
       tabs: {
@@ -382,7 +382,7 @@ function ConfigScreen() {
         />
       </ConfigSection>
 
-      {(Object.keys(config.tabs) as TabKey[]).map(key => {
+      {(Object.keys(config.tabs) as ScreenKey[]).map(key => {
         const tConfig = config.tabs[key];
         return (
           <ConfigSection key={key} title={`Config: ${key}`}>
@@ -449,13 +449,13 @@ function ConfigScreen() {
 }
 
 function ScreenTab2() {
-  return <TestScreenRenderer tabKey="Tab2" />;
+  return <TestScreenRenderer screenKey="Tab2" />;
 }
 function ScreenTab3() {
-  return <TestScreenRenderer tabKey="Tab3" />;
+  return <TestScreenRenderer screenKey="Tab3" />;
 }
 function ScreenTab4() {
-  return <TestScreenRenderer tabKey="Tab4" />;
+  return <TestScreenRenderer screenKey="Tab4" />;
 }
 
 function Tabs() {
@@ -468,7 +468,7 @@ function Tabs() {
     () => [
       {
         tabScreenProps: {
-          tabKey: 'Tab1',
+          screenKey: 'Tab1',
           title: 'Config',
           icon: {
             ios: { type: 'sfSymbol', name: 'gear' },
@@ -479,7 +479,7 @@ function Tabs() {
       },
       {
         tabScreenProps: {
-          tabKey: 'Tab2',
+          screenKey: 'Tab2',
           title: 'Tab 2',
           icon: { ios: { type: 'sfSymbol', name: 'square' } },
           style: { backgroundColor: config.tabs.Tab2.navBackground },
@@ -488,7 +488,7 @@ function Tabs() {
       },
       {
         tabScreenProps: {
-          tabKey: 'Tab3',
+          screenKey: 'Tab3',
           title: 'Tab 3',
           icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
           style: { backgroundColor: config.tabs.Tab3.navBackground },
@@ -497,7 +497,7 @@ function Tabs() {
       },
       {
         tabScreenProps: {
-          tabKey: 'Tab4',
+          screenKey: 'Tab4',
           title: 'Tab 4',
           icon: { ios: { type: 'sfSymbol', name: 'circle' } },
           style: { backgroundColor: config.tabs.Tab4.navBackground },
