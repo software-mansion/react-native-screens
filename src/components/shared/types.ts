@@ -25,7 +25,7 @@ export type ColorScheme = 'light' | 'dark';
 
 export type Direction = 'ltr' | 'rtl';
 
-export type Orientation =
+export type InterfaceOrientation =
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'
