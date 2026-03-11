@@ -1,3 +1,27 @@
+export type BlurEffect =
+  | 'none'
+  | 'systemDefault'
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
+
 export type ColorScheme = 'inherit' | 'light' | 'dark';
 
 export type Direction = 'inherit' | 'ltr' | 'rtl';

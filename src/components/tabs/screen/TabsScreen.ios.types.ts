@@ -2,32 +2,11 @@ import type { ColorValue, TextStyle } from 'react-native';
 import type {
   UserInterfaceStyle,
   ScrollEdgeEffect,
-  PlatformIconIOS,
-} from '../../../types';
+  BlurEffect,
+} from '../../shared/types';
+import type { PlatformIconIOS } from '../../../types';
 
-export type TabsScreenBlurEffect =
-  | 'none'
-  | 'systemDefault'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type TabsScreenBlurEffect = BlurEffect;
 
 export type TabsScreenSystemItem =
   | 'bookmarks'
