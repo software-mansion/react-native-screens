@@ -166,6 +166,7 @@ export { default as Test3345 } from './Test3345';
 export { default as Test3346 } from './Test3346';
 export { default as Test3369 } from './Test3369';
 export { default as Test3379 } from './Test3379';
+export { default as Test3405 } from './Test3405';
 export { default as Test3422 } from './Test3422';
 export { default as Test3425 } from './Test3425';
 export { default as Test3443 } from './Test3443';
