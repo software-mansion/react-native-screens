@@ -7,6 +7,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderConfigurationProviding
+import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
 
 @SuppressLint("ViewConstructor")
 internal class StackScreenCoordinatorLayout(
@@ -21,6 +22,14 @@ internal class StackScreenCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
                 // TODO: when adding possibility to hide the header, this needs to be moved to coordinator
                 behavior = AppBarLayout.ScrollingViewBehavior()
+            },
+        )
+
+        // TODO: debug-only
+        applyHeaderConfiguration(
+            object : StackScreenHeaderConfigurationProviding {
+                override val headerType = StackScreenHeaderType.SMALL
+                override val title = "Hello, World!"
             },
         )
     }
