@@ -15,11 +15,6 @@ import { UnsafeMixed } from './codegenUtils';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-type LifecycleStateChangeEvent = Readonly<{
-  previousState: CT.Int32;
-  newState: CT.Int32;
-}>;
-
 // #endregion General helpers
 
 // #region iOS-specific helpers
@@ -116,7 +111,6 @@ type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
   // Events
-  onLifecycleStateChange?: CT.DirectEventHandler<LifecycleStateChangeEvent>;
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
