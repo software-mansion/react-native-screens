@@ -10,6 +10,8 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import type {
+  BlurEffect,
+  Direction,
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
@@ -45,28 +47,7 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
-export type BlurEffectTypes =
-  | 'none'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =
@@ -140,12 +121,6 @@ export type PlatformIconAndroid =
       name: string;
     }
   | PlatformIconShared;
-
-export interface PlatformIcon {
-  ios?: PlatformIconIOS;
-  android?: PlatformIconAndroid;
-  shared?: PlatformIconShared;
-}
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -708,7 +683,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  direction?: 'rtl' | 'ltr';
+  direction?: Direction;
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios

@@ -2,34 +2,13 @@ import type { ColorValue, TextStyle } from 'react-native';
 import type {
   UserInterfaceStyle,
   ScrollEdgeEffect,
-  PlatformIconIOS,
-} from '../../../types';
+  BlurEffect,
+} from '../../shared/types';
+import type { PlatformIconIOS } from '../../../types';
 
-export type TabsScreenBlurEffect =
-  | 'none'
-  | 'systemDefault'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
-export type TabsSystemItem =
+export type TabsScreenSystemItem =
   | 'bookmarks'
   | 'contacts'
   | 'downloads'
@@ -120,7 +99,6 @@ export interface TabsScreenAppearanceIOS {
   tabBarShadowColor?: ColorValue;
 }
 
-// iOS-specific
 export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines appearance for all tab bar items which are in their enabled, unselected and unfocused state.
@@ -152,7 +130,6 @@ export interface TabsScreenItemAppearanceIOS {
   disabled?: TabsScreenItemStateAppearanceIOS;
 }
 
-// iOS-specific
 export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
@@ -294,7 +271,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  systemItem?: TabsSystemItem;
+  systemItem?: TabsScreenSystemItem;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`

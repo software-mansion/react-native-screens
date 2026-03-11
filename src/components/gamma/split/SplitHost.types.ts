@@ -1,4 +1,5 @@
 import type { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { InterfaceOrientation } from '../../shared/types';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -25,16 +26,7 @@ export type SplitDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
-export type SplitHostOrientation =
-  | 'inherit'
-  | 'all'
-  | 'allButUpsideDown'
-  | 'portrait'
-  | 'portraitUp'
-  | 'portraitDown'
-  | 'landscape'
-  | 'landscapeLeft'
-  | 'landscapeRight';
+export type SplitHostOrientation = InterfaceOrientation | 'inherit';
 
 export interface SplitColumnMetrics {
   /**
