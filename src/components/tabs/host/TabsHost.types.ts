@@ -10,7 +10,7 @@ export type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
-export type TabsHostColorScheme = ColorScheme;
+export type TabsHostColorScheme = ColorScheme | 'inherit';
 
 export type TabsHostDirection = Direction;
 

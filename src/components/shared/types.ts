@@ -21,7 +21,7 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type ColorScheme = 'inherit' | 'light' | 'dark';
+export type ColorScheme = 'light' | 'dark';
 
 export type Direction = 'inherit' | 'ltr' | 'rtl';
 
