@@ -16,11 +16,6 @@ export type TabsScreenEventHandler<T> = (
   event: NativeSyntheticEvent<T>,
 ) => void;
 
-export type LifecycleStateChangeEvent = Readonly<{
-  previousState: number;
-  newState: number;
-}>;
-
 // Currently iOS-only, but we plan to support it on Android
 export type TabsScreenOrientation =
   | 'inherit'
