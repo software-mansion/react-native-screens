@@ -26,7 +26,6 @@ export type ColorScheme = 'light' | 'dark';
 export type Direction = 'ltr' | 'rtl';
 
 export type Orientation =
-  | 'inherit'
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'

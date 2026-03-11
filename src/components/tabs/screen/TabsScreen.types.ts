@@ -18,7 +18,7 @@ export type TabsScreenEventHandler<T> = (
 ) => void;
 
 // Currently iOS-only, but we plan to support it on Android
-export type TabsScreenOrientation = Orientation;
+export type TabsScreenOrientation = Orientation | 'inherit';
 
 // #endregion General helpers
 
