@@ -80,6 +80,13 @@ class TabsHostViewManager :
         view.nativeContainerBackgroundColor = value
     }
 
+    override fun setTabBarRespectsIMEInsets(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.tabBarRespectsIMEInsets = value
+    }
+
     override fun setColorScheme(
         view: TabsHost,
         value: String?,

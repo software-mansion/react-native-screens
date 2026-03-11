@@ -46,7 +46,9 @@ function TabsHost(props: TabsHostProps) {
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
-      {...filteredBaseProps}>
+      {...filteredBaseProps}
+      // Android-specific
+      tabBarRespectsIMEInsets={android?.tabBarRespectsIMEInsets}>
       {children}
     </TabsHostAndroidNativeComponent>
   );

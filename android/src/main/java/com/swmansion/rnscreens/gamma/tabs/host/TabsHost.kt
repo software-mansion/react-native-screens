@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.content.res.Configuration
-import android.os.Build
 import android.view.Choreographer
 import android.view.Gravity
 import android.view.MenuItem
@@ -9,7 +8,9 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.graphics.Insets
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
@@ -187,6 +188,8 @@ class TabsHost(
             background = newValue?.toDrawable()
         }
     }
+
+    var tabBarRespectsIMEInsets: Boolean = false
 
     internal var colorScheme: ColorScheme by colorSchemeCoordinator::colorScheme
 
@@ -474,21 +477,37 @@ class TabsHost(
 
     override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
-    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return super.dispatchApplyWindowInsets(insets)
+    private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
+        if (tabBarRespectsIMEInsets) {
+            return insets
         }
 
+        val compatInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
+
+        return WindowInsetsCompat
+            .Builder(compatInsets)
+            .setInsets(WindowInsetsCompat.Type.ime(), Insets.NONE)
+            .build()
+            .toWindowInsets()
+    }
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
         // On Android versions prior to R, insets dispatch is broken.
         // In order to mitigate this, we override dispatchApplyWindowInsets with
         // correct implementation. To simplify it, we skip the call to TabsHost's
-        // onApplyWindowInsets.
+        // onApplyWindowInsets. We also use this method to dispatch different insets to
+        // BottomNavigationView so that IME inset can be controlled via prop.
         if (insets?.isConsumed ?: true) {
             return insets
         }
 
         for (child in children) {
-            child.dispatchApplyWindowInsets(insets)
+            if (child === bottomNavigationView) {
+                val insetsForBottomNavigationView = getInsetsForBottomNavigationView(insets)
+                child.dispatchApplyWindowInsets(insetsForBottomNavigationView)
+            } else {
+                child.dispatchApplyWindowInsets(insets)
+            }
         }
 
         return insets
