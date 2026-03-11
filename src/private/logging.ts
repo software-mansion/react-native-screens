@@ -1,4 +1,4 @@
-import { featureFlags } from 'react-native-screens';
+import { featureFlags } from '../flags';
 
 export const RNSLog = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
