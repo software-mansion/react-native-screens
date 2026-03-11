@@ -1,6 +1,7 @@
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
+import { ColorScheme } from '../../shared/types';
 
 // #region General helpers
 
@@ -9,7 +10,7 @@ export type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
-export type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+export type TabsHostColorScheme = ColorScheme;
 
 export type TabsHostDirection = 'inherit' | 'ltr' | 'rtl';
 
