@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import type {
   BlurEffect,
+  Direction,
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
@@ -682,7 +683,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  direction?: 'rtl' | 'ltr';
+  direction?: Direction;
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios

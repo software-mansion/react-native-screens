@@ -12,7 +12,7 @@ export type NativeFocusChangeEvent = {
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';
 
-export type TabsHostDirection = Direction;
+export type TabsHostDirection = Direction | 'inherit';
 
 export type TabsHostNativeContainerStyleProps = {
   /**
