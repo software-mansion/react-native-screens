@@ -10,6 +10,7 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import type {
+  BlurEffect,
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
@@ -45,28 +46,7 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
-export type BlurEffectTypes =
-  | 'none'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =

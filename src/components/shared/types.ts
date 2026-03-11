@@ -1,6 +1,5 @@
 export type BlurEffect =
   | 'none'
-  | 'systemDefault'
   | 'extraLight'
   | 'light'
   | 'dark'

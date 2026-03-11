@@ -6,7 +6,7 @@ import type {
 } from '../../shared/types';
 import type { PlatformIconIOS } from '../../../types';
 
-export type TabsScreenBlurEffect = BlurEffect;
+export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
 export type TabsScreenSystemItem =
   | 'bookmarks'
