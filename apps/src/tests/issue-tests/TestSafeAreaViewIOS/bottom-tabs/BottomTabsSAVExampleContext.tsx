@@ -1,13 +1,13 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 import {
-  type TabsSystemItem,
+  type TabsScreenSystemItem,
   TabBarMinimizeBehavior,
 } from 'react-native-screens';
 import { ContentType } from '../shared';
 
 export interface BottomTabsSAVExampleConfig {
   tabBarMinimizeBehavior: TabBarMinimizeBehavior;
-  tabBarItemSystemItem: 'disabled' | TabsSystemItem;
+  tabBarItemSystemItem: 'disabled' | TabsScreenSystemItem;
 
   safeAreaTopEdge: boolean;
   safeAreaBottomEdge: boolean;

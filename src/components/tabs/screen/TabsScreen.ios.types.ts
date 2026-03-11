@@ -29,7 +29,7 @@ export type TabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type TabsSystemItem =
+export type TabsScreenSystemItem =
   | 'bookmarks'
   | 'contacts'
   | 'downloads'
@@ -292,7 +292,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  systemItem?: TabsSystemItem;
+  systemItem?: TabsScreenSystemItem;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
