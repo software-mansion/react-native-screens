@@ -1,7 +1,7 @@
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
-import { ColorScheme, Direction } from '../../shared/types';
+import type { ColorScheme, Direction } from '../../shared/types';
 
 // #region General helpers
 

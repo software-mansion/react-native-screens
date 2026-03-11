@@ -1,5 +1,5 @@
 import type { NativeSyntheticEvent, ViewProps } from 'react-native';
-import { Orientation } from '../../shared/types';
+import type { Orientation } from '../../shared/types';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;

@@ -7,7 +7,7 @@ import type {
 
 import type { TabsScreenPropsIOS } from './TabsScreen.ios.types';
 import type { TabsScreenPropsAndroid } from './TabsScreen.android.types';
-import { Orientation } from '../../shared/types';
+import type { Orientation } from '../../shared/types';
 
 // #region General helpers
 
