@@ -10,6 +10,8 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+
 type LayoutDirection = 'inherit' | 'ltr' | 'rtl';
 
 // #endregion General helpers
@@ -24,8 +26,6 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
-
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
@@ -35,6 +35,7 @@ export interface NativeProps extends ViewProps {
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue;
+  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // We can't use `direction` name for this prop as it's also used by
   // direction style View prop.
@@ -49,7 +50,6 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
-  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {

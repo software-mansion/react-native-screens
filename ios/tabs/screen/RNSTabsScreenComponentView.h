@@ -8,9 +8,7 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -24,10 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                            RNSViewControllerInvalidating
-#else
+                                            RNSSafeAreaProviding
+#if !RCT_NEW_ARCH_ENABLED
+                                            ,
                                             RCTInvalidating
 #endif
                                             >

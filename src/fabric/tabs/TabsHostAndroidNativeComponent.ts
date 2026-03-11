@@ -10,6 +10,8 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+
 // #endregion General helpers
 
 // #region Android-specific helpers
@@ -23,6 +25,7 @@ export interface NativeProps extends ViewProps {
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue;
+  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // Android-specific props
   tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false>;

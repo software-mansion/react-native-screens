@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   enableFreeze,
-  TabsScreenPropsAndroid,
+  TabsScreenAppearanceAndroid,
 } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
@@ -19,7 +19,7 @@ import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/pr
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
-const DEFAULT_APPEARANCE_ANDROID: TabsScreenPropsAndroid.TabsScreenAppearance = {
+const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarBackgroundColor: Colors.NavyLight100,
   tabBarItemRippleColor: Colors.WhiteTransparentDark,
   tabBarItemLabelVisibilityMode: 'auto',
