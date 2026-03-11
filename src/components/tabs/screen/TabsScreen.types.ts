@@ -7,6 +7,7 @@ import type {
 
 import type { TabsScreenPropsIOS } from './TabsScreen.ios.types';
 import type { TabsScreenPropsAndroid } from './TabsScreen.android.types';
+import { Orientation } from '../../shared/types';
 
 // #region General helpers
 
@@ -17,16 +18,7 @@ export type TabsScreenEventHandler<T> = (
 ) => void;
 
 // Currently iOS-only, but we plan to support it on Android
-export type TabsScreenOrientation =
-  | 'inherit'
-  | 'all'
-  | 'allButUpsideDown'
-  | 'portrait'
-  | 'portraitUp'
-  | 'portraitDown'
-  | 'landscape'
-  | 'landscapeLeft'
-  | 'landscapeRight';
+export type TabsScreenOrientation = Orientation;
 
 // #endregion General helpers
 
