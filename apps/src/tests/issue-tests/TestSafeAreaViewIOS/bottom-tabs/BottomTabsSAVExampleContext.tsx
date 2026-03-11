@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
-import {
-  type TabsScreenSystemItem,
+import type {
+  TabsScreenSystemItem,
   TabBarMinimizeBehavior,
 } from 'react-native-screens';
 import { ContentType } from '../shared';
