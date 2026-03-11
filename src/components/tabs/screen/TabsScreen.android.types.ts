@@ -22,7 +22,6 @@ export interface TabsScreenItemStateAppearanceAndroid {
   tabBarItemIconColor?: ColorValue;
 }
 
-// Note: will be renamed in components split follow-up PR
 export interface TabsScreenAppearanceAndroid {
   /**
    * @summary Specifies the background color for the entire tab bar.

@@ -120,7 +120,6 @@ export interface TabsScreenAppearanceIOS {
   tabBarShadowColor?: ColorValue;
 }
 
-// iOS-specific
 export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines appearance for all tab bar items which are in their enabled, unselected and unfocused state.
@@ -152,7 +151,6 @@ export interface TabsScreenItemAppearanceIOS {
   disabled?: TabsScreenItemStateAppearanceIOS;
 }
 
-// iOS-specific
 export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
