@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -15,6 +16,14 @@ internal sealed class StackScreenAppBarLayout(
     context: Context,
 ) : AppBarLayout(context) {
     abstract val toolbar: MaterialToolbar
+
+    init {
+        layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        isLiftOnScroll = true
+        // TODO: this won't work with nested header but there were some problems with lift on scroll
+        //       without it when I was researching this.
+        fitsSystemWindows = true
+    }
 
     internal class Small(
         context: Context,

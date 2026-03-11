@@ -21,12 +21,6 @@ class StackScreen(
         ATTACHED,
     }
 
-    init {
-        // Needed when Transition API is in use to ensure that shadows do not disappear,
-        // views do not jump around the screen and whole sub-tree is animated as a whole.
-        isTransitionGroup = true
-    }
-
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)

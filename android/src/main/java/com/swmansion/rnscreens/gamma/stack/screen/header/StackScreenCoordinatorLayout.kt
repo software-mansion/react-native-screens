@@ -17,6 +17,10 @@ internal class StackScreenCoordinatorLayout(
     private val headerCoordinator = StackScreenHeaderCoordinator(context)
 
     init {
+        // Needed when Transition API is in use to ensure that shadows do not disappear,
+        // views do not jump around the screen and whole sub-tree is animated as a whole.
+        isTransitionGroup = true
+
         addView(
             stackScreen,
             LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
