@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 internal class StackContainer(
-    context: Context,
+    private val context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
 ) : FrameLayout(context),
     FragmentManager.OnBackStackChangedListener {
@@ -194,7 +194,7 @@ internal class StackContainer(
     }
 
     private fun createFragmentForScreen(screen: StackScreen): StackScreenFragment =
-        StackScreenFragment(screen).also {
+        StackScreenFragment(context, screen).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
