@@ -59,7 +59,7 @@ function App() {
             {
               component: FalseTab,
               tabScreenProps: {
-                tabKey: 'False',
+                screenKey: 'False',
                 title: 'False',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: false,
@@ -70,7 +70,7 @@ function App() {
             {
               component: TrueTab,
               tabScreenProps: {
-                tabKey: 'True',
+                screenKey: 'True',
                 title: 'True',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: true,
@@ -81,7 +81,7 @@ function App() {
             {
               component: DefaultTab,
               tabScreenProps: {
-                tabKey: 'Default',
+                screenKey: 'Default',
                 title: 'Default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },

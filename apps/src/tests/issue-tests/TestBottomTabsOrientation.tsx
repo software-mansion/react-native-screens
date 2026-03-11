@@ -78,7 +78,7 @@ function makeTabConfigs(
   return [
     {
       tabScreenProps: {
-        tabKey: 'Auto',
+        screenKey: 'Auto',
         title: 'Auto',
         isFocused: true,
         orientation: tabsOrientations.home.tabScreen,
@@ -109,7 +109,7 @@ function makeTabConfigs(
     },
     {
       tabScreenProps: {
-        tabKey: 'Portrait',
+        screenKey: 'Portrait',
         title: 'Portrait',
         tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
         icon: {
@@ -140,7 +140,7 @@ function makeTabConfigs(
     },
     {
       tabScreenProps: {
-        tabKey: 'Landscape',
+        screenKey: 'Landscape',
         title: 'Landscape',
         orientation: tabsOrientations.landscape.tabScreen,
         ios: {

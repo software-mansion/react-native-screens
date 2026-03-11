@@ -9,7 +9,7 @@ internal class TabsHostEventEmitter(
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
     fun emitOnNativeFocusChange(
-        tabKey: String,
+        screenKey: String,
         tabNumber: Int,
         repeatedSelectionHandledBySpecialEffect: Boolean,
     ) {
@@ -17,7 +17,7 @@ internal class TabsHostEventEmitter(
             TabsHostNativeFocusChangeEvent(
                 surfaceId,
                 viewTag,
-                tabKey,
+                screenKey,
                 tabNumber,
                 repeatedSelectionHandledBySpecialEffect,
             ),

@@ -32,12 +32,12 @@ export function StackInBottomTabsScenario() {
           tabConfigs={[
             {
               component: ConfigComponent,
-              tabScreenProps: { tabKey: 'config', title: 'Config' },
+              tabScreenProps: { screenKey: 'config', title: 'Config' },
             },
             {
               component: StackScenario,
               tabScreenProps: {
-                tabKey: 'stack',
+                screenKey: 'stack',
                 title: 'Stack',
                 ios: {
                   scrollEdgeEffects: config,

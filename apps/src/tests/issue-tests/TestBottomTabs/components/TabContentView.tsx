@@ -6,12 +6,12 @@ import { TabConfigurationSummary } from './TabConfigurationSummary';
 
 export interface TabContentViewProps extends ViewProps {
   selectNextTab?: (() => void) | undefined;
-  tabKey: string;
+  screenKey: string;
   message?: string;
 }
 
 export function TabContentView(props: TabContentViewProps) {
-  const { selectNextTab, tabKey, message, ...viewProps } = props;
+  const { selectNextTab, screenKey, message, ...viewProps } = props;
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
@@ -28,7 +28,7 @@ export function TabContentView(props: TabContentViewProps) {
   return (
     <View {...viewProps}>
       {message !== undefined && <Text>{message}</Text>}
-      <TabConfigurationSummary tabKey={tabKey} />
+      <TabConfigurationSummary screenKey={screenKey} />
       <Button title="Next tab" onPress={selectNextTab} />
       <Button
         title="Toggle heavy render"

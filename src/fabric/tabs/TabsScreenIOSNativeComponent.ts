@@ -124,7 +124,7 @@ export interface NativeProps extends ViewProps {
 
   // Control
   isFocused?: boolean;
-  tabKey: string;
+  screenKey: string;
 
   // General
   title?: string | undefined | null;

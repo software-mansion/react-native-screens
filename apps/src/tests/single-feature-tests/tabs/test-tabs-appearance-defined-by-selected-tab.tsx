@@ -83,7 +83,7 @@ export function App() {
         {
           component: TabScreen,
           tabScreenProps: {
-            tabKey: 'Tab1',
+            screenKey: 'Tab1',
             title: 'Tab1',
             ios: {
               icon: {
@@ -113,7 +113,7 @@ export function App() {
         {
           component: TabScreen,
           tabScreenProps: {
-            tabKey: 'Tab2',
+            screenKey: 'Tab2',
             title: 'Tab2',
             ios: {
               icon: {
@@ -194,7 +194,7 @@ export function App() {
         {
           component: TabScreen,
           tabScreenProps: {
-            tabKey: 'Tab3',
+            screenKey: 'Tab3',
             title: 'Tab3',
             ios: {
               icon: {

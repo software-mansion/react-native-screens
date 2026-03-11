@@ -55,7 +55,7 @@ export interface TabsScreenPropsBase {
    *
    * @platform android, ios
    */
-  tabKey: string;
+  screenKey: string;
 
   // General
   children?: ViewProps['children'];

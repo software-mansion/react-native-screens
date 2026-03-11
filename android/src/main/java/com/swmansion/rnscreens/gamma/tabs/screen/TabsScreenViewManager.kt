@@ -62,11 +62,11 @@ class TabsScreenViewManager :
         view.isFocusedTab = value
     }
 
-    override fun setTabKey(
+    override fun setScreenKey(
         view: TabsScreen,
         value: String?,
     ) {
-        view.tabKey = value
+        view.screenKey = value
     }
 
     override fun setBadgeValue(

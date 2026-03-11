@@ -136,7 +136,7 @@ function TestScreen() {
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
-      tabKey: 'Tab1',
+      screenKey: 'Tab1',
       title: 'Config',
       ios: {
         icon: {
@@ -149,7 +149,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab2',
+      screenKey: 'Tab2',
       title: 'Test',
       ios: {
         icon: {

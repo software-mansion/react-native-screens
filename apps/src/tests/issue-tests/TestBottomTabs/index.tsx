@@ -87,7 +87,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'First Tab Screen',
       tabBarItemTestID: 'tab-item-1-id',
       tabBarItemAccessibilityLabel: 'First Tab Item',
-      tabKey: 'Tab1',
+      screenKey: 'Tab1',
       title: 'Tab1',
       isFocused: true,
     },
@@ -95,7 +95,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab2',
+      screenKey: 'Tab2',
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
       accessibilityLabel: 'Second Tab Screen',
@@ -179,7 +179,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab3',
+      screenKey: 'Tab3',
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
       accessibilityLabel: 'Third Tab Screen',
@@ -228,7 +228,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab4',
+      screenKey: 'Tab4',
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',

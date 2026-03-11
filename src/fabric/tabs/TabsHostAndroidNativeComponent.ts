@@ -6,7 +6,7 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 // #region General helpers
 
 type NativeFocusChangeEvent = {
-  tabKey: string;
+  screenKey: string;
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 

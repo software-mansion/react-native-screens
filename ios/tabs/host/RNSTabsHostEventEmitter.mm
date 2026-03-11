@@ -38,7 +38,7 @@ namespace react = facebook::react;
 #if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
     _reactEventEmitter->onNativeFocusChange(
-        {.tabKey = RCTStringFromNSString(payload.tabKey),
+        {.screenKey = RCTStringFromNSString(payload.screenKey),
          .repeatedSelectionHandledBySpecialEffect =
              static_cast<bool>(payload.repeatedSelectionHandledBySpecialEffect)});
     return YES;
@@ -49,7 +49,7 @@ namespace react = facebook::react;
 #else
   if (self.onNativeFocusChange) {
     self.onNativeFocusChange(@{
-      @"tabKey" : payload.tabKey,
+      @"screenKey" : payload.screenKey,
       @"repeatedSelectionHandledBySpecialEffect" : @(payload.repeatedSelectionHandledBySpecialEffect)
     });
     return YES;

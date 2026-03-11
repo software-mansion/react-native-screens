@@ -31,7 +31,7 @@ class TabsScreen(
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
-    var tabKey: String? = null
+    var screenKey: String? = null
         set(value) {
             field =
                 if (value?.isBlank() == true) {

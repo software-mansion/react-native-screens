@@ -29,5 +29,5 @@ export function findTabScreenOptions<S extends KeyList>(
   config: StaticTabsContainerProps<S>,
   key: Extract<keyof S, string>,
 ): StaticTabConfiguration<S> | undefined {
-  return config.tabConfigs.find(c => c.tabScreenProps.tabKey === key);
+  return config.tabConfigs.find(c => c.tabScreenProps.screenKey === key);
 }
