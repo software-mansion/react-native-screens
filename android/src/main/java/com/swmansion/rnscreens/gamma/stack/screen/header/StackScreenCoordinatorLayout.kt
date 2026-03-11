@@ -32,7 +32,7 @@ internal class StackScreenCoordinatorLayout(
         // TODO: debug-only
         applyHeaderConfiguration(
             object : StackScreenHeaderConfigurationProviding {
-                override val headerType = StackScreenHeaderType.SMALL
+                override val headerType = StackScreenHeaderType.LARGE
                 override val title = "Hello, World!"
             },
         )

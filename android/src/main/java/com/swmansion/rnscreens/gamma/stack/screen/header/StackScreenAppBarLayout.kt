@@ -7,6 +7,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
@@ -31,7 +34,11 @@ internal sealed class StackScreenAppBarLayout(
         override val toolbar =
             MaterialToolbar(context).apply {
                 elevation = 0f
-                layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+                layoutParams =
+                    LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                        // TODO: debug only for small header, must be moved to configuration
+                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
+                    }
             }
 
         init {
@@ -82,7 +89,10 @@ internal sealed class StackScreenAppBarLayout(
                         LayoutParams(
                             MATCH_PARENT,
                             resolveDimensionAttr(context, sizeAttr),
-                        )
+                        ).apply {
+                            // TODO: debug only for medium/large header, must be moved to configuration
+                            scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
+                        }
                     addView(toolbar)
                 }
             }
