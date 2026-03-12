@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.appbar.AppBarLayout
+import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
@@ -12,7 +12,7 @@ import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScre
 @SuppressLint("ViewConstructor")
 internal class StackScreenCoordinatorLayout(
     context: Context,
-    stackScreen: StackScreen,
+    internal val stackScreen: StackScreen,
 ) : CoordinatorLayout(context) {
     private val headerCoordinator = StackScreenHeaderCoordinator(context)
 
@@ -23,10 +23,7 @@ internal class StackScreenCoordinatorLayout(
 
         addView(
             stackScreen,
-            LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
-                // TODO: when adding possibility to hide the header, this needs to be moved to coordinator
-                behavior = AppBarLayout.ScrollingViewBehavior()
-            },
+            LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
         // TODO: debug-only
@@ -34,8 +31,37 @@ internal class StackScreenCoordinatorLayout(
             object : StackScreenHeaderConfigurationProviding {
                 override val headerType = StackScreenHeaderType.LARGE
                 override val title = "Hello, World!"
+                override val isHidden = false
             },
         )
+
+        postDelayed({
+            applyHeaderConfiguration(
+                object : StackScreenHeaderConfigurationProviding {
+                    override val headerType = StackScreenHeaderType.LARGE
+                    override val title = "Hello, World!"
+                    override val isHidden = true
+                },
+            )
+
+            postDelayed({
+                applyHeaderConfiguration(
+                    object : StackScreenHeaderConfigurationProviding {
+                        override val headerType = StackScreenHeaderType.LARGE
+                        override val title = "Hello, World!"
+                        override val isHidden = false
+                    },
+                )
+            }, 3000)
+        }, 3000)
+    }
+
+    private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
+
+    internal fun maybeRequestLayoutContainer() {
+        post {
+            stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()
+        }
     }
 
     internal fun applyHeaderConfiguration(headerConfigurationProviding: StackScreenHeaderConfigurationProviding) =
