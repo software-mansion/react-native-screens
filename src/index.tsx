@@ -60,11 +60,6 @@ export { compatibilityFlags, featureFlags } from './flags';
 export { default as useTransitionProgress } from './useTransitionProgress';
 
 /**
- * RNSLog
- */
-export { RNSLog } from './utils';
-
-/**
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
  */
 export { default as Tabs } from './components/tabs';

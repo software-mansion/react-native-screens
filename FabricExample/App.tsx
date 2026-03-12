@@ -8,5 +8,6 @@ featureFlags.experiment.androidResetScreenShadowStateOnOrientationChangeEnabled 
   true;
 featureFlags.experiment.iosPreventReattachmentOfDismissedScreens = true;
 featureFlags.experiment.ios26AllowInteractionsDuringTransition = true;
+featureFlags.stable.debugLogging = true;
 
 export default App;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { findNodeHandle, ReactNativeElement } from 'react-native';
+import { RNSLog } from '../logging';
 
 export type NativeComponentGenericRef = React.Component & ReactNativeElement;
 
@@ -42,5 +43,5 @@ function logMessage(
   nodeHandle: number,
   message: string,
 ) {
-  console.log(`${componentName} [${nodeHandle}] ${message}`);
+  RNSLog.log(`${componentName} [${nodeHandle}] ${message}`);
 }

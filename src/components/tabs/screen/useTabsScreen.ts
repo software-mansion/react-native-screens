@@ -2,7 +2,7 @@ import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../../fabric/tabs/TabsScreenIOSNativeComponent';
-import { bottomTabsDebugLog } from '../../../private/logging';
+import { RNSLog } from '../../../private';
 import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
 type TabsScreenPlatformNativeComponentProps =
@@ -43,7 +43,7 @@ export function useTabsScreen<
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      bottomTabsDebugLog(
+      RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
       onWillAppear?.(event);
@@ -53,7 +53,7 @@ export function useTabsScreen<
 
   const onDidAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      bottomTabsDebugLog(
+      RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
       );
       onDidAppear?.(event);
@@ -63,7 +63,7 @@ export function useTabsScreen<
 
   const onWillDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      bottomTabsDebugLog(
+      RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
       );
       onWillDisappear?.(event);
@@ -73,7 +73,7 @@ export function useTabsScreen<
 
   const onDidDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      bottomTabsDebugLog(
+      RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );
       onDidDisappear?.(event);
@@ -81,7 +81,7 @@ export function useTabsScreen<
     [onDidDisappear],
   );
 
-  bottomTabsDebugLog(
+  RNSLog.log(
     `TabsScreen [${
       componentNodeHandle.current ?? -1
     }] render; screenKey: ${screenKey}, isFocused: ${isFocused}`,
