@@ -211,11 +211,6 @@ internal class StackContainer(
         check(fragmentManager.primaryNavigationFragment === fragments.last()) {
             "[RNScreens] Top fragment different from primary navigation fragment"
         }
-
-        // TODO: debug only but this is necessary to layout CoordinatorLayout
-        post {
-            forceSubtreeMeasureAndLayoutPass()
-        }
     }
 
     /**
@@ -256,7 +251,7 @@ internal class StackContainer(
         }
     }
 
-    private fun forceSubtreeMeasureAndLayoutPass() {
+    internal fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
