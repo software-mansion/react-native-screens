@@ -1,5 +1,7 @@
 #pragma once
 
+#include <jsi/jsi.h>
+
 #ifdef ANDROID
 #include <folly/dynamic.h>
 #include <react/renderer/core/graphicsConversions.h>

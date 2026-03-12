@@ -8,6 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -24,7 +25,8 @@ internal sealed class StackScreenAppBarLayout(
         layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
         // TODO: this should be exposed in the future via prop. Also, it might not work correctly
-        //       until we set liftOnScrollView manually.
+        //       until we set liftOnScrollView manually. Also, we should disable it in transparent
+        //       mode or set elevation higher.
         isLiftOnScroll = true
 
         // TODO: this won't work with nested header but there were some problems with lift on scroll
@@ -41,8 +43,8 @@ internal sealed class StackScreenAppBarLayout(
                 layoutParams =
                     LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                         // TODO: debug only for small header, must be moved to configuration
-                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
-//                        scrollFlags = SCROLL_FLAG_NO_SCROLL
+//                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
+                        scrollFlags = SCROLL_FLAG_NO_SCROLL
                     }
             }
 
