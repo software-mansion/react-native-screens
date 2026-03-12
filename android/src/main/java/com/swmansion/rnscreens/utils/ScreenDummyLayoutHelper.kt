@@ -307,8 +307,10 @@ internal class ScreenDummyLayoutHelper(
 
         // There are some exotic edge cases where activity might not be present in context
         // at this point, e.g. when reloading RN in development after an error was reported with redbox.
-        if (!maybeInitDummyLayoutWithHeader(reactContext)) {
+        if (maybeInitDummyLayoutWithHeader(reactContext)) {
             reactContext.removeLifecycleEventListener(this)
+        } else {
+            Log.w(TAG, "[RNScreens] Failed to initialise dummy layout in onHostResume.")
         }
     }
 
