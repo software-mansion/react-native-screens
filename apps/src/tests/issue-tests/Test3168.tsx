@@ -89,7 +89,7 @@ function Home({ navigation }: MainStackNavigationProp) {
       <Text>Test Search Bar placement</Text>
       <Button title="Stack only" onPress={() => navigation.push('Stack')} />
       <Button
-        title="Bottom Tabs and Stack"
+        title="Tabs and Stack"
         onPress={() => navigation.push('StackAndTabs')}
       />
     </View>

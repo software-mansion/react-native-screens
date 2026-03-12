@@ -77,7 +77,7 @@ export function TabsContainer(props: TabsContainerProps) {
 
   return (
     <Tabs.Host
-      // Use controlled bottom tabs by default, but allow to overwrite if user wants to
+      // Use controlled tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs

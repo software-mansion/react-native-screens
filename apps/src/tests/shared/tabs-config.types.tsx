@@ -3,7 +3,7 @@ import { KeyList } from './helpers';
 import { TabsHostProps } from 'react-native-screens';
 
 type StaticTabScreenProps<S extends KeyList> = Omit<
-  TabConfiguration['screenProps'],
+  TabConfiguration['options'],
   'screenKey'
 > & { screenKey: Extract<keyof S, string> };
 
