@@ -15,15 +15,17 @@ internal class StackScreenShadowStateProxy {
     private var lastHeightInDp: Float = 0f
 
     fun updateStateIfNeeded(
-        x: Int,
-        y: Int,
-        width: Int,
-        height: Int,
+        x: Int? = null,
+        y: Int? = null,
+        width: Int? = null,
+        height: Int? = null,
     ) {
-        val xInDp: Float = PixelUtil.toDIPFromPixel(x.toFloat())
-        val yInDp: Float = PixelUtil.toDIPFromPixel(y.toFloat())
-        val widthInDp: Float = PixelUtil.toDIPFromPixel(width.toFloat())
-        val heightInDp: Float = PixelUtil.toDIPFromPixel(height.toFloat())
+        val xInDp: Float = x?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastXInDp
+        val yInDp: Float = y?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastYInDp
+        val widthInDp: Float =
+            width?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastWidthInDp
+        val heightInDp: Float =
+            height?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastHeightInDp
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.

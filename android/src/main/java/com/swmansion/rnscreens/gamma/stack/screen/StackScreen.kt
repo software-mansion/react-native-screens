@@ -54,6 +54,13 @@ class StackScreen(
 
     var stateWrapper by shadowStateProxy::stateWrapper
 
+    fun updateStateIfNeeded(
+        x: Int? = null,
+        y: Int? = null,
+        width: Int? = null,
+        height: Int? = null,
+    ) = shadowStateProxy.updateStateIfNeeded(x, y, width, height)
+
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
     /**
@@ -88,7 +95,7 @@ class StackScreen(
         r: Int,
         b: Int,
     ) {
-        shadowStateProxy.updateStateIfNeeded(l, t, r - l, b - t)
+        shadowStateProxy.updateStateIfNeeded(width = r - l, height = b - t)
     }
 
     override fun getAssociatedFragment(): Fragment? =

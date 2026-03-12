@@ -10,6 +10,7 @@ import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScre
 
 internal class StackScreenHeaderCoordinator(
     context: Context,
+    private val onHeaderHeightChanged: (headerHeight: Int) -> Unit,
 ) {
     private var appBarLayout: StackScreenAppBarLayout? = null
     private var currentHeaderType: StackScreenHeaderType? = null
@@ -80,7 +81,12 @@ internal class StackScreenHeaderCoordinator(
         val needsBehavior = appBarLayout != null && !config.isTransparent && !config.isHidden
         val hasBehavior = params.behavior != null
         if (needsBehavior != hasBehavior) {
-            params.behavior = if (needsBehavior) AppBarLayout.ScrollingViewBehavior() else null
+            params.behavior = if (needsBehavior) {
+                StackScreenScrollingViewBehavior(onHeaderHeightChanged)
+            } else {
+                onHeaderHeightChanged(0)
+                null
+            }
             stackScreenWrapper.layoutParams = params
         }
     }
