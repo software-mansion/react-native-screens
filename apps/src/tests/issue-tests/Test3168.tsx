@@ -19,9 +19,9 @@ import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
 import { ListItem, SettingsPicker, SettingsSwitch } from '../../shared';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -248,7 +248,7 @@ function TabsStackComponent() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

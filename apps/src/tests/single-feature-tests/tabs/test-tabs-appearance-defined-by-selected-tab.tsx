@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { Scenario } from '../../shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
@@ -78,7 +78,7 @@ function TabScreen() {
 
 export function App() {
   return (
-    <BottomTabsContainer
+    <TabsContainer
       tabConfigs={[
         {
           component: TabScreen,

@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
@@ -56,7 +56,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
 ];
 
 function App() {
-  return <BottomTabsContainer tabConfigs={TAB_CONFIGS} />;
+  return <TabsContainer tabConfigs={TAB_CONFIGS} />;
 }
 
 export default App;

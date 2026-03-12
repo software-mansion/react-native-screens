@@ -1,7 +1,7 @@
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -66,7 +66,7 @@ export default function BottomTabsComponent() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,

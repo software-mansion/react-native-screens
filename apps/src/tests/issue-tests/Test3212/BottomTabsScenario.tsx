@@ -8,7 +8,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { Config } from './Config';
 import { ScrollViewTemplate } from './ScrollViewTemplate';
 import { ScrollView } from 'react-native';
@@ -31,7 +31,7 @@ export function BottomTabsScenario() {
     <NavigationIndependentTree>
       <ScrollEdgeEffectsConfigContext.Provider value={{ config, setConfig }}>
         <NavigationContainer>
-          <BottomTabsContainer
+          <TabsContainer
             tabConfigs={[
               {
                 component: ConfigComponent,
@@ -44,7 +44,7 @@ export function BottomTabsScenario() {
                   title: 'Scroll',
                   ios: {
                     scrollEdgeEffects: config,
-                  }
+                  },
                 },
               },
             ]}

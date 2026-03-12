@@ -31,12 +31,12 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  type TabConfiguration,
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import {
   createNativeStackNavigator,
-  NativeStackNavigationProp,
+  type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
 
@@ -508,7 +508,7 @@ function HeaderHeightTabsWrapper() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

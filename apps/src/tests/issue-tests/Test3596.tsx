@@ -6,9 +6,9 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 import Colors from '../../shared/styling/Colors';
@@ -89,7 +89,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

@@ -17,11 +17,11 @@ export interface TabConfiguration {
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export type BottomTabsContainerProps = TabsHostProps & {
+export type TabsContainerProps = TabsHostProps & {
   tabConfigs: TabConfiguration[];
 };
 
-export function BottomTabsContainer(props: BottomTabsContainerProps) {
+export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('BottomTabsContainer render');
 
   const { tabConfigs, ...restProps } = props;

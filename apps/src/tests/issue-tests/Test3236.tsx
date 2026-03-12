@@ -6,9 +6,9 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 import { Button } from '../../shared';
@@ -98,7 +98,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarControllerMode: controllerMode,

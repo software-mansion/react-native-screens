@@ -9,9 +9,9 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../../shared/styling/Colors';
 
@@ -277,7 +277,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarTintColor: Colors.YellowLight100,

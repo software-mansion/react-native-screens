@@ -14,9 +14,9 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 
 type RouteParamList = {
@@ -102,7 +102,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

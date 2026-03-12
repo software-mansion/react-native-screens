@@ -1,4 +1,4 @@
-import { TabConfiguration } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabConfiguration } from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { KeyList } from './helpers';
 import { TabsHostProps } from 'react-native-screens';
 

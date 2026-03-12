@@ -5,7 +5,7 @@ import {
   ScrollEdgeEffectsConfigContext,
 } from './context';
 import { NavigationContainer } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import { Config } from './Config';
 import { StackScenario } from './StackScenario';
 import { ScrollView } from 'react-native';
@@ -28,7 +28,7 @@ export function StackInBottomTabsScenario() {
   return (
     <ScrollEdgeEffectsConfigContext.Provider value={{ config, setConfig }}>
       <NavigationContainer>
-        <BottomTabsContainer
+        <TabsContainer
           tabConfigs={[
             {
               component: ConfigComponent,
@@ -41,7 +41,7 @@ export function StackInBottomTabsScenario() {
                 title: 'Stack',
                 ios: {
                   scrollEdgeEffects: config,
-                }
+                },
               },
             },
           ]}

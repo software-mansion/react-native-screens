@@ -16,9 +16,9 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 import ConfigWrapperContext, {
   Configuration,
@@ -514,7 +514,7 @@ function Tabs() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={dynamicTabConfigs}
         nativeContainerStyle={{ backgroundColor: config.containerBackground }}
       />

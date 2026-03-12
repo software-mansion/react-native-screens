@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -46,7 +46,7 @@ export default function ConfigColumn({
           config: tabsConfig,
           setConfig: setTabsConfig,
         }}>
-        <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+        <TabsContainer tabConfigs={TAB_CONFIGS} />
       </ConfigWrapperContext.Provider>
     </SafeAreaView>
   );

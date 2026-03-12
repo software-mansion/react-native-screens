@@ -6,9 +6,9 @@ import {
   ScreenOrientationTypes,
 } from 'react-native-screens';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
@@ -203,7 +203,7 @@ function ScreenStackBottomTabs() {
 
   return (
     <NavigationIndependentTree>
-      <BottomTabsContainer tabConfigs={tabConfigs} />
+      <TabsContainer tabConfigs={tabConfigs} />
     </NavigationIndependentTree>
   );
 }
@@ -220,7 +220,7 @@ function ScrollOnlyBottomTabs() {
 
   return (
     <NavigationIndependentTree>
-      <BottomTabsContainer tabConfigs={tabConfigs} />
+      <TabsContainer tabConfigs={tabConfigs} />
     </NavigationIndependentTree>
   );
 }
