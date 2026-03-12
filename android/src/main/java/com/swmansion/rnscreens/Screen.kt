@@ -38,7 +38,6 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
-import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
@@ -99,10 +98,6 @@ class Screen(
     var sheetDefaultResizeAnimationEnabled = true
 
     /**
-     * On Paper, when using form sheet presentation we want to delay enter transition in order
-     * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy.
-     *
      * On Fabric, the view layout is completed before window insets are applied.
      * To ensure the BottomSheet correctly respects insets during its enter transition,
      * we delay the transition until both layout and insets have been applied.
@@ -169,17 +164,6 @@ class Screen(
                     updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
-                }
-            }
-
-            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                // On old architecture we delay enter transition in order to wait for initial frame.
-                shouldTriggerPostponedTransitionAfterLayout = true
-                val parent = parentAsViewGroup()
-                if (parent != null && !parent.isInLayout) {
-                    // There are reported cases (irreproducible) when Screen is not laid out after
-                    // maxHeight is set on behaviour.
-                    parent.requestLayout()
                 }
             }
         }
@@ -300,9 +284,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
-        }
+        updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -391,20 +373,13 @@ class Screen(
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
-
-        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // When using form sheet presentation we want to delay enter transition **on Paper** in order
-            // to wait for initial layout from React, otherwise the animator-based animation will look
-            // glitchy. *This seems to not be needed on Fabric*.
-            triggerPostponedEnterTransitionIfNeeded()
-        }
     }
 
     // On Fabric, the view layout is completed before window insets are applied.
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
     internal fun requestTriggeringPostponedEnterTransition() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
+        if (!sheetShouldOverflowTopInset) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }
     }
@@ -705,7 +680,7 @@ class Screen(
         dispatchSheetDetentChanged(detentIndex, isStable)
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
+        if (isStable) {
             onSheetYTranslationChanged()
         }
 
@@ -718,10 +693,8 @@ class Screen(
     }
 
     internal fun onSheetYTranslationChanged() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // Translation is relative to the bottom edge, therefore it returns negative values.
-            updateScreenSizeFabric(width, height, top + translationY.toInt())
-        }
+        // Translation is relative to the bottom edge, therefore it returns negative values.
+        updateScreenSizeFabric(width, height, top + translationY.toInt())
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
