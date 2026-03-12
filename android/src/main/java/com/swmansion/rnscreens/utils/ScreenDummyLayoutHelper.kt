@@ -239,7 +239,7 @@ internal class ScreenDummyLayoutHelper(
             object : Application.ActivityLifecycleCallbacks {
                 override fun onActivityDestroyed(destroyedActivity: Activity) {
                     if (destroyedActivity === activity) {
-                        cleanUpViews()
+                        cleanUpViews(destroyedActivity.application)
                     }
                 }
 
@@ -322,7 +322,7 @@ internal class ScreenDummyLayoutHelper(
     }
 
     @Synchronized
-    private fun cleanUpViews() {
+    private fun cleanUpViews(application: Application? = reactContextRef.get()?.currentActivity?.application) {
         coordinatorLayout = null
         appBarLayout = null
         dummyContentView = null
@@ -330,9 +330,8 @@ internal class ScreenDummyLayoutHelper(
 
         isLayoutInitialized = false
 
-        val activity = reactContextRef.get()?.currentActivity
         activityLifecycleCallbacks?.let {
-            activity?.application?.unregisterActivityLifecycleCallbacks(it)
+            application?.unregisterActivityLifecycleCallbacks(it)
         }
         activityLifecycleCallbacks = null
     }
