@@ -19,10 +19,10 @@ function makeTab(title: string, description: string) {
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
-      tabKey: 'Tab1',
+      screenKey: 'Tab1',
       title: 'Tab 1',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
@@ -35,17 +35,17 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab2',
+      screenKey: 'Tab2',
       title: 'Tab 2',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
-      },
-      selectedIcon: {
-        type: 'xcasset',
-        name: 'custom-icon-fill',
+        selectedIcon: {
+          type: 'xcasset',
+          name: 'custom-icon-fill',
+        },
       },
     },
     component: makeTab(

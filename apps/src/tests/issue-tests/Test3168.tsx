@@ -202,10 +202,10 @@ function TabsStackComponent() {
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
-        tabKey: 'main',
+        screenKey: 'main',
         title: 'Main',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house',
           },
@@ -215,10 +215,10 @@ function TabsStackComponent() {
     },
     {
       tabScreenProps: {
-        tabKey: 'another',
+        screenKey: 'another',
         title: 'Another',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'ellipsis',
           },
@@ -228,15 +228,15 @@ function TabsStackComponent() {
     },
     {
       tabScreenProps: {
-        tabKey: 'examples',
+        screenKey: 'examples',
         title: 'Search',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'magnifyingglass',
           },
+          systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
         },
-        systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
       },
       component: () => ExamplesStackComponent({ showMenu: false }),
     },

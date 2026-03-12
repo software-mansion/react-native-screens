@@ -10,6 +10,8 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import type {
+  BlurEffect,
+  Direction,
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
@@ -45,28 +47,7 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
-export type BlurEffectTypes =
-  | 'none'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =
@@ -140,12 +121,6 @@ export type PlatformIconAndroid =
       name: string;
     }
   | PlatformIconShared;
-
-export interface PlatformIcon {
-  ios?: PlatformIconIOS;
-  android?: PlatformIconAndroid;
-  shared?: PlatformIconShared;
-}
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -399,7 +374,7 @@ export interface ScreenProps extends ViewProps {
    * There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
    * to the height of its contents. On iOS `fitToContents` currently also includes small padding accounting for bottom inset.
    *
-   * Please note that the array **must** be sorted in ascending order. This invariant is verified only in developement mode,
+   * Please note that the array **must** be sorted in ascending order. This invariant is verified only in development mode,
    * where violation results in error.
    *
    * **Android is limited to up 3 values in the array** -- any surplus values, beside first three are ignored.
@@ -708,7 +683,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  direction?: 'rtl' | 'ltr';
+  direction?: Direction;
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios
@@ -1175,7 +1150,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?: PlatformIconIOS;
   /**
    * State of the item.
    *
@@ -1217,7 +1192,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?: PlatformIconIOS;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;

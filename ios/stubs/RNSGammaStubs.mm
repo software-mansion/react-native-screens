@@ -6,8 +6,11 @@
 @implementation RNSStackScreenComponentView
 @end
 
-@implementation RNSSplitViewHostComponentView
+@implementation RNSSplitHostComponentView
 @end
 
-@implementation RNSSplitViewScreenComponentView
+@implementation RNSSplitScreenComponentView
+@end
+
+@implementation RNSScrollViewMarkerComponentView
 @end

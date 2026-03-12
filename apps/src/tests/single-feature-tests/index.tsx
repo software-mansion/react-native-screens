@@ -10,11 +10,10 @@ import TabsScenarioGroup from './tabs';
 import SplitScenarioGroup from './split';
 import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
-import type { ScenarioGroup } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 import ScenarioSelectionScreen from '../shared/ScenarioScreen';
 
-export const COMPONENT_SCENARIOS: Record<string, ScenarioGroup> = {
+export const COMPONENT_SCENARIOS = {
   Tabs: TabsScenarioGroup,
   Split: SplitScenarioGroup,
   StackV5: StackV5ScenarioGroup,

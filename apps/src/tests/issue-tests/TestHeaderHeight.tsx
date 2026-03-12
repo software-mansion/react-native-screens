@@ -464,14 +464,16 @@ function HeaderHeightTabsWrapper() {
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
-        tabKey: 'Tab1',
+        screenKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'sunny',
           },
@@ -481,14 +483,16 @@ function HeaderHeightTabsWrapper() {
     },
     {
       tabScreenProps: {
-        tabKey: 'Tab2',
+        screenKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'mode_cool',
           },

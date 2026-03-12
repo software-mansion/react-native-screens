@@ -77,7 +77,7 @@ function Home({ navigation }: StackNavigationProp) {
       if (screensLimitEnabled && screenNumber > 5) {
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 1500);
   };
 
   return (

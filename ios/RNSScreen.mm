@@ -962,8 +962,16 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      [strongSelf->_sheetsScrollView removeObserver:strongSelf forKeyPath:@"bounds" context:nil];
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
 #ifndef RCT_NEW_ARCH_ENABLED
@@ -1357,6 +1365,11 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
@@ -1415,6 +1428,8 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
+
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -1593,6 +1608,13 @@ RNS_IGNORE_SUPER_CALL_END
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
+}
+
+// Opt-in/-out of interaction disabling on transition
+// See: https://github.com/software-mansion/react-native-screens/pull/3631
+- (void)setIos26AllowInteractionsDuringTransition:(BOOL)value
+{
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:value];
 }
 
 #endif
@@ -2269,6 +2291,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onSheetDetentChanged, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(ios26AllowInteractionsDuringTransition, BOOL);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

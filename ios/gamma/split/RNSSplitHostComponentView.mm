@@ -1,0 +1,425 @@
+#import "RNSSplitHostComponentView.h"
+#import <React/RCTAssert.h>
+#import <React/RCTMountingTransactionObserving.h>
+#import <React/UIView+React.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+
+#import "RNSConversions.h"
+#import "RNSDefines.h"
+#import "RNSSplitScreenComponentView.h"
+#import "Swift-Bridging.h"
+
+namespace react = facebook::react;
+
+static const CGFloat epsilon = 1e-6;
+
+#define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
+  (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
+
+@interface RNSSplitHostComponentView () <RCTMountingTransactionObserving, RCTRNSSplitHostViewProtocol>
+@end
+
+@implementation RNSSplitHostComponentView {
+  RNSSplitHostComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSSplitHostController *_Nonnull _controller;
+  NSMutableArray<RNSSplitScreenComponentView *> *_Nonnull _reactSubviews;
+
+  bool _hasModifiedReactSubviewsInCurrentTransaction;
+  bool _needsSplitAppearanceUpdate;
+  bool _needsSplitSecondaryScreenNavBarUpdate;
+  bool _needsSplitDisplayModeUpdate;
+  bool _needsSplitOrientationUpdate;
+  // We need this information to warn users about dynamic changes to behavior being currently unsupported.
+  bool _isShowSecondaryToggleButtonSet;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    [self initState];
+  }
+  return self;
+}
+
+- (void)initState
+{
+  [self resetProps];
+
+  _reactEventEmitter = [RNSSplitHostComponentEventEmitter new];
+
+  _hasModifiedReactSubviewsInCurrentTransaction = false;
+  _needsSplitAppearanceUpdate = false;
+  _needsSplitSecondaryScreenNavBarUpdate = false;
+  _needsSplitDisplayModeUpdate = false;
+  _needsSplitOrientationUpdate = false;
+  _reactSubviews = [NSMutableArray new];
+}
+
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSSplitHostProps>();
+  _props = defaultProps;
+
+  _preferredSplitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
+  _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
+  _preferredDisplayMode = UISplitViewControllerDisplayModeAutomatic;
+  _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
+#if !TARGET_OS_TV
+  UISplitViewController *tempSplitVC = [[UISplitViewController alloc] init];
+  _primaryBackgroundStyle = tempSplitVC.primaryBackgroundStyle;
+#endif // !TARGET_OS_TV
+  _presentsWithGesture = true;
+  _showSecondaryToggleButton = false;
+  _showInspector = false;
+
+  _minimumPrimaryColumnWidth = -1.0;
+  _maximumPrimaryColumnWidth = -1.0;
+  _preferredPrimaryColumnWidthOrFraction = -1.0;
+  _minimumSupplementaryColumnWidth = -1.0;
+  _maximumSupplementaryColumnWidth = -1.0;
+  _preferredSupplementaryColumnWidthOrFraction = -1.0;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  _minimumSecondaryColumnWidth = -1.0;
+  _preferredSecondaryColumnWidthOrFraction = -1.0;
+  _minimumInspectorColumnWidth = -1.0;
+  _maximumInspectorColumnWidth = -1.0;
+  _preferredInspectorColumnWidthOrFraction = -1.0;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  _hasCustomTopColumnForCollapsing = NO;
+  _topColumnForCollapsingColumn = UISplitViewControllerColumnPrimary;
+
+  _orientation = RNSOrientationInherit;
+
+  _isShowSecondaryToggleButtonSet = false;
+}
+
+- (int)getNumberOfColumns
+{
+  int numberOfColumns = 0;
+  for (RNSSplitScreenComponentView *component in _reactSubviews) {
+    if (component.columnType == RNSSplitScreenColumnTypeColumn) {
+      numberOfColumns++;
+    }
+  }
+  return numberOfColumns;
+}
+
+- (void)setupController
+{
+  // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
+  // columns to the constructor. Therefore, we must delay it's creation until attaching it to window.
+  // At this point, children are already attached to the Host component, therefore, we may create SplitView controller.
+  if (_controller == nil) {
+    int numberOfColumns = [self getNumberOfColumns];
+
+    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self numberOfColumns:numberOfColumns];
+  }
+}
+
+- (void)didMoveToWindow
+{
+  [self setupController];
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
+  [self requestSplitHostControllerForAppearanceUpdate];
+  [self reactAddControllerToClosestParent:_controller];
+}
+
+- (void)reactAddControllerToClosestParent:(UIViewController *)controller
+{
+  if (!controller.parentViewController) {
+    UIView *parentView = (UIView *)self.reactSuperview;
+    while (parentView) {
+      if (parentView.reactViewController) {
+        [parentView.reactViewController addChildViewController:controller];
+        [self addSubview:controller.view];
+        [controller didMoveToParentViewController:parentView.reactViewController];
+        break;
+      }
+      parentView = (UIView *)parentView.reactSuperview;
+    }
+    return;
+  }
+}
+
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews
+{
+  RCTAssert(
+      _reactSubviews != nil,
+      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
+      self);
+  return _reactSubviews;
+}
+RNS_IGNORE_SUPER_CALL_END
+
+- (nonnull RNSSplitHostController *)splitHostController
+{
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
+  return _controller;
+}
+
+#pragma mark - RCTComponentViewProtocol
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
+  childScreen.splitHost = self;
+  [_reactSubviews insertObject:childScreen atIndex:index];
+  _hasModifiedReactSubviewsInCurrentTransaction = true;
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
+  childScreen.splitHost = nil;
+  [_reactSubviews removeObject:childScreen];
+  _hasModifiedReactSubviewsInCurrentTransaction = true;
+}
+
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSSplitHostComponentDescriptor>();
+}
+
++ (BOOL)shouldBeRecycled
+{
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
+}
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitHostProps>(props);
+
+  if (oldComponentProps.preferredSplitBehavior != newComponentProps.preferredSplitBehavior) {
+    _needsSplitAppearanceUpdate = true;
+    _preferredSplitBehavior =
+        rnscreens::conversion::SplitViewPreferredSplitBehaviorFromHostProp(newComponentProps.preferredSplitBehavior);
+  }
+
+  if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
+    _needsSplitAppearanceUpdate = true;
+    _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
+  }
+
+  if (oldComponentProps.preferredDisplayMode != newComponentProps.preferredDisplayMode) {
+    _needsSplitAppearanceUpdate = true;
+    _needsSplitDisplayModeUpdate = true;
+    _preferredDisplayMode =
+        rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
+  }
+
+#if !TARGET_OS_TV
+  if (oldComponentProps.primaryBackgroundStyle != newComponentProps.primaryBackgroundStyle) {
+    _needsSplitAppearanceUpdate = true;
+    _primaryBackgroundStyle =
+        rnscreens::conversion::SplitViewPrimaryBackgroundStyleFromHostProp(newComponentProps.primaryBackgroundStyle);
+  }
+#endif // !TARGET_OS_TV
+
+  if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
+    _needsSplitAppearanceUpdate = true;
+    _presentsWithGesture = newComponentProps.presentsWithGesture;
+  }
+
+  if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
+    _needsSplitAppearanceUpdate = true;
+    _needsSplitSecondaryScreenNavBarUpdate = true;
+    _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
+  }
+
+  if (oldComponentProps.showInspector != newComponentProps.showInspector) {
+    _needsSplitAppearanceUpdate = true;
+    _showInspector = newComponentProps.showInspector;
+  }
+
+  if (oldComponentProps.displayModeButtonVisibility != newComponentProps.displayModeButtonVisibility) {
+    _needsSplitAppearanceUpdate = true;
+    _displayModeButtonVisibility = rnscreens::conversion::SplitViewDisplayModeButtonVisibilityFromHostProp(
+        newComponentProps.displayModeButtonVisibility);
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumPrimaryColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumPrimaryColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredPrimaryColumnWidthOrFraction, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _preferredPrimaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSupplementaryColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumSupplementaryColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(
+          oldComponentProps, newComponentProps, preferredSupplementaryColumnWidthOrFraction, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _preferredSupplementaryColumnWidthOrFraction =
+        newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSecondaryColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _preferredSecondaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumInspectorColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _minimumInspectorColumnWidth = newComponentProps.columnMetrics.minimumInspectorColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumInspectorColumnWidth, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
+  }
+
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
+    _needsSplitAppearanceUpdate = true;
+    _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  // No appearance update needed — topColumnForCollapsingColumn is read on-demand by the delegate callback
+  // splitViewController(_:topColumnForCollapsingToProposedTopColumn:), not pushed to the controller.
+  if (oldComponentProps.topColumnForCollapsing != newComponentProps.topColumnForCollapsing) {
+    auto column =
+        rnscreens::conversion::SplitViewTopColumnForCollapsingFromHostProp(newComponentProps.topColumnForCollapsing);
+    _hasCustomTopColumnForCollapsing = column.has_value();
+    _topColumnForCollapsingColumn = column.value_or(UISplitViewControllerColumnPrimary);
+  }
+
+  if (oldComponentProps.orientation != newComponentProps.orientation) {
+    _needsSplitOrientationUpdate = true;
+    _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitHostOrientation(newComponentProps.orientation);
+  }
+
+  // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
+  // This allows us to identify any subsequent changes to this prop,
+  // enabling us to warn users that dynamic changes are not supported.
+  _isShowSecondaryToggleButtonSet = true;
+
+  [super updateProps:props oldProps:oldProps];
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+  [self requestSplitHostControllerForAppearanceUpdate];
+  [super finalizeUpdates:updateMask];
+}
+
+- (void)requestSplitHostControllerForAppearanceUpdate
+{
+  if (_needsSplitAppearanceUpdate && _controller != nil) {
+    _needsSplitAppearanceUpdate = false;
+    [_controller setNeedsAppearanceUpdate];
+  }
+
+  if (_needsSplitDisplayModeUpdate && _controller != nil) {
+    _needsSplitDisplayModeUpdate = false;
+    [_controller setNeedsDisplayModeUpdate];
+  }
+
+  if (_needsSplitSecondaryScreenNavBarUpdate && _controller != nil) {
+    _needsSplitSecondaryScreenNavBarUpdate = false;
+    [_controller setNeedsSecondaryScreenNavBarUpdate];
+  }
+
+  if (_needsSplitOrientationUpdate && _controller != nil) {
+    _needsSplitOrientationUpdate = false;
+    [_controller setNeedsOrientationUpdate];
+  }
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  _hasModifiedReactSubviewsInCurrentTransaction = false;
+  [_controller reactMountingTransactionWillMount];
+}
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  if (_hasModifiedReactSubviewsInCurrentTransaction) {
+    [_controller setNeedsUpdateOfChildViewControllers];
+  }
+  [_controller reactMountingTransactionDidMount];
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter updateEventEmitter:std::static_pointer_cast<const react::RNSSplitHostEventEmitter>(eventEmitter)];
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSSplitHostHandleCommand(self, commandName, args);
+}
+
+- (void)showColumn:(NSString *)column
+{
+  if (_controller == nil) {
+    RCTLogWarn(@"[RNScreens] showColumn called before SplitView controller was initialized. Command ignored.");
+    return;
+  }
+  [_controller showColumnNamed:column];
+}
+
+#pragma mark - Events
+
+- (nonnull RNSSplitHostComponentEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
+
+@end
+
+Class<RCTComponentViewProtocol> RNSSplitHostCls(void)
+{
+  return RNSSplitHostComponentView.class;
+}
+
+#undef COLUMN_METRIC_CHANGED

@@ -1,5 +1,5 @@
 #import "RNSViewInteractionManager.h"
-#import "RNSBottomTabsScreenComponentView.h"
+#import "RNSTabsScreenComponentView.h"
 #import "RNSViewInteractionAware.h"
 
 @implementation RNSViewInteractionManager {
@@ -10,12 +10,17 @@
 {
   if (self = [super init]) {
     lastRootWithInteractionsDisabled = nil;
+    _disabled = YES;
   }
   return self;
 }
 
 - (void)disableInteractionsForSubtreeWith:(UIView *)view
 {
+  if (_disabled) {
+    return;
+  }
+
   UIView *current = view;
   while (current && ![current isKindOfClass:UIWindow.class] &&
          ![current respondsToSelector:@selector(rnscreens_disableInteractions)]) {
@@ -41,6 +46,10 @@
 
 - (void)enableInteractionsForLastSubtree
 {
+  if (_disabled) {
+    return;
+  }
+
   if (lastRootWithInteractionsDisabled) {
     if ([lastRootWithInteractionsDisabled respondsToSelector:@selector(rnscreens_enableInteractions)]) {
       [static_cast<id<RNSViewInteractionAware>>(lastRootWithInteractionsDisabled) rnscreens_enableInteractions];

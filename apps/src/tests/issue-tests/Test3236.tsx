@@ -54,30 +54,39 @@ function App() {
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
-        tabKey: 'Tab1',
+        screenKey: 'Tab1',
         title: 'Tab 1',
-        freezeContents: false,
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
         },
-        iconResourceName: 'sunny',
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'sunny',
+          },
+        },
       },
       component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
     {
       tabScreenProps: {
-        tabKey: 'Tab2',
+        screenKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },
         },
-        iconResourceName: 'mode_cool',
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'mode_cool',
+          },
+        },
       },
       component: makeTab('Tab 2', controllerMode, setControllerMode),
     },
@@ -91,7 +100,9 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

@@ -34,7 +34,7 @@ function reduce(
       break;
     case 'tabScreen':
       const tabIndex = config.tabConfigs.findIndex(
-        c => c.tabScreenProps.tabKey === action.tabKey,
+        c => c.tabScreenProps.screenKey === action.screenKey,
       );
       if (tabIndex >= 0) {
         config.tabConfigs[tabIndex] = {
@@ -59,10 +59,16 @@ function makeInitialConfig(
   return {
     tabConfigs: Object.entries(tabs).map(([k, C]) => ({
       tabScreenProps: {
-        tabKey: k,
+        screenKey: k,
         title: k,
-        icon: {
-          shared: {
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../../../assets/variableIcons/icon.png'),
+          },
+        },
+        ios: {
+          icon: {
             type: 'imageSource',
             imageSource: require('../../../../../assets/variableIcons/icon.png'),
           },

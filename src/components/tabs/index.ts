@@ -1,9 +1,10 @@
-import TabsHost from './TabsHost';
-import TabsScreen from './TabsScreen';
+import { TabsHost } from './host';
+import { TabsScreen } from './screen';
 
-export type * from './TabsHost.types';
-export type * from './TabsScreen.types';
-export type { TabsAccessoryEnvironment } from './TabsAccessory.types';
+export type * from './host';
+export type * from './screen';
+
+export type { TabsBottomAccessoryEnvironment } from './bottom-accessory';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

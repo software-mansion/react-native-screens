@@ -46,3 +46,9 @@ internal fun View.findFragmentOrNull(): Fragment? =
     } catch (_: IllegalStateException) {
         null
     }
+
+/**
+ * This will fail in case the view has been measured with (0, 0) dimensions and laid out
+ * before being attached to window.
+ */
+internal fun View.isMeasured(): Boolean = this.measuredWidth != 0 || this.measuredHeight != 0 || this.isLaidOut

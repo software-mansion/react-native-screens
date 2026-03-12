@@ -69,24 +69,24 @@ function Screen2(stackNavProp: StackNavigationProp) {
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
-        tabKey: 'Tab1',
+        screenKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house',
           },
+          experimental_userInterfaceStyle: 'light',
         },
-        experimental_userInterfaceStyle: 'light',
       },
       component: () => TabScreen(stackNavProp),
     },
     {
       tabScreenProps: {
-        tabKey: 'Tab2',
+        screenKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'rectangle.stack',
           },

@@ -118,6 +118,7 @@ export interface NativeProps extends ViewProps {
     boolean,
     true
   >;
+  ios26AllowInteractionsDuringTransition?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {

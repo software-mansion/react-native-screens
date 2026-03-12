@@ -30,6 +30,7 @@ import {
 } from './helpers/sheet';
 import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
 import featureFlags from '../flags';
+import warnOnce from 'warn-once';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
@@ -163,6 +164,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
 
+      warnOnce(
+        Platform.OS === 'ios' &&
+          featureFlags.experiment.ios26AllowInteractionsDuringTransition &&
+          !featureFlags.experiment.iosPreventReattachmentOfDismissedScreens,
+        '[RNScreens] Using featureFlags `ios26AllowInteractionsDuringTransition` with `iosPreventReattachmentOfDismissedScreens` disabled is discouraged and will result in visual bugs on screen transitions. See flags description for details.',
+      );
+
       if (
         isNativeStack &&
         prevActivityState !== undefined &&
@@ -277,6 +285,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             androidResetScreenShadowStateOnOrientationChangeEnabled={
               featureFlags.experiment
                 .androidResetScreenShadowStateOnOrientationChangeEnabled
+            }
+            ios26AllowInteractionsDuringTransition={
+              featureFlags.experiment.ios26AllowInteractionsDuringTransition
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children

@@ -1,12 +1,16 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import SplitViewHostNativeComponent from '../../../fabric/gamma/SplitViewHostNativeComponent';
+import SplitHostNativeComponent, {
+  Commands as SplitHostNativeCommands,
+} from '../../../fabric/gamma/split/SplitHostNativeComponent';
 import type {
   SplitDisplayMode,
   SplitHostProps,
   SplitBehavior,
 } from './SplitHost.types';
 import SplitScreen from './SplitScreen';
+
+type NativeRef = React.ComponentRef<typeof SplitHostNativeComponent>;
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
@@ -38,8 +42,25 @@ const isValidDisplayModeForSplitBehavior = (
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitHost(props: SplitHostProps) {
+function SplitHost({ ref, ...props }: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
+  const nativeRef = React.useRef<NativeRef>(null);
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      show: column => {
+        if (nativeRef.current) {
+          SplitHostNativeCommands.showColumn(nativeRef.current, column);
+        } else {
+          console.warn(
+            '[RNScreens] Reference to native SplitHost component has not been updated yet',
+          );
+        }
+      },
+    }),
+    [],
+  );
 
   React.useEffect(() => {
     if (preferredDisplayMode && preferredSplitBehavior) {
@@ -73,15 +94,16 @@ function SplitHost(props: SplitHostProps) {
   );
 
   return (
-    <SplitViewHostNativeComponent
+    <SplitHostNativeComponent
+      ref={nativeRef}
       // UISplitViewController requires the number of columns to be specified at initialization and it cannot be changed dynamically later.
       // By using a specific key in this form, we can detect changes in the number of React children.
-      // This enables us to fully recreate the SplitView when necessary, ensuring the correct column configuration is always applied.
+      // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
       style={styles.container}>
       {props.children}
-    </SplitViewHostNativeComponent>
+    </SplitHostNativeComponent>
   );
 }
 

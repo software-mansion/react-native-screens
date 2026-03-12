@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -151,10 +150,6 @@ class SearchBarManager :
         const val REACT_CLASS = "RNSSearchBar"
     }
 
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
-    }
-
     // NativeCommands
 
     override fun blur(view: SearchBarView?) {
@@ -192,49 +187,35 @@ class SearchBarManager :
     override fun setPlacement(
         view: SearchBarView,
         placeholder: String?,
-    ) {
-        logNotAvailable("setPlacement")
-    }
+    ) = Unit
 
     override fun setAllowToolbarIntegration(
         view: SearchBarView,
         value: Boolean,
-    ) {
-        logNotAvailable("allowToolbarIntegration")
-    }
+    ) = Unit
 
     override fun setHideWhenScrolling(
         view: SearchBarView?,
         value: Boolean,
-    ) {
-        logNotAvailable("hideWhenScrolling")
-    }
+    ) = Unit
 
     override fun setObscureBackground(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("obscureBackground")
-    }
+    ) = Unit
 
     override fun setHideNavigationBar(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("hideNavigationBar")
-    }
+    ) = Unit
 
     override fun setCancelButtonText(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("cancelButtonText")
-    }
+    ) = Unit
 
     override fun setTintColor(
         view: SearchBarView?,
         value: Int?,
-    ) {
-        logNotAvailable("tintColor")
-    }
+    ) = Unit
 }

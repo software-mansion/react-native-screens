@@ -1,127 +1,169 @@
 import React from 'react';
 
-import { enableFreeze } from 'react-native-screens';
+import {
+  enableFreeze,
+  TabsScreenAppearanceAndroid,
+} from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext'
+} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
   BottomTabsContainer,
   type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer'
+} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '../../../shared/styling/Colors'
-import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
+import Colors from '../../../shared/styling/Colors';
 
 enableFreeze(true);
-internalEnableDetailedBottomTabsLogging();
+
+const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
+  tabBarBackgroundColor: Colors.NavyLight100,
+  tabBarItemRippleColor: Colors.WhiteTransparentDark,
+  tabBarItemLabelVisibilityMode: 'auto',
+  normal: {
+    tabBarItemIconColor: Colors.BlueLight100,
+    tabBarItemTitleFontColor: Colors.BlueLight40,
+  },
+  selected: {
+    tabBarItemIconColor: Colors.GreenLight100,
+    tabBarItemTitleFontColor: Colors.GreenLight40,
+  },
+  focused: {
+    tabBarItemIconColor: Colors.YellowDark100,
+    tabBarItemTitleFontColor: Colors.YellowDark40,
+  },
+  tabBarItemActiveIndicatorEnabled: true,
+  tabBarItemActiveIndicatorColor: Colors.GreenLight40,
+  tabBarItemTitleSmallLabelFontSize: 10,
+  tabBarItemTitleLargeLabelFontSize: 16,
+  tabBarItemTitleFontFamily: 'monospace',
+  tabBarItemTitleFontStyle: 'italic',
+  tabBarItemTitleFontWeight: 700,
+  tabBarItemBadgeTextColor: Colors.RedDark120,
+  tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+};
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
-      scrollEdgeAppearance: {
-        tabBarBackgroundColor: Colors.NavyLight100,
-        stacked: {
-          normal: {
-            tabBarItemIconColor: Colors.NavyLight60,
-          },
-          selected: {
-            tabBarItemIconColor: Colors.NavyLight20,
-            tabBarItemTitleFontColor: Colors.NavyLight20,
-          },
+      android: {
+        standardAppearance: DEFAULT_APPEARANCE_ANDROID,
+        icon: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon.png'),
         },
-      },
-      testID: 'tab-screen-1-id',
-      accessibilityLabel: 'First Tab Screen',
-      tabBarItemTestID: 'tab-item-1-id',
-      tabBarItemAccessibilityLabel: 'First Tab Item',
-      tabKey: 'Tab1',
-      title: 'Tab1',
-      isFocused: true,
-      icon: {
-        ios: {
-          type: 'sfSymbol',
-          name: 'house.fill',
-        },
-        android: {
+        selectedIcon: {
           type: 'imageSource',
           imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
         },
       },
-      selectedIcon: {
-        type: 'sfSymbol',
-        name: 'house.fill',
+      ios: {
+        scrollEdgeAppearance: {
+          tabBarBackgroundColor: Colors.NavyLight100,
+          stacked: {
+            normal: {
+              tabBarItemIconColor: Colors.NavyLight60,
+            },
+            selected: {
+              tabBarItemIconColor: Colors.NavyLight20,
+              tabBarItemTitleFontColor: Colors.NavyLight20,
+            },
+          },
+        },
+        icon: {
+          type: 'sfSymbol',
+          name: 'house.fill',
+        },
+        selectedIcon: {
+          type: 'sfSymbol',
+          name: 'house.fill',
+        },
       },
+
+      testID: 'tab-screen-1-id',
+      accessibilityLabel: 'First Tab Screen',
+      tabBarItemTestID: 'tab-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
+      screenKey: 'Tab1',
+      title: 'Tab1',
+      isFocused: true,
     },
     component: Tab1,
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab2',
+      screenKey: 'Tab2',
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
       accessibilityLabel: 'Second Tab Screen',
       tabBarItemTestID: 'tab-item-2-id',
       tabBarItemAccessibilityLabel: 'Second Tab Item',
-      scrollEdgeAppearance: {
-        tabBarBackgroundColor: Colors.NavyDark140,
-        stacked: {
-          normal: {
-            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-            tabBarItemTitleFontSize: 20,
-            tabBarItemTitleFontStyle: 'italic',
-            tabBarItemTitleFontColor: Colors.RedDark120,
-            tabBarItemTitleFontWeight: 'bold',
-            tabBarItemTitleFontFamily: 'Baskerville',
-            tabBarItemTitlePositionAdjustment: {
-              vertical: 8,
-            },
-            tabBarItemIconColor: Colors.RedDark120,
-          },
-        },
-        inline: {
-          normal: {
-            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-            tabBarItemTitleFontSize: 20,
-            tabBarItemTitleFontStyle: 'italic',
-            tabBarItemTitleFontColor: Colors.RedDark120,
-            tabBarItemTitleFontWeight: 'bold',
-            tabBarItemTitleFontFamily: 'Baskerville',
-            tabBarItemTitlePositionAdjustment: {
-              vertical: 4,
-            },
-            tabBarItemIconColor: Colors.RedDark120,
-          },
-        },
-        compactInline: {
-          normal: {
-            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-            tabBarItemTitleFontSize: 20,
-            tabBarItemTitleFontStyle: 'italic',
-            tabBarItemTitleFontColor: Colors.RedDark120,
-            tabBarItemTitleFontWeight: 'bold',
-            tabBarItemTitleFontFamily: 'Baskerville',
-            tabBarItemTitlePositionAdjustment: {
-              vertical: 4,
-            },
-            tabBarItemIconColor: Colors.RedDark120,
-          },
-        },
-      },
-      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-      icon: {
-        ios: {
-          type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon.png'),
-        },
-        android: {
+      android: {
+        standardAppearance: DEFAULT_APPEARANCE_ANDROID,
+        icon: {
           type: 'drawableResource',
           name: 'sym_call_missed',
         },
+        selectedIcon: {
+          type: 'drawableResource',
+          name: 'sym_call_incoming',
+        },
       },
-      selectedIcon: {
-        type: 'templateSource',
-        templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+      ios: {
+        scrollEdgeAppearance: {
+          tabBarBackgroundColor: Colors.NavyDark140,
+          stacked: {
+            normal: {
+              tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+              tabBarItemTitleFontSize: 20,
+              tabBarItemTitleFontStyle: 'italic',
+              tabBarItemTitleFontColor: Colors.RedDark120,
+              tabBarItemTitleFontWeight: 'bold',
+              tabBarItemTitleFontFamily: 'Baskerville',
+              tabBarItemTitlePositionAdjustment: {
+                vertical: 8,
+              },
+              tabBarItemIconColor: Colors.RedDark120,
+            },
+          },
+          inline: {
+            normal: {
+              tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+              tabBarItemTitleFontSize: 20,
+              tabBarItemTitleFontStyle: 'italic',
+              tabBarItemTitleFontColor: Colors.RedDark120,
+              tabBarItemTitleFontWeight: 'bold',
+              tabBarItemTitleFontFamily: 'Baskerville',
+              tabBarItemTitlePositionAdjustment: {
+                vertical: 4,
+              },
+              tabBarItemIconColor: Colors.RedDark120,
+            },
+          },
+          compactInline: {
+            normal: {
+              tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+              tabBarItemTitleFontSize: 20,
+              tabBarItemTitleFontStyle: 'italic',
+              tabBarItemTitleFontColor: Colors.RedDark120,
+              tabBarItemTitleFontWeight: 'bold',
+              tabBarItemTitleFontFamily: 'Baskerville',
+              tabBarItemTitlePositionAdjustment: {
+                vertical: 4,
+              },
+              tabBarItemIconColor: Colors.RedDark120,
+            },
+          },
+        },
+        icon: {
+          type: 'templateSource',
+          templateSource: require('../../../../assets/variableIcons/icon.png'),
+        },
+        selectedIcon: {
+          type: 'templateSource',
+          templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        },
       },
       title: 'Tab2',
     },
@@ -135,36 +177,45 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab3',
+      screenKey: 'Tab3',
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
       accessibilityLabel: 'Third Tab Screen',
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
-      scrollEdgeEffects: { bottom: 'hard' },
-      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-      tabBarItemBadgeTextColor: Colors.RedDark120,
-      standardAppearance: {
-        stacked: {
-          normal: {
-            tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+      ios: {
+        scrollEdgeEffects: { bottom: 'hard' },
+        standardAppearance: {
+          stacked: {
+            normal: {
+              tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+            },
           },
         },
-      },
-      scrollEdgeAppearance: {
-        tabBarShadowColor: 'red',
-        tabBarBackgroundColor: 'transparent',
-        tabBarBlurEffect: 'none',
-      },
-      icon: {
-        shared: {
+        scrollEdgeAppearance: {
+          tabBarShadowColor: 'red',
+          tabBarBackgroundColor: 'transparent',
+          tabBarBlurEffect: 'none',
+        },
+        icon: {
           type: 'imageSource',
           imageSource: require('../../../../assets/variableIcons/icon.png'),
         },
+        selectedIcon: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        },
       },
-      selectedIcon: {
-        type: 'imageSource',
-        imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+      android: {
+        standardAppearance: DEFAULT_APPEARANCE_ANDROID,
+        icon: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon.png'),
+        },
+        selectedIcon: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        },
       },
       title: 'Tab3',
       // systemItem: 'search', // iOS specific
@@ -175,27 +226,35 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
-      tabKey: 'Tab4',
+      screenKey: 'Tab4',
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
-      icon: {
-        ios: {
-          type: 'sfSymbol',
-          name: 'rectangle.stack',
+      android: {
+        standardAppearance: DEFAULT_APPEARANCE_ANDROID,
+        icon: {
+          type: 'drawableResource',
+          name: 'custom_home_icon',
         },
-        android: {
+        selectedIcon: {
           type: 'drawableResource',
           name: 'custom_home_icon',
         },
       },
-      selectedIcon: {
-        type: 'sfSymbol',
-        name: 'rectangle.stack.fill',
+      ios: {
+        icon: {
+          type: 'sfSymbol',
+          name: 'rectangle.stack',
+        },
+        selectedIcon: {
+          type: 'sfSymbol',
+          name: 'rectangle.stack.fill',
+        },
+        systemItem: 'search', // iOS specific
       },
       title: 'Tab4',
-      systemItem: 'search', // iOS specific
+
       badgeValue: '123',
       specialEffects: {
         repeatedTabSelection: {
@@ -220,22 +279,10 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-        tabBarItemActiveIndicatorEnabled={true}
-        tabBarTintColor={Colors.YellowLight100}
-        tabBarItemIconColor={Colors.BlueLight100}
-        tabBarItemTitleFontColor={Colors.BlueLight40}
-        tabBarItemIconColorActive={Colors.GreenLight100}
-        tabBarItemTitleFontColorActive={Colors.GreenLight40}
-        tabBarItemTitleFontSize={10}
-        tabBarItemTitleFontSizeActive={15}
-        tabBarItemRippleColor={Colors.WhiteTransparentDark}
-        tabBarItemTitleFontFamily="monospace"
-        tabBarItemTitleFontStyle="italic"
-        tabBarItemTitleFontWeight="700"
-        tabBarItemLabelVisibilityMode="auto"
-        tabBarMinimizeBehavior="onScrollDown"
+        ios={{
+          tabBarTintColor: Colors.YellowLight100,
+          tabBarMinimizeBehavior: 'onScrollDown',
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

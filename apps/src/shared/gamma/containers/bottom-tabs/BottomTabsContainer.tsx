@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, type NativeSyntheticEvent } from 'react-native';
+import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   Tabs,
   TabsHostProps,
@@ -9,6 +9,7 @@ import {
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
 import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import ConfigWrapperContext from './ConfigWrapperContext';
+import { RNSLog } from 'react-native-screens/private';
 
 export interface TabConfiguration {
   tabScreenProps: TabsScreenProps;
@@ -21,12 +22,12 @@ export type BottomTabsContainerProps = TabsHostProps & {
 };
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
-  console.info('BottomTabsContainer render');
+  RNSLog.info('BottomTabsContainer render');
 
   const { tabConfigs, ...restProps } = props;
 
-  const [focusedTabKey, setFocusedTabKey] = React.useState<string>(() => {
-    console.log('BottomTabsContainer focusedStateKey initial state computed');
+  const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
+    RNSLog.log('BottomTabsContainer focusedStateKey initial state computed');
 
     if (props.tabConfigs.length === 0) {
       throw new Error('There must be at least one tab defined');
@@ -34,21 +35,21 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
     const maybeUserRequestedFocusedTab = tabConfigs.find(
       tabConfig => tabConfig.tabScreenProps.isFocused === true,
-    )?.tabScreenProps.tabKey;
+    )?.tabScreenProps.screenKey;
 
     if (maybeUserRequestedFocusedTab != null) {
       return maybeUserRequestedFocusedTab;
     }
 
     // Default to first tab
-    return tabConfigs[0].tabScreenProps.tabKey;
+    return tabConfigs[0].tabScreenProps.screenKey;
   });
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      const tabKey = event.nativeEvent.tabKey;
+      const screenKey = event.nativeEvent.screenKey;
 
       // Use `startTransition` only if the state is controlled in JS
       // const transitionFn = !configWrapper.config.controlledBottomTabs
@@ -67,8 +68,8 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       // };
 
       transitionFn(() => {
-        console.info(`Starting transition to ${tabKey}`);
-        setFocusedTabKey(tabKey);
+        RNSLog.info(`Starting transition to ${screenKey}`);
+        setFocusedScreenKey(screenKey);
       });
     },
     [],
@@ -81,19 +82,21 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabConfigs.map(tabConfig => {
-        const tabKey = tabConfig.tabScreenProps.tabKey;
-        const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
-        console.info(
-          `BottomTabsContainer map to component -> ${tabKey} ${
+        const screenKey = tabConfig.tabScreenProps.screenKey;
+        const isFocused =
+          tabConfig.tabScreenProps.screenKey === focusedScreenKey;
+        RNSLog.info(
+          `BottomTabsContainer map to component -> ${screenKey} ${
             isFocused ? '(focused)' : ''
           }`,
         );
 
         return (
           <Tabs.Screen
-            key={tabKey}
+            key={screenKey}
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >

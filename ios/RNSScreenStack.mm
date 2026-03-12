@@ -213,13 +213,6 @@ namespace react = facebook::react;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
   UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
-#ifdef RCT_NEW_ARCH_ENABLED
-  /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
-  /// in current transaction. This vector should be populated when we receive notification via
-  /// `RCTMountingObserving` protocol, that a transaction will be performed, and should
-  /// be cleaned up when we're notified that the transaction has been completed.
-  std::vector<__strong RNSScreenView *> _toBeDeletedScreens;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -259,6 +252,7 @@ namespace react = facebook::react;
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+  _iosPreventReattachmentOfDismissedScreens = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -867,7 +861,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)rnscreens_disableInteractions
 {
   // When transitioning between screens, disable interactions on stack subview which wraps the screens
-  // and sink all gesture events. This should work for nested stacks and stack inside bottom tabs, inside stack.
+  // and sink all gesture events. This should work for nested stacks and stack inside tabs, inside stack.
   self.subviews[0].userInteractionEnabled = NO;
   [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
 }
@@ -1450,7 +1444,6 @@ RNS_IGNORE_SUPER_CALL_END
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
       if (toBeRemovedChild != nil) {
         [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
-        _toBeDeletedScreens.push_back(toBeRemovedChild);
       }
     }
   }
@@ -1474,25 +1467,6 @@ RNS_IGNORE_SUPER_CALL_END
       });
       break;
     }
-  }
-
-  if (!self->_toBeDeletedScreens.empty()) {
-    __weak RNSScreenStackView *weakSelf = self;
-    // We want to run after container updates are performed (transitions etc.)
-    dispatch_async(dispatch_get_main_queue(), ^{
-      RNSScreenStackView *_Nullable strongSelf = weakSelf;
-      if (strongSelf == nil) {
-        return;
-      }
-      for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
-#ifdef RCT_NEW_ARCH_ENABLED
-        [screenRef invalidateImpl];
-#else
-        [screenRef invalidate];
-#endif
-      }
-      strongSelf->_toBeDeletedScreens.clear();
-    });
   }
 }
 
@@ -1560,6 +1534,7 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedScreens, BOOL);
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

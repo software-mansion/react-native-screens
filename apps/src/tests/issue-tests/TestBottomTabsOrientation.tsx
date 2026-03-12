@@ -10,7 +10,6 @@ import {
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import Colors from '../../shared/styling/Colors';
-import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
   NavigationContainer,
@@ -20,7 +19,6 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 enableFreeze(true);
-internalEnableDetailedBottomTabsLogging();
 
 function ScreenComponent() {
   return (
@@ -78,24 +76,30 @@ function makeTabConfigs(
   return [
     {
       tabScreenProps: {
-        tabKey: 'Auto',
+        screenKey: 'Auto',
         title: 'Auto',
         isFocused: true,
-        icon: {
-          ios: {
+        orientation: tabsOrientations.home.tabScreen,
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house.fill',
           },
-          android: {
+          selectedIcon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
+          },
+        },
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+          selectedIcon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon_fill.png'),
           },
         },
-        selectedIcon: {
-          type: 'sfSymbol',
-          name: 'house.fill',
-        },
-        orientation: tabsOrientations.home.tabScreen,
       },
       component: tabsOrientations.home.stackScreen
         ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
@@ -103,7 +107,7 @@ function makeTabConfigs(
     },
     {
       tabScreenProps: {
-        tabKey: 'Portrait',
+        screenKey: 'Portrait',
         title: 'Portrait',
         tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
         icon: {
@@ -117,8 +121,14 @@ function makeTabConfigs(
           },
         },
         selectedIcon: {
-          type: 'templateSource',
-          templateSource: require('../../../assets/variableIcons/icon_fill.png'),
+          ios: {
+            type: 'templateSource',
+            templateSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+          android: {
+            type: 'drawableResource',
+            name: 'sym_call_missed',
+          },
         },
         orientation: tabsOrientations.portrait.tabScreen,
       },
@@ -128,19 +138,29 @@ function makeTabConfigs(
     },
     {
       tabScreenProps: {
-        tabKey: 'Landscape',
+        screenKey: 'Landscape',
         title: 'Landscape',
-        icon: {
-          shared: {
+        orientation: tabsOrientations.landscape.tabScreen,
+        ios: {
+          icon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon.png'),
           },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
         },
-        selectedIcon: {
-          type: 'imageSource',
-          imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon.png'),
+          },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
         },
-        orientation: tabsOrientations.landscape.tabScreen,
       },
       component: () => (
         <TabElement orientation={tabsOrientations.landscape.stackScreen} />

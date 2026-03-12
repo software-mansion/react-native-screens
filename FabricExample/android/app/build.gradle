@@ -72,6 +72,10 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+def isGammaEnabled() {
+    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -84,6 +88,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         testBuildType System.getProperty('testBuildType', 'release') // Detox
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
     }
@@ -125,7 +130,7 @@ dependencies {
         // https://github.com/wix/Detox/issues/2848
         exclude group: 'com.google.android.material'
     }
-    implementation "androidx.appcompat:appcompat:1.6.1" // Detox
+    implementation "androidx.appcompat:appcompat:1.7.1" // Detox
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
