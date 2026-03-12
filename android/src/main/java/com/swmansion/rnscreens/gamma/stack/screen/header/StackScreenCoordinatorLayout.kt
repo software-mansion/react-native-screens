@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.screen.header
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -15,14 +16,16 @@ internal class StackScreenCoordinatorLayout(
     internal val stackScreen: StackScreen,
 ) : CoordinatorLayout(context) {
     private val headerCoordinator = StackScreenHeaderCoordinator(context)
+    internal var stackScreenWrapper: FrameLayout
 
     init {
         // Needed when Transition API is in use to ensure that shadows do not disappear,
         // views do not jump around the screen and whole sub-tree is animated as a whole.
         isTransitionGroup = true
 
+        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
         addView(
-            stackScreen,
+            stackScreenWrapper,
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 

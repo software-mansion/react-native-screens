@@ -75,13 +75,13 @@ internal class StackScreenHeaderCoordinator(
         coordinatorLayout: StackScreenCoordinatorLayout,
         config: StackScreenHeaderConfigurationProviding,
     ) {
-        val stackScreen = coordinatorLayout.stackScreen
-        val params = stackScreen.layoutParams as CoordinatorLayout.LayoutParams
+        val stackScreenWrapper = coordinatorLayout.stackScreenWrapper
+        val params = stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
         val needsBehavior = appBarLayout != null && !config.isTransparent && !config.isHidden
         val hasBehavior = params.behavior != null
         if (needsBehavior != hasBehavior) {
             params.behavior = if (needsBehavior) AppBarLayout.ScrollingViewBehavior() else null
-            stackScreen.layoutParams = params
+            stackScreenWrapper.layoutParams = params
         }
     }
 }
