@@ -165,6 +165,7 @@ internal class ScreenDummyLayoutHelper(
      * @return header height in dp as consumed by Yoga
      */
     @DoNotStrip
+    @Synchronized
     private fun computeDummyLayout(
         fontSize: Int,
         isTitleEmpty: Boolean,
@@ -190,8 +191,9 @@ internal class ScreenDummyLayoutHelper(
         val currentCoordinatorLayout = coordinatorLayout ?: return 0.0f
         val currentAppBarLayout = appBarLayout ?: return 0.0f
         val currentToolbar = toolbar ?: return 0.0f
+        val currentActivity = reactContextRef.get()?.currentActivity ?: return 0.0f
 
-        val topLevelDecorView = requireActivity().window.decorView
+        val topLevelDecorView = currentActivity.window.decorView
         val topInset = getDecorViewTopInset(topLevelDecorView)
 
         // These dimensions are not accurate, as they do include navigation bar, however
@@ -319,6 +321,7 @@ internal class ScreenDummyLayoutHelper(
         cleanUpViews()
     }
 
+    @Synchronized
     private fun cleanUpViews() {
         coordinatorLayout = null
         appBarLayout = null
