@@ -133,6 +133,7 @@ internal class ScreenDummyLayoutHelper(
                         ).apply { scrollFlags = 0 }
             }
 
+        // We know that the layout hierarchy parts (appBarLayout, toolbar, coordinatorLayout) are non-null at this point.
         // We know the title text view will be there, cause we've just set title.
         defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar!!)!!.textSize
         defaultContentInsetStartWithNavigation = toolbar!!.contentInsetStartWithNavigation
@@ -168,10 +169,6 @@ internal class ScreenDummyLayoutHelper(
         fontSize: Int,
         isTitleEmpty: Boolean,
     ): Float {
-        if (toolbar == null) {
-            return 0.0f
-        }
-
         if (!isLayoutInitialized) {
             val reactContext =
                 requireReactContext { "[RNScreens] Context was null-ed before dummy layout was initialized" }
@@ -190,6 +187,10 @@ internal class ScreenDummyLayoutHelper(
             return cache.headerHeight
         }
 
+        val currentCoordinatorLayout = coordinatorLayout ?: return 0.0f
+        val currentAppBarLayout = appBarLayout ?: return 0.0f
+        val currentToolbar = toolbar ?: return 0.0f
+
         val topLevelDecorView = requireActivity().window.decorView
         val topInset = getDecorViewTopInset(topLevelDecorView)
 
@@ -204,14 +205,14 @@ internal class ScreenDummyLayoutHelper(
             View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
 
         if (isTitleEmpty) {
-            toolbar!!.title = ""
-            toolbar!!.contentInsetStartWithNavigation = 0
+            currentToolbar.title = ""
+            currentToolbar.contentInsetStartWithNavigation = 0
         } else {
-            toolbar!!.title = DEFAULT_HEADER_TITLE
-            toolbar!!.contentInsetStartWithNavigation = defaultContentInsetStartWithNavigation
+            currentToolbar.title = DEFAULT_HEADER_TITLE
+            currentToolbar.contentInsetStartWithNavigation = defaultContentInsetStartWithNavigation
         }
 
-        val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar!!)
+        val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(currentToolbar)
         textView?.textSize =
             if (fontSize != FONT_SIZE_UNSET) {
                 fontSize.toFloat()
@@ -219,14 +220,14 @@ internal class ScreenDummyLayoutHelper(
                 defaultFontSize
             }
 
-        coordinatorLayout?.measure(widthMeasureSpec, heightMeasureSpec)
+        currentCoordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
 
         // It seems that measure pass would be enough, however I'm not certain whether there are no
         // scenarios when layout violates measured dimensions.
-        coordinatorLayout?.layout(0, 0, decorViewWidth, decorViewHeight)
+        currentCoordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
         // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
-        val totalAppBarLayoutHeight = (appBarLayout?.height?.toFloat() ?: 0f) + topInset
+        val totalAppBarLayoutHeight = currentAppBarLayout.height.toFloat() + topInset
 
         val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
         cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
