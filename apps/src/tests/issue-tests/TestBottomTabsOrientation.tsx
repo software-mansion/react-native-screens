@@ -109,23 +109,22 @@ function makeTabConfigs(
       tabScreenProps: {
         screenKey: 'Portrait',
         title: 'Portrait',
-        tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'templateSource',
             templateSource: require('../../../assets/variableIcons/icon.png'),
           },
-          android: {
-            type: 'drawableResource',
-            name: 'sym_call_missed',
-          },
-        },
-        selectedIcon: {
-          ios: {
+          selectedIcon: {
             type: 'templateSource',
             templateSource: require('../../../assets/variableIcons/icon_fill.png'),
           },
-          android: {
+        },
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'sym_call_missed',
+          },
+          selectedIcon: {
             type: 'drawableResource',
             name: 'sym_call_missed',
           },
