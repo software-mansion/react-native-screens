@@ -23,6 +23,7 @@ internal sealed class StackScreenAppBarLayout(
     init {
         layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         isLiftOnScroll = true
+
         // TODO: this won't work with nested header but there were some problems with lift on scroll
         //       without it when I was researching this.
         fitsSystemWindows = true
@@ -37,6 +38,7 @@ internal sealed class StackScreenAppBarLayout(
                 layoutParams =
                     LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                         // TODO: debug only for small header, must be moved to configuration
+//                        scrollFlags = SCROLL_FLAG_NO_SCROLL
                         scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
                     }
             }
@@ -92,6 +94,7 @@ internal sealed class StackScreenAppBarLayout(
                         ).apply {
                             // TODO: debug only for medium/large header, must be moved to configuration
                             scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
+//                            scrollFlags = SCROLL_FLAG_NO_SCROLL
                         }
                     addView(toolbar)
                 }
