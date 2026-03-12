@@ -1,10 +1,11 @@
 import React from 'react';
 import { Scenario } from '../../shared/helpers';
 import { StackContainer } from '../../../shared/gamma/containers/stack';
-import { ScrollView } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import LongText from '../../../../src/shared/LongText';
 import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
 import Colors from '../../../../src/shared/styling/Colors';
+import PressableWithFeedback from '../../../../src/shared/PressableWithFeedback';
 
 const SCENARIO: Scenario = {
   name: 'Stack Header Modes',
@@ -44,7 +45,18 @@ function Screen(isHome: boolean) {
     <ScrollView
       nestedScrollEnabled={true}
       style={{ backgroundColor: Colors.cardBackground }}>
-      <StackNavigationButtons isPopEnabled={!isHome} routeNames={['A']} />
+      <LongText size="xs" />
+      <View style={{ paddingVertical: 10, gap: 10 }}>
+        <StackNavigationButtons isPopEnabled={!isHome} routeNames={['A']} />
+        <PressableWithFeedback
+          style={{
+            height: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Pressable</Text>
+        </PressableWithFeedback>
+      </View>
       <LongText size="xl" />
     </ScrollView>
   );
