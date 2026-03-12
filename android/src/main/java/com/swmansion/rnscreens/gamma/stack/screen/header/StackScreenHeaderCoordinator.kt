@@ -22,41 +22,37 @@ internal class StackScreenHeaderCoordinator(
 
     internal fun applyHeaderConfiguration(
         coordinatorLayout: StackScreenCoordinatorLayout,
-        headerConfigurationProviding: StackScreenHeaderConfigurationProviding,
+        config: StackScreenHeaderConfigurationProviding,
     ) {
-        // TODO: handle hiding the header
-        if (headerConfigurationProviding.isHidden) {
-            teardown(coordinatorLayout)
-        } else if (appBarLayout == null || currentHeaderType == null || currentHeaderType != headerConfigurationProviding.headerType) {
-            rebuild(coordinatorLayout, headerConfigurationProviding)
-        } else {
-            update(headerConfigurationProviding)
-        }
-
+        applyStructure(coordinatorLayout, config)
+        applyAppBarConfiguration(config)
+        applyContentBehavior(coordinatorLayout, config)
         coordinatorLayout.maybeRequestLayoutContainer()
     }
 
-    private fun rebuild(
+    private fun applyStructure(
         coordinatorLayout: StackScreenCoordinatorLayout,
-        headerConfigurationProviding: StackScreenHeaderConfigurationProviding,
+        config: StackScreenHeaderConfigurationProviding,
     ) {
-        teardown(coordinatorLayout)
-        appBarLayout = StackScreenAppBarLayout.create(wrappedContext, headerConfigurationProviding.headerType)
-        coordinatorLayout.addView(appBarLayout, 0)
-        update(headerConfigurationProviding)
-        updateContentBehavior(coordinatorLayout, false)
+        val desiredType = if (config.isHidden) null else config.headerType
+
+        if (desiredType == currentHeaderType) return
+
+        appBarLayout?.let { coordinatorLayout.removeView(it) }
+        appBarLayout =
+            desiredType?.let {
+                StackScreenAppBarLayout.create(wrappedContext, it).also { appBar ->
+                    coordinatorLayout.addView(appBar, 0)
+                }
+            }
+
+        currentHeaderType = desiredType
     }
 
-    private fun teardown(coordinatorLayout: StackScreenCoordinatorLayout) {
-        coordinatorLayout.removeView(appBarLayout)
-        appBarLayout = null
-        currentHeaderType = null
-        updateContentBehavior(coordinatorLayout, true)
-    }
-
-    private fun update(headerConfigurationProviding: StackScreenHeaderConfigurationProviding) {
-        appBarLayout?.let {
-            applyTitle(it, headerConfigurationProviding.title)
+    private fun applyAppBarConfiguration(config: StackScreenHeaderConfigurationProviding) {
+        appBarLayout?.let { appBar ->
+            applyTitle(appBar, config.title)
+            // ...
         }
     }
 
@@ -75,13 +71,13 @@ internal class StackScreenHeaderCoordinator(
         }
     }
 
-    private fun updateContentBehavior(
+    private fun applyContentBehavior(
         coordinatorLayout: StackScreenCoordinatorLayout,
-        isHidden: Boolean,
+        config: StackScreenHeaderConfigurationProviding,
     ) {
         val stackScreen = coordinatorLayout.stackScreen
         val params = stackScreen.layoutParams as CoordinatorLayout.LayoutParams
-        val needsBehavior = !isHidden && appBarLayout != null
+        val needsBehavior = appBarLayout != null && !config.isTransparent && !config.isHidden
         val hasBehavior = params.behavior != null
         if (needsBehavior != hasBehavior) {
             params.behavior = if (needsBehavior) AppBarLayout.ScrollingViewBehavior() else null

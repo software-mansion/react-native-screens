@@ -29,31 +29,34 @@ internal class StackScreenCoordinatorLayout(
         // TODO: debug-only
         applyHeaderConfiguration(
             object : StackScreenHeaderConfigurationProviding {
-                override val headerType = StackScreenHeaderType.LARGE
+                override val headerType = StackScreenHeaderType.SMALL
                 override val title = "Hello, World!"
                 override val isHidden = false
+                override val isTransparent = true
             },
         )
 
-        postDelayed({
-            applyHeaderConfiguration(
-                object : StackScreenHeaderConfigurationProviding {
-                    override val headerType = StackScreenHeaderType.LARGE
-                    override val title = "Hello, World!"
-                    override val isHidden = true
-                },
-            )
-
-            postDelayed({
-                applyHeaderConfiguration(
-                    object : StackScreenHeaderConfigurationProviding {
-                        override val headerType = StackScreenHeaderType.LARGE
-                        override val title = "Hello, World!"
-                        override val isHidden = false
-                    },
-                )
-            }, 3000)
-        }, 3000)
+//        postDelayed({
+//            applyHeaderConfiguration(
+//                object : StackScreenHeaderConfigurationProviding {
+//                    override val headerType = StackScreenHeaderType.LARGE
+//                    override val title = "Hello, World!"
+//                    override val isHidden = true
+//                    override val isTransparent = false
+//                },
+//            )
+//
+//            postDelayed({
+//                applyHeaderConfiguration(
+//                    object : StackScreenHeaderConfigurationProviding {
+//                        override val headerType = StackScreenHeaderType.LARGE
+//                        override val title = "Hello, World!"
+//                        override val isHidden = false
+//                        override val isTransparent = false
+//                    },
+//                )
+//            }, 3000)
+//        }, 3000)
     }
 
     private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
