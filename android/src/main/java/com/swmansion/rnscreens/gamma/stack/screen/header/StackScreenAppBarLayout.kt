@@ -22,6 +22,9 @@ internal sealed class StackScreenAppBarLayout(
 
     init {
         layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+
+        // TODO: this should be exposed in the future via prop. Also, it might not work correctly
+        //       until we set liftOnScrollView manually.
         isLiftOnScroll = true
 
         // TODO: this won't work with nested header but there were some problems with lift on scroll
@@ -38,8 +41,8 @@ internal sealed class StackScreenAppBarLayout(
                 layoutParams =
                     LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                         // TODO: debug only for small header, must be moved to configuration
-//                        scrollFlags = SCROLL_FLAG_NO_SCROLL
                         scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
+//                        scrollFlags = SCROLL_FLAG_NO_SCROLL
                     }
             }
 

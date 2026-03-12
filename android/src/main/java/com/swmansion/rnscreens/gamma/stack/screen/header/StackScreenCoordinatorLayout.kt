@@ -24,16 +24,21 @@ internal class StackScreenCoordinatorLayout(
 
     init {
         // Needed when Transition API is in use to ensure that shadows do not disappear,
-        // views do not jump around the screen and whole sub-tree is animated as a whole.
+        // views do not jump around the screen and whole subtree is animated as a whole.
         isTransitionGroup = true
 
+        // Due to how we're synchronizing native & Yoga layout (via contentOriginOffset on
+        // StackScreen), we can't use StackScreen directly as a child of CoordinatorLayout because
+        // SurfaceMountingManager will override Y offset (that depends on the header height) with
+        // Y=0. If we wrap StackScreen in another view, as Y is relative to parent view, value set
+        // by Yoga will be correct.
         stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
         addView(
             stackScreenWrapper,
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        // TODO: debug-only
+        // TODO: debug-only, this will be sent in reaction to information from "HeaderConfig" component.
         applyHeaderConfiguration(
             object : StackScreenHeaderConfigurationProviding {
                 override val headerType = StackScreenHeaderType.LARGE
@@ -43,6 +48,7 @@ internal class StackScreenCoordinatorLayout(
             },
         )
 
+        // TODO: debug only, until we expose props via JS
 //        postDelayed({
 //            applyHeaderConfiguration(
 //                object : StackScreenHeaderConfigurationProviding {
@@ -68,6 +74,7 @@ internal class StackScreenCoordinatorLayout(
 
     private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
 
+    // TODO: do we need to rely on parent here?
     internal fun maybeRequestLayoutContainer() {
         post {
             stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()

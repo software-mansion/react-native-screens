@@ -52,7 +52,7 @@ internal class StackScreenHeaderCoordinator(
     private fun applyAppBarConfiguration(config: StackScreenHeaderConfigurationProviding) {
         appBarLayout?.let { appBar ->
             applyTitle(appBar, config.title)
-            // ...
+            // TODO: other app bar configuration...
         }
     }
 
@@ -60,6 +60,7 @@ internal class StackScreenHeaderCoordinator(
         appBarLayout: StackScreenAppBarLayout,
         title: String,
     ) {
+        // TODO: diffing mechanism?
         when (appBarLayout) {
             is StackScreenAppBarLayout.Small -> {
                 appBarLayout.toolbar.title = title
