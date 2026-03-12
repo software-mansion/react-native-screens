@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
-import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
 
@@ -81,12 +80,13 @@ internal class StackScreenHeaderCoordinator(
         val needsBehavior = appBarLayout != null && !config.isTransparent && !config.isHidden
         val hasBehavior = params.behavior != null
         if (needsBehavior != hasBehavior) {
-            params.behavior = if (needsBehavior) {
-                StackScreenScrollingViewBehavior(onHeaderHeightChanged)
-            } else {
-                onHeaderHeightChanged(0)
-                null
-            }
+            params.behavior =
+                if (needsBehavior) {
+                    StackScreenScrollingViewBehavior(onHeaderHeightChanged)
+                } else {
+                    onHeaderHeightChanged(0)
+                    null
+                }
             stackScreenWrapper.layoutParams = params
         }
     }
