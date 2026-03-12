@@ -5,7 +5,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 
 internal class StackScreenScrollingViewBehavior(
-    private val onContentOffsetChanged: (headerHeight: Int) -> Unit,
+    private val onHeaderHeightChanged: (headerHeight: Int) -> Unit,
 ) : AppBarLayout.ScrollingViewBehavior() {
     override fun onDependentViewChanged(
         parent: CoordinatorLayout,
@@ -13,7 +13,7 @@ internal class StackScreenScrollingViewBehavior(
         dependency: View,
     ): Boolean {
         val result = super.onDependentViewChanged(parent, child, dependency)
-        onContentOffsetChanged(child.top)
+        onHeaderHeightChanged(child.top)
         return result
     }
 }
