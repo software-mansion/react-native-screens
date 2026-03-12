@@ -214,11 +214,7 @@ internal class ScreenDummyLayoutHelper(
 
         val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(currentToolbar)
         textView?.textSize =
-            if (fontSize != FONT_SIZE_UNSET) {
-                fontSize.toFloat()
-            } else {
-                defaultFontSize
-            }
+            if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
 
         currentCoordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
 
