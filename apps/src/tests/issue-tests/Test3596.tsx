@@ -29,7 +29,7 @@ function makeTab(title: string) {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab1',
       title: 'Tab 1',
       ios: {
@@ -48,7 +48,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: makeTab('Tab 1'),
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab2',
       title: 'Tab 2',
       ios: {
@@ -67,7 +67,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: makeTab('Tab 2'),
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab3',
       title: 'Tab 3',
       ios: {

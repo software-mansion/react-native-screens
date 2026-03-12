@@ -35,11 +35,11 @@ export function BottomTabsScenario() {
             tabConfigs={[
               {
                 component: ConfigComponent,
-                screenProps: { screenKey: 'config', title: 'Config' },
+                options: { screenKey: 'config', title: 'Config' },
               },
               {
                 component: ScrollViewTemplate,
-                screenProps: {
+                options: {
                   screenKey: 'stack',
                   title: 'Scroll',
                   ios: {

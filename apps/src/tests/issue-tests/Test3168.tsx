@@ -201,7 +201,7 @@ function TabsStackComponent() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      screenProps: {
+      options: {
         screenKey: 'main',
         title: 'Main',
         ios: {
@@ -214,7 +214,7 @@ function TabsStackComponent() {
       component: () => Menu({ tabsMode: true }),
     },
     {
-      screenProps: {
+      options: {
         screenKey: 'another',
         title: 'Another',
         ios: {
@@ -227,7 +227,7 @@ function TabsStackComponent() {
       component: AnotherTab,
     },
     {
-      screenProps: {
+      options: {
         screenKey: 'examples',
         title: 'Search',
         ios: {

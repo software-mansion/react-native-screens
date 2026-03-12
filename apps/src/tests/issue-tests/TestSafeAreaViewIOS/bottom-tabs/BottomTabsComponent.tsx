@@ -17,7 +17,7 @@ export default function BottomTabsComponent() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      screenProps: {
+      options: {
         screenKey: 'config',
         title: 'Config',
         ios: {
@@ -30,7 +30,7 @@ export default function BottomTabsComponent() {
       component: ConfigTab,
     },
     {
-      screenProps: {
+      options: {
         screenKey: 'test',
         title: 'Test',
         ios: {

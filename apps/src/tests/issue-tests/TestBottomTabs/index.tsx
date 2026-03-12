@@ -46,7 +46,7 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    screenProps: {
+    options: {
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
@@ -92,7 +92,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Tab1,
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab2',
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
@@ -176,7 +176,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     },
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab3',
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
@@ -225,7 +225,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Tab3,
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab4',
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',

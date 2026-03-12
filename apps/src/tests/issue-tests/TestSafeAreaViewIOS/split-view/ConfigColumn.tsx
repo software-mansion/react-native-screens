@@ -19,7 +19,7 @@ export default function ConfigColumn({
     .filter(index => index !== configColumnIndex)
     .map(index => {
       const configuration: TabConfiguration = {
-        screenProps: {
+        options: {
           screenKey: 'column' + index,
           title: 'Column ' + index,
           ios: {

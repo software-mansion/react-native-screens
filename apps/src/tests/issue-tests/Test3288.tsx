@@ -135,7 +135,7 @@ function TestScreen() {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab1',
       title: 'Config',
       ios: {
@@ -148,7 +148,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Config,
   },
   {
-    screenProps: {
+    options: {
       screenKey: 'Tab2',
       title: 'Test',
       ios: {

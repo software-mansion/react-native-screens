@@ -467,7 +467,7 @@ function Tabs() {
   const dynamicTabConfigs = useMemo<TabConfiguration[]>(
     () => [
       {
-        screenProps: {
+        options: {
           screenKey: 'Tab1',
           title: 'Config',
           icon: {
@@ -478,7 +478,7 @@ function Tabs() {
         component: ConfigScreen,
       },
       {
-        screenProps: {
+        options: {
           screenKey: 'Tab2',
           title: 'Tab 2',
           icon: { ios: { type: 'sfSymbol', name: 'square' } },
@@ -487,7 +487,7 @@ function Tabs() {
         component: ScreenTab2,
       },
       {
-        screenProps: {
+        options: {
           screenKey: 'Tab3',
           title: 'Tab 3',
           icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
@@ -496,7 +496,7 @@ function Tabs() {
         component: ScreenTab3,
       },
       {
-        screenProps: {
+        options: {
           screenKey: 'Tab4',
           title: 'Tab 4',
           icon: { ios: { type: 'sfSymbol', name: 'circle' } },

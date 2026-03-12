@@ -32,11 +32,11 @@ export function StackInBottomTabsScenario() {
           tabConfigs={[
             {
               component: ConfigComponent,
-              screenProps: { screenKey: 'config', title: 'Config' },
+              options: { screenKey: 'config', title: 'Config' },
             },
             {
               component: StackScenario,
-              screenProps: {
+              options: {
                 screenKey: 'stack',
                 title: 'Stack',
                 ios: {

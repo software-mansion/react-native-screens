@@ -463,7 +463,7 @@ function HeaderHeightTabsWrapper() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      screenProps: {
+      options: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -482,7 +482,7 @@ function HeaderHeightTabsWrapper() {
       component: HeaderHeightTest,
     },
     {
-      screenProps: {
+      options: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {

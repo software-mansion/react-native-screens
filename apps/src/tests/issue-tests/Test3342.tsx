@@ -68,7 +68,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      screenProps: {
+      options: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -82,7 +82,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
       component: () => TabScreen(stackNavProp),
     },
     {
-      screenProps: {
+      options: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {

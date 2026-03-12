@@ -12,7 +12,7 @@ import ConfigWrapperContext from './ConfigWrapperContext';
 import { RNSLog } from 'react-native-screens/private';
 
 export interface TabConfiguration {
-  screenProps: TabsScreenProps;
+  options: TabsScreenProps;
   component: React.ComponentType;
   safeAreaConfiguration?: SafeAreaViewProps;
 }
@@ -34,15 +34,15 @@ export function TabsContainer(props: TabsContainerProps) {
     }
 
     const maybeUserRequestedFocusedTab = tabConfigs.find(
-      tabConfig => tabConfig.screenProps.isFocused === true,
-    )?.screenProps.screenKey;
+      tabConfig => tabConfig.options.isFocused === true,
+    )?.options.screenKey;
 
     if (maybeUserRequestedFocusedTab != null) {
       return maybeUserRequestedFocusedTab;
     }
 
     // Default to first tab
-    return tabConfigs[0].screenProps.screenKey;
+    return tabConfigs[0].options.screenKey;
   });
 
   const configWrapper = React.useContext(ConfigWrapperContext);
@@ -85,8 +85,8 @@ export function TabsContainer(props: TabsContainerProps) {
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabConfigs.map(tabConfig => {
-        const screenKey = tabConfig.screenProps.screenKey;
-        const isFocused = tabConfig.screenProps.screenKey === focusedScreenKey;
+        const screenKey = tabConfig.options.screenKey;
+        const isFocused = tabConfig.options.screenKey === focusedScreenKey;
         RNSLog.info(
           `BottomTabsContainer map to component -> ${screenKey} ${
             isFocused ? '(focused)' : ''
@@ -96,7 +96,7 @@ export function TabsContainer(props: TabsContainerProps) {
         return (
           <Tabs.Screen
             key={screenKey}
-            {...tabConfig.screenProps}
+            {...tabConfig.options}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
             {getContent(tabConfig)}

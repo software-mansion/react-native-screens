@@ -58,7 +58,7 @@ function App() {
           tabConfigs={[
             {
               component: FalseTab,
-              screenProps: {
+              options: {
                 screenKey: 'False',
                 title: 'False',
                 ios: {
@@ -69,7 +69,7 @@ function App() {
             },
             {
               component: TrueTab,
-              screenProps: {
+              options: {
                 screenKey: 'True',
                 title: 'True',
                 ios: {
@@ -80,7 +80,7 @@ function App() {
             },
             {
               component: DefaultTab,
-              screenProps: {
+              options: {
                 screenKey: 'Default',
                 title: 'Default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
