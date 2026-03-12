@@ -328,12 +328,15 @@ internal class ScreenDummyLayoutHelper(
         dummyContentView = null
         toolbar = null
 
+        cache = CacheEntry.EMPTY
+
         isLayoutInitialized = false
 
-        activityLifecycleCallbacks?.let {
-            application?.unregisterActivityLifecycleCallbacks(it)
+        val callbacks = activityLifecycleCallbacks
+        if (callbacks != null && application != null) {
+            application.unregisterActivityLifecycleCallbacks(callbacks)
+            activityLifecycleCallbacks = null
         }
-        activityLifecycleCallbacks = null
     }
 }
 
