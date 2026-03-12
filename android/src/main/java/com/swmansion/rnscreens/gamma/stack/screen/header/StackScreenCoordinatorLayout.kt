@@ -15,7 +15,10 @@ internal class StackScreenCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
 ) : CoordinatorLayout(context) {
-    private val headerCoordinator = StackScreenHeaderCoordinator(context)
+    private val headerCoordinator = StackScreenHeaderCoordinator(context) { headerHeight ->
+        stackScreen.updateStateIfNeeded(y = headerHeight)
+    }
+
     internal var stackScreenWrapper: FrameLayout
 
     init {
