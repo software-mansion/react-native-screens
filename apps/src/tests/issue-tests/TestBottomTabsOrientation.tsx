@@ -8,7 +8,7 @@ import {
 import {
   TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
@@ -75,7 +75,7 @@ function makeTabConfigs(
 ): TabConfiguration[] {
   return [
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Auto',
         title: 'Auto',
         isFocused: true,
@@ -106,7 +106,7 @@ function makeTabConfigs(
         : TabElement,
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Portrait',
         title: 'Portrait',
         tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
@@ -137,7 +137,7 @@ function makeTabConfigs(
       ),
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Landscape',
         title: 'Landscape',
         orientation: tabsOrientations.landscape.tabScreen,

@@ -9,11 +9,11 @@ import React, {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import {
   ColorValue,
   Pressable,
@@ -135,7 +135,7 @@ function TestScreen() {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    tabScreenProps: {
+    screenProps: {
       screenKey: 'Tab1',
       title: 'Config',
       ios: {
@@ -148,7 +148,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Config,
   },
   {
-    tabScreenProps: {
+    screenProps: {
       screenKey: 'Tab2',
       title: 'Test',
       ios: {

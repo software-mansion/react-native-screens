@@ -29,11 +29,11 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import {
   createNativeStackNavigator,
   type NativeStackNavigationProp,
@@ -463,7 +463,7 @@ function HeaderHeightTabsWrapper() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -482,7 +482,7 @@ function HeaderHeightTabsWrapper() {
       component: HeaderHeightTest,
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {

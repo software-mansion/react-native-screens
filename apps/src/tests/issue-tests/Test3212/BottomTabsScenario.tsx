@@ -8,7 +8,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { TabsContainer } from '../../../shared/gamma/containers/bottom-tabs/TabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
 import { Config } from './Config';
 import { ScrollViewTemplate } from './ScrollViewTemplate';
 import { ScrollView } from 'react-native';
@@ -35,11 +35,11 @@ export function BottomTabsScenario() {
             tabConfigs={[
               {
                 component: ConfigComponent,
-                tabScreenProps: { screenKey: 'config', title: 'Config' },
+                screenProps: { screenKey: 'config', title: 'Config' },
               },
               {
                 component: ScrollViewTemplate,
-                tabScreenProps: {
+                screenProps: {
                   screenKey: 'stack',
                   title: 'Scroll',
                   ios: {

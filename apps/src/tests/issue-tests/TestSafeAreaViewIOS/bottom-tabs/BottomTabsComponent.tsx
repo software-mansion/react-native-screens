@@ -1,11 +1,11 @@
 import {
   TabsContainer,
   TabConfiguration,
-} from '../../../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../../../shared/gamma/containers/tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import React from 'react';
 import { useState } from 'react';
 import TestTab from './TestTab';
@@ -17,7 +17,7 @@ export default function BottomTabsComponent() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'config',
         title: 'Config',
         ios: {
@@ -30,7 +30,7 @@ export default function BottomTabsComponent() {
       component: ConfigTab,
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'test',
         title: 'Test',
         ios: {

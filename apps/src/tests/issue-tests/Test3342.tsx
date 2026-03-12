@@ -12,11 +12,11 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 
 type RouteParamList = {
@@ -68,7 +68,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -82,7 +82,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
       component: () => TabScreen(stackNavProp),
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {

@@ -21,11 +21,11 @@ import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import {
   TabsContainer,
   TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -201,7 +201,7 @@ function TabsStackComponent() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'main',
         title: 'Main',
         ios: {
@@ -214,7 +214,7 @@ function TabsStackComponent() {
       component: () => Menu({ tabsMode: true }),
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'another',
         title: 'Another',
         ios: {
@@ -227,7 +227,7 @@ function TabsStackComponent() {
       component: AnotherTab,
     },
     {
-      tabScreenProps: {
+      screenProps: {
         screenKey: 'examples',
         title: 'Search',
         ios: {

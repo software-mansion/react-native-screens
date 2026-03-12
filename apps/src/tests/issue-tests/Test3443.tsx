@@ -3,7 +3,7 @@ import React from 'react';
 import {
   TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
@@ -18,7 +18,7 @@ function makeTab(title: string, description: string) {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    tabScreenProps: {
+    screenProps: {
       screenKey: 'Tab1',
       title: 'Tab 1',
       ios: {
@@ -34,7 +34,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     ),
   },
   {
-    tabScreenProps: {
+    screenProps: {
       screenKey: 'Tab2',
       title: 'Tab 2',
       ios: {

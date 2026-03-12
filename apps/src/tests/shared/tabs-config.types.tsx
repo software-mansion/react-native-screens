@@ -1,9 +1,9 @@
-import { TabConfiguration } from '../../shared/gamma/containers/bottom-tabs/TabsContainer';
+import { TabConfiguration } from '../../shared/gamma/containers/tabs/TabsContainer';
 import { KeyList } from './helpers';
 import { TabsHostProps } from 'react-native-screens';
 
 type StaticTabScreenProps<S extends KeyList> = Omit<
-  TabConfiguration['tabScreenProps'],
+  TabConfiguration['screenProps'],
   'screenKey'
 > & { screenKey: Extract<keyof S, string> };
 
