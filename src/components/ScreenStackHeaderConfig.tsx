@@ -137,6 +137,9 @@ export const ScreenStackHeaderBackButtonImage = (
     style={styles.headerSubview}
     synchronousShadowStateUpdatesEnabled={
       featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
+    }
+    preventScrollToTopEnabled={
+      featureFlags.experiment.ipados26PreventScrollToTopForHeaderSubviews
     }>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreenStackHeaderSubview>
@@ -153,6 +156,9 @@ export const ScreenStackHeaderRightView = (
       type="right"
       synchronousShadowStateUpdatesEnabled={
         featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
+      }
+      preventScrollToTopEnabled={
+        featureFlags.experiment.ipados26PreventScrollToTopForHeaderSubviews
       }
       style={[styles.headerSubview, style]}
     />
@@ -171,6 +177,9 @@ export const ScreenStackHeaderLeftView = (
       synchronousShadowStateUpdatesEnabled={
         featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
       }
+      preventScrollToTopEnabled={
+        featureFlags.experiment.ipados26PreventScrollToTopForHeaderSubviews
+      }
       style={[styles.headerSubview, style]}
     />
   );
@@ -188,6 +197,9 @@ export const ScreenStackHeaderCenterView = (
       synchronousShadowStateUpdatesEnabled={
         featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
       }
+      preventScrollToTopEnabled={
+        featureFlags.experiment.ipados26PreventScrollToTopForHeaderSubviews
+      }
       style={[styles.headerSubviewCenter, style]}
     />
   );
@@ -201,6 +213,9 @@ export const ScreenStackHeaderSearchBarView = (
     type="searchBar"
     synchronousShadowStateUpdatesEnabled={
       featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
+    }
+    preventScrollToTopEnabled={
+      featureFlags.experiment.ipados26PreventScrollToTopForHeaderSubviews
     }
     style={styles.headerSubview}
   />

@@ -6,6 +6,7 @@ const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
 const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
+const RNS_IPADOS_26_PREVENT_SCROLL_TO_TOP_FOR_HEADER_SUBVIEWS = true;
 const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
@@ -61,6 +62,8 @@ const _featureFlags = {
       RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
     ios26AllowInteractionsDuringTransition:
       RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
+    ipados26PreventScrollToTopForHeaderSubviews:
+      RNS_IPADOS_26_PREVENT_SCROLL_TO_TOP_FOR_HEADER_SUBVIEWS,
   },
   stable: {
     debugLogging: RNS_DEBUG_LOGGING,
@@ -152,6 +155,12 @@ const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
   RNS_DEBUG_LOGGING,
 );
 
+const ipados26PreventScrollToTopForHeaderSubviewsAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'ipados26PreventScrollToTopForHeaderSubviews',
+    RNS_IPADOS_26_PREVENT_SCROLL_TO_TOP_FOR_HEADER_SUBVIEWS,
+  );
+
 /**
  * Exposes configurable global behaviour of the library.
  *
@@ -216,6 +225,17 @@ export const featureFlags = {
     },
     set ios26AllowInteractionsDuringTransition(value: boolean) {
       ios26AllowInteractionsDuringTransitionAccessor.set(value);
+    },
+    /**
+     * On iPadOS 26+, prevents ScrollView from scrolling to top when header subview
+     * is pressed. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3731
+     */
+    get ipados26PreventScrollToTopForHeaderSubviews() {
+      return ipados26PreventScrollToTopForHeaderSubviewsAccessor.get();
+    },
+    set ipados26PreventScrollToTopForHeaderSubviews(value: boolean) {
+      ipados26PreventScrollToTopForHeaderSubviewsAccessor.set(value);
     },
   },
   /**
