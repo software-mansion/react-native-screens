@@ -15,8 +15,8 @@ const SCREENS: Record<
     title: 'Stack Presentation',
     type: 'example',
   },
-  TabsAndStack: {
-    title: 'Tabs and native stack',
+  BottomTabsAndStack: {
+    title: 'Bottom tabs and native stack',
     type: 'example',
   },
   Modals: {
