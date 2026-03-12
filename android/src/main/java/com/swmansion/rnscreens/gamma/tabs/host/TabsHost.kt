@@ -130,14 +130,14 @@ class TabsHost(
     private val specialEffectsHandler = SpecialEffectsHandler()
     private val colorSchemeCoordinator = ColorSchemeCoordinator()
 
-    private val wrappedContext =
+    private val themedContext =
         ContextThemeWrapper(
             reactContext,
             R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
     private val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(wrappedContext).apply {
+        BottomNavigationView(themedContext).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -322,7 +322,7 @@ class TabsHost(
     override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
             val appearance = currentFocusedTab.tabsScreen.appearance
-            appearanceCoordinator.updateMenuItemAppearance(wrappedContext, menuItem, tabsScreen, appearance)
+            appearanceCoordinator.updateMenuItemAppearance(themedContext, menuItem, tabsScreen, appearance)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
     }
@@ -343,7 +343,7 @@ class TabsHost(
     private fun updateBottomNavigationViewAppearance() {
         RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
-        appearanceCoordinator.updateTabAppearance(wrappedContext, this)
+        appearanceCoordinator.updateTabAppearance(themedContext, this)
 
         val selectedTabsScreenFragmentId =
             checkNotNull(getSelectedTabsScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
@@ -414,19 +414,19 @@ class TabsHost(
         // update the appearance when user toggles between dark/light mode
         when (uiMode) {
             Configuration.UI_MODE_NIGHT_YES -> {
-                wrappedContext.setTheme(R.style.Theme_Material3_Dark_NoActionBar)
+                themedContext.setTheme(R.style.Theme_Material3_Dark_NoActionBar)
             }
 
             Configuration.UI_MODE_NIGHT_NO -> {
-                wrappedContext.setTheme(R.style.Theme_Material3_Light_NoActionBar)
+                themedContext.setTheme(R.style.Theme_Material3_Light_NoActionBar)
             }
 
             else -> {
-                wrappedContext.setTheme(R.style.Theme_Material3_DayNight_NoActionBar)
+                themedContext.setTheme(R.style.Theme_Material3_DayNight_NoActionBar)
             }
         }
 
-        appearanceCoordinator.updateTabAppearance(wrappedContext, this)
+        appearanceCoordinator.updateTabAppearance(themedContext, this)
     }
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
