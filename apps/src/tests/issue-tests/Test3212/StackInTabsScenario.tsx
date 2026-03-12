@@ -10,16 +10,16 @@ import { Config } from './Config';
 import { StackScenario } from './StackScenario';
 import { ScrollView } from 'react-native';
 
-export function StackInBottomTabsScenario() {
+export function StackInTabsScenario() {
   const [config, setConfig] = useState<ScrollEdgeEffects>({
     ...SCROLL_EDGE_EFFECT_DEFAULTS,
   });
 
-  // Add ScrollView for automatic insets which are missing in BottomTabsScreen
+  // Add ScrollView for automatic insets which are missing in TabsScreen
   const ConfigComponent = useCallback(
     () => (
       <ScrollView>
-        <Config title="Outer BottomTabs / scrollEdgeEffects:" />
+        <Config title="Outer Tabs / scrollEdgeEffects:" />
       </ScrollView>
     ),
     [],

@@ -25,7 +25,7 @@ function ScreenComponent() {
     <ScrollView contentOffset={{ x: 0, y: 200 }}>
       {Array.from({ length: 99 }).map((_, i) => (
         <View
-          key={i}
+          key={i.toString()}
           style={{
             margin: 8,
             padding: 8,
@@ -169,10 +169,10 @@ function makeTabConfigs(
   ];
 }
 
-function ChooseBottomTabs(props: {
+function ChooseTabs(props: {
   navigation: NavigationProp<{
-    ScreenStackBottomTabs: undefined;
-    ScrollOnlyBottomTabs: undefined;
+    ScreenStackTabs: undefined;
+    ScrollOnlyTabs: undefined;
   }>;
 }) {
   const { navigation } = props;
@@ -181,17 +181,17 @@ function ChooseBottomTabs(props: {
     <View style={{ marginTop: 200 }}>
       <Button
         title="Tabs with ScreenStack"
-        onPress={() => navigation.navigate('ScreenStackBottomTabs')}
+        onPress={() => navigation.navigate('ScreenStackTabs')}
       />
       <Button
         title="Tabs with Scroll only"
-        onPress={() => navigation.navigate('ScrollOnlyBottomTabs')}
+        onPress={() => navigation.navigate('ScrollOnlyTabs')}
       />
     </View>
   );
 }
 
-function ScreenStackBottomTabs() {
+function ScreenStackTabs() {
   const tabConfigs = makeTabConfigs(
     {
       home: { tabScreen: 'all', stackScreen: 'all' },
@@ -208,7 +208,7 @@ function ScreenStackBottomTabs() {
   );
 }
 
-function ScrollOnlyBottomTabs() {
+function ScrollOnlyTabs() {
   const tabConfigs = makeTabConfigs(
     {
       home: { tabScreen: 'all' },
@@ -232,21 +232,21 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="ChooseBottomTabs"
-          key="ChooseBottomTabs"
-          component={ChooseBottomTabs}
-          options={{ title: 'Choose BottomTabs content' }}
+          name="ChooseTabs"
+          key="ChooseTabs"
+          component={ChooseTabs}
+          options={{ title: 'Choose Tabs content' }}
         />
         <Stack.Screen
-          name="ScreenStackBottomTabs"
-          key="ScreenStackBottomTabs"
-          component={ScreenStackBottomTabs}
+          name="ScreenStackTabs"
+          key="ScreenStackTabs"
+          component={ScreenStackTabs}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ScrollOnlyBottomTabs"
-          key="ScrollOnlyBottomTabs"
-          component={ScrollOnlyBottomTabs}
+          name="ScrollOnlyTabs"
+          key="ScrollOnlyTabs"
+          component={ScrollOnlyTabs}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

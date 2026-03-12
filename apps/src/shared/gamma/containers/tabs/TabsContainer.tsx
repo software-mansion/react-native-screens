@@ -22,12 +22,12 @@ export type TabsContainerProps = TabsHostProps & {
 };
 
 export function TabsContainer(props: TabsContainerProps) {
-  RNSLog.info('BottomTabsContainer render');
+  RNSLog.info('TabsContainer render');
 
   const { tabConfigs, ...restProps } = props;
 
   const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
-    RNSLog.log('BottomTabsContainer focusedStateKey initial state computed');
+    RNSLog.log('TabsContainer focusedStateKey initial state computed');
 
     if (props.tabConfigs.length === 0) {
       throw new Error('There must be at least one tab defined');
@@ -88,7 +88,7 @@ export function TabsContainer(props: TabsContainerProps) {
         const screenKey = tabConfig.options.screenKey;
         const isFocused = tabConfig.options.screenKey === focusedScreenKey;
         RNSLog.info(
-          `BottomTabsContainer map to component -> ${screenKey} ${
+          `TabsContainer map to component -> ${screenKey} ${
             isFocused ? '(focused)' : ''
           }`,
         );

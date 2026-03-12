@@ -9,11 +9,11 @@ import ConfigWrapperContext, {
 import React from 'react';
 import { useState } from 'react';
 import TestTab from './TestTab';
-import { useBottomTabsSAVExampleContext } from './BottomTabsSAVExampleContext';
+import { useTabsSAVExampleContext } from './TabsSAVExampleContext';
 import ConfigTab from './ConfigTab';
 
-export default function BottomTabsComponent() {
-  const { config } = useBottomTabsSAVExampleContext();
+export default function TabsComponent() {
+  const { config } = useTabsSAVExampleContext();
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {

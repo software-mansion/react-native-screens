@@ -5,7 +5,7 @@ import type {
 } from 'react-native-screens';
 import { ContentType } from '../shared';
 
-export interface BottomTabsSAVExampleConfig {
+export interface TabsSAVExampleConfig {
   tabBarMinimizeBehavior: TabBarMinimizeBehavior;
   tabBarItemSystemItem: 'disabled' | TabsScreenSystemItem;
 
@@ -17,20 +17,20 @@ export interface BottomTabsSAVExampleConfig {
   content: Exclude<ContentType, 'scrollViewNever'>;
 }
 
-export interface BottomTabsSAVExampleContextInterface {
-  config: BottomTabsSAVExampleConfig;
-  setConfig: Dispatch<SetStateAction<BottomTabsSAVExampleConfig>>;
+export interface TabsSAVExampleContextInterface {
+  config: TabsSAVExampleConfig;
+  setConfig: Dispatch<SetStateAction<TabsSAVExampleConfig>>;
 }
 
-export const BottomTabsSAVExampleContext =
-  createContext<BottomTabsSAVExampleContextInterface | null>(null);
+export const TabsSAVExampleContext =
+  createContext<TabsSAVExampleContextInterface | null>(null);
 
-export const useBottomTabsSAVExampleContext = () => {
-  const ctx = useContext(BottomTabsSAVExampleContext);
+export const useTabsSAVExampleContext = () => {
+  const ctx = useContext(TabsSAVExampleContext);
 
   if (!ctx) {
     throw new Error(
-      'useBottomTabsSAVExampleContext has to be used within <BottomTabsSAVExampleContext.Provider>',
+      'useTabsSAVExampleContext has to be used within <TabsSAVExampleContext.Provider>',
     );
   }
 

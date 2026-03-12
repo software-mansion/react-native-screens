@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { useBottomTabsSAVExampleContext } from './BottomTabsSAVExampleContext';
+import { useTabsSAVExampleContext } from './TabsSAVExampleContext';
 import { mapContentStringToComponent } from '../shared';
 
 export default function TestTab() {
-  const { config } = useBottomTabsSAVExampleContext();
+  const { config } = useTabsSAVExampleContext();
 
   let content = useMemo(
     () => mapContentStringToComponent(config.content),

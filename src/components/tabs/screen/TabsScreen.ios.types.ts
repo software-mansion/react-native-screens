@@ -294,7 +294,7 @@ export interface TabsScreenPropsIOS {
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
    * for the specified edge of the ScrollView.
    *
-   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * When set in nested containers, i.e. Stack inside Tabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
    *
    * Edge effects can be configured for each edge separately. The following values are currently supported:
