@@ -50,6 +50,10 @@ class StackScreen(
             field = value
         }
 
+    private val shadowStateProxy = StackScreenShadowStateProxy()
+
+    var stateWrapper by shadowStateProxy::stateWrapper
+
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
     /**
@@ -83,7 +87,9 @@ class StackScreen(
         t: Int,
         r: Int,
         b: Int,
-    ) = Unit
+    ) {
+        shadowStateProxy.updateStateIfNeeded(l, t, r - l, b - t)
+    }
 
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {

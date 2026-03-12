@@ -35,4 +35,6 @@ export interface NativeProps extends ViewProps {
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSStackScreen', {});
+export default codegenNativeComponent<NativeProps>('RNSStackScreen', {
+  interfaceOnly: true,
+});
