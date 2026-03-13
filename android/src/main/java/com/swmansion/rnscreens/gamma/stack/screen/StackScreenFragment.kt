@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -7,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
+import com.swmansion.rnscreens.gamma.stack.screen.header.StackScreenCoordinatorLayout
 
 internal class StackScreenFragment(
+    private val context: Context,
     internal val stackScreen: StackScreen,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
@@ -43,7 +46,7 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = stackScreen
+    ): View = StackScreenCoordinatorLayout(context, stackScreen)
 
     override fun onViewCreated(
         view: View,
