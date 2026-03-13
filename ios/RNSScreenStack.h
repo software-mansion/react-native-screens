@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL disableSwipeBack;
 
 @property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
+@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedModals;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

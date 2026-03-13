@@ -873,6 +873,8 @@ RNS_IGNORE_SUPER_CALL_END
     [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
+  [_controller notifyPresentedControllerDismissed];
+
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
     [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
   }
@@ -1943,6 +1945,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (BOOL)isRemovedFromParent
 {
   return _isRemovedFromParent;
+}
+
+- (void)notifyPresentedControllerDismissed
+{
+  _isRemovedFromParent = YES;
 }
 
 #pragma mark - transition progress related methods

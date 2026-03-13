@@ -80,6 +80,13 @@ class ScreenStackViewManager :
         value: Boolean,
     ) = Unit
 
+    // iosPreventReattachmentOfDismissedModals is not available on Android,
+    // however we must override their setters
+    override fun setIosPreventReattachmentOfDismissedModals(
+        view: ScreenStack?,
+        value: Boolean,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSScreenStack"
     }

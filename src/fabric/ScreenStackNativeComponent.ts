@@ -8,6 +8,7 @@ type FinishTransitioningEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
   iosPreventReattachmentOfDismissedScreens?: CT.WithDefault<boolean, true>;
+  iosPreventReattachmentOfDismissedModals?: CT.WithDefault<boolean, true>;
 
   onFinishTransitioning?: CT.DirectEventHandler<FinishTransitioningEvent>;
 }
