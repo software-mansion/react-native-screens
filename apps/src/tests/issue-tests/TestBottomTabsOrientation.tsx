@@ -7,8 +7,8 @@ import {
 } from 'react-native-screens';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
+  type TabRouteConfig,
+} from '../../shared/gamma/containers/tabs';
 import Colors from '../../shared/styling/Colors';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
@@ -72,13 +72,15 @@ interface TabsOrientations {
 function makeTabConfigs(
   tabsOrientations: TabsOrientations,
   TabElement: React.ComponentType<{ orientation?: ScreenOrientationTypes }>,
-): TabConfiguration[] {
+): TabRouteConfig[] {
   return [
     {
+      name: 'Auto',
+      Component: tabsOrientations.home.stackScreen
+        ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
+        : TabElement,
       options: {
-        screenKey: 'Auto',
         title: 'Auto',
-        isFocused: true,
         orientation: tabsOrientations.home.tabScreen,
         ios: {
           icon: {
@@ -101,13 +103,13 @@ function makeTabConfigs(
           },
         },
       },
-      component: tabsOrientations.home.stackScreen
-        ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
-        : TabElement,
     },
     {
+      name: 'Portrait',
+      Component: () => (
+        <TabElement orientation={tabsOrientations.portrait.stackScreen} />
+      ),
       options: {
-        screenKey: 'Portrait',
         title: 'Portrait',
         ios: {
           icon: {
@@ -131,13 +133,13 @@ function makeTabConfigs(
         },
         orientation: tabsOrientations.portrait.tabScreen,
       },
-      component: () => (
-        <TabElement orientation={tabsOrientations.portrait.stackScreen} />
-      ),
     },
     {
+      name: 'Landscape',
+      Component: () => (
+        <TabElement orientation={tabsOrientations.landscape.stackScreen} />
+      ),
       options: {
-        screenKey: 'Landscape',
         title: 'Landscape',
         orientation: tabsOrientations.landscape.tabScreen,
         ios: {
@@ -161,9 +163,6 @@ function makeTabConfigs(
           },
         },
       },
-      component: () => (
-        <TabElement orientation={tabsOrientations.landscape.stackScreen} />
-      ),
     },
   ];
 }
@@ -191,7 +190,7 @@ function ChooseTabs(props: {
 }
 
 function ScreenStackTabs() {
-  const tabConfigs = makeTabConfigs(
+  const routeConfigs = makeTabConfigs(
     {
       home: { tabScreen: 'all', stackScreen: 'all' },
       portrait: { tabScreen: 'all', stackScreen: 'portrait' },
@@ -202,13 +201,13 @@ function ScreenStackTabs() {
 
   return (
     <NavigationIndependentTree>
-      <TabsContainer tabConfigs={tabConfigs} />
+      <TabsContainer initialFocusedName="Auto" routeConfigs={routeConfigs} />
     </NavigationIndependentTree>
   );
 }
 
 function ScrollOnlyTabs() {
-  const tabConfigs = makeTabConfigs(
+  const routeConfigs = makeTabConfigs(
     {
       home: { tabScreen: 'all' },
       portrait: { tabScreen: 'portrait' },
@@ -219,7 +218,7 @@ function ScrollOnlyTabs() {
 
   return (
     <NavigationIndependentTree>
-      <TabsContainer tabConfigs={tabConfigs} />
+      <TabsContainer routeConfigs={routeConfigs} />
     </NavigationIndependentTree>
   );
 }

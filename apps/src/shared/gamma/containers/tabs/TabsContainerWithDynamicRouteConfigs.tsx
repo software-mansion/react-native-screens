@@ -1,15 +1,15 @@
 import React from 'react';
-import { StackContainer } from './StackContainer';
-import { StackContainerProps, StackRouteOptions } from './StackContainer.types';
-import { StackRouteConfigContext } from './contexts/StackRouteConfigContext';
+import { TabsContainer } from './TabsContainer';
+import type { TabsContainerProps, TabRouteOptions } from './TabsContainer.types';
+import { TabsRouteConfigContext } from './contexts/TabsRouteConfigContext';
 
 /**
- * StackContainer wrapped in context allowing for modifying options
+ * TabsContainer wrapped in context allowing for modifying options
  * of route configs.
- * See StackRouteConfigContext.
+ * See TabsRouteConfigContext.
  */
-export function StackContainerWithDynamicRouteConfigs(
-  props: StackContainerProps,
+export function TabsContainerWithDynamicRouteConfigs(
+  props: TabsContainerProps,
 ) {
   // Note: routeConfigs state is initialized once from props and does not sync
   // with subsequent prop changes. This is intentional for now — the component
@@ -19,14 +19,14 @@ export function StackContainerWithDynamicRouteConfigs(
   const [routeConfigs, setRouteConfigs] = React.useState(props.routeConfigs);
 
   const updateRouteConfigWithOptions = React.useCallback(
-    (routeName: string, options: Partial<StackRouteOptions>) => {
+    (name: string, options: Partial<TabRouteOptions>) => {
       setRouteConfigs(prevConfigs => {
         const routeConfigIndex = prevConfigs.findIndex(
-          config => config.name === routeName,
+          config => config.name === name,
         );
 
         if (routeConfigIndex === -1) {
-          throw new Error(`[Stack] Route with name "${routeName}" not found`);
+          throw new Error(`[Tabs] Tab with name "${name}" not found`);
         }
 
         return prevConfigs.toSpliced(routeConfigIndex, 1, {
@@ -42,12 +42,12 @@ export function StackContainerWithDynamicRouteConfigs(
   );
 
   return (
-    <StackRouteConfigContext
+    <TabsRouteConfigContext
       value={{
         routeConfigs,
         updateRouteConfigWithOptions,
       }}>
-      <StackContainer routeConfigs={routeConfigs} />
-    </StackRouteConfigContext>
+      <TabsContainer {...props} routeConfigs={routeConfigs} />
+    </TabsRouteConfigContext>
   );
 }

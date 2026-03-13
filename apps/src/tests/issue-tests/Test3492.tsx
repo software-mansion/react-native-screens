@@ -17,8 +17,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
+  type TabRouteConfig,
+} from '../../shared/gamma/containers/tabs';
 import Colors from '../../shared/styling/Colors';
 import ConfigWrapperContext, {
   Configuration,
@@ -464,45 +464,45 @@ function Tabs() {
   );
   const { config } = useBackgroundTestContext();
 
-  const dynamicTabConfigs = useMemo<TabConfiguration[]>(
+  const dynamicRouteConfigs = useMemo<TabRouteConfig[]>(
     () => [
       {
+        name: 'Tab1',
+        Component: ConfigScreen,
         options: {
-          screenKey: 'Tab1',
           title: 'Config',
           icon: {
             ios: { type: 'sfSymbol', name: 'gear' },
           },
           style: { backgroundColor: Colors.White },
         },
-        component: ConfigScreen,
       },
       {
+        name: 'Tab2',
+        Component: ScreenTab2,
         options: {
-          screenKey: 'Tab2',
           title: 'Tab 2',
           icon: { ios: { type: 'sfSymbol', name: 'square' } },
           style: { backgroundColor: config.tabs.Tab2.navBackground },
         },
-        component: ScreenTab2,
       },
       {
+        name: 'Tab3',
+        Component: ScreenTab3,
         options: {
-          screenKey: 'Tab3',
           title: 'Tab 3',
           icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
           style: { backgroundColor: config.tabs.Tab3.navBackground },
         },
-        component: ScreenTab3,
       },
       {
+        name: 'Tab4',
+        Component: ScreenTab4,
         options: {
-          screenKey: 'Tab4',
           title: 'Tab 4',
           icon: { ios: { type: 'sfSymbol', name: 'circle' } },
           style: { backgroundColor: config.tabs.Tab4.navBackground },
         },
-        component: ScreenTab4,
       },
     ],
     [config],
@@ -515,7 +515,7 @@ function Tabs() {
         setConfig: setTabsConfig,
       }}>
       <TabsContainer
-        tabConfigs={dynamicTabConfigs}
+        routeConfigs={dynamicRouteConfigs}
         nativeContainerStyle={{ backgroundColor: config.containerBackground }}
       />
     </ConfigWrapperContext.Provider>
