@@ -78,7 +78,7 @@ export function TabsContainer(props: TabsContainerProps) {
           routeKey: screenKey,
           routeOptions: { ...routeConfig.options },
           setRouteOptions: () => {
-            // Route option updates are handled via TabsContainerWithDynamicRouteConfigs
+            throw new Error('[Tabs] setRouteOptions is not implemented yet');
           },
         };
 
