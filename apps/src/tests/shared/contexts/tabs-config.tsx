@@ -5,7 +5,7 @@ import {
 } from '../tabs-config.types';
 
 export const ConfigContext = createContext<StaticTabsContainerProps<any>>({
-  tabConfigs: [],
+  routeConfigs: [],
 });
 
 export const ConfigDispatchContext = createContext<

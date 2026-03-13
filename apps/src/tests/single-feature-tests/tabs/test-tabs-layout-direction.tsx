@@ -39,7 +39,7 @@ function ConfigScreen() {
   useEffect(() => {
     dispatch({
       type: 'tabScreen',
-      screenKey: 'Config',
+      name: 'Config',
       config: {
         safeAreaConfiguration: {
           edges: {
