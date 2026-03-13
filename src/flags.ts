@@ -214,7 +214,7 @@ export const featureFlags = {
     },
     /**
      * Enables the fix for native / JS state desynchronization for Modals. On by default.
-     * PR: <TBD>
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3760
      */
     get iosPreventReattachmentOfDismissedModals() {
       return iosPreventReattachmentOfDismissedModalsAccessor.get();
