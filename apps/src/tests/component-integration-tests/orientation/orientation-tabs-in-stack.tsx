@@ -59,15 +59,15 @@ function ConfigScreen() {
         label="Tab Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          findTabScreenOptions(tabsConfig, 'Tab1')?.tabScreenProps
-            .orientation ?? 'undefined'
+          findTabScreenOptions(tabsConfig, 'Tab1')?.options.orientation ??
+          'undefined'
         }
         onValueChange={value =>
           tabsDispatch({
             type: 'tabScreen',
             screenKey: 'Tab1',
             config: {
-              tabScreenProps: {
+              options: {
                 orientation: value === 'undefined' ? undefined : value,
               },
             },

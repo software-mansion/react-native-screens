@@ -34,15 +34,15 @@ function reduce(
       break;
     case 'tabScreen':
       const tabIndex = config.tabConfigs.findIndex(
-        c => c.tabScreenProps.screenKey === action.screenKey,
+        c => c.options.screenKey === action.screenKey,
       );
       if (tabIndex >= 0) {
         config.tabConfigs[tabIndex] = {
           ...config.tabConfigs[tabIndex],
           ...action.config,
-          tabScreenProps: {
-            ...config.tabConfigs[tabIndex].tabScreenProps,
-            ...action.config.tabScreenProps,
+          options: {
+            ...config.tabConfigs[tabIndex].options,
+            ...action.config.options,
           },
         };
         config = { ...config };
@@ -58,7 +58,7 @@ function makeInitialConfig(
 ): StaticTabsContainerProps<any> {
   return {
     tabConfigs: Object.entries(tabs).map(([k, C]) => ({
-      tabScreenProps: {
+      options: {
         screenKey: k,
         title: k,
         android: {
