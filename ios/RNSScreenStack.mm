@@ -253,6 +253,7 @@ namespace react = facebook::react;
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
   _iosPreventReattachmentOfDismissedScreens = YES;
+  _iosPreventReattachmentOfDismissedModals = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -780,6 +781,17 @@ RNS_IGNORE_SUPER_CALL_END
           }
           [pushControllers addObject:screen.controller];
         } else {
+          /// When a Modal is dismissed natively the event is sent to JS **asynchronously**.
+          /// If multiple modals are pushed/dismissed quickly, JS might send back
+          /// a delayed update containing modals that were already dismissed. Attempting to render this
+          /// stale state could force UIKit to illegally reshuffle presented controllers.
+          /// We're preventing this, identifying reshuffling as an invalid state.
+          /// Since view recycling is disabled, once we detect that a modal has been removed from the view
+          /// hierarchy, it won't be reused. This allows us to safely filter out dismissed modal from modals coming
+          /// from JS state via `controllers`.
+          if (_iosPreventReattachmentOfDismissedModals && screen.controller.isRemovedFromParent) {
+            continue;
+          }
           [modalControllers addObject:screen.controller];
         }
       }
@@ -1378,6 +1390,11 @@ RNS_IGNORE_SUPER_CALL_END
     [self setIosPreventReattachmentOfDismissedScreens:newScreenProps.iosPreventReattachmentOfDismissedScreens];
   }
 
+  if (newScreenProps.iosPreventReattachmentOfDismissedModals !=
+      oldScreenProps.iosPreventReattachmentOfDismissedModals) {
+    [self setIosPreventReattachmentOfDismissedModals:newScreenProps.iosPreventReattachmentOfDismissedModals];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1535,6 +1552,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedScreens, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedModals, BOOL);
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

@@ -74,8 +74,15 @@ class ScreenStackViewManager :
         )
 
     // iosPreventReattachmentOfDismissedScreens is not available on Android,
-    // however we must override their setters
+    // however we must override the setter
     override fun setIosPreventReattachmentOfDismissedScreens(
+        view: ScreenStack?,
+        value: Boolean,
+    ) = Unit
+
+    // iosPreventReattachmentOfDismissedModals is not available on Android,
+    // however we must override the setter
+    override fun setIosPreventReattachmentOfDismissedModals(
         view: ScreenStack?,
         value: Boolean,
     ) = Unit
