@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
 import { Scenario } from '../../shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
@@ -78,11 +78,11 @@ function TabScreen() {
 
 export function App() {
   return (
-    <BottomTabsContainer
+    <TabsContainer
       tabConfigs={[
         {
           component: TabScreen,
-          tabScreenProps: {
+          options: {
             screenKey: 'Tab1',
             title: 'Tab1',
             ios: {
@@ -112,7 +112,7 @@ export function App() {
         },
         {
           component: TabScreen,
-          tabScreenProps: {
+          options: {
             screenKey: 'Tab2',
             title: 'Tab2',
             ios: {
@@ -193,7 +193,7 @@ export function App() {
         },
         {
           component: TabScreen,
-          tabScreenProps: {
+          options: {
             screenKey: 'Tab3',
             title: 'Tab3',
             ios: {

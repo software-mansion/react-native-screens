@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '../e2e-utils';
 
-describe('Native BottomTabs', () => {
+describe('Native tabs', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });

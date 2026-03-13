@@ -4,11 +4,11 @@ import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 import Colors from '../../shared/styling/Colors';
@@ -29,7 +29,7 @@ function makeTab(title: string) {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab1',
       title: 'Tab 1',
       ios: {
@@ -48,7 +48,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: makeTab('Tab 1'),
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab2',
       title: 'Tab 2',
       ios: {
@@ -67,7 +67,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: makeTab('Tab 2'),
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab3',
       title: 'Tab 3',
       ios: {
@@ -89,7 +89,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

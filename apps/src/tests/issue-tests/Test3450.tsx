@@ -7,9 +7,16 @@ import {
   NavigationContainer,
   StackActions,
 } from '@react-navigation/native';
-import { createStackNavigator, StackAnimationName, StackNavigationOptions } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackAnimationName,
+  StackNavigationOptions,
+} from '@react-navigation/stack';
 import { SettingsPicker, SettingsSwitch } from '../../shared';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import Colors from '../../shared/styling/Colors';
 import { Button } from '@react-navigation/elements';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -24,7 +31,7 @@ interface StackScreenConfig {
   detachPreviousScreen: boolean;
 }
 
-interface TabScreenConfig {
+interface TabsScreenConfig {
   title: string;
   screens: StackScreenConfig[];
 }
@@ -57,65 +64,78 @@ const STACK_ANIMATION_NAMES: StackAnimationName[] = [
   'scale_from_center',
   'slide_from_bottom',
   'slide_from_right',
-  'slide_from_left'
+  'slide_from_left',
 ];
 
 const DEFAULT_SCREEN: StackScreenConfig = {
-   title: 'Home',
-   presentation: 'card',
-   detachPreviousScreen: true,
-   animation: 'default',
+  title: 'Home',
+  presentation: 'card',
+  detachPreviousScreen: true,
+  animation: 'default',
 };
 
-const StackConfigContext = React.createContext<SettableConfigContext<StackScreenConfig[]>>({ config: [], setConfig: () => { } });
-const BottomTabsConfigContext = React.createContext<SettableConfigContext<TabScreenConfig[]>>({ config: [], setConfig: () => { } });
+const StackConfigContext = React.createContext<
+  SettableConfigContext<StackScreenConfig[]>
+>({ config: [], setConfig: () => {} });
+const TabsConfigContext = React.createContext<
+  SettableConfigContext<TabsScreenConfig[]>
+>({ config: [], setConfig: () => {} });
 
 // #region Test configuration
 
 function applyConfigChange<T>(configList: T[], index: number, config: T) {
   configList = [...configList];
-  configList[index] = config
+  configList[index] = config;
   return configList;
 }
 
-function StackScreenConfigItem(props: SingleItemConfigProps<StackScreenConfig>) {
+function StackScreenConfigItem(
+  props: SingleItemConfigProps<StackScreenConfig>,
+) {
   const { config, setItemConfig } = props;
 
   return (
     <View style={styles.configItem}>
       <Text style={styles.titleText}>{props.config.title}</Text>
-      <SettingsSwitch 
-        label='detachPreviousScreen'
+      <SettingsSwitch
+        label="detachPreviousScreen"
         value={props.config.detachPreviousScreen}
-        onValueChange={v => setItemConfig({ ...config, detachPreviousScreen: v })}
+        onValueChange={v =>
+          setItemConfig({ ...config, detachPreviousScreen: v })
+        }
       />
-      <SettingsPicker<StackScreenConfig['presentation']> 
-        label='presentation'
+      <SettingsPicker<StackScreenConfig['presentation']>
+        label="presentation"
         value={config.presentation}
         onValueChange={v => setItemConfig({ ...config, presentation: v })}
         items={['card', 'modal', 'transparentModal']}
       />
-      <SettingsPicker<StackAnimationName> 
-        label='animation'
+      <SettingsPicker<StackAnimationName>
+        label="animation"
         value={config.animation}
         onValueChange={v => setItemConfig({ ...config, animation: v })}
         items={STACK_ANIMATION_NAMES}
       />
     </View>
-  )
+  );
 }
 
-function BottomTabsScreenConfigItem(props: SingleItemConfigProps<TabScreenConfig>) {
+function TabsScreenConfigItem(props: SingleItemConfigProps<TabsScreenConfig>) {
   const { config, setItemConfig } = props;
 
   return (
     <View style={styles.configItem}>
       <Text style={styles.titleText}>{props.config.title}</Text>
       {config.screens.map((stackConfig, i) => (
-        <StackScreenConfigItem 
-          key={i}
+        <StackScreenConfigItem
+          key={i.toString()}
           config={stackConfig}
-          setItemConfig={newConfig => setItemConfig({ ...config, screens: applyConfigChange(config.screens, i, newConfig) })}
+          setItemConfig={newConfig =>
+            setItemConfig({
+              ...config,
+              screens: applyConfigChange(config.screens, i, newConfig),
+            })
+          }
         />
       ))}
       <Pressable
@@ -123,10 +143,12 @@ function BottomTabsScreenConfigItem(props: SingleItemConfigProps<TabScreenConfig
         onPress={() => {
           setItemConfig({
             ...config,
-            screens: [ ...config.screens, { ...DEFAULT_SCREEN, title: `Screen${config.screens.length}` } ],
-          })
-        }}
-      >
+            screens: [
+              ...config.screens,
+              { ...DEFAULT_SCREEN, title: `Screen${config.screens.length}` },
+            ],
+          });
+        }}>
         <Text>Add</Text>
       </Pressable>
       <Pressable
@@ -134,98 +156,146 @@ function BottomTabsScreenConfigItem(props: SingleItemConfigProps<TabScreenConfig
         onPress={() => {
           setItemConfig({
             ...config,
-            screens: [ ...config.screens.slice(0, -1) ],
-          })
-        }}
-      >
+            screens: [...config.screens.slice(0, -1)],
+          });
+        }}>
         <Text>Remove</Text>
       </Pressable>
     </View>
-  )
+  );
 }
 
 function Config(props: { navigation: NativeStackNavigationProp<TestRoutes> }) {
-  const { config: stackConfig, setConfig: setStackConfig } = React.useContext(StackConfigContext);
-  const { config: bottomTabsConfig, setConfig: setBottomTabsConfig } = React.useContext(BottomTabsConfigContext);
-  const [ scenario, setScenario ] = React.useState<'stack' | 'tabs'>('stack');
-  
+  const { config: stackConfig, setConfig: setStackConfig } =
+    React.useContext(StackConfigContext);
+  const { config: tabsConfig, setConfig: setTabsConfig } =
+    React.useContext(TabsConfigContext);
+  const [scenario, setScenario] = React.useState<'stack' | 'tabs'>('stack');
+
   return (
     <ScrollView style={styles.configList}>
       <SafeAreaView>
         <SettingsPicker<'stack' | 'tabs'>
-          label='Scenario'
+          label="Scenario"
           value={scenario}
           onValueChange={s => setScenario(s)}
           items={['stack', 'tabs']}
         />
-        {scenario === 'stack' && (<>
-          {stackConfig.map((config, i) => (
-            <StackScreenConfigItem 
-              key={i}
-              config={config}
-              setItemConfig={newConfig => setStackConfig(applyConfigChange(stackConfig, i, newConfig))}
-            />
-          ))}
-          <Pressable style={styles.stackButton} onPress={() => {setStackConfig([...stackConfig, { ...DEFAULT_SCREEN, title: `Screen${stackConfig.length}` }])}}>
-            <Text>Add</Text>
-          </Pressable>
-          <Pressable style={styles.stackButton} onPress={() => setStackConfig([...stackConfig.slice(0, -1)])}>
-            <Text>Remove</Text>
-          </Pressable>
-          <Pressable style={styles.stackButton} onPress={() => props.navigation.navigate('TestStack')}>
-            <Text>Test</Text>
-          </Pressable>
-        </>)}
-        {scenario === 'tabs' && (<>
-          {bottomTabsConfig.map((config, i) => (
-            <BottomTabsScreenConfigItem 
-              key={i}
-              config={config}
-              setItemConfig={newConfig => setBottomTabsConfig(applyConfigChange(bottomTabsConfig, i, newConfig))}
-            />
-          ))}
-          <Pressable style={styles.tabsButton} onPress={() => {setBottomTabsConfig([...bottomTabsConfig, { title: `Tab${stackConfig.length}`, screens: [{ ...DEFAULT_SCREEN }] }])}}>
-            <Text>Add</Text>
-          </Pressable>
-          <Pressable style={styles.tabsButton} onPress={() => setBottomTabsConfig([...bottomTabsConfig.slice(0, -1)])}>
-            <Text>Remove</Text>
-          </Pressable>
-          <Pressable style={styles.tabsButton} onPress={() => props.navigation.navigate('TestBottomTabs')}>
-            <Text>Test</Text>
-          </Pressable>
-        </>)}
+        {scenario === 'stack' && (
+          <>
+            {stackConfig.map((config, i) => (
+              <StackScreenConfigItem
+                key={i.toString()}
+                config={config}
+                setItemConfig={newConfig =>
+                  setStackConfig(applyConfigChange(stackConfig, i, newConfig))
+                }
+              />
+            ))}
+            <Pressable
+              style={styles.stackButton}
+              onPress={() => {
+                setStackConfig([
+                  ...stackConfig,
+                  { ...DEFAULT_SCREEN, title: `Screen${stackConfig.length}` },
+                ]);
+              }}>
+              <Text>Add</Text>
+            </Pressable>
+            <Pressable
+              style={styles.stackButton}
+              onPress={() => setStackConfig([...stackConfig.slice(0, -1)])}>
+              <Text>Remove</Text>
+            </Pressable>
+            <Pressable
+              style={styles.stackButton}
+              onPress={() => props.navigation.navigate('TestStack')}>
+              <Text>Test</Text>
+            </Pressable>
+          </>
+        )}
+        {scenario === 'tabs' && (
+          <>
+            {tabsConfig.map((config, i) => (
+              <TabsScreenConfigItem
+                key={i.toString()}
+                config={config}
+                setItemConfig={newConfig =>
+                  setTabsConfig(applyConfigChange(tabsConfig, i, newConfig))
+                }
+              />
+            ))}
+            <Pressable
+              style={styles.tabsButton}
+              onPress={() => {
+                setTabsConfig([
+                  ...tabsConfig,
+                  {
+                    title: `Tab${stackConfig.length}`,
+                    screens: [{ ...DEFAULT_SCREEN }],
+                  },
+                ]);
+              }}>
+              <Text>Add</Text>
+            </Pressable>
+            <Pressable
+              style={styles.tabsButton}
+              onPress={() => setTabsConfig([...tabsConfig.slice(0, -1)])}>
+              <Text>Remove</Text>
+            </Pressable>
+            <Pressable
+              style={styles.tabsButton}
+              onPress={() => props.navigation.navigate('TestBottomTabs')}>
+              <Text>Test</Text>
+            </Pressable>
+          </>
+        )}
       </SafeAreaView>
     </ScrollView>
-  )
+  );
 }
 
 // #region Test routes
 
-function TestScreen(props: { nextScreen: string | undefined, isFirst: boolean }) {
+function TestScreen(props: {
+  nextScreen: string | undefined;
+  isFirst: boolean;
+}) {
   return (
     <View style={{ padding: 8, gap: 8 }}>
-      { props.nextScreen && <Button screen={props.nextScreen}>Go to {props.nextScreen}</Button> }
-      { !props.isFirst && <Button action={CommonActions.goBack()}>Go back</Button> }
-      { !props.isFirst && <Button action={StackActions.pop(2)}>Pop 2</Button> }
+      {props.nextScreen && (
+        <Button screen={props.nextScreen}>Go to {props.nextScreen}</Button>
+      )}
+      {!props.isFirst && (
+        <Button action={CommonActions.goBack()}>Go back</Button>
+      )}
+      {!props.isFirst && <Button action={StackActions.pop(2)}>Pop 2</Button>}
     </View>
-  )
+  );
 }
 
-function TestStack( props: { configList: StackScreenConfig[] }) {
+function TestStack(props: { configList: StackScreenConfig[] }) {
   const JSStack = createStackNavigator({
     detachInactiveScreens: true,
-    screens: Object.fromEntries(props.configList.map((config, i) => [
-      config.title,
-      {
-        screen: () => <TestScreen nextScreen={ props.configList.at(i + 1)?.title } isFirst={i === 0} />,
-        options: {
-          presentation: config.presentation,
-          detachPreviousScreen: config.detachPreviousScreen,
-          animation: config.animation,
-          gestureEnabled: true,
+    screens: Object.fromEntries(
+      props.configList.map((config, i) => [
+        config.title,
+        {
+          screen: () => (
+            <TestScreen
+              nextScreen={props.configList.at(i + 1)?.title}
+              isFirst={i === 0}
+            />
+          ),
+          options: {
+            presentation: config.presentation,
+            detachPreviousScreen: config.detachPreviousScreen,
+            animation: config.animation,
+            gestureEnabled: true,
+          },
         },
-      },
-    ]))
+      ]),
+    ),
   });
 
   const Navigation = createStaticNavigation(JSStack);
@@ -234,10 +304,10 @@ function TestStack( props: { configList: StackScreenConfig[] }) {
     <NavigationIndependentTree>
       <Navigation />
     </NavigationIndependentTree>
-  )
+  );
 }
 
-function TestBottomTabs( props: { configList: TabScreenConfig[] }) {
+function TestBottomTabs(props: { configList: TabsScreenConfig[] }) {
   const Tab = createBottomTabNavigator();
 
   return (
@@ -254,44 +324,47 @@ function TestBottomTabs( props: { configList: TabScreenConfig[] }) {
 }
 
 export default function App() {
-  const [stackScreenConfig, setStackScreenConfig] = React.useState<StackScreenConfig[]>([
-    { ...DEFAULT_SCREEN }
-  ]);
-  const [tabScreenConfig, setTabScreenConfig] = React.useState<TabScreenConfig[]>([
+  const [stackScreenConfig, setStackScreenConfig] = React.useState<
+    StackScreenConfig[]
+  >([{ ...DEFAULT_SCREEN }]);
+  const [tabScreenConfig, setTabScreenConfig] = React.useState<
+    TabsScreenConfig[]
+  >([
     {
       title: 'HomeTab',
-      screens: [ { ...DEFAULT_SCREEN } ]
-    }
+      screens: [{ ...DEFAULT_SCREEN }],
+    },
   ]);
 
   const Stack = createNativeStackNavigator<TestRoutes>();
 
   return (
-    <StackConfigContext.Provider value={{
-      config: stackScreenConfig,
-      setConfig: setStackScreenConfig,
-    }}>
-      <BottomTabsConfigContext.Provider value={{
-        config: tabScreenConfig,
-        setConfig: setTabScreenConfig,
+    <StackConfigContext.Provider
+      value={{
+        config: stackScreenConfig,
+        setConfig: setStackScreenConfig,
       }}>
+      <TabsConfigContext.Provider
+        value={{
+          config: tabScreenConfig,
+          setConfig: setTabScreenConfig,
+        }}>
         <NavigationIndependentTree>
           <NavigationContainer>
             <Stack.Navigator>
+              <Stack.Screen name="Config" component={Config} />
               <Stack.Screen
-                name='Config'
-                component={Config}
-              />
-              <Stack.Screen
-                name='TestStack'
+                name="TestStack"
                 component={() => <TestStack configList={stackScreenConfig} />}
                 options={{
                   headerShown: false,
                 }}
               />
               <Stack.Screen
-                name='TestBottomTabs'
-                component={() => <TestBottomTabs configList={tabScreenConfig} />}
+                name="TestBottomTabs"
+                component={() => (
+                  <TestBottomTabs configList={tabScreenConfig} />
+                )}
                 options={{
                   headerShown: false,
                 }}
@@ -299,9 +372,9 @@ export default function App() {
             </Stack.Navigator>
           </NavigationContainer>
         </NavigationIndependentTree>
-      </BottomTabsConfigContext.Provider>
+      </TabsConfigContext.Provider>
     </StackConfigContext.Provider>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -339,5 +412,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.GreenDark100,
     margin: 4,
     padding: 8,
-  }
+  },
 });

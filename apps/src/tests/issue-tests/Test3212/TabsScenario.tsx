@@ -8,13 +8,13 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
 import { Config } from './Config';
 import { ScrollViewTemplate } from './ScrollViewTemplate';
 import { ScrollView } from 'react-native';
 
 function ConfigComponent() {
-  // Add ScrollView for automatic insets which are missing in BottomTabsScreen
+  // Add ScrollView for automatic insets which are missing in TabsScreen
   return (
     <ScrollView>
       <Config title="Stack / scrollEdgeEffects:" />
@@ -22,7 +22,7 @@ function ConfigComponent() {
   );
 }
 
-export function BottomTabsScenario() {
+export function TabsScenario() {
   const [config, setConfig] = useState<ScrollEdgeEffects>({
     ...SCROLL_EDGE_EFFECT_DEFAULTS,
   });
@@ -31,20 +31,20 @@ export function BottomTabsScenario() {
     <NavigationIndependentTree>
       <ScrollEdgeEffectsConfigContext.Provider value={{ config, setConfig }}>
         <NavigationContainer>
-          <BottomTabsContainer
+          <TabsContainer
             tabConfigs={[
               {
                 component: ConfigComponent,
-                tabScreenProps: { screenKey: 'config', title: 'Config' },
+                options: { screenKey: 'config', title: 'Config' },
               },
               {
                 component: ScrollViewTemplate,
-                tabScreenProps: {
+                options: {
                   screenKey: 'stack',
                   title: 'Scroll',
                   ios: {
                     scrollEdgeEffects: config,
-                  }
+                  },
                 },
               },
             ]}

@@ -1,23 +1,23 @@
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../../shared/gamma/containers/tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import React from 'react';
 import { useState } from 'react';
 import TestTab from './TestTab';
-import { useBottomTabsSAVExampleContext } from './BottomTabsSAVExampleContext';
+import { useTabsSAVExampleContext } from './TabsSAVExampleContext';
 import ConfigTab from './ConfigTab';
 
-export default function BottomTabsComponent() {
-  const { config } = useBottomTabsSAVExampleContext();
+export default function TabsComponent() {
+  const { config } = useTabsSAVExampleContext();
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'config',
         title: 'Config',
         ios: {
@@ -30,7 +30,7 @@ export default function BottomTabsComponent() {
       component: ConfigTab,
     },
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'test',
         title: 'Test',
         ios: {
@@ -66,7 +66,7 @@ export default function BottomTabsComponent() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,

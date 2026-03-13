@@ -4,11 +4,11 @@ import { TabBarControllerMode } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 import { Button } from '../../shared';
@@ -53,7 +53,7 @@ function App() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -72,7 +72,7 @@ function App() {
       component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {
@@ -98,7 +98,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarControllerMode: controllerMode,

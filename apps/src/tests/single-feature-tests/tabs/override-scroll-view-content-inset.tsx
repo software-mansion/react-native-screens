@@ -4,7 +4,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
 import type { Scenario } from '../../shared/helpers';
 
 const SCENARIO: Scenario = {
@@ -54,11 +54,11 @@ function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
-        <BottomTabsContainer
+        <TabsContainer
           tabConfigs={[
             {
               component: FalseTab,
-              tabScreenProps: {
+              options: {
                 screenKey: 'False',
                 title: 'False',
                 ios: {
@@ -69,7 +69,7 @@ function App() {
             },
             {
               component: TrueTab,
-              tabScreenProps: {
+              options: {
                 screenKey: 'True',
                 title: 'True',
                 ios: {
@@ -80,7 +80,7 @@ function App() {
             },
             {
               component: DefaultTab,
-              tabScreenProps: {
+              options: {
                 screenKey: 'Default',
                 title: 'Default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },

@@ -29,14 +29,14 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  type TabConfiguration,
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import {
   createNativeStackNavigator,
-  NativeStackNavigationProp,
+  type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
 
@@ -463,7 +463,7 @@ function HeaderHeightTabsWrapper() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
@@ -482,7 +482,7 @@ function HeaderHeightTabsWrapper() {
       component: HeaderHeightTest,
     },
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {
@@ -508,7 +508,7 @@ function HeaderHeightTabsWrapper() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

@@ -5,21 +5,21 @@ import {
   ScrollEdgeEffectsConfigContext,
 } from './context';
 import { NavigationContainer } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
 import { Config } from './Config';
 import { StackScenario } from './StackScenario';
 import { ScrollView } from 'react-native';
 
-export function StackInBottomTabsScenario() {
+export function StackInTabsScenario() {
   const [config, setConfig] = useState<ScrollEdgeEffects>({
     ...SCROLL_EDGE_EFFECT_DEFAULTS,
   });
 
-  // Add ScrollView for automatic insets which are missing in BottomTabsScreen
+  // Add ScrollView for automatic insets which are missing in TabsScreen
   const ConfigComponent = useCallback(
     () => (
       <ScrollView>
-        <Config title="Outer BottomTabs / scrollEdgeEffects:" />
+        <Config title="Outer Tabs / scrollEdgeEffects:" />
       </ScrollView>
     ),
     [],
@@ -28,20 +28,20 @@ export function StackInBottomTabsScenario() {
   return (
     <ScrollEdgeEffectsConfigContext.Provider value={{ config, setConfig }}>
       <NavigationContainer>
-        <BottomTabsContainer
+        <TabsContainer
           tabConfigs={[
             {
               component: ConfigComponent,
-              tabScreenProps: { screenKey: 'config', title: 'Config' },
+              options: { screenKey: 'config', title: 'Config' },
             },
             {
               component: StackScenario,
-              tabScreenProps: {
+              options: {
                 screenKey: 'stack',
                 title: 'Stack',
                 ios: {
                   scrollEdgeEffects: config,
-                }
+                },
               },
             },
           ]}

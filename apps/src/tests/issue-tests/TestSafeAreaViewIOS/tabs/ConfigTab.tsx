@@ -1,14 +1,14 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import {
-  BottomTabsSAVExampleConfig,
-  useBottomTabsSAVExampleContext,
-} from './BottomTabsSAVExampleContext';
+  TabsSAVExampleConfig,
+  useTabsSAVExampleContext,
+} from './TabsSAVExampleContext';
 import { SettingsPicker, SettingsSwitch } from '../../../../shared';
 import Info from '../shared/Info';
 
 export default function ConfigTab() {
-  const { config, setConfig } = useBottomTabsSAVExampleContext();
+  const { config, setConfig } = useTabsSAVExampleContext();
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, gap: 5 }}>
@@ -42,7 +42,7 @@ export default function ConfigTab() {
         }
       />
       <Text style={styles.title}>Tabs configuration</Text>
-      <SettingsPicker<BottomTabsSAVExampleConfig['tabBarMinimizeBehavior']>
+      <SettingsPicker<TabsSAVExampleConfig['tabBarMinimizeBehavior']>
         label="tabBarMinimizeBehavior"
         value={config.tabBarMinimizeBehavior}
         onValueChange={value =>
@@ -53,7 +53,7 @@ export default function ConfigTab() {
         }
         items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
       />
-      <SettingsPicker<BottomTabsSAVExampleConfig['tabBarItemSystemItem']>
+      <SettingsPicker<TabsSAVExampleConfig['tabBarItemSystemItem']>
         label="tabBarItemSystemItem"
         value={config.tabBarItemSystemItem}
         onValueChange={value =>
@@ -79,7 +79,7 @@ export default function ConfigTab() {
         ]}
       />
       <Text style={styles.title}>Content configuration</Text>
-      <SettingsPicker<BottomTabsSAVExampleConfig['content']>
+      <SettingsPicker<TabsSAVExampleConfig['content']>
         label="content"
         value={config.content}
         onValueChange={value =>

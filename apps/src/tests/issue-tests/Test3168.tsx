@@ -19,13 +19,13 @@ import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
 import { ListItem, SettingsPicker, SettingsSwitch } from '../../shared';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -89,7 +89,7 @@ function Home({ navigation }: MainStackNavigationProp) {
       <Text>Test Search Bar placement</Text>
       <Button title="Stack only" onPress={() => navigation.push('Stack')} />
       <Button
-        title="Bottom Tabs and Stack"
+        title="Tabs and Stack"
         onPress={() => navigation.push('StackAndTabs')}
       />
     </View>
@@ -201,7 +201,7 @@ function TabsStackComponent() {
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'main',
         title: 'Main',
         ios: {
@@ -214,7 +214,7 @@ function TabsStackComponent() {
       component: () => Menu({ tabsMode: true }),
     },
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'another',
         title: 'Another',
         ios: {
@@ -227,7 +227,7 @@ function TabsStackComponent() {
       component: AnotherTab,
     },
     {
-      tabScreenProps: {
+      options: {
         screenKey: 'examples',
         title: 'Search',
         ios: {
@@ -248,7 +248,7 @@ function TabsStackComponent() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

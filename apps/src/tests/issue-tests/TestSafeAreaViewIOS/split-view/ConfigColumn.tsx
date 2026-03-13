@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   TabConfiguration,
-} from '../../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../../shared/gamma/containers/tabs/TabsContainer';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import ConfigColumnTab from './ConfigColumnTab';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
@@ -19,7 +19,7 @@ export default function ConfigColumn({
     .filter(index => index !== configColumnIndex)
     .map(index => {
       const configuration: TabConfiguration = {
-        tabScreenProps: {
+        options: {
           screenKey: 'column' + index,
           title: 'Column ' + index,
           ios: {
@@ -46,7 +46,7 @@ export default function ConfigColumn({
           config: tabsConfig,
           setConfig: setTabsConfig,
         }}>
-        <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+        <TabsContainer tabConfigs={TAB_CONFIGS} />
       </ConfigWrapperContext.Provider>
     </SafeAreaView>
   );

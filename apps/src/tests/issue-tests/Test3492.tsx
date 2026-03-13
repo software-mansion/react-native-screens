@@ -16,14 +16,14 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import Colors from '../../shared/styling/Colors';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import LongText from '../../shared/LongText';
 import { someExtensiveComputation } from './TestBottomTabs/utils';
 
@@ -467,7 +467,7 @@ function Tabs() {
   const dynamicTabConfigs = useMemo<TabConfiguration[]>(
     () => [
       {
-        tabScreenProps: {
+        options: {
           screenKey: 'Tab1',
           title: 'Config',
           icon: {
@@ -478,7 +478,7 @@ function Tabs() {
         component: ConfigScreen,
       },
       {
-        tabScreenProps: {
+        options: {
           screenKey: 'Tab2',
           title: 'Tab 2',
           icon: { ios: { type: 'sfSymbol', name: 'square' } },
@@ -487,7 +487,7 @@ function Tabs() {
         component: ScreenTab2,
       },
       {
-        tabScreenProps: {
+        options: {
           screenKey: 'Tab3',
           title: 'Tab 3',
           icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
@@ -496,7 +496,7 @@ function Tabs() {
         component: ScreenTab3,
       },
       {
-        tabScreenProps: {
+        options: {
           screenKey: 'Tab4',
           title: 'Tab 4',
           icon: { ios: { type: 'sfSymbol', name: 'circle' } },
@@ -514,7 +514,7 @@ function Tabs() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={dynamicTabConfigs}
         nativeContainerStyle={{ backgroundColor: config.containerBackground }}
       />

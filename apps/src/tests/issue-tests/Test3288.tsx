@@ -9,11 +9,11 @@ import React, {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../shared/gamma/containers/tabs/TabsContainer';
 import {
   ColorValue,
   Pressable,
@@ -135,7 +135,7 @@ function TestScreen() {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab1',
       title: 'Config',
       ios: {
@@ -148,7 +148,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Config,
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab2',
       title: 'Test',
       ios: {
@@ -226,7 +226,7 @@ function Tabs() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,

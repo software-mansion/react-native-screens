@@ -7,11 +7,11 @@ import {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '../../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
+  TabsContainer,
   type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+} from '../../../shared/gamma/containers/tabs/TabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../../shared/styling/Colors';
 
@@ -46,7 +46,7 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
-    tabScreenProps: {
+    options: {
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
@@ -92,7 +92,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Tab1,
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab2',
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
@@ -176,7 +176,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     },
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab3',
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
@@ -225,7 +225,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     component: Tab3,
   },
   {
-    tabScreenProps: {
+    options: {
       screenKey: 'Tab4',
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
@@ -277,7 +277,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
+      <TabsContainer
         tabConfigs={TAB_CONFIGS}
         ios={{
           tabBarTintColor: Colors.YellowLight100,
