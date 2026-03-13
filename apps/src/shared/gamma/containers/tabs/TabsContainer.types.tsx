@@ -22,6 +22,35 @@ export type TabRouteConfig = {
   safeAreaConfiguration?: SafeAreaViewProps;
 };
 
+/**
+ * Runtime instance of a tab route. Created from a TabRouteConfig blueprint.
+ */
+export type TabRoute = TabRouteConfig & {
+  routeKey: string;
+};
+
+export type TabsNavState = {
+  routes: TabRoute[];
+  selectedRouteKey: string;
+};
+
+/// Navigation actions
+
+export type TabsNavigationActionChangeTab = {
+  type: 'change-tab';
+  routeKey: string;
+};
+
+export type TabsNavigationActionSetOptions = {
+  type: 'set-options';
+  routeKey: string;
+  options: Partial<TabRouteOptions>;
+};
+
+export type TabsNavigationAction =
+  | TabsNavigationActionChangeTab
+  | TabsNavigationActionSetOptions;
+
 /// TabsContainer props
 
 export type TabsContainerProps = Omit<TabsHostProps, 'children'> & {
@@ -39,6 +68,6 @@ export type TabsContainerProps = Omit<TabsHostProps, 'children'> & {
 };
 
 export type SetTabOptionsMethod = (
-  name: string,
+  routeKey: string,
   options: Partial<TabRouteOptions>,
 ) => void;

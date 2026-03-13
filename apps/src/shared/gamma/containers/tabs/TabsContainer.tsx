@@ -1,16 +1,24 @@
 import React from 'react';
 import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
-import {
-  Tabs,
-  NativeFocusChangeEvent,
-} from 'react-native-screens';
+import { Tabs, type NativeFocusChangeEvent } from 'react-native-screens';
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
 import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
-import type { TabRouteConfig, TabsContainerProps } from './TabsContainer.types';
+import type {
+  TabRoute,
+  TabRouteConfig,
+  TabRouteOptions,
+  TabsContainerProps,
+  TabsNavState,
+  TabsNavigationAction,
+} from './TabsContainer.types';
 import {
   TabsNavigationContext,
   type TabsNavigationContextPayload,
 } from './contexts/TabsNavigationContext';
+import {
+  tabsNavigationReducerWithLogging,
+  determineInitialTabsNavState,
+} from './reducer';
 import { RNSLog } from 'react-native-screens/private';
 
 export function TabsContainer(props: TabsContainerProps) {
@@ -23,20 +31,23 @@ export function TabsContainer(props: TabsContainerProps) {
     ...restProps
   } = props;
 
-  const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
-    RNSLog.log('TabsContainer focusedStateKey initial state computed');
+  useSanitizeRouteConfigs(routeConfigs);
 
-    if (routeConfigs.length === 0) {
-      throw new Error('There must be at least one tab defined');
-    }
+  const [tabsNavState, dispatch]: [
+    TabsNavState,
+    React.Dispatch<TabsNavigationAction>,
+  ] = React.useReducer(
+    tabsNavigationReducerWithLogging,
+    { routeConfigs, initialFocusedName },
+    determineInitialTabsNavState,
+  );
 
-    if (initialFocusedName != null) {
-      return initialFocusedName;
-    }
-
-    // Default to first tab
-    return routeConfigs[0].name;
-  });
+  const setRouteOptions = React.useCallback(
+    (routeKey: string, options: Partial<TabRouteOptions>) => {
+      dispatch({ type: 'set-options', routeKey, options });
+    },
+    [],
+  );
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
@@ -46,11 +57,9 @@ export function TabsContainer(props: TabsContainerProps) {
       // because it intruduces additional renders, which lead
       // to blank screens / placeholders being visible (on slower render)
       // for a few frames!
-      const transitionFn = React.startTransition;
-
-      transitionFn(() => {
+      React.startTransition(() => {
         RNSLog.info(`Starting transition to ${screenKey}`);
-        setFocusedScreenKey(screenKey);
+        dispatch({ type: 'change-tab', routeKey: screenKey });
       });
     },
     [],
@@ -65,32 +74,29 @@ export function TabsContainer(props: TabsContainerProps) {
       }
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
-      {routeConfigs.map(routeConfig => {
-        const screenKey = routeConfig.name;
-        const isFocused = screenKey === focusedScreenKey;
+      {tabsNavState.routes.map((route: TabRoute) => {
+        const isFocused = route.routeKey === tabsNavState.selectedRouteKey;
         RNSLog.info(
-          `TabsContainer map to component -> ${screenKey} ${
+          `TabsContainer map to component -> ${route.routeKey} ${
             isFocused ? '(focused)' : ''
           }`,
         );
 
         const tabsNavigationContext: TabsNavigationContextPayload = {
-          routeKey: screenKey,
-          routeOptions: { ...routeConfig.options },
-          setRouteOptions: () => {
-            throw new Error('[Tabs] setRouteOptions is not implemented yet');
-          },
+          routeKey: route.routeKey,
+          routeOptions: { ...route.options },
+          setRouteOptions,
         };
 
         return (
           <Tabs.Screen
-            key={screenKey}
-            {...routeConfig.options}
-            screenKey={screenKey}
+            key={route.routeKey}
+            {...route.options}
+            screenKey={route.routeKey}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
             <TabsNavigationContext.Provider value={tabsNavigationContext}>
-              {getContent(routeConfig)}
+              {getContent(route)}
             </TabsNavigationContext.Provider>
           </Tabs.Screen>
         );
@@ -136,4 +142,19 @@ function getSafeAreaViewEdges(
   }
 
   return { ...defaultEdges, ...edges };
+}
+
+function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
+  if (routeConfigs.length === 0) {
+    throw new Error('[Tabs] There must be at least one tab defined');
+  }
+
+  const areNamesUnique = React.useMemo(() => {
+    const names = routeConfigs.map(c => c.name);
+    return names.length === new Set(names).size;
+  }, [routeConfigs]);
+
+  if (!areNamesUnique) {
+    throw new Error('[Tabs] All tabs must have unique names');
+  }
 }

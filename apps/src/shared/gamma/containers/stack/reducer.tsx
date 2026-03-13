@@ -15,7 +15,7 @@ import type {
   StackRouteConfig,
   StackState,
 } from './StackContainer.types';
-import { generateID } from './utils/id-generator';
+import { generateID } from '../shared/id-generator';
 
 const NOT_FOUND_INDEX = -1;
 

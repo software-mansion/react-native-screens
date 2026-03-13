@@ -1,8 +1,13 @@
 export type {
-  TabRouteOptions,
-  TabRouteConfig,
-  TabsContainerProps,
   SetTabOptionsMethod,
+  TabRoute,
+  TabRouteConfig,
+  TabRouteOptions,
+  TabsContainerProps,
+  TabsNavigationAction,
+  TabsNavigationActionChangeTab,
+  TabsNavigationActionSetOptions,
+  TabsNavState,
 } from './TabsContainer.types';
 
 export type { TabsNavigationContextPayload } from './contexts/TabsNavigationContext';
