@@ -148,7 +148,7 @@ const iosPreventReattachmentOfDismissedScreensAccessor =
 const iosPreventReattachmentOfDismissedModalsAccessor =
   createExperimentalFeatureFlagAccessor(
     'iosPreventReattachmentOfDismissedModals',
-    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
+    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS,
   );
 const ios26AllowInteractionsDuringTransitionAccessor =
   createExperimentalFeatureFlagAccessor(

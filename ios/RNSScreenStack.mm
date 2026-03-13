@@ -783,11 +783,11 @@ RNS_IGNORE_SUPER_CALL_END
         } else {
           /// When a Modal is dismissed natively the event is sent to JS **asynchronously**.
           /// If multiple modals are pushed/dismissed quickly, JS might send back
-          /// a delayed update containing screens that were already dismissed. Attempting to render this
+          /// a delayed update containing modals that were already dismissed. Attempting to render this
           /// stale state could force UIKit to illegally reshuffle presented controllers.
-          /// We're preventing this, identifying reshulling as an invalid state.
-          /// Since view recycling is disabled, once we detect that a screen has been removed from the view
-          /// hierarchy, it won't be reused. This allows us to safely filter out dismissed screens from screens coming
+          /// We're preventing this, identifying reshuffling as an invalid state.
+          /// Since view recycling is disabled, once we detect that a modal has been removed from the view
+          /// hierarchy, it won't be reused. This allows us to safely filter out dismissed modal from modals coming
           /// from JS state via `controllers`.
           if (_iosPreventReattachmentOfDismissedModals && screen.controller.isRemovedFromParent) {
             continue;
