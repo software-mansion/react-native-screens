@@ -124,11 +124,16 @@ export type PlatformIconAndroid =
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
-  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
+  activityState?:
+    | 0
+    | 1
+    | 2
+    | Animated.AnimatedInterpolation<number>
+    | undefined;
   /**
    * Boolean indicating that the screen should be frozen with `react-freeze`.
    */
-  shouldFreeze?: boolean;
+  shouldFreeze?: boolean | undefined;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -284,9 +289,9 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called when the header height has changed.
    */
-  onHeaderHeightChange?: (
-    e: NativeSyntheticEvent<HeaderHeightChangeEventType>,
-  ) => void;
+  onHeaderHeightChange?:
+    | ((e: NativeSyntheticEvent<HeaderHeightChangeEventType>) => void)
+    | undefined;
   /**
    * A callback that gets called after swipe back is canceled.
    */
@@ -389,7 +394,13 @@ export interface ScreenProps extends ViewProps {
    *
    * Defaults to `[1.0]`.
    */
-  sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
+  sheetAllowedDetents?:
+    | number[]
+    | 'fitToContents'
+    | 'medium'
+    | 'large'
+    | 'all'
+    | undefined;
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
@@ -1280,11 +1291,11 @@ export type AnimatedScreenTransition = {
 export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
 
 export interface GestureProps {
-  screensRefs?: React.MutableRefObject<ScreensRefsHolder>;
-  currentScreenId?: string;
-  goBackGesture?: GoBackGesture;
-  transitionAnimation?: AnimatedScreenTransition;
-  screenEdgeGesture?: boolean;
+  screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;
+  currentScreenId?: string | undefined;
+  goBackGesture?: GoBackGesture | undefined;
+  transitionAnimation?: AnimatedScreenTransition | undefined;
+  screenEdgeGesture?: boolean | undefined;
 }
 
 export interface GestureProviderProps extends GestureProps {

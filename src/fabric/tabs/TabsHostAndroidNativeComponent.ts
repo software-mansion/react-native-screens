@@ -24,7 +24,7 @@ export interface NativeProps extends ViewProps {
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
-  nativeContainerBackgroundColor?: ColorValue;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // Android-specific props

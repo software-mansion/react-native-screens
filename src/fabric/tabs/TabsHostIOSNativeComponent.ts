@@ -34,7 +34,7 @@ export interface NativeProps extends ViewProps {
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
-  nativeContainerBackgroundColor?: ColorValue;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // We can't use `direction` name for this prop as it's also used by
@@ -47,7 +47,7 @@ export interface NativeProps extends ViewProps {
   controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
 
   // iOS-specific props
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
 }
