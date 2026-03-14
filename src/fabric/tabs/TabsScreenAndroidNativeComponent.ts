@@ -24,16 +24,16 @@ type TabBarItemLabelVisibilityMode =
   | 'unlabeled';
 
 export type ItemStateAppearance = {
-  tabBarItemTitleFontColor?: ProcessedColorValue | null;
-  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
+  tabBarItemIconColor?: ProcessedColorValue | null | undefined;
 };
 
 export type Appearance = {
   // TabBar - Appearance
-  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Ripple
-  tabBarItemRippleColor?: ProcessedColorValue | null;
+  tabBarItemRippleColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Label layout
   tabBarItemLabelVisibilityMode?: CT.WithDefault<
@@ -42,25 +42,25 @@ export type Appearance = {
   >;
 
   // TabBarItem - State-dependent appearance
-  normal?: ItemStateAppearance;
-  selected?: ItemStateAppearance;
-  focused?: ItemStateAppearance;
-  disabled?: ItemStateAppearance;
+  normal?: ItemStateAppearance | undefined;
+  selected?: ItemStateAppearance | undefined;
+  focused?: ItemStateAppearance | undefined;
+  disabled?: ItemStateAppearance | undefined;
 
   // TabBarItem - Active Indicator
-  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null;
+  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
 
   // TabBarItem - Label
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleSmallLabelFontSize?: CT.Float;
-  tabBarItemTitleLargeLabelFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontFamily?: string | undefined;
+  tabBarItemTitleSmallLabelFontSize?: CT.Float | undefined;
+  tabBarItemTitleLargeLabelFontSize?: CT.Float | undefined;
+  tabBarItemTitleFontWeight?: string | undefined;
+  tabBarItemTitleFontStyle?: string | undefined;
 
   // TabBarItem - Badge
-  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
-  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null | undefined;
+  tabBarItemBadgeTextColor?: ProcessedColorValue | null | undefined;
 };
 
 // #endregion Android-specific helpers
@@ -73,34 +73,36 @@ export interface NativeProps extends ViewProps {
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 
   // Control
-  isFocused?: boolean;
+  isFocused?: boolean | undefined;
   screenKey: string;
 
   // General
   title?: string | undefined | null;
-  badgeValue?: string;
+  badgeValue?: string | undefined;
 
   // Accessibility
-  tabBarItemTestID?: string;
-  tabBarItemAccessibilityLabel?: string;
+  tabBarItemTestID?: string | undefined;
+  tabBarItemAccessibilityLabel?: string | undefined;
 
   // Effects
-  specialEffects?: {
-    repeatedTabSelection?: {
-      popToRoot?: CT.WithDefault<boolean, true>;
-      scrollToTop?: CT.WithDefault<boolean, true>;
-    };
-  };
+  specialEffects?:
+    | {
+        repeatedTabSelection?: {
+          popToRoot?: CT.WithDefault<boolean, true>;
+          scrollToTop?: CT.WithDefault<boolean, true>;
+        };
+      }
+    | undefined;
 
   // Android-specific props
   // Image handling
-  drawableIconResourceName?: string;
-  imageIconResource?: ImageSource;
-  selectedDrawableIconResourceName?: string;
-  selectedImageIconResource?: ImageSource;
+  drawableIconResourceName?: string | undefined;
+  imageIconResource?: ImageSource | undefined;
+  selectedDrawableIconResourceName?: string | undefined;
+  selectedImageIconResource?: ImageSource | undefined;
 
   // Appearance
-  standardAppearance?: Appearance;
+  standardAppearance?: Appearance | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenAndroid', {
