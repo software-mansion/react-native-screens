@@ -41,9 +41,11 @@ function ConfigScreen() {
       type: 'tabScreen',
       name: 'Config',
       config: {
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
+        options: {
+          safeAreaConfiguration: {
+            edges: {
+              bottom: true,
+            },
           },
         },
       },

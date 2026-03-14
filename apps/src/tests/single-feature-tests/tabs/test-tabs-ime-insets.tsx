@@ -26,7 +26,7 @@ function ConfigScreen() {
   const [config, dispatch] = useTabsConfigState<TabsParamList>();
   const [tabBarRespectsIMEInsets, setTabBarRespectsIMEInsets] = useState(false);
   const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
-    useState(config.routeConfigs[0].safeAreaConfiguration?.edges?.bottom ?? true);
+    useState(config.routeConfigs[0].options?.safeAreaConfiguration?.edges?.bottom ?? true);
 
   useEffect(() => {
     dispatch({
@@ -44,9 +44,11 @@ function ConfigScreen() {
       type: 'tabScreen',
       name: 'Config',
       config: {
-        safeAreaConfiguration: {
-          edges: {
-            bottom: safeAreaViewBottomEdgeEnabled,
+        options: {
+          safeAreaConfiguration: {
+            edges: {
+              bottom: safeAreaViewBottomEdgeEnabled,
+            },
           },
         },
       },

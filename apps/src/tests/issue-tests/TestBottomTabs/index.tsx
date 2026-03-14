@@ -166,11 +166,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
         },
       },
       title: 'Tab2',
-    },
-    safeAreaConfiguration: {
-      edges: {
-        top: true,
-        bottom: true,
+      safeAreaConfiguration: {
+        edges: {
+          top: true,
+          bottom: true,
+        },
       },
     },
   },
