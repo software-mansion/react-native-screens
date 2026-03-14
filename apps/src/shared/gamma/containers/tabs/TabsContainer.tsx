@@ -88,7 +88,8 @@ export function TabsContainer(props: TabsContainerProps) {
           setRouteOptions,
         };
 
-        const { safeAreaConfiguration, ...nativeOptions } = route.options ?? {};
+        const { safeAreaConfiguration, ...nativeOptions } =
+          route.options ?? {};
 
         return (
           <Tabs.Screen
@@ -97,9 +98,9 @@ export function TabsContainer(props: TabsContainerProps) {
             screenKey={route.routeKey}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <TabsNavigationContext.Provider value={tabsNavigationContext}>
+            <TabsNavigationContext value={tabsNavigationContext}>
               {getContent(route.Component, safeAreaConfiguration)}
-            </TabsNavigationContext.Provider>
+            </TabsNavigationContext>
           </Tabs.Screen>
         );
       })}

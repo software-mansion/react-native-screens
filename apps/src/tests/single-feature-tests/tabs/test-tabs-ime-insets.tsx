@@ -1,9 +1,14 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Scenario } from '../../shared/helpers';
-import { createAutoConfiguredTabs } from '../../shared/tabs';
 import React, { useEffect, useState } from 'react';
 import { SettingsSwitch } from '../../../shared';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsNavigationContext,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '../../../shared/gamma/containers/tabs';
 import { DummyScreen } from '../../shared/DummyScreens';
 
 const SCENARIO: Scenario = {
@@ -17,43 +22,21 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TabsParamList = {
-  Config: undefined;
-  Tab2: undefined;
-};
-
 function ConfigScreen() {
-  const [config, dispatch] = useTabsConfigState<TabsParamList>();
-  const [tabBarRespectsIMEInsets, setTabBarRespectsIMEInsets] = useState(false);
+  const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
-    useState(config.routeConfigs[0].options?.safeAreaConfiguration?.edges?.bottom ?? true);
+    useState(routeOptions.safeAreaConfiguration?.edges?.bottom ?? true);
 
   useEffect(() => {
-    dispatch({
-      type: 'tabBar',
-      config: {
-        android: {
-          tabBarRespectsIMEInsets: tabBarRespectsIMEInsets,
+    setRouteOptions(routeKey, {
+      safeAreaConfiguration: {
+        edges: {
+          bottom: safeAreaViewBottomEdgeEnabled,
         },
       },
     });
-  }, [dispatch, tabBarRespectsIMEInsets]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'tabScreen',
-      name: 'Config',
-      config: {
-        options: {
-          safeAreaConfiguration: {
-            edges: {
-              bottom: safeAreaViewBottomEdgeEnabled,
-            },
-          },
-        },
-      },
-    });
-  }, [dispatch, safeAreaViewBottomEdgeEnabled]);
+  }, [routeKey, setRouteOptions, safeAreaViewBottomEdgeEnabled]);
 
   return (
     <View style={[styles.container, styles.content]}>
@@ -71,9 +54,9 @@ function ConfigScreen() {
         <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
         <SettingsSwitch
           label={'tabBarRespectsIMEInsets'}
-          value={tabBarRespectsIMEInsets}
+          value={hostConfig.android?.tabBarRespectsIMEInsets ?? false}
           onValueChange={function (value: boolean): void {
-            setTabBarRespectsIMEInsets(value);
+            updateHostConfig({ android: { tabBarRespectsIMEInsets: value } });
           }}
         />
       </View>
@@ -91,17 +74,32 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({
-  Config: ConfigScreen,
-  Tab2: DummyScreen,
-});
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Config',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Config',
+      safeAreaConfiguration: {
+        edges: {
+          bottom: true,
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: DummyScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({
