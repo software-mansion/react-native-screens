@@ -9,11 +9,15 @@ import {
   View,
 } from 'react-native';
 import { Scenario } from '../../shared/helpers';
-import { createAutoConfiguredTabs } from '../../shared/tabs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { SettingsPicker } from '../../../shared';
 import type { TabsHostColorScheme } from 'react-native-screens';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '../../../shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Color Scheme',
@@ -25,32 +29,10 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TabsParamList = {
-  Config: undefined;
-  Keyboard: undefined;
-};
-
 function ConfigScreen() {
-  const [config, dispatch] = useTabsConfigState<TabsParamList>();
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactColorScheme, setReactColorScheme] =
-    useState<ColorSchemeName>('unspecified');
-
-  // TODO: Tabs.Autoconfig should allow initial prop configuration.
-  useEffect(() => {
-    dispatch({
-      type: 'tabScreen',
-      name: 'Config',
-      config: {
-        options: {
-          safeAreaConfiguration: {
-            edges: {
-              bottom: true,
-            },
-          },
-        },
-      },
-    });
-  }, [dispatch]);
+    React.useState<ColorSchemeName>('unspecified');
 
   useEffect(() => {
     Appearance.setColorScheme(reactColorScheme);
@@ -89,15 +71,8 @@ function ConfigScreen() {
         <Text style={styles.heading}>TabsHost color scheme</Text>
         <SettingsPicker<NonNullable<TabsHostColorScheme>>
           label={'colorScheme'}
-          value={config.colorScheme ?? 'inherit'}
-          onValueChange={function (value: TabsHostColorScheme): void {
-            dispatch({
-              type: 'tabBar',
-              config: {
-                colorScheme: value,
-              },
-            });
-          }}
+          value={hostConfig.colorScheme ?? 'inherit'}
+          onValueChange={value => updateHostConfig({ colorScheme: value })}
           items={['inherit', 'light', 'dark']}
         />
       </View>
@@ -113,17 +88,32 @@ function TestScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({
-  Config: ConfigScreen,
-  Keyboard: TestScreen,
-});
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Config',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Config',
+      safeAreaConfiguration: {
+        edges: {
+          bottom: true,
+        },
+      },
+    },
+  },
+  {
+    name: 'Keyboard',
+    Component: TestScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Keyboard',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({
