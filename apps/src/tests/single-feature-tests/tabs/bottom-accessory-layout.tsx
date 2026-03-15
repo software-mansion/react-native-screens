@@ -90,8 +90,7 @@ function ConfigScreen() {
     updateHostConfig({
       ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
+  }, [selected, updateHostConfig]);
 
   return (
     <ScrollView style={styles.container}>
