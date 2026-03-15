@@ -1,6 +1,7 @@
 import React from 'react';
 import { TabsContainer } from './TabsContainer';
 import type { TabsContainerProps, TabsHostConfig } from './TabsContainer.types';
+import { deepMerge } from '../../../utils/deep-merge';
 import {
   TabsHostConfigContext,
   type TabsHostConfigContextPayload,
@@ -27,7 +28,7 @@ export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
 
   const updateHostConfig = React.useCallback(
     (config: Partial<TabsHostConfig>) => {
-      setHostConfig(prev => ({ ...prev, ...config }));
+      setHostConfig(prev => deepMerge(prev, config));
     },
     [],
   );
@@ -50,3 +51,4 @@ export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
     </TabsHostConfigContext>
   );
 }
+
