@@ -1,4 +1,3 @@
-import { generateID } from '../shared/id-generator';
 import type {
   TabRoute,
   TabRouteConfig,
@@ -98,7 +97,9 @@ function tabsActionSetOptionsHandler(
 function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
   return {
     ...config,
-    routeKey: `r-${config.name}-${generateID()}`,
+    // Tab names are required to be unique (enforced by useSanitizeRouteConfigs),
+    // so the name itself serves as a stable unique key.
+    routeKey: config.name,
   };
 }
 

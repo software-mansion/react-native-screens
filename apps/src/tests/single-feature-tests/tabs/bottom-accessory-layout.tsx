@@ -2,9 +2,13 @@ import LongText from '../../../shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '../../shared/DummyScreens';
-import { useDispatchTabsConfig } from '../../shared/hooks/tabs-config';
-import { createAutoConfiguredTabs } from '../../shared/tabs';
 import type { Scenario } from '../../shared/helpers';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '../../../shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Bottom Accessory',
@@ -15,11 +19,6 @@ const SCENARIO: Scenario = {
 };
 
 export default SCENARIO;
-
-type TabsParamList = {
-  Tab1: undefined;
-  Tab2: undefined;
-};
 
 function ShortViewUL() {
   return (
@@ -85,17 +84,13 @@ const ACCESSORY_VARIANTS = [
 
 function ConfigScreen() {
   const [selected, setSelected] = useState(0);
-  const dispatch = useDispatchTabsConfig();
+  const { updateHostConfig } = useTabsHostConfig();
 
   useEffect(() => {
-    dispatch({
-      type: 'tabBar',
-      config: {
-        ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
-      },
+    updateHostConfig({
+      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
+  }, [selected, updateHostConfig]);
 
   return (
     <ScrollView style={styles.container}>
@@ -114,17 +109,27 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({
-  Tab1: ConfigScreen,
-  Tab2: DummyScreen,
-});
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab1',
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: DummyScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({

@@ -44,13 +44,13 @@ export default function TabsComponent() {
               ? config.tabBarItemSystemItem
               : undefined,
         },
-      },
-      safeAreaConfiguration: {
-        edges: {
-          top: config.safeAreaTopEdge,
-          bottom: config.safeAreaBottomEdge,
-          left: config.safeAreaLeftEdge,
-          right: config.safeAreaRightEdge,
+        safeAreaConfiguration: {
+          edges: {
+            top: config.safeAreaTopEdge,
+            bottom: config.safeAreaBottomEdge,
+            left: config.safeAreaLeftEdge,
+            right: config.safeAreaRightEdge,
+          },
         },
       },
     },
