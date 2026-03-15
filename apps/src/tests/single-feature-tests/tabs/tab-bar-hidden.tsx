@@ -1,9 +1,13 @@
 import { SettingsSwitch } from '../../../shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
-import { createAutoConfiguredTabs } from '../../shared/tabs';
 import { Scenario } from '../../shared/helpers';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '../../../shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
@@ -14,32 +18,31 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TabsParamList = {
-  Tab1: undefined;
-};
-
 function ConfigScreen() {
-  const [config, dispatch] = useTabsConfigState<TabsParamList>();
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
     <ScrollView style={{ padding: 40 }}>
       <SettingsSwitch
         label="tabBarHidden"
-        value={config.tabBarHidden ?? false}
-        onValueChange={value =>
-          dispatch({ type: 'tabBar', config: { tabBarHidden: value } })
-        }
+        value={hostConfig.tabBarHidden ?? false}
+        onValueChange={value => updateHostConfig({ tabBarHidden: value })}
       />
     </ScrollView>
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({ Tab1: ConfigScreen });
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab1',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
