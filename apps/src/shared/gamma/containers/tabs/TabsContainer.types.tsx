@@ -10,7 +10,9 @@ import type { SafeAreaViewProps } from '../../../../../../src/components/safe-ar
 export type TabRouteOptions = Omit<
   TabsScreenProps,
   'children' | 'screenKey' | 'isFocused'
->;
+> & {
+  safeAreaConfiguration?: SafeAreaViewProps;
+};
 
 /**
  * Blueprint for a tab route.
@@ -19,7 +21,6 @@ export type TabRouteConfig = {
   name: string;
   Component: React.ComponentType;
   options?: TabRouteOptions;
-  safeAreaConfiguration?: SafeAreaViewProps;
 };
 
 /**
@@ -52,6 +53,11 @@ export type TabsNavigationAction =
   | TabsNavigationActionSetOptions;
 
 /// TabsContainer props
+
+export type TabsHostConfig = Omit<
+  TabsHostProps,
+  'children' | 'onNativeFocusChange' | 'experimentalControlNavigationStateInJS'
+>;
 
 export type TabsContainerProps = Omit<TabsHostProps, 'children'> & {
   routeConfigs: TabRouteConfig[];
