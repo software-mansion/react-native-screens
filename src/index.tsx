@@ -46,11 +46,20 @@ export { default as ScreenContentWrapper } from './components/ScreenContentWrapp
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
+
+/**
+ * Flags
+ */
+export { compatibilityFlags, featureFlags } from './flags';
 
 /**
  * Hooks
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
+
+/**
+ * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
+ */
+export { default as Tabs } from './components/tabs';

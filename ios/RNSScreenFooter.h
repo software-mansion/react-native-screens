@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 

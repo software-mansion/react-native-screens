@@ -1,0 +1,147 @@
+import React from 'react';
+import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
+import {
+  Tabs,
+  TabsHostProps,
+  TabsScreenProps,
+  NativeFocusChangeEvent,
+} from 'react-native-screens';
+import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
+import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
+import ConfigWrapperContext from './ConfigWrapperContext';
+import { RNSLog } from 'react-native-screens/private';
+
+export interface TabConfiguration {
+  options: TabsScreenProps;
+  component: React.ComponentType;
+  safeAreaConfiguration?: SafeAreaViewProps;
+}
+
+export type TabsContainerProps = TabsHostProps & {
+  tabConfigs: TabConfiguration[];
+};
+
+export function TabsContainer(props: TabsContainerProps) {
+  RNSLog.info('TabsContainer render');
+
+  const { tabConfigs, ...restProps } = props;
+
+  const [focusedScreenKey, setFocusedScreenKey] = React.useState<string>(() => {
+    RNSLog.log('TabsContainer focusedStateKey initial state computed');
+
+    if (props.tabConfigs.length === 0) {
+      throw new Error('There must be at least one tab defined');
+    }
+
+    const maybeUserRequestedFocusedTab = tabConfigs.find(
+      tabConfig => tabConfig.options.isFocused === true,
+    )?.options.screenKey;
+
+    if (maybeUserRequestedFocusedTab != null) {
+      return maybeUserRequestedFocusedTab;
+    }
+
+    // Default to first tab
+    return tabConfigs[0].options.screenKey;
+  });
+
+  const configWrapper = React.useContext(ConfigWrapperContext);
+
+  const onNativeFocusChangeCallback = React.useCallback(
+    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
+      const screenKey = event.nativeEvent.screenKey;
+
+      // Use `startTransition` only if the state is controlled in JS
+      // const transitionFn = !configWrapper.config.controlledBottomTabs
+      //   ? startTransition
+      //   : (callback: () => void) => {
+      //       callback();
+      //     };
+
+      // Please note that the `useTransition` hook can not be used here,
+      // because it intruduces additional renders, which lead
+      // to blank screens / placeholders being visible (on slower render)
+      // for a few frames!
+      const transitionFn = React.startTransition;
+      // const transitionFn = (callback: () => void) => {
+      //   callback();
+      // };
+
+      transitionFn(() => {
+        RNSLog.info(`Starting transition to ${screenKey}`);
+        setFocusedScreenKey(screenKey);
+      });
+    },
+    [],
+  );
+
+  return (
+    <Tabs.Host
+      // Use controlled tabs by default, but allow to overwrite if user wants to
+      onNativeFocusChange={onNativeFocusChangeCallback}
+      experimentalControlNavigationStateInJS={
+        configWrapper.config.controlledBottomTabs
+      }
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      {...restProps}>
+      {tabConfigs.map(tabConfig => {
+        const screenKey = tabConfig.options.screenKey;
+        const isFocused = tabConfig.options.screenKey === focusedScreenKey;
+        RNSLog.info(
+          `TabsContainer map to component -> ${screenKey} ${
+            isFocused ? '(focused)' : ''
+          }`,
+        );
+
+        return (
+          <Tabs.Screen
+            key={screenKey}
+            {...tabConfig.options}
+            isFocused={isFocused} // notice that the value passed by user is overriden here!
+          >
+            {getContent(tabConfig)}
+          </Tabs.Screen>
+        );
+      })}
+    </Tabs.Host>
+  );
+}
+
+function getContent(tabConfig: TabConfiguration) {
+  const { safeAreaConfiguration, component: Component } = tabConfig;
+
+  const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
+    safeAreaConfiguration?.edges,
+  );
+
+  const anySAVEdgeSet = Object.values(safeAreaConfigurationWithDefault).some(
+    edge => edge === true,
+  );
+
+  if (anySAVEdgeSet) {
+    return (
+      <SafeAreaView {...safeAreaConfiguration}>
+        <Component />
+      </SafeAreaView>
+    );
+  }
+
+  return <Component />;
+}
+
+function getSafeAreaViewEdges(
+  edges?: SafeAreaViewProps['edges'],
+): NonNullable<SafeAreaViewProps['edges']> {
+  let defaultEdges: SafeAreaViewProps['edges'];
+
+  switch (Platform.OS) {
+    case 'android':
+      defaultEdges = { bottom: true };
+      break;
+    default:
+      defaultEdges = {};
+      break;
+  }
+
+  return { ...defaultEdges, ...edges };
+}

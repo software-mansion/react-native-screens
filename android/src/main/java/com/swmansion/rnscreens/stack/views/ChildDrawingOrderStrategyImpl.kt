@@ -17,7 +17,6 @@ internal abstract class ChildrenDrawingOrderStrategyBase(
     override fun isEnabled() = enabled
 }
 
-
 internal class ReverseFromIndex(
     val startIndex: Int,
 ) : ChildrenDrawingOrderStrategyBase() {

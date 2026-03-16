@@ -19,18 +19,19 @@ import com.swmansion.rnscreens.ext.equalWithRespectToEps
 internal class DimmingView(
     context: Context,
     initialAlpha: Float = 0.6F,
-    private val pointerEventsProxy: DimmingViewPointerEventsProxy
+    private val pointerEventsProxy: DimmingViewPointerEventsProxy,
 ) : ViewGroup(context),
     ReactCompoundViewGroup,
     ReactPointerEventsView by pointerEventsProxy {
-
     constructor(context: Context, initialAlpha: Float = 0.6F) : this(
-        context, initialAlpha,
-        DimmingViewPointerEventsProxy(null)
+        context,
+        initialAlpha,
+        DimmingViewPointerEventsProxy(null),
     )
 
     init {
         pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
+        setFocusable(false)
     }
 
     internal val blockGestures

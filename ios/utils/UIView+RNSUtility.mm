@@ -1,8 +1,8 @@
-
 #import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTSurfaceView.h>
+#import "RNSModalScreen.h"
 #endif
 
 @implementation UIView (RNSUtility)
@@ -17,7 +17,10 @@
   // hosts `RCTSurfaceTouchHandler` as a private field. When initialised, `RCTSurfaceTouchHandler` is attached to the
   // surface view as a gestureRecognizer <- and this is where we can lay our hands on it.
 
-  while (parent != nil && ![parent isKindOfClass:RCTSurfaceView.class]) {
+  // On Fabric, every screen not mounted under react root view has it's own surface touch handler attached
+  // (done when the screen is moved to window).
+  while (parent != nil && ![parent isKindOfClass:RCTSurfaceView.class] &&
+         ![parent isKindOfClass:RNSModalScreen.class]) {
     parent = parent.superview;
   }
 

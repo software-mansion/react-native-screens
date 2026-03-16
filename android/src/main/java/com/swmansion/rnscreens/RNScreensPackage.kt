@@ -7,6 +7,12 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
+import com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
+import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
+import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager
+import com.swmansion.rnscreens.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
@@ -45,6 +51,12 @@ class RNScreensPackage : BaseReactPackage() {
             SearchBarManager(),
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
+            TabsHostViewManager(),
+            TabsScreenViewManager(),
+            SafeAreaViewManager(),
+            StackHostViewManager(),
+            StackScreenViewManager(),
+            ScrollViewMarkerViewManager(),
         )
     }
 

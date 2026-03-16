@@ -20,6 +20,10 @@ class NativeProxy {
 
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
+    external fun cleanupExpiredMountingCoordinators()
+
+    external fun invalidateNative()
+
     companion object {
         // we use ConcurrentHashMap here since it will be read on the JS thread,
         // and written to on the UI thread.
@@ -59,7 +63,13 @@ class NativeProxy {
 
         val screen = weakScreeRef.get()
         if (screen is Screen) {
-            screen.startRemovalTransition()
+            val isScheduled =
+                screen.post {
+                    screen.startRemovalTransition()
+                }
+            if (!isScheduled) {
+                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
+            }
         } else {
             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }

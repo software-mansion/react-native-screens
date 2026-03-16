@@ -73,6 +73,20 @@ class ScreenStackViewManager :
             StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning"),
         )
 
+    // iosPreventReattachmentOfDismissedScreens is not available on Android,
+    // however we must override the setter
+    override fun setIosPreventReattachmentOfDismissedScreens(
+        view: ScreenStack?,
+        value: Boolean,
+    ) = Unit
+
+    // iosPreventReattachmentOfDismissedModals is not available on Android,
+    // however we must override the setter
+    override fun setIosPreventReattachmentOfDismissedModals(
+        view: ScreenStack?,
+        value: Boolean,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSScreenStack"
     }

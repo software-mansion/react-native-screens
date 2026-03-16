@@ -8,6 +8,8 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
+import com.swmansion.rnscreens.bottomsheet.sheetShouldUseDimmingView
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
@@ -22,10 +24,12 @@ class ScreenStack(
 ) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
+    private var preloadedWrappers: List<ScreenFragmentWrapper> = ArrayList()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
+    private var currentVisibleBottom: ScreenFragmentWrapper? = null
 
     private var childrenDrawingOrderStrategy: ChildrenDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
@@ -91,6 +95,11 @@ class ScreenStack(
         }
     }
 
+    /**
+     * Integration function. Allows other solutions to retrieve list of screens owned by this stack.
+     */
+    fun getScreenIds(): List<String?> = screenWrappers.map { it.screen.screenId }
+
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper
@@ -101,6 +110,22 @@ class ScreenStack(
     override fun removeScreenAt(index: Int) {
         dismissedWrappers.remove(getScreenFragmentWrapperAt(index))
         super.removeScreenAt(index)
+    }
+
+    // When there is more then one active screen on stack,
+    // pops the screen, so that only one remains
+    // Returns true when any screen was popped
+    // When there was only one screen on stack returns false
+    fun popToRoot(): Boolean {
+        val rootIndex = screenWrappers.indexOfFirst { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        val lastActiveIndex = screenWrappers.indexOfLast { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        if (rootIndex >= 0 && lastActiveIndex > rootIndex) {
+            for (screenIndex in (rootIndex + 1)..lastActiveIndex) {
+                notifyScreenDetached(screenWrappers[screenIndex].screen)
+            }
+            return true
+        }
+        return false
     }
 
     override fun removeAllScreens() {
@@ -139,11 +164,14 @@ class ScreenStack(
                 .dropWhile { it.isTranslucent() }
                 .firstOrNull()
                 ?.takeUnless { it === newTop }
+        currentVisibleBottom = visibleBottom
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        val newTopAlreadyInStack = stack.contains(newTop)
+        // We don't count preloaded screen as "already in stack" until it appears with state == ON_TOP
+        // See https://github.com/software-mansion/react-native-screens/pull/3062
+        val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
         if (newTop != null && !newTopAlreadyInStack) {
@@ -258,34 +286,80 @@ class ScreenStack(
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
-            turnOffA11yUnderTransparentScreen(visibleBottom)
+            // All screens that were displayed at some point in time should, confusingly,
+            // have state set to ON_TOP == 2, and the ones that were preloaded should have state INACTIVE == 0
+            // There could be special cases that I didn't know of at the time of writing,
+            // and the list could contain some other inactive screens that were not being preloaded
+            // but we are only really interested in and check the INACTIVE screens that are above
+            // newTop screen, which ARE the preloaded ones
+            preloadedWrappers =
+                screenWrappers
+                    .asSequence()
+                    .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
+                    .toList()
+
+            updateA11yForVisibleScreens()
+
             transaction.commitNowAllowingStateLoss()
         }
     }
 
     // only top visible screen should be accessible
-    private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenFragmentWrapper?) {
-        if (screenWrappers.size > 1 && visibleBottom != null) {
+    internal fun updateA11yForVisibleScreens() {
+        if (screenWrappers.size > 1 && currentVisibleBottom != null) {
             topScreenWrapper?.let {
-                if (it.isTranslucent()) {
-                    val screenFragmentsBeneathTop =
-                        screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
-                    // go from the top of the stack excluding the top screen
-                    for (fragmentWrapper in screenFragmentsBeneathTop) {
-                        fragmentWrapper.screen.changeAccessibilityMode(
-                            IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
-                        )
+                val shouldDisableFocusability = shouldDisableFocusabilityBeneathTopScreen()
+                val screenFragmentsBeneathTop =
+                    screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
+                // go from the top of the stack excluding the top screen
+                for (fragmentWrapper in screenFragmentsBeneathTop) {
+                    val accessibilityMode =
+                        if (shouldDisableFocusability) IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else IMPORTANT_FOR_ACCESSIBILITY_AUTO
+                    fragmentWrapper.screen.changeAccessibilityMode(accessibilityMode)
 
-                        // don't change a11y below non-transparent screens
-                        if (fragmentWrapper == visibleBottom) {
-                            break
-                        }
+                    // Keyboard navigation focus is separate from screen reader focus, that's
+                    // why we need to use focusable and descendantFocusability.
+                    changeScreenFocusability(fragmentWrapper.screen, !shouldDisableFocusability)
+
+                    // don't change a11y below non-transparent screens
+                    if (fragmentWrapper == currentVisibleBottom) {
+                        break
                     }
                 }
             }
         }
 
         topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
+        topScreen?.let { changeScreenFocusability(it, true) }
+    }
+
+    private fun shouldDisableFocusabilityBeneathTopScreen(): Boolean {
+        topScreenWrapper?.let {
+            return if (it.screen.usesFormSheetPresentation()) {
+                it.screen.sheetShouldUseDimmingView()
+            } else {
+                it.isTranslucent()
+            }
+        }
+        return false
+    }
+
+    private fun changeScreenFocusability(
+        screen: Screen,
+        focusable: Boolean,
+    ) {
+        val descendantFocusability =
+            if (focusable) FOCUS_AFTER_DESCENDANTS else FOCUS_BLOCK_DESCENDANTS
+
+        // On API >= 26, we use FOCUSABLE_AUTO.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            screen.changeFocusability(
+                if (focusable) FOCUSABLE_AUTO else NOT_FOCUSABLE,
+                descendantFocusability,
+            )
+        } else {
+            screen.changeFocusabilityCompat(focusable, descendantFocusability)
+        }
     }
 
     override fun notifyContainerUpdate() {

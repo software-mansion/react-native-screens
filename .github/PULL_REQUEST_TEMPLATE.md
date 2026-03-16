@@ -1,52 +1,63 @@
 ## Description
 
 <!--
-Description and motivation for this PR.
+Description and motivation for this PR. 
+This section should include "what & why".
 
-Include Fixes #<number> if this is fixing some issue.
+Please link all related issues that merging this PR should close,
+by using the `Closes #<issue-number>` syntax.
 
-Fixes # .
+For example: 
+Closes #12345.
 -->
 
 ## Changes
 
 <!--
-Please describe things you've changed here, make a **high level** overview, if change is simple you can omit this section.
+This is "how" of the PR description.
+
+Please describe things you've changed here, make a **high level** overview, 
+if change is simple you can omit this section.
 
 For example:
 
 - Updated `about.md` docs
-
 -->
 
+## Before & after - visual documentation
+
 <!--
+This section is MANDATORY for any PR that introduces any visual changes.
 
-## Screenshots / GIFs
+If your PR does not introduce such changes, please omit this section.
 
-Here you can add screenshots / GIFs documenting your change.
+Consider using a table here to position the recordings / screenshots 
+next to each other.
 
-You can add before / after section if you're changing some behavior.
+| Before | After |
+| --- | --- |
+| ![Before](before.png) | ![After](after.png) |
+
+Alternatively add two sections - Before & After
 
 ### Before
 
 ### After
-
 -->
 
-## Test code and steps to reproduce
+## Test plan
 
 <!--
-Please include code that can be used to test this change and short description how this example should work.
-This snippet should be as minimal as possible and ready to be pasted into editor (don't exclude exports or remove "not important" parts of reproduction example)
+Please name all newly added and existing test files that you tested the changes with.
+This section should also contain short description of steps to reproduce the issue.
+
+The reproduction code should be minimal & complete. Don't exclude exports or remove "not important" parts of reproduction example.
 -->
 
 ## Checklist
 
-- [ ] Included code example that can be used to test this change
-- [ ] Updated TS types
-- [ ] Updated documentation: <!-- For adding new props to native-stack -->
-  - [ ] https://github.com/software-mansion/react-native-screens/blob/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md
-  - [ ] https://github.com/software-mansion/react-native-screens/blob/main/native-stack/README.md
-  - [ ] https://github.com/software-mansion/react-native-screens/blob/main/src/types.tsx
-  - [ ] https://github.com/software-mansion/react-native-screens/blob/main/src/native-stack/types.tsx
+- [ ] Included code example that can be used to test this change.
+- [ ] Updated / created local changelog entries in relevant test files.
+- [ ] For visual changes, included screenshots / GIFs / recordings documenting the change.
+- [ ] For API changes, updated relevant public types.
 - [ ] Ensured that CI passes

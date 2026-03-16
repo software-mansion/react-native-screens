@@ -1,10 +1,9 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.common.MapBuilder
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -157,15 +156,6 @@ class ScreenStackHeaderConfigViewManager :
         config.setHideBackButton(hideBackButton)
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default.")
-    @ReactProp(name = "topInsetEnabled")
-    override fun setTopInsetEnabled(
-        config: ScreenStackHeaderConfig,
-        topInsetEnabled: Boolean,
-    ) {
-        config.setTopInsetEnabled(topInsetEnabled)
-    }
-
     @ReactProp(name = "color", customType = "Color")
     override fun setColor(
         config: ScreenStackHeaderConfig,
@@ -206,12 +196,17 @@ class ScreenStackHeaderConfigViewManager :
         config.setDirection(direction)
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
-        MapBuilder.of(
-            HeaderAttachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAttached"),
-            HeaderDetachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDetached"),
+    // synchronousShadowStateUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setSynchronousShadowStateUpdatesEnabled(
+        config: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) = Unit
+
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        hashMapOf(
+            HeaderAttachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onAttached"),
+            HeaderDetachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onDetached"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = delegate
@@ -220,106 +215,95 @@ class ScreenStackHeaderConfigViewManager :
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }
 
-    // TODO: Find better way to handle platform specific props
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
-    }
+    // iOS only
 
     override fun setBackTitle(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backTitle")
-    }
+    ) = Unit
 
     override fun setBackTitleFontFamily(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backTitleFontFamily")
-    }
+    ) = Unit
 
     override fun setBackTitleFontSize(
         view: ScreenStackHeaderConfig?,
         value: Int,
-    ) {
-        logNotAvailable("backTitleFontSize")
-    }
+    ) = Unit
 
     override fun setBackTitleVisible(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("backTitleVisible")
-    }
+    ) = Unit
 
     override fun setLargeTitle(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("largeTitle")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontFamily(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("largeTitleFontFamily")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontSize(
         view: ScreenStackHeaderConfig?,
         value: Int,
-    ) {
-        logNotAvailable("largeTitleFontSize")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontWeight(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("largeTitleFontWeight")
-    }
+    ) = Unit
 
     override fun setLargeTitleBackgroundColor(
         view: ScreenStackHeaderConfig?,
         value: Int?,
-    ) {
-        logNotAvailable("largeTitleBackgroundColor")
-    }
+    ) = Unit
 
     override fun setLargeTitleHideShadow(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("largeTitleHideShadow")
-    }
+    ) = Unit
 
     override fun setLargeTitleColor(
         view: ScreenStackHeaderConfig?,
         value: Int?,
-    ) {
-        logNotAvailable("largeTitleColor")
-    }
+    ) = Unit
 
     override fun setDisableBackButtonMenu(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("disableBackButtonMenu")
-    }
+    ) = Unit
 
     override fun setBackButtonDisplayMode(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backButtonDisplayMode")
-    }
+    ) = Unit
 
     override fun setBlurEffect(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("blurEffect")
-    }
+    ) = Unit
+
+    override fun setTopInsetEnabled(
+        config: ScreenStackHeaderConfig,
+        topInsetEnabled: Boolean,
+    ) = Unit
+
+    override fun setHeaderLeftBarButtonItems(
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
+    ) = Unit
+
+    override fun setHeaderRightBarButtonItems(
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
+    ) = Unit
+
+    override fun setUserInterfaceStyle(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) = Unit
 }

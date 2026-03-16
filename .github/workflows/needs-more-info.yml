@@ -28,7 +28,7 @@ jobs:
         uses: ./needs-more-info
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          needs-more-info-label: 'Missing info'
+          needs-more-info-label: 'missing-info'
           required-sections: 'Description;Steps to reproduce;Snack or a link to a repository;Screens version;React Native version;Platforms'
           needs-more-info-response: "Hey! 👋 \n\nIt looks like you've omitted a few important sections from the issue template."
           # This action also appends something like: "Please complete X, Y and Z sections." to the response.

@@ -114,7 +114,11 @@
   _accessibilityContainerViewIsModal = YES;
   _reactFrame = CGRectNull;
   _container = self.container;
-  [self show];
+}
+
+- (void)dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)setAccessibilityContainerViewIsModal:(BOOL)accessibilityContainerViewIsModal
@@ -138,12 +142,6 @@
   return _container;
 }
 
-- (void)show
-{
-  UIWindow *window = RCTKeyWindow();
-  [window addSubview:_container];
-}
-
 - (void)didMoveToSuperview
 {
   if (self.superview == nil) {
@@ -163,21 +161,40 @@
 #endif
     }
     [_touchHandler attachToView:_container];
+
+    // Called here in case the attempt to show the container failed
+    // in `didMoveToWindow`, as it happens e.g. in case where a `fullScreenModal`
+    // is in presntation. This assumes that this method is called after
+    // `didMoveToWindow`.
+    [self maybeShow];
+  }
+}
+
+- (void)didMoveToWindow
+{
+  // Detaching FullWindowOverlay is handled by `didMoveToSuperview`
+  if (self.window != nil) {
+    [self maybeShow];
+  }
+}
+
+- (void)maybeShow
+{
+  UIWindow *window = [self window];
+
+  if (window == nil) {
+    // This fallback might return wrong window in case of multi-window
+    // apps e.g. on iPad.
+    window = RCTKeyWindow();
+  }
+
+  if (![[window subviews] containsObject:_container]) {
+    [window addSubview:_container];
   }
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric Specific
-
-// When the component unmounts we remove it from window's children,
-// so when the component gets recycled we need to add it back.
-- (void)maybeShow
-{
-  UIWindow *window = RCTKeyWindow();
-  if (![[window subviews] containsObject:self]) {
-    [window addSubview:_container];
-  }
-}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -196,11 +213,6 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // When the component unmounts we remove it from window's children,
-  // so when the component gets recycled we need to add it back.
-  // As for now it is called here as we lack of method that is called
-  // just before component gets restored (from recycle pool).
-  [self maybeShow];
   [self addSubview:childComponentView];
 }
 

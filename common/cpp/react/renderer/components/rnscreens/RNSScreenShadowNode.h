@@ -28,7 +28,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   Point getContentOriginOffset(bool includeTransform) const override;
 
-  void appendChild(const ShadowNode::Shared &child) override;
+  void appendChild(const std::shared_ptr<const ShadowNode> &child) override;
 
   void layout(LayoutContext layoutContext) override;
 
@@ -38,8 +38,10 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   FrameCorrectionModes &getFrameCorrectionModes();
 
- private:
 #ifdef ANDROID
+  void resetFrameSizeState();
+
+ private:
   void applyFrameCorrections();
 
   StateData &getStateDataMutable();

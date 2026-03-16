@@ -1,0 +1,7 @@
+{
+  "main": "../lib/commonjs/experimental/index",
+  "module": "../lib/module/experimental/index",
+  "react-native": "../src/experimental/index",
+  "types": "../lib/typescript/experimental/index"
+}
+

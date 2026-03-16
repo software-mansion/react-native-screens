@@ -41,7 +41,6 @@ We inform you that unrespectful issues will be closed.
 - `common` &ndash; C++ code related to components - shadow nodes and state
 - `cpp` &ndash; C++ code for turbo modules
 - `apps` &ndash; apps implementations shared by wrappers
-- `Example` &ndash; paper version of React Native mobile example app from apps
 - `FabricExample` &ndash; fabric version of React Native mobile example app from apps
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
@@ -67,18 +66,16 @@ What you can do is ask the owner of an issue for such details or try provide the
 
 ## Contributing to Code
 
-Submitting Pull Requests that resolve issues is great way to contribute to Screens. If you eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
+Submitting Pull Requests that resolve issues is a great way to contribute to Screens. If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
-We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare showcases in Example app. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
-There are two separate applications: Example and FabricExample in root which are used as wrappers for running the examples depending on the architecture needed.
+We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The former work as a showcase of the library, the latter contain isolated props' behavior, selected interactions between props, and specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare dedicated showcases. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
 
 - `apps/Example` &ndash; source code with showcase app
 - `apps/src/tests` &ndash; source code with test examples app
 - `apps/App` &ndash; source code management
-- `Example/src` &ndash; wrapper with paper architecture for showcase and test examples app
 - `FabricExample/src` &ndash; wrapper with fabric architecture for showcase and test examples app
 - `TVOSExample/src` &ndash; source code with example app for TVOS
 - `src` &ndash; contains JS core code of the library
@@ -91,11 +88,11 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-4. `cd Example` or `cd FabricExample` (depending on architecture you want to work on)
+4. `cd FabricExample`
 5. `yarn`
 6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
-and open `react-native-screens/Example/android` with Android Studio.
+and open `react-native-screens/FabricExample/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
@@ -107,20 +104,31 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-4. `cd Example` or `cd FabricExample`
-5. `yarn`
-6. `(cd ios && pod install && cd ../)`
+3. `cd FabricExample`
+4. `yarn`
+5. `rbenv exec bundle install`
+6. `(cd ios && rbenv exec bundle exec pod install && cd ../)`
 7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
-and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.
+and open `react-native-screens/FabricExample/ios/FabricExample.xcworkspace` with XCode.
 
 ![XCode](xcode.png)
 
-To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > ScreensExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > ScreensExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code.
+To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > FabricExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > FabricExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code.
 
 ### Fabric
 
-Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`. In both cases it is important to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync for Paper architecture.
+Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`.
+
+### Project Gamma
+
+If you wish to work on next major, 5.0 version of Screens (codename: "Project Gamma") or just test the new components you need to do some additional configuration.
+
+"Project Gamma" files are excluded from regular library builds, therefore any usage of "Gamma" components will crash in runtime when React Native discovers that 
+component implementation is missing. To include the implementation files **you need to set `RNS_GAMMA_ENABLED` environment variable to `1` before installing pods**.
+
+Recommended approach is to set up [direnv](https://direnv.net/) as suggested [here](https://github.com/software-mansion/react-native-screens-labs/pull/197/files), 
+so that you don't have to do this manually each time. 
 
 ### Preparing Pull Request
 

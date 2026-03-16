@@ -1,4 +1,5 @@
 #import "RNSConvert.h"
+#import <React/RCTLog.h>
 
 #ifndef RCT_NEW_ARCH_ENABLED
 #import <React/RCTAssert.h>
@@ -32,6 +33,20 @@
       return UINavigationItemBackButtonDisplayModeGeneric;
     case Minimal:
       return UINavigationItemBackButtonDisplayModeMinimal;
+  }
+}
+
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled
+{
+  switch (fullScreenSwipeEnabled) {
+    using enum react::RNSScreenFullScreenSwipeEnabled;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
   }
 }
 
@@ -132,6 +147,48 @@
   }
 }
 
+#define SWITCH_EDGE_EFFECT(X)                              \
+  switch (edgeEffect) {                                    \
+    using enum react::X;                                   \
+    case Automatic:                                        \
+      return RNSScrollEdgeEffectAutomatic;                 \
+    case Hard:                                             \
+      return RNSScrollEdgeEffectHard;                      \
+    case Soft:                                             \
+      return RNSScrollEdgeEffectSoft;                      \
+    case Hidden:                                           \
+      return RNSScrollEdgeEffectHidden;                    \
+    default:                                               \
+      RCTLogError(@"[RNScreens] unsupported edge effect"); \
+      return RNSScrollEdgeEffectAutomatic;                 \
+  }
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenBottomScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenBottomScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenLeftScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenLeftScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenRightScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenRightScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenTopScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenTopScrollEdgeEffect);
+}
+
+#undef SWITCH_EDGE_EFFECT
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
   auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];
@@ -160,6 +217,7 @@
     using enum react::RNSSearchBarAutoCapitalize;
     case Words:
       return UITextAutocapitalizationTypeWords;
+    case SystemDefault:
     case Sentences:
       return UITextAutocapitalizationTypeSentences;
     case Characters:
@@ -180,6 +238,57 @@
       return RNSSearchBarPlacementAutomatic;
     case Inline:
       return RNSSearchBarPlacementInline;
+    case Integrated:
+      return RNSSearchBarPlacementIntegrated;
+    case IntegratedButton:
+      return RNSSearchBarPlacementIntegratedButton;
+    case IntegratedCentered:
+      return RNSSearchBarPlacementIntegratedCentered;
+  }
+}
+
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarObscureBackground:
+    (react::RNSSearchBarObscureBackground)obscureBackground
+{
+  switch (obscureBackground) {
+    using enum react::RNSSearchBarObscureBackground;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:
+    (react::RNSSearchBarHideNavigationBar)hideNavigationBar
+{
+  switch (hideNavigationBar) {
+    using enum react::RNSSearchBarHideNavigationBar;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
++ (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle
+{
+  switch (userInterfaceStyle) {
+    using enum react::RNSScreenStackHeaderConfigUserInterfaceStyle;
+
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
   }
 }
 
@@ -195,7 +304,6 @@
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
 {
   using enum react::RNSScreenStackHeaderConfigBlurEffect;
-#if !TARGET_OS_TV
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
@@ -209,6 +317,7 @@
       return RNSBlurEffectStyleRegular;
     case Prominent:
       return RNSBlurEffectStyleProminent;
+#if !TARGET_OS_TV
     case SystemUltraThinMaterial:
       return RNSBlurEffectStyleSystemUltraThinMaterial;
     case SystemThinMaterial:
@@ -239,24 +348,42 @@
       return RNSBlurEffectStyleSystemThickMaterialDark;
     case SystemChromeMaterialDark:
       return RNSBlurEffectStyleSystemChromeMaterialDark;
-  }
-#endif
-
-  switch (blurEffect) {
-    case None:
+    default:
+      RCTLogError(@"[RNScreens] unsupported blur effect style");
       return RNSBlurEffectStyleNone;
-    case Light:
-      return RNSBlurEffectStyleLight;
-    case Dark:
-      return RNSBlurEffectStyleDark;
-    case Regular:
-      return RNSBlurEffectStyleRegular;
-    case Prominent:
-      return RNSBlurEffectStyleProminent;
-    case ExtraLight:
+#else // !TARGET_OS_TV
     default:
       return RNSBlurEffectStyleNone;
+#endif // !TARGET_OS_TV
   }
+}
+
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn
+{
+  if (dyn.isNull()) {
+    return nil;
+  } else if (dyn.isBool()) {
+    return [NSNumber numberWithBool:dyn.getBool()];
+  } else if (dyn.isInt()) {
+    return [NSNumber numberWithLongLong:dyn.getInt()];
+  } else if (dyn.isDouble()) {
+    return [NSNumber numberWithDouble:dyn.getDouble()];
+  } else if (dyn.isString()) {
+    return [NSString stringWithUTF8String:dyn.getString().c_str()];
+  } else if (dyn.isArray()) {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:dyn.size()];
+    for (const auto &item : dyn) {
+      [array addObject:[self idFromFollyDynamic:item]];
+    }
+    return array;
+  } else if (dyn.isObject()) {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:dyn.size()];
+    for (const auto &pair : dyn.items()) {
+      dict[@(pair.first.c_str())] = [self idFromFollyDynamic:pair.second];
+    }
+    return dict;
+  }
+  return nil;
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
@@ -264,14 +391,15 @@
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  react_native_assert(blurEffect != RNSBlurEffectStyleNone);
+  react_native_assert(blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault);
 #else
   RCTAssert(
-      blurEffect != RNSBlurEffectStyleNone, @"RNSBlurEffectStyleNone variant is not convertible to UIBlurEffectStyle");
+      blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault,
+      @"RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault variants are not convertible to UIBlurEffectStyle");
 #endif // RCT_NEW_ARCH_ENABLED
 
   // Cast safety: RNSBlurEffectStyle is defined in such way that its values map 1:1 with
-  // UIBlurEffectStyle, except RNSBlurEffectStyleNone which is excluded above.
+  // UIBlurEffectStyle, except RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault which are excluded above.
   return (UIBlurEffectStyle)blurEffect;
 }
 

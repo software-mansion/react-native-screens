@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSDefines.h"
 #import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
@@ -23,6 +24,11 @@ namespace react = facebook::react;
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
+
+  // We use those booleans to log a warning if user attempts to restore
+  // default behavior after setting explicit value for the prop.
+  BOOL _isObscureBackgroundSet;
+  BOOL _isHideNavigationBarSet;
 }
 
 @synthesize controller = _controller;
@@ -65,8 +71,14 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+
+  _isObscureBackgroundSet = NO;
+  _isHideNavigationBarSet = NO;
+
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
+
+  _allowToolbarIntegration = YES;
 }
 
 - (void)emitOnFocusEvent
@@ -144,16 +156,46 @@ namespace react = facebook::react;
 #endif
 }
 
-- (void)setObscureBackground:(BOOL)obscureBackground
+- (void)setObscureBackground:(RNSOptionalBoolean)obscureBackground
 {
-  if (@available(iOS 9.1, *)) {
-    [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
+  switch (obscureBackground) {
+    case RNSOptionalBooleanTrue:
+      [_controller setObscuresBackgroundDuringPresentation:YES];
+      _isObscureBackgroundSet = YES;
+      break;
+
+    case RNSOptionalBooleanFalse:
+      [_controller setObscuresBackgroundDuringPresentation:NO];
+      _isObscureBackgroundSet = YES;
+      break;
+
+    default:
+      if (_isObscureBackgroundSet) {
+        RCTLogWarn(@"[RNScreens] Dynamically restoring obscureBackground to default native behavior is unsupported.");
+      }
+      break;
   }
 }
 
-- (void)setHideNavigationBar:(BOOL)hideNavigationBar
+- (void)setHideNavigationBar:(RNSOptionalBoolean)hideNavigationBar
 {
-  [_controller setHidesNavigationBarDuringPresentation:hideNavigationBar];
+  switch (hideNavigationBar) {
+    case RNSOptionalBooleanTrue:
+      [_controller setHidesNavigationBarDuringPresentation:YES];
+      _isHideNavigationBarSet = YES;
+      break;
+
+    case RNSOptionalBooleanFalse:
+      [_controller setHidesNavigationBarDuringPresentation:NO];
+      _isHideNavigationBarSet = YES;
+      break;
+
+    default:
+      if (_isHideNavigationBarSet) {
+        RCTLogWarn(@"[RNScreens] Dynamically restoring hideNavigationBar to default native behavior is unsupported.");
+      }
+      break;
+  }
 }
 
 - (void)setHideWhenScrolling:(BOOL)hideWhenScrolling
@@ -220,8 +262,7 @@ namespace react = facebook::react;
 #endif
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0 && !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
     API_UNAVAILABLE(tvos, watchos)
 {
@@ -232,6 +273,34 @@ namespace react = facebook::react;
       return UINavigationItemSearchBarPlacementAutomatic;
     case RNSSearchBarPlacementInline:
       return UINavigationItemSearchBarPlacementInline;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    case RNSSearchBarPlacementIntegrated:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegrated;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedButton:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedButton;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedCentered:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedCentered;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+#else // Check for iOS >= 26
+    case RNSSearchBarPlacementIntegrated:
+    case RNSSearchBarPlacementIntegratedButton:
+    case RNSSearchBarPlacementIntegratedCentered:
+      return UINavigationItemSearchBarPlacementInline;
+#endif // Check for iOS >= 26
+    default:
+      RCTLogError(@"[RNScreens] unsupported search bar placement");
+      return UINavigationItemSearchBarPlacementStacked;
   }
 }
 #endif // Check for iOS >= 16 && !TARGET_OS_TV
@@ -324,18 +393,24 @@ namespace react = facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
-  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  if (oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling) {
+    [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  }
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
   }
 
   if (oldScreenProps.obscureBackground != newScreenProps.obscureBackground) {
-    [self setObscureBackground:newScreenProps.obscureBackground];
+    [self
+        setObscureBackground:[RNSConvert
+                                 RNSOptionalBooleanFromRNSSearchBarObscureBackground:newScreenProps.obscureBackground]];
   }
 
   if (oldScreenProps.hideNavigationBar != newScreenProps.hideNavigationBar) {
-    [self setHideNavigationBar:newScreenProps.hideNavigationBar];
+    [self
+        setHideNavigationBar:[RNSConvert
+                                 RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:newScreenProps.hideNavigationBar]];
   }
 
   if (oldScreenProps.placeholder != newScreenProps.placeholder) {
@@ -364,6 +439,10 @@ namespace react = facebook::react;
     self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
   }
 
+  if (oldScreenProps.allowToolbarIntegration != newScreenProps.allowToolbarIntegration) {
+    self.allowToolbarIntegration = newScreenProps.allowToolbarIntegration;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -375,6 +454,14 @@ namespace react = facebook::react;
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
 {
   RCTRNSSearchBarHandleCommand(self, commandName, args);
+}
+
++ (BOOL)shouldBeRecycled
+{
+  // Recycling RNSSearchBar causes multiple bugs on iOS 26+, resulting in search bar
+  // not appearing at all.
+  // Details: https://github.com/software-mansion/react-native-screens/pull/3168
+  return NO;
 }
 
 #else
@@ -401,16 +488,29 @@ RCT_EXPORT_MODULE()
 }
 #endif
 
-RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(obscureBackground, RNSOptionalBoolean)
+RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, RNSOptionalBoolean)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
+
+// We want to use "systemDefault" option which is not in UITextAutocapitalizationType
+// but RCTConvert enum conversion already exists.
+RCT_CUSTOM_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType, RNSSearchBar)
+{
+  RNSSearchBar *searchBarView = static_cast<RNSSearchBar *>(view);
+  if ([json isKindOfClass:[NSString class]] && [static_cast<NSString *>(json) isEqualToString:@"systemDefault"]) {
+    [searchBarView setAutoCapitalize:UITextAutocapitalizationTypeSentences];
+  } else {
+    [searchBarView setAutoCapitalize:[RCTConvert UITextAutocapitalizationType:json]];
+  }
+}
+
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
+RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
@@ -480,8 +580,11 @@ RCT_ENUM_CONVERTER(
       @"automatic" : @(RNSSearchBarPlacementAutomatic),
       @"inline" : @(RNSSearchBarPlacementInline),
       @"stacked" : @(RNSSearchBarPlacementStacked),
+      @"integrated" : @(RNSSearchBarPlacementIntegrated),
+      @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
+      @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end

@@ -1,0 +1,62 @@
+import React from 'react';
+
+import {
+  TabsContainer,
+  type TabConfiguration,
+} from '../../shared/gamma/containers/tabs/TabsContainer';
+import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+import { Text } from 'react-native';
+
+function makeTab(title: string, description: string) {
+  return () => (
+    <CenteredLayoutView>
+      <Text style={{ fontWeight: 'bold' }}>{title}</Text>
+      <Text style={{ textAlign: 'center' }}>{description}</Text>
+    </CenteredLayoutView>
+  );
+}
+
+const TAB_CONFIGS: TabConfiguration[] = [
+  {
+    options: {
+      screenKey: 'Tab1',
+      title: 'Tab 1',
+      ios: {
+        icon: {
+          type: 'xcasset',
+          name: 'custom-icon',
+        },
+      },
+    },
+    component: makeTab(
+      'Tab 1',
+      'Tab icon is from Xcassets.\nOnly icon prop is defined.',
+    ),
+  },
+  {
+    options: {
+      screenKey: 'Tab2',
+      title: 'Tab 2',
+      ios: {
+        icon: {
+          type: 'xcasset',
+          name: 'custom-icon',
+        },
+        selectedIcon: {
+          type: 'xcasset',
+          name: 'custom-icon-fill',
+        },
+      },
+    },
+    component: makeTab(
+      'Tab 2',
+      'Tab icon is from Xcassets.\nBoth icon and selectedIcon props are defined.',
+    ),
+  },
+];
+
+function App() {
+  return <TabsContainer tabConfigs={TAB_CONFIGS} />;
+}
+
+export default App;

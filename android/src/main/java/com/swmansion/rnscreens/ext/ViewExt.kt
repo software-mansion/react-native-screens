@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.ext
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 
 internal fun View.parentAsView() = this.parent as? View
 
@@ -37,3 +39,16 @@ internal fun View.maybeBgColor(): Int? {
 }
 
 internal fun View.asViewGroupOrNull(): ViewGroup? = this as? ViewGroup
+
+internal fun View.findFragmentOrNull(): Fragment? =
+    try {
+        this.findFragment()
+    } catch (_: IllegalStateException) {
+        null
+    }
+
+/**
+ * This will fail in case the view has been measured with (0, 0) dimensions and laid out
+ * before being attached to window.
+ */
+internal fun View.isMeasured(): Boolean = this.measuredWidth != 0 || this.measuredHeight != 0 || this.isLaidOut

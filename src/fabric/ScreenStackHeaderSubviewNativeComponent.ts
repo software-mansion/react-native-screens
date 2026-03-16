@@ -1,8 +1,7 @@
 'use client';
 
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps } from 'react-native';
-import type { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
+import { codegenNativeComponent } from 'react-native';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
 
 export type HeaderSubviewTypes =
   | 'back'
@@ -13,7 +12,9 @@ export type HeaderSubviewTypes =
   | 'searchBar';
 
 export interface NativeProps extends ViewProps {
-  type?: WithDefault<HeaderSubviewTypes, 'left'>;
+  type?: CT.WithDefault<HeaderSubviewTypes, 'left'>;
+  hidesSharedBackground?: boolean;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>(
