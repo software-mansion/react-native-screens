@@ -32,7 +32,7 @@ class JSI_EXPORT RNSStackScreenState final {
                 (Float)data["contentOffsetY"].getDouble()}) {};
 
   Size frameSize{};
-  Point contentOffset;
+  Point contentOffset{};
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
