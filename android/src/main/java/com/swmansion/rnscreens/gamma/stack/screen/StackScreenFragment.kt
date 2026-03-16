@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
