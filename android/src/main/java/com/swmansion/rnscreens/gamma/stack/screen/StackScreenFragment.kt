@@ -11,7 +11,6 @@ import androidx.transition.Slide
 import com.swmansion.rnscreens.gamma.stack.screen.header.StackScreenCoordinatorLayout
 
 internal class StackScreenFragment(
-    private val context: Context,
     internal val stackScreen: StackScreen,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
@@ -46,7 +45,7 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = StackScreenCoordinatorLayout(context, stackScreen)
+    ): View = StackScreenCoordinatorLayout(requireContext(), stackScreen)
 
     override fun onViewCreated(
         view: View,
