@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -67,13 +66,13 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    override fun setNavState(view: TabsHost, value: ReadableMap?) {
-        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
-        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
-        val provenance = requireNotNull(navStateMap.getInt("provenance"))
-//        view.setNavStateFromJS(TabsHost.NavState(selectedScreenKey, provenance))
-    }
-
+//    override fun setNavState(view: TabsHost, value: ReadableMap?) {
+//        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
+//        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
+//        val provenance = requireNotNull(navStateMap.getInt("provenance"))
+// //        view.setNavStateFromJS(TabsHost.NavState(selectedScreenKey, provenance))
+//    }
+//
     override fun setTabBarHidden(
         view: TabsHost,
         value: Boolean,
