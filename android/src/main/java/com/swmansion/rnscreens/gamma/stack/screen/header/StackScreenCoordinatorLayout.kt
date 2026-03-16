@@ -72,6 +72,9 @@ internal class StackScreenCoordinatorLayout(
 //        }, 3000)
     }
 
+    /**
+     * Will crash in case parent is not StackContainer.
+     */
     private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
 
     // TODO: do we need to rely on parent here?
