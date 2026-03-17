@@ -102,8 +102,7 @@ namespace react = facebook::react;
 
 - (void)addPopOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
 {
-  // TODO: is this android only?
-  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached /* && !stackScreen.isNativelyDismissed */) {
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached && !stackScreen.isNativelyDismissed) {
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
     [_stackOperationCoordinator addPushOperation:stackScreen];
   } else {
