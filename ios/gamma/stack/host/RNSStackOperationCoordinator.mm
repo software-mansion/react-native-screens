@@ -4,17 +4,22 @@
 #import "RNSStackScreenComponentView.h"
 
 @implementation RNSStackOperationCoordinator {
-  NSMutableArray<RNSPushOperation *> *_pendingPushOperations;
-  NSMutableArray<RNSPopOperation *> *_pendingPopOperations;
+  NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
+  NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
-    _pendingPushOperations = [NSMutableArray array];
-    _pendingPopOperations = [NSMutableArray array];
+    [self initState];
   }
   return self;
+}
+
+- (void)initState
+{
+  _pendingPushOperations = [NSMutableArray array];
+  _pendingPopOperations = [NSMutableArray array];
 }
 
 - (BOOL)hasPendingOperations
@@ -22,20 +27,20 @@
   return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;
 }
 
-- (void)addPushOperation:(RNSStackScreenComponentView *)screen
+- (void)addPushOperation:(nonnull RNSStackScreenComponentView *)stackScreen
 {
-  RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:screen];
+  RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:stackScreen];
   [_pendingPushOperations addObject:operation];
 }
 
-- (void)addPopOperation:(RNSStackScreenComponentView *)screen
+- (void)addPopOperation:(nonnull RNSStackScreenComponentView *)stackScreen
 {
-  RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:screen];
+  RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:stackScreen];
   [_pendingPopOperations addObject:operation];
 }
 
-- (void)executePendingOperationsIfNeeded:(RNSStackNavigationController *)controller
-                     withRenderedScreens:(NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens
+- (void)executePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
+                     withRenderedScreens:(nonnull NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens
 {
   if (![self hasPendingOperations]) {
     return;
@@ -44,13 +49,13 @@
   for (id<RNSStackOperation> operation in
        [[[self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPopOperations
                  withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects]) {
-    [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).screen];
+    [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).stackScreen];
   }
 
   for (id<RNSStackOperation> operation in
        [self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPushOperations
                withIndicesFrom:renderedScreens]) {
-    [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).screen];
+    [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
   }
 
   [controller performContainerUpdateIfNeeded];
@@ -59,12 +64,13 @@
   [_pendingPushOperations removeAllObjects];
 }
 
-- (NSMutableArray<id<RNSStackOperation>> *)orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)operations
-                                             withIndicesFrom:(NSMutableArray<RNSStackScreenComponentView *> *)screens
+- (NSMutableArray<id<RNSStackOperation>> *)orderedOperations:(nonnull NSMutableArray<id<RNSStackOperation>> *)operations
+                                             withIndicesFrom:
+                                                 (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
 {
   NSMutableArray<NSDictionary *> *operationsWithIndices = [NSMutableArray array];
   for (id<RNSStackOperation> operation in operations) {
-    NSInteger index = [screens indexOfObject:operation.screen];
+    NSInteger index = [stackScreens indexOfObject:operation.stackScreen];
     [operationsWithIndices addObject:@{@"index" : @(index), @"operation" : operation}];
   }
 
