@@ -1370,6 +1370,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
   if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    // When native dismissal is not being prevented, this recognizer should not
+    // participate in handling touches to avoid interfering with UIKit.
+    if (!_preventNativeDismiss) {
+      return NO;
+    }
+
     UIPresentationController *presentationController = _controller.presentationController;
 
     // Ignore any touches that land inside the actual sheet content.
