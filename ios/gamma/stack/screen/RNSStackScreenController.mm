@@ -24,19 +24,6 @@
   return [self.screen reactEventEmitter];
 }
 
-- (nullable RNSStackController *)findStackController
-{
-  if (self.navigationController != nil) {
-    return (RNSStackController *)self.navigationController;
-  }
-
-  if (self.screen.stackHost != nil) {
-    return self.screen.stackHost.stackController;
-  }
-
-  return nil;
-}
-
 #pragma mark - Lifecycle Events
 
 - (void)viewWillAppear:(BOOL)animated

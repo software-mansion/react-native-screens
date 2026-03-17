@@ -13,8 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithComponentView:(RNSStackScreenComponentView *)componentView;
 
-- (nullable RNSStackController *)findStackController;
-
 @end
 
 NS_ASSUME_NONNULL_END

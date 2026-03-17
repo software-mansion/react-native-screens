@@ -41,12 +41,15 @@
     return;
   }
 
-  for (RNSStackOperation *operation in [[[self orderedOperations:_pendingPopOperations withIndicesFrom:renderedScreens]
-           reverseObjectEnumerator] allObjects]) {
+  for (id<RNSStackOperation> operation in
+       [[[self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPopOperations
+                 withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects]) {
     [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).screen];
   }
 
-  for (RNSStackOperation *operation in [self orderedOperations:_pendingPopOperations withIndicesFrom:renderedScreens]) {
+  for (id<RNSStackOperation> operation in
+       [self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPushOperations
+               withIndicesFrom:renderedScreens]) {
     [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).screen];
   }
 
@@ -56,12 +59,12 @@
   [_pendingPushOperations removeAllObjects];
 }
 
-- (NSMutableList<RNSStackOperation *>)orderedOperations:(NSMutableList<RNSStackOperation *>)operations
-                                        withIndicesFrom:(NSMutableList < RNSStackScreenComponentView *)screens
+- (NSMutableArray<id<RNSStackOperation>> *)orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)operations
+                                             withIndicesFrom:(NSMutableArray<RNSStackScreenComponentView *> *)screens
 {
   NSMutableArray<NSDictionary *> *operationsWithIndices = [NSMutableArray array];
-  for (RNSStackOperation *operation in operations) {
-    NSInteger index = [renderedScreens indexOfObject:operation.screen];
+  for (id<RNSStackOperation> operation in operations) {
+    NSInteger index = [screens indexOfObject:operation.screen];
     [operationsWithIndices addObject:@{@"index" : @(index), @"operation" : operation}];
   }
 
@@ -69,12 +72,12 @@
     return [obj1[@"index"] compare:obj2[@"index"]];
   }];
 
-  NSMutableList<RNSStackOperation *> operations = [NSMutableList new];
+  NSMutableArray<id<RNSStackOperation>> *orderedOperations = [NSMutableArray new];
   for (NSDictionary *dict in operationsWithIndices) {
-    [operations addObject:dict["operation"]];
+    [orderedOperations addObject:dict[@"operation"]];
   }
 
-  return operations;
+  return orderedOperations;
 }
 
 @end

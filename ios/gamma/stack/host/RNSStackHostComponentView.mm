@@ -84,6 +84,7 @@ namespace react = facebook::react;
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
   [_renderedScreens insertObject:childScreen atIndex:index];
+  [self addPushOperationIfNeeded:childScreen];
 }
 
 - (void)addPushOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
@@ -98,6 +99,7 @@ namespace react = facebook::react;
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
   childScreen.stackHost = nil;
+  [self addPopOperationIfNeeded:childScreen];
 }
 
 - (void)addPopOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
@@ -107,7 +109,8 @@ namespace react = facebook::react;
     [_stackOperationCoordinator addPushOperation:stackScreen];
   } else {
     RNSLog(
-        @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed", stackScreen.screenKey);
+        @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed",
+        stackScreen.screenKey.cString);
   }
 }
 
