@@ -8,6 +8,7 @@
 
 #import "RNSConversions-Stack.h"
 #import "RNSStackHostComponentView.h"
+#import "RNSStackScreenController.h"
 
 #import "Swift-Bridging.h"
 
