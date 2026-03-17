@@ -5,11 +5,11 @@
 
 @interface RNSStackOperationCoordinator : NSObject
 
-- (void)addPushOperation:(RNSStackScreenComponentView *)screen;
+- (void)addPushOperation:(nonnull RNSStackScreenComponentView *)screen;
 
-- (void)addPopOperation:(RNSStackScreenComponentView *)screen;
+- (void)addPopOperation:(nonnull RNSStackScreenComponentView *)screen;
 
-- (void)executePendingOperationsIfNeeded:(RNSStackNavigationController *)controller
-                     withRenderedScreens:(NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens;
+- (void)executePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
+                     withRenderedScreens:(nonnull NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens;
 
 @end

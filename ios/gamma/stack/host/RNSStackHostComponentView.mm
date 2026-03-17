@@ -46,7 +46,7 @@ namespace react = facebook::react;
   [self reactAddControllerToClosestParent:_stackNavigationController];
 }
 
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
+- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
 {
   if (!controller.parentViewController) {
     UIView *parentView = (UIView *)self.reactSuperview;
@@ -87,7 +87,7 @@ namespace react = facebook::react;
   [self addPushOperationIfNeeded:childScreen];
 }
 
-- (void)addPushOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
+- (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
 {
   if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
     [_stackOperationCoordinator addPushOperation:stackScreen];
@@ -102,7 +102,7 @@ namespace react = facebook::react;
   [self addPopOperationIfNeeded:childScreen];
 }
 
-- (void)addPopOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
+- (void)addPopOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
 {
   if (stackScreen.activityMode == RNSStackScreenActivityModeAttached && !stackScreen.isNativelyDismissed) {
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
@@ -131,13 +131,12 @@ namespace react = facebook::react;
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  //  [_stackNavigationController reactMountingTransactionWillMount];
+  // noop
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  //  [_controller reactMountingTransactionDidMount];
   [_stackOperationCoordinator executePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
 }

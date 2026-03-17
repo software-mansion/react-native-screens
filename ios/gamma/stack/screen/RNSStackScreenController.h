@@ -9,8 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackScreenController : UIViewController
 
-@property (nonatomic, strong, readonly) RNSStackScreenComponentView *screen;
-
 - (instancetype)initWithComponentView:(RNSStackScreenComponentView *)componentView;
 
 @end
