@@ -15,6 +15,7 @@ import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.stack.views.ReverseOrder
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
+import com.swmansion.rnscreens.sharedtransition.SharedTransitionHelper
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import kotlin.collections.ArrayList
 import kotlin.math.max
@@ -241,7 +242,20 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
-            if (stackAnimation != null) {
+            // Try to set up shared element transition between outgoing and incoming fragments.
+            // Works for both forward (push) and backward (pop) navigation.
+            val hasSharedElements = if (newTop != null && topScreenWrapper != null && topScreenWillChange) {
+                SharedTransitionHelper.setupSharedElementTransition(
+                    transaction,
+                    topScreenWrapper?.fragment,
+                    newTop.fragment,
+                    isForward = shouldUseOpenAnimation,
+                )
+            } else {
+                false
+            }
+
+            if (stackAnimation != null && !hasSharedElements) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
 

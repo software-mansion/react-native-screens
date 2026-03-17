@@ -13,6 +13,7 @@ import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager
 import com.swmansion.rnscreens.safearea.SafeAreaViewManager
+import com.swmansion.rnscreens.sharedtransition.SharedTransitionViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
@@ -57,6 +58,7 @@ class RNScreensPackage : BaseReactPackage() {
             StackHostViewManager(),
             StackScreenViewManager(),
             ScrollViewMarkerViewManager(),
+            SharedTransitionViewManager(),
         )
     }
 
