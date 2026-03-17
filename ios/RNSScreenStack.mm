@@ -735,6 +735,12 @@ RNS_IGNORE_SUPER_CALL_END
         // added the last top element to it and perform (animated) pop
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
         [newControllers addObject:previousTop];
+
+        // If we're replacing root screen, there should be no back button.
+        if ([newControllers count] == 2) {
+          previousTop.navigationItem.hidesBackButton = YES;
+        }
+
         [_controller setViewControllers:newControllers animated:NO];
         [_controller popViewControllerAnimated:YES];
       }
