@@ -46,6 +46,9 @@
       UIViewController *controller = static_cast<UIViewController *>(op.screen.controller);
       [self pushViewController:controller animated:true];
     }
+
+    [_pendingPopOperations removeAllObjects];
+    [_pendingPushOperations removeAllObjects];
   }
 }
 
