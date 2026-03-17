@@ -77,12 +77,12 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  UITapGestureRecognizer *_backdropTapGestureRecognizer;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
-  UITapGestureRecognizer *_backdropTapGestureRecognizer;
 #else
   __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
