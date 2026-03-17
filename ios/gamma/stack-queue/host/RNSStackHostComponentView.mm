@@ -67,27 +67,49 @@ namespace react = facebook::react;
 
 - (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
 {
-  // TODO: add operation
+  switch (stackScreen.activityMode) {
+    case RNSStackScreenActivityModeAttached:
+      [_stackOperationCoordinator addPushOperation:stackScreen];
+      break;
+    case RNSStackScreenActivityModeDetached:
+      [_stackOperationCoordinator addPopOperation:stackScreen];
+      break;
+  }
 }
 
 #pragma mark - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  //  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
-  //  childScreen.stackHost = self;
-  //  [_reactSubviews insertObject:childScreen atIndex:index];
-  //  _hasModifiedReactSubviewsInCurrentTransaction = true;
-  // TODO: add operation
+  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
+  childScreen.stackHost = self;
+  [_renderedScreens insertObject:childScreen atIndex:index];
+}
+
+- (void)addPushOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
+{
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
+    [_stackOperationCoordinator addPushOperation:stackScreen];
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  //  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
-  //  [_reactSubviews removeObject:childScreen];
-  //  childScreen.stackHost = nil;
-  //  _hasModifiedReactSubviewsInCurrentTransaction = true;
-  // TODO: add operation
+  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
+  [_renderedScreens removeObject:childScreen];
+  childScreen.stackHost = nil;
+}
+
+- (void)addPopOperationIfNeeded:(RNSStackScreenComponentView *)stackScreen
+{
+  // TODO: is this android only?
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached /* && !stackScreen.isNativelyDismissed */) {
+    // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
+    [_stackOperationCoordinator addPushOperation:stackScreen];
+  } else {
+    RNSLog(
+        @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed", stackScreen.screenKey);
+  }
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
