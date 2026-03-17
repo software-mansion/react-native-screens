@@ -4,12 +4,14 @@
 #import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenComponentView.h"
 
-@implementation RNSStackScreenController
+@implementation RNSStackScreenController {
+  RNSStackScreenComponentView *_Nonnull _screenView;
+}
 
 - (instancetype)initWithComponentView:(RNSStackScreenComponentView *)componentView
 {
   if (self = [super initWithNibName:nil bundle:nil]) {
-    _screen = componentView;
+    _screenView = componentView;
   }
   return self;
 }
@@ -21,7 +23,7 @@
 
 - (RNSStackScreenComponentEventEmitter *)reactEventEmitter
 {
-  return [self.screen reactEventEmitter];
+  return [_screenView reactEventEmitter];
 }
 
 #pragma mark - Lifecycle Events
@@ -52,12 +54,12 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  NSLog(@"ScreenCtrl [%ld] didMoveToParent %@", (long)self.screen.tag, parent);
+  NSLog(@"ScreenCtrl [%ld] didMoveToParent %@", (long)_screenView.tag, parent);
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
-    self.screen.isNativelyDismissed = YES;
-    if (self.screen.activityMode == RNSStackScreenActivityModeAttached) {
+    _screenView.isNativelyDismissed = YES;
+    if (_screenView.activityMode == RNSStackScreenActivityModeAttached) {
       [[self reactEventEmitter] emitOnDismiss];
     } else {
       [[self reactEventEmitter] emitOnNativeDismiss];

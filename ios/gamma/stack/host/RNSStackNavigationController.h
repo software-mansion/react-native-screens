@@ -4,9 +4,9 @@
 
 @interface RNSStackNavigationController : UINavigationController
 
-- (void)enqueuePushOperation:(RNSStackScreenComponentView *)screen;
+- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
 
-- (void)enqueuePopOperation:(RNSStackScreenComponentView *)screen;
+- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
 
 - (void)performContainerUpdateIfNeeded;
 
