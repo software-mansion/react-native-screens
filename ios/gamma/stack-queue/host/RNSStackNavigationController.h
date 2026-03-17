@@ -1,7 +1,13 @@
-#ifndef RNSStackNavigationController_h
-#define RNSStackNavigationController_h
+#pragma once
 
-@interface RNSStackNavigationController : UINAvigationController
+#include "RNSStackScreenComponentView.h"
+
+@interface RNSStackNavigationController : UINavigationController
+
+- (void)enqueuePushOperation:(RNSStackScreenComponentView *)screen;
+
+- (void)enqueuePopOperation:(RNSStackScreenComponentView *)screen;
+
+- (void)performContainerUpdateIfNeeded;
+
 @end
-
-#endif
