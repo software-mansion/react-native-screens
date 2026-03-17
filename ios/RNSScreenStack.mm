@@ -738,7 +738,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 #if !TARGET_OS_TV
         // If we're replacing root screen, there should be no back button.
-        if ([newControllers count] == 2) {
+        BOOL isRootReplace = _controller.viewControllers.count == 1 && controllers.count == 1;
+        if (isRootReplace) {
           previousTop.navigationItem.hidesBackButton = YES;
         }
 #endif // !TARGET_OS_TV
