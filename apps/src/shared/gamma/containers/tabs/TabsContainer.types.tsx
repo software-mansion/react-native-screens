@@ -1,5 +1,6 @@
 import React from 'react';
 import type {
+  TabChangeEvent,
   TabsHostProps,
   TabsScreenProps,
 } from 'react-native-screens';
@@ -31,8 +32,22 @@ export type TabRoute = TabRouteConfig & {
 };
 
 export type TabsNavState = {
-  routes: TabRoute[];
   selectedRouteKey: string;
+  provenance: number;
+};
+
+export type TabsContainerState = {
+  routes: TabRoute[];
+  /**
+   * State as last confirmed by the native side.
+   *
+   * During initial render it is filled immediately & aligned with suggestedState.
+   */
+  confirmedState: TabsNavState;
+  /**
+   * State as last send to the native side.
+   */
+  suggestedState: TabsNavState;
 };
 
 /// Navigation actions
@@ -40,6 +55,12 @@ export type TabsNavState = {
 export type TabsNavigationActionChangeTab = {
   type: 'change-tab';
   routeKey: string;
+};
+
+export type TabsNavigationActionNativeChangeTab = {
+  type: 'native-change-tab';
+  routeKey: string;
+  nativeEvent: TabChangeEvent;
 };
 
 export type TabsNavigationActionSetOptions = {
@@ -50,7 +71,8 @@ export type TabsNavigationActionSetOptions = {
 
 export type TabsNavigationAction =
   | TabsNavigationActionChangeTab
-  | TabsNavigationActionSetOptions;
+  | TabsNavigationActionSetOptions
+  | TabsNavigationActionNativeChangeTab;
 
 /// TabsContainer props
 
@@ -59,7 +81,10 @@ export type TabsHostConfig = Omit<
   'children' | 'onNativeFocusChange' | 'experimentalControlNavigationStateInJS'
 >;
 
-export type TabsContainerProps = Omit<TabsHostProps, 'children'> & {
+export type TabsContainerProps = Omit<
+  TabsHostProps,
+  'children' | 'navState'
+> & {
   routeConfigs: TabRouteConfig[];
   /**
    * Name of the tab that should be focused initially.
@@ -77,3 +102,5 @@ export type SetTabOptionsMethod = (
   routeKey: string,
   options: Partial<TabRouteOptions>,
 ) => void;
+
+export type ChangeTabMethod = (routeKey: string) => void;
