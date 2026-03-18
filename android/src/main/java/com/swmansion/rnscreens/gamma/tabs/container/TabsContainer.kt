@@ -335,10 +335,11 @@ internal class TabsContainer(
             }
 
         val isRepeated = nextSelectedFragment === currSelectedFragment
-        val hasTriggeredSpecialEffect =
-            if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
         val stateChanged = updateSelectedFragment(nextSelectedFragment)
+
+        val hasTriggeredSpecialEffect =
+            if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
         if (stateChanged) {
             delegate.onNavStateUpdate(
