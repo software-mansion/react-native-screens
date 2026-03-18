@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.content.Context
 import android.view.MenuItem
-import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
@@ -24,15 +23,6 @@ internal class TabsAppearanceCoordinator(
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }
 
-    // THIS MUST BE CALLED BEFORE WE UPDATE THE CONTAINER, WTF
-    // WE CAN NOT FIRST UPDATE THE CONTAINER AND JUST LATER CREATE THE MENU ITEMS
-    // IT DOES NOT MAKE SENSE.
-    //
-    // I see two options. We can either create menu items, update model & fragment manager and just
-    // then update appearance, OR create menu items, update mode, update apperance and just them update fragment manager.
-    // I think first option is better in case we ever want to make the container update asynchronous
-    // (via commitAllowingStateLoss), however the appearance update should be synchronous in relation
-    // to update of fragment manager state, to ensure visual consistency.
     private fun updateMenuItems(
         context: Context,
         tabsAppearance: TabsAppearance?,
