@@ -56,6 +56,7 @@ struct ContentWrapperBox {
 
 @interface RNSScreenView () <
     UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate,
 #if !TARGET_OS_TV
     UISheetPresentationControllerDelegate,
 #endif
@@ -76,6 +77,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  UITapGestureRecognizer *_backdropTapGestureRecognizer;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -608,6 +610,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)notifyWillAppear
 {
+  [self setupBackdropTapGestureRecognizer];
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
@@ -877,6 +880,34 @@ RNS_IGNORE_SUPER_CALL_END
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
     [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
+  }
+}
+
+- (void)setupBackdropTapGestureRecognizer
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet &&
+      self.stackPresentation != RNSScreenStackPresentationPageSheet &&
+      self.stackPresentation != RNSScreenStackPresentationModal) {
+    return;
+  }
+
+  UIPresentationController *presentationController = _controller.presentationController;
+
+  if (presentationController && presentationController.containerView && !_backdropTapGestureRecognizer) {
+    _backdropTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                            action:@selector(handleBackdropTap:)];
+    _backdropTapGestureRecognizer.delegate = self;
+    _backdropTapGestureRecognizer.cancelsTouchesInView = NO;
+    [presentationController.containerView addGestureRecognizer:_backdropTapGestureRecognizer];
+  }
+}
+
+- (void)handleBackdropTap:(UITapGestureRecognizer *)gesture
+{
+  if (gesture.state == UIGestureRecognizerStateRecognized) {
+    if (_preventNativeDismiss) {
+      [self notifyDismissCancelledWithDismissCount:1];
+    }
   }
 }
 
@@ -1334,6 +1365,38 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super safeAreaInsetsDidChange];
   [self dispatchSafeAreaDidChangeNotification];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    // When native dismissal is not being prevented, this recognizer should not
+    // participate in handling touches to avoid interfering with UIKit.
+    if (!_preventNativeDismiss) {
+      return NO;
+    }
+
+    UIPresentationController *presentationController = _controller.presentationController;
+
+    // Ignore any touches that land inside the actual sheet content.
+    if (presentationController && presentationController.presentedView &&
+        [touch.view isDescendantOfView:presentationController.presentedView]) {
+      return NO;
+    }
+    return YES;
+  }
+  return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    return YES;
+  }
+  return NO;
 }
 
 #pragma mark - Fabric specific
