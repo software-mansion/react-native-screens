@@ -46,15 +46,15 @@
     return;
   }
 
-  for (id<RNSStackOperation> operation in
-       [[[self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPopOperations
-                 withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects]) {
+  auto popOperations = [[[self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPopOperations
+                                 withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects];
+  for (id<RNSStackOperation> operation in popOperations) {
     [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).stackScreen];
   }
 
-  for (id<RNSStackOperation> operation in
-       [self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPushOperations
-               withIndicesFrom:renderedScreens]) {
+  auto pushOperations = [self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPushOperations
+                                withIndicesFrom:renderedScreens];
+  for (id<RNSStackOperation> operation in pushOperations) {
     [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
   }
 
