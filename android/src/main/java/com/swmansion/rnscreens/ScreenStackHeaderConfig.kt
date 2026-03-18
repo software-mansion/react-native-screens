@@ -130,7 +130,6 @@ class ScreenStackHeaderConfig(
 
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
 
-        // Note that implementation of the callee differs between architectures.
         updateHeaderConfigState(
             toolbar.width,
             toolbar.height,

@@ -8,7 +8,6 @@ import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderSubviewManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderSubviewManagerInterface
 
@@ -26,7 +25,6 @@ class ScreenStackHeaderSubviewManager :
 
     override fun createViewInstance(context: ThemedReactContext) = ScreenStackHeaderSubview(context)
 
-    @ReactProp(name = "type")
     override fun setType(
         view: ScreenStackHeaderSubview,
         type: String?,
@@ -42,7 +40,6 @@ class ScreenStackHeaderSubviewManager :
             }
     }
 
-    @ReactProp(name = "hidesSharedBackground")
     override fun setHidesSharedBackground(
         view: ScreenStackHeaderSubview,
         hidesSharedBackground: Boolean,
