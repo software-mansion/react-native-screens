@@ -885,7 +885,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setupBackdropTapGestureRecognizer
 {
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet &&
+      self.stackPresentation != RNSScreenStackPresentationPageSheet &&
+      self.stackPresentation != RNSScreenStackPresentationModal) {
     return;
   }
 
