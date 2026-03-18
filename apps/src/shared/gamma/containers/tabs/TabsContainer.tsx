@@ -68,7 +68,7 @@ export function TabsContainer(props: TabsContainerProps) {
       React.startTransition(() => {
         RNSLog.info(`Starting transition to ${screenKey}`);
         dispatch({
-          type: 'native-change-tab',
+          type: 'native-tab-change',
           routeKey: screenKey,
           nativeEvent: event.nativeEvent,
         });
@@ -79,7 +79,7 @@ export function TabsContainer(props: TabsContainerProps) {
 
   const tabChangeActionMethod: ChangeTabMethod = React.useCallback(
     (routeKey: string) => {
-      dispatch({ type: 'change-tab', routeKey });
+      dispatch({ type: 'tab-change', routeKey });
     },
     [],
   );
