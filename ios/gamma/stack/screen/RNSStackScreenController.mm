@@ -54,14 +54,14 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  NSLog(@"ScreenCtrl [%ld] didMoveToParent %@", (long)_screenView.tag, parent);
+  NSLog(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
-    _screenView.isNativelyDismissed = YES;
     if (_screenView.activityMode == RNSStackScreenActivityModeAttached) {
       [[self reactEventEmitter] emitOnDismiss];
     } else {
+      _screenView.isNativelyDismissed = YES;
       [[self reactEventEmitter] emitOnNativeDismiss];
     }
   }
