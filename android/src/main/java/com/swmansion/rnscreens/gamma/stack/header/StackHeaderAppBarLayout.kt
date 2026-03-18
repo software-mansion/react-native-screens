@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.screen.header
+package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,10 +13,10 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
-import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
 import com.swmansion.rnscreens.utils.resolveDimensionAttr
 
-internal sealed class StackScreenAppBarLayout(
+internal sealed class StackHeaderAppBarLayout(
     context: Context,
 ) : AppBarLayout(context) {
     abstract val toolbar: MaterialToolbar
@@ -36,7 +36,7 @@ internal sealed class StackScreenAppBarLayout(
 
     internal class Small(
         context: Context,
-    ) : StackScreenAppBarLayout(context) {
+    ) : StackHeaderAppBarLayout(context) {
         override val toolbar =
             MaterialToolbar(context).apply {
                 elevation = 0f
@@ -56,12 +56,12 @@ internal sealed class StackScreenAppBarLayout(
     @SuppressLint("ViewConstructor")
     internal class Collapsing(
         context: Context,
-        val type: StackScreenHeaderType,
-    ) : StackScreenAppBarLayout(context) {
+        val type: StackHeaderType,
+    ) : StackHeaderAppBarLayout(context) {
         init {
             require(
-                type == StackScreenHeaderType.MEDIUM ||
-                    type == StackScreenHeaderType.LARGE,
+                type == StackHeaderType.MEDIUM ||
+                    type == StackHeaderType.LARGE,
             ) {
                 "[RNScreens] Collapsing StackScreenAppBarLayout must be MEDIUM or LARGE type."
             }
@@ -84,9 +84,9 @@ internal sealed class StackScreenAppBarLayout(
             run {
                 val (styleAttr, sizeAttr) =
                     when (type) {
-                        StackScreenHeaderType.MEDIUM ->
+                        StackHeaderType.MEDIUM ->
                             Pair(R.attr.collapsingToolbarLayoutMediumStyle, R.attr.collapsingToolbarLayoutMediumSize)
-                        StackScreenHeaderType.LARGE ->
+                        StackHeaderType.LARGE ->
                             Pair(R.attr.collapsingToolbarLayoutLargeStyle, R.attr.collapsingToolbarLayoutLargeSize)
                         else -> error("[RNScreens] Invalid header mode.")
                     }
@@ -113,11 +113,11 @@ internal sealed class StackScreenAppBarLayout(
     companion object {
         fun create(
             context: Context,
-            type: StackScreenHeaderType,
-        ): StackScreenAppBarLayout =
+            type: StackHeaderType,
+        ): StackHeaderAppBarLayout =
             when (type) {
-                StackScreenHeaderType.SMALL -> Small(context)
-                StackScreenHeaderType.MEDIUM, StackScreenHeaderType.LARGE -> Collapsing(context, type)
+                StackHeaderType.SMALL -> Small(context)
+                StackHeaderType.MEDIUM, StackHeaderType.LARGE -> Collapsing(context, type)
             }
     }
 }

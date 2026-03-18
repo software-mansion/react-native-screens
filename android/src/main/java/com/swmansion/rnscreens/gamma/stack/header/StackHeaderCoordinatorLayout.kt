@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.screen.header
+package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,16 +7,16 @@ import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
-import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderConfigurationProviding
-import com.swmansion.rnscreens.gamma.stack.screen.header.configuration.StackScreenHeaderType
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
 
 @SuppressLint("ViewConstructor")
-internal class StackScreenCoordinatorLayout(
+internal class StackHeaderCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
 ) : CoordinatorLayout(context) {
     private val headerCoordinator =
-        StackScreenHeaderCoordinator(context) { headerHeight ->
+        StackHeaderCoordinator(context) { headerHeight ->
             stackScreen.updateStateIfNeeded(y = headerHeight)
         }
 
@@ -40,8 +40,8 @@ internal class StackScreenCoordinatorLayout(
 
         // TODO: debug-only, this will be sent in reaction to information from "HeaderConfig" component.
         applyHeaderConfiguration(
-            object : StackScreenHeaderConfigurationProviding {
-                override val headerType = StackScreenHeaderType.LARGE
+            object : StackHeaderConfigurationProviding {
+                override val headerType = StackHeaderType.LARGE
                 override val title = "Hello, World!"
                 override val isHidden = false
                 override val isTransparent = false
@@ -84,6 +84,6 @@ internal class StackScreenCoordinatorLayout(
         }
     }
 
-    internal fun applyHeaderConfiguration(headerConfigurationProviding: StackScreenHeaderConfigurationProviding) =
+    internal fun applyHeaderConfiguration(headerConfigurationProviding: StackHeaderConfigurationProviding) =
         headerCoordinator.applyHeaderConfiguration(this, headerConfigurationProviding)
 }

@@ -1,10 +1,10 @@
-package com.swmansion.rnscreens.gamma.stack.screen.header
+package com.swmansion.rnscreens.gamma.stack.header
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 
-internal class StackScreenScrollingViewBehavior(
+internal class StackHeaderScrollingViewBehavior(
     private val onHeaderHeightChanged: (headerHeight: Int) -> Unit,
 ) : AppBarLayout.ScrollingViewBehavior() {
     override fun onDependentViewChanged(
