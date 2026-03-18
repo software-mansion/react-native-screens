@@ -16,9 +16,9 @@ export function tabsNavigationReducer(
   action: TabsNavigationAction,
 ): TabsContainerState {
   switch (action.type) {
-    case 'change-tab':
+    case 'tab-change':
       return tabsActionChangeTabHandler(state, action);
-    case 'native-change-tab':
+    case 'native-tab-change':
       return tabsActionNativeChangeTabHandler(state, action);
     case 'set-options':
       return tabsActionSetOptionsHandler(state, action);
@@ -104,7 +104,7 @@ function tabsActionNativeChangeTabHandler(
 
   // What about aligning suggestedState here?
   return navStateWithConfirmedState(state, {
-    selectedRouteKey: action.nativeEvent.selectedScreenKey,
+    selectedRouteKey: action.routeKey,
     provenance: action.nativeEvent.provenance,
   });
 }

@@ -53,12 +53,12 @@ export type TabsContainerState = {
 /// Navigation actions
 
 export type TabsNavigationActionChangeTab = {
-  type: 'change-tab';
+  type: 'tab-change';
   routeKey: string;
 };
 
 export type TabsNavigationActionNativeChangeTab = {
-  type: 'native-change-tab';
+  type: 'native-tab-change';
   routeKey: string;
   nativeEvent: TabChangeEvent;
 };
