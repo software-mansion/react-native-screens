@@ -33,6 +33,7 @@ export function TabsContainer(props: TabsContainerProps) {
     routeConfigs,
     initialFocusedName,
     experimentalControlNavigationStateInJS,
+    onTabChange,
     ...restProps
   } = props;
 
@@ -58,6 +59,10 @@ export function TabsContainer(props: TabsContainerProps) {
 
   const onTabChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<TabChangeEvent>) => {
+      // First call user provided callback
+      onTabChange?.(event);
+
+      // Perform our logic
       const screenKey = event.nativeEvent.selectedScreenKey;
       console.log(`[Tabs] onTabChangeCallback: ${screenKey}`);
 
@@ -74,7 +79,7 @@ export function TabsContainer(props: TabsContainerProps) {
         });
       });
     },
-    [],
+    [onTabChange],
   );
 
   const tabChangeActionMethod: ChangeTabMethod = React.useCallback(
