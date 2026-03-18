@@ -4,42 +4,42 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
-import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 
-class TabsHostNativeFocusChangeEvent(
+class TabsHostTabChangeEvent(
     surfaceId: Int,
     viewId: Int,
-    val screenKey: String,
-    val tabNumber: Int,
-    val repeatedSelectionHandledBySpecialEffect: Boolean,
-) : Event<TabsScreenDidAppearEvent>(surfaceId, viewId),
+    val selectedScreenKey: String,
+    val provenance: Int,
+    val isRepeated: Boolean,
+    val hasTriggeredSpecialEffect: Boolean,
+    val isNativeAction: Boolean,
+) : Event<TabsHostTabChangeEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
 
-    // If the user taps currently selected tab 2 times and e.g. scroll to top effect can run,
-    // we should send 2 events [(screenKey, true), (screenKey, false)]. We don't want them to be coalesced
-    // as we would lose information about activation of special effect. That's why we take into
-    // account `repeatedSelectionHandledBySpecialEffect` for coalescingKey.
-    override fun getCoalescingKey(): Short = (tabNumber * 10 + if (repeatedSelectionHandledBySpecialEffect) 1 else 0).toShort()
+    // This event should never be coalesced. It informs JS side of all navigation events that happen.
+    override fun canCoalesce(): Boolean = false
 
     override fun getEventData(): WritableMap? =
         Arguments.createMap().apply {
-            putString(EVENT_KEY_SCREEN_KEY, screenKey)
-            putBoolean(
-                EVENT_KEY_REPEATED_SELECTION_HANDLED_BY_SPECIAL_EFFECT,
-                repeatedSelectionHandledBySpecialEffect,
-            )
+            putString(EK_SELECTED_KEY, selectedScreenKey)
+            putInt(EK_PROVENANCE, provenance)
+            putBoolean(EK_IS_REPEATED, isRepeated)
+            putBoolean(EK_HAS_TRIGGERED_SPECIAL_EFFECT, hasTriggeredSpecialEffect)
+            putBoolean(EK_IS_NATIVE_ACTION, isNativeAction)
         }
 
     companion object : NamingAwareEventType {
-        const val EVENT_NAME = "topNativeFocusChange"
-        const val EVENT_REGISTRATION_NAME = "onNativeFocusChange"
+        const val EVENT_NAME = "topTabChange"
+        const val EVENT_REGISTRATION_NAME = "onTabChange"
 
-        private const val EVENT_KEY_SCREEN_KEY = "screenKey"
-        private const val EVENT_KEY_REPEATED_SELECTION_HANDLED_BY_SPECIAL_EFFECT =
-            "repeatedSelectionHandledBySpecialEffect"
+        private const val EK_SELECTED_KEY = "selectedScreenKey"
+        private const val EK_PROVENANCE = "provenance"
+        private const val EK_IS_REPEATED = "isRepeated"
+        private const val EK_HAS_TRIGGERED_SPECIAL_EFFECT = "hasTriggeredSpecialEffect"
+        private const val EK_IS_NATIVE_ACTION = "isNativeAction"
 
         override fun getEventName() = EVENT_NAME
 

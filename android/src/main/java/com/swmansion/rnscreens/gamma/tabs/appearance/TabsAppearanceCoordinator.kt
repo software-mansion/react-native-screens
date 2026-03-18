@@ -1,15 +1,14 @@
 package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.content.Context
-import android.view.Menu
 import android.view.MenuItem
-import androidx.core.view.size
+import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
+import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
-class TabsAppearanceCoordinator(
+internal class TabsAppearanceCoordinator(
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
 ) {
@@ -17,26 +16,34 @@ class TabsAppearanceCoordinator(
 
     fun updateTabAppearance(
         context: Context,
-        tabsHost: TabsHost,
+        tabsContainer: TabsContainer,
     ) {
-        appearanceApplicator.updateSharedAppearance(context, tabsHost)
-        updateMenuItems(context, tabsHost)
-        appearanceApplicator.updateFontStyles(context, tabsHost) // It needs to be updated after updateMenuItems
+        val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
+        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
+        updateMenuItems(context, selectedTabAppearance)
+        appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }
 
+    // THIS MUST BE CALLED BEFORE WE UPDATE THE CONTAINER, WTF
+    // WE CAN NOT FIRST UPDATE THE CONTAINER AND JUST LATER CREATE THE MENU ITEMS
+    // IT DOES NOT MAKE SENSE.
+    //
+    // I see two options. We can either create menu items, update model & fragment manager and just
+    // then update appearance, OR create menu items, update mode, update apperance and just them update fragment manager.
+    // I think first option is better in case we ever want to make the container update asynchronous
+    // (via commitAllowingStateLoss), however the appearance update should be synchronous in relation
+    // to update of fragment manager state, to ensure visual consistency.
     private fun updateMenuItems(
         context: Context,
-        tabsHost: TabsHost,
+        tabsAppearance: TabsAppearance?,
     ) {
-        if (bottomNavigationView.menu.size != tabsScreenFragments.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            bottomNavigationView.menu.clear()
-        }
-        val appearance = tabsHost.currentFocusedTab.tabsScreen.appearance
         tabsScreenFragments.forEachIndexed { index, fragment ->
-            val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabsScreen)
-            check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, appearance)
+            val menuItem =
+                checkNotNull(bottomNavigationView.menu.findItem(index + 1)) {
+                    "[RNScreens] Missing MenuItem for id: ${index + 1}"
+                }
+            check(menuItem.itemId == index + 1) { "[RNScreens] Illegal state: menu items are shuffled" }
+            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
         }
     }
 
@@ -50,8 +57,3 @@ class TabsAppearanceCoordinator(
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }
-
-private fun Menu.getOrCreateMenuItem(
-    index: Int,
-    tabsScreen: TabsScreen,
-): MenuItem = this.findItem(index) ?: this.add(Menu.NONE, index, Menu.NONE, tabsScreen.tabTitle)
