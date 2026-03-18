@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Scenario } from '../../shared/helpers';
-import { Text } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import {
   TabsContainer,
   type TabRouteConfig,
@@ -23,8 +23,23 @@ function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>{routeKey}</Text>
+      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+        {routeKey}
+      </Text>
+      <TabsNavigationButtons />
     </CenteredLayoutView>
+  );
+}
+
+function TabsNavigationButtons() {
+  const nav = useTabsNavigationContext();
+
+  return (
+    <View>
+      <Button title="Select First" onPress={() => nav.changeTabTo('First')} />
+      <Button title="Select Second" onPress={() => nav.changeTabTo('Second')} />
+      <Button title="Select Third" onPress={() => nav.changeTabTo('Third')} />
+    </View>
   );
 }
 

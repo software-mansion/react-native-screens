@@ -1,21 +1,25 @@
 import type {
   TabRoute,
   TabRouteConfig,
+  TabsContainerState,
   TabsNavState,
   TabsNavigationAction,
   TabsNavigationActionChangeTab,
+  TabsNavigationActionNativeChangeTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
 
 const NOT_FOUND_INDEX = -1;
 
 export function tabsNavigationReducer(
-  state: TabsNavState,
+  state: TabsContainerState,
   action: TabsNavigationAction,
-): TabsNavState {
+): TabsContainerState {
   switch (action.type) {
-    case 'change-tab':
+    case 'tab-change':
       return tabsActionChangeTabHandler(state, action);
+    case 'native-tab-change':
+      return tabsActionNativeChangeTabHandler(state, action);
     case 'set-options':
       return tabsActionSetOptionsHandler(state, action);
   }
@@ -27,51 +31,88 @@ export function tabsNavigationReducer(
 }
 
 export function tabsNavigationReducerWithLogging(
-  state: TabsNavState,
+  state: TabsContainerState,
   action: TabsNavigationAction,
-): TabsNavState {
-  console.debug(`[Tabs] Handling action: ${JSON.stringify(action)}`);
-  console.debug(`[Tabs] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
+): TabsContainerState {
+  console.log(`[Tabs] Handling action: ${JSON.stringify(action)}`);
+  console.log(`[Tabs] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
   const newState = tabsNavigationReducer(state, action);
   if (state === newState) {
-    console.debug('[Tabs] AFTER state: unchanged');
+    console.log('[Tabs] AFTER state: unchanged');
   } else {
-    console.debug(
+    console.log(
       `[Tabs] AFTER state: ${JSON.stringify(newState, undefined, 2)}`,
     );
   }
   return newState;
 }
 
+/**
+ * Models JS-driven tab change request.
+ */
 function tabsActionChangeTabHandler(
-  state: TabsNavState,
+  state: TabsContainerState,
   action: TabsNavigationActionChangeTab,
-): TabsNavState {
+): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
   );
 
   if (routeIndex === NOT_FOUND_INDEX) {
-    console.warn(
+    console.error(
       `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
     return state;
   }
 
-  if (state.selectedRouteKey === action.routeKey) {
+  if (state.confirmedState.selectedRouteKey === action.routeKey) {
     return state;
   }
 
-  return {
-    ...state,
+  return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-  };
+    provenance: state.confirmedState.provenance + 1, // suggested? What about update stacking before we receive confirmation?
+  });
+}
+
+function tabsActionNativeChangeTabHandler(
+  state: TabsContainerState,
+  action: TabsNavigationActionNativeChangeTab,
+): TabsContainerState {
+  const routeIndex = state.routes.findIndex(
+    r => r.routeKey === action.routeKey,
+  );
+
+  if (routeIndex === NOT_FOUND_INDEX) {
+    console.error(
+      `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
+    );
+    return state;
+  }
+
+  if (
+    state.confirmedState.selectedRouteKey === action.routeKey &&
+    state.confirmedState.provenance === action.nativeEvent.provenance
+  ) {
+    console.warn(
+      `[Tabs] Duplicated state confirmation event! ${JSON.stringify(
+        action.nativeEvent,
+      )}`,
+    );
+    return state;
+  }
+
+  // What about aligning suggestedState here?
+  return navStateWithConfirmedState(state, {
+    selectedRouteKey: action.routeKey,
+    provenance: action.nativeEvent.provenance,
+  });
 }
 
 function tabsActionSetOptionsHandler(
-  state: TabsNavState,
+  state: TabsContainerState,
   action: TabsNavigationActionSetOptions,
-): TabsNavState {
+): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
   );
@@ -103,14 +144,14 @@ function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
   };
 }
 
-export type TabsNavStateInitArg = {
+export type TabsContainerStateInitArg = {
   routeConfigs: TabRouteConfig[];
   initialFocusedName?: string;
 };
 
-export function determineInitialTabsNavState(
-  arg: TabsNavStateInitArg,
-): TabsNavState {
+export function determineInitialTabsContainerState(
+  arg: TabsContainerStateInitArg,
+): TabsContainerState {
   const { routeConfigs, initialFocusedName } = arg;
 
   const routes = routeConfigs.map(createTabRouteFromConfig);
@@ -128,5 +169,40 @@ export function determineInitialTabsNavState(
     selectedRouteKey = routes[0].routeKey;
   }
 
-  return { routes, selectedRouteKey };
+  // suggestedState & confirmedState are aligned here. We assume that JS
+  // decides what is rendered after first render, therefore we don't need
+  // to wait for confirmation. This simplifies implementation of the reducer.
+  return {
+    routes,
+    suggestedState: {
+      selectedRouteKey: selectedRouteKey,
+      provenance: 0,
+    },
+    confirmedState: {
+      selectedRouteKey: selectedRouteKey,
+      provenance: 0,
+    },
+  };
+}
+
+function navStateWithSuggestedState(
+  state: TabsContainerState,
+  suggestedState: TabsNavState,
+): TabsContainerState {
+  return {
+    routes: state.routes,
+    confirmedState: state.confirmedState,
+    suggestedState: suggestedState,
+  };
+}
+
+function navStateWithConfirmedState(
+  state: TabsContainerState,
+  confirmedState: TabsNavState,
+): TabsContainerState {
+  return {
+    routes: state.routes,
+    confirmedState: confirmedState,
+    suggestedState: state.suggestedState,
+  };
 }
