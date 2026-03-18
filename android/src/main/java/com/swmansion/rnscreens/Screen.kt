@@ -167,6 +167,14 @@ class Screen(
         }
     }
 
+    private fun updateShadowNodeScreenSize(
+        width: Int,
+        height: Int,
+        headerHeight: Int,
+    ) {
+        updateState(width, height, headerHeight)
+    }
+
     /**
      * This should be used only with sheet in `fitToContents` mode.
      */
