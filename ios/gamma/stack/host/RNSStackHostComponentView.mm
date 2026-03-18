@@ -119,7 +119,7 @@ namespace react = facebook::react;
 {
   if (stackScreen.activityMode == RNSStackScreenActivityModeAttached && !stackScreen.isNativelyDismissed) {
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
-    [_stackOperationCoordinator addPushOperation:stackScreen];
+    [_stackOperationCoordinator addPopOperation:stackScreen];
   } else {
     RNSLog(
         @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed",
