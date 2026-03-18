@@ -13,8 +13,6 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
-import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
-import com.swmansion.rnscreens.safearea.paper.SafeAreaViewShadowNode
 
 @ReactModule(name = SafeAreaViewManager.REACT_CLASS)
 class SafeAreaViewManager :
@@ -27,10 +25,6 @@ class SafeAreaViewManager :
     override fun createViewInstance(reactContext: ThemedReactContext): SafeAreaView = SafeAreaView(reactContext)
 
     override fun getDelegate() = delegate
-
-    override fun createShadowNodeInstance() = SafeAreaViewShadowNode()
-
-    override fun getShadowNodeClass() = SafeAreaViewShadowNode::class.java
 
     @ReactProp(name = "edges")
     override fun setEdges(
