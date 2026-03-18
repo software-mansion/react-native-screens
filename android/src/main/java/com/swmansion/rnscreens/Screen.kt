@@ -18,12 +18,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
@@ -284,7 +282,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
+        updateScreenSize(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -392,21 +390,6 @@ class Screen(
         }
     }
 
-    private fun updateScreenSizePaper(
-        width: Int,
-        height: Int,
-    ) {
-        reactContext.runOnNativeModulesQueueThread(
-            object : GuardedRunnable(reactContext.exceptionHandler) {
-                override fun runGuarded() {
-                    reactContext
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.updateNodeSize(id, width, height)
-                }
-            },
-        )
-    }
-
     /**
      * @param offsetY ignored on old architecture
      */
@@ -415,11 +398,7 @@ class Screen(
         height: Int,
         offsetY: Int,
     ) {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, offsetY)
-        } else {
-            updateScreenSizePaper(width, height)
-        }
+        updateScreenSize(width, height, offsetY)
     }
 
     val headerConfig: ScreenStackHeaderConfig?
@@ -694,7 +673,7 @@ class Screen(
 
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
-        updateScreenSizeFabric(width, height, top + translationY.toInt())
+        updateScreenSize(width, height, top + translationY.toInt())
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {

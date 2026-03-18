@@ -2,10 +2,8 @@ package com.swmansion.rnscreens
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
@@ -32,9 +30,6 @@ class ScreenStackHeaderConfigViewManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStackHeaderConfig(reactContext)
 
-    // This works only on Paper. On Fabric the shadow node is implemented in C++ layer.
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreenStackHeaderConfigShadowNode(context)
-
     override fun addView(
         parent: ScreenStackHeaderConfig,
         child: View,
@@ -53,9 +48,7 @@ class ScreenStackHeaderConfigViewManager :
         props: ReactStylesDiffMap?,
         stateWrapper: StateWrapper?,
     ): Any? {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            view.setStateWrapper(stateWrapper)
-        }
+        view.setStateWrapper(stateWrapper)
         return super.updateState(view, props, stateWrapper)
     }
 

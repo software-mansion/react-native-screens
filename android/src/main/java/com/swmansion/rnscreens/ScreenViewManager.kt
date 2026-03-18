@@ -86,9 +86,7 @@ open class ScreenViewManager :
         props: ReactStylesDiffMap?,
         stateWrapper: StateWrapper?,
     ): Any? {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            view.setStateWrapper(stateWrapper)
-        }
+        view.setStateWrapper(stateWrapper)
         return super.updateState(view, props, stateWrapper)
     }
 
