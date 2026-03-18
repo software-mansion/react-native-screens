@@ -8,7 +8,7 @@ export type {
   TabsNavigationAction,
   TabsNavigationActionChangeTab,
   TabsNavigationActionSetOptions,
-  TabsNavState,
+  TabsContainerState,
 } from './TabsContainer.types';
 
 export type { TabsNavigationContextPayload } from './contexts/TabsNavigationContext';
