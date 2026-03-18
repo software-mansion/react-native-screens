@@ -58,7 +58,7 @@
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
-    if (_screenView.activityMode == RNSStackScreenActivityModeAttached) {
+    if (_screenView.activityMode == RNSStackScreenActivityModeDetached) {
       [[self reactEventEmitter] emitOnDismiss];
     } else {
       _screenView.isNativelyDismissed = YES;
