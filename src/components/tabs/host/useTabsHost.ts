@@ -4,7 +4,7 @@ import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../.
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import featureFlags from '../../../flags';
 import { RNSLog } from '../../../private';
-import type { NativeFocusChangeEvent } from './TabsHost.types';
+import type { TabChangeEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
@@ -13,15 +13,13 @@ type TabsHostPlatformNativeComponentProps =
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
   controlNavigationStateInJS?: boolean;
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
+  onTabChange?: (event: NativeSyntheticEvent<TabChangeEvent>) => void;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   componentNodeRef,
   controlNavigationStateInJS,
-  onNativeFocusChange,
+  onTabChange,
 }: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -34,22 +32,22 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
     }
   }, []);
 
-  const onNativeFocusChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
+  const onTabChangeCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabChangeEvent>) => {
       RNSLog.log(
         `TabsHost [${
           componentNodeHandle.current ?? -1
-        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
+        }] onTabChange: ${JSON.stringify(event.nativeEvent)}`,
       );
-      onNativeFocusChange?.(event);
+      onTabChange?.(event);
     },
-    [onNativeFocusChange],
+    [onTabChange],
   );
 
   return {
     controlNavigationStateInJS:
       controlNavigationStateInJS ??
       featureFlags.experiment.controlledBottomTabs,
-    onNativeFocusChangeCallback,
+    onTabChange: onTabChangeCallback,
   };
 }
