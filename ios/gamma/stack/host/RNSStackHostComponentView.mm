@@ -82,6 +82,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
+
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
   [_renderedScreens insertObject:childScreen atIndex:index];
@@ -97,6 +103,12 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
+
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
   childScreen.stackHost = nil;

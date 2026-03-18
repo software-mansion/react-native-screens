@@ -4,7 +4,6 @@
 #import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
-  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _stackModel;
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
 }
