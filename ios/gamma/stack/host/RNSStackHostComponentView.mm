@@ -43,6 +43,7 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
+  RNSLog(@"[RNScreens] StackHost [%pv] attached to window", self);
   [self reactAddControllerToClosestParent:_stackNavigationController];
 }
 
@@ -110,7 +111,7 @@ namespace react = facebook::react;
   } else {
     RNSLog(
         @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed",
-        stackScreen.screenKey.cString);
+        [stackScreen.screenKey cStringUsingEncoding:NSUTF8StringEncoding]);
   }
 }
 
