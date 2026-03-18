@@ -282,7 +282,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        updateScreenSize(width, clampedHeight, top + translationY.toInt())
+        updateShadowNodeScreenSize(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -348,9 +348,9 @@ class Screen(
                 val correctedHeight = height - topInset
                 val correctedOffsetY = t + topInset
 
-                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
+                updateShadowNodeScreenSize(width, correctedHeight, correctedOffsetY)
             } else {
-                dispatchShadowStateUpdate(width, height, t)
+                updateShadowNodeScreenSize(width, height, t)
             }
         }
     }
@@ -367,7 +367,7 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            dispatchShadowStateUpdate(width, height, top)
+            updateShadowNodeScreenSize(width, height, top)
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
@@ -388,17 +388,6 @@ class Screen(
             // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
         }
-    }
-
-    /**
-     * @param offsetY ignored on old architecture
-     */
-    private fun dispatchShadowStateUpdate(
-        width: Int,
-        height: Int,
-        offsetY: Int,
-    ) {
-        updateScreenSize(width, height, offsetY)
     }
 
     val headerConfig: ScreenStackHeaderConfig?
@@ -673,7 +662,7 @@ class Screen(
 
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
-        updateScreenSize(width, height, top + translationY.toInt())
+        updateShadowNodeScreenSize(width, height, top + translationY.toInt())
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {

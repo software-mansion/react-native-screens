@@ -22,7 +22,7 @@ abstract class FabricEnabledViewGroup(
         mStateWrapper = wrapper
     }
 
-    protected fun updateScreenSize(
+    protected fun updateShadowNodeScreenSize(
         width: Int,
         height: Int,
         headerHeight: Int,
