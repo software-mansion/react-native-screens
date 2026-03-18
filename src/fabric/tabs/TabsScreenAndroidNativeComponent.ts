@@ -73,7 +73,6 @@ export interface NativeProps extends ViewProps {
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 
   // Control
-  isFocused?: boolean;
   screenKey: string;
 
   // General
