@@ -1,6 +1,5 @@
 #import "RNSStackOperation.h"
 
-
 @implementation RNSPushOperation
 
 - (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen
