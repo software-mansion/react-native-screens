@@ -143,8 +143,6 @@ internal class TabsContainer(
         addView(bottomNavigationView)
 
         bottomNavigationView.setOnItemSelectedListener(this::onMenuItemSelected)
-//        bottomNavigationView.setOnItemReselectedListener(this::onMenuItemReselected)
-
         invalidationFlags.invalidateAll()
     }
 
@@ -248,7 +246,7 @@ internal class TabsContainer(
         // This function is called only to perform JS requests
 
         if (pendingJsOperation == null) {
-            RNSLog.w(TAG, "")
+            RNSLog.w(TAG, "TabsContainer::performOperation called w/o pending operation; skipping update")
             return
         }
 
