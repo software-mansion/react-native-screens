@@ -166,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
  */
-@property (nonatomic, readwrite) bool needsUpdateOfReactChildrenControllers;
+@property (nonatomic, readwrite) bool needsUpdateOfChildViewControllers;
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
