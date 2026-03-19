@@ -1,34 +1,31 @@
-import { TabConfiguration } from '../../shared/gamma/containers/tabs/TabsContainer';
+import type { TabRouteConfig, TabRouteOptions, TabsContainerProps } from '../../shared/gamma/containers/tabs';
 import { KeyList } from './helpers';
-import { TabsHostProps } from 'react-native-screens';
-
-type StaticTabScreenProps<S extends KeyList> = Omit<
-  TabConfiguration['options'],
-  'screenKey'
-> & { screenKey: Extract<keyof S, string> };
 
 export type StaticTabConfiguration<S extends KeyList> = Omit<
-  TabConfiguration,
-  'options'
+  TabRouteConfig,
+  'name'
 > & {
-  options: StaticTabScreenProps<S>;
+  name: Extract<keyof S, string>;
 };
 
-export type StaticTabsContainerProps<S extends KeyList> = TabsHostProps & {
-  tabConfigs: StaticTabConfiguration<S>[];
+export type StaticTabsContainerProps<S extends KeyList> = Omit<
+  TabsContainerProps,
+  'routeConfigs'
+> & {
+  routeConfigs: StaticTabConfiguration<S>[];
 };
 
 export type TabConfigUpdate<S extends KeyList> =
   | {
       type: 'tabScreen';
-      screenKey: Extract<keyof S, string>;
+      name: Extract<keyof S, string>;
       config: Partial<
         Omit<StaticTabConfiguration<S>, 'options'> & {
-          options: Partial<StaticTabScreenProps<S>>;
+          options: Partial<TabRouteOptions>;
         }
       >;
     }
   | {
       type: 'tabBar';
-      config: Partial<Omit<StaticTabsContainerProps<S>, 'tabConfigs'>>;
+      config: Partial<Omit<StaticTabsContainerProps<S>, 'routeConfigs'>>;
     };

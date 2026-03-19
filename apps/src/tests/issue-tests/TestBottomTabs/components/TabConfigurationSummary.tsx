@@ -15,10 +15,6 @@ export function TabConfigurationSummary(props: TabConfigurationSummaryProps) {
       <Text>
         heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
       </Text>
-      <Text>
-        controlledBottomTabs:{' '}
-        {configWrapper.config.controlledBottomTabs ? 'true' : 'false'}
-      </Text>
     </>
   );
 }

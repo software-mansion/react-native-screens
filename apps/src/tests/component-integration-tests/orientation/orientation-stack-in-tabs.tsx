@@ -1,18 +1,18 @@
-import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
+import { SettingsPicker } from '../../../shared/SettingsPicker';
 import { DummyScreen } from '../../shared/DummyScreens';
+import { Scenario } from '../../shared/helpers';
 import useStackConfigState from '../../shared/hooks/stack-config';
+import useTabsConfigState from '../../shared/hooks/tabs-config';
 import {
   createAutoConfiguredStack,
   findStackScreenOptions,
 } from '../../shared/stack';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
 import {
   createAutoConfiguredTabs,
   findTabScreenOptions,
 } from '../../shared/tabs';
-import { Scenario } from '../../shared/helpers';
 
 const SCENARIO: Scenario = {
   name: 'StackInTabs',
@@ -45,13 +45,13 @@ function ConfigScreen() {
         label="Tab Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          findTabScreenOptions(tabsConfig, 'Tab1')?.options.orientation ??
+          findTabScreenOptions(tabsConfig, 'Tab1')?.options?.orientation ??
           'undefined'
         }
         onValueChange={value =>
           tabsDispatch({
             type: 'tabScreen',
-            screenKey: 'Tab1',
+            name: 'Tab1',
             config: {
               options: {
                 orientation: value === 'undefined' ? undefined : value,
