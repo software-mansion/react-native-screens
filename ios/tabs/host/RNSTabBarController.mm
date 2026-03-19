@@ -50,17 +50,17 @@
   RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
 }
 
-#pragma mark-- Signals
+#pragma mark - Signals
 
 - (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
 {
   _tabScreenControllers = reactChildControllers;
-  self.needsUpdateOfReactChildrenControllers = true;
+  self.needsUpdateOfChildViewControllers = true;
 }
 
-- (void)setNeedsUpdateOfReactChildrenControllers:(bool)needsReactChildrenUpdate
+- (void)setNeedsUpdateOfChildViewControllers:(bool)needsReactChildrenUpdate
 {
-  _needsUpdateOfReactChildrenControllers = true;
+  _needsUpdateOfChildViewControllers = true;
   self.needsUpdateOfSelectedTab = true;
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
@@ -100,7 +100,7 @@
   _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
-#pragma mark-- RNSReactTransactionObserving
+#pragma mark - RNSReactTransactionObserving
 
 - (void)reactMountingTransactionWillMount
 {
@@ -117,11 +117,11 @@
   [self updateOrientationIfNeeded];
 }
 
-#pragma mark-- Signals related
+#pragma mark - Signals related
 
 - (void)updateReactChildrenControllersIfNeeded
 {
-  if (_needsUpdateOfReactChildrenControllers) {
+  if (_needsUpdateOfChildViewControllers) {
     [self updateReactChildrenControllers];
   }
 }
@@ -129,7 +129,7 @@
 - (void)updateReactChildrenControllers
 {
   RNSLog(@"TabBarCtrl updateReactChildrenControllers");
-  _needsUpdateOfReactChildrenControllers = false;
+  _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
     RCTLogWarn(@"[RNScreens] Attempt to update react children while the _updatedChildren array is nil!");
