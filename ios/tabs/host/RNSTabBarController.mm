@@ -110,7 +110,14 @@
 - (void)reactMountingTransactionDidMount
 {
   RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
-  [self updateReactChildrenControllersIfNeeded];
+  [self performContainerUpdate];
+}
+
+#pragma mark - Container update
+
+- (void)performContainerUpdate
+{
+  [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
@@ -119,7 +126,7 @@
 
 #pragma mark - Signals related
 
-- (void)updateReactChildrenControllersIfNeeded
+- (void)updateChildViewControllersIfNeeded
 {
   if (_needsUpdateOfChildViewControllers) {
     [self updateReactChildrenControllers];

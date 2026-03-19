@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
  * invalidation signal & let the controller decide when to flush the updates.
  */
-- (void)updateReactChildrenControllersIfNeeded;
+- (void)updateChildViewControllersIfNeeded;
 
 /**
  * Force update of the tab controller state with previously provided children.
