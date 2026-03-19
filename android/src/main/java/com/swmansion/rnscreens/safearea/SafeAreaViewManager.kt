@@ -10,7 +10,6 @@ import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
 
@@ -26,7 +25,6 @@ class SafeAreaViewManager :
 
     override fun getDelegate() = delegate
 
-    @ReactProp(name = "edges")
     override fun setEdges(
         view: SafeAreaView,
         value: ReadableMap?,
@@ -36,7 +34,6 @@ class SafeAreaViewManager :
         }
     }
 
-    @ReactProp(name = "insetType")
     override fun setInsetType(
         view: SafeAreaView,
         value: String?,
