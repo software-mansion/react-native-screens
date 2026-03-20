@@ -1,13 +1,13 @@
 #pragma once
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 #import <rnscreens/rnscreens.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSModule : NSObject
-#ifdef __cplusplus
+#if defined(__cplusplus)
                        <NativeScreensModuleSpec>
 #endif
 

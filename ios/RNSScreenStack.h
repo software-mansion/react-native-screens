@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
+#endif // __cplusplus
 #import "RNSScreenContainer.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
@@ -21,7 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenStackView : RCTViewComponentView <RNSScreenContainerDelegate>
+#else
+@interface RNSScreenStackView : UIView <RNSScreenContainerDelegate>
+#endif // __cplusplus
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
