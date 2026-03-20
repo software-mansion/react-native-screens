@@ -41,7 +41,6 @@ namespace react = facebook::react;
 
 @implementation RNSTabsHostComponentView {
   RNSTabBarController *_Nonnull _controller;
-  //  RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
@@ -86,8 +85,6 @@ namespace react = facebook::react;
   [self resetProps];
 
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
-  //  _controllerDelegate = [RNSTabBarControllerDelegate new];
-  //  _controller.delegate = _controllerDelegate;
 
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSTabsHostEventEmitter new];
@@ -250,17 +247,8 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-//- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-//                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect
-//{
-//  return [_reactEventEmitter
-//      emitOnNativeFocusChange:OnNativeFocusChangePayload{
-//                                  .screenKey = tabScreen.screenKey,
-//                                  .repeatedSelectionHandledBySpecialEffect =
-//                                  repeatedSelectionHandledBySpecialEffect}];
-//}
-
 #pragma mark - RCTComponentViewProtocol
+
 #if RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -620,21 +608,6 @@ RNS_IGNORE_SUPER_CALL_END
                                            .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
                                            .isNativeAction = context.isNativeAction}];
 }
-
-//- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-// didSelectViewController:(nonnull RNSTabsScreenViewController *)tabsScreenViewController
-//{
-//  NSString *screenKey = tabsScreenViewController.getScreenKeyOrNull;
-//  RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
-//
-//  [self.reactEventEmitter emitOnTabChange:{
-//    .selectedScreenKey = screenKey,
-//    .provenance = tabBarController.provenance,
-//    .isRepeated = NO,
-//    .hasTriggeredSpecialEffect = NO,
-//    .isNativeAction = YES
-//  }];
-//}
 
 @end
 
