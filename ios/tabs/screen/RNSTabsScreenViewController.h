@@ -20,11 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSString *)getScreenKeyOrNull;
 
-///**
-// * Tell the controller that the tab screen it owns has got its react-props-focus changed.
-// */
-//- (void)tabScreenFocusHasChanged;
-
 /**
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
  */

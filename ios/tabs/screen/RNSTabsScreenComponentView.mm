@@ -274,11 +274,6 @@ RNS_IGNORE_SUPER_CALL_END
     _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
-  //  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-  //    _isSelectedScreen = newComponentProps.isFocused;
-  //    [_controller tabScreenFocusHasChanged];
-  //  }
-
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     tabBarItemNeedsUpdate = YES;
