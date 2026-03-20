@@ -115,7 +115,6 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
-// we recreate the behavior of `reactSetFrame` on new architecture
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;

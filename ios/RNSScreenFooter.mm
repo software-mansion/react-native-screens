@@ -1,14 +1,9 @@
 #import "RNSScreenFooter.h"
-#import "RNSScreen.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-
-#endif // RCT_NEW_ARCH_ENABLED
+#import "RNSScreen.h"
 
 @implementation RNSScreenFooter {
   RNSScreenView *_parent;
@@ -95,10 +90,6 @@
   //  }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma Fabric specific
-
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
 + (void)load
 {
@@ -114,19 +105,6 @@ Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
 {
   return RNSScreenFooter.class;
 }
-
-#else
-
-#pragma Paper specific
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  // ignore frame from react
-  // this view should be layouted by it's parent screen
-  //  [super reactSetFrame:frame];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 

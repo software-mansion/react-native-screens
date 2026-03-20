@@ -1,10 +1,4 @@
 #import "RNSScreenContentWrapper.h"
-#import "RNSDefines.h"
-#import "RNSSafeAreaViewComponentView.h"
-#import "RNSScreen.h"
-#import "RNSScreenStack.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import <React/RCTScrollViewComponentView.h>
@@ -12,25 +6,14 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RNSDefines.h"
+#import "RNSSafeAreaViewComponentView.h"
+#import "RNSScreen.h"
+#import "RNSScreenStack.h"
 
 namespace react = facebook::react;
-#else
-#import <React/RCTScrollView.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenContentWrapper
-
-#ifndef RCT_NEW_ARCH_ENABLED
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  [super reactSetFrame:frame];
-  if (self.delegate != nil) {
-    [self.delegate contentWrapper:self receivedReactFrame:frame];
-  }
-}
-
-#endif // !RCT_NEW_ARCH_ENABLED
 
 - (void)notifyDelegateWithFrame:(CGRect)frame
 {
@@ -82,11 +65,7 @@ namespace react = facebook::react;
       static_cast<RNSScreen *_Nullable>([[self findFirstScreenViewAncestor] reactViewController]);
 
   if (screen == nil) {
-    // On old architecture, especially when executing `replace` action it can happen that **replaced** (old one) screen
-    // receives willMoveToWindow: with not nil argument. On new architecture it seems to work as expected.
-#ifdef RCT_NEW_ARCH_ENABLED
     RCTLogWarn(@"Failed to find parent screen controller from %@.", self);
-#endif
     return;
   }
   [self attachToAncestorScreenViewStartingFrom:screen];
@@ -171,23 +150,19 @@ namespace react = facebook::react;
     CGRect newFrame = scrollViewComponent.frame;
     newFrame.size = size;
     newFrame.size.height -= headerView.frame.size.height;
-#ifdef RCT_NEW_ARCH_ENABLED
-    // For some unknown yet reason on new architecture the scroll view
+    // For some unknown yet reason on Fabric the scroll view
     // is placed at (0, 0), which makes no sense given there
     // is another child at lower index in flex layout.
     // TODO: Research why this happens and solve this properly.
     if (newFrame.origin.y == 0) {
       newFrame.origin.y = headerView.frame.size.height;
     }
-#endif // RCT_NEW_ARCH_ENABLED
     scrollViewComponent.frame = newFrame;
     return YES;
   }
 
   return NO;
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -213,7 +188,6 @@ Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
 {
   [super load];
 }
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
