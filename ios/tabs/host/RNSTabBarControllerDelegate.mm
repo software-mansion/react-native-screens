@@ -39,9 +39,10 @@
   BOOL repeatedSelectionHandledBySpecialEffect =
       repeatedSelection ? [tabScreenCtrl tabScreenSelectedRepeatedly] : false;
 
-  [tabBarCtrl.tabsHostComponentView
-      emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView
-              repeatedSelectionHandledBySpecialEffect:repeatedSelectionHandledBySpecialEffect];
+  //  [tabBarCtrl.tabsHostComponentView tabBarController:tabBarCtrl did]
+  //  [tabBarCtrl.tabsHostComponentView
+  //      emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView
+  //              repeatedSelectionHandledBySpecialEffect:repeatedSelectionHandledBySpecialEffect];
 
   // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
   // and interferes with our implementation (which is necessary for controlled tabs).
@@ -62,6 +63,9 @@
           [viewController isKindOfClass:UINavigationController.class],
       @"[RNScreens] Unexpected type of controller: %@",
       viewController.class);
+
+  RNSTabBarController *tabBarCtrl = static_cast<RNSTabBarController *>(tabBarController);
+  RNSTabsScreenViewController *tabScreenCtrl = static_cast<RNSTabsScreenViewController *>(viewController);
 
 #if !TARGET_OS_TV
   // When the moreNavigationController is selected, we want to show it

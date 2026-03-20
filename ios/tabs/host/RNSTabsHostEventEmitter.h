@@ -15,21 +15,17 @@ namespace react = facebook::react;
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus)
-struct OnNativeFocusChangePayload {
-  NSString *_Nonnull screenKey;
-  BOOL repeatedSelectionHandledBySpecialEffect;
-};
-#else
 typedef struct {
-  NSString *_Nonnull screenKey;
-  BOOL repeatedSelectionHandledBySpecialEffect;
-} OnNativeFocusChangePayload;
-#endif
+  NSString *_Nonnull selectedScreenKey;
+  int provenance;
+  BOOL isRepeated;
+  BOOL hasTriggeredSpecialEffect;
+  BOOL isNativeAction;
+} OnTabChangePayload;
 
 @interface RNSTabsHostEventEmitter : NSObject
 
-- (BOOL)emitOnNativeFocusChange:(OnNativeFocusChangePayload)payload;
+- (BOOL)emitOnTabChange:(OnTabChangePayload)payload;
 
 @end
 

@@ -33,31 +33,20 @@ namespace react = facebook::react;
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
-- (BOOL)emitOnNativeFocusChange:(OnNativeFocusChangePayload)payload
+- (BOOL)emitOnTabChange:(OnTabChangePayload)payload
 {
-#if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onNativeFocusChange(
-        {.screenKey = RCTStringFromNSString(payload.screenKey),
-         .repeatedSelectionHandledBySpecialEffect =
-             static_cast<bool>(payload.repeatedSelectionHandledBySpecialEffect)});
+    _reactEventEmitter->onTabChange(
+        {.selectedScreenKey = RCTStringFromNSString(payload.selectedScreenKey),
+         .provenance = payload.provenance,
+         .isRepeated = static_cast<bool>(payload.isRepeated),
+         .hasTriggeredSpecialEffect = static_cast<bool>(payload.hasTriggeredSpecialEffect),
+         .isNativeAction = static_cast<bool>(payload.isNativeAction)});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnNativeFocusChange event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnTabChange event emission due to nullish emitter");
     return NO;
   }
-#else
-  if (self.onNativeFocusChange) {
-    self.onNativeFocusChange(@{
-      @"screenKey" : payload.screenKey,
-      @"repeatedSelectionHandledBySpecialEffect" : @(payload.repeatedSelectionHandledBySpecialEffect)
-    });
-    return YES;
-  } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnNativeFocusChange event emission due to nullish emitter");
-    return NO;
-  }
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 @end
