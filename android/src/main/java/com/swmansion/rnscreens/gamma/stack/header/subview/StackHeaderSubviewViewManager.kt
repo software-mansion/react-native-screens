@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.header.subview
 
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -23,7 +24,18 @@ open class StackHeaderSubviewViewManager :
 
     override fun getDelegate(): ViewManagerDelegate<StackHeaderSubview> = delegate
 
-    override fun setType(view: StackHeaderSubview, value: String?) = Unit
+    override fun setType(
+        view: StackHeaderSubview,
+        value: String?,
+    ) {
+        view.type =
+            when (value) {
+                "left" -> StackHeaderSubviewType.LEFT
+                "center" -> StackHeaderSubviewType.CENTER
+                "right" -> StackHeaderSubviewType.RIGHT
+                else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview type: $value")
+            }
+    }
 
     companion object {
         const val REACT_CLASS = "RNSStackHeaderSubview"

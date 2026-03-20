@@ -20,6 +20,7 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { Text } from 'react-native';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -82,6 +83,19 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                <Stack.Header.Configuration
+                  title="Hello, World! Hello, World! Hello, World! Hello, World!"
+                  type="small">
+                  <Stack.Header.Subview type="left" key="left">
+                    <Text>left</Text>
+                  </Stack.Header.Subview>
+                  {/*<Stack.Header.Subview type="center" key="center">
+                    <Text>center</Text>
+                  </Stack.Header.Subview>*/}
+                  <Stack.Header.Subview type="right" key="right">
+                    <Text>rightvery</Text>
+                  </Stack.Header.Subview>
+                </Stack.Header.Configuration>
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { StackHeaderSubviewProps } from './StackHeaderSubview.types';
 import StackHeaderSubviewNativeComponent from '../../../../fabric/gamma/stack/StackHeaderSubviewNativeComponent';
 
@@ -11,7 +10,7 @@ function StackHeaderSubview(props: StackHeaderSubviewProps) {
   return (
     <StackHeaderSubviewNativeComponent
       collapsable={false}
-      style={StyleSheet.absoluteFill}
+      style={{ position: 'absolute', left: 0, top: 0 }}
       {...filteredProps}>
       {children}
     </StackHeaderSubviewNativeComponent>

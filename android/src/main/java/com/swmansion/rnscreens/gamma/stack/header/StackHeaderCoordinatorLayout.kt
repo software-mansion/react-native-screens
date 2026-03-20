@@ -5,10 +5,13 @@ import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationAttachObserver
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationChangeListener
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
+import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
@@ -21,6 +24,24 @@ internal class StackHeaderCoordinatorLayout(
         }
 
     internal var stackScreenWrapper: FrameLayout
+
+    private var isHeaderUpdatePending = false
+
+    private val headerConfigChangeListener =
+        StackHeaderConfigurationChangeListener { config ->
+            if (!isHeaderUpdatePending) {
+                isHeaderUpdatePending = true
+                post {
+                    isHeaderUpdatePending = false
+                    applyHeaderConfiguration(config)
+                }
+            }
+        }
+
+    private val headerAttachObserver =
+        StackHeaderConfigurationAttachObserver { config ->
+            onHeaderConfigurationAvailable(config)
+        }
 
     init {
         // Needed when Transition API is in use to ensure that shadows do not disappear,
@@ -38,38 +59,21 @@ internal class StackHeaderCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        // TODO: debug-only, this will be sent in reaction to information from "HeaderConfig" component.
-        applyHeaderConfiguration(
-            object : StackHeaderConfigurationProviding {
-                override val headerType = StackHeaderType.LARGE
-                override val title = "Hello, World!"
-                override val isHidden = false
-                override val isTransparent = false
-            },
-        )
+        // Wire observer on StackScreen for header attach/detach notifications
+        stackScreen.headerConfigurationAttachObserver = WeakReference(headerAttachObserver)
 
-        // TODO: debug only, until we expose props via JS
-//        postDelayed({
-//            applyHeaderConfiguration(
-//                object : StackScreenHeaderConfigurationProviding {
-//                    override val headerType = StackScreenHeaderType.LARGE
-//                    override val title = "Hello, World!"
-//                    override val isHidden = true
-//                    override val isTransparent = false
-//                },
-//            )
-//
-//            postDelayed({
-//                applyHeaderConfiguration(
-//                    object : StackScreenHeaderConfigurationProviding {
-//                        override val headerType = StackScreenHeaderType.LARGE
-//                        override val title = "Hello, World!"
-//                        override val isHidden = false
-//                        override val isTransparent = false
-//                    },
-//                )
-//            }, 3000)
-//        }, 3000)
+        // Handle case where header was already attached before this layout was created
+        stackScreen.headerConfiguration?.let { onHeaderConfigurationAvailable(it) }
+    }
+
+    private fun onHeaderConfigurationAvailable(config: StackHeaderConfiguration?) {
+        if (config != null) {
+            // Wire header's own change listener so prop updates go directly to us
+            config.configurationChangeListener = WeakReference(headerConfigChangeListener)
+            applyHeaderConfiguration(config)
+        } else {
+            // Header removed — could reset to default state
+        }
     }
 
     /**
@@ -84,6 +88,6 @@ internal class StackHeaderCoordinatorLayout(
         }
     }
 
-    internal fun applyHeaderConfiguration(headerConfigurationProviding: StackHeaderConfigurationProviding) =
-        headerCoordinator.applyHeaderConfiguration(this, headerConfigurationProviding)
+    internal fun applyHeaderConfiguration(config: StackHeaderConfigurationProviding) =
+        headerCoordinator.applyHeaderConfiguration(this, config)
 }

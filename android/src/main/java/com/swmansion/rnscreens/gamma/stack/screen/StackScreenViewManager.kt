@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -10,6 +11,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
@@ -28,6 +30,29 @@ class StackScreenViewManager :
     override fun getDelegate() = delegate
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
+
+    override fun addView(
+        parent: StackScreen,
+        child: View,
+        index: Int,
+    ) {
+        if (child is StackHeaderConfiguration) {
+            parent.attachHeaderConfiguration(child)
+        } else {
+            super.addView(parent, child, index)
+        }
+    }
+
+    override fun removeView(
+        parent: StackScreen,
+        view: View,
+    ) {
+        if (view is StackHeaderConfiguration) {
+            parent.detachHeaderConfiguration(view)
+        } else {
+            super.removeView(parent, view)
+        }
+    }
 
     override fun addEventEmitters(
         reactContext: ThemedReactContext,
