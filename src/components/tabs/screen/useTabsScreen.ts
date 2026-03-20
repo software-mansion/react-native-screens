@@ -11,11 +11,11 @@ type TabsScreenPlatformNativeComponentProps =
 
 interface TabsScreenConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  onDidAppear?: TabsScreenEventHandler<EmptyObject>;
-  onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
-  onWillAppear?: TabsScreenEventHandler<EmptyObject>;
-  onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
-  isFocused?: boolean;
+  onDidAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onDidDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  isFocused?: boolean | undefined;
   screenKey: string;
 }
 
