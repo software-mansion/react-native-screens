@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateReactChildrenControllers;
 
 /**
- * Find out which tab bar controller is currently focused & select it.
+ * If any state update operation is pending - perform it.
  *
  * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
@@ -187,7 +187,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
  * updated.
  *
- * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
+ * Do not raise this signal only when you want to modify selected view controller. Use `setPendingNavigationStateUpdate`
+ * instead.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfChildViewControllers;
 
