@@ -49,9 +49,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsHostComponentView ()
 
 /**
- * Last navigation state requested by JS.
+ * Last navigation state requested by JS. Will be nonnull after first prop update.
  */
-@property (nonatomic, strong, readonly, nonnull) RNSTabsNavigationState *navState;
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 

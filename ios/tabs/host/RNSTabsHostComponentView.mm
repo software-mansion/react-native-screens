@@ -286,7 +286,7 @@ namespace react = facebook::react;
     RCTAssert(newComponentProps.navState.provenance >= 0, @"[RNScreens] provenance MUST BE >= 0]");
     _jsNavState = [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
                                                           provenance:newComponentProps.navState.provenance];
-    [_controller setPendingJSStateUpdate:[_jsNavState cloneState]];
+    [_controller setPendingNavigationStateUpdate:[_jsNavState cloneState]];
   }
 
   if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {

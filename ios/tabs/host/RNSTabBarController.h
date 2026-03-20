@@ -44,8 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Get reference to the host component view that owns this tab bar controller.
  *
  * Might return null in cases where the controller view hierararchy is not attached to parent.
- *
- *  TODO: Shouldn't this be a weak reference?
+ * The reference is retained strongly and it is expected to be managed by `TabsHost`.
  */
 @property (nonatomic, readonly, nullable) RNSTabsHostComponentView *tabsHostComponentView;
 
@@ -55,6 +54,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, strong, nonnull) RNSTabBarAppearanceCoordinator *tabBarAppearanceCoordinator;
 
+/**
+ * Represents current navigation state.
+ *
+ * After each model update, the container (controller) udpates the navigation state. The `provenance` part is
+ * incremented monotonically with each state update.
+ *
+ * The controller manages this state. It MUST NOT be overwritten by any external actor.
+ */
 @property (nonatomic, readonly, strong, nullable) RNSTabsNavigationState *navigationState;
 
 /**
@@ -84,7 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateSelectedViewControllerIfNeeded;
 
 /**
- * Find out which tab bar controller is currently focused & select it.
+ * Update the selected view controller to what's currently requested.
+ *
+ * To request update use `setPendingNavigationStateUpdate`.
  *
  * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
  * invalidation signal & let the controller decide when to flush the updates.
@@ -168,11 +177,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)childViewControllersHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
 
 /**
- * Tell the controller that a JS update is pending.
+ * Request navigation state update from the controller to the given one.
  *
  * If you want to exectue multiple updates in sequence you must flush the container after each one separately.
  */
-- (void)setPendingJSStateUpdate:(nullable RNSTabsNavigationState *)jsNavState;
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState;
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be

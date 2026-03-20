@@ -64,7 +64,7 @@
 
 #pragma mark - Signals
 
-- (void)setPendingJSStateUpdate:(nullable RNSTabsNavigationState *)jsNavState
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)jsNavState
 {
   _pendingOperation = jsNavState;
 }

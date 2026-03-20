@@ -4,6 +4,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Describes navigation state of a tabs container.
+ *
+ * It holds information about key of selected key AND state provenance.
+ * The provenance describes *a history of the state*. Conceptually, the state with provenance `N + 1`
+ * MUST BE derived from state with provenance `N`.
+ */
 @interface RNSTabsNavigationState : NSObject
 
 @property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
