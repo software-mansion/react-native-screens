@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSTabBarAppearanceCoordinator.h"
+#import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
 
 #if !TARGET_OS_TV
@@ -17,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reactMountingTransactionDidMount;
 
 @end
+
+@class RNSTabsNavigationStateUpdateContext;
 
 /**
  * This controller is responsible for tab management & all other responsibilities coming from the fact of inheritance
@@ -41,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Get reference to the host component view that owns this tab bar controller.
  *
  * Might return null in cases where the controller view hierararchy is not attached to parent.
+ *
+ *  TODO: Shouldn't this be a weak reference?
  */
 @property (nonatomic, readonly, nullable) RNSTabsHostComponentView *tabsHostComponentView;
 
@@ -49,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
  * controller a signal, invalidate the tab bar appearance & either wait for the update flush or flush it manually.
  */
 @property (nonatomic, readonly, strong, nonnull) RNSTabBarAppearanceCoordinator *tabBarAppearanceCoordinator;
+
+@property (nonatomic, readonly, strong, nullable) RNSTabsNavigationState *navigationState;
 
 /**
  * Update tab controller state with previously provided children.
@@ -161,18 +168,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)childViewControllersHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
 
 /**
+ * Tell the controller that a JS update is pending.
+ *
+ * If you want to exectue multiple updates in sequence you must flush the container after each one separately.
+ */
+- (void)setPendingJSStateUpdate:(nullable RNSTabsNavigationState *)jsNavState;
+
+/**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
  * updated.
  *
  * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfChildViewControllers;
-
-/**
- * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * updated.
- */
-@property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
 
 /**
  * Tell the controller that some configuration regarding the tab bar apperance has changed & the appearance requires

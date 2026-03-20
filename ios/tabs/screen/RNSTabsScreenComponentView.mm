@@ -78,7 +78,6 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -275,10 +274,10 @@ RNS_IGNORE_SUPER_CALL_END
     _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
-  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isSelectedScreen = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
-  }
+  //  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
+  //    _isSelectedScreen = newComponentProps.isFocused;
+  //    [_controller tabScreenFocusHasChanged];
+  //  }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
