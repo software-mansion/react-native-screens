@@ -64,7 +64,6 @@ struct ContentWrapperBox {
   UITapGestureRecognizer *_backdropTapGestureRecognizer;
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
-  // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
 }
 
@@ -612,7 +611,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
-  // For RN touches to work we need to instantiate and connect RCTTouchHandler. This only applies
+  // For RN touches to work we need to instantiate and connect RCTSurfaceTouchHandler. This only applies
   // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
   // root application window.
   if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
@@ -641,7 +640,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onTransitionProgress(
@@ -654,15 +652,6 @@ RNS_IGNORE_SUPER_CALL_END
                                                                     closing:closing
                                                                goingForward:goingForward];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
-#else
-  if (self.onTransitionProgress) {
-    self.onTransitionProgress(@{
-      @"progress" : @(progress),
-      @"closing" : @(closing ? 1 : 0),
-      @"goingForward" : @(goingForward ? 1 : 0),
-    });
-  }
-#endif
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
@@ -1426,7 +1415,6 @@ RNS_IGNORE_SUPER_CALL_END
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
-  // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
 }
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
@@ -1477,9 +1465,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView = [UIView new];
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
-#ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
-#endif
   }
   return self;
 }
@@ -1616,14 +1602,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
-#ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
-#else
-    if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
-      _lastViewFrame = self.screenView.frame;
-      [((RNSScreenView *)self.viewIfLoaded) updateBounds];
-    }
-#endif
   }
 }
 
@@ -1974,15 +1953,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return (int)[[self.screenView.reactSuperview reactSubviews] indexOfObject:view];
 }
 
-// since on Fabric the view of controller can be a snapshot of type `UIView`,
+// Since the view of the controller can be a snapshot of type `UIView`,
 // when we want to check props of ScreenView, we need to get them from _initialView
 - (RNSScreenView *)screenView
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   return _initialView;
-#else
-  return (RNSScreenView *)self.view;
-#endif
 }
 
 - (void)hideHeaderIfNecessary
@@ -2002,11 +1977,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
         [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
     BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
-#ifdef RCT_NEW_ARCH_ENABLED
     BOOL shouldHideHeader = !config.show;
-#else
-    BOOL shouldHideHeader = config.hide;
-#endif
 
     if (wasSearchBarActive && shouldHideHeader) {
       dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
@@ -2064,7 +2035,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #endif // !TARGET_OS_TV
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)setViewToSnapshot
@@ -2080,8 +2050,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [superView addSubview:snapshot];
   }
 }
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
@@ -2158,14 +2126,6 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
   });
 }
 #endif // !TARGET_OS_TV
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (UIView *)view
-{
-  return [[RNSScreenView alloc] initWithBridge:self.bridge];
-}
-#endif
 
 + (BOOL)requiresMainQueueSetup
 {
