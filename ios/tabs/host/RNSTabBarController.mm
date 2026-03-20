@@ -64,9 +64,9 @@
 
 #pragma mark - Signals
 
-- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)jsNavState
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState
 {
-  _pendingOperation = jsNavState;
+  _pendingOperation = navState;
 }
 
 - (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
@@ -270,7 +270,6 @@
 #endif // !TARGET_OS_TV
 
   [self userDidSelectViewController:screenController];
-  //  [tabBarCtrl.tabsHostComponentView tabBarController:tabBarCtrl didSelectViewController:tabScreenCtrl];
 }
 
 - (BOOL)shouldPreventNativeTabChange
@@ -320,11 +319,9 @@
   }
 
   RNSLog(@"TabBarCtrl updateSelectedViewController");
+  // TODO: Think through support for `moreNavigationController`
 
-  RNSTabsScreenViewController *_Nonnull currSelectedViewController = self.selectedViewController;
-  // Think through support for `moreNavigationController`
-  RCTAssert(currSelectedViewController != nil, @"");
-  RCTAssert([currSelectedViewController isKindOfClass:RNSTabsScreenViewController.class], @"");
+  RNSTabsScreenViewController *_Nonnull currSelectedViewController = [self selectedScreenViewController];
 
   NSString *_Nonnull nextSelectedViewControllerKey = _pendingOperation.selectedScreenKey;
   RNSTabsScreenViewController *_Nullable nextSelectedViewController =
@@ -333,7 +330,6 @@
       nextSelectedViewController != nil,
       @"[RNScreens] Missing SelectedViewController; failed lookup for key: %@",
       nextSelectedViewControllerKey);
-  // TODO: Think about handling release mode
 
   if (currSelectedViewController == nextSelectedViewController && _navigationState != nil) {
     // Nothing to do, we don't allow for programmatic repeat selection, unless
@@ -341,6 +337,8 @@
     return;
   }
 
+  // TODO: This code MUST be moved to some callback.
+  // Should this be called only on JS updates?
   if (@available(iOS 26.0, *)) {
     // On iOS 26, we need to set user interface style 2 parent views above the tab bar
     // for this prop to take effect.
@@ -409,7 +407,6 @@
         @"[RNScreens] Unexpected type of controller: %@",
         viewController.class);
     auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
-    // Add your key comparison logic here
     if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
       return screenViewController;
     }
@@ -417,15 +414,15 @@
   return nil;
 }
 
-/// @param newSelectedScreenKey might be null in case `isRepeated == YES`.
-- (void)progressNavigationState:(nullable NSString *)newSelectedScreenKey
+- (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey
 {
+  RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
+
   if (_navigationState == nil) {
     _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey provenance:0];
     return;
   }
 
-  RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
   _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
                                                              provenance:_navigationState.provenance + 1];
 }
