@@ -17,7 +17,6 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
-#import "RNSTabBarControllerDelegate.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 #import "RNSTabsScreenComponentView.h"
