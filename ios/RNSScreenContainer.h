@@ -1,7 +1,10 @@
 #pragma once
 
-#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
+
+#if defined(__cplusplus)
+#import <React/RCTViewComponentView.h>
+#endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,7 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenContainerView : RCTViewComponentView <RNSScreenContainerDelegate>
+#else
+@interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate>
+#endif // __cplusplus
 
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, retain) NSMutableArray *reactSubviews;

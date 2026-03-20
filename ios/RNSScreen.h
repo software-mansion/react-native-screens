@@ -15,11 +15,13 @@
 #import "RNSOrientationProviding.h"
 #endif // !TARGET_OS_TV
 
+#if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 namespace react = facebook::react;
+#endif // __cplusplus
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTConvert (RNSScreen)
 
@@ -58,11 +60,15 @@ namespace react = facebook::react;
 
 @class RNSScreenStackHeaderConfig;
 
+#if defined(__cplusplus)
 @interface RNSScreenView : RCTViewComponentView <
                                RNSScreenContentWrapperDelegate,
                                RNSScrollViewBehaviorOverriding,
                                RNSSafeAreaProviding,
                                RNSScrollEdgeEffectProviding>
+#else
+@interface RNSScreenView : UIView
+#endif // __cplusplus
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property
@@ -115,8 +121,10 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
+#if defined(__cplusplus)
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
+#endif // __cplusplus
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)

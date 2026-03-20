@@ -1,10 +1,13 @@
 #pragma once
 
 #import <React/RCTConvert.h>
-#import <React/RCTViewComponentView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
+
+#if defined(__cplusplus)
+#import <React/RCTViewComponentView.h>
+#endif // __cplusplus
 
 @interface NSString (RNSStringUtil)
 
@@ -12,7 +15,11 @@
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenStackHeaderConfig : RCTViewComponentView
+#else
+@interface RNSScreenStackHeaderConfig : UIView
+#endif // __cplusplus
 
 @property (nonatomic, weak) RNSScreenView *screenView;
 
