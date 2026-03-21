@@ -230,19 +230,17 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
       @"[RNScreens] Unexpected type of controller: %@",
       viewController.class);
 
-  RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(viewController);
-
   // TODO: handle enforcing orientation with natively-driven tabs
 
   // Detect repeated selection and inform tabScreenController
-  BOOL repeatedSelection = self.selectedViewController == screenController;
+  BOOL repeatedSelection = self.selectedViewController == viewController;
 
   if (repeatedSelection) {
     // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
     // and interferes with our implementation (which is necessary for controlled tabs).
 
     // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
-    [self userDidRepeatViewControllerSelection:screenController];
+    [self userDidRepeatViewControllerSelection:viewController];
 
     return NO;
   }
@@ -262,18 +260,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
       @"[RNScreens] Unexpected type of controller: %@",
       viewController.class);
 
-  RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(viewController);
+  // TODO: Research why do we do this.
+  [self disableNavigationBarInMoreNavigationControllerIfNeeded];
 
-#if !TARGET_OS_TV
-  // When the moreNavigationController is selected, we want to show it
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
-    // Hide the navigation bar for the more controller
-    // TODO: Why do we actually have this code here? Why do we hide the header?
-    [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
-  }
-#endif // !TARGET_OS_TV
-
-  [self userDidSelectViewController:screenController];
+  [self userDidSelectViewController:viewController];
 }
 
 - (BOOL)shouldPreventNativeTabChange
@@ -381,6 +371,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                        isNativeAction:NO];
     [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
   }
+
+  // TODO: Research why do we do this.
+  [self disableNavigationBarInMoreNavigationControllerIfNeeded];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -504,6 +497,16 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
   }
 
   return [navState.selectedScreenKey isEqualToString:kMoreNavigationControllerScreenKey];
+}
+
+- (void)disableNavigationBarInMoreNavigationControllerIfNeeded
+{
+#if !TARGET_OS_TV
+  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+    // Align with user-driven flow.
+    [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+  }
+#endif // !TARGET_OS_TV
 }
 
 #if !RCT_NEW_ARCH_ENABLED
