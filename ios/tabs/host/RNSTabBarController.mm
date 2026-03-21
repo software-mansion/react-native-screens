@@ -195,7 +195,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                          isRepeated:YES
                                           hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
                                                      isNativeAction:YES];
-  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+  [self.tabsHostComponentView tabBarController:self
+                              didUpdateStateTo:_navigationState
+                                   withContext:updateContext];
 }
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
@@ -210,7 +212,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                                            isRepeated:NO
                                                             hasTriggeredSpecialEffect:NO
                                                                        isNativeAction:YES];
-  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+  [self.tabsHostComponentView tabBarController:self
+                              didUpdateStateTo:_navigationState
+                                   withContext:updateContext];
 }
 
 #pragma mark - UITabBarControllerDelegate
@@ -369,7 +373,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                            isRepeated:NO
                                             hasTriggeredSpecialEffect:NO
                                                        isNativeAction:NO];
-    [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
+    [self.tabsHostComponentView tabBarController:self
+                                didUpdateStateTo:_navigationState
+                                     withContext:context];
   }
 
   // TODO: Research why do we do this.
