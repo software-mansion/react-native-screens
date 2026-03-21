@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type {
   TabRoute,
   TabRouteConfig,
@@ -58,7 +59,7 @@ function tabsActionChangeTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
       `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -83,7 +84,7 @@ function tabsActionNativeChangeTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
       `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -205,4 +206,8 @@ function navStateWithConfirmedState(
     confirmedState: confirmedState,
     suggestedState: state.suggestedState,
   };
+}
+
+function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
+  return Platform.OS === 'ios' && routeKey === 'moreNavigationController';
 }

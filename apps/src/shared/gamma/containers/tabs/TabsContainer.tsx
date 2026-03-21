@@ -106,8 +106,7 @@ export function TabsContainer(props: TabsContainerProps) {
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
         RNSLog.info(
-          `TabsContainer map to component -> ${route.routeKey} ${
-            isSelected ? '(selected)' : ''
+          `TabsContainer map to component -> ${route.routeKey} ${isSelected ? '(selected)' : ''
           }`,
         );
 
@@ -200,7 +199,15 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
     return names.length === new Set(names).size;
   }, [routeConfigs]);
 
+  const noNameUsesReservedRouteKey = React.useMemo(() => {
+    return routeConfigs.every(c => c.name !== 'moreNavigationController');
+  }, [routeConfigs]);
+
   if (!areNamesUnique) {
     throw new Error('[Tabs] All tabs must have unique names');
+  }
+
+  if (!noNameUsesReservedRouteKey) {
+    throw new Error('[Tabs] Tab name "moreNavigationController" is reserved and can not be used');
   }
 }
