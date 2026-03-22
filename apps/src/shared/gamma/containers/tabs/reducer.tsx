@@ -72,7 +72,7 @@ function tabsActionChangeTabHandler(
 
   return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-    provenance: state.confirmedState.provenance + 1, // suggested? What about update stacking before we receive confirmation?
+    provenance: max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
   });
 }
 
@@ -103,7 +103,6 @@ function tabsActionNativeChangeTabHandler(
     return state;
   }
 
-  // What about aligning suggestedState here?
   return navStateWithConfirmedState(state, {
     selectedRouteKey: action.routeKey,
     provenance: action.nativeEvent.provenance,
@@ -210,4 +209,8 @@ function navStateWithConfirmedState(
 
 function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
   return Platform.OS === 'ios' && routeKey === 'moreNavigationController';
+}
+
+function max(a: number, b: number): number {
+  return a > b ? a : b;
 }

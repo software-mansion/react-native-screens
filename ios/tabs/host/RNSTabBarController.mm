@@ -319,10 +319,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
     if (![self isMoreNavigationControllerPresentInTabBar]) {
       // If the controller is not visible atm. we'll crash the app.
       // TODO: Emit rejection event
-      // TODO: HANDLE THE PROBLEM WHERE MORE NAV CTRL CAN NOT BE SELECTED AGAIN VIA JS
-      // IF IT HAS BEEN PREVIOUSLY REJECTED. OUR JS IMPLEMENTATION create suggestedState
-      // based on confirmed one, and we don't send anything, so confirmed does not change,
-      // and more controller can not be reselected, even if app resized & it is now visible.
       return;
     }
     nextSelectedViewController = self.moreNavigationController;
