@@ -195,9 +195,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                          isRepeated:YES
                                           hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
                                                      isNativeAction:YES];
-  [self.tabsHostComponentView tabBarController:self
-                              didUpdateStateTo:_navigationState
-                                   withContext:updateContext];
+  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
 }
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
@@ -212,9 +210,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                                            isRepeated:NO
                                                             hasTriggeredSpecialEffect:NO
                                                                        isNativeAction:YES];
-  [self.tabsHostComponentView tabBarController:self
-                              didUpdateStateTo:_navigationState
-                                   withContext:updateContext];
+  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
 }
 
 #pragma mark - UITabBarControllerDelegate
@@ -320,8 +316,13 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
   BOOL isNextMoreNavigationController = NO;
 
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
-    if (![self canHaveMoreNavigationController]) {
+    if (![self isMoreNavigationControllerPresentInTabBar]) {
+      // If the controller is not visible atm. we'll crash the app.
       // TODO: Emit rejection event
+      // TODO: HANDLE THE PROBLEM WHERE MORE NAV CTRL CAN NOT BE SELECTED AGAIN VIA JS
+      // IF IT HAS BEEN PREVIOUSLY REJECTED. OUR JS IMPLEMENTATION create suggestedState
+      // based on confirmed one, and we don't send anything, so confirmed does not change,
+      // and more controller can not be reselected, even if app resized & it is now visible.
       return;
     }
     nextSelectedViewController = self.moreNavigationController;
@@ -373,9 +374,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                            isRepeated:NO
                                             hasTriggeredSpecialEffect:NO
                                                        isNativeAction:NO];
-    [self.tabsHostComponentView tabBarController:self
-                                didUpdateStateTo:_navigationState
-                                     withContext:context];
+    [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
   }
 
   // TODO: Research why do we do this.
@@ -503,6 +502,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
   }
 
   return [navState.selectedScreenKey isEqualToString:kMoreNavigationControllerScreenKey];
+}
+
+- (BOOL)isMoreNavigationControllerPresentInTabBar
+{
+  return [self canHaveMoreNavigationController] &&
+      [self.tabBar.items containsObject:self.moreNavigationController.tabBarItem];
 }
 
 - (void)disableNavigationBarInMoreNavigationControllerIfNeeded
