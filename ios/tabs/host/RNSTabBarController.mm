@@ -5,9 +5,15 @@
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
 
+#define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
+
 static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationController";
 
 @interface RNSTabBarController () <UITabBarControllerDelegate>
+@end
+
+// We need this to handle navigation within `moreNavigationController`
+@interface RNSTabBarController () <UINavigationControllerDelegate>
 @end
 
 @implementation RNSTabBarController {
@@ -206,6 +212,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
 
   [self updateNavigationStateOnModelUpdate];
 
+  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+    [self setupMoreNavigationControllerDelegateIfNeeded];
+  }
+
   auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                            isRepeated:NO
                                                             hasTriggeredSpecialEffect:NO
@@ -253,17 +263,38 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
 {
   RCTAssert(self == tabBarController, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
+  BOOL isNextViewControllerMoreNavigationController = [viewController isKindOfClass:UINavigationController.class];
+
   // Can be UINavigationController in case of MoreNavigationController
   RCTAssert(
-      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
-          [viewController isKindOfClass:UINavigationController.class],
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] || isNextViewControllerMoreNavigationController,
       @"[RNScreens] Unexpected type of controller: %@",
       viewController.class);
 
-  // TODO: Research why do we do this.
-  [self disableNavigationBarInMoreNavigationControllerIfNeeded];
+  if (isNextViewControllerMoreNavigationController) {
+    [self disableNavigationBarInMoreNavigationController];
+  }
 
   [self userDidSelectViewController:viewController];
+}
+
+#pragma mark - UINavigationControllerDelegate
+
+- (void)navigationController:(UINavigationController *)navigationController
+       didShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  RCTAssert(
+      self.moreNavigationController == navigationController,
+      @"[RNScreens] Unexpected view controller called delegate method: %@",
+      navigationController);
+
+  // The root view controller is of different type.
+  if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    [self userDidSelectViewController:viewController];
+  }
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 - (BOOL)shouldPreventNativeTabChange
@@ -359,6 +390,21 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
     }
   }
 
+  if (isNextMoreNavigationController) {
+    // If we navigate explicitly to `moreNavigationController` we want to show the
+    // list of the available view controllers, not what's already on the stack there.
+
+    // Animate only if we're currently in context of more view controller.
+    BOOL shouldAnimate = [self isMoreNavigationControllerTabBarItemSelected];
+    [self popToRootInMoreNavigationControllerIfNeededAnimated:shouldAnimate];
+
+    // Also disable the header - we don't control it, but it impacts the layout
+    // in ways Yoga is not aware of. The simplest option here is to disable it.
+    [self disableNavigationBarInMoreNavigationController];
+
+    [self setupMoreNavigationControllerDelegateIfNeeded];
+  }
+
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey];
@@ -372,9 +418,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
                                                        isNativeAction:NO];
     [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
   }
-
-  // TODO: Research why do we do this.
-  [self disableNavigationBarInMoreNavigationControllerIfNeeded];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -472,23 +515,33 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
   return screenKey;
 }
 
+#pragma mark-- More Navigation Controller
+
 - (BOOL)canHaveMoreNavigationController
 {
-#if !TARGET_OS_TV
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
   return self.viewControllers.count > 5;
 #else
   return NO;
-#endif // !TARGET_OS_TV
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (BOOL)isMoreNavigationControllerScreenKey:(nullable NSString *)screenKey
+{
+  if (screenKey == nil) {
+    return NO;
+  }
+  return [screenKey isEqualToString:kMoreNavigationControllerScreenKey];
 }
 
 - (BOOL)isSelectedViewControllerTheMoreNavigationController
 {
-#if !TARGET_OS_TV
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   return [self canHaveMoreNavigationController] && self.selectedViewController == self.moreNavigationController;
 #else
   return NO;
-#endif // !TARGET_OS_TV
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 - (BOOL)isMoreNavigationControllerRequestedByOperation:(nullable RNSTabsNavigationState *)navState
@@ -497,23 +550,52 @@ static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationCont
     return NO;
   }
 
-  return [navState.selectedScreenKey isEqualToString:kMoreNavigationControllerScreenKey];
+  return [self isMoreNavigationControllerScreenKey:navState.selectedScreenKey];
 }
 
 - (BOOL)isMoreNavigationControllerPresentInTabBar
 {
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   return [self canHaveMoreNavigationController] &&
       [self.tabBar.items containsObject:self.moreNavigationController.tabBarItem];
+#else
+  return NO;
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (void)disableNavigationBarInMoreNavigationControllerIfNeeded
+- (BOOL)isMoreNavigationControllerTabBarItemSelected
 {
-#if !TARGET_OS_TV
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
-    // Align with user-driven flow.
-    [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  return [self canHaveMoreNavigationController] && self.tabBar.selectedItem == self.moreNavigationController.tabBarItem;
+#else
+  return NO;
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (void)disableNavigationBarInMoreNavigationController
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+#endif RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (void)popToRootInMoreNavigationControllerIfNeededAnimated:(BOOL)isAnimated
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  if ([self isMoreNavigationControllerPresentInTabBar] && self.moreNavigationController.viewControllers.count > 1) {
+    // We quietly assume here, that the root view controller is the `UIMoreListViewController`.
+    [self.moreNavigationController popToRootViewControllerAnimated:isAnimated];
   }
-#endif // !TARGET_OS_TV
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (void)setupMoreNavigationControllerDelegateIfNeeded
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  if (self.moreNavigationController.delegate == nil) {
+    self.moreNavigationController.delegate = self;
+  }
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 #if !RCT_NEW_ARCH_ENABLED
