@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +66,6 @@ internal class StackHeaderCoordinator(
         // (MDC limitation: can't change custom views at runtime in CollapsingToolbarLayout)
         if (appBarLayout is StackHeaderAppBarLayout.Collapsing) {
             if (subviewWidthChanged(config.leftSubview, lastLeftSubviewWidth)) return true
-            if (subviewWidthChanged(config.centerSubview, lastCenterSubviewWidth)) return true
             if (subviewWidthChanged(config.rightSubview, lastRightSubviewWidth)) return true
         }
 
@@ -102,6 +102,7 @@ internal class StackHeaderCoordinator(
             appBarLayout = appBar
             populateToolbar(appBar.toolbar, config)
             coordinatorLayout.addView(appBar, 0)
+            appBar.requestApplyInsets()
         }
 
         currentHeaderType = desiredType
@@ -156,10 +157,14 @@ internal class StackHeaderCoordinator(
         }
 
         if (config.centerSubview != null) {
-            // Center subview replaces title for all header types
-            managedTitleView = null
-            detachFromCurrentParent(config.centerSubview)
-            toolbar.addView(config.centerSubview, centerGravityParams())
+            if (appBarLayout is StackHeaderAppBarLayout.Small) {
+                toolbar.removeView(managedTitleView)
+                managedTitleView = null
+                detachFromCurrentParent(config.centerSubview)
+                toolbar.addView(config.centerSubview, centerGravityParams())
+            } else {
+                Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
+            }
         } else if (appBarLayout is StackHeaderAppBarLayout.Small) {
             // Small header: managed title view (we can't use native title
             // because we can't insert custom views before it)
@@ -167,7 +172,6 @@ internal class StackHeaderCoordinator(
             managedTitleView = titleView
             toolbar.addView(titleView)
         }
-        // Collapsing: no title in toolbar — CTL handles it (canvas-drawn)
     }
 
     private fun createManagedTitleView(toolbar: Toolbar): AppCompatTextView =
@@ -232,11 +236,7 @@ internal class StackHeaderCoordinator(
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
-                if (config.centerSubview != null) {
-                    appBar.collapsingToolbarLayout.title = null
-                } else {
-                    appBar.collapsingToolbarLayout.title = config.title
-                }
+                appBar.collapsingToolbarLayout.title = config.title
             }
         }
     }
@@ -261,5 +261,9 @@ internal class StackHeaderCoordinator(
                 }
             stackScreenWrapper.layoutParams = params
         }
+    }
+
+    companion object {
+        const val TAG = "StackHeaderCoordinator"
     }
 }

@@ -85,13 +85,13 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                 <Component />
                 <Stack.Header.Configuration
                   title="Hello, World! Hello, World! Hello, World! Hello, World!"
-                  type="small">
+                  type="large">
                   <Stack.Header.Subview type="left" key="left">
                     <Text>left</Text>
                   </Stack.Header.Subview>
-                  {/*<Stack.Header.Subview type="center" key="center">
+                  <Stack.Header.Subview type="center" key="center">
                     <Text>center</Text>
-                  </Stack.Header.Subview>*/}
+                  </Stack.Header.Subview>
                   <Stack.Header.Subview type="right" key="right">
                     <Text>rightvery</Text>
                   </Stack.Header.Subview>

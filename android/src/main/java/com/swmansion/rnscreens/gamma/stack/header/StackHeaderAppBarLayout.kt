@@ -2,8 +2,6 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -103,13 +101,13 @@ internal sealed class StackHeaderAppBarLayout(
                             scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
 //                            scrollFlags = SCROLL_FLAG_NO_SCROLL
                         }
-                    addView(
-                        View(context).apply {
-                            layoutParams = CollapsingToolbarLayout.LayoutParams(1080, 900)
-                            setBackgroundColor(Color.BLUE)
-                            fitsSystemWindows = true
-                        },
-                    )
+//                    addView(
+//                        View(context).apply {
+//                            layoutParams = CollapsingToolbarLayout.LayoutParams(1080, 900)
+//                            setBackgroundColor(Color.BLUE)
+//                            fitsSystemWindows = true
+//                        },
+//                    )
                     addView(toolbar)
                 }
             }
