@@ -7,8 +7,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationAttachObserver
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -63,25 +63,20 @@ class StackScreen(
         height: Int? = null,
     ) = shadowStateProxy.updateStateIfNeeded(x, y, width, height)
 
-    // --- Header configuration ---
-    // StackScreen is a dumb pass-through. It stores the header and notifies an observer.
-    // The observer is set by whoever manages the header (e.g., StackHeaderCoordinatorLayout).
-    // WeakReference avoids a cycle: CoordinatorLayout → StackScreen → observer → CoordinatorLayout.
-
     internal var headerConfiguration: StackHeaderConfiguration? = null
         private set
 
-    internal var headerConfigurationAttachObserver: WeakReference<StackHeaderConfigurationAttachObserver>? = null
+    internal var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
 
     internal fun attachHeaderConfiguration(header: StackHeaderConfiguration) {
         headerConfiguration = header
-        headerConfigurationAttachObserver?.get()?.onHeaderConfigurationChanged(header)
+        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigurationAttach(header)
     }
 
     internal fun detachHeaderConfiguration(header: StackHeaderConfiguration) {
         if (headerConfiguration === header) {
             headerConfiguration = null
-            headerConfigurationAttachObserver?.get()?.onHeaderConfigurationChanged(null)
+            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigurationAttach(null)
         }
     }
 

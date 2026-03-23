@@ -5,9 +5,9 @@ import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationAttachObserver
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -23,12 +23,23 @@ internal class StackHeaderCoordinatorLayout(
             stackScreen.updateStateIfNeeded(y = headerHeight)
         }
 
-    internal var stackScreenWrapper: FrameLayout
+    /**
+     * This callback is used to detect when header configuration is attached.
+     * This allows us to configure listener for header configuration changes.
+     */
+    private val onHeaderConfigurationAttach =
+        OnHeaderConfigurationAttachListener { config ->
+            handleHeaderConfigurationAttach(config)
+        }
 
     private var isHeaderUpdatePending = false
 
-    private val headerConfigChangeListener =
-        StackHeaderConfigurationChangeListener { config ->
+    /**
+     * This callback is used to listen for header configuration changes.
+     * We use [isHeaderUpdatePending] to batch changes and pass them to [headerCoordinator].
+     */
+    private val onHeaderConfigurationChange =
+        OnHeaderConfigurationChangeListener { config ->
             if (!isHeaderUpdatePending) {
                 isHeaderUpdatePending = true
                 post {
@@ -38,10 +49,7 @@ internal class StackHeaderCoordinatorLayout(
             }
         }
 
-    private val headerAttachObserver =
-        StackHeaderConfigurationAttachObserver { config ->
-            onHeaderConfigurationAvailable(config)
-        }
+    internal var stackScreenWrapper: FrameLayout
 
     init {
         // Needed when Transition API is in use to ensure that shadows do not disappear,
@@ -59,30 +67,14 @@ internal class StackHeaderCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        // Wire observer on StackScreen for header attach/detach notifications
-        stackScreen.headerConfigurationAttachObserver = WeakReference(headerAttachObserver)
-
-        // Handle case where header was already attached before this layout was created
-        stackScreen.headerConfiguration?.let { onHeaderConfigurationAvailable(it) }
+        // Setup header configuration attach listener. If header configuration is already available,
+        // use it immediately.
+        stackScreen.onHeaderConfigurationAttachListener = WeakReference(onHeaderConfigurationAttach)
+        stackScreen.headerConfiguration?.let { handleHeaderConfigurationAttach(it) }
     }
 
-    private fun onHeaderConfigurationAvailable(config: StackHeaderConfiguration?) {
-        if (config != null) {
-            // Wire header's own change listener so prop updates go directly to us
-            config.configurationChangeListener = WeakReference(headerConfigChangeListener)
-            applyHeaderConfiguration(config)
-        } else {
-            // Header removed — could reset to default state
-        }
-    }
-
-    /**
-     * Will crash in case parent is not StackContainer.
-     */
-    private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
-
-    // TODO: do we need to rely on parent here?
     internal fun maybeRequestLayoutContainer() {
+        // TODO: do we need to rely on parent here?
         post {
             stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()
         }
@@ -90,4 +82,16 @@ internal class StackHeaderCoordinatorLayout(
 
     internal fun applyHeaderConfiguration(config: StackHeaderConfigurationProviding) =
         headerCoordinator.applyHeaderConfiguration(this, config)
+
+    private fun handleHeaderConfigurationAttach(config: StackHeaderConfiguration?) {
+        if (config != null) {
+            config.onConfigurationChangeListener = WeakReference(onHeaderConfigurationChange)
+            applyHeaderConfiguration(config)
+        }
+    }
+
+    /**
+     * Will crash in case parent is not StackContainer.
+     */
+    private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
 }

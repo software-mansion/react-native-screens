@@ -47,7 +47,7 @@ open class StackHeaderSubviewViewManager :
                 "off" -> StackHeaderSubviewCollapseMode.OFF
                 "pin" -> StackHeaderSubviewCollapseMode.PIN
                 "parallax" -> StackHeaderSubviewCollapseMode.PARALLAX
-                else ->  throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview collapseMode: $value")
+                else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview collapseMode: $value")
             }
     }
 

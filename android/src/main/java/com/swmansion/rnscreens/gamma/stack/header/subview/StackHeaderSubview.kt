@@ -1,10 +1,10 @@
 package com.swmansion.rnscreens.gamma.stack.header.subview
 
 import android.annotation.SuppressLint
-import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import java.lang.ref.WeakReference
+import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor")
 class StackHeaderSubview(
@@ -13,17 +13,19 @@ class StackHeaderSubview(
     StackHeaderSubviewProviding {
     override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
 
-    override var collapseMode: StackHeaderSubviewCollapseMode = StackHeaderSubviewCollapseMode.PIN
-        set(value) {
-            if (field != value) {
-                field = value
-                propertyChangeListener?.get()?.onSubviewPropertyChanged()
-            }
+    override var collapseMode: StackHeaderSubviewCollapseMode by Delegates.observable(
+        StackHeaderSubviewCollapseMode.PIN,
+    ) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
         }
+    }
 
-    override val view: View get() = this
+    override val view = this
 
-    internal var propertyChangeListener: WeakReference<StackHeaderSubviewPropertyChangeListener>? = null
+    internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
+
+    private var lastNotifiedWidth: Int = 0
 
     override fun onLayout(
         changed: Boolean,
@@ -33,10 +35,14 @@ class StackHeaderSubview(
         bottom: Int,
     ) {
         super.onLayout(changed, left, top, right, bottom)
+        val newWidth = right - left
+        if (newWidth != lastNotifiedWidth) {
+            lastNotifiedWidth = newWidth
+            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
+        }
     }
 
-    // We want to rely on layout from Yoga instead of native Toolbar layout which tries to stretch
-    // subview to match parent.
+    // Rely on Yoga layout instead of native Toolbar layout which stretches subview to match parent.
     override fun onMeasure(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
