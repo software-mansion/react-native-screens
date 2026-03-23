@@ -145,7 +145,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  *
  * This method will advance state in case the selected view controller is repeated.
  *
- * This method MUST be called only in situations where `UITabBarController` state  has not been updated yet.
+ * This method MUST be called only in situations where `UITabBarController` state has not been updated yet.
  * Otherwise it'll progress the state incorrectly.
  *
  * @returns whether the state has been updated or not.
