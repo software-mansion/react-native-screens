@@ -72,7 +72,7 @@ function tabsActionChangeTabHandler(
 
   return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-    provenance: max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
+    provenance: Math.max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
   });
 }
 
@@ -211,6 +211,3 @@ function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean 
   return Platform.OS === 'ios' && routeKey === 'moreNavigationController';
 }
 
-function max(a: number, b: number): number {
-  return a > b ? a : b;
-}
