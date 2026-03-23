@@ -33,7 +33,21 @@ open class StackHeaderSubviewViewManager :
                 "left" -> StackHeaderSubviewType.LEFT
                 "center" -> StackHeaderSubviewType.CENTER
                 "right" -> StackHeaderSubviewType.RIGHT
+                "background" -> StackHeaderSubviewType.BACKGROUND
                 else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview type: $value")
+            }
+    }
+
+    override fun setCollapseMode(
+        view: StackHeaderSubview,
+        value: String?,
+    ) {
+        view.collapseMode =
+            when (value) {
+                "off" -> StackHeaderSubviewCollapseMode.OFF
+                "pin" -> StackHeaderSubviewCollapseMode.PIN
+                "parallax" -> StackHeaderSubviewCollapseMode.PARALLAX
+                else ->  throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview collapseMode: $value")
             }
     }
 

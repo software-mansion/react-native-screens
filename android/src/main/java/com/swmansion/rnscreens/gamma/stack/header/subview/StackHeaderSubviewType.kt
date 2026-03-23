@@ -4,4 +4,5 @@ enum class StackHeaderSubviewType {
     LEFT,
     CENTER,
     RIGHT,
+    BACKGROUND,
 }

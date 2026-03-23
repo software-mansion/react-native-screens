@@ -6,16 +6,18 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
-import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
-import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
 internal class StackHeaderCoordinator(
     context: Context,
@@ -24,14 +26,16 @@ internal class StackHeaderCoordinator(
     private var appBarLayout: StackHeaderAppBarLayout? = null
     private var currentHeaderType: StackHeaderType? = null
 
-    private var attachedLeftSubview: StackHeaderSubview? = null
+    private var attachedLeftSubview: StackHeaderSubviewProviding? = null
     private var lastLeftSubviewWidth: Int? = null
 
-    private var attachedCenterSubview: StackHeaderSubview? = null
+    private var attachedCenterSubview: StackHeaderSubviewProviding? = null
     private var lastCenterSubviewWidth: Int? = null
 
-    private var attachedRightSubview: StackHeaderSubview? = null
+    private var attachedRightSubview: StackHeaderSubviewProviding? = null
     private var lastRightSubviewWidth: Int? = null
+
+    private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
 
     private var managedTitleView: AppCompatTextView? = null
 
@@ -61,6 +65,7 @@ internal class StackHeaderCoordinator(
         if (config.leftSubview !== attachedLeftSubview) return true
         if (config.centerSubview !== attachedCenterSubview) return true
         if (config.rightSubview !== attachedRightSubview) return true
+        if (config.backgroundSubview !== attachedBackgroundSubview) return true
 
         // Collapsing headers need rebuild when subview sizes change
         // (MDC limitation: can't change custom views at runtime in CollapsingToolbarLayout)
@@ -73,18 +78,18 @@ internal class StackHeaderCoordinator(
     }
 
     private fun subviewWidthChanged(
-        subview: StackHeaderSubview?,
+        subview: StackHeaderSubviewProviding?,
         lastSubviewWidth: Int?,
     ): Boolean {
         if (subview == null && lastSubviewWidth == null) return false
         if (subview == null || lastSubviewWidth == null) return true
-        return subview.width != lastSubviewWidth
+        return subview.view.width != lastSubviewWidth
     }
 
     private fun snapshotSubviewWidths(config: StackHeaderConfigurationProviding) {
-        lastLeftSubviewWidth = config.leftSubview?.width
-        lastCenterSubviewWidth = config.centerSubview?.width
-        lastRightSubviewWidth = config.rightSubview?.width
+        lastLeftSubviewWidth = config.leftSubview?.view?.width
+        lastCenterSubviewWidth = config.centerSubview?.view?.width
+        lastRightSubviewWidth = config.rightSubview?.view?.width
     }
 
     // --- Full rebuild ---
@@ -100,7 +105,7 @@ internal class StackHeaderCoordinator(
         if (desiredType != null) {
             val appBar = StackHeaderAppBarLayout.create(wrappedContext, desiredType)
             appBarLayout = appBar
-            populateToolbar(appBar.toolbar, config)
+            populateToolbar(appBar, config)
             coordinatorLayout.addView(appBar, 0)
             appBar.requestApplyInsets()
         }
@@ -109,14 +114,15 @@ internal class StackHeaderCoordinator(
         attachedLeftSubview = config.leftSubview
         attachedCenterSubview = config.centerSubview
         attachedRightSubview = config.rightSubview
+        attachedBackgroundSubview = config.backgroundSubview
 
         snapshotSubviewWidths(config)
     }
 
     private fun teardown(coordinatorLayout: StackHeaderCoordinatorLayout) {
-        // Subviews need to be detached from toolbar before removing the app bar,
+        // Subviews need to be detached before removing the app bar,
         // otherwise they'd be destroyed with it
-        detachSubviewsFromToolbar()
+        detachSubviews()
         appBarLayout?.let { coordinatorLayout.removeView(it) }
         appBarLayout = null
         managedTitleView = null
@@ -124,21 +130,30 @@ internal class StackHeaderCoordinator(
         attachedLeftSubview = null
         attachedCenterSubview = null
         attachedRightSubview = null
+        attachedBackgroundSubview = null
     }
 
-    private fun detachSubviewsFromToolbar() {
-        val toolbar = appBarLayout?.toolbar ?: return
-        attachedLeftSubview?.let { toolbar.removeView(it) }
-        attachedCenterSubview?.let { toolbar.removeView(it) }
-        attachedRightSubview?.let { toolbar.removeView(it) }
+    private fun detachSubviews() {
+        val appBar = appBarLayout ?: return
+        val toolbar = appBar.toolbar
+
+        attachedLeftSubview?.let { toolbar.removeView(it.view) }
+        attachedCenterSubview?.let { toolbar.removeView(it.view) }
+        attachedRightSubview?.let { toolbar.removeView(it.view) }
+
+        if (appBar is StackHeaderAppBarLayout.Collapsing) {
+            attachedBackgroundSubview?.let { appBar.collapsingToolbarLayout.removeView(it.view) }
+        }
     }
 
     // --- Toolbar population (called during rebuild) ---
 
     private fun populateToolbar(
-        toolbar: MaterialToolbar,
+        appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
+        val toolbar = appBar.toolbar
+
         // Never use native title — we manage our own
         toolbar.title = null
 
@@ -147,30 +162,47 @@ internal class StackHeaderCoordinator(
         // so it gets the remaining space after left and right are accounted for.
 
         config.leftSubview?.let {
-            detachFromCurrentParent(it)
-            toolbar.addView(it, startGravityParams())
+            detachFromCurrentParent(it.view)
+            toolbar.addView(it.view, startGravityParams())
         }
 
         config.rightSubview?.let {
-            detachFromCurrentParent(it)
-            toolbar.addView(it, endGravityParams())
+            detachFromCurrentParent(it.view)
+            toolbar.addView(it.view, endGravityParams())
         }
 
-        if (config.centerSubview != null) {
-            if (appBarLayout is StackHeaderAppBarLayout.Small) {
+        val centerSubview = config.centerSubview
+        if (centerSubview != null) {
+            if (appBar is StackHeaderAppBarLayout.Small) {
                 toolbar.removeView(managedTitleView)
                 managedTitleView = null
-                detachFromCurrentParent(config.centerSubview)
-                toolbar.addView(config.centerSubview, centerGravityParams())
+                detachFromCurrentParent(centerSubview.view)
+                toolbar.addView(centerSubview.view, centerGravityParams())
             } else {
                 Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
             }
-        } else if (appBarLayout is StackHeaderAppBarLayout.Small) {
+        } else if (appBar is StackHeaderAppBarLayout.Small) {
             // Small header: managed title view (we can't use native title
             // because we can't insert custom views before it)
             val titleView = createManagedTitleView(toolbar)
             managedTitleView = titleView
             toolbar.addView(titleView)
+        }
+
+        // Background subview goes into CollapsingToolbarLayout, behind the toolbar
+        val backgroundSubview = config.backgroundSubview
+        if (appBar is StackHeaderAppBarLayout.Collapsing && backgroundSubview != null) {
+            detachFromCurrentParent(backgroundSubview.view)
+            backgroundSubview.view.fitsSystemWindows = true
+            appBar.collapsingToolbarLayout.addView(
+                backgroundSubview.view,
+                0,
+                CollapsingToolbarLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
+                    collapseMode = toNativeCollapseMode(backgroundSubview.collapseMode)
+                },
+            )
+        } else if (backgroundSubview != null) {
+            Log.e(TAG, "[RNScreens] Background subview is supported only for collapsing header types (medium, large).")
         }
     }
 
@@ -237,11 +269,32 @@ internal class StackHeaderCoordinator(
 
             is StackHeaderAppBarLayout.Collapsing -> {
                 appBar.collapsingToolbarLayout.title = config.title
+                applyBackgroundCollapseMode(config)
             }
         }
     }
 
-    // --- Content behavior (unchanged) ---
+    private fun applyBackgroundCollapseMode(
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val backgroundSubview = config.backgroundSubview ?: return
+        val params = backgroundSubview.view.layoutParams as? CollapsingToolbarLayout.LayoutParams ?: return
+        val desired = toNativeCollapseMode(backgroundSubview.collapseMode)
+        if (params.collapseMode != desired) {
+            params.collapseMode = desired
+        }
+    }
+
+    // --- Collapse mode mapping ---
+
+    private fun toNativeCollapseMode(mode: StackHeaderSubviewCollapseMode): Int =
+        when (mode) {
+            StackHeaderSubviewCollapseMode.OFF -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_OFF
+            StackHeaderSubviewCollapseMode.PIN -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+            StackHeaderSubviewCollapseMode.PARALLAX -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+        }
+
+    // --- Content behavior ---
 
     private fun applyContentBehavior(
         coordinatorLayout: StackHeaderCoordinatorLayout,

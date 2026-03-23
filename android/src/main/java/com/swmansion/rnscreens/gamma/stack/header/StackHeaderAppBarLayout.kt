@@ -58,15 +58,6 @@ internal sealed class StackHeaderAppBarLayout(
         context: Context,
         val type: StackHeaderType,
     ) : StackHeaderAppBarLayout(context) {
-        init {
-            require(
-                type == StackHeaderType.MEDIUM ||
-                    type == StackHeaderType.LARGE,
-            ) {
-                "[RNScreens] Collapsing StackScreenAppBarLayout must be MEDIUM or LARGE type."
-            }
-        }
-
         override val toolbar =
             MaterialToolbar(context).apply {
                 elevation = 0f
@@ -101,18 +92,17 @@ internal sealed class StackHeaderAppBarLayout(
                             scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
 //                            scrollFlags = SCROLL_FLAG_NO_SCROLL
                         }
-//                    addView(
-//                        View(context).apply {
-//                            layoutParams = CollapsingToolbarLayout.LayoutParams(1080, 900)
-//                            setBackgroundColor(Color.BLUE)
-//                            fitsSystemWindows = true
-//                        },
-//                    )
                     addView(toolbar)
                 }
             }
 
         init {
+            require(
+                type == StackHeaderType.MEDIUM ||
+                    type == StackHeaderType.LARGE,
+            ) {
+                "[RNScreens] Collapsing StackScreenAppBarLayout must be MEDIUM or LARGE type."
+            }
             addView(collapsingToolbarLayout)
         }
     }

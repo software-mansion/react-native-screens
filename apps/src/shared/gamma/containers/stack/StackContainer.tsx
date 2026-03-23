@@ -20,7 +20,8 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
+import LongText from '../../../../../src/shared/LongText';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -86,7 +87,19 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                 <Stack.Header.Configuration
                   title="Hello, World! Hello, World! Hello, World! Hello, World!"
                   type="large">
-                  <Stack.Header.Subview type="left" key="left">
+                  <Stack.Header.Subview
+                    type="background"
+                    collapseMode="parallax">
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 120,
+                        backgroundColor: 'blue',
+                      }}>
+                      <LongText />
+                    </View>
+                  </Stack.Header.Subview>
+                  {/*<Stack.Header.Subview type="left" key="left">
                     <Text>left</Text>
                   </Stack.Header.Subview>
                   <Stack.Header.Subview type="center" key="center">
@@ -94,7 +107,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                   </Stack.Header.Subview>
                   <Stack.Header.Subview type="right" key="right">
                     <Text>rightvery</Text>
-                  </Stack.Header.Subview>
+                  </Stack.Header.Subview>*/}
                 </Stack.Header.Configuration>
               </StackNavigationContext.Provider>
             </Stack.Screen>

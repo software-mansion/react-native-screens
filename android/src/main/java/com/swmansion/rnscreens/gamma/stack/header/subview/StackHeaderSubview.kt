@@ -1,14 +1,29 @@
 package com.swmansion.rnscreens.gamma.stack.header.subview
 
 import android.annotation.SuppressLint
+import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
 class StackHeaderSubview(
     val reactContext: ReactContext,
-) : ReactViewGroup(reactContext) {
-    var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
+) : ReactViewGroup(reactContext),
+    StackHeaderSubviewProviding {
+    override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
+
+    override var collapseMode: StackHeaderSubviewCollapseMode = StackHeaderSubviewCollapseMode.PIN
+        set(value) {
+            if (field != value) {
+                field = value
+                propertyChangeListener?.get()?.onSubviewPropertyChanged()
+            }
+        }
+
+    override val view: View get() = this
+
+    internal var propertyChangeListener: WeakReference<StackHeaderSubviewPropertyChangeListener>? = null
 
     override fun onLayout(
         changed: Boolean,

@@ -10,7 +10,13 @@ function StackHeaderSubview(props: StackHeaderSubviewProps) {
   return (
     <StackHeaderSubviewNativeComponent
       collapsable={false}
-      style={{ position: 'absolute', left: 0, top: 0 }}
+      style={
+        filteredProps.type !== 'background' && {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+        }
+      }
       {...filteredProps}>
       {children}
     </StackHeaderSubviewNativeComponent>
