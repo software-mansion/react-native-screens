@@ -1,6 +1,6 @@
 import React from 'react';
 import type {
-  TabChangeEvent,
+  TabSelectedEvent,
   TabsHostProps,
   TabsScreenProps,
 } from 'react-native-screens';
@@ -60,7 +60,7 @@ export type TabsNavigationActionChangeTab = {
 export type TabsNavigationActionNativeChangeTab = {
   type: 'native-tab-change';
   routeKey: string;
-  nativeEvent: TabChangeEvent;
+  nativeEvent: TabSelectedEvent;
 };
 
 export type TabsNavigationActionSetOptions = {

@@ -253,12 +253,12 @@ internal class TabsContainer(
         }
 
         check(hasPendingOperation) { "[RNScreens] Attempt to update container with empty state and no pending update" }
-        check(pendingOperation is TabChangeOp)
-        val tabChangeOp = pendingOperation as TabChangeOp
+        check(pendingOperation is TabSelectOp)
+        val tabSelectOp = pendingOperation as TabSelectOp
 
         val nextSelectedMenuItemId =
-            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabChangeOp.navState.selectedKey))) {
-                "[RNScreens] Failed to find Menu Item for screenKey: ${tabChangeOp.navState.selectedKey}"
+            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabSelectOp.navState.selectedKey))) {
+                "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.navState.selectedKey}"
             }
 
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
@@ -373,8 +373,7 @@ internal class TabsContainer(
         appearanceCoordinator.updateTabAppearance(themedContext, this)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? =
-        tabsModel.getOrNull(fragmentIndexForMenuItemId(itemId))
+    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.getOrNull(fragmentIndexForMenuItemId(itemId))
 
     private fun getMenuItemIdForFragment(tabsScreenFragment: TabsScreenFragment): Int? =
         tabsModel.indexOfFirst { it === tabsScreenFragment }.takeIf { it != -1 }?.let {
@@ -396,11 +395,9 @@ internal class TabsContainer(
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
-    override fun addColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.addColorSchemeListener(listener)
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
 
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.removeColorSchemeListener(listener)
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     override fun onAppearanceChanged(tabsScreen: TabsScreen) {
         if (selectedTab.tabsScreen === tabsScreen) {
@@ -427,11 +424,10 @@ internal class TabsContainer(
     override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
         tabsModel.find {
             it.tabsScreen ===
-                    tabsScreen
+                tabsScreen
         }
 
-    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? =
-        tabsModel.find { it.requireScreenKey == screenKey }
+    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
 
     private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
         checkNotNull(getFragmentForScreenKey(screenKey)) {
@@ -490,8 +486,7 @@ internal class TabsContainer(
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets =
-        EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
     private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
         if (tabBarRespectsIMEInsets) {
@@ -528,8 +523,7 @@ internal class TabsContainerInvalidationFlags(
     var isNavigationMenuAppearanceInvalidated: Boolean = false,
     var isNavigationMenuStructureInvalidated: Boolean = false,
 ) {
-    internal fun any(): Boolean =
-        isSelectedTabInvalidated || isNavigationMenuAppearanceInvalidated || isNavigationMenuStructureInvalidated
+    internal fun any(): Boolean = isSelectedTabInvalidated || isNavigationMenuAppearanceInvalidated || isNavigationMenuStructureInvalidated
 
     internal fun invalidateAll() {
         isSelectedTabInvalidated = true
