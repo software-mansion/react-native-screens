@@ -201,7 +201,7 @@ function ScreenStackTabs() {
 
   return (
     <NavigationIndependentTree>
-      <TabsContainer initialFocusedName="Auto" routeConfigs={routeConfigs} />
+      <TabsContainer defaultRouteName="Auto" routeConfigs={routeConfigs} />
     </NavigationIndependentTree>
   );
 }

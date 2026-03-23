@@ -278,7 +278,7 @@ function App() {
       }}>
       <TabsContainer
         routeConfigs={TAB_CONFIGS}
-        initialFocusedName="Tab1"
+        defaultRouteName="Tab1"
         ios={{
           tabBarTintColor: Colors.YellowLight100,
           tabBarMinimizeBehavior: 'onScrollDown',

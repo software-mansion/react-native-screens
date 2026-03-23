@@ -87,10 +87,10 @@ export type TabsContainerProps = Omit<
 > & {
   routeConfigs: TabRouteConfig[];
   /**
-   * Name of the tab that should be focused initially.
+   * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
    */
-  initialFocusedName?: string;
+  defaultRouteName?: string;
   /**
    * Whether to control navigation state in JS.
    * Passed to Tabs.Host as experimentalControlNavigationStateInJS.
