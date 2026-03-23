@@ -50,6 +50,18 @@ internal class StackHeaderCoordinator(
 
     internal fun applyHeaderConfiguration(
         coordinatorLayout: StackHeaderCoordinatorLayout,
+        config: StackHeaderConfigurationProviding?,
+    ) {
+        if (config != null) {
+            updateHeader(coordinatorLayout, config)
+        } else {
+            removeHeader(coordinatorLayout)
+        }
+        coordinatorLayout.maybeRequestLayoutContainer()
+    }
+
+    private fun updateHeader(
+        coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ) {
         if (requiresRebuild(config)) {
@@ -57,7 +69,11 @@ internal class StackHeaderCoordinator(
         }
         applyProps(config)
         applyContentBehavior(coordinatorLayout, config)
-        coordinatorLayout.maybeRequestLayoutContainer()
+    }
+
+    private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
+        teardown(coordinatorLayout)
+        removeContentBehavior(coordinatorLayout)
     }
 
     // region Rebuild detection
@@ -272,19 +288,28 @@ internal class StackHeaderCoordinator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ) {
-        val stackScreenWrapper = coordinatorLayout.stackScreenWrapper
-        val params = stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
         val needsBehavior = appBarLayout != null && !config.transparent && !config.hidden
-        val hasBehavior = params.behavior != null
-        if (needsBehavior != hasBehavior) {
-            params.behavior =
-                if (needsBehavior) {
-                    StackHeaderScrollingViewBehavior(onHeaderHeightChanged)
-                } else {
-                    onHeaderHeightChanged(0)
-                    null
-                }
-            stackScreenWrapper.layoutParams = params
+        if (needsBehavior) {
+            setContentBehavior(coordinatorLayout)
+        } else {
+            removeContentBehavior(coordinatorLayout)
+        }
+    }
+
+    private fun setContentBehavior(coordinatorLayout: StackHeaderCoordinatorLayout) {
+        val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
+        if (params.behavior == null) {
+            params.behavior = StackHeaderScrollingViewBehavior(onHeaderHeightChanged)
+            coordinatorLayout.stackScreenWrapper.layoutParams = params
+        }
+    }
+
+    private fun removeContentBehavior(coordinatorLayout: StackHeaderCoordinatorLayout) {
+        val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
+        if (params.behavior != null) {
+            params.behavior = null
+            coordinatorLayout.stackScreenWrapper.layoutParams = params
+            onHeaderHeightChanged(0)
         }
     }
 

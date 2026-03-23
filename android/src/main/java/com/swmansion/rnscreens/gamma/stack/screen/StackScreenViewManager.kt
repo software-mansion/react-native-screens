@@ -54,6 +54,32 @@ class StackScreenViewManager :
         }
     }
 
+    // Header configuration is not added as a native child (it's stored as a reference
+    // on StackScreen), but React tracks it by index. Since it's always the last child
+    // in the React tree, we only need to handle the last index specially.
+    override fun removeViewAt(
+        parent: StackScreen,
+        index: Int,
+    ) {
+        if (index == getChildCount(parent) - 1 && parent.headerConfiguration != null) {
+            parent.headerConfiguration?.let { parent.detachHeaderConfiguration(it) }
+        } else {
+            super.removeViewAt(parent, index)
+        }
+    }
+
+    override fun getChildCount(parent: StackScreen): Int = parent.childCount + if (parent.headerConfiguration != null) 1 else 0
+
+    override fun getChildAt(
+        parent: StackScreen,
+        index: Int,
+    ): View? {
+        if (index == parent.childCount && parent.headerConfiguration != null) {
+            return parent.headerConfiguration
+        }
+        return parent.getChildAt(index)
+    }
+
     override fun addEventEmitters(
         reactContext: ThemedReactContext,
         view: StackScreen,

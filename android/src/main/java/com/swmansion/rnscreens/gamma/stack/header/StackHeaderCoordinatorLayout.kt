@@ -8,7 +8,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import java.lang.ref.WeakReference
@@ -39,15 +38,19 @@ internal class StackHeaderCoordinatorLayout(
      * We use [isHeaderUpdatePending] to batch changes and pass them to [headerCoordinator].
      */
     private val onHeaderConfigurationChange =
-        OnHeaderConfigurationChangeListener { config ->
+        OnHeaderConfigurationChangeListener {
             if (!isHeaderUpdatePending) {
                 isHeaderUpdatePending = true
+                // Read currentConfiguration when the runnable executes, not when it's posted,
+                // to avoid applying a stale config that was swapped out in the meantime.
                 post {
                     isHeaderUpdatePending = false
-                    applyHeaderConfiguration(config)
+                    headerCoordinator.applyHeaderConfiguration(this, currentConfiguration)
                 }
             }
         }
+
+    private var currentConfiguration: StackHeaderConfiguration? = null
 
     internal var stackScreenWrapper: FrameLayout
 
@@ -67,10 +70,8 @@ internal class StackHeaderCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        // Setup header configuration attach listener. If header configuration is already available,
-        // use it immediately.
         stackScreen.onHeaderConfigurationAttachListener = WeakReference(onHeaderConfigurationAttach)
-        stackScreen.headerConfiguration?.let { handleHeaderConfigurationAttach(it) }
+        handleHeaderConfigurationAttach(stackScreen.headerConfiguration)
     }
 
     internal fun maybeRequestLayoutContainer() {
@@ -80,14 +81,15 @@ internal class StackHeaderCoordinatorLayout(
         }
     }
 
-    internal fun applyHeaderConfiguration(config: StackHeaderConfigurationProviding) =
-        headerCoordinator.applyHeaderConfiguration(this, config)
-
     private fun handleHeaderConfigurationAttach(config: StackHeaderConfiguration?) {
+        // Disconnect old configuration to prevent spurious updates from a detached config
+        currentConfiguration?.onConfigurationChangeListener = null
+        currentConfiguration = config
+
         if (config != null) {
             config.onConfigurationChangeListener = WeakReference(onHeaderConfigurationChange)
-            applyHeaderConfiguration(config)
         }
+        headerCoordinator.applyHeaderConfiguration(this, config)
     }
 
     /**
