@@ -1,19 +1,20 @@
 #pragma once
 
-#import <React/RCTConvert.h>
-#import <React/RCTViewManager.h>
-#import "RNSEnums.h"
-
 #if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
 #endif // __cplusplus
 
+#import <React/RCTConvert.h>
+#import <React/RCTViewManager.h>
+#import "RNSEnums.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
+@interface RNSScreenStackHeaderSubview :
 #if defined(__cplusplus)
-@interface RNSScreenStackHeaderSubview : RCTViewComponentView
+    RCTViewComponentView
 #else
-@interface RNSScreenStackHeaderSubview : UIView
+    UIView
 #endif // __cplusplus
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;

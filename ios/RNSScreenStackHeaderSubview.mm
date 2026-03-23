@@ -3,12 +3,14 @@
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#import <React/RCTConversions.h>
-#import <React/RCTFabricComponentsPlugins.h>
 #import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+
+#import <React/RCTConversions.h>
+#import <React/RCTFabricComponentsPlugins.h>
+
 #import <rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 
 namespace react = facebook::react;
