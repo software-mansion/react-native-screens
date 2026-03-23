@@ -13,6 +13,7 @@ export type {
 
 export type { TabsNavigationContextPayload } from './contexts/TabsNavigationContext';
 export type { TabsHostConfigContextPayload } from './contexts/TabsHostConfigContext';
+
 export { useTabsNavigationContext } from './hooks/useTabsNavigationContext';
 export { useTabsHostConfig } from './hooks/useTabsHostConfig';
 
