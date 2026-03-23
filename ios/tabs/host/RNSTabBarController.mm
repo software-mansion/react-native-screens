@@ -258,7 +258,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     return NO;
   }
 
-  return ![self shouldPreventNativeTabChange];
+  return ![self shouldPreventNativeTabSelection];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -300,7 +300,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (BOOL)shouldPreventNativeTabChange
+- (BOOL)shouldPreventNativeTabSelection
 {
   // This handles the tabsHostComponentView nullability
   return [self.tabsHostComponentView experimental_controlNavigationStateInJS] ?: NO;
