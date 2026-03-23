@@ -160,7 +160,7 @@ export function determineInitialTabsContainerState(
   let selectedRouteKey: string;
   if (initialFocusedName != null) {
     const matchingRoute = routes.find(r => r.name === initialFocusedName);
-    if (matchingRoute == null) {
+    if (!matchingRoute) {
       throw new Error(
         `[Tabs] initialFocusedName "${initialFocusedName}" does not match any route config name`,
       );
