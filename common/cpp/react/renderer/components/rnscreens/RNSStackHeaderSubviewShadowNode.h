@@ -4,6 +4,7 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include <react/renderer/core/LayoutContext.h>
 #include "RNSStackHeaderSubviewState.h"
 
 namespace facebook::react {
@@ -20,9 +21,15 @@ class JSI_EXPORT RNSStackHeaderSubviewShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
-#ifdef ANDROID
+#pragma mark - ShadowNode overrides
+
   Point getContentOriginOffset(bool includeTransform) const override;
-#endif // ANDROID
+
+  void layout(LayoutContext layoutContext) override;
+
+#pragma mark - Custom interface
+ private:
+  void applyFrameCorrections();
 };
 
 } // namespace facebook::react

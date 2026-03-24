@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.subview
 
 enum class StackHeaderSubviewType {
     BACKGROUND,
-    LEFT,
+    LEADING,
     CENTER,
-    RIGHT,
+    TRAILING,
 }

@@ -96,6 +96,8 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                       style={{
                         backgroundColor: 'blue',
                         flex: 1,
+                        // width: '50%',
+                        // height: '100%',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
@@ -104,9 +106,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                       </PressableWithFeedback>
                     </View>
                   </Stack.Header.Subview>
-                  <Stack.Header.Subview type="left" key="left">
+                  <Stack.Header.Subview type="leading" key="leading">
                     <PressableWithFeedback>
-                      <Text>left</Text>
+                      <Text>leading</Text>
                     </PressableWithFeedback>
                   </Stack.Header.Subview>
                   <Stack.Header.Subview type="center" key="center">
@@ -114,9 +116,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                       <Text>center</Text>
                     </PressableWithFeedback>
                   </Stack.Header.Subview>
-                  <Stack.Header.Subview type="right" key="right">
+                  <Stack.Header.Subview type="trailing" key="trailing">
                     <PressableWithFeedback>
-                      <Text>right</Text>
+                      <Text>trailing</Text>
                     </PressableWithFeedback>
                   </Stack.Header.Subview>
                 </Stack.Header.Configuration>

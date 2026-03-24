@@ -7,10 +7,12 @@ internal interface StackHeaderConfigurationProviding {
     val title: String
     val hidden: Boolean
     val transparent: Boolean
-    val leftSubview: StackHeaderSubviewProviding?
+    val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
-    val rightSubview: StackHeaderSubviewProviding?
+    val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
+
+    val isRtl: Boolean
 
     fun updateHeaderFrame(width: Int, height: Int, contentOffsetY: Int)
 }

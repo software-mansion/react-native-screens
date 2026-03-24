@@ -14,7 +14,7 @@ function StackHeaderSubview(props: StackHeaderSubviewProps) {
       style={
         filteredProps.type === 'background'
           ? StyleSheet.absoluteFill
-          : { position: 'absolute', left: 0, top: 0 }
+          : { position: 'absolute', start: 0, top: 0 }
       }
       {...filteredProps}>
       {children}

@@ -1,10 +1,10 @@
 import { ViewProps } from 'react-native';
 
 export type StackHeaderSubviewTypeAndroid =
-  | 'left'
+  | 'background'
+  | 'leading'
   | 'center'
-  | 'right'
-  | 'background';
+  | 'trailing';
 
 export type StackHeaderSubviewBackgroundCollapseModeAndroid =
   | 'off'

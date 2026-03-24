@@ -32,9 +32,9 @@ open class StackHeaderSubviewViewManager :
     ) {
         view.type =
             when (value) {
-                "left" -> StackHeaderSubviewType.LEFT
+                "leading" -> StackHeaderSubviewType.LEADING
                 "center" -> StackHeaderSubviewType.CENTER
-                "right" -> StackHeaderSubviewType.RIGHT
+                "trailing" -> StackHeaderSubviewType.TRAILING
                 "background" -> StackHeaderSubviewType.BACKGROUND
                 else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid StackHeaderSubview type: $value")
             }

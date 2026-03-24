@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header.configuration
 
 import android.annotation.SuppressLint
+import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
@@ -22,12 +23,15 @@ class StackHeaderConfiguration(
 
     override var backgroundSubview: StackHeaderSubview? = null
         private set
-    override var leftSubview: StackHeaderSubview? = null
+    override var leadingSubview: StackHeaderSubview? = null
         private set
     override var centerSubview: StackHeaderSubview? = null
         private set
-    override var rightSubview: StackHeaderSubview? = null
+    override var trailingSubview: StackHeaderSubview? = null
         private set
+
+    override val isRtl: Boolean
+        get() = layoutDirection == LayoutDirection.RTL
 
     private val shadowStateProxy = ShadowStateProxy()
 
@@ -56,9 +60,9 @@ class StackHeaderConfiguration(
     internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
         when (headerSubview.type) {
             StackHeaderSubviewType.BACKGROUND -> backgroundSubview = headerSubview
-            StackHeaderSubviewType.LEFT -> leftSubview = headerSubview
+            StackHeaderSubviewType.LEADING -> leadingSubview = headerSubview
             StackHeaderSubviewType.CENTER -> centerSubview = headerSubview
-            StackHeaderSubviewType.RIGHT -> rightSubview = headerSubview
+            StackHeaderSubviewType.TRAILING -> trailingSubview = headerSubview
         }
         headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
         notifyConfigurationChanged()
@@ -68,9 +72,9 @@ class StackHeaderConfiguration(
         headerSubview.onStackHeaderSubviewChangeListener = null
         when (headerSubview.type) {
             StackHeaderSubviewType.BACKGROUND -> backgroundSubview = null
-            StackHeaderSubviewType.LEFT -> leftSubview = null
+            StackHeaderSubviewType.LEADING -> leadingSubview = null
             StackHeaderSubviewType.CENTER -> centerSubview = null
-            StackHeaderSubviewType.RIGHT -> rightSubview = null
+            StackHeaderSubviewType.TRAILING -> trailingSubview = null
         }
         notifyConfigurationChanged()
     }
@@ -81,14 +85,14 @@ class StackHeaderConfiguration(
 
     internal fun removeAllConfigSubviews() {
         backgroundSubview?.let { removeConfigSubview(it) }
-        leftSubview?.let { removeConfigSubview(it) }
+        leadingSubview?.let { removeConfigSubview(it) }
         centerSubview?.let { removeConfigSubview(it) }
-        rightSubview?.let { removeConfigSubview(it) }
+        trailingSubview?.let { removeConfigSubview(it) }
     }
 
     internal val configSubviewsCount: Int
-        get() = listOfNotNull(backgroundSubview, leftSubview, centerSubview, rightSubview).size
+        get() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).size
 
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
-        listOfNotNull(backgroundSubview, leftSubview, centerSubview, rightSubview).getOrNull(index)
+        listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
 }

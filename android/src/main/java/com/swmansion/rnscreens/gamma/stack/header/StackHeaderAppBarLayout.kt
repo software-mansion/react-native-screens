@@ -10,7 +10,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
@@ -71,7 +70,7 @@ internal sealed class StackHeaderAppBarLayout(
                         }
             }
 
-        val collapsingToolbarLayout: CollapsingToolbarLayout =
+        internal val collapsingToolbarLayout: CollapsingToolbarLayout =
             run {
                 val (styleAttr, sizeAttr) =
                     when (type) {

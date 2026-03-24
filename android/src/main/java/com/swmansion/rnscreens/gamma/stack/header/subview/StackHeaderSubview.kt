@@ -15,7 +15,7 @@ class StackHeaderSubview(
     override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
 
     override var collapseMode: StackHeaderSubviewCollapseMode by Delegates.observable(
-        StackHeaderSubviewCollapseMode.PARALLAX,
+        StackHeaderSubviewCollapseMode.OFF,
     ) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
