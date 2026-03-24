@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -10,6 +11,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
@@ -28,6 +30,55 @@ class StackScreenViewManager :
     override fun getDelegate() = delegate
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
+
+    override fun addView(
+        parent: StackScreen,
+        child: View,
+        index: Int,
+    ) {
+        if (child is StackHeaderConfiguration) {
+            parent.attachHeaderConfiguration(child)
+        } else {
+            super.addView(parent, child, index)
+        }
+    }
+
+    override fun removeView(
+        parent: StackScreen,
+        view: View,
+    ) {
+        if (view is StackHeaderConfiguration) {
+            parent.detachHeaderConfiguration(view)
+        } else {
+            super.removeView(parent, view)
+        }
+    }
+
+    // Header configuration is not added as a native child (it's stored as a reference
+    // on StackScreen), but React tracks it by index. Since it's always the last child
+    // in the React tree, we only need to handle the last index specially.
+    override fun removeViewAt(
+        parent: StackScreen,
+        index: Int,
+    ) {
+        if (index == getChildCount(parent) - 1 && parent.headerConfiguration != null) {
+            parent.headerConfiguration?.let { parent.detachHeaderConfiguration(it) }
+        } else {
+            super.removeViewAt(parent, index)
+        }
+    }
+
+    override fun getChildCount(parent: StackScreen): Int = parent.childCount + if (parent.headerConfiguration != null) 1 else 0
+
+    override fun getChildAt(
+        parent: StackScreen,
+        index: Int,
+    ): View? {
+        if (index == parent.childCount && parent.headerConfiguration != null) {
+            return parent.headerConfiguration
+        }
+        return parent.getChildAt(index)
+    }
 
     override fun addEventEmitters(
         reactContext: ThemedReactContext,

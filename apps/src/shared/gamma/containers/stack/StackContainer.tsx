@@ -20,6 +20,9 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { Text, View } from 'react-native';
+import LongText from '../../../../../src/shared/LongText';
+import PressableWithFeedback from '../../../../../src/shared/PressableWithFeedback';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -82,6 +85,43 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                <Stack.Header.Configuration
+                  title="Hello, World! Hello, World! Hello, World! Hello, World!"
+                  type="large">
+                  <Stack.Header.Subview
+                    type="background"
+                    collapseMode="parallax"
+                    key="background">
+                    <View
+                      style={{
+                        backgroundColor: 'blue',
+                        flex: 1,
+                        // width: '50%',
+                        // height: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <PressableWithFeedback>
+                        <Text>Pressable</Text>
+                      </PressableWithFeedback>
+                    </View>
+                  </Stack.Header.Subview>
+                  <Stack.Header.Subview type="leading" key="leading">
+                    <PressableWithFeedback>
+                      <Text>leading</Text>
+                    </PressableWithFeedback>
+                  </Stack.Header.Subview>
+                  <Stack.Header.Subview type="center" key="center">
+                    <PressableWithFeedback>
+                      <Text>center</Text>
+                    </PressableWithFeedback>
+                  </Stack.Header.Subview>
+                  <Stack.Header.Subview type="trailing" key="trailing">
+                    <PressableWithFeedback>
+                      <Text>trailing</Text>
+                    </PressableWithFeedback>
+                  </Stack.Header.Subview>
+                </Stack.Header.Configuration>
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );
