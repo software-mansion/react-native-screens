@@ -113,13 +113,7 @@ open class CustomToolbar(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
 
-        resetInsetsState()
-    }
-
-    private fun resetInsetsState() {
-        insetsAppliedFromListener = false
-        lastInsets = InsetsCompat.NONE
-        applyExactPadding(0, 0, 0, 0)
+        clearAppliedInsetsAndPadding()
     }
 
     private fun applyDecorViewTopInset() {
@@ -167,7 +161,7 @@ open class CustomToolbar(
         val shouldHandleTopInset = if (config.legacyTopInsetBehavior) true else config.consumeTopInset
 
         if (!shouldHandleTopInset) {
-            resetInsetsState()
+            clearAppliedInsetsAndPadding()
             return unhandledInsets
         }
 
@@ -226,6 +220,12 @@ open class CustomToolbar(
     ) {
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
+    }
+
+    private fun clearAppliedInsetsAndPadding() {
+        insetsAppliedFromListener = false
+        lastInsets = InsetsCompat.NONE
+        applyExactPadding(0, 0, 0, 0)
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
