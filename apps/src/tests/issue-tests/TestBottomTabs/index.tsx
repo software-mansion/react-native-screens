@@ -10,8 +10,8 @@ import ConfigWrapperContext, {
 } from '../../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../../shared/gamma/containers/tabs/TabsContainer';
+  type TabRouteConfig,
+} from '../../../shared/gamma/containers/tabs';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../../shared/styling/Colors';
 
@@ -44,8 +44,10 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarItemBadgeBackgroundColor: Colors.RedDark40,
 };
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
+    name: 'Tab1',
+    Component: Tab1,
     options: {
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
@@ -85,15 +87,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'First Tab Screen',
       tabBarItemTestID: 'tab-item-1-id',
       tabBarItemAccessibilityLabel: 'First Tab Item',
-      screenKey: 'Tab1',
       title: 'Tab1',
-      isFocused: true,
     },
-    component: Tab1,
   },
   {
+    name: 'Tab2',
+    Component: Tab2,
     options: {
-      screenKey: 'Tab2',
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
       accessibilityLabel: 'Second Tab Screen',
@@ -167,7 +167,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       title: 'Tab2',
     },
-    component: Tab2,
     safeAreaConfiguration: {
       edges: {
         top: true,
@@ -176,8 +175,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
     },
   },
   {
+    name: 'Tab3',
+    Component: Tab3,
     options: {
-      screenKey: 'Tab3',
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
       accessibilityLabel: 'Third Tab Screen',
@@ -222,11 +222,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // systemItem: 'contacts', // iOS specific
       // systemItem: 'history', // iOS specific
     },
-    component: Tab3,
   },
   {
+    name: 'Tab4',
+    Component: Tab4,
     options: {
-      screenKey: 'Tab4',
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
@@ -262,7 +262,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: Tab4,
   },
 ];
 
@@ -278,7 +277,8 @@ function App() {
         setConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
+        initialFocusedName="Tab1"
         ios={{
           tabBarTintColor: Colors.YellowLight100,
           tabBarMinimizeBehavior: 'onScrollDown',

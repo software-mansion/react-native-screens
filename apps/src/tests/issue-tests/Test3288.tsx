@@ -12,8 +12,8 @@ import ConfigWrapperContext, {
 } from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
+  type TabRouteConfig,
+} from '../../shared/gamma/containers/tabs';
 import {
   ColorValue,
   Pressable,
@@ -133,10 +133,11 @@ function TestScreen() {
   );
 }
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
+    name: 'Tab1',
+    Component: Config,
     options: {
-      screenKey: 'Tab1',
       title: 'Config',
       ios: {
         icon: {
@@ -145,11 +146,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: Config,
   },
   {
+    name: 'Tab2',
+    Component: TestScreen,
     options: {
-      screenKey: 'Tab2',
       title: 'Test',
       ios: {
         icon: {
@@ -158,7 +159,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: TestScreen,
   },
 ];
 
@@ -227,7 +227,7 @@ function Tabs() {
         setConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,
           bottomAccessory: bottomAccessoryConfig.shown

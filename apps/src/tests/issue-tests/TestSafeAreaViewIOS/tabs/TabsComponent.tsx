@@ -1,7 +1,7 @@
 import {
   TabsContainer,
-  TabConfiguration,
-} from '../../../../shared/gamma/containers/tabs/TabsContainer';
+  TabRouteConfig,
+} from '../../../../shared/gamma/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -15,10 +15,11 @@ import ConfigTab from './ConfigTab';
 export default function TabsComponent() {
   const { config } = useTabsSAVExampleContext();
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'config',
+      Component: ConfigTab,
       options: {
-        screenKey: 'config',
         title: 'Config',
         ios: {
           icon: {
@@ -27,11 +28,11 @@ export default function TabsComponent() {
           },
         },
       },
-      component: ConfigTab,
     },
     {
+      name: 'test',
+      Component: TestTab,
       options: {
-        screenKey: 'test',
         title: 'Test',
         ios: {
           icon: {
@@ -44,7 +45,6 @@ export default function TabsComponent() {
               : undefined,
         },
       },
-      component: TestTab,
       safeAreaConfiguration: {
         edges: {
           top: config.safeAreaTopEdge,
@@ -67,7 +67,7 @@ export default function TabsComponent() {
         setConfig: setTabsConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,
         }}

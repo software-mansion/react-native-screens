@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
+import { TabsContainer } from '../../../shared/gamma/containers/tabs';
 import { Scenario } from '../../shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
@@ -79,11 +79,11 @@ function TabScreen() {
 export function App() {
   return (
     <TabsContainer
-      tabConfigs={[
+      routeConfigs={[
         {
-          component: TabScreen,
+          name: 'Tab1',
+          Component: TabScreen,
           options: {
-            screenKey: 'Tab1',
             title: 'Tab1',
             ios: {
               icon: {
@@ -111,9 +111,9 @@ export function App() {
           },
         },
         {
-          component: TabScreen,
+          name: 'Tab2',
+          Component: TabScreen,
           options: {
-            screenKey: 'Tab2',
             title: 'Tab2',
             ios: {
               icon: {
@@ -192,9 +192,9 @@ export function App() {
           },
         },
         {
-          component: TabScreen,
+          name: 'Tab3',
+          Component: TabScreen,
           options: {
-            screenKey: 'Tab3',
             title: 'Tab3',
             ios: {
               icon: {

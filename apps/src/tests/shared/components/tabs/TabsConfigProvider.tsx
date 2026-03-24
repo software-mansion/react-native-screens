@@ -33,15 +33,15 @@ function reduce(
       config = { ...config, ...action.config };
       break;
     case 'tabScreen':
-      const tabIndex = config.tabConfigs.findIndex(
-        c => c.options.screenKey === action.screenKey,
+      const tabIndex = config.routeConfigs.findIndex(
+        c => c.name === action.name,
       );
       if (tabIndex >= 0) {
-        config.tabConfigs[tabIndex] = {
-          ...config.tabConfigs[tabIndex],
+        config.routeConfigs[tabIndex] = {
+          ...config.routeConfigs[tabIndex],
           ...action.config,
           options: {
-            ...config.tabConfigs[tabIndex].options,
+            ...config.routeConfigs[tabIndex].options,
             ...action.config.options,
           },
         };
@@ -57,9 +57,10 @@ function makeInitialConfig(
   tabs: Record<string, ComponentType>,
 ): StaticTabsContainerProps<any> {
   return {
-    tabConfigs: Object.entries(tabs).map(([k, C]) => ({
+    routeConfigs: Object.entries(tabs).map(([k, C]) => ({
+      name: k,
+      Component: C,
       options: {
-        screenKey: k,
         title: k,
         android: {
           icon: {
@@ -74,7 +75,6 @@ function makeInitialConfig(
           },
         },
       },
-      component: C,
     })),
   };
 }
