@@ -7,4 +7,9 @@ internal interface TabsContainerDelegate {
         hasTriggeredSpecialEffect: Boolean,
         isNativeAction: Boolean,
     )
+
+    fun onNavStateUpdateRejected(
+        currentNavState: TabsNavState,
+        rejectedNavState: TabsNavState,
+    )
 }
