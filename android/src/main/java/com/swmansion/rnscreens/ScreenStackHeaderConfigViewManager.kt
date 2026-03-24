@@ -90,7 +90,6 @@ class ScreenStackHeaderConfigViewManager :
         parent.onUpdate()
     }
 
-    @ReactProp(name = "consumeTopInset")
     override fun setConsumeTopInset(
         config: ScreenStackHeaderConfig,
         consumeTopInset: Boolean,
@@ -98,7 +97,6 @@ class ScreenStackHeaderConfigViewManager :
         config.consumeTopInset = consumeTopInset
     }
 
-    @ReactProp(name = "legacyTopInsetBehavior")
     override fun setLegacyTopInsetBehavior(
         config: ScreenStackHeaderConfig,
         legacyTopInsetBehavior: Boolean,
