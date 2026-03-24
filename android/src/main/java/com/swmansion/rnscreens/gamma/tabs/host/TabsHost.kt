@@ -169,6 +169,16 @@ class TabsHost(
         )
     }
 
+    override fun onNavStateUpdateRejected(
+        currentNavState: TabsNavState,
+        rejectedNavState: TabsNavState
+    ) {
+        eventEmitter.emitOnTabSelectionRejectedEvent(
+            currentNavState,
+            rejectedNavState,
+        )
+    }
+
     override fun didMountItems(uiManager: UIManager) {
         container.performContainerUpdateIfNeeded()
     }
