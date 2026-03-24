@@ -146,11 +146,6 @@ function ScreenStackItem(
             children
           )}
         </DebugContainer>
-        {stackPresentationWithDefault === 'formSheet' &&
-          // eslint-disable-next-line camelcase
-          unstable_sheetFooter && (
-            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
-          )}
       </TopInsetConsumptionContext.Provider>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
@@ -164,6 +159,11 @@ function ScreenStackItem(
        * for detailed explanation.
        */}
       <ScreenStackHeaderConfig {...headerConfig} />
+      {stackPresentationWithDefault === 'formSheet' &&
+        // eslint-disable-next-line camelcase
+        unstable_sheetFooter && (
+          <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
+        )}
     </>
   );
 
