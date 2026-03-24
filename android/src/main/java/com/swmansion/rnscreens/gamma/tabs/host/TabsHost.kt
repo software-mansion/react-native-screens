@@ -39,6 +39,8 @@ class TabsHost(
                 )
         }
 
+    internal var rejectStaleNavStateUpdates: Boolean by container::rejectOpsWithStaleNavState
+
     internal lateinit var eventEmitter: TabsHostEventEmitter
 
     private var isLayoutEnqueued: Boolean = false
