@@ -14,5 +14,9 @@ internal interface StackHeaderConfigurationProviding {
 
     val isRtl: Boolean
 
-    fun updateHeaderFrame(width: Int, height: Int, contentOffsetY: Int)
+    fun updateHeaderFrame(
+        width: Int,
+        height: Int,
+        contentOffsetY: Int,
+    )
 }

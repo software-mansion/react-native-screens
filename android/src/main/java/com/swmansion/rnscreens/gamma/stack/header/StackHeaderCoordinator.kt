@@ -2,11 +2,9 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.LayoutDirection
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.view.ContextThemeWrapper
@@ -16,10 +14,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
 internal class StackHeaderCoordinator(
@@ -45,7 +43,6 @@ internal class StackHeaderCoordinator(
     // CollapsingToolbarLayout can't resize custom views at runtime,
     // so we must rebuild the hierarchy when toolbar subview widths change.
     private var lastLeadingSubviewWidth: Int? = null
-    private var lastCenterSubviewWidth: Int? = null
     private var lastTrailingSubviewWidth: Int? = null
 
     // For small header, we need to use custom title view in order to
@@ -101,7 +98,6 @@ internal class StackHeaderCoordinator(
 
     private fun snapshotSubviewWidths(config: StackHeaderConfigurationProviding) {
         lastLeadingSubviewWidth = config.leadingSubview?.view?.width
-        lastCenterSubviewWidth = config.centerSubview?.view?.width
         lastTrailingSubviewWidth = config.trailingSubview?.view?.width
     }
 
@@ -173,12 +169,12 @@ internal class StackHeaderCoordinator(
         // Toolbar measures children in insertion order. Leading and trailing go first so the
         // title/center gets the remaining space.
         config.leadingSubview?.let {
-            detachFromCurrentParent(it.view)
+            it.view.detachFromCurrentParent()
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
         }
 
         config.trailingSubview?.let {
-            detachFromCurrentParent(it.view)
+            it.view.detachFromCurrentParent()
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
@@ -197,7 +193,7 @@ internal class StackHeaderCoordinator(
                 toolbar.removeView(managedTitleView)
                 managedTitleView = null
 
-                detachFromCurrentParent(centerSubview.view)
+                centerSubview.view.detachFromCurrentParent()
                 toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
             } else {
                 Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
@@ -222,7 +218,7 @@ internal class StackHeaderCoordinator(
             return
         }
 
-        detachFromCurrentParent(backgroundSubview.view)
+        backgroundSubview.view.detachFromCurrentParent()
 
         // Needed to extend the background under the status bar
         backgroundSubview.view.fitsSystemWindows = true
@@ -281,7 +277,7 @@ internal class StackHeaderCoordinator(
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigurationProviding) {
         val backgroundSubview = config.backgroundSubview ?: return
         val params = backgroundSubview.view.layoutParams as? CollapsingToolbarLayout.LayoutParams ?: return
-        val desired = toNativeCollapseMode(backgroundSubview.collapseMode)
+        val desired = backgroundSubview.collapseMode.toNativeCollapseMode()
         if (params.collapseMode != desired) {
             params.collapseMode = desired
         }
@@ -385,11 +381,11 @@ internal class StackHeaderCoordinator(
 
     // endregion
 
-    private fun detachFromCurrentParent(view: View) {
-        (view.parent as? ViewGroup)?.removeView(view)
-    }
-
-    private fun maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout: StackHeaderCoordinatorLayout, config: StackHeaderConfigurationProviding, appBar: StackHeaderAppBarLayout) {
+    private fun maybeApplyRtlCollapsingToolbarLayoutWorkaround(
+        coordinatorLayout: StackHeaderCoordinatorLayout,
+        config: StackHeaderConfigurationProviding,
+        appBar: StackHeaderAppBarLayout,
+    ) {
         // For collapsing headers, CTL lazily adds a MATCH_PARENT dummy view
         // to the Toolbar during the first onMeasure (ensureToolbar). We need
         // our subviews at higher indices than the dummy view so they get
@@ -425,15 +421,7 @@ internal class StackHeaderCoordinator(
         }
     }
 
-    private fun toNativeCollapseMode(mode: StackHeaderSubviewCollapseMode): Int =
-        when (mode) {
-            StackHeaderSubviewCollapseMode.OFF -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_OFF
-            StackHeaderSubviewCollapseMode.PARALLAX -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
-        }
-
     companion object {
         private const val TAG = "StackHeaderCoordinator"
-
-
     }
 }

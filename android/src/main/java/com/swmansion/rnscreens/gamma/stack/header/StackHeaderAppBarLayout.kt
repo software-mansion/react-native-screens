@@ -42,7 +42,6 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams =
                     LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                         // TODO: debug only for small header, must be moved to configuration
-//                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_SNAP
                         scrollFlags = SCROLL_FLAG_NO_SCROLL
                     }
             }
@@ -89,7 +88,6 @@ internal sealed class StackHeaderAppBarLayout(
                         ).apply {
                             // TODO: debug only for medium/large header, must be moved to configuration
                             scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-//                            scrollFlags = SCROLL_FLAG_NO_SCROLL
                         }
                     addView(toolbar)
                 }

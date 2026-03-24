@@ -7,5 +7,8 @@ interface StackHeaderSubviewProviding {
     val collapseMode: StackHeaderSubviewCollapseMode
     val view: View
 
-    fun updateContentOriginOffset(x: Int, y: Int)
+    fun updateContentOriginOffset(
+        x: Int,
+        y: Int,
+    )
 }

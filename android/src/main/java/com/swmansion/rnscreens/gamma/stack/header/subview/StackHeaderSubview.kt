@@ -13,6 +13,7 @@ class StackHeaderSubview(
 ) : ReactViewGroup(reactContext),
     StackHeaderSubviewProviding {
     override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
+        internal set
 
     override var collapseMode: StackHeaderSubviewCollapseMode by Delegates.observable(
         StackHeaderSubviewCollapseMode.OFF,
@@ -21,12 +22,13 @@ class StackHeaderSubview(
             onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
         }
     }
+        internal set
 
     override val view = this
 
     private val shadowStateProxy = ShadowStateProxy(includesFrameSize = false)
 
-    var stateWrapper by shadowStateProxy::stateWrapper
+    internal var stateWrapper by shadowStateProxy::stateWrapper
 
     override fun updateContentOriginOffset(
         x: Int,

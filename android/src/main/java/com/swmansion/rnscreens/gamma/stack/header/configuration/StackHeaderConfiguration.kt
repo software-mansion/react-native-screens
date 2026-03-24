@@ -17,9 +17,13 @@ class StackHeaderConfiguration(
     StackHeaderConfigurationProviding,
     OnStackHeaderSubviewChangeListener {
     override var type: StackHeaderType = StackHeaderType.SMALL
+        internal set
     override var title: String = ""
+        internal set
     override var hidden: Boolean = false
+        internal set
     override var transparent: Boolean = false
+        internal set
 
     override var backgroundSubview: StackHeaderSubview? = null
         private set
@@ -35,7 +39,7 @@ class StackHeaderConfiguration(
 
     private val shadowStateProxy = ShadowStateProxy()
 
-    var stateWrapper by shadowStateProxy::stateWrapper
+    internal var stateWrapper by shadowStateProxy::stateWrapper
 
     override fun updateHeaderFrame(
         width: Int,

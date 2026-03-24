@@ -55,7 +55,7 @@ class StackScreen(
 
     private val shadowStateProxy = ShadowStateProxy()
 
-    var stateWrapper by shadowStateProxy::stateWrapper
+    internal var stateWrapper by shadowStateProxy::stateWrapper
 
     fun updateStateIfNeeded(
         x: Int? = null,
