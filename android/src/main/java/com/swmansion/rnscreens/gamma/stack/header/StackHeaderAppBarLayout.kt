@@ -89,7 +89,7 @@ internal sealed class StackHeaderAppBarLayout(
                             resolveDimensionAttr(context, sizeAttr),
                         ).apply {
                             // TODO: debug only for medium/large header, must be moved to configuration
-                            scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
+                            scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 //                            scrollFlags = SCROLL_FLAG_NO_SCROLL
                         }
                     addView(toolbar)

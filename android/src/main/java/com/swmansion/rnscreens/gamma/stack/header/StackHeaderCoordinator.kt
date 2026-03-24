@@ -31,6 +31,7 @@ internal class StackHeaderCoordinator(
 
     private var appBarLayout: StackHeaderAppBarLayout? = null
     private var currentHeaderTypeOrNull: StackHeaderType? = null
+    private var currentConfig: StackHeaderConfigurationProviding? = null
 
     private var attachedLeftSubview: StackHeaderSubviewProviding? = null
     private var attachedCenterSubview: StackHeaderSubviewProviding? = null
@@ -52,6 +53,7 @@ internal class StackHeaderCoordinator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding?,
     ) {
+        currentConfig = config
         if (config != null) {
             updateHeader(coordinatorLayout, config)
         } else {
@@ -299,7 +301,10 @@ internal class StackHeaderCoordinator(
     private fun setContentBehavior(coordinatorLayout: StackHeaderCoordinatorLayout) {
         val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
         if (params.behavior == null) {
-            params.behavior = StackHeaderScrollingViewBehavior(onHeaderHeightChanged)
+            params.behavior = StackHeaderScrollingViewBehavior { contentTop, dependency ->
+                onHeaderHeightChanged(contentTop)
+                updateShadowState(contentTop, dependency)
+            }
             coordinatorLayout.stackScreenWrapper.layoutParams = params
         }
     }
@@ -311,6 +316,60 @@ internal class StackHeaderCoordinator(
             coordinatorLayout.stackScreenWrapper.layoutParams = params
             onHeaderHeightChanged(0)
         }
+    }
+
+    // endregion
+
+    // region Shadow state updates (Yoga synchronization)
+
+    /**
+     * Called on every AppBarLayout change (scroll, size, position) via
+     * [StackHeaderScrollingViewBehavior.onDependentViewChanged].
+     *
+     * @param contentTop Y position of the content area (StackScreen wrapper) in the CoordinatorLayout
+     * @param dependency the AppBarLayout view
+     */
+    private fun updateShadowState(contentTop: Int, dependency: View) {
+        val config = currentConfig ?: return
+        val appBar = appBarLayout ?: return
+
+        // Header configuration: report AppBarLayout size and its offset relative to content
+        config.updateHeaderFrame(
+            width = appBar.width,
+            height = appBar.height,
+            contentOffsetY = -contentTop,
+        )
+
+        // Subviews: report position relative to AppBarLayout
+        updateSubviewOffsets(appBar, config)
+    }
+
+    private fun updateSubviewOffsets(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        config.leftSubview?.let { updateSubviewOffset(it, appBar) }
+        config.centerSubview?.let { updateSubviewOffset(it, appBar) }
+        config.rightSubview?.let { updateSubviewOffset(it, appBar) }
+        config.backgroundSubview?.let { updateSubviewOffset(it, appBar) }
+    }
+
+    private fun updateSubviewOffset(
+        subview: StackHeaderSubviewProviding,
+        appBar: StackHeaderAppBarLayout,
+    ) {
+        val view = subview.view
+        if (view.width == 0 && view.height == 0) return
+
+        val appBarPos = IntArray(2)
+        val subviewPos = IntArray(2)
+        appBar.getLocationInWindow(appBarPos)
+        view.getLocationInWindow(subviewPos)
+
+        subview.updateContentOriginOffset(
+            x = subviewPos[0] - appBarPos[0],
+            y = subviewPos[1] - appBarPos[1],
+        )
     }
 
     // endregion

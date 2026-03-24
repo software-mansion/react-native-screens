@@ -11,4 +11,6 @@ internal interface StackHeaderConfigurationProviding {
     val centerSubview: StackHeaderSubviewProviding?
     val rightSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
+
+    fun updateHeaderFrame(width: Int, height: Int, contentOffsetY: Int)
 }

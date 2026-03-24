@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.gamma.stack.header.configuration
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -54,6 +56,15 @@ open class StackHeaderConfigurationViewManager :
         parent: StackHeaderConfiguration,
         index: Int,
     ): View? = parent.getConfigSubviewAt(index)
+
+    override fun updateState(
+        view: StackHeaderConfiguration,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?,
+    ): Any? {
+        view.stateWrapper = stateWrapper
+        return super.updateState(view, props, stateWrapper)
+    }
 
     override fun onAfterUpdateTransaction(view: StackHeaderConfiguration) {
         super.onAfterUpdateTransaction(view)

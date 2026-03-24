@@ -19,6 +19,10 @@ class JSI_EXPORT RNSStackHeaderConfigurationShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
+
+#ifdef ANDROID
+  Point getContentOriginOffset(bool includeTransform) const override;
+#endif // ANDROID
 };
 
 } // namespace facebook::react

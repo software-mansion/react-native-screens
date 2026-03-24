@@ -22,6 +22,7 @@ import {
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 import { Text, View } from 'react-native';
 import LongText from '../../../../../src/shared/LongText';
+import PressableWithFeedback from '../../../../../src/shared/PressableWithFeedback';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -96,18 +97,26 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                         height: 120,
                         backgroundColor: 'blue',
                       }}>
-                      <LongText />
+                      <PressableWithFeedback style={{ height: 100 }}>
+                        <Text>Pressable</Text>
+                      </PressableWithFeedback>
                     </View>
                   </Stack.Header.Subview>
-                  {/*<Stack.Header.Subview type="left" key="left">
-                    <Text>left</Text>
+                  <Stack.Header.Subview type="left" key="left">
+                    <PressableWithFeedback>
+                      <Text>left</Text>
+                    </PressableWithFeedback>
                   </Stack.Header.Subview>
                   <Stack.Header.Subview type="center" key="center">
-                    <Text>center</Text>
+                    <PressableWithFeedback>
+                      <Text>center</Text>
+                    </PressableWithFeedback>
                   </Stack.Header.Subview>
                   <Stack.Header.Subview type="right" key="right">
-                    <Text>rightvery</Text>
-                  </Stack.Header.Subview>*/}
+                    <PressableWithFeedback>
+                      <Text>right</Text>
+                    </PressableWithFeedback>
+                  </Stack.Header.Subview>
                 </Stack.Header.Configuration>
               </StackNavigationContext.Provider>
             </Stack.Screen>

@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.header.subview
 import android.annotation.SuppressLint
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -22,6 +23,14 @@ class StackHeaderSubview(
     }
 
     override val view = this
+
+    private val shadowStateProxy = ShadowStateProxy(includesFrameSize = false)
+
+    var stateWrapper by shadowStateProxy::stateWrapper
+
+    override fun updateContentOriginOffset(x: Int, y: Int) {
+        shadowStateProxy.updateStateIfNeeded(contentOffsetX = x, contentOffsetY = y)
+    }
 
     internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
@@ -52,7 +53,7 @@ class StackScreen(
             field = value
         }
 
-    private val shadowStateProxy = StackScreenShadowStateProxy()
+    private val shadowStateProxy = ShadowStateProxy()
 
     var stateWrapper by shadowStateProxy::stateWrapper
 
@@ -61,7 +62,12 @@ class StackScreen(
         y: Int? = null,
         width: Int? = null,
         height: Int? = null,
-    ) = shadowStateProxy.updateStateIfNeeded(x, y, width, height)
+    ) = shadowStateProxy.updateStateIfNeeded(
+        contentOffsetX = x,
+        contentOffsetY = y,
+        frameWidth = width,
+        frameHeight = height,
+    )
 
     internal var headerConfiguration: StackHeaderConfiguration? = null
         private set
@@ -114,7 +120,7 @@ class StackScreen(
         r: Int,
         b: Int,
     ) {
-        shadowStateProxy.updateStateIfNeeded(width = r - l, height = b - t)
+        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
     }
 
     override fun getAssociatedFragment(): Fragment? =

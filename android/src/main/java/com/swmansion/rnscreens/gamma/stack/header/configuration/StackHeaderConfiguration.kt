@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.header.configuration
 import android.annotation.SuppressLint
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
@@ -27,6 +28,18 @@ class StackHeaderConfiguration(
         private set
     override var backgroundSubview: StackHeaderSubview? = null
         private set
+
+    private val shadowStateProxy = ShadowStateProxy()
+
+    var stateWrapper by shadowStateProxy::stateWrapper
+
+    override fun updateHeaderFrame(width: Int, height: Int, contentOffsetY: Int) {
+        shadowStateProxy.updateStateIfNeeded(
+            frameWidth = width,
+            frameHeight = height,
+            contentOffsetY = contentOffsetY,
+        )
+    }
 
     internal var onConfigurationChangeListener: WeakReference<OnHeaderConfigurationChangeListener>? = null
 
