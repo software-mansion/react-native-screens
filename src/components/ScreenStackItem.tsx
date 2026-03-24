@@ -23,6 +23,7 @@ import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
+import { TopInsetConsumptionContext } from './TopInsetConsumptionContext';
 
 type Props = Omit<
   ScreenProps,
@@ -52,6 +53,22 @@ function ScreenStackItem(
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
+  const insetContext = React.useContext(TopInsetConsumptionContext);
+  const useLegacyBehavior =
+    featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
+
+  const hasVisibleHeader = headerConfig?.hidden !== true;
+  const consumesTopInset = useLegacyBehavior
+    ? true
+    : !insetContext.isTopInsetConsumed && hasVisibleHeader;
+
+  const nextContextValue = React.useMemo(
+    () => ({
+      isTopInsetConsumed: insetContext.isTopInsetConsumed || consumesTopInset,
+    }),
+    [insetContext.isTopInsetConsumed, consumesTopInset],
+  );
+
   const currentScreenRef = React.useRef<View | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
@@ -115,34 +132,41 @@ function ScreenStackItem(
 
   const content = (
     <>
-      <DebugContainer
-        contentStyle={contentStyle}
-        style={debugContainerStyle}
-        stackPresentation={stackPresentationWithDefault}>
-        {shouldUseSafeAreaView ? (
-          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
-            {children}
-          </SafeAreaView>
-        ) : (
-          children
-        )}
-      </DebugContainer>
-      {/**
-       * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
-       * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`
-       * Otherwise dynamically rendering a custom `header` leaves the native header visible
-       *
-       * https://github.com/software-mansion/react-native-screens/blob/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md#screenstackheaderconfig
-       *
-       * HeaderConfig must not be first child of a Screen.
-       * See https://github.com/software-mansion/react-native-screens/pull/1825
-       * for detailed explanation.
-       */}
-      <ScreenStackHeaderConfig {...headerConfig} />
-      {/* eslint-disable-next-line camelcase */}
-      {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
-        <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
-      )}
+      <TopInsetConsumptionContext.Provider value={nextContextValue}>
+        <DebugContainer
+          contentStyle={contentStyle}
+          style={debugContainerStyle}
+          stackPresentation={stackPresentationWithDefault}>
+          {shouldUseSafeAreaView ? (
+            <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+              {children}
+            </SafeAreaView>
+          ) : (
+            children
+          )}
+        </DebugContainer>
+        {/**
+         * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
+         * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`
+         * Otherwise dynamically rendering a custom `header` leaves the native header visible
+         *
+         * https://github.com/software-mansion/react-native-screens/blob/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md#screenstackheaderconfig
+         *
+         * HeaderConfig must not be first child of a Screen.
+         * See https://github.com/software-mansion/react-native-screens/pull/1825
+         * for detailed explanation.
+         */}
+        <ScreenStackHeaderConfig
+          {...headerConfig}
+          consumeTopInset={consumesTopInset}
+          legacyTopInsetBehavior={useLegacyBehavior}
+        />
+        {stackPresentationWithDefault === 'formSheet' &&
+          // eslint-disable-next-line camelcase
+          unstable_sheetFooter && (
+            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
+          )}
+      </TopInsetConsumptionContext.Provider>
     </>
   );
 

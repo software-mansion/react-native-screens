@@ -80,6 +80,9 @@ export interface NativeProps extends ViewProps {
 
   // Experimental
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
+
+  consumeTopInset?: boolean;
+  legacyTopInsetBehavior?: boolean;
 }
 
 export default codegenNativeComponent<NativeProps>(
