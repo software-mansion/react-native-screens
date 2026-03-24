@@ -66,6 +66,7 @@ export type TabsHostNativeContainerStyleProps = {
 export interface TabsHostPropsBase {
   // Control
   /**
+<<<<<<< HEAD
    * @summary
    * The navigation state for the tabs host to align to. It also determines
    * initial navigation state after first render.
@@ -75,9 +76,28 @@ export interface TabsHostPropsBase {
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
    *
+   * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.
    */
   navState: TabsHostNavState;
+  /**
+   * @summary If true, the native side will reject any navigation state updates coming from JS
+   * if the provenance of the update is stale.
+   *
+   * @description A navigation state update is considered stale if its provenance is older
+   * than the provenance of the currently active navigation state.
+   *
+   * This can happen, when an update from JS is dispatched, but before it reaches the native
+   * side, another update happens on UI thread, e.g. user selects another tab. For such
+   * situations, where to-be-applied navigation state update had been dispatched w/o
+   * full context of actual navigation state you can toggle this prop.
+   *
+   * If an update is rejected due to being stale, the `onTabSelectionRejected` event will be
+   * emitted with details of the rejected update and the currently active navigation state.
+   *
+   * @default false
+   */
+  rejectStaleNavStateUpdates?: boolean;
 
   // General
   children?: ViewProps['children'];
