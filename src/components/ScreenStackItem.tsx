@@ -23,7 +23,10 @@ import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
-import { TopInsetConsumptionContext } from './contexts/TopInsetConsumptionContext';
+import {
+  TopInsetConsumptionContext,
+  useTopInsetConsumption,
+} from './contexts/TopInsetConsumptionContext';
 
 type Props = Omit<
   ScreenProps,
@@ -52,21 +55,7 @@ function ScreenStackItem(
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
-  const insetContext = React.useContext(TopInsetConsumptionContext);
-  const useLegacyBehavior =
-    featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
-
-  const hasVisibleHeader = headerConfig?.hidden !== true;
-  const consumesTopInset = useLegacyBehavior
-    ? true
-    : !insetContext.isTopInsetConsumed && hasVisibleHeader;
-
-  const nextContextValue = React.useMemo(
-    () => ({
-      isTopInsetConsumed: insetContext.isTopInsetConsumed || consumesTopInset,
-    }),
-    [insetContext.isTopInsetConsumed, consumesTopInset],
-  );
+  const { nextContextValue } = useTopInsetConsumption(headerConfig?.hidden);
 
   const currentScreenRef = React.useRef<View | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
