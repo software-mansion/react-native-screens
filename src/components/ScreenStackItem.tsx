@@ -158,11 +158,10 @@ function ScreenStackItem(
        * for detailed explanation.
        */}
       <ScreenStackHeaderConfig {...headerConfig} />
-      {stackPresentationWithDefault === 'formSheet' &&
-        // eslint-disable-next-line camelcase
-        unstable_sheetFooter && (
-          <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
-        )}
+      {/* eslint-disable-next-line camelcase */}
+      {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
+        <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
+      )}
     </>
   );
 
