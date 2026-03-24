@@ -33,6 +33,8 @@ open class CustomToolbar(
     // edge-to-edge was enabled: https://github.com/software-mansion/react-native-screens/pull/2464/files#diff-bd1164595b04f44490738b8183f84a625c0e7552a4ae70bfefcdf3bca4d37fc7R34).
     private val shouldAvoidDisplayCutout = true
 
+    private val shouldApplyTopInset = true
+
     private var lastInsets = InsetsCompat.NONE
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
@@ -162,9 +164,9 @@ open class CustomToolbar(
                 0,
             )
 
-        val shouldApplyTop = if (config.legacyTopInsetBehavior) true else config.consumeTopInset
+        val shouldHandleTopInset = if (config.legacyTopInsetBehavior) true else config.consumeTopInset
 
-        if (!shouldApplyTop) {
+        if (!shouldHandleTopInset) {
             resetInsetsState()
             return unhandledInsets
         }
@@ -175,7 +177,7 @@ open class CustomToolbar(
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTop) systemBarInsets.top else 0),
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
