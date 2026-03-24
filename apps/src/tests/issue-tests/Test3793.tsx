@@ -1,12 +1,33 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Button, Switch } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from '../../shared/styling/Colors';
 
-const HeaderConfigContext = createContext<any>(null);
+interface HeaderConfigContextType {
+  outerShown: boolean;
+  setOuterShown: React.Dispatch<React.SetStateAction<boolean>>;
+  middleShown: boolean;
+  setMiddleShown: React.Dispatch<React.SetStateAction<boolean>>;
+  innerShown: boolean;
+  setInnerShown: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const HeaderConfigProvider = ({ children }: { children: React.ReactNode }) => {
+const HeaderConfigContext = createContext<HeaderConfigContextType | null>(null);
+
+const useHeaderConfig = () => {
+  const context = useContext(HeaderConfigContext);
+  if (!context) {
+    throw new Error('useHeaderConfig must be used within a HeaderConfigProvider');
+  }
+  return context;
+};
+
+interface HeaderConfigProviderProps {
+  children: ReactNode;
+}
+
+const HeaderConfigProvider = ({ children }: HeaderConfigProviderProps) => {
   const [outerShown, setOuterShown] = useState(true);
   const [middleShown, setMiddleShown] = useState(true);
   const [innerShown, setInnerShown] = useState(true);
@@ -27,7 +48,7 @@ const HeaderConfigProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 const ControlPanel = () => {
-  const config = useContext(HeaderConfigContext);
+  const config = useHeaderConfig();
 
   return (
     <View style={styles.panel}>
@@ -109,7 +130,7 @@ const MiddleStack = createNativeStackNavigator();
 const OuterStack = createNativeStackNavigator();
 
 const InnerNavigator = ({ navigation }: any) => {
-  const config = useContext(HeaderConfigContext);
+  const config = useHeaderConfig();
 
   return (
     <InnerStack.Navigator
@@ -143,7 +164,7 @@ const InnerNavigator = ({ navigation }: any) => {
 };
 
 const MiddleNavigator = ({ navigation }: any) => {
-  const config = useContext(HeaderConfigContext);
+  const config = useHeaderConfig();
 
   return (
     <MiddleStack.Navigator
@@ -167,7 +188,7 @@ const MiddleNavigator = ({ navigation }: any) => {
 };
 
 const OuterNavigator = () => {
-  const config = useContext(HeaderConfigContext);
+  const config = useHeaderConfig();
 
   return (
     <OuterStack.Navigator
