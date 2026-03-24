@@ -34,6 +34,23 @@ class ScreenStackHeaderConfig(
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
+
+    // @t0maboro - revisit
+    var consumeTopInset = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (isAttachedToWindow) toolbar.requestApplyInsets()
+            }
+        }
+
+    var legacyTopInsetBehavior = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (isAttachedToWindow) toolbar.requestApplyInsets()
+            }
+        }
     private var title: String? = null
     private var titleColor = 0
     private var titleFontFamily: String? = null

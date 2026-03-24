@@ -2,6 +2,7 @@ const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
+const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
@@ -56,6 +57,8 @@ const _featureFlags = {
       RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
     synchronousHeaderSubviewUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+    androidLegacyTopInsetBehavior:
+      RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
     iosPreventReattachmentOfDismissedScreens:
@@ -135,6 +138,11 @@ const synchronousHeaderSubviewUpdatesAccessor =
     'synchronousHeaderSubviewUpdatesEnabled',
     RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   );
+const androidLegacyTopInsetBehaviorAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'androidLegacyTopInsetBehavior',
+    RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
+  );
 const androidResetScreenShadowStateOnOrientationChangeAccessor =
   createExperimentalFeatureFlagAccessor(
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
@@ -193,6 +201,12 @@ export const featureFlags = {
     },
     set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
       synchronousHeaderSubviewUpdatesAccessor.set(value);
+    },
+    get androidLegacyTopInsetBehavior() {
+      return androidLegacyTopInsetBehaviorAccessor.get();
+    },
+    set androidLegacyTopInsetBehavior(value: boolean) {
+      androidLegacyTopInsetBehaviorAccessor.set(value);
     },
     get androidResetScreenShadowStateOnOrientationChangeEnabled() {
       return androidResetScreenShadowStateOnOrientationChangeAccessor.get();

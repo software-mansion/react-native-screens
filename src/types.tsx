@@ -820,6 +820,14 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle;
+  /**
+   * TODO: @t0maboro - desc.
+   */
+  consumeTopInset?: boolean;
+  /**
+   * TODO: @t0maboro - desc.
+   */
+  legacyTopInsetBehavior?: boolean;
 }
 
 export interface SearchBarProps {
