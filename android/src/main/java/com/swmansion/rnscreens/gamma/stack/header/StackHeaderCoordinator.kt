@@ -301,10 +301,11 @@ internal class StackHeaderCoordinator(
     private fun setContentBehavior(coordinatorLayout: StackHeaderCoordinatorLayout) {
         val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
         if (params.behavior == null) {
-            params.behavior = StackHeaderScrollingViewBehavior { contentTop, dependency ->
-                onHeaderHeightChanged(contentTop)
-                updateShadowState(contentTop, dependency)
-            }
+            params.behavior =
+                StackHeaderScrollingViewBehavior { contentTop, dependency ->
+                    onHeaderHeightChanged(contentTop)
+                    updateShadowState(contentTop, dependency)
+                }
             coordinatorLayout.stackScreenWrapper.layoutParams = params
         }
     }
@@ -329,18 +330,23 @@ internal class StackHeaderCoordinator(
      * @param contentTop Y position of the content area (StackScreen wrapper) in the CoordinatorLayout
      * @param dependency the AppBarLayout view
      */
-    private fun updateShadowState(contentTop: Int, dependency: View) {
+    private fun updateShadowState(
+        contentTop: Int,
+        dependency: View,
+    ) {
         val config = currentConfig ?: return
         val appBar = appBarLayout ?: return
 
-        // Header configuration: report AppBarLayout size and its offset relative to content
+        // For header configuration we need to:
+        // - cancel out the StackScreen's Y offset (contentTop),
+        // - handle AppBarLayout's negative offset when collapsed.
         config.updateHeaderFrame(
             width = appBar.width,
             height = appBar.height,
-            contentOffsetY = -contentTop,
+            contentOffsetY = appBar.top - contentTop,
         )
 
-        // Subviews: report position relative to AppBarLayout
+        // For subviews report position relative to AppBarLayout
         updateSubviewOffsets(appBar, config)
     }
 
