@@ -411,7 +411,6 @@ internal class StackHeaderCoordinator(
         private fun toNativeCollapseMode(mode: StackHeaderSubviewCollapseMode): Int =
             when (mode) {
                 StackHeaderSubviewCollapseMode.OFF -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_OFF
-                StackHeaderSubviewCollapseMode.PIN -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
                 StackHeaderSubviewCollapseMode.PARALLAX -> CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
             }
     }

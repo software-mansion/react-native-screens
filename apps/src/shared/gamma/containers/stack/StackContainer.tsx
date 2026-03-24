@@ -93,11 +93,12 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                     collapseMode="parallax">
                     <View
                       style={{
-                        width: '100%',
-                        height: 120,
                         backgroundColor: 'blue',
+                        flex: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}>
-                      <PressableWithFeedback style={{ height: 100 }}>
+                      <PressableWithFeedback>
                         <Text>Pressable</Text>
                       </PressableWithFeedback>
                     </View>

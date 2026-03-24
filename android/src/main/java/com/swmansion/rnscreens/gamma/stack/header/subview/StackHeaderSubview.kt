@@ -15,7 +15,7 @@ class StackHeaderSubview(
     override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
 
     override var collapseMode: StackHeaderSubviewCollapseMode by Delegates.observable(
-        StackHeaderSubviewCollapseMode.PIN,
+        StackHeaderSubviewCollapseMode.PARALLAX,
     ) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
@@ -28,7 +28,10 @@ class StackHeaderSubview(
 
     var stateWrapper by shadowStateProxy::stateWrapper
 
-    override fun updateContentOriginOffset(x: Int, y: Int) {
+    override fun updateContentOriginOffset(
+        x: Int,
+        y: Int,
+    ) {
         shadowStateProxy.updateStateIfNeeded(contentOffsetX = x, contentOffsetY = y)
     }
 

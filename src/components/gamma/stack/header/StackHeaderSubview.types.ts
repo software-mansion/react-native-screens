@@ -8,7 +8,6 @@ export type StackHeaderSubviewTypeAndroid =
 
 export type StackHeaderSubviewBackgroundCollapseModeAndroid =
   | 'off'
-  | 'pin'
   | 'parallax';
 
 export type StackHeaderSubviewProps = {
