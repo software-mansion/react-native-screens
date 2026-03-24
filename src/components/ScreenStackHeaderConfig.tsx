@@ -25,7 +25,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
-import { TopInsetConsumptionContext } from './contexts/TopInsetConsumptionContext';
+import { useTopInsetConsumption } from './contexts/TopInsetConsumptionContext';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -34,14 +34,9 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
-  const insetContext = React.useContext(TopInsetConsumptionContext);
-  const useLegacyBehavior =
-    featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
-
-  const hasVisibleHeader = props.hidden !== true;
-  const consumesTopInset = useLegacyBehavior
-    ? true
-    : !insetContext.isTopInsetConsumed && hasVisibleHeader;
+  const { consumesTopInset, useLegacyBehavior } = useTopInsetConsumption(
+    props.hidden,
+  );
 
   const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
 
