@@ -72,6 +72,7 @@ internal class TabsContainer(
 
     private var navState: TabsNavState = TabsNavState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
+    internal var rejectOpsWithStaleNavState: Boolean = false
 
     internal val selectedTab: TabsScreenFragment
         get() =
