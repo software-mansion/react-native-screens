@@ -5,16 +5,7 @@ export function deepMerge<T extends object>(base: T, override: Partial<T>): T {
   for (const key of Object.keys(override) as (keyof T)[]) {
     const baseVal = base[key];
     const overrideVal = override[key];
-    if (
-      overrideVal !== null &&
-      typeof overrideVal === 'object' &&
-      !Array.isArray(overrideVal) &&
-      !React.isValidElement(overrideVal) &&
-      baseVal !== null &&
-      typeof baseVal === 'object' &&
-      !Array.isArray(baseVal) &&
-      !React.isValidElement(baseVal)
-    ) {
+    if (isMergeableObject(overrideVal) && isMergeableObject(baseVal)) {
       result[key] = deepMerge(
         baseVal as object,
         overrideVal as object,
@@ -24,5 +15,14 @@ export function deepMerge<T extends object>(base: T, override: Partial<T>): T {
     }
   }
   return result;
+}
+
+function isMergeableObject(val: unknown): val is object {
+  return (
+    val !== null &&
+    typeof val === 'object' &&
+    !Array.isArray(val) &&
+    !React.isValidElement(val)
+  );
 }
 
