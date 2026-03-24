@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <RNSTabsNavigationState.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
 #if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
@@ -23,9 +24,16 @@ typedef struct {
   BOOL isNativeAction;
 } OnTabSelectedPayload;
 
+typedef struct {
+  RNSTabsNavigationState *_Nonnull currentNavState;
+  RNSTabsNavigationState *_Nonnull rejectedNavState;
+} OnTabSelectionRejectedPayload;
+
 @interface RNSTabsHostEventEmitter : NSObject
 
 - (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload;
+
+- (BOOL)emitOnTabSelectionRejected:(OnTabSelectionRejectedPayload)payload;
 
 @end
 

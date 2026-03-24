@@ -50,6 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
 
+@property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
+
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
@@ -104,6 +106,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
         didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
              withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
+             currentState:(nonnull RNSTabsNavigationState *)currentNavState;
 
 @end
 

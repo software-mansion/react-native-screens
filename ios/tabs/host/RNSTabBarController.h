@@ -63,6 +63,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong, nullable) RNSTabsNavigationState *navigationState;
 
 /**
+ *
+ * If true, the controller will reject any navigation state updates
+ * if the provenance of the update is stale.
+ *
+ * A navigation state update is considered stale if its provenance is older
+ * than the provenance of the currently active navigation state.
+ *
+ * This can happen, e.g. when an update from JS is dispatched, but before it reaches the native
+ * side, another update happens on UI thread, e.g. user selects another tab. For such
+ * situations, where to-be-applied navigation state update had been dispatched w/o
+ * full context of actual navigation state you can toggle this prop.
+ *
+ * If an update is rejected due to being stale, the controller will notify its delegate.
+ */
+@property (nonatomic, readwrite) BOOL rejectStaleNavigationStateUpdates;
+
+/**
  * Update tab controller state with previously provided children.
  *
  * This method does nothing if the children have not been changed / update has not been requested before.
