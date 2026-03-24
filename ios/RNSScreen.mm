@@ -612,7 +612,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didMoveToWindow
 {
   // For RN touches to work we need to instantiate and connect RCTSurfaceTouchHandler. This only applies
-  // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
+  // for screens that aren't mounted under RCTRootComponentView e.g., modals that are mounted directly to
   // root application window.
   if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
     if (_touchHandler == nil) {
