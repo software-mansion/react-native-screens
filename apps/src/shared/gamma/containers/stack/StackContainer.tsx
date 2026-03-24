@@ -90,7 +90,8 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                   type="large">
                   <Stack.Header.Subview
                     type="background"
-                    collapseMode="parallax">
+                    collapseMode="parallax"
+                    key="background">
                     <View
                       style={{
                         backgroundColor: 'blue',

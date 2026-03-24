@@ -39,6 +39,13 @@ open class StackHeaderConfigurationViewManager :
         parent.addConfigSubview(child)
     }
 
+    override fun removeView(parent: StackHeaderConfiguration, view: View) {
+        require(view is StackHeaderSubview) {
+            "[RNScreens] StackHeaderConfiguration can only have children of type StackHeaderSubview. Attempted to remove $view instead."
+        }
+        parent.removeConfigSubview(view)
+    }
+
     override fun removeViewAt(
         parent: StackHeaderConfiguration,
         index: Int,

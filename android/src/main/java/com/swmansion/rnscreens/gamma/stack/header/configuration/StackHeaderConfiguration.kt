@@ -20,20 +20,24 @@ class StackHeaderConfiguration(
     override var hidden: Boolean = false
     override var transparent: Boolean = false
 
+    override var backgroundSubview: StackHeaderSubview? = null
+        private set
     override var leftSubview: StackHeaderSubview? = null
         private set
     override var centerSubview: StackHeaderSubview? = null
         private set
     override var rightSubview: StackHeaderSubview? = null
         private set
-    override var backgroundSubview: StackHeaderSubview? = null
-        private set
 
     private val shadowStateProxy = ShadowStateProxy()
 
     var stateWrapper by shadowStateProxy::stateWrapper
 
-    override fun updateHeaderFrame(width: Int, height: Int, contentOffsetY: Int) {
+    override fun updateHeaderFrame(
+        width: Int,
+        height: Int,
+        contentOffsetY: Int,
+    ) {
         shadowStateProxy.updateStateIfNeeded(
             frameWidth = width,
             frameHeight = height,
@@ -51,10 +55,10 @@ class StackHeaderConfiguration(
 
     internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
         when (headerSubview.type) {
+            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = headerSubview
             StackHeaderSubviewType.LEFT -> leftSubview = headerSubview
             StackHeaderSubviewType.CENTER -> centerSubview = headerSubview
             StackHeaderSubviewType.RIGHT -> rightSubview = headerSubview
-            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = headerSubview
         }
         headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
         notifyConfigurationChanged()
@@ -63,10 +67,10 @@ class StackHeaderConfiguration(
     internal fun removeConfigSubview(headerSubview: StackHeaderSubview) {
         headerSubview.onStackHeaderSubviewChangeListener = null
         when (headerSubview.type) {
+            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = null
             StackHeaderSubviewType.LEFT -> leftSubview = null
             StackHeaderSubviewType.CENTER -> centerSubview = null
             StackHeaderSubviewType.RIGHT -> rightSubview = null
-            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = null
         }
         notifyConfigurationChanged()
     }
@@ -76,15 +80,15 @@ class StackHeaderConfiguration(
     }
 
     internal fun removeAllConfigSubviews() {
+        backgroundSubview?.let { removeConfigSubview(it) }
         leftSubview?.let { removeConfigSubview(it) }
         centerSubview?.let { removeConfigSubview(it) }
         rightSubview?.let { removeConfigSubview(it) }
-        backgroundSubview?.let { removeConfigSubview(it) }
     }
 
     internal val configSubviewsCount: Int
-        get() = listOfNotNull(leftSubview, centerSubview, rightSubview, backgroundSubview).size
+        get() = listOfNotNull(backgroundSubview, leftSubview, centerSubview, rightSubview).size
 
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
-        listOfNotNull(leftSubview, centerSubview, rightSubview, backgroundSubview).getOrNull(index)
+        listOfNotNull(backgroundSubview, leftSubview, centerSubview, rightSubview).getOrNull(index)
 }
