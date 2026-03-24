@@ -273,6 +273,8 @@ internal class TabsContainer(
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
             bottomNavigationView.selectedItemId = nextSelectedMenuItemId
             isInExternalOperationContext = false
+        } else {
+            delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
         }
 
         pendingOperation = null
