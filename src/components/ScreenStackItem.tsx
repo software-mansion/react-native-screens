@@ -23,7 +23,7 @@ import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
-import { TopInsetConsumptionContext } from './TopInsetConsumptionContext';
+import { TopInsetConsumptionContext } from './contexts/TopInsetConsumptionContext';
 
 type Props = Omit<
   ScreenProps,

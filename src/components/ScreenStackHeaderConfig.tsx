@@ -25,7 +25,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
-import { TopInsetConsumptionContext } from './TopInsetConsumptionContext';
+import { TopInsetConsumptionContext } from './contexts/TopInsetConsumptionContext';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
