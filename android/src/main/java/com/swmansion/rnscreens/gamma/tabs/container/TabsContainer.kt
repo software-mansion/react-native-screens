@@ -150,7 +150,7 @@ internal class TabsContainer(
         RNSLog.d(TAG, "TabsContainer [$id] attached to window")
 
         super.onAttachedToWindow()
-        setupFragmentManger()
+        setupFragmentManager()
         performContainerUpdateIfNeeded()
 
         colorSchemeCoordinator.setup(this) { uiNightMode ->
@@ -505,7 +505,7 @@ internal class TabsContainer(
             .toWindowInsets()
     }
 
-    internal fun setupFragmentManger() {
+    internal fun setupFragmentManager() {
         fragmentManager =
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
