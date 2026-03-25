@@ -82,7 +82,11 @@ internal class TabsContainer(
     private var pendingOperation: TabsContainerOp? = null
     internal val hasPendingOperation
         get() = pendingOperation != null
-    private var isInJsOperationContext: Boolean = false
+
+    /**
+     * Denotes whether container is currently performing update triggered by the `pendingOperation`.
+     */
+    private var isInExternalOperationContext: Boolean = false
 
     private var fragmentManager: FragmentManager? = null
     private val requireFragmentManager: FragmentManager
@@ -249,8 +253,8 @@ internal class TabsContainer(
         }
 
         check(hasPendingOperation) { "[RNScreens] Attempt to update container with empty state and no pending update" }
-        check(pendingOperation is TabChangeJSOp)
-        val tabChangeOp = pendingOperation as TabChangeJSOp
+        check(pendingOperation is TabChangeOp)
+        val tabChangeOp = pendingOperation as TabChangeOp
 
         val nextSelectedMenuItemId =
             checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabChangeOp.navState.selectedKey))) {
@@ -258,10 +262,10 @@ internal class TabsContainer(
             }
 
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
-            isInJsOperationContext = true
+            isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
             bottomNavigationView.selectedItemId = nextSelectedMenuItemId
-            isInJsOperationContext = false
+            isInExternalOperationContext = false
         }
 
         pendingOperation = null
@@ -294,7 +298,7 @@ internal class TabsContainer(
 
     private fun updateSelectedFragment(nextSelectedFragment: TabsScreenFragment): Boolean {
         if (navState.isEmpty()) {
-            check(isInJsOperationContext && hasPendingOperation)
+            check(isInExternalOperationContext && hasPendingOperation)
             navState = TabsNavState(nextSelectedFragment.requireScreenKey, 0)
             requireFragmentManager
                 .createTransactionWithReordering()
@@ -342,7 +346,7 @@ internal class TabsContainer(
                 navState,
                 isRepeated = isRepeated,
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
-                isNativeAction = !isInJsOperationContext,
+                isNativeAction = !isInExternalOperationContext,
             )
         }
 

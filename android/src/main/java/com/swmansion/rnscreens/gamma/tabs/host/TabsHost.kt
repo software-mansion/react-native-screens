@@ -12,7 +12,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
-import com.swmansion.rnscreens.gamma.tabs.container.TabChangeJSOp
+import com.swmansion.rnscreens.gamma.tabs.container.TabChangeOp
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
@@ -108,7 +108,7 @@ class TabsHost(
 
     internal fun updateJSNavState(navState: TabsNavState) {
         jsNavState = navState
-        container.setContainerOperation(TabChangeJSOp(jsNavState.copy()))
+        container.setContainerOperation(TabChangeOp(jsNavState.copy()))
     }
 
     private val layoutCallback =
