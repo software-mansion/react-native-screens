@@ -3,11 +3,23 @@ import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
 import type { ColorScheme, Direction } from '../../shared/types';
 
+// #region Control
+
+export type TabsHostNavState = {
+  selectedScreenKey: string;
+  provenance: number;
+};
+
+// #endregion Control
+
 // #region General helpers
 
-export type NativeFocusChangeEvent = {
-  screenKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
+export type TabChangeEvent = {
+  selectedScreenKey: string;
+  provenance: number;
+  isRepeated: boolean;
+  hasTriggeredSpecialEffect: boolean;
+  isNativeAction: boolean;
 };
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';
@@ -26,6 +38,9 @@ export type TabsHostNativeContainerStyleProps = {
 // #endregion General helpers
 
 export interface TabsHostPropsBase {
+  // Control
+  navState: TabsHostNavState;
+
   // General
   children?: ViewProps['children'];
   /**
@@ -107,13 +122,11 @@ export interface TabsHostPropsBase {
 
   // Events
   /**
-   * A callback that gets invoked when user requests change of focused tab screen.
+   * @summary A callback that gets invoked when the selected tab changes.
    *
    * @platform android, ios
    */
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
+  onTabChange?: (event: NativeSyntheticEvent<TabChangeEvent>) => void;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {

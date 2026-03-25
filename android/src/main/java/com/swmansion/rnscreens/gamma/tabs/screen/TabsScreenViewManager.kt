@@ -54,14 +54,6 @@ class TabsScreenViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    override fun setIsFocused(
-        view: TabsScreen,
-        value: Boolean,
-    ) {
-        RNSLog.d(REACT_CLASS, "TabsScreen [${view.id}] setIsFocused $value")
-        view.isFocusedTab = value
-    }
-
     override fun setScreenKey(
         view: TabsScreen,
         value: String?,

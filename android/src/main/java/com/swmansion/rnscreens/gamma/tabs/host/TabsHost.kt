@@ -1,87 +1,43 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
+import android.annotation.SuppressLint
 import android.view.Choreographer
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
+import com.facebook.react.bridge.UIManager
+import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.gamma.tabs.container.TabChangeOp
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
+import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
+@SuppressLint("ViewConstructor") // Only created by us. Should never be restored
+@OptIn(UnstableReactNativeAPI::class)
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : FrameLayout(reactContext) {
-    /**
-     * All container updates should go through instance of this class.
-     * The semantics are as follows:
-     *
-     * * `invalidateXXX` methods do mark that some update is required, however **they do not schedule the update**!
-     * * `postXXX` methods schedule an update
-     * * `runXXX` methods execute update synchronously
-     *
-     * If there is a posted update & before it is executed updates are flushed synchronously, then
-     * the posted update becomes a noop.
-     */
-    private inner class ContainerUpdateCoordinator {
-        private var isUpdatePending: Boolean = false
-
-        private val container: TabsContainer
-            get() = this@TabsHost.container
-
-        fun invalidateSelectedTab() {
-            container.invalidationFlags.isSelectedTabInvalidated = true
-        }
-
-        fun invalidateNavigationMenu() {
-            container.invalidationFlags.isBottomNavigationMenuInvalidated = true
-        }
-
-        fun invalidateAll() {
-            invalidateSelectedTab()
-            invalidateNavigationMenu()
-        }
-
-        fun postContainerUpdateIfNeeded() {
-            if (isUpdatePending) {
-                return
-            }
-            postContainerUpdate()
-        }
-
-        fun postContainerUpdate() {
-            isUpdatePending = true
-            post {
-                runContainerUpdateIfNeeded()
-            }
-        }
-
-        private fun runContainerUpdateIfNeeded() {
-            if (isUpdatePending) {
-                runContainerUpdate()
-            }
-        }
-
-        fun runContainerUpdate() {
-            isUpdatePending = false
-            this@TabsHost.container.performContainerUpdateIfNeeded()
-        }
-    }
-
+) : FrameLayout(reactContext),
+    TabsContainerDelegate,
+    UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
+    private var jsNavState: TabsNavState = TabsNavState.EMPTY
 
-    private val containerUpdateCoordinator = ContainerUpdateCoordinator()
-
-    private val container: TabsContainer = TabsContainer(reactContext, this).apply {
-        layoutParams =
-            LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT,
-            )
-    }
+    private val container: TabsContainer =
+        TabsContainer(reactContext, this).apply {
+            layoutParams =
+                LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT,
+                )
+        }
 
     internal lateinit var eventEmitter: TabsHostEventEmitter
 
@@ -96,21 +52,18 @@ class TabsHost(
     }
 
     internal var colorScheme: ColorScheme by container::colorScheme
-    internal val currentFocusedTab: TabsScreenFragment by container::currentFocusedTab
     var tabBarRespectsIMEInsets: Boolean by container::tabBarRespectsIMEInsets
 
     init {
         addView(container)
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .addUIManagerEventListener(this)
     }
 
     override fun onAttachedToWindow() {
-        RNSLog.d(TAG, "TabsHost [$id] attached to window")
+        RNSLog.i(TAG, "TabsHost [$id] attached to window")
         super.onAttachedToWindow()
-
-        containerUpdateCoordinator.let {
-            it.invalidateAll()
-            it.runContainerUpdate()
-        }
     }
 
     override fun onDetachedFromWindow() {
@@ -123,40 +76,26 @@ class TabsHost(
     ) {
         val bottomNavigationViewMaxItemCount = container.bottomNavigationView.maxItemCount
         require(index < bottomNavigationViewMaxItemCount) {
-            "[RNScreens] Attempt to insert TabsScreen at index $index; BottomNavigationView supports at most ${bottomNavigationViewMaxItemCount} items"
+            "[RNScreens] Attempt to insert TabsScreen at index $index; BottomNavigationView supports at most $bottomNavigationViewMaxItemCount items"
         }
 
         renderedScreens.add(index, tabsScreen)
         tabsScreen.setTabsScreenDelegate(container)
 
-        val tabsScreenFragment = TabsScreenFragment(tabsScreen)
-        container.tabsModel.add(index, tabsScreenFragment)
-
-        containerUpdateCoordinator.let {
-            it.invalidateAll()
-            it.postContainerUpdateIfNeeded()
-        }
+        container.addTabsScreenAt(index, tabsScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         renderedScreens.removeAt(index).also { tabsScreen ->
-            container.tabsModel.removeAt(index)
+            container.removeTabsScreenAt(index)
             tabsScreen.setTabsScreenDelegate(null)
-            containerUpdateCoordinator.let {
-                it.invalidateAll()
-                it.postContainerUpdateIfNeeded()
-            }
         }
     }
 
     internal fun unmountReactSubview(reactSubview: TabsScreen) {
         if (renderedScreens.removeIf { it === reactSubview }) {
-            assert(container.tabsModel.removeIf { it.tabsScreen === reactSubview })
+            assert(container.removeTabsScreen(reactSubview))
             reactSubview.setTabsScreenDelegate(null)
-            containerUpdateCoordinator.let {
-                it.invalidateAll()
-                it.postContainerUpdateIfNeeded()
-            }
         }
     }
 
@@ -164,15 +103,13 @@ class TabsHost(
         renderedScreens.forEach { it.setTabsScreenDelegate(null) }
         renderedScreens.clear()
 
-        // TODO: Remove this after refactor
-        container.tabsModel.clear()
-
-        containerUpdateCoordinator.let {
-            it.invalidateAll()
-            it.postContainerUpdateIfNeeded()
-        }
+        container.removeAllTabsScreens()
     }
 
+    internal fun updateJSNavState(navState: TabsNavState) {
+        jsNavState = navState
+        container.setContainerOperation(TabChangeOp(jsNavState.copy()))
+    }
 
     private val layoutCallback =
         Choreographer.FrameCallback {
@@ -214,6 +151,33 @@ class TabsHost(
         check(id != NO_ID) { "[RNScreens] TabsHost must have its tag set when registering event emitters" }
         eventEmitter = TabsHostEventEmitter(reactContext, id)
     }
+
+    override fun onNavStateUpdate(
+        navState: TabsNavState,
+        isRepeated: Boolean,
+        hasTriggeredSpecialEffect: Boolean,
+        isNativeAction: Boolean,
+    ) {
+        eventEmitter.emitOnTabChangeEvent(
+            navState.selectedKey,
+            navState.provenance,
+            isRepeated,
+            hasTriggeredSpecialEffect,
+            isNativeAction,
+        )
+    }
+
+    override fun didMountItems(uiManager: UIManager) {
+        container.performContainerUpdateIfNeeded()
+    }
+
+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
+
+    override fun willMountItems(uiManager: UIManager) = Unit
+
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
+
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
     companion object {
         const val TAG = "TabsHost"
