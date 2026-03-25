@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
 
@@ -34,13 +35,13 @@ open class CustomToolbar(
 
     private val shouldApplyTopInset = true
 
-    private var shouldApplyLayoutCorrectionForTopInset = false
-
     private var lastInsets = InsetsCompat.NONE
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
+
+    private var insetsAppliedFromListener = false
 
     init {
         // Ensure ActionMenuView is initialized as soon as the Toolbar is created.
@@ -76,16 +77,6 @@ open class CustomToolbar(
     override fun requestLayout() {
         super.requestLayout()
 
-        val maybeAppBarLayout = parent as? CustomAppBarLayout
-        maybeAppBarLayout?.let {
-            if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
-                // In `applyToolbarLayoutCorrection`, we call and immediate layout on AppBarLayout
-                // to update it right away and avoid showing a potentially wrong UI state.
-                it.applyToolbarLayoutCorrection(paddingTop)
-                shouldApplyLayoutCorrectionForTopInset = false
-            }
-        }
-
         val softInputMode =
             (context as ThemedReactContext)
                 .currentActivity
@@ -113,7 +104,35 @@ open class CustomToolbar(
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        applyDecorViewTopInset()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        clearAppliedInsetsAndPadding()
+    }
+
+    private fun applyDecorViewTopInset() {
+        if (config.legacyTopInsetBehavior || !config.consumeTopInset) return
+
+        val activity = (context as? ThemedReactContext)?.currentActivity ?: return
+        val decorView = activity.window.decorView
+        val topInset = getDecorViewTopInset(decorView)
+
+        if (topInset > 0) {
+            if (!insetsAppliedFromListener) {
+                applyExactPadding(paddingLeft, topInset, paddingRight, paddingBottom)
+            }
+        }
+    }
+
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        insetsAppliedFromListener = true
+
         val unhandledInsets = super.onApplyWindowInsets(insets)
 
         // There are few UI modes we could be running in
@@ -138,6 +157,13 @@ open class CustomToolbar(
                 cutoutInsets.right + systemBarInsets.right,
                 0,
             )
+
+        val shouldHandleTopInset = if (config.legacyTopInsetBehavior) true else config.consumeTopInset
+
+        if (!shouldHandleTopInset) {
+            clearAppliedInsetsAndPadding()
+            return unhandledInsets
+        }
 
         // We want to handle display cutout always, no matter the HeaderConfig prop values.
         // If there are no cutout displays, we want to apply the additional padding to
@@ -192,9 +218,14 @@ open class CustomToolbar(
         right: Int,
         bottom: Int,
     ) {
-        shouldApplyLayoutCorrectionForTopInset = true
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
+    }
+
+    private fun clearAppliedInsetsAndPadding() {
+        insetsAppliedFromListener = false
+        lastInsets = InsetsCompat.NONE
+        applyExactPadding(0, 0, 0, 0)
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {

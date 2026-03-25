@@ -90,6 +90,20 @@ class ScreenStackHeaderConfigViewManager :
         parent.onUpdate()
     }
 
+    override fun setConsumeTopInset(
+        config: ScreenStackHeaderConfig,
+        consumeTopInset: Boolean,
+    ) {
+        config.consumeTopInset = consumeTopInset
+    }
+
+    override fun setLegacyTopInsetBehavior(
+        config: ScreenStackHeaderConfig,
+        legacyTopInsetBehavior: Boolean,
+    ) {
+        config.legacyTopInsetBehavior = legacyTopInsetBehavior
+    }
+
     @ReactProp(name = "title")
     override fun setTitle(
         config: ScreenStackHeaderConfig,
