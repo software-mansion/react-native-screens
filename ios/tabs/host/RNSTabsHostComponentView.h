@@ -14,10 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsScreenComponentView;
-@class RNSTabsScreenViewController;
 @class RNSTabBarController;
-@class RNSTabsNavigationStateUpdateContext;
 @class RCTImageLoader;
 
 /**

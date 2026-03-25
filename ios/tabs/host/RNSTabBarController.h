@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@class RNSTabsNavigationStateUpdateContext;
-
 /**
  * This controller is responsible for tab management & all other responsibilities coming from the fact of inheritance
  * from `UITabBarController`. It is limited only to the child view controllers of type `RNSTabsScreenViewController`,
@@ -57,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Represents current navigation state.
  *
- * After each model update, the container (controller) udpates the navigation state. The `provenance` part is
+ * After each model update, the container (controller) updates the navigation state. The `provenance` part is
  * incremented monotonically with each state update.
  *
  * The controller manages this state. It MUST NOT be overwritten by any external actor.
@@ -179,7 +177,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Request navigation state update from the controller to the given one.
  *
- * If you want to exectue multiple updates in sequence you must flush the container after each one separately.
+ * If you want to execute multiple updates in sequence you must flush the container after each one separately.
  */
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState;
 
