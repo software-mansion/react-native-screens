@@ -79,9 +79,9 @@ internal class TabsContainer(
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
-    private var pendingJsOperation: TabsContainerOp? = null
+    private var pendingOperation: TabsContainerOp? = null
     internal val hasPendingOperation
-        get() = pendingJsOperation != null
+        get() = pendingOperation != null
     private var isInJsOperationContext: Boolean = false
 
     private var fragmentManager: FragmentManager? = null
@@ -191,7 +191,7 @@ internal class TabsContainer(
     }
 
     internal fun setContainerOperation(op: TabsContainerOp) {
-        pendingJsOperation = op
+        pendingOperation = op
         invalidationFlags.isSelectedTabInvalidated = true
     }
 
@@ -245,14 +245,14 @@ internal class TabsContainer(
     private fun performOperation() {
         // This function is called only to perform JS requests
 
-        if (pendingJsOperation == null) {
+        if (pendingOperation == null) {
             RNSLog.w(TAG, "TabsContainer::performOperation called w/o pending operation; skipping update")
             return
         }
 
         check(hasPendingOperation) { "[RNScreens] Attempt to update container with empty state and no pending update" }
-        check(pendingJsOperation is TabChangeJSOp)
-        val tabChangeOp = pendingJsOperation as TabChangeJSOp
+        check(pendingOperation is TabChangeJSOp)
+        val tabChangeOp = pendingOperation as TabChangeJSOp
 
         val nextSelectedMenuItemId =
             checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabChangeOp.navState.selectedKey))) {
@@ -266,7 +266,7 @@ internal class TabsContainer(
             isInJsOperationContext = false
         }
 
-        pendingJsOperation = null
+        pendingOperation = null
     }
 
     private fun updateNavigationMenuStructure() {
