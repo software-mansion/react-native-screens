@@ -243,8 +243,6 @@ internal class TabsContainer(
     }
 
     private fun performOperation() {
-        // This function is called only to perform JS requests
-
         if (pendingOperation == null) {
             RNSLog.w(TAG, "TabsContainer::performOperation called w/o pending operation; skipping update")
             return
