@@ -12,10 +12,10 @@ type TabsHostPlatformNativeComponentProps =
 
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  controlNavigationStateInJS?: boolean;
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
+  controlNavigationStateInJS?: boolean | undefined;
+  onNativeFocusChange?:
+    | ((event: NativeSyntheticEvent<NativeFocusChangeEvent>) => void)
+    | undefined;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
