@@ -66,6 +66,13 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
+//    override fun setNavState(view: TabsHost, value: ReadableMap?) {
+//        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
+//        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
+//        val provenance = requireNotNull(navStateMap.getInt("provenance"))
+// //        view.setNavStateFromJS(TabsHost.NavState(selectedScreenKey, provenance))
+//    }
+//
     override fun setTabBarHidden(
         view: TabsHost,
         value: Boolean,
