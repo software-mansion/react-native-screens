@@ -4,8 +4,15 @@
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
 
+@interface RNSTabBarController () <UITabBarControllerDelegate>
+@end
+
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
+
+  /// This property is nullable until first container udpate. Later it MUST NOT be nil.
+  RNSTabsNavigationState *_Nullable _navigationState;
+  RNSTabsNavigationState *_Nullable _pendingOperation;
 
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
@@ -18,6 +25,11 @@
     _tabScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
     _tabsHostComponentView = nil;
+    _navigationState = nil;
+    _pendingOperation = nil;
+
+    // Delegate field retains weakly, no risk of cycle.
+    self.delegate = self;
 
 #if !RCT_NEW_ARCH_ENABLED
     _isControllerFlushBlockScheduled = NO;
@@ -50,30 +62,22 @@
   RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
 }
 
-#pragma mark-- Signals
+#pragma mark - Signals
+
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState
+{
+  _pendingOperation = navState;
+}
 
 - (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
 {
   _tabScreenControllers = reactChildControllers;
-  self.needsUpdateOfReactChildrenControllers = true;
+  self.needsUpdateOfChildViewControllers = true;
 }
 
-- (void)setNeedsUpdateOfReactChildrenControllers:(bool)needsReactChildrenUpdate
+- (void)setNeedsUpdateOfChildViewControllers:(bool)needsReactChildrenUpdate
 {
-  _needsUpdateOfReactChildrenControllers = true;
-  self.needsUpdateOfSelectedTab = true;
-#if !RCT_NEW_ARCH_ENABLED
-  [self scheduleControllerUpdateIfNeeded];
-#endif // !RCT_NEW_ARCH_ENABLED
-}
-
-- (void)setNeedsUpdateOfSelectedTab:(bool)needsSelectedTabUpdate
-{
-  _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
-
-  if (needsSelectedTabUpdate) {
-    _needsOrientationUpdate = true;
-  }
+  _needsUpdateOfChildViewControllers = true;
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -100,7 +104,7 @@
   _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
-#pragma mark-- RNSReactTransactionObserving
+#pragma mark - RNSReactTransactionObserving
 
 - (void)reactMountingTransactionWillMount
 {
@@ -110,18 +114,180 @@
 - (void)reactMountingTransactionDidMount
 {
   RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
-  [self updateReactChildrenControllersIfNeeded];
+  [self performContainerUpdate];
+}
+
+#pragma mark - Container update
+
+- (void)performContainerUpdate
+{
+  [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
-#pragma mark-- Signals related
-
-- (void)updateReactChildrenControllersIfNeeded
+/**
+ * Update UIKit model and associated navigation state.
+ *
+ * This method will advance state in case the selected view controller is repeated.
+ *
+ * This method MUST be called only in situations where `UITabBarControllerMode` has not been updated yet.
+ * Otherwise it'll progress the state incorrectly.
+ *
+ * @returns whether the state has been updated or not.
+ */
+- (BOOL)updateSelectedViewControllerTo:(nullable RNSTabsScreenViewController *)nextSelectedViewController
 {
-  if (_needsUpdateOfReactChildrenControllers) {
+  if (nextSelectedViewController == nil) {
+    return NO;
+  }
+
+  UIViewController *currSelectedViewController = self.selectedViewController;
+
+  [self progressNavigationState:nextSelectedViewController.getScreenKeyOrNull];
+
+  if (currSelectedViewController == nextSelectedViewController) {
+    return YES;
+  }
+
+  [self setSelectedViewController:nextSelectedViewController];
+  return YES;
+}
+
+/**
+ * Update tabs navigation state in reaction to UIKit model update.
+ *
+ * This method does not update the UIKit model. It assumes that exactly one model update happened,
+ * and will sync the state with the UIKit and progress the provenance.
+ */
+- (void)updateNavigationStateOnModelUpdate
+{
+  [self progressNavigationState:[[self selectedScreenViewController] getScreenKeyOrNull]];
+}
+
+- (void)userDidRepeatViewControllerSelection:(nonnull RNSTabsScreenViewController *)viewController
+{
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
+
+  [self updateNavigationStateOnModelUpdate];
+
+  // After state progression we trigger the special effect.
+  BOOL repeatedSelectionHandledBySpecialEffect = [viewController tabScreenSelectedRepeatedly];
+
+  auto *updateContext =
+      [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
+                                                         isRepeated:YES
+                                          hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
+                                                     isNativeAction:YES];
+  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+}
+
+- (void)userDidSelectViewController:(nonnull RNSTabsScreenViewController *)viewController
+{
+  // At this moment the `UITabBarController` model is already updated.
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
+
+  [self updateNavigationStateOnModelUpdate];
+
+  auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
+                                                                           isRepeated:NO
+                                                            hasTriggeredSpecialEffect:NO
+                                                                       isNativeAction:YES];
+  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+}
+
+#pragma mark - UITabBarControllerDelegate
+
+// These methods are not called on programatic selection!
+// They are called only when a user taps on tab bar.
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController
+    shouldSelectViewController:(UIViewController *)viewController
+{
+  RCTAssert(tabBarController == self, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
+
+  // Can be UINavigationController in case of MoreNavigationController
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
+          [viewController isKindOfClass:UINavigationController.class],
+      @"[RNScreens] Unexpected type of controller: %@",
+      viewController.class);
+
+  RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(viewController);
+
+#if !TARGET_OS_TV
+  // When the moreNavigationController is selected, we want to show it
+  // TODO: this solution only works for uncontrolled mode. Add support for controlled mode as well.
+  // In case it is not created here yet, we'll create it by calling the getter.
+  // TODO: Optimise this.
+  if ([self shouldAllowMoreControllerSelection] && viewController == self.moreNavigationController) {
+    return YES;
+  }
+#endif // !TARGET_OS_TV
+
+  // TODO: handle enforcing orientation with natively-driven tabs
+
+  // Detect repeated selection and inform tabScreenController
+  BOOL repeatedSelection = self.selectedViewController == screenController;
+
+  if (repeatedSelection) {
+    // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
+    // and interferes with our implementation (which is necessary for controlled tabs).
+
+    // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
+    [self userDidRepeatViewControllerSelection:screenController];
+
+    return NO;
+  }
+
+  return ![self shouldPreventNativeTabChange];
+}
+
+- (void)tabBarController:(UITabBarController *)tabBarController
+    didSelectViewController:(UIViewController *)viewController
+{
+  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
+
+  // Can be UINavigationController in case of MoreNavigationController
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
+          [viewController isKindOfClass:UINavigationController.class],
+      @"[RNScreens] Unexpected type of controller: %@",
+      viewController.class);
+
+  RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(viewController);
+
+#if !TARGET_OS_TV
+  // When the moreNavigationController is selected, we want to show it
+  if ([self shouldAllowMoreControllerSelection] && viewController == self.moreNavigationController) {
+    // Hide the navigation bar for the more controller
+    [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+  }
+#endif // !TARGET_OS_TV
+
+  [self userDidSelectViewController:screenController];
+}
+
+- (BOOL)shouldPreventNativeTabChange
+{
+  // This handles the tabsHostComponentView nullability
+  return [self.tabsHostComponentView experimental_controlNavigationStateInJS] ?: NO;
+}
+
+- (BOOL)shouldAllowMoreControllerSelection
+{
+  return ![self.tabsHostComponentView experimental_controlNavigationStateInJS] ?: YES;
+}
+
+#pragma mark - Signals related
+
+- (void)updateChildViewControllersIfNeeded
+{
+  if (_needsUpdateOfChildViewControllers) {
     [self updateReactChildrenControllers];
   }
 }
@@ -129,7 +295,7 @@
 - (void)updateReactChildrenControllers
 {
   RNSLog(@"TabBarCtrl updateReactChildrenControllers");
-  _needsUpdateOfReactChildrenControllers = false;
+  _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
     RCTLogWarn(@"[RNScreens] Attempt to update react children while the _updatedChildren array is nil!");
@@ -141,46 +307,59 @@
 
 - (void)updateSelectedViewControllerIfNeeded
 {
-  if (_needsUpdateOfSelectedTab) {
+  if (_pendingOperation != nil) {
     [self updateSelectedViewController];
   }
 }
 
 - (void)updateSelectedViewController
 {
-  RNSLog(@"TabBarCtrl updateSelectedViewController");
-  _needsUpdateOfSelectedTab = false;
-
-#if !defined(NDEBUG)
-  [self assertExactlyOneFocusedTab];
-#endif
-
-  RNSTabsScreenViewController *_Nullable selectedViewController = nil;
-  for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
-    RNSLog(
-        @"Update Selected View Controller [%ld] isFocused %d",
-        tabViewController.tabScreenComponentView.tag,
-        tabViewController.tabScreenComponentView.isSelectedScreen);
-    if (tabViewController.tabScreenComponentView.isSelectedScreen == true) {
-      selectedViewController = tabViewController;
-      break;
-    }
+  if (_pendingOperation == nil || self.viewControllers.count == 0) {
+    return;
   }
 
-  RCTAssert(selectedViewController != nil, @"[RNScreens] No selected view controller!");
+  RNSLog(@"TabBarCtrl updateSelectedViewController");
+  // TODO: Think through support for `moreNavigationController`
 
-  RNSLog(@"Change selected view controller to: %@", selectedViewController);
+  RNSTabsScreenViewController *_Nonnull currSelectedViewController = [self selectedScreenViewController];
 
+  NSString *_Nonnull nextSelectedViewControllerKey = _pendingOperation.selectedScreenKey;
+  RNSTabsScreenViewController *_Nullable nextSelectedViewController =
+      [self findChildViewControllerForKey:nextSelectedViewControllerKey];
+  RCTAssert(
+      nextSelectedViewController != nil,
+      @"[RNScreens] Missing SelectedViewController; failed lookup for key: %@",
+      nextSelectedViewControllerKey);
+
+  if (currSelectedViewController == nextSelectedViewController && _navigationState != nil) {
+    // Nothing to do, we don't allow for programmatic repeat selection, unless
+    // we're during first render.
+    return;
+  }
+
+  // TODO: This code MUST be moved to some callback.
+  // Should this be called only on JS updates?
   if (@available(iOS 26.0, *)) {
     // On iOS 26, we need to set user interface style 2 parent views above the tab bar
     // for this prop to take effect.
     self.tabBar.superview.superview.overrideUserInterfaceStyle =
-        selectedViewController.tabScreenComponentView.userInterfaceStyle;
+        nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   } else {
-    self.tabBar.overrideUserInterfaceStyle = selectedViewController.tabScreenComponentView.userInterfaceStyle;
+    self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
 
-  [self setSelectedViewController:selectedViewController];
+  RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
+  BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController];
+  _pendingOperation = nil;
+
+  if (hasStateProgressed) {
+    RNSTabsNavigationStateUpdateContext *context =
+        [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
+                                                           isRepeated:NO
+                                            hasTriggeredSpecialEffect:NO
+                                                       isNativeAction:NO];
+    [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
+  }
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -215,19 +394,47 @@
   }
 }
 
-#if !defined(NDEBUG)
-- (void)assertExactlyOneFocusedTab
+#pragma mark - Utility
+
+- (nullable RNSTabsScreenViewController *)findChildViewControllerForKey:(nullable NSString *)screenKey
 {
-  int selectedCount = 0;
-  for (RNSTabsScreenViewController *tabViewController in _tabScreenControllers) {
-    if (tabViewController.tabScreenComponentView.isSelectedScreen) {
-      ++selectedCount;
+  if (screenKey == nil) {
+    return nil;
+  }
+  for (UIViewController *viewController in self.viewControllers) {
+    RCTAssert(
+        [viewController isKindOfClass:RNSTabsScreenViewController.class],
+        @"[RNScreens] Unexpected type of controller: %@",
+        viewController.class);
+    auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
+    if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
+      return screenViewController;
     }
   }
-  RCTAssert(
-      selectedCount == 1, @"[RNScreens] Invariant violation. Expected exactly 1 focused tab, got: %d", selectedCount);
+  return nil;
 }
-#endif
+
+- (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey
+{
+  RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
+
+  if (_navigationState == nil) {
+    _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey provenance:0];
+    return;
+  }
+
+  _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
+                                                             provenance:_navigationState.provenance + 1];
+}
+
+- (RNSTabsScreenViewController *)selectedScreenViewController
+{
+  RCTAssert(
+      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] Unexpected type of selectedViewController: %@",
+      self.selectedViewController.class);
+  return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
+}
 
 #if !RCT_NEW_ARCH_ENABLED
 
