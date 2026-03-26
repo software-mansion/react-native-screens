@@ -8,6 +8,7 @@ import {
   useTabsNavigationContext,
 } from '../../../shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
+import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'More navigation controller',
@@ -42,7 +43,7 @@ function TabsNavigationButtons() {
       <Button title="Select Fourth" onPress={() => nav.changeTabTo('Fourth')} />
       <Button title="Select Fifth" onPress={() => nav.changeTabTo('Fifth')} />
       <Button title="Select Sixth" onPress={() => nav.changeTabTo('Sixth')} />
-      <Button title="Select MoreTab" onPress={() => nav.changeTabTo('moreNavigationController')} />
+      <Button title="Select MoreTab" onPress={() => nav.changeTabTo(SCREEN_KEY_MORE_NAV_CTRL)} />
     </View>
   );
 }
