@@ -9,6 +9,7 @@ import type {
   TabsNavigationActionNativeChangeTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
+import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -208,6 +209,6 @@ function navStateWithConfirmedState(
 }
 
 function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
-  return Platform.OS === 'ios' && routeKey === 'moreNavigationController';
+  return Platform.OS === 'ios' && routeKey === SCREEN_KEY_MORE_NAV_CTRL;
 }
 
