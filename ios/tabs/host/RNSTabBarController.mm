@@ -7,7 +7,10 @@
 
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
 
-static NSString *const kMoreNavigationControllerScreenKey = @"moreNavigationController";
+/**
+ * This must be kept in sync with the constant we define in JS - `SCREEN_KEY_MORE_NAV_CTRL`.
+ */
+static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavigationController";
 
 @interface RNSTabBarController () <UITabBarControllerDelegate>
 @end
