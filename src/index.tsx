@@ -66,4 +66,4 @@ export { default as useTransitionProgress } from './useTransitionProgress';
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
  */
 export * from './components/tabs';
-export type * from './components/shared/types'; // TODO: Do we need to reexport these types?
+export type * from './components/shared/types';
