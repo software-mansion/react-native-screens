@@ -37,6 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (bool)tabScreenSelectedRepeatedly;
 
 /**
+ * Updates the content ScrollView observed by UIKit for tab bar behavior.
+ */
+- (void)updateTabBarObservedContentScrollViewIfNeeded;
+
+/**
  * Set new special effects delegate.
  */
 - (void)setTabsSpecialEffectsDelegate:(nonnull id<RNSTabsSpecialEffectsSupporting>)delegate;
