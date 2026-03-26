@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { Button, Alert } from '../shared';
+import { Modal } from 'react-native-screens';
 
 type StackParamList = {
   Main: undefined;
@@ -19,25 +20,38 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
-  <View style={{ ...styles.container, backgroundColor: 'bisque' }}>
-    <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
-    <Button
-      title="Open fullscreen modal"
-      onPress={() => navigation.navigate('FullscreenModal')}
-    />
-    <Button title="Open alert" onPress={() => navigation.navigate('Alert')} />
-    <Button
-      title="Open contained modal"
-      onPress={() => navigation.navigate('ContainedModal')}
-    />
-    <Button
-      title="Open pageSheet"
-      onPress={() => navigation.navigate('PageSheet')}
-    />
-    <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
-  </View>
-);
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
+  const [showModal, setShowModal] = React.useState(false);
+
+  return (
+    <View style={{ ...styles.container, backgroundColor: 'bisque' }}>
+      <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
+      <Button
+        title="Open fullscreen modal"
+        onPress={() => navigation.navigate('FullscreenModal')}
+      />
+      <Button title="Open alert" onPress={() => navigation.navigate('Alert')} />
+      <Button
+        title="Open contained modal"
+        onPress={() => navigation.navigate('ContainedModal')}
+      />
+      <Button
+        title="Open pageSheet"
+        onPress={() => navigation.navigate('PageSheet')}
+      />
+      <Button
+        title="Open new modal component"
+        onPress={() => navigation.navigate('ContainedModal')}
+      />
+      <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
+      
+      <Modal presented={showModal}>
+        <Text>Modal content</Text>
+        <Button title="Close modal" onPress={() => setShowModal(false)} />
+      </Modal>
+    </View>
+  );
+};
 
 interface ModalScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Modal'>;
