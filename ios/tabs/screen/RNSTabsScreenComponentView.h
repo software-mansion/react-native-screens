@@ -2,10 +2,12 @@
 
 #import <React/RCTImageSource.h>
 #import "RNSEnums.h"
+#import "RNSContentScrollViewProviding.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "RNSScrollViewSeeking.h"
 #import "RNSTabsScreenEventEmitter.h"
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -22,7 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding
+                                            RNSSafeAreaProviding,
+                                            RNSContentScrollViewProviding,
+                                            RNSScrollViewSeeking
 #if !RCT_NEW_ARCH_ENABLED
                                             ,
                                             RCTInvalidating
@@ -44,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
  * on a content ScrollView inside the tab screen, if one exists. It uses ScrollViewFinder to find the ScrollView.
  */
 - (void)updateContentScrollViewEdgeEffectsIfExists;
+
+- (nullable UIScrollView *)findContentScrollView;
 
 @end
 

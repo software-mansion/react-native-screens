@@ -1,10 +1,11 @@
 #import "RNSTabsScreenViewController.h"
 #import "RNSLog.h"
-#import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
-@implementation RNSTabsScreenViewController
+@implementation RNSTabsScreenViewController {
+  __weak UIScrollView *_observedTabBarContentScrollView;
+}
 
 - (nullable NSString *)getScreenKeyOrNull
 {
@@ -39,6 +40,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
+  [self updateTabBarObservedContentScrollViewIfNeeded];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -77,6 +79,7 @@
 
   [tabBarCtrl setNeedsUpdateOfTabBarAppearance:true];
   [tabBarCtrl updateTabBarAppearanceIfNeeded];
+  [self updateTabBarObservedContentScrollViewIfNeeded];
 }
 
 - (void)setTabsSpecialEffectsDelegate:(id<RNSTabsSpecialEffectsSupporting>)delegate
@@ -99,12 +102,26 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
+    UIScrollView *scrollView = [self.tabScreenComponentView findContentScrollView];
     return [scrollView rnscreens_scrollToTop];
   }
 
   return false;
+}
+
+- (void)updateTabBarObservedContentScrollViewIfNeeded
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 15.0, *)) {
+    UIScrollView *resolvedScrollView = [self.tabScreenComponentView findContentScrollView];
+    if (_observedTabBarContentScrollView == resolvedScrollView) {
+      return;
+    }
+
+    _observedTabBarContentScrollView = resolvedScrollView;
+    [self setContentScrollView:resolvedScrollView forEdge:NSDirectionalRectEdgeBottom];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #if !TARGET_OS_TV

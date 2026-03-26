@@ -166,10 +166,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   [self progressNavigationState:screenKey];
 
   if (currSelectedViewController == nextSelectedViewController) {
+    [nextSelectedViewController updateTabBarObservedContentScrollViewIfNeeded];
     return YES;
   }
 
   [self setSelectedViewController:nextSelectedViewController];
+  [nextSelectedViewController updateTabBarObservedContentScrollViewIfNeeded];
   return YES;
 }
 
