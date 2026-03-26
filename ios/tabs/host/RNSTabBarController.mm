@@ -149,10 +149,12 @@
   [self progressNavigationState:nextSelectedViewController.getScreenKeyOrNull];
 
   if (currSelectedViewController == nextSelectedViewController) {
+    [nextSelectedViewController updateTabBarObservedContentScrollViewIfNeeded];
     return YES;
   }
 
   [self setSelectedViewController:nextSelectedViewController];
+  [nextSelectedViewController updateTabBarObservedContentScrollViewIfNeeded];
   return YES;
 }
 

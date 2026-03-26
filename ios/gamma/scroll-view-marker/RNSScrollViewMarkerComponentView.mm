@@ -19,6 +19,7 @@ namespace react = facebook::react;
 
 @implementation RNSScrollViewMarkerComponentView {
   BOOL _hasAttemptedRegistration;
+  BOOL _isActive;
   BOOL _needsEdgeEffectUpdate;
 
   RNSScrollEdgeEffect _leftScrollEdgeEffect;
@@ -48,6 +49,7 @@ namespace react = facebook::react;
 {
   static const auto defaultProps = std::make_shared<const react::RNSScrollViewMarkerProps>();
   _props = defaultProps;
+  _isActive = NO;
   _leftScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
   _topScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
   _rightScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
@@ -109,6 +111,24 @@ namespace react = facebook::react;
   }
 
   [seekingAncestor registerDescendantScrollView:scrollView fromMarker:self];
+  [seekingAncestor updateDescendantScrollView:scrollView fromMarker:self isActive:self.isActive];
+}
+
+- (void)notifySeekingAncestorAboutActiveStateIfNeeded
+{
+  UIScrollView *scrollView = [self findScrollView];
+
+  if (scrollView == nil) {
+    return;
+  }
+
+  id<RNSScrollViewSeeking> seekingAncestor = [self findFirstSeekingAncestor];
+
+  if (seekingAncestor == nil) {
+    return;
+  }
+
+  [seekingAncestor updateDescendantScrollView:scrollView fromMarker:self isActive:self.isActive];
 }
 
 - (void)configureScrollView:(nullable UIScrollView *)scrollView
@@ -151,11 +171,22 @@ namespace react = facebook::react;
   [self maybeRegisterWithSeekingAncestor];
 }
 
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  [self registerWithSeekingAncestor];
+}
+
 #pragma mark - RNSScrollEdgeEffectProviding
 
 - (RNSScrollEdgeEffect)leftScrollEdgeEffect
 {
   return _leftScrollEdgeEffect;
+}
+
+- (BOOL)isActive
+{
+  return _isActive;
 }
 
 - (RNSScrollEdgeEffect)topScrollEdgeEffect
@@ -186,6 +217,11 @@ namespace react = facebook::react;
   if (oldComponentProps.leftScrollEdgeEffect != newComponentProps.leftScrollEdgeEffect) {
     _leftScrollEdgeEffect = RNSScrollEdgeEffectFromSVMLeftEdgeEffect(newComponentProps.leftScrollEdgeEffect);
     _needsEdgeEffectUpdate = true;
+  }
+
+  if (oldComponentProps.active != newComponentProps.active) {
+    _isActive = newComponentProps.active;
+    [self notifySeekingAncestorAboutActiveStateIfNeeded];
   }
 
   if (oldComponentProps.topScrollEdgeEffect != newComponentProps.topScrollEdgeEffect) {

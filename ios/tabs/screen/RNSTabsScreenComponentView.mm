@@ -4,6 +4,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
@@ -29,6 +30,8 @@ namespace react = facebook::react;
   RNSTabsHostComponentView *__weak _Nullable _reactSuperview;
 
   RNSTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
+  NSMapTable<RNSScrollViewMarkerComponentView *, UIScrollView *> *_registeredDescendantScrollViewsByMarker;
+  __weak UIScrollView *_activeRegisteredDescendantScrollView;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
@@ -64,6 +67,8 @@ namespace react = facebook::react;
 
   _reactSuperview = nil;
   _reactEventEmitter = [RNSTabsScreenEventEmitter new];
+  _registeredDescendantScrollViewsByMarker = [NSMapTable weakToWeakObjectsMapTable];
+  _activeRegisteredDescendantScrollView = nil;
 
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
@@ -159,14 +164,97 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
 {
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
-    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+    [RNSScrollViewHelper overrideContentInsetAdjustmentBehaviorIfNeededForScrollView:[self findContentScrollView]];
   }
 }
 
 - (void)updateContentScrollViewEdgeEffectsIfExists
 {
-  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      withProvider:self];
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[self findContentScrollView] withProvider:self];
+}
+
+#pragma mark - RNSContentScrollViewProviding
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  if (_activeRegisteredDescendantScrollView != nil && _activeRegisteredDescendantScrollView.window != nil) {
+    return _activeRegisteredDescendantScrollView;
+  }
+
+  UIScrollView *registeredDescendantScrollView = [self findMostVisibleRegisteredDescendantScrollView];
+  if (registeredDescendantScrollView != nil) {
+    return registeredDescendantScrollView;
+  }
+
+  UIView *firstSubview = self.subviews.firstObject;
+  UIScrollView *delegatedScrollView = [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:firstSubview];
+  if (delegatedScrollView != nil) {
+    return delegatedScrollView;
+  }
+
+  return [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self];
+}
+
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(nonnull UIScrollView *)scrollView
+                          fromMarker:(nonnull RNSScrollViewMarkerComponentView *)marker
+{
+  [_registeredDescendantScrollViewsByMarker setObject:scrollView forKey:marker];
+  if (marker.isActive) {
+    _activeRegisteredDescendantScrollView = scrollView;
+  }
+  [self updateObservedContentScrollViewIfNeeded];
+}
+
+- (void)updateDescendantScrollView:(nonnull UIScrollView *)scrollView
+                        fromMarker:(nonnull RNSScrollViewMarkerComponentView *)marker
+                          isActive:(BOOL)isActive
+{
+  UIScrollView *registeredScrollView = [_registeredDescendantScrollViewsByMarker objectForKey:marker];
+  UIScrollView *resolvedScrollView = registeredScrollView ?: scrollView;
+
+  if (isActive) {
+    _activeRegisteredDescendantScrollView = resolvedScrollView;
+  } else if (_activeRegisteredDescendantScrollView == resolvedScrollView) {
+    _activeRegisteredDescendantScrollView = nil;
+  }
+
+  [self updateObservedContentScrollViewIfNeeded];
+}
+
+#pragma mark - Private
+
+- (void)updateObservedContentScrollViewIfNeeded
+{
+  [_controller updateTabBarObservedContentScrollViewIfNeeded];
+}
+
+- (nullable UIScrollView *)findMostVisibleRegisteredDescendantScrollView
+{
+  NSArray<RNSScrollViewMarkerComponentView *> *markers = _registeredDescendantScrollViewsByMarker.keyEnumerator.allObjects;
+  UIScrollView *bestScrollView = nil;
+  CGFloat bestVisibilityScore = 0;
+
+  for (RNSScrollViewMarkerComponentView *marker in markers) {
+    UIScrollView *scrollView = [_registeredDescendantScrollViewsByMarker objectForKey:marker];
+    if (scrollView == nil || scrollView.window == nil) {
+      continue;
+    }
+
+    CGRect visibleRect = CGRectIntersection([scrollView convertRect:scrollView.bounds toView:self], self.bounds);
+    if (CGRectIsNull(visibleRect) || CGRectIsEmpty(visibleRect)) {
+      continue;
+    }
+
+    CGFloat visibilityScore = CGRectGetWidth(visibleRect) * CGRectGetHeight(visibleRect);
+    if (bestScrollView == nil || visibilityScore > bestVisibilityScore) {
+      bestScrollView = scrollView;
+      bestVisibilityScore = visibilityScore;
+    }
+  }
+
+  return bestScrollView;
 }
 
 #pragma mark - Prop update utils
