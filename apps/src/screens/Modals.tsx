@@ -41,7 +41,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
       />
       <Button
         title="Open new modal component"
-        onPress={() => navigation.navigate('ContainedModal')}
+        onPress={() => setShowModal(true)}
       />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
       
