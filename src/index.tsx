@@ -2,7 +2,10 @@
 // is loaded.
 import './fabric/NativeScreensModule';
 
-export * from './types';
+/*
+ * V4 types
+ */
+export type * from './types';
 
 /**
  * Core
@@ -62,4 +65,5 @@ export { default as useTransitionProgress } from './useTransitionProgress';
 /**
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
  */
-export { default as Tabs } from './components/tabs';
+export * from './components/tabs';
+export type * from './components/shared/types'; // TODO: Do we need to reexport these types?
