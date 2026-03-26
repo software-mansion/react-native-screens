@@ -151,7 +151,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  * @returns whether the state has been updated or not.
  */
 - (BOOL)updateSelectedViewControllerTo:(nullable UIViewController *)nextSelectedViewController
-                               withKey:(nullable NSString *)screenKey;
+                               withKey:(nullable NSString *)screenKey
 {
   if (nextSelectedViewController == nil) {
     return NO;
