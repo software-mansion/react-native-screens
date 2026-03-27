@@ -147,22 +147,22 @@ function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
 
 export type TabsContainerStateInitArg = {
   routeConfigs: TabRouteConfig[];
-  initialFocusedName?: string;
+  defaultRouteName?: string;
 };
 
 export function determineInitialTabsContainerState(
   arg: TabsContainerStateInitArg,
 ): TabsContainerState {
-  const { routeConfigs, initialFocusedName } = arg;
+  const { routeConfigs, defaultRouteName } = arg;
 
   const routes = routeConfigs.map(createTabRouteFromConfig);
 
   let selectedRouteKey: string;
-  if (initialFocusedName != null) {
-    const matchingRoute = routes.find(r => r.name === initialFocusedName);
-    if (matchingRoute == null) {
+  if (defaultRouteName != null) {
+    const matchingRoute = routes.find(r => r.name === defaultRouteName);
+    if (!matchingRoute) {
       throw new Error(
-        `[Tabs] initialFocusedName "${initialFocusedName}" does not match any route config name`,
+        `[Tabs] defaultRouteName "${defaultRouteName}" does not match any route config name`,
       );
     }
     selectedRouteKey = matchingRoute.routeKey;

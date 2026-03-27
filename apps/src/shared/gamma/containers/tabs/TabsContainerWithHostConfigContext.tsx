@@ -19,7 +19,7 @@ import {
 export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
   const {
     routeConfigs,
-    initialFocusedName,
+    defaultRouteName,
     experimentalControlNavigationStateInJS,
     ...hostProps
   } = props;
@@ -42,7 +42,7 @@ export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
     <TabsHostConfigContext value={tabsHostConfigContext}>
       <TabsContainer
         routeConfigs={routeConfigs}
-        initialFocusedName={initialFocusedName}
+        defaultRouteName={defaultRouteName}
         experimentalControlNavigationStateInJS={
           experimentalControlNavigationStateInJS
         }
