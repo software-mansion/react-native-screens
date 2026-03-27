@@ -3,7 +3,7 @@ import { TabsScreen } from './screen';
 
 export type {
   TabsHostNavState,
-  TabChangeEvent,
+  TabSelectedEvent,
   TabsHostColorScheme,
   TabsHostDirection,
   TabsHostNativeContainerStyleProps,

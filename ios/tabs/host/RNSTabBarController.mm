@@ -145,7 +145,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  *
  * This method will advance state in case the selected view controller is repeated.
  *
- * This method MUST be called only in situations where `UITabBarControllerMode` has not been updated yet.
+ * This method MUST be called only in situations where `UITabBarController` state has not been updated yet.
  * Otherwise it'll progress the state incorrectly.
  *
  * @returns whether the state has been updated or not.
@@ -258,7 +258,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     return NO;
   }
 
-  return ![self shouldPreventNativeTabChange];
+  return ![self shouldPreventNativeTabSelection];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -300,7 +300,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (BOOL)shouldPreventNativeTabChange
+- (BOOL)shouldPreventNativeTabSelection
 {
   // This handles the tabsHostComponentView nullability
   return [self.tabsHostComponentView experimental_controlNavigationStateInJS] ?: NO;

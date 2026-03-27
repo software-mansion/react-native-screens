@@ -602,11 +602,11 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RCTAssert(navState.selectedScreenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
 
-  [self.reactEventEmitter emitOnTabChange:{.selectedScreenKey = navState.selectedScreenKey,
-                                           .provenance = navState.provenance,
-                                           .isRepeated = context.isRepeated,
-                                           .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
-                                           .isNativeAction = context.isNativeAction}];
+  [self.reactEventEmitter emitOnTabSelected:{.selectedScreenKey = navState.selectedScreenKey,
+                                             .provenance = navState.provenance,
+                                             .isRepeated = context.isRepeated,
+                                             .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
+                                             .isNativeAction = context.isNativeAction}];
 }
 
 @end

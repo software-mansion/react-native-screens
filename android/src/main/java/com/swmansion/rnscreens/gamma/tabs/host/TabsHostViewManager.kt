@@ -12,7 +12,7 @@ import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
-import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
@@ -57,7 +57,7 @@ class TabsHostViewManager :
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            makeEventRegistrationInfo(TabsHostTabChangeEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectedEvent),
         )
 
     override fun addEventEmitters(

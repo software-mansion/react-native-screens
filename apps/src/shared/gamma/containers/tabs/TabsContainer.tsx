@@ -2,13 +2,13 @@ import React from 'react';
 import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   SCREEN_KEY_MORE_NAV_CTRL,
-  type TabChangeEvent,
+  type TabSelectedEvent,
   Tabs,
   type TabsHostNavState,
 } from 'react-native-screens';
 import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
 import type {
-  ChangeTabMethod,
+  SelectTabMethod,
   TabRoute,
   TabRouteConfig,
   TabRouteOptions,
@@ -33,7 +33,7 @@ export function TabsContainer(props: TabsContainerProps) {
     routeConfigs,
     initialFocusedName,
     experimentalControlNavigationStateInJS,
-    onTabChange,
+    onTabSelected,
     ...restProps
   } = props;
 
@@ -57,14 +57,14 @@ export function TabsContainer(props: TabsContainerProps) {
 
   const hostNavState = useTabsHostNavState(tabsNavState);
 
-  const onTabChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<TabChangeEvent>) => {
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
       // First call user provided callback
-      onTabChange?.(event);
+      onTabSelected?.(event);
 
       // Perform our logic
       const screenKey = event.nativeEvent.selectedScreenKey;
-      console.log(`[Tabs] onTabChangeCallback: ${screenKey}`);
+      console.log(`[Tabs] onTabSelectedCallback: ${screenKey}`);
 
       // Please note that the `useTransition` hook can not be used here,
       // because it intruduces additional renders, which lead
@@ -73,18 +73,18 @@ export function TabsContainer(props: TabsContainerProps) {
       React.startTransition(() => {
         RNSLog.info(`Starting transition to ${screenKey}`);
         dispatch({
-          type: 'native-tab-change',
+          type: 'native-tab-select',
           routeKey: screenKey,
           nativeEvent: event.nativeEvent,
         });
       });
     },
-    [onTabChange],
+    [onTabSelected],
   );
 
-  const tabChangeActionMethod: ChangeTabMethod = React.useCallback(
+  const selectTabMethod: SelectTabMethod = React.useCallback(
     (routeKey: string) => {
-      dispatch({ type: 'tab-change', routeKey });
+      dispatch({ type: 'tab-select', routeKey });
     },
     [],
   );
@@ -93,7 +93,7 @@ export function TabsContainer(props: TabsContainerProps) {
     <Tabs.Host
       // Use controlled tabs by default, but allow to overwrite if user wants to
       navState={hostNavState}
-      onTabChange={onTabChangeCallback}
+      onTabSelected={onTabSelectedCallback}
       experimentalControlNavigationStateInJS={
         experimentalControlNavigationStateInJS
       }
@@ -114,7 +114,7 @@ export function TabsContainer(props: TabsContainerProps) {
           routeKey: route.routeKey,
           routeOptions: { ...route.options },
           setRouteOptions,
-          changeTabTo: tabChangeActionMethod,
+          selectTab: selectTabMethod,
           isSelected: isSelected,
           shouldRenderContents: isSelected || pendingForUpdate,
         };

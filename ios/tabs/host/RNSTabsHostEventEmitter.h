@@ -21,11 +21,11 @@ typedef struct {
   BOOL isRepeated;
   BOOL hasTriggeredSpecialEffect;
   BOOL isNativeAction;
-} OnTabChangePayload;
+} OnTabSelectedPayload;
 
 @interface RNSTabsHostEventEmitter : NSObject
 
-- (BOOL)emitOnTabChange:(OnTabChangePayload)payload;
+- (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload;
 
 @end
 

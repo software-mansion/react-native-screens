@@ -33,10 +33,10 @@ namespace react = facebook::react;
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
-- (BOOL)emitOnTabChange:(OnTabChangePayload)payload
+- (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onTabChange(
+    _reactEventEmitter->onTabSelected(
         {.selectedScreenKey = RCTStringFromNSString(payload.selectedScreenKey),
          .provenance = payload.provenance,
          .isRepeated = static_cast<bool>(payload.isRepeated),
@@ -44,7 +44,7 @@ namespace react = facebook::react;
          .isNativeAction = static_cast<bool>(payload.isNativeAction)});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnTabChange event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnTabSelected event emission due to nullish emitter");
     return NO;
   }
 }

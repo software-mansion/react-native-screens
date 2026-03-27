@@ -5,8 +5,8 @@ import type {
   TabsContainerState,
   TabsNavState,
   TabsNavigationAction,
-  TabsNavigationActionChangeTab,
-  TabsNavigationActionNativeChangeTab,
+  TabsNavigationActionSelectTab,
+  TabsNavigationActionNativeSelectTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
 import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
@@ -18,10 +18,10 @@ export function tabsNavigationReducer(
   action: TabsNavigationAction,
 ): TabsContainerState {
   switch (action.type) {
-    case 'tab-change':
-      return tabsActionChangeTabHandler(state, action);
-    case 'native-tab-change':
-      return tabsActionNativeChangeTabHandler(state, action);
+    case 'tab-select':
+      return tabsActionSelectTabHandler(state, action);
+    case 'native-tab-select':
+      return tabsActionNativeSelectTabHandler(state, action);
     case 'set-options':
       return tabsActionSetOptionsHandler(state, action);
   }
@@ -50,11 +50,11 @@ export function tabsNavigationReducerWithLogging(
 }
 
 /**
- * Models JS-driven tab change request.
+ * Models JS-driven tab select request.
  */
-function tabsActionChangeTabHandler(
+function tabsActionSelectTabHandler(
   state: TabsContainerState,
-  action: TabsNavigationActionChangeTab,
+  action: TabsNavigationActionSelectTab,
 ): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
@@ -62,7 +62,7 @@ function tabsActionChangeTabHandler(
 
   if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
-      `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
+      `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
     return state;
   }
@@ -77,9 +77,9 @@ function tabsActionChangeTabHandler(
   });
 }
 
-function tabsActionNativeChangeTabHandler(
+function tabsActionNativeSelectTabHandler(
   state: TabsContainerState,
-  action: TabsNavigationActionNativeChangeTab,
+  action: TabsNavigationActionNativeSelectTab,
 ): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
@@ -87,7 +87,7 @@ function tabsActionNativeChangeTabHandler(
 
   if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
-      `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
+      `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
     return state;
   }

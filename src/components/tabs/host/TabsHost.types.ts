@@ -40,7 +40,7 @@ export type TabsHostNavState = {
 
 // #region General helpers
 
-export type TabChangeEvent = {
+export type TabSelectedEvent = {
   selectedScreenKey: string;
   provenance: number;
   isRepeated: boolean;
@@ -164,7 +164,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  onTabChange?: (event: NativeSyntheticEvent<TabChangeEvent>) => void;
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
