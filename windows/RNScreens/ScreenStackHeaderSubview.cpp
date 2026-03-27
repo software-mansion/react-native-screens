@@ -1,43 +1,11 @@
 #include "pch.h"
 #include "ScreenStackHeaderSubview.h"
-#include "JSValueXaml.h"
-#include "NativeModules.h"
-
-namespace winrt {
-using namespace Microsoft::ReactNative;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Collections;
-using namespace Windows::UI;
-using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Controls;
-} // namespace winrt
+#include "BaseProps.h"
 
 namespace winrt::RNScreens::implementation {
-ScreenStackHeaderSubview::ScreenStackHeaderSubview(
-    winrt::Microsoft::ReactNative::IReactContext reactContext)
-    : m_reactContext(reactContext),
-      m_children(
-               {winrt::single_threaded_vector<Windows::UI::Xaml::UIElement>()}) {}
-
-void ScreenStackHeaderSubview::addView(winrt::Windows::UI::Xaml::UIElement element) {
-  Children().Append(element);
-}
-
-void ScreenStackHeaderSubview::removeAllChildren() {
-  Children().Clear();
-}
-
-void ScreenStackHeaderSubview::removeChildAt(int64_t index) {
-  Children().RemoveAt(static_cast<uint32_t>(index));
-}
-
-void ScreenStackHeaderSubview::replaceChild(
-    winrt::Windows::UI::Xaml::UIElement oldChild,
-    winrt::Windows::UI::Xaml::UIElement newChild) {
-  uint32_t index;
-  if (!Children().IndexOf(oldChild, index))
-    return;
-
-  Children().SetAt(index, newChild);
+void RegisterScreenStackHeaderSubview(
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
+  noexcept {
+  RegisterStubComponent(fabricBuilder, L"RNSScreenStackHeaderSubview");
 }
 } // namespace winrt::RNScreens::implementation
