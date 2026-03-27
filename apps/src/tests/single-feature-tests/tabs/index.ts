@@ -9,6 +9,7 @@ import TestTabsColorScheme from './test-tabs-color-scheme';
 import TestTabsLayoutDirection from './test-tabs-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
+import TestTabsVisibility from './test-tab-bar-visibility';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -20,6 +21,7 @@ const scenarios = {
   TestTabsLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSimpleNav,
+  TestTabsVisibility,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
