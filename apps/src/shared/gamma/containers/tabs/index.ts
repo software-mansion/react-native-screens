@@ -6,7 +6,7 @@ export type {
   TabsContainerProps,
   TabsHostConfig,
   TabsNavigationAction,
-  TabsNavigationActionChangeTab,
+  TabsNavigationActionSelectTab,
   TabsNavigationActionSetOptions,
   TabsContainerState,
 } from './TabsContainer.types';

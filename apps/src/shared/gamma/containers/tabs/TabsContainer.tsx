@@ -8,7 +8,7 @@ import {
 } from 'react-native-screens';
 import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
 import type {
-  ChangeTabMethod,
+  SelectTabMethod,
   TabRoute,
   TabRouteConfig,
   TabRouteOptions,
@@ -73,7 +73,7 @@ export function TabsContainer(props: TabsContainerProps) {
       React.startTransition(() => {
         RNSLog.info(`Starting transition to ${screenKey}`);
         dispatch({
-          type: 'native-tab-change',
+          type: 'native-tab-select',
           routeKey: screenKey,
           nativeEvent: event.nativeEvent,
         });
@@ -82,9 +82,9 @@ export function TabsContainer(props: TabsContainerProps) {
     [onTabSelected],
   );
 
-  const tabChangeActionMethod: ChangeTabMethod = React.useCallback(
+  const selectTabMethod: SelectTabMethod = React.useCallback(
     (routeKey: string) => {
-      dispatch({ type: 'tab-change', routeKey });
+      dispatch({ type: 'tab-select', routeKey });
     },
     [],
   );
@@ -114,7 +114,7 @@ export function TabsContainer(props: TabsContainerProps) {
           routeKey: route.routeKey,
           routeOptions: { ...route.options },
           setRouteOptions,
-          changeTabTo: tabChangeActionMethod,
+          selectTab: selectTabMethod,
           isSelected: isSelected,
           shouldRenderContents: isSelected || pendingForUpdate,
         };
