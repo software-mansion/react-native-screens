@@ -11,7 +11,7 @@ export type TabsHostNavState = {
    *
    * @description
    * It must correspond to one of the keys you assign to the `TabsScreens`.
-   * There is one notable exception of `SCREEN_KEY_NAV_CTRL`, which can be
+   * There is one notable exception of `SCREEN_KEY_MORE_NAV_CTRL`, which can be
    * used on iOS to select the {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/morenavigationcontroller?language=objc moreNavigationController}.
    *
    * @see `SCREEN_KEY_MORE_NAV_CTRL` in `./constants`.
