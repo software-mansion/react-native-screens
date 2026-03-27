@@ -104,21 +104,21 @@ public class RNSSplitScreenController: UIViewController {
 
     var targetFrame = splitScreenComponentView.frame
 
-    /*
-     * When a UISplitViewController collapses into a single column, it hides columns and pushes
-     * them onto a UINavigationController stack. To optimize resources, UIKit
-     * does NOT update the frames of these off-screen views - they retain their old widths.
-     *
-     * When navigating back to a hidden column, UIKit performs the transition animation, but skips calling
-     * `setFrame:` on our actual component view, relying on AutoLayout to resize the content.
-     *
-     * However, Yoga is expecting absolute values. If we rely strictly on the component's current frame
-     * during this transition, Yoga will receive the stale width calculate the layout and break the UI.
-     *
-     * To fix this, if the SplitView is collapsed, we know the column must span the entire screen.
-     * We preemptively extract the host's bounds and send them as the target frame to the ShadowTree,
-     * ensuring the column renders at full width.
-     */
+    ///
+    /// When a UISplitViewController collapses into a single column, it hides columns and pushes
+    /// them onto a UINavigationController stack. To optimize resources, UIKit
+    /// does NOT update the frames of these off-screen views - they retain their old widths.
+    ///
+    /// When navigating back to a hidden column, UIKit performs the transition animation, but skips calling
+    /// `setFrame:` on our actual component view, relying on AutoLayout to resize the content.
+    ///
+    /// However, Yoga is expecting absolute values. If we rely strictly on the component's current frame
+    /// during this transition, Yoga will receive the stale width calculate the layout and break the UI.
+    ///
+    /// To fix this, if the SplitView is collapsed, we know the column must span the entire screen.
+    /// We preemptively extract the host's bounds and send them as the target frame to the ShadowTree,
+    /// ensuring the column renders at full width.
+    ///
     if splitHostController.isCollapsed {
       targetFrame = ancestorView.bounds
     }
