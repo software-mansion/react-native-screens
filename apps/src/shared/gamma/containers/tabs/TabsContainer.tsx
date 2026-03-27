@@ -5,7 +5,7 @@ import {
   Tabs,
   type TabsHostNavState,
 } from 'react-native-screens';
-import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
+import { SafeAreaView } from '../../../../../../src/components/safe-area/SafeAreaView';
 import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import type {
   ChangeTabMethod,
