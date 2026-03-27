@@ -1,6 +1,7 @@
 'use client';
 
 import React, { PropsWithChildren } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   GestureDetectorBridge,
   ScreensRefsHolder,
@@ -83,6 +84,9 @@ function ScreenStack(props: ScreenStackProps) {
     goBackGesture,
   );
 
+  const { style } = rest;
+  const { backgroundColor } = StyleSheet.flatten(style);
+
   return (
     <RNSScreensRefContext.Provider value={screensRefs}>
       <ScreenGestureDetector
@@ -105,6 +109,7 @@ function ScreenStack(props: ScreenStackProps) {
           iosPreventReattachmentOfDismissedModals={
             featureFlags.experiment.iosPreventReattachmentOfDismissedModals
           }
+          nativeContainerBackgroundColor={backgroundColor}
           /**
            * This messy override is to conform NativeProps used by codegen and
            * our Public API. To see reasoning go to this PR:

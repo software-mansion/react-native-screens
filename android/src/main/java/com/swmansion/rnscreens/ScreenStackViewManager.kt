@@ -82,6 +82,13 @@ class ScreenStackViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setNativeContainerBackgroundColor(
+        view: ScreenStack,
+        value: Int?,
+    ) {
+        view.nativeContainerBackgroundColor = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSScreenStack"
     }

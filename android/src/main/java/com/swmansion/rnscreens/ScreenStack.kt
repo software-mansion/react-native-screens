@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
 import android.view.View
+import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
@@ -18,6 +19,7 @@ import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import kotlin.collections.ArrayList
 import kotlin.math.max
+import kotlin.properties.Delegates
 
 class ScreenStack(
     context: Context?,
@@ -34,6 +36,11 @@ class ScreenStack(
     private var childrenDrawingOrderStrategy: ChildrenDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
+    var nativeContainerBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            background = newValue?.toDrawable()
+        }
+    }
     var goingForward = false
 
     /**

@@ -216,6 +216,11 @@ namespace react = facebook::react;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
   _iosPreventReattachmentOfDismissedScreens = YES;
   _iosPreventReattachmentOfDismissedModals = YES;
+#if !TARGET_OS_TV
+  _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+#else // !TARGET_OS_TV
+  _nativeContainerBackgroundColor = nil;
+#endif // !TARGET_OS_TV
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -1313,6 +1318,17 @@ RNS_IGNORE_SUPER_CALL_END
   if (newScreenProps.iosPreventReattachmentOfDismissedModals !=
       oldScreenProps.iosPreventReattachmentOfDismissedModals) {
     [self setIosPreventReattachmentOfDismissedModals:newScreenProps.iosPreventReattachmentOfDismissedModals];
+  }
+
+  if (newScreenProps.nativeContainerBackgroundColor != oldScreenProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.nativeContainerBackgroundColor);
+#if !TARGET_OS_TV
+    if (_nativeContainerBackgroundColor == nil) {
+      _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+    }
+#endif // !TARGET_OS_TV
+
+    _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
   [super updateProps:props oldProps:oldProps];
