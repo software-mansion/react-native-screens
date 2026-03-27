@@ -616,12 +616,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   if ([self canHaveMoreNavigationController]) {
     return self.moreNavigationController;
-  } else {
-    return nil;
   }
-#else
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   return nil;
-#endif
 }
 
 #if !RCT_NEW_ARCH_ENABLED
