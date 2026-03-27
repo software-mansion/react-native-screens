@@ -208,6 +208,6 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
   }
 
   if (!noNameUsesReservedRouteKey) {
-    throw new Error('[Tabs] Tab name "moreNavigationController" is reserved and can not be used');
+    throw new Error(`[Tabs] Tab name "${SCREEN_KEY_MORE_NAV_CTRL}" is reserved and can not be used`);
   }
 }
