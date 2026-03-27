@@ -4,12 +4,10 @@
 #import <UIKit/UIKit.h>
 #import "RNSDefines.h"
 
-#if RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTView.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,12 +28,11 @@ typedef struct {
   UIView *contentContainerView;
 } RNSScrollViewSearchResult;
 
-@interface RNSScreenContentWrapper :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
+#if defined(__cplusplus)
+@interface RNSScreenContentWrapper : RCTViewComponentView
 #else
-    RCTView
-#endif
+@interface RNSScreenContentWrapper : UIView
+#endif // __cplusplus
 
 @property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 

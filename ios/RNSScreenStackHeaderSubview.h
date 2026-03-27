@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
-#endif
+#endif // __cplusplus
 
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
@@ -11,18 +11,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackHeaderSubview :
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
     RCTViewComponentView
 #else
-    UIView <RCTInvalidating>
-#endif
+    UIView
+#endif // __cplusplus
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 @property (nonatomic, weak) UIView *reactSuperview;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 /**
  * Updates state of the header subview shadow node in shadow tree.
  * This method updates state of header subview shadow node only.
@@ -47,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param frame source frame, which will be transformed in relation to `ancestorView`.
  */
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame;
-#endif
 
 /**
  * Returns UIBarButtonItem associated with this subview. If it doesn't exist, UIBarButtonItem is created.

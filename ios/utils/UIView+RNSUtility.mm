@@ -1,9 +1,7 @@
 #import "UIView+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTSurfaceView.h>
 #import "RNSModalScreen.h"
-#endif
 
 @implementation UIView (RNSUtility)
 
@@ -11,7 +9,6 @@
 {
   UIView *parent = self.superview;
 
-#ifdef RCT_NEW_ARCH_ENABLED
   // On Fabric there is no view that exposes touchHandler above us in the view hierarchy, however it is still
   // utilised. `RCTSurfaceView` should be present above us, which hosts `RCTFabricSurface` instance, which in turn
   // hosts `RCTSurfaceTouchHandler` as a private field. When initialised, `RCTSurfaceTouchHandler` is attached to the
@@ -36,20 +33,6 @@
       return static_cast<RNS_TOUCH_HANDLER_ARCH_TYPE *>(recognizer);
     }
   }
-
-#else
-  // On Paper we can access touchHandler hosted by `RCTRootContentView` which should be above ScreenStack
-  // in view hierarchy.
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) {
-    parent = parent.superview;
-  }
-
-  if (parent != nil) {
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    return static_cast<RNS_TOUCH_HANDLER_ARCH_TYPE *>(touchHandler);
-  }
-
-#endif // RCT_NEW_ARCH_ENABLED
 
   return nil;
 }

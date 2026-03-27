@@ -15,17 +15,13 @@
 #import "RNSOrientationProviding.h"
 #endif // !TARGET_OS_TV
 
-#if RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTView.h>
-#endif // RCT_NEW_ARCH_ENABLED
+
+namespace react = facebook::react;
+#endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
-
-#ifdef RCT_NEW_ARCH_ENABLED
-namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @interface RCTConvert (RNSScreen)
 
@@ -55,10 +51,8 @@ namespace react = facebook::react;
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
-#endif
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;
 
@@ -66,16 +60,15 @@ namespace react = facebook::react;
 
 @class RNSScreenStackHeaderConfig;
 
-@interface RNSScreenView :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
+#if defined(__cplusplus)
+@interface RNSScreenView : RCTViewComponentView <
+                               RNSScreenContentWrapperDelegate,
+                               RNSScrollViewBehaviorOverriding,
+                               RNSSafeAreaProviding,
+                               RNSScrollEdgeEffectProviding>
 #else
-    RCTView
-#endif
-    <RNSScreenContentWrapperDelegate,
-     RNSScrollViewBehaviorOverriding,
-     RNSSafeAreaProviding,
-     RNSScrollEdgeEffectProviding>
+@interface RNSScreenView : UIView
+#endif // __cplusplus
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property
@@ -128,10 +121,10 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
-#ifdef RCT_NEW_ARCH_ENABLED
-// we recreate the behavior of `reactSetFrame` on new architecture
+#if defined(__cplusplus)
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
+#endif // __cplusplus
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
@@ -142,23 +135,10 @@ namespace react = facebook::react;
  * *This property was introduced for the sake of integration with reanimated.*
  */
 @property (nonatomic) BOOL snapshotAfterUpdates;
-#else
-@property (nonatomic, copy) RCTDirectEventBlock onAppear;
-@property (nonatomic, copy) RCTDirectEventBlock onDisappear;
-@property (nonatomic, copy) RCTDirectEventBlock onDismissed;
-@property (nonatomic, copy) RCTDirectEventBlock onHeaderHeightChange;
-@property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
-@property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
-@property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
-@property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
-@property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
-@property (nonatomic, copy) RCTDirectEventBlock onSheetDetentChanged;
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
 - (void)notifyHeaderHeightChange:(double)height;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
 - (void)notifyAppear;
@@ -173,9 +153,6 @@ namespace react = facebook::react;
  * replace it with snapshot or not.
  */
 - (void)willBeUnmountedInUpcomingTransaction;
-#else
-- (instancetype)initWithBridge:(RCTBridge *)bridge;
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
@@ -193,16 +170,6 @@ namespace react = facebook::react;
  * any retained resources.
  */
 - (void)invalidateImpl;
-
-#ifndef RCT_NEW_ARCH_ENABLED
-/**
- * Tell `Screen` component that it has been removed from react state and can safely cleanup
- * any retained resources.
- *
- * On old architecture this method might be called by RN via `RCTInvalidating` protocol.
- */
-- (void)invalidate;
-#endif // !RCT_NEW_ARCH_ENABLED
 
 /**
  * Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.

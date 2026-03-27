@@ -3,23 +3,20 @@
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 
-#if RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTView.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^OnLayoutCallback)(CGRect frame);
 
-@interface RNSScreenFooter :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
+#if defined(__cplusplus)
+@interface RNSScreenFooter : RCTViewComponentView
 #else
-    RCTView
-#endif
+@interface RNSScreenFooter : UIView
+#endif // __cplusplus
 
 @property (nonatomic, copy, nullable) OnLayoutCallback onLayout;
 
