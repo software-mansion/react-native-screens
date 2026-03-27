@@ -37,13 +37,13 @@ function TabsNavigationButtons() {
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.changeTabTo('First')} />
-      <Button title="Select Second" onPress={() => nav.changeTabTo('Second')} />
-      <Button title="Select Third" onPress={() => nav.changeTabTo('Third')} />
-      <Button title="Select Fourth" onPress={() => nav.changeTabTo('Fourth')} />
-      <Button title="Select Fifth" onPress={() => nav.changeTabTo('Fifth')} />
-      <Button title="Select Sixth" onPress={() => nav.changeTabTo('Sixth')} />
-      <Button title="Select MoreTab" onPress={() => nav.changeTabTo(SCREEN_KEY_MORE_NAV_CTRL)} />
+      <Button title="Select First" onPress={() => nav.selectTab('First')} />
+      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
+      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
+      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
+      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')} />
+      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')} />
+      <Button title="Select MoreTab" onPress={() => nav.selectTab(SCREEN_KEY_MORE_NAV_CTRL)} />
     </View>
   );
 }

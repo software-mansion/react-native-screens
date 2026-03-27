@@ -36,9 +36,9 @@ function TabsNavigationButtons() {
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.changeTabTo('First')} />
-      <Button title="Select Second" onPress={() => nav.changeTabTo('Second')} />
-      <Button title="Select Third" onPress={() => nav.changeTabTo('Third')} />
+      <Button title="Select First" onPress={() => nav.selectTab('First')} />
+      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
+      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
     </View>
   );
 }

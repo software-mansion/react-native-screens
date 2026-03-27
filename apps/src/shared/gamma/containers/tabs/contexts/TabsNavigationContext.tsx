@@ -2,14 +2,14 @@ import React from 'react';
 import type {
   TabRouteOptions,
   SetTabOptionsMethod,
-  ChangeTabMethod,
+  SelectTabMethod,
 } from '../TabsContainer.types';
 
 export type TabsNavigationContextPayload = {
   routeKey: string;
   routeOptions: TabRouteOptions;
   setRouteOptions: SetTabOptionsMethod;
-  changeTabTo: ChangeTabMethod;
+  selectTab: SelectTabMethod;
   isSelected: boolean;
   shouldRenderContents: boolean;
 };
