@@ -349,7 +349,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   UIViewController *nextSelectedViewController = nil;
   BOOL isNextMoreNavigationController = NO;
 
-#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
     if (![self isMoreNavigationControllerPresentInTabBar]) {
       // If the controller is not visible atm. we'll crash the app.
@@ -362,7 +361,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   } else {
     nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
   }
-#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
   RCTAssert(
       nextSelectedViewController != nil,
