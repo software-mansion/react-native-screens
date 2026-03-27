@@ -605,11 +605,11 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 }
 
 /**
- * This method allows get the `moreNavigationController` instance under a couple of conditions.
+ * This method allows getting the `moreNavigationController` instance under a couple of conditions.
  *
  * First, it verifies whether we are on an appropriate platform, where the `moreNavigationController`
  * is available.
- * Second, it verifies whether the moreNavigationController can be even visible right now.
+ * Second, it verifies whether the `moreNavigationController` can even be in the interface right now.
  */
 - (nullable UINavigationController *)resolveMoreNavigationController
 {
