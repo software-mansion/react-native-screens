@@ -353,6 +353,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     if (![self isMoreNavigationControllerPresentInTabBar]) {
       // If the controller is not visible atm. we'll crash the app.
       // TODO: Emit rejection event
+      _pendingOperation = nil;
       return;
     }
     nextSelectedViewController = self.moreNavigationController;
@@ -376,6 +377,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     // Nothing to do, we don't allow for programmatic repeat selection, unless
     // we're during first render.
     // TODO: Should we emit here that an update has been rejected?
+    _pendingOperation = nil;
     return;
   }
 
