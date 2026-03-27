@@ -349,7 +349,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   UIViewController *nextSelectedViewController = nil;
   BOOL isNextMoreNavigationController = NO;
 
-#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
     if (![self isMoreNavigationControllerPresentInTabBar]) {
       // If the controller is not visible atm. we'll crash the app.
@@ -357,12 +356,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
       _pendingOperation = nil;
       return;
     }
-    nextSelectedViewController = self.moreNavigationController;
+    nextSelectedViewController = [self resolveMoreNavigationController];
+    RCTAssert(nextSelectedViewController != nil, @"[RNScreens] Expected non-nil moreNavigationController");
     isNextMoreNavigationController = YES;
   } else {
     nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
   }
-#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
   RCTAssert(
       nextSelectedViewController != nil,
@@ -603,6 +602,26 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     self.moreNavigationController.delegate = self;
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+/**
+ * This method allows get the `moreNavigationController` instance under a couple of conditions.
+ *
+ * First, it verifies whether we are on an appropriate platform, where the `moreNavigationController`
+ * is available.
+ * Second, it verifies whether the moreNavigationController can be even visible right now.
+ */
+- (nullable UINavigationController *)resolveMoreNavigationController
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  if ([self canHaveMoreNavigationController]) {
+    return self.moreNavigationController;
+  } else {
+    return nil;
+  }
+#else
+  return nil;
+#endif
 }
 
 #if !RCT_NEW_ARCH_ENABLED
