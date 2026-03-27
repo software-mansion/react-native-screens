@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type {
   TabRoute,
   TabRouteConfig,
@@ -8,6 +9,7 @@ import type {
   TabsNavigationActionNativeChangeTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
+import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -58,7 +60,7 @@ function tabsActionChangeTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
       `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -71,7 +73,7 @@ function tabsActionChangeTabHandler(
 
   return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-    provenance: state.confirmedState.provenance + 1, // suggested? What about update stacking before we receive confirmation?
+    provenance: Math.max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
   });
 }
 
@@ -83,7 +85,7 @@ function tabsActionNativeChangeTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
       `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -102,7 +104,6 @@ function tabsActionNativeChangeTabHandler(
     return state;
   }
 
-  // What about aligning suggestedState here?
   return navStateWithConfirmedState(state, {
     selectedRouteKey: action.routeKey,
     provenance: action.nativeEvent.provenance,
@@ -206,3 +207,8 @@ function navStateWithConfirmedState(
     suggestedState: state.suggestedState,
   };
 }
+
+function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
+  return Platform.OS === 'ios' && routeKey === SCREEN_KEY_MORE_NAV_CTRL;
+}
+

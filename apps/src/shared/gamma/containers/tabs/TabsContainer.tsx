@@ -1,12 +1,12 @@
 import React from 'react';
 import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
 import {
+  SCREEN_KEY_MORE_NAV_CTRL,
   type TabChangeEvent,
   Tabs,
   type TabsHostNavState,
 } from 'react-native-screens';
-import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
-import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
+import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
 import type {
   ChangeTabMethod,
   TabRoute,
@@ -106,8 +106,7 @@ export function TabsContainer(props: TabsContainerProps) {
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
         RNSLog.info(
-          `TabsContainer map to component -> ${route.routeKey} ${
-            isSelected ? '(selected)' : ''
+          `TabsContainer map to component -> ${route.routeKey} ${isSelected ? '(selected)' : ''
           }`,
         );
 
@@ -200,7 +199,15 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
     return names.length === new Set(names).size;
   }, [routeConfigs]);
 
+  const noNameUsesReservedRouteKey = React.useMemo(() => {
+    return routeConfigs.every(c => c.name !== SCREEN_KEY_MORE_NAV_CTRL);
+  }, [routeConfigs]);
+
   if (!areNamesUnique) {
     throw new Error('[Tabs] All tabs must have unique names');
+  }
+
+  if (!noNameUsesReservedRouteKey) {
+    throw new Error(`[Tabs] Tab name "${SCREEN_KEY_MORE_NAV_CTRL}" is reserved and can not be used`);
   }
 }
