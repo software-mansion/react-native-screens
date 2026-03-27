@@ -3,14 +3,9 @@
  * BE SUBJECT TO BREAKING CHANGES WITHOUT NOTICE OR LIBRARY MAJOR VERSION CHANGE.
  */
 
-// Types
-export type * from './types';
+// Components & types
 
-// Components
-
-export { default as Stack } from '../components/gamma/stack';
-
-export { default as Split } from '../components/gamma/split';
-export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';
-
-export { default as ScrollViewMarker } from '../components/gamma/scroll-view-marker/ScrollViewMarker';
+export * from '../components/gamma/stack';
+export * from '../components/gamma/split';
+export * from '../components/safe-area';
+export * from '../components/gamma/scroll-view-marker';
