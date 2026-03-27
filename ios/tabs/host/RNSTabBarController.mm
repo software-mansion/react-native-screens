@@ -579,7 +579,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
-#endif RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 - (void)popToRootInMoreNavigationControllerIfNeededAnimated:(BOOL)isAnimated
