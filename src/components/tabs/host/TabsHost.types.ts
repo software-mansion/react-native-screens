@@ -66,7 +66,6 @@ export type TabsHostNativeContainerStyleProps = {
 export interface TabsHostPropsBase {
   // Control
   /**
-<<<<<<< HEAD
    * @summary
    * The navigation state for the tabs host to align to. It also determines
    * initial navigation state after first render.
