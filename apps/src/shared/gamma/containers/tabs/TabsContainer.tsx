@@ -1,12 +1,12 @@
 import React from 'react';
 import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
 import {
+  SCREEN_KEY_MORE_NAV_CTRL,
   type TabChangeEvent,
   Tabs,
   type TabsHostNavState,
 } from 'react-native-screens';
-import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
-import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
+import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
 import type {
   ChangeTabMethod,
   TabRoute,
@@ -200,7 +200,7 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
   }, [routeConfigs]);
 
   const noNameUsesReservedRouteKey = React.useMemo(() => {
-    return routeConfigs.every(c => c.name !== 'moreNavigationController');
+    return routeConfigs.every(c => c.name !== SCREEN_KEY_MORE_NAV_CTRL);
   }, [routeConfigs]);
 
   if (!areNamesUnique) {
