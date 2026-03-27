@@ -18,20 +18,20 @@ export type TabsHostNavState = {
    */
   selectedScreenKey: string;
   /**
-   * @summary An number describing the provenane of the state instance.
+   * @summary A number describing the provenance of the state instance.
    *
    * @description
-   * The provenance value estabilishes relation between different navigation state instances
+   * The provenance value establishes a relationship between different navigation state instances
    * held by different state holders. The assumption here is that when the navigation
-   * state is progressed (modified), then the provenance number is incremented.
-   * This creates a relationship, where we can say that:
+   * state is progressed (modified), the provenance number is incremented.
+   * This creates a relationship where we can say that:
    *
-   * 1. State with provenance = n + 1, has been derived from state with provenance = n,
-   * 2. For two given navigation states A, B, we can say that A *is stale* iff
+   * 1. State with provenance = n + 1 has been derived from state with provenance = n.
+   * 2. For two given navigation states A and B, we can say that A *is stale* iff
    * A.provenance <= B.provenance.
    *
-   * This allows to mitigate & resolve state conflicts that can happen with
-   * asynchornous navigation.
+   * This allows us to mitigate and resolve state conflicts that can happen with
+   * asynchronous navigation.
    */
   provenance: number;
 };
