@@ -1,10 +1,12 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "react-native-screens": ["src"],
-      "react-native-screens/*": ["src/*"],
-      "@react-navigation/*": ["react-navigation/packages/*/src"]
+      "react-native-screens": ["../src"],
+      "react-native-screens/*": ["../src/*"],
+      "@react-navigation/*": ["../react-navigation/packages/*/src"],
+      "@apps/*": ["src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
