@@ -7,6 +7,7 @@ module.exports = {
       {
         alias: {
           '@apps': '../apps/src',
+          '@assets': '../apps/assets',
         },
       },
     ],

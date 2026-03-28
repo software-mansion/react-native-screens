@@ -6,7 +6,8 @@
       "react-native-screens": ["../src"],
       "react-native-screens/*": ["../src/*"],
       "@react-navigation/*": ["../react-navigation/packages/*/src"],
-      "@apps/*": ["src/*"]
+      "@apps/*": ["src/*"],
+      "@assets/*": ["assets/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
