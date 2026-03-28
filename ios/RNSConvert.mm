@@ -36,6 +36,25 @@
   }
 }
 
++ (RNSLargeTitleDisplayMode)RNSLargeTitleDisplayModeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigLargeTitleDisplayMode)largeTitleDisplayMode
+{
+  switch (largeTitleDisplayMode) {
+    using enum react::RNSScreenStackHeaderConfigLargeTitleDisplayMode;
+
+    case None:
+      return RNSLargeTitleDisplayModeNone;
+    case Automatic:
+      return RNSLargeTitleDisplayModeAutomatic;
+    case Always:
+      return RNSLargeTitleDisplayModeAlways;
+    case Never:
+      return RNSLargeTitleDisplayModeNever;
+    case InlineLarge:
+      return RNSLargeTitleDisplayModeInlineLarge;
+  }
+}
+
 + (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
     (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled
 {
