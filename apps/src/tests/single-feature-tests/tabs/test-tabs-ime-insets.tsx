@@ -1,15 +1,15 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
-import { SettingsSwitch } from '../../../shared';
+import { SettingsSwitch } from '@apps/shared';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsNavigationContext,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
-import { DummyScreen } from '../../shared/DummyScreens';
+} from '@apps/shared/gamma/containers/tabs';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const SCENARIO: Scenario = {
   name: 'IME insets',

@@ -1,14 +1,14 @@
 import React from 'react';
-import type { Scenario } from '../../shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import Colors from '../../../shared/styling/Colors';
-import { ToastProvider, useToast } from '../../../shared';
-import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
+} from '@apps/shared/gamma/containers/stack';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import Colors from '@apps/shared/styling/Colors';
+import { ToastProvider, useToast } from '@apps/shared';
+import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
 const SCENARIO: Scenario = {
   name: 'Prevent native dismiss - nested stack',

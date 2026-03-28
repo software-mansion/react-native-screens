@@ -4,14 +4,14 @@ import { TabBarControllerMode } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import { Button } from '../../shared';
+import { Button } from '@apps/shared';
 
 function makeTab(
   title: string,

@@ -9,11 +9,11 @@ import React, {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import {
   ColorValue,
   Pressable,
@@ -23,9 +23,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SettingsPicker, SettingsSwitch } from '../../shared';
-import Colors from '../../shared/styling/Colors';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import Colors from '@apps/shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import type {
   TabBarMinimizeBehavior,
   TabsBottomAccessoryEnvironment,

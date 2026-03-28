@@ -2,7 +2,7 @@ import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { Image, View } from 'react-native';
-import Colors from '../../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 import { SplitBaseConfig } from '../helpers/types';
 
 const HeaderLeft = () => (
@@ -42,7 +42,7 @@ export const SplitWithNativeStackHeader = ({
           }}
           customScreenThreeNavigationOptions={{
             headerShown: true,
-            headerBackImageSource: require('../../../../assets/backButton.png'),
+            headerBackImageSource: require('@assets/backButton.png'),
           }}
         />
       </Split.Column>

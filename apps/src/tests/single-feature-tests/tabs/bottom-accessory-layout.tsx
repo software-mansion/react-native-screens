@@ -1,14 +1,14 @@
-import LongText from '../../../shared/LongText';
+import LongText from '@apps/shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { DummyScreen } from '../../shared/DummyScreens';
-import type { Scenario } from '../../shared/helpers';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Bottom Accessory',

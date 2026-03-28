@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabsContainer } from './TabsContainer';
 import type { TabsContainerProps, TabsHostConfig } from './TabsContainer.types';
-import { deepMerge } from '../../../utils/deep-merge';
+import { deepMerge } from '@apps/shared/utils/deep-merge';
 import {
   TabsHostConfigContext,
   type TabsHostConfigContextPayload,

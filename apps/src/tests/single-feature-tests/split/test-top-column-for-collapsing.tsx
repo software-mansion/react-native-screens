@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import { Split } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
 

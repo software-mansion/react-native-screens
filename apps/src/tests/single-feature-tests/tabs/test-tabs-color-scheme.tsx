@@ -8,16 +8,16 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
-import { SettingsPicker } from '../../../shared';
+import { SettingsPicker } from '@apps/shared';
 import type { TabsHostColorScheme } from 'react-native-screens';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Color Scheme',

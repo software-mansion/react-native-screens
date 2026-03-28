@@ -16,16 +16,16 @@ import React, {
 } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
-import { ListItem, SettingsPicker, SettingsSwitch } from '../../shared';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+import { ListItem, SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import {
   TabsContainer,
   TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;

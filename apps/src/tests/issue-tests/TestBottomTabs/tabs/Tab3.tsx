@@ -1,4 +1,4 @@
-import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
 

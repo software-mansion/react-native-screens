@@ -8,7 +8,7 @@ import {
   createNativeStackNavigator,
   type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 type RouteParamList = {
   Main: undefined;

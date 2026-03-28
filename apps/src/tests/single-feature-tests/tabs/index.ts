@@ -1,4 +1,4 @@
-import type { ScenarioGroup } from '../../shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';

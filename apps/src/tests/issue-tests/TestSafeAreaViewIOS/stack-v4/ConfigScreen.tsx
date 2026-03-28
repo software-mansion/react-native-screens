@@ -5,7 +5,7 @@ import {
   StackV4SAVExampleConfig,
   useStackV4SAVExampleContext,
 } from './StackV4SAVExampleContext';
-import { SettingsPicker, SettingsSwitch } from '../../../../shared';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import Info from '../shared/Info';
 
 export default function ConfigScreen({ navigation }: StackNavigationProp) {
