@@ -72,6 +72,7 @@ internal class TabsContainer(
 
     private var navState: TabsNavState = TabsNavState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
+    internal var rejectOpsWithStaleNavState: Boolean = false
 
     internal val selectedTab: TabsScreenFragment
         get() =
@@ -261,11 +262,19 @@ internal class TabsContainer(
                 "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.navState.selectedKey}"
             }
 
+        if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.navState)) {
+            delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
+            pendingJsOperation = null
+            return
+        }
+
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
             bottomNavigationView.selectedItemId = nextSelectedMenuItemId
             isInExternalOperationContext = false
+        } else {
+            delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
         }
 
         pendingOperation = null
@@ -512,6 +521,8 @@ internal class TabsContainer(
     internal fun teardownFragmentManager() {
         fragmentManager = null
     }
+
+    private fun isNavStateStale(state: TabsNavState): Boolean = state.provenance <= navState.provenance
 
     companion object {
         const val TAG = "TabsContainer"

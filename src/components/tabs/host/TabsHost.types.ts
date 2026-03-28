@@ -48,6 +48,13 @@ export type TabSelectedEvent = {
   isNativeAction: boolean;
 };
 
+export type TabSelectionRejectedEvent = {
+  selectedScreenKey: string;
+  provenance: number;
+  rejectedScreenKey: string;
+  rejectedProvenance: number;
+};
+
 export type TabsHostColorScheme = ColorScheme | 'inherit';
 
 export type TabsHostDirection = Direction | 'inherit';
@@ -75,9 +82,28 @@ export interface TabsHostPropsBase {
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
    *
+   * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.
    */
   navState: TabsHostNavState;
+  /**
+   * @summary If true, the native side will reject any navigation state updates coming from JS
+   * if the provenance of the update is stale.
+   *
+   * @description A navigation state update is considered stale if its provenance is older
+   * than the provenance of the currently active navigation state.
+   *
+   * This can happen, when an update from JS is dispatched, but before it reaches the native
+   * side, another update happens on UI thread, e.g. user selects another tab. For such
+   * situations, where to-be-applied navigation state update had been dispatched w/o
+   * full context of actual navigation state you can toggle this prop.
+   *
+   * If an update is rejected due to being stale, the `onTabSelectionRejected` event will be
+   * emitted with details of the rejected update and the currently active navigation state.
+   *
+   * @default false
+   */
+  rejectStaleNavStateUpdates?: boolean;
 
   // General
   children?: ViewProps['children'];
@@ -165,6 +191,16 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+
+  /**
+   * @summary
+   * A callback that gets invoked when the native side rejects a tab selection request.
+   *
+   * @see {@link TabSelectionRejectedEvent}
+   */
+  onTabSelectionRejected?: (
+    event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
+  ) => void;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
