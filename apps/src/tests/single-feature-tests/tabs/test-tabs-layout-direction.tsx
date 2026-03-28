@@ -6,17 +6,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
-import { SettingsPicker, SettingsSwitch } from '../../../shared';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import type { TabsHostProps } from 'react-native-screens';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
-import { DummyScreen } from '../../shared/DummyScreens';
+} from '@apps/shared/gamma/containers/tabs';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const SCENARIO: Scenario = {
   name: 'Layout Direction',

@@ -4,7 +4,7 @@ import {
   StackContainer,
   StackRouteConfig,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
+} from '@apps/shared/gamma/containers/stack';
 import { Button, Text, View } from 'react-native';
 
 function TemplateScreen() {

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
-import { StackContainer } from '../../../shared/gamma/containers/stack';
-import { Rectangle } from '../../../shared/Rectangle';
-import Colors from '../../../shared/styling/Colors';
-import { generateNextColor } from '../../../shared/utils/color-generator';
+import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { Rectangle } from '@apps/shared/Rectangle';
+import Colors from '@apps/shared/styling/Colors';
+import { generateNextColor } from '@apps/shared/utils/color-generator';
 
 const SCENARIO: Scenario = {
   name: 'Basic functionality',

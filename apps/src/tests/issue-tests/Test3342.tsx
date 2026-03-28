@@ -12,12 +12,12 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
-import Colors from '../../shared/styling/Colors';
+} from '@apps/shared/gamma/containers/tabs';
+import Colors from '@apps/shared/styling/Colors';
 
 type RouteParamList = {
   Screen1: undefined;

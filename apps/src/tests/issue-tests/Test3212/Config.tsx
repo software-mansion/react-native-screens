@@ -1,7 +1,7 @@
 import React, { Button, Text } from "react-native";
 import { useScrollEdgeEffectsConfigContext } from './context';
 import { NavigationProp, useNavigation } from "@react-navigation/core";
-import { SettingsPicker } from "../../../shared";
+import { SettingsPicker } from "@apps/shared";
 import { ScrollEdgeEffect } from "react-native-screens";
 
 interface ConfigProps {

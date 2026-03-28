@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TabsContainer } from '../../../shared/gamma/containers/tabs';
-import { Scenario } from '../../shared/helpers';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
-import Colors from '../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Appearance',
@@ -100,11 +100,11 @@ export function App() {
             android: {
               icon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon.png'),
+                imageSource: require('@assets/variableIcons/icon.png'),
               },
               selectedIcon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: DEFAULT_APPEARANCE_ANDROID,
             },
@@ -118,7 +118,7 @@ export function App() {
             ios: {
               icon: {
                 type: 'templateSource',
-                templateSource: require('../../../../assets/variableIcons/icon.png'),
+                templateSource: require('@assets/variableIcons/icon.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_IOS,
@@ -199,7 +199,7 @@ export function App() {
             ios: {
               icon: {
                 type: 'templateSource',
-                templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                templateSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_IOS,
@@ -225,7 +225,7 @@ export function App() {
             android: {
               icon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_ANDROID,

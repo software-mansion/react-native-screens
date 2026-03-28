@@ -8,8 +8,8 @@ import {
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
-import Colors from '../../shared/styling/Colors';
+} from '@apps/shared/gamma/containers/tabs';
+import Colors from '@apps/shared/styling/Colors';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {
   NavigationContainer,
@@ -95,11 +95,11 @@ function makeTabConfigs(
         android: {
           icon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
           },
           selectedIcon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
           },
         },
       },
@@ -114,11 +114,11 @@ function makeTabConfigs(
         ios: {
           icon: {
             type: 'templateSource',
-            templateSource: require('../../../assets/variableIcons/icon.png'),
+            templateSource: require('@assets/variableIcons/icon.png'),
           },
           selectedIcon: {
             type: 'templateSource',
-            templateSource: require('../../../assets/variableIcons/icon_fill.png'),
+            templateSource: require('@assets/variableIcons/icon_fill.png'),
           },
         },
         android: {
@@ -145,21 +145,21 @@ function makeTabConfigs(
         ios: {
           icon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon.png'),
+            imageSource: require('@assets/variableIcons/icon.png'),
           },
           selectedIcon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
           },
         },
         android: {
           icon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon.png'),
+            imageSource: require('@assets/variableIcons/icon.png'),
           },
           selectedIcon: {
             type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
           },
         },
       },

@@ -11,7 +11,7 @@ import {
 } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
 import { Button, Modal, StyleSheet, Text, View } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 type StackRouteParamList = {
   Home: undefined;

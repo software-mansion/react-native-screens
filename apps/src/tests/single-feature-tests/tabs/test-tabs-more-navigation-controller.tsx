@@ -1,13 +1,13 @@
 import React from 'react';
-import type { Scenario } from '../../shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   TabsContainer,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
-} from '../../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const SCENARIO: Scenario = {

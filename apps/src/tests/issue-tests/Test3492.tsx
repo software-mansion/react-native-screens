@@ -18,13 +18,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
-import Colors from '../../shared/styling/Colors';
+} from '@apps/shared/gamma/containers/tabs';
+import Colors from '@apps/shared/styling/Colors';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
-import LongText from '../../shared/LongText';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+import LongText from '@apps/shared/LongText';
 import { someExtensiveComputation } from './TestBottomTabs/utils';
 
 type ScreenKey = 'Tab2' | 'Tab3' | 'Tab4';

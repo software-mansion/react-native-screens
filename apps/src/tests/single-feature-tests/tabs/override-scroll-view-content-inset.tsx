@@ -4,8 +4,8 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { TabsContainer } from '../../../shared/gamma/containers/tabs';
-import type { Scenario } from '../../shared/helpers';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import type { Scenario } from '@apps/tests/shared/helpers';
 
 const SCENARIO: Scenario = {
   name: 'Override ScrollView Content Inset',

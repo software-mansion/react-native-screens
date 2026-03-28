@@ -4,10 +4,10 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { ScrollView, View } from 'react-native';
-import Colors from '../../shared/styling/Colors';
-import { SettingsPicker, SettingsSwitch } from '../../shared';
+import Colors from '@apps/shared/styling/Colors';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 
 type RouteParamList = {
   Home: undefined;

@@ -1,19 +1,19 @@
-import { SettingsPicker } from '../../../shared/SettingsPicker';
+import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { DummyScreen } from '../../shared/DummyScreens';
-import { Scenario } from '../../shared/helpers';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
+import { Scenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   type StackRouteConfig,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
+} from '@apps/shared/gamma/containers/stack';
 import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'TabsInStack',

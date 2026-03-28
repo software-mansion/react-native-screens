@@ -1,11 +1,11 @@
 import {
   TabsContainer,
   TabRouteConfig,
-} from '../../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import React from 'react';
 import { useState } from 'react';
 import TestTab from './TestTab';

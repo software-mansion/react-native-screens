@@ -3,8 +3,8 @@ import React from 'react';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
 function makeTab(title: string, description: string) {
