@@ -1,15 +1,16 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import type { Scenario } from '../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
-  TabsContainer,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
+  TabsContainerWithHostConfigContext,
+  useTabsHostConfig,
 } from '../../../shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import { Rectangle } from 'apps/src/shared/Rectangle';
-import Colors from 'apps/src/shared/styling/Colors';
+import { ToastProvider, useToast } from '../../../shared/';
+import Colors from '../../../shared/styling/Colors';
 
 const SCENARIO: Scenario = {
   name: 'Stale update rejection',
@@ -23,12 +24,27 @@ export default SCENARIO;
 
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+
+  console.log(`ContentView - render for key ${routeKey}`);
+
+  const [heavyRenderEnabled, setHeavyRenderEnabled] = React.useState(false);
+
   return (
     <CenteredLayoutView>
       <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
         {routeKey}
       </Text>
+      <Text style={{ textAlign: 'center' }}>
+        heavyRender: {JSON.stringify(heavyRenderEnabled)}
+      </Text>
+      <Text style={{ textAlign: 'center' }}>
+        rejectStaleNavStateUpdates: {JSON.stringify(hostConfig.rejectStaleNavStateUpdates)}
+      </Text>
+      <HeavyRenderHierarchy enabled={heavyRenderEnabled} timeMs={3000} />
       <TabsNavigationButtons />
+      <Button title='Toggle heavyRender' onPress={() => setHeavyRenderEnabled(prev => !prev)} />
+      <Button title='Toggle rejectStaleNavStateUpdates' onPress={() => updateHostConfig({ rejectStaleNavStateUpdates: !hostConfig.rejectStaleNavStateUpdates })} />
     </CenteredLayoutView>
   );
 }
@@ -64,39 +80,42 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
-}
-
-function SuspenseHierarchy({ promise }: { promise: Promise<string> }) {
   return (
-    <Suspense fallback={<SuspenseFallback />}>
-      <SuspendingComponent promise={promise} />
-    </Suspense>
-  );
-
-}
-
-function SuspendingComponent({ promise }: { promise: Promise<string> }) {
-  const promiseValue = React.use(promise);
-  return (
-    <Rectangle color={Colors.GreenLight60} width={'100%'} height={128}>
-      <Text>SuspendingComponent: {promiseValue}</Text>
-    </Rectangle>
+    <ToastProvider>
+      <AppContents />
+    </ToastProvider>
   );
 }
 
-function SuspenseFallback() {
+function AppContents() {
+  const toast = useToast();
+
   return (
-    <Rectangle color={Colors.GreenLight60} width={'100%'} height={128}>
-      <Text>Fallback</Text>
-    </Rectangle>
+    <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} rejectStaleNavStateUpdates={true} onTabSelectionRejected={(event) => {
+      const message = `onTabSelectionRejected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`
+      console.warn(message);
+      toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
+    }} />
   );
 }
 
-function createTimeoutPromise(timeout: number = 4000): Promise<string> {
-  return new Promise((resolve, _) => {
-    setTimeout(() => {
-      resolve('Promise resolved');
-    }, timeout);
-  });
+
+function HeavyRenderHierarchy({ enabled, timeMs = 5000 }: { enabled: boolean, timeMs: number }) {
+  if (enabled) {
+    console.log('HeavyRenderHierarchy computation BEGIN')
+    blockThread(timeMs);
+    console.log('HeavyRenderHierarchy computation END')
+  }
+  return (
+    <View>
+      <Text>HeavyRenderHierarchy</Text>
+    </View>
+
+  );
 }
+
+function blockThread(ms: number) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) { }
+}
+
