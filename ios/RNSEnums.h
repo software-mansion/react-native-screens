@@ -185,6 +185,19 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanFalse
 };
 
+typedef NS_ENUM(NSInteger, RNSLargeTitleDisplayMode) {
+  /// Falls back to the `largeTitle` boolean prop behaviour.
+  RNSLargeTitleDisplayModeNone,
+  /// Inherits the display mode from the navigation controller.
+  RNSLargeTitleDisplayModeAutomatic,
+  /// Always displays a large title.
+  RNSLargeTitleDisplayModeAlways,
+  /// Never displays a large title.
+  RNSLargeTitleDisplayModeNever,
+  /// Displays a large title in an inline (compact) position. Requires iOS 17+.
+  RNSLargeTitleDisplayModeInlineLarge,
+};
+
 typedef NS_ENUM(NSInteger, RNSTabsBottomAccessoryEnvironment) {
   RNSTabsBottomAccessoryEnvironmentRegular,
   RNSTabsBottomAccessoryEnvironmentInline

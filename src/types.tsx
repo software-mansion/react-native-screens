@@ -26,6 +26,7 @@ export type SearchBarCommands = {
 };
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+export type LargeTitleDisplayMode = 'none' | 'automatic' | 'always' | 'never' | 'inlineLarge';
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -761,6 +762,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean;
+  /**
+   * Controls how the navigation title is displayed. When set to a value other than `none`,
+   * this prop takes precedence over the `largeTitle` boolean prop.
+   *
+   * - `none` (default) — falls back to the `largeTitle` prop behaviour.
+   * - `automatic` — inherits the display mode from the navigation controller.
+   * - `always` — always displays a large title.
+   * - `never` — never displays a large title.
+   * - `inlineLarge` — displays a large title in an inline (compact) position (requires iOS 17+).
+   *
+   * @platform ios
+   */
+  largeTitleDisplayMode?: LargeTitleDisplayMode;
   /**
    * Callback which is executed when screen header is attached
    */

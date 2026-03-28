@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL largeTitle;
+@property (nonatomic) RNSLargeTitleDisplayMode largeTitleDisplayMode;
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic, retain) NSString *largeTitleFontWeight;
@@ -174,5 +175,6 @@ NS_ASSUME_NONNULL_END
 
 + (UISemanticContentAttribute)UISemanticContentAttribute:(nonnull id)json;
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(nonnull id)json;
++ (RNSLargeTitleDisplayMode)RNSLargeTitleDisplayMode:(nonnull id)json;
 
 @end

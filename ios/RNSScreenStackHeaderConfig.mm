@@ -588,11 +588,41 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
 
-  if (config.largeTitle) {
-    navctr.navigationBar.prefersLargeTitles = YES;
+  if (config.largeTitleDisplayMode == RNSLargeTitleDisplayModeNone) {
+    // Legacy behaviour: driven by the boolean `largeTitle` prop.
+    if (config.largeTitle) {
+      navctr.navigationBar.prefersLargeTitles = YES;
+    }
+    navitem.largeTitleDisplayMode =
+        config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
+  } else {
+    // Explicit display-mode requested.
+    UINavigationItemLargeTitleDisplayMode displayMode;
+    switch (config.largeTitleDisplayMode) {
+      case RNSLargeTitleDisplayModeAutomatic:
+        displayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        break;
+      case RNSLargeTitleDisplayModeAlways:
+        navctr.navigationBar.prefersLargeTitles = YES;
+        displayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        break;
+      case RNSLargeTitleDisplayModeNever:
+        displayMode = UINavigationItemLargeTitleDisplayModeNever;
+        break;
+      case RNSLargeTitleDisplayModeInlineLarge:
+        navctr.navigationBar.prefersLargeTitles = YES;
+        if (@available(iOS 17.0, *)) {
+          displayMode = UINavigationItemLargeTitleDisplayModeInlineLarge;
+        } else {
+          displayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        }
+        break;
+      default:
+        displayMode = UINavigationItemLargeTitleDisplayModeNever;
+        break;
+    }
+    navitem.largeTitleDisplayMode = displayMode;
   }
-  navitem.largeTitleDisplayMode =
-      config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
@@ -1127,6 +1157,8 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _hideShadow = newScreenProps.hideShadow;
 
   _largeTitle = newScreenProps.largeTitle;
+  _largeTitleDisplayMode =
+      [RNSConvert RNSLargeTitleDisplayModeFromCppEquivalent:newScreenProps.largeTitleDisplayMode];
   if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
     _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
@@ -1286,6 +1318,7 @@ RCT_EXPORT_VIEW_PROPERTY(blurEffect, RNSBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleDisplayMode, RNSLargeTitleDisplayMode)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontWeight, NSString)
@@ -1366,6 +1399,18 @@ RCT_ENUM_CONVERTER(
       @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
     }),
     UINavigationItemBackButtonDisplayModeDefault,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSLargeTitleDisplayMode,
+    (@{
+      @"none" : @(RNSLargeTitleDisplayModeNone),
+      @"automatic" : @(RNSLargeTitleDisplayModeAutomatic),
+      @"always" : @(RNSLargeTitleDisplayModeAlways),
+      @"never" : @(RNSLargeTitleDisplayModeNever),
+      @"inlineLarge" : @(RNSLargeTitleDisplayModeInlineLarge),
+    }),
+    RNSLargeTitleDisplayModeNone,
     integerValue)
 
 @end
