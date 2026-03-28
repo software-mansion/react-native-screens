@@ -48,6 +48,13 @@ export type TabSelectedEvent = {
   isNativeAction: boolean;
 };
 
+export type TabSelectionRejectedEvent = {
+  selectedScreenKey: string;
+  provenance: number;
+  rejectedScreenKey: string;
+  rejectedProvenance: number;
+};
+
 export type TabsHostColorScheme = ColorScheme | 'inherit';
 
 export type TabsHostDirection = Direction | 'inherit';
@@ -184,6 +191,16 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+
+  /**
+   * @summary
+   * A callback that gets invoked when the native side rejects a tab selection request.
+   *
+   * @see {@link TabSelectionRejectedEvent}
+   */
+  onTabSelectionRejected?: (
+    event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
+  ) => void;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
