@@ -1,3 +1,10 @@
+/**
+ * Changelog:
+ *
+ * #3816 - scrollEdgeEffects not applied on modal screens. The prop was set on the outer modal
+ *         screen which doesn't contain the scroll view. Fix forwards it to the inner screen.
+ */
+
 import React from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
