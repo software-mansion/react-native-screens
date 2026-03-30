@@ -122,6 +122,15 @@ export type PlatformIconAndroid =
     }
   | PlatformIconShared;
 
+export type ScreenStackNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container.
+   *
+   * @platform android, ios
+   */
+  backgroundColor?: ColorValue;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -629,6 +638,7 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.MutableRefObject<React.Ref<View>>;
+  nativeContainerStyle?: ScreenStackNativeContainerStyleProps;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

@@ -194,6 +194,7 @@ export { default as TestPreload } from './TestPreload';
 export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestHeaderTitle } from './TestHeaderTitle';
 export { default as TestHeaderHeight } from './TestHeaderHeight';
+export { default as TestStackBackgroundColor } from './TestStackBackgroundColor';
 export { default as TestModalNavigation } from './TestModalNavigation';
 export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
