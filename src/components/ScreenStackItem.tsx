@@ -80,8 +80,8 @@ function ScreenStackItem(
   }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
 
   const hasEdgeEffects =
-    rest?.scrollEdgeEffects === undefined ||
-    Object.values(rest.scrollEdgeEffects).some(
+    scrollEdgeEffects === undefined ||
+    Object.values(scrollEdgeEffects).some(
       propValue => propValue !== 'hidden',
     );
   const hasBlurEffect =
@@ -178,7 +178,7 @@ function ScreenStackItem(
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
-      scrollEdgeEffects={isHeaderInModal ? undefined : scrollEdgeEffects}
+      scrollEdgeEffects={scrollEdgeEffects}
       onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
