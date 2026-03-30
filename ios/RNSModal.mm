@@ -1,4 +1,5 @@
 #import "RNSModal.h"
+#import "RNSConvert.h"
 #import <React/RCTConversions.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -38,6 +39,7 @@ static UIModalPresentationStyle RNSUIModalPresentationStyleFromCpp(react::RNSMod
   UIViewController *_sheetViewController;
   RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView *> *_reactSubviews;
+  NSArray<NSNumber *> *_sheetAllowedDetents;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -87,6 +89,13 @@ static UIModalPresentationStyle RNSUIModalPresentationStyleFromCpp(react::RNSMod
 
   _sheetViewController.modalPresentationStyle = RNSUIModalPresentationStyleFromCpp(newModalProps.presentation);
 
+  if (newModalProps.sheetAllowedDetents != oldModalProps.sheetAllowedDetents) {
+    _sheetAllowedDetents = [RNSConvert detentFractionsArrayFromVector:newModalProps.sheetAllowedDetents];
+    if (_sheetViewController.presentingViewController) {
+      [self applyDetentsToSheet:_sheetViewController.sheetPresentationController animate:YES];
+    }
+  }
+
   if (oldModalProps.presented != newModalProps.presented) {
     if (newModalProps.presented) {
       [self presentSheet];
@@ -113,16 +122,69 @@ static UIModalPresentationStyle RNSUIModalPresentationStyleFromCpp(react::RNSMod
 
   UISheetPresentationController *sheet = _sheetViewController.sheetPresentationController;
   if (sheet != nil) {
-    sheet.detents = @[
-      [UISheetPresentationControllerDetent mediumDetent],
-      [UISheetPresentationControllerDetent largeDetent],
-    ];
+    [self applyDetentsToSheet:sheet animate:NO];
     sheet.prefersGrabberVisible = YES;
     sheet.prefersScrollingExpandsWhenScrolledToEdge = YES;
   }
 
   [presentingVC presentViewController:_sheetViewController animated:YES completion:nil];
 }
+
+- (void)applyDetentsToSheet:(UISheetPresentationController *)sheet animate:(BOOL)animate
+{
+  if (sheet == nil) {
+    return;
+  }
+
+  void (^applyBlock)(void) = ^{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
+    if (@available(iOS 16.0, *)) {
+      if (_sheetAllowedDetents.count > 0) {
+        sheet.detents = [self detentsFromMaxHeightFractions:_sheetAllowedDetents];
+        return;
+      }
+    }
+#endif
+    // Fallback to system detents for iOS < 16 or when no custom detents specified.
+    if (_sheetAllowedDetents.count == 1 && _sheetAllowedDetents[0].floatValue < 1.0) {
+      sheet.detents = @[ [UISheetPresentationControllerDetent mediumDetent] ];
+    } else if (_sheetAllowedDetents.count == 1 && _sheetAllowedDetents[0].floatValue >= 1.0) {
+      sheet.detents = @[ [UISheetPresentationControllerDetent largeDetent] ];
+    } else {
+      // Default: both medium and large detents (matches previous behaviour and the [1.0] default).
+      sheet.detents = @[
+        [UISheetPresentationControllerDetent mediumDetent],
+        [UISheetPresentationControllerDetent largeDetent],
+      ];
+    }
+  };
+
+  if (animate) {
+    [sheet animateChanges:applyBlock];
+  } else {
+    applyBlock();
+  }
+}
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+    API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:fractions.count];
+  [fractions enumerateObjectsUsingBlock:^(NSNumber *fraction, NSUInteger index, BOOL *stop) {
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
+    [customDetents addObject:[UISheetPresentationControllerDetent
+                                 customDetentWithIdentifier:ident
+                                                   resolver:^CGFloat(
+                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                     return MIN(ctx.maximumDetentValue,
+                                                                ctx.maximumDetentValue * fraction.floatValue);
+                                                   }]];
+  }];
+  return customDetents;
+}
+#endif
 
 - (void)dismissSheet
 {

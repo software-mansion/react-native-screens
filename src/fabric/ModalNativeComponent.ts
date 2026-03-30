@@ -16,6 +16,7 @@ interface NativeProps extends ViewProps {
   presented?: boolean;
   presentation?: CT.WithDefault<ModalPresentation, 'pageSheet'>;
   onDismiss?: CT.DirectEventHandler<Readonly<{}>>;
+  sheetAllowedDetents?: number[];
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModal', {});
