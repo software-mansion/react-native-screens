@@ -1,4 +1,6 @@
 #import "RNSModal.h"
+#import <React/RCTConversions.h>
+#import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -7,6 +9,7 @@ namespace react = facebook::react;
 
 @implementation RNSModal {
   UIViewController *_sheetViewController;
+  RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView *> *_reactSubviews;
 }
 
@@ -17,6 +20,9 @@ namespace react = facebook::react;
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _sheetViewController = [[UIViewController alloc] init];
+
+    _touchHandler = [RCTSurfaceTouchHandler new];
+    [_touchHandler attachToView:_sheetViewController.view];
 
     // This view is a logical container only; the content lives inside the presented sheet.
     self.hidden = YES;
