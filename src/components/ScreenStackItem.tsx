@@ -45,6 +45,7 @@ function ScreenStackItem(
     style,
     screenId,
     onHeaderHeightChange,
+    scrollEdgeEffects,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -177,6 +178,7 @@ function ScreenStackItem(
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
+      scrollEdgeEffects={isHeaderInModal ? undefined : scrollEdgeEffects}
       onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
@@ -187,6 +189,7 @@ function ScreenStackItem(
             activityState={activityState}
             shouldFreeze={shouldFreeze}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
+            scrollEdgeEffects={scrollEdgeEffects}
             style={StyleSheet.absoluteFill}
             onHeaderHeightChange={onHeaderHeightChange}>
             {content}
