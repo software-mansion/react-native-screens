@@ -1,205 +1,84 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   Button,
-  useWindowDimensions,
 } from 'react-native';
-import { Screen, ScreenStack, ScreenStackHeaderConfig } from 'react-native-screens';
+import {
+  Screen,
+  ScreenStack,
+  ScreenStackHeaderConfig,
+} from 'react-native-screens';
 import Colors from '../../shared/styling/Colors';
 import LongText from '../../shared/LongText';
-import { someExtensiveComputation } from './TestBottomTabs/utils';
 
-type ContentType = 'view' | 'scrollViewWithText' | 'scrollViewWithRects';
-
-type RectConfig = {
-  height: number;
-  gap: number;
-};
-
-type ScreenConfig = {
-  reactBackground: string;
-  isHeavy: 'true' | 'false';
-  contentType: ContentType;
-  rectConfig: RectConfig;
-};
+type ScreenKey = 'ScreenView' | 'ScreenScroll';
 
 type AppConfig = {
   containerBackground: string;
-  screens: Record<ScreenKey, ScreenConfig>;
+  reactBackground: string;
 };
 
-type BackgroundContextType = {
-  config: AppConfig;
-  setConfig: Dispatch<SetStateAction<AppConfig>>;
-  applyPreset: (preset: AppConfig) => void;
-};
-
-type ScreenKey = 'ScreenA' | 'ScreenB' | 'ScreenC';
-
-const DEFAULT_RECT_CONFIG: RectConfig = {
-  height: 100,
-  gap: 20,
-};
-
-const DEFAULT_SCREEN_CONFIG: ScreenConfig = {
-  reactBackground: Colors.White,
-  isHeavy: 'false',
-  contentType: 'view',
-  rectConfig: DEFAULT_RECT_CONFIG,
-};
+const COLORS = [
+  Colors.White,
+  Colors.PurpleLight40,
+  Colors.BlueLight40,
+  Colors.NavyDark140,
+  'transparent',
+];
 
 const INITIAL_CONFIG: AppConfig = {
   containerBackground: Colors.White,
-  screens: {
-    ScreenA: { ...DEFAULT_SCREEN_CONFIG, contentType: 'view' },
-    ScreenB: { ...DEFAULT_SCREEN_CONFIG, contentType: 'scrollViewWithText' },
-    ScreenC: { ...DEFAULT_SCREEN_CONFIG, contentType: 'scrollViewWithRects' },
-  },
+  reactBackground: Colors.White,
 };
 
-const PRESETS: Record<string, AppConfig> = {
-  Default: INITIAL_CONFIG,
-  ColorfulContainer: {
-    containerBackground: Colors.PurpleLight40,
-    screens: {
-      ScreenA: { ...DEFAULT_SCREEN_CONFIG, contentType: 'view', reactBackground: 'transparent' },
-      ScreenB: { ...DEFAULT_SCREEN_CONFIG, contentType: 'scrollViewWithText', reactBackground: 'transparent' },
-      ScreenC: { ...DEFAULT_SCREEN_CONFIG, contentType: 'scrollViewWithRects', reactBackground: 'transparent' },
-    },
-  },
-  ColorfulReact: {
-    containerBackground: Colors.White,
-    screens: {
-      ScreenA: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'view',
-        reactBackground: Colors.PurpleLight40,
-      },
-      ScreenB: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'scrollViewWithText',
-        reactBackground: Colors.BlueLight40,
-      },
-      ScreenC: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'scrollViewWithRects',
-        reactBackground: Colors.NavyDark140,
-        rectConfig: { height: 80, gap: 15 },
-      },
-    },
-  },
-  ColorfulContainerReact: {
-    containerBackground: Colors.NavyDark140,
-    screens: {
-      ScreenA: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'view',
-        reactBackground: Colors.PurpleLight40,
-      },
-      ScreenB: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'scrollViewWithText',
-        reactBackground: Colors.BlueLight40,
-      },
-      ScreenC: {
-        ...DEFAULT_SCREEN_CONFIG,
-        contentType: 'scrollViewWithRects',
-        reactBackground: Colors.White,
-        rectConfig: { height: 80, gap: 15 },
-      },
-    },
-  },
+const ConfigContext = createContext<{
+  config: AppConfig;
+  setConfig: React.Dispatch<React.SetStateAction<AppConfig>>;
+} | null>(null);
+
+const useConfig = () => {
+  const ctx = useContext(ConfigContext);
+  if (!ctx) throw new Error('Missing ConfigContext');
+  return ctx;
 };
 
-const BackgroundTestContext = createContext<BackgroundContextType | null>(null);
-
-const useBackgroundTestContext = () => {
-  const context = useContext(BackgroundTestContext);
-  if (!context)
-    throw new Error('useBackgroundTestContext must be used within provider');
-  return context;
-};
-
-const ConfigSection = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <View
-    style={{
-      marginBottom: 20,
-      padding: 10,
-      backgroundColor: '#f0f0f0',
-      borderRadius: 8,
-    }}>
-    <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 16 }}>
-      {title}
-    </Text>
-    {children}
-  </View>
-);
-
-const SimplePicker = ({
+const ColorPicker = ({
   label,
   value,
-  options,
   onChange,
-  type = 'normal',
 }: {
   label: string;
   value: string;
-  options: string[];
-  onChange: (option: string) => void;
-  type?: 'normal' | 'color';
+  onChange: (c: string) => void;
 }) => (
-  <View style={{ marginBottom: 10 }}>
-    <Text style={{ fontSize: 12, color: 'gray' }}>
+  <View style={{ marginBottom: 12 }}>
+    <Text style={{ fontSize: 12, color: 'gray', marginBottom: 4 }}>
       {label}: {value}
     </Text>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 12,
-        padding: 5,
-      }}>
-      {options.map((opt: string) => (
+      contentContainerStyle={{ gap: 10 }}>
+      {COLORS.map(c => (
         <Pressable
-          key={opt}
-          onPress={() => onChange(opt)}
+          key={c}
+          onPress={() => onChange(c)}
           style={{
             padding: 8,
             backgroundColor: 'white',
             borderRadius: 6,
             borderWidth: 2,
-            borderColor: type === 'color' ? opt : '#ddd',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowOpacity: 0.22,
-            shadowRadius: 2.22,
-            elevation: 3,
+            borderColor: c,
           }}>
           <Text
             style={{
-              color: 'black',
               fontSize: 12,
-              fontWeight: opt === value ? 'bold' : undefined,
+              fontWeight: c === value ? 'bold' : undefined,
             }}>
-            {opt}
+            {c}
           </Text>
         </Pressable>
       ))}
@@ -207,116 +86,40 @@ const SimplePicker = ({
   </View>
 );
 
-const RectsGenerator = ({ config }: { config: RectConfig }) => {
-  const { width } = useWindowDimensions();
-  const sidePadding = 30;
-
-  return (
-    <View
-      style={{
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: config.gap,
-        paddingVertical: config.gap,
-      }}>
-      {[...Array(20).keys()].map(i => (
-        <View
-          key={i}
-          style={{
-            width: width - sidePadding * 2,
-            height: config.height,
-            backgroundColor: Colors.PurpleLight80,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 4,
-          }}>
-          <Text style={{ color: 'white', fontWeight: 'bold' }}>{i + 1}</Text>
-        </View>
-      ))}
-    </View>
-  );
-};
-
-const TestScreenContent = ({
+function PushedScreen({
   screenKey,
   onPop,
 }: {
   screenKey: ScreenKey;
   onPop: () => void;
-}) => {
-  const { config } = useBackgroundTestContext();
-  const screenConfig = config.screens[screenKey];
-
-  const Container = screenConfig.contentType === 'view' ? View : ScrollView;
-
-  if (screenConfig.isHeavy === 'true') {
-    someExtensiveComputation();
-  }
+}) {
+  const { config } = useConfig();
+  const isScroll = screenKey === 'ScreenScroll';
+  const Container = isScroll ? ScrollView : View;
 
   return (
     <Container
-      style={{ flex: 1, backgroundColor: screenConfig.reactBackground }}
-      contentContainerStyle={
-        screenConfig.contentType !== 'view' ? { flexGrow: 1 } : undefined
-      }>
+      style={{ flex: 1, backgroundColor: config.reactBackground }}
+      contentContainerStyle={isScroll ? { flexGrow: 1 } : undefined}>
       <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{screenKey}</Text>
-        <Text>React BG: {screenConfig.reactBackground}</Text>
         <Text>Container BG: {config.containerBackground}</Text>
-        <View style={{ marginTop: 16, gap: 8 }}>
-          <Button title="Pop" onPress={onPop} />
-        </View>
+        <Text>React BG: {config.reactBackground}</Text>
+        <Button title="Pop" onPress={onPop} />
       </View>
-
-      {screenConfig.contentType === 'scrollViewWithText' && (
+      {isScroll ? (
         <LongText size="xl" />
-      )}
-
-      {screenConfig.contentType === 'scrollViewWithRects' && (
-        <RectsGenerator config={screenConfig.rectConfig} />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 24, fontWeight: 'bold' }}>View</Text>
+        </View>
       )}
     </Container>
   );
-};
+}
 
-function ConfigScreenContent({
-  onPush,
-}: {
-  onPush: (screen: ScreenKey) => void;
-}) {
-  const { config, setConfig, applyPreset } = useBackgroundTestContext();
-
-  const updateScreen = (key: ScreenKey, update: Partial<ScreenConfig>) => {
-    setConfig(prev => ({
-      ...prev,
-      screens: {
-        ...prev.screens,
-        [key]: { ...prev.screens[key], ...update },
-      },
-    }));
-  };
-
-  const updateRects = (key: ScreenKey, update: Partial<RectConfig>) => {
-    setConfig(prev => ({
-      ...prev,
-      screens: {
-        ...prev.screens,
-        [key]: {
-          ...prev.screens[key],
-          rectConfig: { ...prev.screens[key].rectConfig, ...update },
-        },
-      },
-    }));
-  };
-
-  const colors = [
-    Colors.White,
-    Colors.PurpleLight40,
-    Colors.BlueLight40,
-    Colors.NavyDark140,
-    'transparent',
-  ];
-  const contentTypes = ['view', 'scrollViewWithText', 'scrollViewWithRects'];
+function ConfigScreen({ onPush }: { onPush: (s: ScreenKey) => void }) {
+  const { config, setConfig } = useConfig();
 
   return (
     <ScrollView
@@ -329,150 +132,55 @@ function ConfigScreenContent({
         Stack Background Tester
       </Text>
 
-      <ConfigSection title="Presets">
-        <ScrollView horizontal contentContainerStyle={{ gap: 10 }}>
-          {Object.keys(PRESETS).map(name => (
-            <Pressable
-              key={name}
-              style={{
-                padding: 8,
-                backgroundColor: 'white',
-                borderRadius: 6,
-                borderWidth: 1,
-                borderColor: '#ddd',
-              }}
-              onPress={() => applyPreset(PRESETS[name])}>
-              <Text>{name}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </ConfigSection>
+      <ColorPicker
+        label="Container BG (nativeContainerStyle)"
+        value={config.containerBackground}
+        onChange={c => setConfig(p => ({ ...p, containerBackground: c }))}
+      />
 
-      <ConfigSection title="Container (ScreenStack)">
-        <SimplePicker
-          type="color"
-          label="Container BG (style.backgroundColor)"
-          value={config.containerBackground}
-          options={colors}
-          onChange={(c: string) =>
-            setConfig(p => ({ ...p, containerBackground: c }))
-          }
+      <ColorPicker
+        label="React View BG"
+        value={config.reactBackground}
+        onChange={c => setConfig(p => ({ ...p, reactBackground: c }))}
+      />
+
+      <View style={{ gap: 8, marginTop: 16 }}>
+        <Button
+          title="Push View Screen"
+          onPress={() => onPush('ScreenView')}
         />
-      </ConfigSection>
-
-      <ConfigSection title="Push Screens">
-        <View style={{ gap: 8 }}>
-          <Button
-            title="Push Screen A (view)"
-            onPress={() => onPush('ScreenA')}
-          />
-          <Button
-            title="Push Screen B (scrollText)"
-            onPress={() => onPush('ScreenB')}
-          />
-          <Button
-            title="Push Screen C (scrollRects)"
-            onPress={() => onPush('ScreenC')}
-          />
-        </View>
-      </ConfigSection>
-
-      {(Object.keys(config.screens) as ScreenKey[]).map(key => {
-        const sConfig = config.screens[key];
-        return (
-          <ConfigSection key={key} title={`Config: ${key}`}>
-            <SimplePicker
-              type="color"
-              label="React View BG"
-              value={sConfig.reactBackground}
-              options={colors}
-              onChange={(c: string) =>
-                updateScreen(key, { reactBackground: c })
-              }
-            />
-            <SimplePicker
-              label="Heavy Render"
-              value={String(sConfig.isHeavy)}
-              options={['true', 'false']}
-              onChange={(c: string) =>
-                updateScreen(key, {
-                  isHeavy: c === 'true' ? 'true' : 'false',
-                })
-              }
-            />
-            <SimplePicker
-              label="Content Type"
-              value={sConfig.contentType}
-              options={contentTypes}
-              onChange={(c: any) => updateScreen(key, { contentType: c })}
-            />
-            {sConfig.contentType === 'scrollViewWithRects' && (
-              <View
-                style={{
-                  marginTop: 10,
-                  padding: 10,
-                  backgroundColor: '#fff',
-                  borderRadius: 4,
-                }}>
-                <Text style={{ fontWeight: 'bold' }}>Rect Configs:</Text>
-                <SimplePicker
-                  label="Item Height"
-                  value={String(sConfig.rectConfig.height)}
-                  options={['50', '100', '200']}
-                  onChange={(v: string) =>
-                    updateRects(key, { height: parseFloat(v) })
-                  }
-                />
-                <SimplePicker
-                  label="Gap Size"
-                  value={String(sConfig.rectConfig.gap)}
-                  options={['20', '50', '100']}
-                  onChange={(v: string) =>
-                    updateRects(key, { gap: parseFloat(v) })
-                  }
-                />
-              </View>
-            )}
-          </ConfigSection>
-        );
-      })}
+        <Button
+          title="Push Scroll Screen"
+          onPress={() => onPush('ScreenScroll')}
+        />
+      </View>
     </ScrollView>
   );
 }
 
 export default function App() {
-  const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
+  const [config, setConfig] = useState(INITIAL_CONFIG);
   const [stack, setStack] = useState<ScreenKey[]>([]);
 
-  const push = (screen: ScreenKey) => {
-    setStack(prev => [...prev, screen]);
-  };
-
-  const pop = () => {
-    setStack(prev => prev.slice(0, -1));
-  };
-
   return (
-    <BackgroundTestContext.Provider
-      value={{
-        config,
-        setConfig,
-        applyPreset: newConfig => setConfig(newConfig),
-      }}>
+    <ConfigContext.Provider value={{ config, setConfig }}>
       <ScreenStack
         style={{ flex: 1 }}
         nativeContainerStyle={{ backgroundColor: config.containerBackground }}>
         <Screen activityState={2} isNativeStack>
           <ScreenStackHeaderConfig title="Config" />
-          <ConfigScreenContent onPush={push} />
+          <ConfigScreen onPush={s => setStack(p => [...p, s])} />
         </Screen>
-        {stack.map((screenKey, index) => (
-          <Screen key={`${screenKey}-${index}`} activityState={2} isNativeStack>
+        {stack.map((screenKey, i) => (
+          <Screen key={`${screenKey}-${i}`} activityState={2} isNativeStack>
             <ScreenStackHeaderConfig title={screenKey} />
-            <TestScreenContent screenKey={screenKey} onPop={pop} />
+            <PushedScreen
+              screenKey={screenKey}
+              onPop={() => setStack(p => p.slice(0, -1))}
+            />
           </Screen>
         ))}
       </ScreenStack>
-    </BackgroundTestContext.Provider>
+    </ConfigContext.Provider>
   );
 }
