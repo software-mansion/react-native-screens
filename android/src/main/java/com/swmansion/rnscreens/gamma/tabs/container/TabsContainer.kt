@@ -264,7 +264,7 @@ internal class TabsContainer(
 
         if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.navState)) {
             delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
-            pendingJsOperation = null
+            pendingOperation = null
             return
         }
 
