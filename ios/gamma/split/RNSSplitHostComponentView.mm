@@ -7,7 +7,7 @@
 
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSSplitScreenComponentView.h"
+#import "RNSSplitNavigatorComponentView.h"
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -23,7 +23,7 @@ static const CGFloat epsilon = 1e-6;
 @implementation RNSSplitHostComponentView {
   RNSSplitHostComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSSplitHostController *_Nonnull _controller;
-  NSMutableArray<RNSSplitScreenComponentView *> *_Nonnull _reactSubviews;
+  NSMutableArray<RNSSplitNavigatorComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitAppearanceUpdate;
@@ -99,8 +99,8 @@ static const CGFloat epsilon = 1e-6;
 - (int)getNumberOfColumns
 {
   int numberOfColumns = 0;
-  for (RNSSplitScreenComponentView *component in _reactSubviews) {
-    if (component.columnType == RNSSplitScreenColumnTypeColumn) {
+  for (RNSSplitNavigatorComponentView *component in _reactSubviews) {
+    if (component.columnType != RNSSplitNavigatorColumnTypeInspector) {
       numberOfColumns++;
     }
   }
@@ -145,11 +145,11 @@ static const CGFloat epsilon = 1e-6;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
-- (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews
+- (nonnull NSMutableArray<RNSSplitNavigatorComponentView *> *)reactSubviews
 {
   RCTAssert(
       _reactSubviews != nil,
-      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
+      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitNavigatorComponentView subviews. (for: %@)",
       self);
   return _reactSubviews;
 }
@@ -166,28 +166,28 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      [childComponentView isKindOfClass:RNSSplitNavigatorComponentView.class],
       @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
       childComponentView.class,
-      RNSSplitScreenComponentView.class);
+      RNSSplitNavigatorComponentView.class);
 
-  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
-  childScreen.splitHost = self;
-  [_reactSubviews insertObject:childScreen atIndex:index];
+  auto *childNavigator = static_cast<RNSSplitNavigatorComponentView *>(childComponentView);
+  childNavigator.splitHost = self;
+  [_reactSubviews insertObject:childNavigator atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      [childComponentView isKindOfClass:RNSSplitNavigatorComponentView.class],
       @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
       childComponentView.class,
-      RNSSplitScreenComponentView.class);
+      RNSSplitNavigatorComponentView.class);
 
-  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
-  childScreen.splitHost = nil;
-  [_reactSubviews removeObject:childScreen];
+  auto *childNavigator = static_cast<RNSSplitNavigatorComponentView *>(childComponentView);
+  childNavigator.splitHost = nil;
+  [_reactSubviews removeObject:childNavigator];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 

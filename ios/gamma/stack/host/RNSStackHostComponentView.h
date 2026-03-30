@@ -1,25 +1,17 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import "RNSBaseNavigatorComponentView.h"
 
 @class RNSStackController;
 @class RNSStackScreenComponentView;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHostComponentView : RNSReactBaseView
+@interface RNSStackHostComponentView : RNSBaseNavigatorComponentView
 
 @property (nonatomic, nonnull, strong, readonly) RNSStackController *stackController;
 
 - (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews;
-
-@end
-
-#pragma mark - Communication with StackScreen
-
-@interface RNSStackHostComponentView ()
-
-- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen;
 
 @end
 

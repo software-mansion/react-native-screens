@@ -1,6 +1,5 @@
 #import "RNSStackScreenComponentView.h"
 #import <React/RCTConversions.h>
-#import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -13,45 +12,21 @@
 
 namespace react = facebook::react;
 
-@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving>
-@end
-
 #pragma mark - View implementation
 
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
-
-  // Flags
-  BOOL _hasUpdatedActivityMode;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-  if (self = [super initWithFrame:frame]) {
-    [self initState];
-  }
-
-  return self;
-}
-
-- (void)initState
-{
-  [self resetProps];
-  [self setupController];
-
-  _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
-
-  _hasUpdatedActivityMode = NO;
-}
+// MARK: - RNSBaseScreenComponentView abstract overrides
 
 - (void)resetProps
 {
   static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
   _props = defaultProps;
 
-  // container state
-  _screenKey = nil;
+  [self updateScreenKey:nil];
   _activityMode = RNSStackScreenActivityModeDetached;
 }
 
@@ -59,18 +34,22 @@ namespace react = facebook::react;
 {
   _controller = [[RNSStackScreenController alloc] initWithComponentView:self];
   _controller.view = self;
+  _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 }
 
-- (void)invalidateImpl
+- (void)notifyParentOfActivityModeChange
 {
-  // We want to run after container updates are performed (transitions etc.)
-  __weak auto weakSelf = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
-    auto strongSelf = weakSelf;
-    if (strongSelf) {
-      strongSelf->_controller = nil;
-    }
-  });
+  [self.stackHost screenChangedActivityMode:self];
+}
+
+- (BOOL)isAttached
+{
+  return _activityMode == RNSStackScreenActivityModeAttached;
+}
+
+- (UIViewController *)screenViewController
+{
+  return _controller;
 }
 
 #pragma mark - Events
@@ -91,25 +70,14 @@ namespace react = facebook::react;
 
   if (oldComponentProps.activityMode != newComponentProps.activityMode) {
     _activityMode = rnscreens::conversion::convert<RNSStackScreenActivityMode>(newComponentProps.activityMode);
-    _hasUpdatedActivityMode = YES;
+    [self markActivityModeChanged];
   }
 
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
-    RCTAssert(_screenKey == nil, @"[RNScreens] ScreenController cannot change its screenKey");
-    _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
+    [self updateScreenKey:RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey)];
   }
 
   [super updateProps:props oldProps:oldProps];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  if (_hasUpdatedActivityMode) {
-    _hasUpdatedActivityMode = NO;
-    [self.stackHost stackScreenChangedActivityMode:self];
-  }
-
-  [super finalizeUpdates:updateMask];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -124,16 +92,16 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSStackScreenComponentDescriptor>();
 }
 
-+ (BOOL)shouldBeRecycled
-{
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
-  return NO;
-}
-
 - (void)invalidate
 {
-  [self invalidateImpl];
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
 @end

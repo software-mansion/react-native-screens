@@ -6,19 +6,30 @@ import { codegenNativeComponent } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-type SplitScreenColumnType = 'column' | 'inspector';
+type OnDismissEventPayload = Readonly<{
+  isNativeDismiss: boolean;
+}>;
+
+type SplitScreenActivityMode = 'detached' | 'attached';
 
 interface NativeProps extends ViewProps {
-  // Config
-  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'>;
+  // Stack management
+  activityMode?: CT.WithDefault<SplitScreenActivityMode, 'detached'>;
+  screenKey: string;
+
+  // Screen-level header config
+  title?: CT.WithDefault<string, ''>;
+  headerBackgroundColor?: CT.WithDefault<string, ''>;
+
+  // Dismiss control
+  preventNativeDismiss?: CT.WithDefault<boolean, false>;
 
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDismiss?: CT.DirectEventHandler<OnDismissEventPayload>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSSplitScreen', {
-  interfaceOnly: true,
-});
+export default codegenNativeComponent<NativeProps>('RNSSplitScreen', {});

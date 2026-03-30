@@ -4,27 +4,27 @@
 #include <fbjni/fbjni.h>
 #endif // ANDROID
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include "RNSSplitScreenShadowNode.h"
+#include "RNSSplitNavigatorShadowNode.h"
 
 namespace facebook::react {
 
-class RNSSplitScreenComponentDescriptor final
-    : public ConcreteComponentDescriptor<RNSSplitScreenShadowNode> {
+class RNSSplitNavigatorComponentDescriptor final
+    : public ConcreteComponentDescriptor<RNSSplitNavigatorShadowNode> {
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(dynamic_cast<RNSSplitScreenShadowNode *>(&shadowNode));
-    auto &splitScreenShadowNode =
-        static_cast<RNSSplitScreenShadowNode &>(shadowNode);
+    react_native_assert(dynamic_cast<RNSSplitNavigatorShadowNode *>(&shadowNode));
+    auto &splitNavigatorShadowNode =
+        static_cast<RNSSplitNavigatorShadowNode &>(shadowNode);
 
     react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&splitScreenShadowNode));
+        dynamic_cast<YogaLayoutableShadowNode *>(&splitNavigatorShadowNode));
     auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(splitScreenShadowNode);
+        static_cast<YogaLayoutableShadowNode &>(splitNavigatorShadowNode);
 
     auto state =
-        std::static_pointer_cast<const RNSSplitScreenShadowNode::ConcreteState>(
+        std::static_pointer_cast<const RNSSplitNavigatorShadowNode::ConcreteState>(
             shadowNode.getState());
     auto stateData = state->getData();
 

@@ -3,35 +3,28 @@ import { StyleSheet } from 'react-native';
 import SplitHostNativeComponent, {
   Commands as SplitHostNativeCommands,
 } from '../../../fabric/gamma/split/SplitHostNativeComponent';
-import type {
-  SplitDisplayMode,
-  SplitHostProps,
-  SplitBehavior,
-} from './SplitHost.types';
+import type { SplitHostProps } from './SplitHost.types';
 import SplitNavigator from './SplitNavigator';
+import type { SplitNavigatorProps } from './SplitNavigator.types';
 
 type NativeRef = React.ComponentRef<typeof SplitHostNativeComponent>;
 
-// According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
-// Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
-// Therefore, we're adding check on the JS side to return a feedback to the client when that pairing isn't valid.
-// However, we're not blocking these props to be set on the native side, because it doesn't crash, just the result or transitions may not work as expected.
+// Compatibility map for displayMode / splitBehavior validation (same as SplitHost)
 const displayModeForSplitCompatibilityMap: Record<
-  SplitBehavior,
-  SplitDisplayMode[]
+  NonNullable<SplitHostProps['preferredSplitBehavior']>,
+  NonNullable<SplitHostProps['preferredDisplayMode']>[]
 > = {
   tile: ['secondaryOnly', 'oneBesideSecondary', 'twoBesideSecondary'],
   overlay: ['secondaryOnly', 'oneOverSecondary', 'twoOverSecondary'],
   displace: ['secondaryOnly', 'oneBesideSecondary', 'twoDisplaceSecondary'],
-  automatic: [], // placeholder for satisfying types; we'll handle it specially in logic
+  automatic: [],
 };
 
 const isValidDisplayModeForSplitBehavior = (
-  displayMode: SplitDisplayMode,
-  splitBehavior: SplitBehavior,
-) => {
+  displayMode: NonNullable<SplitHostProps['preferredDisplayMode']>,
+  splitBehavior: NonNullable<SplitHostProps['preferredSplitBehavior']>,
+): boolean => {
   if (splitBehavior === 'automatic') {
-    // for automatic we cannot easily verify the compatibility, because it depends on the system preference for display mode, therefore we're assuming that 'automatic' has only valid combinations
     return true;
   }
   return displayModeForSplitCompatibilityMap[splitBehavior].includes(
@@ -39,10 +32,42 @@ const isValidDisplayModeForSplitBehavior = (
   );
 };
 
+type ColumnProps = Omit<SplitNavigatorProps, 'columnType'>;
+
+function Primary(props: ColumnProps) {
+  return <SplitNavigator columnType="primary" {...props} />;
+}
+
+function Secondary(props: ColumnProps) {
+  return <SplitNavigator columnType="secondary" {...props} />;
+}
+
+function Supplementary(props: ColumnProps) {
+  return <SplitNavigator columnType="supplementary" {...props} />;
+}
+
+function Inspector(props: ColumnProps) {
+  return <SplitNavigator columnType="inspector" {...props} />;
+}
+
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ *
+ * Root compound component for SplitView layouts. Use the sub-components to
+ * declare columns and the inspector:
+ *
+ * ```tsx
+ * <SplitView preferredSplitBehavior="automatic">
+ *   <SplitView.Primary>
+ *     <SplitScreen screenKey="menu" activityMode="attached">...</SplitScreen>
+ *   </SplitView.Primary>
+ *   <SplitView.Secondary>
+ *     <SplitScreen screenKey="detail" activityMode="attached">...</SplitScreen>
+ *   </SplitView.Secondary>
+ * </SplitView>
+ * ```
  */
-function SplitHost({ ref, ...props }: SplitHostProps) {
+function SplitView({ ref, ...props }: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
   const nativeRef = React.useRef<NativeRef>(null);
 
@@ -73,9 +98,7 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
           displayModeForSplitCompatibilityMap[preferredSplitBehavior];
         console.warn(
           `Invalid display mode "${preferredDisplayMode}" for split behavior "${preferredSplitBehavior}".` +
-            `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(
-              ', ',
-            )}.`,
+            `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(', ')}.`,
         );
       }
     }
@@ -83,30 +106,22 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
 
   const children = React.Children.toArray(props.children);
 
+  // Count columns and inspectors to determine the key for re-mounting when column count changes
   const columns = children.filter(child => {
     if (!React.isValidElement(child)) return false;
-    const columnType = (child.props as { columnType?: string }).columnType;
-    return (
-      child.type === SplitNavigator &&
-      columnType !== 'inspector'
-    );
+    const type = child.type;
+    return type === Primary || type === Secondary || type === Supplementary;
   });
 
   const inspectors = children.filter(child => {
     if (!React.isValidElement(child)) return false;
-    const columnType = (child.props as { columnType?: string }).columnType;
-    return (
-      child.type === SplitNavigator &&
-      columnType === 'inspector'
-    );
+    return child.type === Inspector;
   });
 
   return (
     <SplitHostNativeComponent
       ref={nativeRef}
-      // UISplitViewController requires the number of columns to be specified at initialization and it cannot be changed dynamically later.
-      // By using a specific key in this form, we can detect changes in the number of React children.
-      // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
+      // Force remount when column count changes (UISplitViewController cannot change column count dynamically)
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
       style={styles.container}>
@@ -115,10 +130,15 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
   );
 }
 
+SplitView.Primary = Primary;
+SplitView.Secondary = Secondary;
+SplitView.Supplementary = Supplementary;
+SplitView.Inspector = Inspector;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
 
-export default SplitHost;
+export default SplitView;

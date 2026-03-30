@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/tomaszboron/SplitViewModernApproach/modules/react-native-modern-split/**)",
+      "Read(//Users/tomaszboron/SplitViewModernApproach/**)",
+      "Bash(find /Users/tomaszboron/SplitViewModernApproach/ios -name *.swift -o -name *.mm -o -name *.h)",
+      "Bash(find /Users/tomaszboron/react-native-screens -path */common/cpp* -name *Split*)",
+      "Bash(find /Users/tomaszboron/react-native-screens -path */common/cpp* -name *Stack*)",
+      "Bash(find /Users/tomaszboron/react-native-screens/common/cpp -name RNSStackScreen*)",
+      "Bash(find /Users/tomaszboron/react-native-screens/common/cpp -name RNSStackHost*)",
+      "Bash(grep -r \"RNSStackHost\\\\|RNSStackScreen\" /Users/tomaszboron/react-native-screens/common/cpp/ --include=*.h -l)",
+      "Bash(grep -r \"RNSStackHostComponentDescriptor\\\\|RNSStackScreenComponentDescriptor\" /Users/tomaszboron/react-native-screens/ --include=*.mm --include=*.h -l)",
+      "Bash(grep -r RNSStackHostComponentDescriptor /Users/tomaszboron/react-native-screens/ios/ --include=*.mm)",
+      "Bash(find /Users/tomaszboron/react-native-screens -name RNSEnums.h -not -path */node_modules/*)",
+      "Bash(find /Users/tomaszboron/react-native-screens -name RNSConversions-Stack.h -not -path */node_modules/*)",
+      "Bash(find /Users/tomaszboron/react-native-screens -name *.podspec -not -path */node_modules/*)",
+      "Bash(find /Users/tomaszboron/react-native-screens -name ComponentDescriptors.h -not -path */node_modules/* -not -path */Pods/* -not -path */build/*)",
+      "Bash(find /Users/tomaszboron/react-native-screens -name ComponentDescriptors.h -not -path */node_modules/*)",
+      "Bash(find /Users/tomaszboron/react-native-screens/apps -name *split* -o -name *Split*)",
+      "Bash(grep -l \"Split\\\\.Column\\\\|Split\\\\.Inspector\" /Users/tomaszboron/react-native-screens/apps/src/tests/issue-tests/TestSplit/**/*.tsx /Users/tomaszboron/react-native-screens/apps/src/tests/issue-tests/TestSplit/*.tsx)"
+    ]
+  }
+}

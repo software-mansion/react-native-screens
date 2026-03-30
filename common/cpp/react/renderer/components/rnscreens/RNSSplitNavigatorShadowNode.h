@@ -5,19 +5,19 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
-#include "RNSSplitScreenState.h"
+#include "RNSSplitNavigatorState.h"
 
 namespace facebook::react {
 
-JSI_EXPORT extern const char RNSSplitScreenComponentName[];
+JSI_EXPORT extern const char RNSSplitNavigatorComponentName[];
 
 using ConcreteViewShadowNodeSuperType = ConcreteViewShadowNode<
-    RNSSplitScreenComponentName,
-    RNSSplitScreenProps,
-    RNSSplitScreenEventEmitter,
-    RNSSplitScreenState>;
+    RNSSplitNavigatorComponentName,
+    RNSSplitNavigatorProps,
+    RNSSplitNavigatorEventEmitter,
+    RNSSplitNavigatorState>;
 
-class JSI_EXPORT RNSSplitScreenShadowNode final
+class JSI_EXPORT RNSSplitNavigatorShadowNode final
     : public ConcreteViewShadowNodeSuperType {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;

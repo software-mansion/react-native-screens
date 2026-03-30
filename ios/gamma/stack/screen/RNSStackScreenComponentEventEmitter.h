@@ -1,5 +1,6 @@
 #pragma once
 
+#import "RNSScreenEventEmitting.h"
 #import <Foundation/Foundation.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
@@ -16,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Returned value denotes whether the event has been successfully dispatched to React event pipeline.
  * The returned value of `true` does not mean, that the event has been successfully delivered.
  */
-@interface RNSStackScreenComponentEventEmitter : NSObject
+@interface RNSStackScreenComponentEventEmitter : NSObject <RNSScreenEventEmitting>
 
 - (BOOL)emitOnWillAppear;
 - (BOOL)emitOnDidAppear;

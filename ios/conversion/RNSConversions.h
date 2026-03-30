@@ -138,9 +138,13 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
 
 RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation);
 
+#pragma mark SplitNavigator props
+
+RNSSplitNavigatorColumnType RNSSplitNavigatorColumnTypeFromNavigatorProp(react::RNSSplitNavigatorColumnType columnType);
+
 #pragma mark SplitScreen props
 
-RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitScreenColumnType columnType);
+RNSSplitScreenActivityMode RNSSplitScreenActivityModeFromScreenProp(react::RNSSplitScreenActivityMode activityMode);
 
 }; // namespace rnscreens::conversion
 

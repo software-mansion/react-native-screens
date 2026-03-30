@@ -1,20 +1,53 @@
 #import "RNSSplitScreenComponentView.h"
 #import <React/RCTAssert.h>
+#import <React/RCTConversions.h>
 #import <React/RCTSurfaceTouchHandler.h>
-#import <rnscreens/RNSSplitScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitNavigatorComponentView.h"
 
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
+// Helper: parse a CSS hex color string (#RRGGBB or #RRGGBBAA) to UIColor.
+static UIColor *_Nullable RNSUIColorFromHexString(NSString *_Nullable hexString)
+{
+  if (hexString.length == 0) {
+    return nil;
+  }
+
+  NSString *hex = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
+  if (hex.length != 6 && hex.length != 8) {
+    return nil;
+  }
+
+  unsigned long long rgbValue = 0;
+  NSScanner *scanner = [NSScanner scannerWithString:hex];
+  if (![scanner scanHexLongLong:&rgbValue]) {
+    return nil;
+  }
+
+  if (hex.length == 6) {
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16) / 255.0
+                           green:((rgbValue & 0x00FF00) >> 8) / 255.0
+                            blue:(rgbValue & 0x0000FF) / 255.0
+                           alpha:1.0];
+  } else {
+    return [UIColor colorWithRed:((rgbValue & 0xFF000000) >> 24) / 255.0
+                           green:((rgbValue & 0x00FF00) >> 8) / 255.0
+                            blue:(rgbValue & 0x0000FF) / 255.0
+                           alpha:((rgbValue & 0xFF00) >> 8) / 255.0];
+  }
+}
+
 @implementation RNSSplitScreenComponentView {
   RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSSplitScreenController *_Nullable _controller;
-  RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
-  NSMutableSet<UIView *> *_viewsForFrameCorrection;
 }
 
 - (RNSSplitScreenController *)controller
@@ -26,42 +59,15 @@ namespace react = facebook::react;
   return _controller;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-  if (self = [super initWithFrame:frame]) {
-    [self initState];
-  }
-
-  return self;
-}
-
-- (void)initState
-{
-  [self resetProps];
-  [self setupController];
-
-  _reactEventEmitter = [RNSSplitScreenComponentEventEmitter new];
-  _shadowStateProxy = [RNSSplitScreenShadowStateProxy new];
-
-  _viewsForFrameCorrection = [NSMutableSet set];
-}
-
-- (void)setupController
-{
-  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
-  _controller.view = self;
-}
-
 - (void)didMoveToWindow
 {
   // Starting from iOS 26, a new column type called 'inspector' was introduced.
   // This column can be displayed as a modal, independent of the React Native view hierarchy.
   // In contrast, prior to iOS 26, all SplitView columns were placed under RCTSurface,
-  // meaning that touches were handler by RN handlers.
+  // meaning that touches were handled by RN handlers.
   if (@available(iOS 26.0, *)) {
-    // If the current controller’s splitViewController is of type RNSSplitHostController,
-    // we know that we're still inside the RN hierarchy,
-    // so there's no need to enforce additional touch event support.
+    // If the current controller is inside a RNSSplitHostController subtree (via navigation hierarchy),
+    // touches are handled by RN handlers and no additional support is needed.
     if ([_controller isInSplitHostSubtree]) {
       return;
     }
@@ -77,44 +83,40 @@ namespace react = facebook::react;
   }
 }
 
+// MARK: - RNSBaseScreenComponentView abstract overrides
+
 - (void)resetProps
 {
   static const auto defaultProps = std::make_shared<const react::RNSSplitScreenProps>();
   _props = defaultProps;
 
-  _columnType = RNSSplitScreenColumnTypeColumn;
+  _activityMode = RNSSplitScreenActivityModeDetached;
+  [self updateScreenKey:nil];
+  _title = nil;
+  _headerBackgroundColor = nil;
+  _preventNativeDismiss = NO;
 }
 
-- (void)registerForFrameCorrection:(UIView *)view
+- (void)setupController
 {
-  [_viewsForFrameCorrection addObject:view];
+  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
+  _controller.view = self;
+  _reactEventEmitter = [RNSSplitScreenComponentEventEmitter new];
 }
 
-- (void)unregisterFromFrameCorrection:(UIView *)view
+- (void)notifyParentOfActivityModeChange
 {
-  [_viewsForFrameCorrection removeObject:view];
+  [self.splitNavigator screenChangedActivityMode:self];
 }
 
-#pragma mark - Layout
-
-///
-/// This override **should be considered as a workaround** for which I made some assumptions:
-/// 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
-/// 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
-/// new stack implementations, however, it will have an impact on any other native component which will be extending
-/// from the same class.
-///
-- (void)layoutSubviews
+- (BOOL)isAttached
 {
-  [super layoutSubviews];
+  return _activityMode == RNSSplitScreenActivityModeAttached;
 }
 
-#pragma mark - ShadowTreeState
-
-- (nonnull RNSSplitScreenShadowStateProxy *)shadowStateProxy
+- (UIViewController *)screenViewController
 {
-  RCTAssert(_shadowStateProxy != nil, @"[RNScreens] Attempt to access uninitialized _shadowStateProxy");
-  return _shadowStateProxy;
+  return _controller;
 }
 
 #pragma mark - Events
@@ -137,10 +139,6 @@ namespace react = facebook::react;
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
 
-#pragma mark - RNSSafeAreaProviding related methods
-
-// TODO: register for UIKeyboard notifications
-
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
@@ -154,28 +152,34 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSSplitScreenComponentDescriptor>();
 }
 
-+ (BOOL)shouldBeRecycled
-{
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
-  return NO;
-}
-
-- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
-{
-  [super updateState:state oldState:oldState];
-
-  [_shadowStateProxy updateState:state oldState:oldState];
-}
-
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitScreenProps>(props);
 
-  if (oldComponentProps.columnType != newComponentProps.columnType) {
-    _columnType = rnscreens::conversion::RNSSplitScreenColumnTypeFromScreenProp(newComponentProps.columnType);
+  if (oldComponentProps.activityMode != newComponentProps.activityMode) {
+    _activityMode = rnscreens::conversion::RNSSplitScreenActivityModeFromScreenProp(newComponentProps.activityMode);
+    [self markActivityModeChanged];
+  }
+
+  if (oldComponentProps.screenKey != newComponentProps.screenKey) {
+    [self updateScreenKey:RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey)];
+  }
+
+  if (oldComponentProps.title != newComponentProps.title) {
+    _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
+    _controller.title = _title;
+  }
+
+  if (oldComponentProps.headerBackgroundColor != newComponentProps.headerBackgroundColor) {
+    NSString *colorString = RCTNSStringFromStringNilIfEmpty(newComponentProps.headerBackgroundColor);
+    _headerBackgroundColor = RNSUIColorFromHexString(colorString);
+    _controller.headerBackgroundColor = _headerBackgroundColor;
+  }
+
+  if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
+    _preventNativeDismiss = newComponentProps.preventNativeDismiss;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -190,9 +194,6 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-  // Controller keeps the strong reference to the component via the `.view` property.
-  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
-  // when we want to destroy the component.
   _controller = nil;
 }
 

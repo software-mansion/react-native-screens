@@ -1,47 +1,26 @@
 #pragma once
 
+#import "RNSBaseScreenComponentView.h"
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
-#import "RNSSplitScreenShadowStateProxy.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSSplitHostComponentView;
+@class RNSSplitNavigatorComponentView;
 @class RNSSplitScreenController;
 
 /**
  * @class RNSSplitScreenComponentView
- * @brief Native view component representing one column in a UISplitViewController layout.
+ * @brief Native view component representing one screen in a RNSSplitNavigatorController stack.
  *
- * Responsible for a lifecycle management, layout, and event emission for a single screen; used as a child
- * of RNSSplitHostComponentView.
+ * Responsible for lifecycle management, layout, and event emission for a single screen;
+ * used as a child of RNSSplitNavigatorComponentView.
  */
-@interface RNSSplitScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
+@interface RNSSplitScreenComponentView : RNSBaseScreenComponentView <RNSSafeAreaProviding>
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitScreenController *controller;
-@property (nonatomic, weak, readwrite, nullable) RNSSplitHostComponentView *splitHost;
-
-@end
-
-#pragma mark - ShadowTreeState
-
-/**
- * @category ShadowTreeState
- * @brief Interactions between the host component and the associated ShadowNode.
- */
-@interface RNSSplitScreenComponentView ()
-
-/**
- * @brief Getter for the proxy object that interfaces with the Shadow Tree state for this screen.
- *
- * The ShadowStateProxy is the object that's responsible for sending layout updates coming from the Host tree to the
- * ShadowTree.
- *
- * @return A pointer to a RNSSplitScreenShadowStateProxy instance.
- */
-- (nonnull RNSSplitScreenShadowStateProxy *)shadowStateProxy;
+@property (nonatomic, weak, readwrite, nullable) RNSSplitNavigatorComponentView *splitNavigator;
 
 @end
 
@@ -54,9 +33,27 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitScreenComponentView ()
 
 /**
- * @brief Determines the purpose for the column (classic Column or one of specific types, like Inspector)
+ * @brief Determines whether this screen is part of the active navigation stack.
  */
-@property (nonatomic, readonly) RNSSplitScreenColumnType columnType;
+@property (nonatomic, readonly) RNSSplitScreenActivityMode activityMode;
+
+// screenKey is inherited from RNSBaseScreenComponentView
+
+/**
+ * @brief Title to display in the navigation bar while this screen is shown.
+ */
+@property (nonatomic, strong, readonly, nullable) NSString *title;
+
+/**
+ * @brief Background color for the navigation bar while this screen is shown.
+ * Nil means no override — the navigation bar keeps its default appearance.
+ */
+@property (nonatomic, strong, readonly, nullable) UIColor *headerBackgroundColor;
+
+/**
+ * @brief Whether native back-gesture dismiss is suppressed for this screen.
+ */
+@property (nonatomic, readonly) BOOL preventNativeDismiss;
 
 @end
 

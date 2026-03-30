@@ -2,54 +2,19 @@ import Foundation
 import UIKit
 
 @objc
-public class RNSStackController: UINavigationController, ReactMountingTransactionObserving {
-  private var needsChildViewControllersUpdate = false
-  private let stackHostComponentView: RNSStackHostComponentView
+public class RNSStackController: RNSBaseNavigatorController, ReactMountingTransactionObserving {
 
-  @objc public required init(stackHostComponentView: RNSStackHostComponentView) {
-    self.stackHostComponentView = stackHostComponentView
-    super.init(nibName: nil, bundle: nil)
+  /// Typed convenience accessor for the stack host component view.
+  @objc public var stackHostComponentView: RNSStackHostComponentView? {
+    navigatorComponentView as? RNSStackHostComponentView
   }
 
-  required init?(coder aDecoder: NSCoder) {
-    return nil
+  @objc public convenience init(stackHostComponentView: RNSStackHostComponentView) {
+    self.init(navigatorComponentView: stackHostComponentView)
   }
 
-  // MARK: Signals
-
-  @objc
-  public func setNeedsUpdateOfChildViewControllers() {
-    needsChildViewControllersUpdate = true
-  }
-
-  // MARK: Updating
-
-  @objc
-  public func updateChildViewControllersIfNeeded() {
-    if needsChildViewControllersUpdate {
-      updateChildViewControllers()
-    }
-  }
-
-  @objc
-  public func updateChildViewControllers() {
-    precondition(
-      needsChildViewControllersUpdate,
-      "[RNScreens] Child view controller must be invalidated when update is forced!")
-
-    let activeControllers = sourceAllViewControllers()
-      .filter { screenCtrl in screenCtrl.screen.activityMode == .attached }
-
-    setViewControllers(activeControllers, animated: true)
-
-    needsChildViewControllersUpdate = false
-  }
-
-  private func sourceAllViewControllers() -> [RNSStackScreenController] {
-    let screenStackComponents =
-      stackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
-    return screenStackComponents.lazy.map(\.controller)
-  }
+  // updateChildViewControllers() is inherited from RNSBaseNavigatorController.
+  // It reads reactSubviews(), filters by isAttached, maps to screenViewController.
 
   // MARK: ReactMountingTransactionObserving
 
@@ -58,8 +23,5 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
     // noop
   }
 
-  @objc
-  public func reactMountingTransactionDidMount() {
-    updateChildViewControllersIfNeeded()
-  }
+  // reactMountingTransactionDidMount() is inherited from RNSBaseNavigatorController
 }

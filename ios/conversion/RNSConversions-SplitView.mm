@@ -162,19 +162,30 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
   }
 }
 
-#pragma mark SplitScreen props
+#pragma mark SplitNavigator props
 
-RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(facebook::react::RNSSplitScreenColumnType columnType)
+RNSSplitNavigatorColumnType RNSSplitNavigatorColumnTypeFromNavigatorProp(facebook::react::RNSSplitNavigatorColumnType columnType)
 {
-  using enum facebook::react::RNSSplitScreenColumnType;
+  using enum facebook::react::RNSSplitNavigatorColumnType;
 
   switch (columnType) {
+    case Primary:
+      return RNSSplitNavigatorColumnTypePrimary;
+    case Supplementary:
+      return RNSSplitNavigatorColumnTypeSupplementary;
     case Inspector:
-      return RNSSplitScreenColumnTypeInspector;
-    case Column:
+      return RNSSplitNavigatorColumnTypeInspector;
+    case Secondary:
     default:
-      return RNSSplitScreenColumnTypeColumn;
+      return RNSSplitNavigatorColumnTypeSecondary;
   }
+}
+
+#pragma mark SplitScreen props
+
+RNSSplitScreenActivityMode RNSSplitScreenActivityModeFromScreenProp(facebook::react::RNSSplitScreenActivityMode activityMode)
+{
+  return static_cast<RNSSplitScreenActivityMode>(activityMode);
 }
 
 }; // namespace rnscreens::conversion

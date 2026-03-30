@@ -1,5 +1,5 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { SplitView, SplitScreen } from 'react-native-screens/experimental';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
@@ -79,17 +79,23 @@ const OuterStack = () => (
 
 export const SplitWithNestedStack = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitBaseConfig}>
-      <Split.Column>
-        <OuterStack />
-      </Split.Column>
-      <Split.Column>
-        <OuterStack />
-      </Split.Column>
-      <Split.Column>
-        <OuterStack />
-      </Split.Column>
-    </Split.Host>
+    <SplitView {...splitBaseConfig}>
+      <SplitView.Primary>
+        <SplitScreen screenKey="primary" activityMode="attached">
+          <OuterStack />
+        </SplitScreen>
+      </SplitView.Primary>
+      <SplitView.Supplementary>
+        <SplitScreen screenKey="supplementary" activityMode="attached">
+          <OuterStack />
+        </SplitScreen>
+      </SplitView.Supplementary>
+      <SplitView.Secondary>
+        <SplitScreen screenKey="secondary" activityMode="attached">
+          <OuterStack />
+        </SplitScreen>
+      </SplitView.Secondary>
+    </SplitView>
   );
 }
 

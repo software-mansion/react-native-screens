@@ -211,6 +211,9 @@
         "RNSSplitHost": {
           "className": "RNSSplitHostComponentView"
         },
+        "RNSSplitNavigator": {
+          "className": "RNSSplitNavigatorComponentView"
+        },
         "RNSSplitScreen": {
           "className": "RNSSplitScreenComponentView"
         },

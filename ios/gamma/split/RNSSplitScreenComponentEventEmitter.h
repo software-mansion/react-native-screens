@@ -1,5 +1,6 @@
 #pragma once
 
+#import "RNSScreenEventEmitting.h"
 #import <Foundation/Foundation.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
@@ -15,43 +16,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @class RNSSplitScreenComponentEventEmitter
  * @brief Responsible for emitting events from the native SplitScreen (column) to the React Element Tree.
  */
-@interface RNSSplitScreenComponentEventEmitter : NSObject
+@interface RNSSplitScreenComponentEventEmitter : NSObject <RNSScreenEventEmitting>
 
-/**
- * @brief Emits the onWillAppear event to notify React Native.
- *
- * This event is triggered when the SplitView column will be added to the native hierarchy.
- *
- * @return true if the event was successfully emitted, false otherwise.
- */
 - (BOOL)emitOnWillAppear;
-
-/**
- * @brief Emits the onDidAppear event to notify React Native.
- *
- * This event is triggered when the SplitView column was added to the native hierarchy.
- *
- * @return true if the event was successfully emitted, false otherwise.
- */
 - (BOOL)emitOnDidAppear;
-
-/**
- * @brief Emits the onWillDisappear event to notify React Native.
- *
- * This event is triggered when the SplitView column will be removed from the native hierarchy.
- *
- * @return true if the event was successfully emitted, false otherwise.
- */
 - (BOOL)emitOnWillDisappear;
-
-/**
- * @brief Emits the onDidDisappear event to notify React Native.
- *
- * This event is triggered when the SplitView column was removed from the native hierarchy.
- *
- * @return true if the event was successfully emitted, false otherwise.
- */
 - (BOOL)emitOnDidDisappear;
+
+/// Emitted when the screen is dismissed by JS (activityMode was already .detached).
+- (BOOL)emitOnDismiss;
+
+/// Emitted when the screen is dismissed by a native back gesture (activityMode was still .attached).
+- (BOOL)emitOnNativeDismiss;
 
 @end
 

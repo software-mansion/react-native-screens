@@ -1,6 +1,6 @@
 import React from 'react';
 import { Scenario } from '../../shared/helpers';
-import { Split } from 'react-native-screens/experimental';
+import { SplitView, SplitScreen } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
 
 const SCENARIO: Scenario = {
@@ -18,17 +18,23 @@ export default SCENARIO;
 
 export function App() {
   return (
-    <Split.Host topColumnForCollapsing="supplementary">
-      <Split.Column>
-        <ColumnContent columnTitle="Primary column" />
-      </Split.Column>
-      <Split.Column>
-        <ColumnContent columnTitle="Supplementary column" />
-      </Split.Column>
-      <Split.Column>
-        <ColumnContent columnTitle="Secondary column" />
-      </Split.Column>
-    </Split.Host>
+    <SplitView topColumnForCollapsing="supplementary">
+      <SplitView.Primary>
+        <SplitScreen screenKey="primary" activityMode="attached">
+          <ColumnContent columnTitle="Primary column" />
+        </SplitScreen>
+      </SplitView.Primary>
+      <SplitView.Supplementary>
+        <SplitScreen screenKey="supplementary" activityMode="attached">
+          <ColumnContent columnTitle="Supplementary column" />
+        </SplitScreen>
+      </SplitView.Supplementary>
+      <SplitView.Secondary>
+        <SplitScreen screenKey="secondary" activityMode="attached">
+          <ColumnContent columnTitle="Secondary column" />
+        </SplitScreen>
+      </SplitView.Secondary>
+    </SplitView>
   );
 }
 

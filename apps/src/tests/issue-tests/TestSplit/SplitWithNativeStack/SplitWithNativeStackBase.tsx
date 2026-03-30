@@ -1,20 +1,30 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { SplitScreen, SplitView } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 
-export const SplitWithNativeStackBase = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNativeStackBase = ({
+  splitBaseConfig,
+}: {
+  splitBaseConfig: SplitBaseConfig;
+}) => {
   return (
-    <Split.Host {...splitBaseConfig}>
-      <Split.Column>
-        <NativeStackNavigatorComponent />
-      </Split.Column>
-      <Split.Column>
-        <NativeStackNavigatorComponent />
-      </Split.Column>
-      <Split.Column>
-        <NativeStackNavigatorComponent />
-      </Split.Column>
-    </Split.Host>
+    <SplitView {...splitBaseConfig}>
+      <SplitView.Primary>
+        <SplitScreen screenKey="primary" activityMode="attached">
+          <NativeStackNavigatorComponent />
+        </SplitScreen>
+      </SplitView.Primary>
+      <SplitView.Supplementary>
+        <SplitScreen screenKey="supplementary" activityMode="attached">
+          <NativeStackNavigatorComponent />
+        </SplitScreen>
+      </SplitView.Supplementary>
+      <SplitView.Secondary>
+        <SplitScreen screenKey="secondary" activityMode="attached">
+          <NativeStackNavigatorComponent />
+        </SplitScreen>
+      </SplitView.Secondary>
+    </SplitView>
   );
-}
+};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { SplitView, SplitScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
@@ -32,26 +32,32 @@ const ScreenThree = () => (
 
 export const SplitWithNativeStackContainedModal = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitBaseConfig}>
-      <Split.Column>
-        <NativeStackNavigatorComponent />
-      </Split.Column>
-      <Split.Column>
-        <NativeStackNavigatorComponent />
-      </Split.Column>
-      <Split.Column>
-        <NativeStackNavigatorComponent
-          CustomScreenOne={ScreenOne}
-          customScreenOneName='ScreenOne'
-          CustomScreenTwo={ScreenTwo}
-          customScreenTwoName='ScreenTwo'
-          customScreenTwoNavigationOptions={{ presentation: 'containedModal' }}
-          CustomScreenThree={ScreenThree}
-          customScreenThreeName='ScreenThree'
-          customScreenThreeNavigationOptions={{ presentation: 'containedTransparentModal' }}
-        />
-      </Split.Column>
-    </Split.Host>
+    <SplitView {...splitBaseConfig}>
+      <SplitView.Primary>
+        <SplitScreen screenKey="primary" activityMode="attached">
+          <NativeStackNavigatorComponent />
+        </SplitScreen>
+      </SplitView.Primary>
+      <SplitView.Supplementary>
+        <SplitScreen screenKey="supplementary" activityMode="attached">
+          <NativeStackNavigatorComponent />
+        </SplitScreen>
+      </SplitView.Supplementary>
+      <SplitView.Secondary>
+        <SplitScreen screenKey="secondary" activityMode="attached">
+          <NativeStackNavigatorComponent
+            CustomScreenOne={ScreenOne}
+            customScreenOneName='ScreenOne'
+            CustomScreenTwo={ScreenTwo}
+            customScreenTwoName='ScreenTwo'
+            customScreenTwoNavigationOptions={{ presentation: 'containedModal' }}
+            CustomScreenThree={ScreenThree}
+            customScreenThreeName='ScreenThree'
+            customScreenThreeNavigationOptions={{ presentation: 'containedTransparentModal' }}
+          />
+        </SplitScreen>
+      </SplitView.Secondary>
+    </SplitView>
   );
 }
 

@@ -7,7 +7,8 @@ import {
 import { NavigationIndependentTree } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
 import {
-  Split
+  SplitView,
+  SplitScreen,
 } from 'react-native-screens/experimental';
 import ConfigColumn from './ConfigColumn';
 import { mapContentStringToComponent } from '../shared';
@@ -54,39 +55,47 @@ export default function SplitViewSAVExample({
       }}>
       <NavigationIndependentTree>
         <NavigationContainer>
-          <Split.Host
+          <SplitView
             preferredDisplayMode="twoBesideSecondary"
             preferredSplitBehavior="tile"
             showInspector={config.showInspector}>
-            <Split.Column>
-              {configColumnIndex !== 1 ? (
-                renderColumnContent(config.column1)
-              ) : (
-                <ConfigColumn configColumnIndex={configColumnIndex} />
-              )}
-            </Split.Column>
-            <Split.Column>
-              {configColumnIndex !== 2 ? (
-                renderColumnContent(config.column2)
-              ) : (
-                <ConfigColumn configColumnIndex={configColumnIndex} />
-              )}
-            </Split.Column>
-            <Split.Column>
-              {configColumnIndex !== 3 ? (
-                renderColumnContent(config.column3)
-              ) : (
-                <ConfigColumn configColumnIndex={configColumnIndex} />
-              )}
-            </Split.Column>
-            <Split.Inspector>
-              {configColumnIndex !== 4 ? (
-                renderColumnContent(config.column4)
-              ) : (
-                <ConfigColumn configColumnIndex={configColumnIndex} />
-              )}
-            </Split.Inspector>
-          </Split.Host>
+            <SplitView.Primary>
+              <SplitScreen screenKey="primary" activityMode="attached">
+                {configColumnIndex !== 1 ? (
+                  renderColumnContent(config.column1)
+                ) : (
+                  <ConfigColumn configColumnIndex={configColumnIndex} />
+                )}
+              </SplitScreen>
+            </SplitView.Primary>
+            <SplitView.Supplementary>
+              <SplitScreen screenKey="supplementary" activityMode="attached">
+                {configColumnIndex !== 2 ? (
+                  renderColumnContent(config.column2)
+                ) : (
+                  <ConfigColumn configColumnIndex={configColumnIndex} />
+                )}
+              </SplitScreen>
+            </SplitView.Supplementary>
+            <SplitView.Secondary>
+              <SplitScreen screenKey="secondary" activityMode="attached">
+                {configColumnIndex !== 3 ? (
+                  renderColumnContent(config.column3)
+                ) : (
+                  <ConfigColumn configColumnIndex={configColumnIndex} />
+                )}
+              </SplitScreen>
+            </SplitView.Secondary>
+            <SplitView.Inspector>
+              <SplitScreen screenKey="inspector" activityMode="attached">
+                {configColumnIndex !== 4 ? (
+                  renderColumnContent(config.column4)
+                ) : (
+                  <ConfigColumn configColumnIndex={configColumnIndex} />
+                )}
+              </SplitScreen>
+            </SplitView.Inspector>
+          </SplitView>
         </NavigationContainer>
       </NavigationIndependentTree>
     </SplitViewSAVExampleContext.Provider>

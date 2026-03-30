@@ -1,13 +1,11 @@
 #import "RNSStackHostComponentView.h"
 
 #import <React/RCTConversions.h>
-#import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "RNSDefines.h"
 #import "RNSLog.h"
 
 #import "RNSStackScreenComponentView.h"
@@ -17,35 +15,21 @@ namespace react = facebook::react;
 
 static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews);
 
-@interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
-@end
-
 @implementation RNSStackHostComponentView {
   RNSStackController *_Nonnull _controller;
-  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _reactSubviews;
-
-  bool _hasModifiedReactSubviewsInCurrentTransaction;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    [self initState];
+    _controller = [[RNSStackController alloc] initWithStackHostComponentView:self];
   }
   return self;
-}
-
-- (void)initState
-{
-  _controller = [[RNSStackController alloc] initWithStackHostComponentView:self];
-  _hasModifiedReactSubviewsInCurrentTransaction = false;
-  _reactSubviews = [NSMutableArray new];
 }
 
 - (void)didMoveToWindow
 {
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -66,12 +50,10 @@ static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *r
   }
 }
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 - (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews
 {
-  return _reactSubviews;
+  return (NSMutableArray<RNSStackScreenComponentView *> *)[super reactSubviews];
 }
-RNS_IGNORE_SUPER_CALL_END
 
 - (nonnull RNSStackController *)stackController
 {
@@ -79,14 +61,14 @@ RNS_IGNORE_SUPER_CALL_END
   return _controller;
 }
 
-#pragma mark - Communication with StackScreen
+// MARK: - RNSBaseNavigatorComponentView abstract override
 
-- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
+- (nonnull RNSBaseNavigatorController *)navigatorController
 {
-  [_controller setNeedsUpdateOfChildViewControllers];
+  return _controller;
 }
 
-#pragma mark - RCTComponentViewProtocol
+// MARK: - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -98,8 +80,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
-  [_reactSubviews insertObject:childScreen atIndex:index];
-  _hasModifiedReactSubviewsInCurrentTransaction = true;
+  [[self reactSubviews] insertObject:childScreen atIndex:index];
+  [self markSubviewsModifiedInCurrentTransaction];
 
   RNSLog(
       @"StackHost [%ld] mount: StackScreen [%ld] (%@) at %ld",
@@ -118,9 +100,9 @@ RNS_IGNORE_SUPER_CALL_END
       RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
-  [_reactSubviews removeObject:childScreen];
+  [[self reactSubviews] removeObject:childScreen];
   childScreen.stackHost = nil;
-  _hasModifiedReactSubviewsInCurrentTransaction = true;
+  [self markSubviewsModifiedInCurrentTransaction];
 
   RNSLog(
       @"StackHost [%ld] unmount: StackScreen [%ld] (%@) at %ld",
@@ -142,23 +124,13 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
-#pragma mark - RCTMountingTransactionObserving
+// MARK: - RNSBaseNavigatorComponentView hook (debug dump)
 
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+- (void)navigatorDidMountTransaction
 {
-  _hasModifiedReactSubviewsInCurrentTransaction = false;
-  [_controller reactMountingTransactionWillMount];
-}
-
-- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
-               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
-    [_controller setNeedsUpdateOfChildViewControllers];
-    dumpStackHostSubviewsState(_reactSubviews);
+  if (self.hadSubviewsModifiedInCurrentTransaction) {
+    dumpStackHostSubviewsState([self reactSubviews]);
   }
-  [_controller reactMountingTransactionDidMount];
 }
 
 @end

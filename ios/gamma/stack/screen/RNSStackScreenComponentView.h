@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import "RNSBaseScreenComponentView.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,7 +13,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
   RNSStackScreenActivityModeAttached = 1,
 };
 
-@interface RNSStackScreenComponentView : RNSReactBaseView
+@interface RNSStackScreenComponentView : RNSBaseScreenComponentView
 
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
@@ -24,7 +24,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @interface RNSStackScreenComponentView ()
 
-@property (nonatomic, strong, readonly, nullable) NSString *screenKey;
+// screenKey is inherited from RNSBaseScreenComponentView
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
 
 @end

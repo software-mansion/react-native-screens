@@ -8,7 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSSplitHostController;
-@class RNSSplitScreenComponentView;
+@class RNSSplitNavigatorComponentView;
 
 /**
  * @class RNSSplitHostComponentView
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitHostComponentView : RNSReactBaseView
 
-- (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews;
+- (nonnull NSMutableArray<RNSSplitNavigatorComponentView *> *)reactSubviews;
 
 @property (nonatomic, nonnull, strong, readonly) RNSSplitHostController *splitHostController;
 
