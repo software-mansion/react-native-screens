@@ -1,26 +1,31 @@
-import { SettingsSwitch } from '../../../shared/SettingsSwitch';
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-    Appearance,
-    ColorSchemeName,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
-import { Scenario } from '../../shared/helpers';
 import {
     TabsContainerWithHostConfigContext,
     type TabRouteConfig,
     useTabsHostConfig,
     DEFAULT_TAB_ROUTE_OPTIONS,
 } from '../../../shared/gamma/containers/tabs';
-import { ScreenStackHeaderConfig, Tabs } from 'react-native-screens';
-import { PropToggle,PropSelector } from '../../../shared/PropToggle';
+import React from 'react';
+import { Button, View, Platform, Text, ScrollView, StyleSheet,I18nManager } from 'react-native';
+import { Scenario } from '../../shared/helpers';
+import { SettingsPicker, SettingsSwitch } from '../../../shared';
+import { TabBarMinimizeBehavior, TabBarControllerMode } from 'react-native-screens';
+import RNRestart from 'react-native-restart';
 
+import {
+    createNativeStackNavigator,
+    type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import {
+    useNavigation,
+    type NavigationProp,
+} from '@react-navigation/native';
+type RootStackParamList = {
+    Main: undefined;
+    LightScreen: undefined;
+    DarkScreen: undefined;
+};
 
-
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Visibility',
@@ -31,105 +36,217 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
-type TabBarMinimizeBehavior = 'automatic' | 'never' | 'onScrollDown' | 'onScrollUp';
-type Direction = 'inherit' | 'ltr' | 'rtl';
-type ColorScheme = 'light' | 'dark';
-type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
-
-type LogEntry = { id: number; text: string };
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-const TAB_BAR_CONTROLLER_MODE_OPTIONS: TabBarControllerMode[] = ['automatic', 'tabBar', 'tabSidebar'];
-const TAB_BAR_MINIMIZE_BEHAVIOR_OPTIONS: TabBarMinimizeBehavior[] = ['automatic', 'never', 'onScrollDown', 'onScrollUp'];
-const DIRECTION_OPTIONS: Direction[] = ['inherit', 'ltr', 'rtl'];
-const COLOR_SCHEME_OPTIONS: ColorScheme[] = ['light', 'dark'];
-const USER_INTERFACE_STYLE_OPTIONS: UserInterfaceStyle[] = ['unspecified', 'light', 'dark'];
-
-
-const StatusLog = ({
-    entries,
-    testIDPrefix,
-}: {
-    entries: LogEntry[];
-    testIDPrefix: string;
-}) => (
-    <View style={ctrl.log}>
-        <Text style={ctrl.label}>Callback log</Text>
-        <ScrollView style={ctrl.logScroll} nestedScrollEnabled>
-            {entries.length === 0 && (
-                <Text style={ctrl.logEmpty}>No events yet</Text>
-            )}
-            {entries.map((e, i) => (
-                <Text
-                    key={e.id}
-                    style={ctrl.logEntry}
-                    testID={i === entries.length - 1 ? `${testIDPrefix}-last` : undefined}>
-                    {e.text}
-                </Text>
-            ))}
-        </ScrollView>
-    </View>
-);
+// type ConfigScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
 function ConfigScreen() {
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { hostConfig, updateHostConfig } = useTabsHostConfig();
-    // const [reactColorScheme, setReactColorScheme] =
-    //     React.useState<ColorSchemeName>('unspecified');
-
-    // ── Tabs.Host props ──────────────────────────────────────────────────
-    const [tabBarHidden, setTabBarHidden] = useState(false);
-    const [tabBarControllerMode, setTabBarControllerMode] = useState<TabBarControllerMode>('auto');
-    const [tabBarMinimizeBehavior, setTabBarMinimizeBehavior] = useState<TabBarMinimizeBehavior>('automatic');
-
-    // ── Tabs.Screen props ────────────────────────────────────────────────
-    const [direction, setDirection] = useState<Direction>('inherit');
-    const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
-    const [userInterfaceStyle, setUiStyle] = useState<UserInterfaceStyle>('unspecified');
-
-    // ── callback log ───────────────────
-    const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
-    const logId = React.useRef(0);
-
-    const log = useCallback((text: string) => {
-        setLogEntries(prev => [
-            ...prev,
-            { id: logId.current++, text: `${new Date().toISOString().slice(11, 23)}  ${text}` },
-        ]);
-    }, []);
-
-    // useEffect(() => {
-    //     Appearance.setColorScheme(reactColorScheme);
-    // }, [reactColorScheme]);
-
     return (
         <ScrollView style={{ padding: 40 }}>
-            <View style={styles.section}>
-                <Text>TabBarHidden option:</Text>
-                <PropToggle
+            <View>
+                <Text style={{ fontWeight: '800' }}>Instruction:</Text>
+                <Text>To change values for flags click on button with it's name and select value. Below each switching button expected behaviour for each value were described.</Text>
+                {/* Only prop which can be automated in e2e tests */}
+                <SettingsSwitch style={{ marginTop: 20, marginBottom: 15 }}
                     label="tabBarHidden"
-                    iosOnly={false}
                     value={hostConfig.tabBarHidden ?? false}
                     onValueChange={value => updateHostConfig({ tabBarHidden: value })}
                 />
-                <PropSelector
-                    label="tabBarControllerMode"
-                    options={TAB_BAR_CONTROLLER_MODE_OPTIONS}
-                    selected={hostConfig.tabBarControllerMode ?? 'automatic'}
-                    testIDPrefix="select-tab-bar-controller-mode"
-                    iosOnly
-                    note="Prop on TabsHost. tabSideBar collapses to tabBar on iPhone — test on iPad."
-                    onValueChange={value => updateHostConfig({ tabBarControllerMode: value })
-                    }
+                <Text style={{ fontWeight: '700' }}>Expected for:</Text>
+                <Text>- true - tab bar should be hidden</Text>
+                <Text>- false - tab bar should be visible</Text>
+
+                {/* TO BE DISCUSS currently it doenst work on ios and work weirdly on android */}
+{/* 
+                <SettingsSwitch
+                          label="Right to left"
+                          value={I18nManager.isRTL}
+                          onValueChange={() => {
+                            I18nManager.forceRTL(!I18nManager.isRTL);
+                            RNRestart.Restart();
+                          }}
+                          testID="root-screen-switch-rtl"
+                        /> */}
+                <SettingsPicker style={{ marginTop: 20, marginBottom: 15 }}
+                    label={'tabHostLayoutDirection'}
+                    value={hostConfig.direction ?? 'inherit'}
+                    onValueChange={value => updateHostConfig({ direction: value })}
+                    items={['inherit', 'ltr', 'rtl']}
                 />
+                <Text style={{ fontWeight: '700' }}>Configuration1:</Text>
+                <Text>system layout direction set to left-to-right: </Text>
+                <Text>- inherit - parent's layout direction is used</Text>
+                <Text>- ltr - tab tab should be visible</Text>
+                <Text>- rtl - tab tab should be visible</Text>
+
+                <Text style={{ fontWeight: '700' }}>{'\n'}Configuration2:</Text>
+                <Text>system layout direction set to right-to-left: </Text>
+                <Text>- inherit - parent's layout direction is used</Text>
+                <Text>- ltr - tab tab should be visible</Text>
+                <Text>- rtl - tab tab should be visible</Text>
+
+                <SettingsPicker style={{ marginTop: 20, marginBottom: 15 }}
+                    label={'ColorScheme'}
+                    value={hostConfig.colorScheme ?? 'inherit'}
+                    onValueChange={value => updateHostConfig({ colorScheme: value })}
+                    items={['inherit', 'light', 'dark']}
+                />
+
+                {Platform.OS === 'ios' && (
+                    <>
+                        <Text style={styles.sectionHeader}>iOS only</Text>
+
+                        <Text style={styles.description}>
+                            Controls whether the tab bar is displayed as a bar or
+                            sidebar. Test tabSidebar on iPad — on iPhone it collapses
+                            back to a tab bar automatically.
+                        </Text>
+                        <SettingsPicker<TabBarControllerMode>
+                            label="tabBarControllerMode"
+                            value={hostConfig.ios?.tabBarControllerMode ?? 'automatic'}
+                            onValueChange={value =>
+                                updateHostConfig({ ios: { tabBarControllerMode: value } })
+                            }
+                            items={['automatic', 'tabBar', 'tabSidebar']}
+                        />
+
+                        <Text style={styles.description}>
+                            Controls when the tab bar minimizes. Switch to Tab2 and
+                            scroll up/down to observe the behaviour. Requires iOS 26+.
+                        </Text>
+                        <SettingsPicker<TabBarMinimizeBehavior>
+                            label="tabBarMinimizeBehavior"
+                            value={hostConfig.ios?.tabBarMinimizeBehavior ?? 'automatic'}
+                            onValueChange={value =>
+                                updateHostConfig({ ios: { tabBarMinimizeBehavior: value } })
+                            }
+                            items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
+                        />
+
+                        <Text style={styles.sectionHeader}>
+                            experimental_userInterfaceStyle
+                        </Text>
+                        <Text style={styles.description}>
+                            Enable system dark mode and observe the tab bar and back
+                            button on the pushed screen.
+                        </Text>
+                        <Button
+                            title="Push screen with style: light"
+                            onPress={() => navigation.navigate('LightScreen')}
+                        />
+                        <Text style={styles.description}>
+                            Enable system light mode and observe the tab bar and back
+                            button on the pushed screen.
+                        </Text>
+                        <Button
+                            title="Push screen with style: dark"
+                            onPress={() => navigation.navigate('DarkScreen')}
+                        />
+                    </>
+                )}
             </View>
         </ScrollView>
     );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
+function TestScreen() {
+    return (
+        <ScrollView
+            style={{ flex: 1 }}
+            contentInsetAdjustmentBehavior="automatic"
+            testID="test-screen-scroll">
+            {Array.from({ length: 40 }, (_, i) => (
+                <View key={i} style={styles.scrollItem}>
+                    <Text>Row {i + 1} — scroll to test tabBarMinimizeBehavior</Text>
+                </View>
+            ))}
+        </ScrollView>
+    );
+}
+
+function LightStyleTabContent() {
+    return (
+        <View style={styles.centeredScreen}>
+            <Text style={styles.screenLabel}>experimental_userInterfaceStyle: light</Text>
+            <Text style={styles.screenHint}>
+                This screen forces light interface style regardless of system setting.
+                Observe the tab bar and navigation bar appearance.
+            </Text>
+        </View>
+    );
+}
+
+function DarkStyleTabContent() {
+    return (
+        <View style={styles.centeredScreen}>
+            <Text style={styles.screenLabel}>experimental_userInterfaceStyle: dark</Text>
+            <Text style={styles.screenHint}>
+                This screen forces dark interface style regardless of system setting.
+                Observe the tab bar and navigation bar appearance.
+            </Text>
+        </View>
+    );
+}
+
+const LIGHT_ROUTE_CONFIGS: TabRouteConfig[] = [
+    {
+        name: 'LightTab1',
+        Component: LightStyleTabContent,
+        options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab1',
+            ios: { experimental_userInterfaceStyle: 'light' },
+        },
+    },
+    {
+        name: 'LightTab2',
+        Component: TestScreen,
+        options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab2',
+            ios: { experimental_userInterfaceStyle: 'light' },
+        },
+    },
+];
+
+const DARK_ROUTE_CONFIGS: TabRouteConfig[] = [
+    {
+        name: 'DarkTab1',
+        Component: DarkStyleTabContent,
+        options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab1',
+            ios: { experimental_userInterfaceStyle: 'dark' },
+        },
+    },
+    {
+        name: 'DarkTab2',
+        Component: TestScreen,
+        options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab2',
+            ios: { experimental_userInterfaceStyle: 'dark' },
+        },
+    },
+];
+
+function LightInterfaceStyleScreen() {
+    return (
+        <TabsContainerWithHostConfigContext
+            routeConfigs={LIGHT_ROUTE_CONFIGS}
+        />
+    );
+}
+
+function DarkInterfaceStyleScreen() {
+    return (
+        <TabsContainerWithHostConfigContext
+            routeConfigs={DARK_ROUTE_CONFIGS}
+        />
+    );
+}
+
+const MAIN_ROUTE_CONFIGS: TabRouteConfig[] = [
     {
         name: 'Tab1',
         Component: ConfigScreen,
@@ -140,113 +257,81 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
     {
         name: 'Tab2',
-        Component: ConfigScreen,
+        Component: TestScreen,
         options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab2',
+
         },
     },
 ];
-
-export function App() {
-    return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+function MainScreen({ navigation }: NativeStackScreenProps<RootStackParamList, 'Main'>) {
+    return (
+        <TabsContainerWithHostConfigContext
+            routeConfigs={MAIN_ROUTE_CONFIGS}
+        />
+    );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    containerCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    content: {
-        padding: 20,
-        paddingTop: Platform.OS === 'android' ? 60 : undefined,
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    section: {
-        marginBottom: 10,
-    },
-});
+export function App() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen
+                name="Main"
+                component={MainScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="LightScreen"
+                component={LightInterfaceStyleScreen}
+                options={{ title: 'Light Interface Style' }}
+            />
+            <Stack.Screen
+                name="DarkScreen"
+                component={DarkInterfaceStyleScreen}
+                options={{ title: 'Dark Interface Style' }}
+            />
+        </Stack.Navigator>
+    );
+}
 
-const ctrl = StyleSheet.create({
-    panel: {
-        marginTop: 24,
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
-        paddingTop: 16,
-        gap: 12,
-    },
-    heading: {
+const styles = {
+    sectionHeader: {
         fontSize: 13,
-        fontWeight: '600',
-        textTransform: 'uppercase',
+        fontWeight: '600' as const,
+        textTransform: 'uppercase' as const,
         color: '#888',
         letterSpacing: 0.5,
+        marginTop: 24,
+        marginBottom: 4,
     },
-    group: {
-        gap: 6,
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    label: {
+    description: {
         fontSize: 13,
         color: '#555',
-        fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+        marginBottom: 6,
+        marginTop: 12,
     },
-    chip: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginRight: 6,
+    scrollItem: {
+        padding: 16,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#e0e0e0',
     },
-    chipActive: {
-        borderColor: '#007AFF',
-        backgroundColor: '#007AFF',
+    centeredScreen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+        gap: 12,
     },
-    chipText: {
-        fontSize: 12,
+    screenLabel: {
+        fontSize: 17,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    screenHint: {
+        fontSize: 14,
         color: '#555',
+        textAlign: 'center',
+        lineHeight: 20,
     },
-    chipTextActive: {
-        color: '#fff',
-    },
-    note: {
-        fontSize: 12,
-        color: '#888',
-        fontStyle: 'italic',
-    },
-    log: {
-        marginTop: 8,
-        gap: 4,
-    },
-    logScroll: {
-        maxHeight: 120,
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 6,
-        padding: 8,
-    },
-    logEmpty: {
-        fontSize: 12,
-        color: '#aaa',
-        fontStyle: 'italic',
-    },
-    logEntry: {
-        fontSize: 11,
-        color: '#333',
-        fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-        lineHeight: 18,
-    },
-});
+}
