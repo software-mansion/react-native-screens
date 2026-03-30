@@ -67,8 +67,8 @@ android/.settings
 # e2e
 *Example/artifacts
 
-# not-yet-mature AI setup
-CLAUDE.md
-AGENTS.md
-.claude/
+# AI assistant configuration (local only)
+/CLAUDE.md
+/AGENTS.md
+/.claude/
 
