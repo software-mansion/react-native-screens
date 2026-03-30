@@ -114,6 +114,7 @@ DEPENDENCIES
   cocoapods (>= 1.13, != 1.15.1, != 1.15.0)
   logger
   mutex_m
+  nkf
   plist
   xcodeproj (< 1.26.0)
 
