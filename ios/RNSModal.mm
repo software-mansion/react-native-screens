@@ -7,6 +7,9 @@
 
 namespace react = facebook::react;
 
+@interface RNSModal () <UIAdaptivePresentationControllerDelegate>
+@end
+
 @implementation RNSModal {
   UIViewController *_sheetViewController;
   RCTSurfaceTouchHandler *_touchHandler;
@@ -81,6 +84,7 @@ namespace react = facebook::react;
   }
 
   _sheetViewController.modalPresentationStyle = UIModalPresentationPageSheet;
+  _sheetViewController.presentationController.delegate = self;
   UISheetPresentationController *sheet = _sheetViewController.sheetPresentationController;
   sheet.detents = @[
     [UISheetPresentationControllerDetent mediumDetent],
@@ -109,6 +113,16 @@ namespace react = facebook::react;
     responder = responder.nextResponder;
   }
   return self.window.rootViewController;
+}
+
+#pragma mark - UIAdaptivePresentationControllerDelegate
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSModalEventEmitter>(_eventEmitter)
+        ->onDismiss(react::RNSModalEventEmitter::OnDismiss{});
+  }
 }
 
 - (NSArray<UIView *> *)reactSubviews
