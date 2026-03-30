@@ -45,7 +45,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
       />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
 
-      <Modal presented={showModal} onDismiss={() => setShowModal(false)}>
+      <Modal presented={showModal} onDismiss={() => setShowModal(false)} presentation='pageSheet'>
         <Text>Modal content</Text>
         <Button title="Close modal" onPress={() => setShowModal(false)} />
       </Modal>

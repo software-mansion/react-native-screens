@@ -7,6 +7,30 @@
 
 namespace react = facebook::react;
 
+static UIModalPresentationStyle RNSUIModalPresentationStyleFromCpp(react::RNSModalPresentation presentation)
+{
+  switch (presentation) {
+    case react::RNSModalPresentation::Automatic:
+      return UIModalPresentationAutomatic;
+    case react::RNSModalPresentation::FullScreen:
+      return UIModalPresentationFullScreen;
+    case react::RNSModalPresentation::PageSheet:
+      return UIModalPresentationPageSheet;
+    case react::RNSModalPresentation::FormSheet:
+      return UIModalPresentationFormSheet;
+    case react::RNSModalPresentation::CurrentContext:
+      return UIModalPresentationCurrentContext;
+    case react::RNSModalPresentation::Custom:
+      return UIModalPresentationCustom;
+    case react::RNSModalPresentation::OverFullScreen:
+      return UIModalPresentationOverFullScreen;
+    case react::RNSModalPresentation::OverCurrentContext:
+      return UIModalPresentationOverCurrentContext;
+    case react::RNSModalPresentation::Popover:
+      return UIModalPresentationPopover;
+  }
+}
+
 @interface RNSModal () <UIAdaptivePresentationControllerDelegate>
 @end
 
@@ -61,6 +85,8 @@ namespace react = facebook::react;
   const auto &oldModalProps = static_cast<const react::RNSModalProps &>(*_props);
   const auto &newModalProps = static_cast<const react::RNSModalProps &>(*props);
 
+  _sheetViewController.modalPresentationStyle = RNSUIModalPresentationStyleFromCpp(newModalProps.presentation);
+
   if (oldModalProps.presented != newModalProps.presented) {
     if (newModalProps.presented) {
       [self presentSheet];
@@ -83,15 +109,17 @@ namespace react = facebook::react;
     return;
   }
 
-  _sheetViewController.modalPresentationStyle = UIModalPresentationPageSheet;
   _sheetViewController.presentationController.delegate = self;
+
   UISheetPresentationController *sheet = _sheetViewController.sheetPresentationController;
-  sheet.detents = @[
-    [UISheetPresentationControllerDetent mediumDetent],
-    [UISheetPresentationControllerDetent largeDetent],
-  ];
-  sheet.prefersGrabberVisible = YES;
-  sheet.prefersScrollingExpandsWhenScrolledToEdge = YES;
+  if (sheet != nil) {
+    sheet.detents = @[
+      [UISheetPresentationControllerDetent mediumDetent],
+      [UISheetPresentationControllerDetent largeDetent],
+    ];
+    sheet.prefersGrabberVisible = YES;
+    sheet.prefersScrollingExpandsWhenScrolledToEdge = YES;
+  }
 
   [presentingVC presentViewController:_sheetViewController animated:YES completion:nil];
 }
