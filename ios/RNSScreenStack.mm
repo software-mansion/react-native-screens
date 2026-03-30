@@ -229,6 +229,7 @@ namespace react = facebook::react;
   // the header will render in collapsed state which is perhaps a bug
   // in UIKit but ¯\_(ツ)_/¯
   [_controller setViewControllers:@[ [UIViewController new] ]];
+  _controller.view.backgroundColor = _nativeContainerBackgroundColor;
 }
 
 #pragma mark - helper methods
