@@ -3,10 +3,11 @@ import ScrollViewMarkerNativeComponent from '../../../fabric/gamma/ScrollViewMar
 import type { ScrollViewMarkerProps } from './ScrollViewMarker.types';
 
 export function ScrollViewMarker(props: ScrollViewMarkerProps) {
-  const { scrollEdgeEffects, ...rest } = props;
+  const { active, scrollEdgeEffects, ...rest } = props;
 
   return (
     <ScrollViewMarkerNativeComponent
+      active={active}
       leftScrollEdgeEffect={scrollEdgeEffects?.left}
       topScrollEdgeEffect={scrollEdgeEffects?.top}
       rightScrollEdgeEffect={scrollEdgeEffects?.right}

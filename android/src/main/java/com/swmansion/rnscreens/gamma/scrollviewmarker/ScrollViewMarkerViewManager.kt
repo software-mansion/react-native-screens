@@ -49,6 +49,11 @@ class ScrollViewMarkerViewManager :
         value: String?,
     ) = Unit
 
+    override fun setActive(
+        view: ScrollViewMarker?,
+        value: Boolean,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSScrollViewMarker"
     }

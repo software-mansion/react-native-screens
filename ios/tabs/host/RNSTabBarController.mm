@@ -19,6 +19,13 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 @interface RNSTabBarController () <UINavigationControllerDelegate>
 @end
 
+static inline void RNSUpdateObservedContentScrollViewIfNeeded(UIViewController *_Nullable viewController)
+{
+  if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    [(RNSTabsScreenViewController *)viewController updateTabBarObservedContentScrollViewIfNeeded];
+  }
+}
+
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
@@ -166,10 +173,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   [self progressNavigationState:screenKey];
 
   if (currSelectedViewController == nextSelectedViewController) {
+    RNSUpdateObservedContentScrollViewIfNeeded(nextSelectedViewController);
     return YES;
   }
 
   [self setSelectedViewController:nextSelectedViewController];
+  RNSUpdateObservedContentScrollViewIfNeeded(nextSelectedViewController);
   return YES;
 }
 
