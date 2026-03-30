@@ -5,7 +5,7 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // #region General helpers
 
-type TabChangeEvent = {
+type TabSelectedEvent = {
   selectedScreenKey: string;
   provenance: CT.Int32;
   isRepeated: boolean;
@@ -31,7 +31,7 @@ export interface NativeProps extends ViewProps {
   navState: NavigationState;
 
   // Events
-  onTabChange?: CT.DirectEventHandler<TabChangeEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;

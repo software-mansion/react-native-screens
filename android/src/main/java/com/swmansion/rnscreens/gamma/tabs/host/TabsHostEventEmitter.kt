@@ -2,13 +2,13 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
-import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 
 internal class TabsHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
-    fun emitOnTabChangeEvent(
+    fun emitOnTabSelectedEvent(
         selectedScreenKey: String,
         provenance: Int,
         isRepeated: Boolean,
@@ -16,7 +16,7 @@ internal class TabsHostEventEmitter(
         isNativeAction: Boolean,
     ) {
         reactEventDispatcher.dispatchEvent(
-            TabsHostTabChangeEvent(
+            TabsHostTabSelectedEvent(
                 surfaceId,
                 viewTag,
                 selectedScreenKey,

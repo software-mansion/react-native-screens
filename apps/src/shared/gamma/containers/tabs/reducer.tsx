@@ -1,13 +1,15 @@
+import { Platform } from 'react-native';
 import type {
   TabRoute,
   TabRouteConfig,
   TabsContainerState,
   TabsNavState,
   TabsNavigationAction,
-  TabsNavigationActionChangeTab,
-  TabsNavigationActionNativeChangeTab,
+  TabsNavigationActionSelectTab,
+  TabsNavigationActionNativeSelectTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
+import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -16,10 +18,10 @@ export function tabsNavigationReducer(
   action: TabsNavigationAction,
 ): TabsContainerState {
   switch (action.type) {
-    case 'tab-change':
-      return tabsActionChangeTabHandler(state, action);
-    case 'native-tab-change':
-      return tabsActionNativeChangeTabHandler(state, action);
+    case 'tab-select':
+      return tabsActionSelectTabHandler(state, action);
+    case 'native-tab-select':
+      return tabsActionNativeSelectTabHandler(state, action);
     case 'set-options':
       return tabsActionSetOptionsHandler(state, action);
   }
@@ -48,19 +50,19 @@ export function tabsNavigationReducerWithLogging(
 }
 
 /**
- * Models JS-driven tab change request.
+ * Models JS-driven tab select request.
  */
-function tabsActionChangeTabHandler(
+function tabsActionSelectTabHandler(
   state: TabsContainerState,
-  action: TabsNavigationActionChangeTab,
+  action: TabsNavigationActionSelectTab,
 ): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
-      `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
+      `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
     return state;
   }
@@ -71,21 +73,21 @@ function tabsActionChangeTabHandler(
 
   return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-    provenance: state.confirmedState.provenance + 1, // suggested? What about update stacking before we receive confirmation?
+    provenance: Math.max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
   });
 }
 
-function tabsActionNativeChangeTabHandler(
+function tabsActionNativeSelectTabHandler(
   state: TabsContainerState,
-  action: TabsNavigationActionNativeChangeTab,
+  action: TabsNavigationActionNativeSelectTab,
 ): TabsContainerState {
   const routeIndex = state.routes.findIndex(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX) {
+  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
     console.error(
-      `[Tabs] change-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
+      `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
     return state;
   }
@@ -102,7 +104,6 @@ function tabsActionNativeChangeTabHandler(
     return state;
   }
 
-  // What about aligning suggestedState here?
   return navStateWithConfirmedState(state, {
     selectedRouteKey: action.routeKey,
     provenance: action.nativeEvent.provenance,
@@ -146,22 +147,22 @@ function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
 
 export type TabsContainerStateInitArg = {
   routeConfigs: TabRouteConfig[];
-  initialFocusedName?: string;
+  defaultRouteName?: string;
 };
 
 export function determineInitialTabsContainerState(
   arg: TabsContainerStateInitArg,
 ): TabsContainerState {
-  const { routeConfigs, initialFocusedName } = arg;
+  const { routeConfigs, defaultRouteName } = arg;
 
   const routes = routeConfigs.map(createTabRouteFromConfig);
 
   let selectedRouteKey: string;
-  if (initialFocusedName != null) {
-    const matchingRoute = routes.find(r => r.name === initialFocusedName);
-    if (matchingRoute == null) {
+  if (defaultRouteName != null) {
+    const matchingRoute = routes.find(r => r.name === defaultRouteName);
+    if (!matchingRoute) {
       throw new Error(
-        `[Tabs] initialFocusedName "${initialFocusedName}" does not match any route config name`,
+        `[Tabs] defaultRouteName "${defaultRouteName}" does not match any route config name`,
       );
     }
     selectedRouteKey = matchingRoute.routeKey;
@@ -206,3 +207,8 @@ function navStateWithConfirmedState(
     suggestedState: state.suggestedState,
   };
 }
+
+function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
+  return Platform.OS === 'ios' && routeKey === SCREEN_KEY_MORE_NAV_CTRL;
+}
+

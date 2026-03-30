@@ -5,7 +5,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
-class TabsHostTabChangeEvent(
+class TabsHostTabSelectedEvent(
     surfaceId: Int,
     viewId: Int,
     val selectedScreenKey: String,
@@ -13,7 +13,7 @@ class TabsHostTabChangeEvent(
     val isRepeated: Boolean,
     val hasTriggeredSpecialEffect: Boolean,
     val isNativeAction: Boolean,
-) : Event<TabsHostTabChangeEvent>(surfaceId, viewId),
+) : Event<TabsHostTabSelectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
@@ -32,8 +32,8 @@ class TabsHostTabChangeEvent(
         }
 
     companion object : NamingAwareEventType {
-        const val EVENT_NAME = "topTabChange"
-        const val EVENT_REGISTRATION_NAME = "onTabChange"
+        const val EVENT_NAME = "topTabSelected"
+        const val EVENT_REGISTRATION_NAME = "onTabSelected"
 
         private const val EK_SELECTED_KEY = "selectedScreenKey"
         private const val EK_PROVENANCE = "provenance"

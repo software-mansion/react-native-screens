@@ -9,6 +9,7 @@ import TestTabsColorScheme from './test-tabs-color-scheme';
 import TestTabsLayoutDirection from './test-tabs-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
+import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
 import TestTabsVisibility from './test-tab-bar-visibility';
 
 const scenarios = {
@@ -21,6 +22,7 @@ const scenarios = {
   TestTabsLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSimpleNav,
+  TestTabsMoreNavigationController,
   TestTabsVisibility,
 };
 

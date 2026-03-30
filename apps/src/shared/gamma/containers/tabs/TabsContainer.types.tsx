@@ -1,6 +1,6 @@
 import React from 'react';
 import type {
-  TabChangeEvent,
+  TabSelectedEvent,
   TabsHostProps,
   TabsScreenProps,
 } from 'react-native-screens';
@@ -52,15 +52,15 @@ export type TabsContainerState = {
 
 /// Navigation actions
 
-export type TabsNavigationActionChangeTab = {
-  type: 'tab-change';
+export type TabsNavigationActionSelectTab = {
+  type: 'tab-select';
   routeKey: string;
 };
 
-export type TabsNavigationActionNativeChangeTab = {
-  type: 'native-tab-change';
+export type TabsNavigationActionNativeSelectTab = {
+  type: 'native-tab-select';
   routeKey: string;
-  nativeEvent: TabChangeEvent;
+  nativeEvent: TabSelectedEvent;
 };
 
 export type TabsNavigationActionSetOptions = {
@@ -70,9 +70,9 @@ export type TabsNavigationActionSetOptions = {
 };
 
 export type TabsNavigationAction =
-  | TabsNavigationActionChangeTab
+  | TabsNavigationActionSelectTab
   | TabsNavigationActionSetOptions
-  | TabsNavigationActionNativeChangeTab;
+  | TabsNavigationActionNativeSelectTab;
 
 /// TabsContainer props
 
@@ -87,10 +87,10 @@ export type TabsContainerProps = Omit<
 > & {
   routeConfigs: TabRouteConfig[];
   /**
-   * Name of the tab that should be focused initially.
+   * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
    */
-  initialFocusedName?: string;
+  defaultRouteName?: string;
   /**
    * Whether to control navigation state in JS.
    * Passed to Tabs.Host as experimentalControlNavigationStateInJS.
@@ -103,4 +103,4 @@ export type SetTabOptionsMethod = (
   options: Partial<TabRouteOptions>,
 ) => void;
 
-export type ChangeTabMethod = (routeKey: string) => void;
+export type SelectTabMethod = (routeKey: string) => void;

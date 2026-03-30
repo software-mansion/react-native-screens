@@ -1,3 +1,3 @@
-export type * from './ScrollViewMarker.types';
+export type { ScrollViewMarkerProps } from './ScrollViewMarker.types';
 
-export { default as ScrollViewMarker } from './ScrollViewMarker';
+export { ScrollViewMarker } from './ScrollViewMarker';

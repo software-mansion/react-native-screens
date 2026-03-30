@@ -4,7 +4,7 @@ import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../.
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import featureFlags from '../../../flags';
 import { RNSLog } from '../../../private';
-import type { TabChangeEvent } from './TabsHost.types';
+import type { TabSelectedEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
@@ -13,13 +13,13 @@ type TabsHostPlatformNativeComponentProps =
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
   controlNavigationStateInJS?: boolean;
-  onTabChange?: (event: NativeSyntheticEvent<TabChangeEvent>) => void;
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   componentNodeRef,
   controlNavigationStateInJS,
-  onTabChange,
+  onTabSelected,
 }: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -32,22 +32,22 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
     }
   }, []);
 
-  const onTabChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<TabChangeEvent>) => {
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
       RNSLog.log(
         `TabsHost [${
           componentNodeHandle.current ?? -1
-        }] onTabChange: ${JSON.stringify(event.nativeEvent)}`,
+        }] onTabSelected: ${JSON.stringify(event.nativeEvent)}`,
       );
-      onTabChange?.(event);
+      onTabSelected?.(event);
     },
-    [onTabChange],
+    [onTabSelected],
   );
 
   return {
     controlNavigationStateInJS:
       controlNavigationStateInJS ??
       featureFlags.experiment.controlledBottomTabs,
-    onTabChange: onTabChangeCallback,
+    onTabSelected: onTabSelectedCallback,
   };
 }

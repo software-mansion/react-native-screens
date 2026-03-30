@@ -1,9 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.view.View
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -52,8 +50,6 @@ class ScreenContainerViewManager :
         parent: ScreenContainer,
         index: Int,
     ): View = parent.getScreenAt(index)
-
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 
     override fun needsCustomLayoutForChildren(): Boolean = true
 
