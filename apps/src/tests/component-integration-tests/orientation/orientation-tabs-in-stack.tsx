@@ -2,7 +2,7 @@ import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   type StackRouteConfig,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
 import { StackContainer } from '@apps/shared/gamma/containers/stack';

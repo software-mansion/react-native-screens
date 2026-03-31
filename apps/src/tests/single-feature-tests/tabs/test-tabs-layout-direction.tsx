@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import type { TabsHostProps } from 'react-native-screens';

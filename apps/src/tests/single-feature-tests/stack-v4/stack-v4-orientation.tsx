@@ -6,7 +6,7 @@ import {
   createAutoConfiguredStack,
   findStackScreenOptions,
 } from '@apps/tests/shared/stack';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 
 const SCENARIO: Scenario = {
   name: 'Orientation',

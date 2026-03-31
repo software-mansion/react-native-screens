@@ -1,7 +1,7 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,

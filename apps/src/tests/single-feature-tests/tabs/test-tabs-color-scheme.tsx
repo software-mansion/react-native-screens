@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';
 import type { TabsHostColorScheme } from 'react-native-screens';
