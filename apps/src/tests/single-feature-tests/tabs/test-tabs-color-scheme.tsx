@@ -41,7 +41,7 @@ function ConfigScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.section}>
-        <Text>
+        <Text style={styles.text}>
           There are 3 sources of color scheme, in ascending order of precedence:
           system, React Native and our property on TabsHost.
         </Text>
@@ -49,7 +49,7 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>System color scheme</Text>
-        <Text>
+        <Text style={styles.text}>
           Switch system color scheme via quick settings in notification drawer
           (Android/iOS) or Cmd+Shift+A (iOS simulator).
         </Text>
@@ -125,6 +125,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    color: 'gray'
+  },
   content: {
     padding: 20,
     paddingTop: Platform.OS === 'android' ? 60 : undefined,
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: 'rgb(10, 132, 255)'
   },
   section: {
     marginBottom: 10,

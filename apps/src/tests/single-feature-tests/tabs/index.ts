@@ -11,6 +11,10 @@ import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
 import TestTabsVisibility from './test-tab-bar-visibility';
+import TestTabsControllerMode from './test-tab-bar-controller-mode-ios';
+import TestTabBarMinimizeBehavior from './test-tab-bar-minimize-behavior-ios';
+import TestTabBarDarkExperimentalUserInterfaceStyle from './test-tab-bar-dark-experimental-userInterfaceStyle-ios';
+import TestTabBarLightExperimentalUserInterfaceStyle from './test-tab-bar-light-experimental-userInterfaceStyle-ios';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -24,6 +28,10 @@ const scenarios = {
   TestTabsSimpleNav,
   TestTabsMoreNavigationController,
   TestTabsVisibility,
+  TestTabsControllerMode,
+  TestTabBarMinimizeBehavior,
+  TestTabBarDarkExperimentalUserInterfaceStyle,
+  TestTabBarLightExperimentalUserInterfaceStyle,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
