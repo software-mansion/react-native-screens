@@ -178,7 +178,7 @@ function ScreenStackItem(
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
-      scrollEdgeEffects={scrollEdgeEffects}
+      scrollEdgeEffects={isHeaderInModal ? undefined : scrollEdgeEffects}
       onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
