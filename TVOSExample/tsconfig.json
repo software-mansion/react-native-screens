@@ -1,6 +1,11 @@
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@apps/*": ["../apps/src/*"],
+      "@assets/*": ["../apps/assets/*"]
+    },
     "types": ["jest"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
