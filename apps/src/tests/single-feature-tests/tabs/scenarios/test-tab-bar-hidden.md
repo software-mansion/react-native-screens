@@ -1,14 +1,15 @@
 
 ## tabBarHidden — Manual Test Scenarios
 
+**File:** `test-tab-bar-hidden`  
+**Platform:** iOS + Android
+
 ## Prerequisites
 - iOS 18+ device or simulator
 - Android emulator 
 
 ---
 
-**File:** `test-tab-bar-hidden`  
-**Platform:** iOS + Android
 
 ### Steps
 1. Launch the app and navigate to the scenario

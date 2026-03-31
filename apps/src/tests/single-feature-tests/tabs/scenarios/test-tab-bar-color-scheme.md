@@ -1,66 +1,58 @@
+## colorScheme — Manual Test Scenarios
 
-# colorScheme — Manual Test Scenarios
+**File:** `test-tabs-color-scheme`
+**Platform:** iOS + Android
 
-# Prerequisites
-- iOS 18+ device or simulator
-- Android emulator -> The easiest way to change system color shceme is to use CLI: 
-  - adb shell "cmd uimode night yes"
-  - adb shell "cmd uimode night no"
+### Prerequisites
+- iOS device/simulator (use Cmd+Shift+A to toggle appearance on simulator)
+- Android emulator (use CLI):
+  - `adb shell "cmd uimode night yes"`
+  - `adb shell "cmd uimode night no"`
+
+Assumption: system and RN color scheme settings are working correctly. Here only the `colorScheme` prop on TabsHost is tested, verified against different system/RN combinations.
 
 ---
 
-**File:** `test-tab-color-scheme`  
-**Platform:** iOS + Android
+### Steps
 
-## Steps
+**1. Baseline**
 
-### Baseline
+1. Launch the app and navigate to the scenario
+   Expected: Config tab is shown. Pickers default to `unspecified` / `inherit`
 
-1. Launch the app and navigate to the scenario screen  
-   Expected: Config tab is shown. All pickers default to  `unspecified` /  `inherit`.
+---
 
-### System color scheme
+**2. TabsHost `inherit` — follows RN/system**
 
-2. System settings set to `light`
-3. Ensure RN `colorScheme`: `unspecified` and TabsHost `colorScheme`: `inherit` 
-   Expected: Tabs displayed in light colorScheme
-4. Switch system to `dark` mode
-   Expected: Tab bar follows system — appears dark
-5. Switch system to `light` mode
-         Expected: Tab bar follows system — appears light
+2. Set system/RN to **light**, TabsHost colorScheme = `inherit`
+   Expected: Tab bar appears **light**
+3. Set system/RN to **dark**, keep TabsHost colorScheme = `inherit`
+   Expected: Tab bar appears **dark** — TabsHost defers to RN/system
 
-### React Native color scheme (overrides system)
+---
 
-6. Keep TabsHost colorScheme = `inherit`
-7. Set RN colorScheme = `dark`, system = `light`
-   Expected: Tab bar appears dark, ignoring system light mode
-8. Set RN colorScheme = `light`, system = `dark`
-   Expected: Tab bar appears light, ignoring system dark mode
-9. Set RN colorScheme =  `unspecified`
-   Expected: Tab bar falls back to system setting - dark mode
+**3. TabsHost `light` — overrides RN/system**
 
-### TabsHost colorScheme (highest precedence)
+4. Set system/RN to **dark**, set TabsHost colorScheme = `light`
+   Expected: Tab bar appears **light** — TabsHost overrides dark from RN/system
+5. Set system/RN to **light**, keep TabsHost colorScheme = `light`
+   Expected: Tab bar stays **light**
+6. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
+   Expected: Tab bar color scheme updates immediately with each change, no crash or layout freeze
 
-10. Set system = `light`, RN colorScheme = `dark`
-11. Set TabsHost colorScheme = `light`
-   Expected: Tab bar appears light, overriding both system and RN dark setting
-12. Set system = `dark`, RN colorScheme = `light`
-13. Set TabsHost colorScheme = `dark`
-   Expected: Tab bar appears dark, overriding both system and RN light setting
-14. Set TabsHost colorScheme =  `inherit`
-   Expected: Tab bar falls back to RN colorScheme setting - light mode
+---
 
-### Precedence chain verification
+**4. TabsHost `dark` — overrides RN/system**
 
-15. Set system = `light`, RN = `dark`, TabsHost = `light`
-   Expected: Tab bar is light (TabsHost wins)
-16. Set TabsHost = `inherit`, RN = `dark`, system = `light`
-   Expected: Tab bar is dark (RN wins over system)
-17. Set TabsHost = `inherit`, RN =  `unspecified`, system = `dark`
-   Expected: Tab bar is dark (system is the only source)
+7. Set system/RN to **light**, set TabsHost colorScheme = `dark`
+   Expected: Tab bar appears **dark** — TabsHost overrides light from RN/system
+8. Set system/RN to **dark**, keep TabsHost colorScheme = `dark`
+   Expected: Tab bar stays **dark**
+9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
+---
 
-### Keyboard tab
+**5. Keyboard tab — smoke**
 
-18. Switch to the Keyboard tab, open the keyboard via the TextInput (or using Cmd+K on iOS)
-   Expected: Keyboard appearance matches the currently active color scheme across all combinations above
+10. Switch to the **Keyboard** tab, open the keyboard via TextInput (or Cmd+K on iOS simulator)
+   Expected: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.

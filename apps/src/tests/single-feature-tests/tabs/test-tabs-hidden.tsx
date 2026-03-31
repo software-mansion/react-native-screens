@@ -11,7 +11,7 @@ import {
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
-  key: 'tab-bar-hidden',
+  key: 'test-tabs-hidden',
   platforms: ['ios', 'android'],
   AppComponent: App,
 };

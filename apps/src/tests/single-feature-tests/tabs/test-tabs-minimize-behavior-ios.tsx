@@ -7,8 +7,8 @@ import {
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Scenario } from '../../shared/helpers';
-import { SettingsPicker } from '../../../shared';
-import {TabBarControllerMode } from 'react-native-screens';
+import { SettingsPicker, SettingsSwitch } from '../../../shared';
+import { TabBarMinimizeBehavior } from 'react-native-screens';
 
 import {
     createNativeStackNavigator,
@@ -26,8 +26,8 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const SCENARIO: Scenario = {
-    name: 'Tab Bar Controller Mode',
-    key: 'test-tab-bar-controller-mode-ios',
+    name: 'Tab Bar Minimize Behavior',
+    key: 'test-tabs-minimize-behavior-ios',
     platforms: ['ios'],
     AppComponent: App,
 };
@@ -41,19 +41,18 @@ function ConfigScreen() {
         <ScrollView style={{ padding: 40 }}>
             <View>
                 <Text style={styles.description}>
-                    Controls whether the tab bar is displayed as a bar or
-                    sidebar. Test tabSidebar on iPad — on iPhone it collapses
-                    back to a tab bar automatically.
+                    Controls when the tab bar minimizes. Switch to Tab2 and
+                    scroll up/down to observe the behaviour. Requires iOS 26+.
                 </Text>
-                <SettingsPicker<TabBarControllerMode>
-                    label="tabBarControllerMode"
-                    value={hostConfig.ios?.tabBarControllerMode ?? 'automatic'}
+                <SettingsPicker<TabBarMinimizeBehavior>
+                    label="tabBarMinimizeBehavior"
+                    value={hostConfig.ios?.tabBarMinimizeBehavior ?? 'automatic'}
                     onValueChange={value =>
-                        updateHostConfig({ ios: { tabBarControllerMode: value } })
+                        updateHostConfig({ ios: { tabBarMinimizeBehavior: value } })
                     }
-                    items={['automatic', 'tabBar', 'tabSidebar']}
+                    items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
                 />
-        </View>
+            </View>
         </ScrollView >
     );
 }
