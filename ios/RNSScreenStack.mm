@@ -216,11 +216,6 @@ namespace react = facebook::react;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
   _iosPreventReattachmentOfDismissedScreens = YES;
   _iosPreventReattachmentOfDismissedModals = YES;
-#if !TARGET_OS_TV
-  _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
-#else // !TARGET_OS_TV
-  _nativeContainerBackgroundColor = nil;
-#endif // !TARGET_OS_TV
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -229,7 +224,6 @@ namespace react = facebook::react;
   // the header will render in collapsed state which is perhaps a bug
   // in UIKit but ¯\_(ツ)_/¯
   [_controller setViewControllers:@[ [UIViewController new] ]];
-  _controller.view.backgroundColor = _nativeContainerBackgroundColor;
 }
 
 #pragma mark - helper methods
@@ -1323,12 +1317,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newScreenProps.nativeContainerBackgroundColor != oldScreenProps.nativeContainerBackgroundColor) {
     _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.nativeContainerBackgroundColor);
-#if !TARGET_OS_TV
-    if (_nativeContainerBackgroundColor == nil) {
-      _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
-    }
-#endif // !TARGET_OS_TV
-
     _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
