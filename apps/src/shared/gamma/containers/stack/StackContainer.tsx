@@ -21,6 +21,55 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { Pressable } from 'react-native';
+
+function ItemBlueComponent() {
+  return (
+    <Pressable
+      style={{ width: 30, height: 30, backgroundColor: 'blue' }}
+      onPressIn={() => console.log('blue pressable in')}
+      onPress={() => console.log('blue pressable click')}
+      onPressOut={() => console.log('blue pressable out')}
+    />
+  );
+}
+
+function HorizontalGreenItem() {
+  return (
+    <Pressable
+      style={{ width: 100, height: 20, backgroundColor: 'green' }}
+      onPressIn={() => console.log('green pressable in')}
+      onPress={() => console.log('green pressable click')}
+      onPressOut={() => console.log('green pressable out')}
+    />
+  );
+}
+
+function HorizontalPinkItem() {
+  return (
+    <Pressable
+      style={{ width: 80, height: 10, backgroundColor: 'pink' }}
+      onPressIn={() => console.log('pink pressable in')}
+      onPress={() => console.log('pink pressable click')}
+      onPressOut={() => console.log('pink pressable out')}
+    />
+  );
+}
+
+function ItemRedComponent() {
+  return (
+    <Pressable
+      style={{
+        width: 20,
+        height: 20,
+        backgroundColor: 'red',
+      }}
+      onPressIn={() => console.log('red pressable in')}
+      onPress={() => console.log('red pressable click')}
+      onPressOut={() => console.log('red pressable out')}
+    />
+  );
+}
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -83,6 +132,28 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                <Stack.HeaderConfig
+                  title={'Hello World'}
+                  largeTitleEnabled={true}
+                  titleItem={{ key: 'title', component: HorizontalGreenItem }}
+                  subtitleItem={{
+                    key: 'subtitle',
+                    component: HorizontalPinkItem,
+                  }}
+                  largeSubtitleItem={{
+                    key: 'largeSubtitle',
+                    component: HorizontalGreenItem,
+                  }}
+                  hidden={false}
+                  leftItems={[
+                    { key: 'left-0', component: ItemRedComponent },
+                    { key: 'left-1', spacer: 'fixed', width: 100 },
+                    { key: 'left-2', component: ItemRedComponent },
+                    { key: 'left-3', component: ItemBlueComponent },
+                    { key: 'left-4', label: 'An item' },
+                  ]}
+                  rightItems={[{ key: 'right-0', component: ItemRedComponent }]}
+                />
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

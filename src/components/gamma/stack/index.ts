@@ -1,3 +1,4 @@
+import StackHeaderConfig from './StackHeaderConfig';
 import StackHost from './StackHost';
 import StackScreen from './StackScreen';
 
@@ -18,4 +19,5 @@ export type {
 export const Stack = {
   Host: StackHost,
   Screen: StackScreen,
+  HeaderConfig: StackHeaderConfig,
 };

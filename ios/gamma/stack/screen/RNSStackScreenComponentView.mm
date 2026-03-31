@@ -7,6 +7,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackScreenController.h"
 
@@ -128,14 +129,24 @@ namespace react = facebook::react;
 
 + (BOOL)shouldBeRecycled
 {
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
   return NO;
 }
 
 - (void)invalidate
 {
   [self invalidateImpl];
+}
+
+#pragma mark - Header Config Lookup
+
+- (nullable RNSStackHeaderConfigComponentView *)findHeaderConfig
+{
+  for (UIView *subview in self.subviews) {
+    if ([subview isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+      return (RNSStackHeaderConfigComponentView *)subview;
+    }
+  }
+  return nil;
 }
 
 @end
