@@ -1,4 +1,4 @@
-import type { ScenarioGroup } from '../../shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import Orientation from './stack-v4-orientation';
 
 const scenarios = { Orientation };

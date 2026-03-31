@@ -81,9 +81,7 @@ function ScreenStackItem(
 
   const hasEdgeEffects =
     scrollEdgeEffects === undefined ||
-    Object.values(scrollEdgeEffects).some(
-      propValue => propValue !== 'hidden',
-    );
+    Object.values(scrollEdgeEffects).some(propValue => propValue !== 'hidden');
   const hasBlurEffect =
     headerConfig?.blurEffect !== undefined &&
     headerConfig.blurEffect !== 'none';

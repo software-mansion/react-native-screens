@@ -1,7 +1,7 @@
 import { ScrollView } from 'react-native';
 import React from 'react';
-import Colors from '../../../../shared/styling/Colors';
-import LongText from '../../../../shared/LongText';
+import Colors from '@apps/shared/styling/Colors';
+import LongText from '@apps/shared/LongText';
 
 export default function ScrollViewNever() {
   return (

@@ -1,13 +1,13 @@
-import { SettingsSwitch } from '../../../shared/SettingsSwitch';
+import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',

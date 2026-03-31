@@ -5,7 +5,7 @@ import {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { Button, SettingsPicker, ToastProvider, useToast } from '../shared';
+import { Button, SettingsPicker, ToastProvider, useToast } from '@apps/shared';
 
 type StackParamList = {
   Main: undefined;

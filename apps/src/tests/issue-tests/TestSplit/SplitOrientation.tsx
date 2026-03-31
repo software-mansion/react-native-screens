@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Split } from 'react-native-screens/experimental';
-import { Colors } from '../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling/Colors';
 import { SplitBaseConfig } from './helpers/types';
 
 const SplitOrientation = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {

@@ -14,7 +14,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import LongText from '../../shared/LongText';
+import LongText from '@apps/shared/LongText';
 import {
   ScreenStack,
   ScreenStackHeaderSearchBarView,
@@ -23,17 +23,17 @@ import {
   SearchBarPlacement,
   StackPresentationTypes,
 } from 'react-native-screens';
-import Colors from '../../shared/styling/Colors';
-import { SettingsPicker, SettingsSwitch } from '../../shared';
+import Colors from '@apps/shared/styling/Colors';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import {
   createNativeStackNavigator,
   type NativeStackNavigationProp,
