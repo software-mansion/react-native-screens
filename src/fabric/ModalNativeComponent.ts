@@ -12,10 +12,13 @@ export type ModalPresentation =
   | 'overCurrentContext'
   | 'popover';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+type ModalEvent = Readonly<{}>;
+
 interface NativeProps extends ViewProps {
   presented?: boolean;
   presentation?: CT.WithDefault<ModalPresentation, 'pageSheet'>;
-  onDismiss?: CT.DirectEventHandler<Readonly<{}>>;
+  onDismiss?: CT.DirectEventHandler<ModalEvent>;
   sheetAllowedDetents?: number[];
 }
 
