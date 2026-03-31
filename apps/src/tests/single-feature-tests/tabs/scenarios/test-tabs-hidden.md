@@ -12,6 +12,7 @@
 
 
 ### Steps
+
 1. Launch the app and navigate to the scenario
    
    Expected: Screen with one Tab in tab bar should be displayed.
