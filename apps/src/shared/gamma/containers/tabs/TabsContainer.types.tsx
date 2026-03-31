@@ -78,7 +78,9 @@ export type TabsNavigationAction =
 
 export type TabsHostConfig = Omit<
   TabsHostProps,
-  'children' | 'onNativeFocusChange' | 'experimentalControlNavigationStateInJS'
+  | 'children'
+  | 'navState'
+  | 'experimentalControlNavigationStateInJS'
 >;
 
 export type TabsContainerProps = Omit<
