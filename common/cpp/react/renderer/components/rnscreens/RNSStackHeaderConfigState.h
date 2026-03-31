@@ -4,11 +4,11 @@
 
 #ifdef ANDROID
 #include <folly/dynamic.h>
-#include <react/renderer/core/graphicsConversions.h>
-#include <react/renderer/graphics/Float.h>
 #include <react/renderer/mapbuffer/MapBuffer.h>
 #include <react/renderer/mapbuffer/MapBufferBuilder.h>
 #endif // ANDROID
+#include <react/renderer/core/graphicsConversions.h>
+#include <react/renderer/graphics/Float.h>
 
 namespace facebook::react {
 
@@ -38,6 +38,14 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   }
+#else // ANDROID
+  RNSStackHeaderConfigState() = default;
+
+  RNSStackHeaderConfigState(Size frameSize_, Point contentOffset_)
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
+
+  const Size frameSize{};
+  const Point contentOffset{};
 #endif // ANDROID
 };
 

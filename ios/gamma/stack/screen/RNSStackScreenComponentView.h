@@ -1,12 +1,14 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
+#import "RNSStackHeaderData.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackScreenController;
 @class RNSStackHostComponentView;
+@class RNSStackHeaderConfigComponentView;
 
 typedef NS_ENUM(int, RNSStackScreenActivityMode) {
   RNSStackScreenActivityModeDetached = 0,
@@ -18,6 +20,8 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
 @property (nonatomic) BOOL isNativelyDismissed;
+
+- (nullable RNSStackHeaderConfigComponentView *)findHeaderConfig;
 
 @end
 
