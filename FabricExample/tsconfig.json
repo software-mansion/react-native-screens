@@ -5,7 +5,9 @@
     "types": ["jest", "node"],
     "paths": {
       "@apps/*": ["../apps/src/*"],
-      "@assets/*": ["../apps/assets/*"]
+      "@assets/*": ["../apps/assets/*"],
+      "react-native-screens": ["../src"],
+      "react-native-screens/*": ["../src/*"]
     }
   }
 }

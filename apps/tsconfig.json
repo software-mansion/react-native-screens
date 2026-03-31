@@ -3,11 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@apps/*": ["src/*"],
+      "@assets/*": ["assets/*"],
       "react-native-screens": ["../src"],
       "react-native-screens/*": ["../src/*"],
-      "@react-navigation/*": ["../react-navigation/packages/*/src"],
-      "@apps/*": ["src/*"],
-      "@assets/*": ["assets/*"]
+      "@react-navigation/*": ["../react-navigation/packages/*/src"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
