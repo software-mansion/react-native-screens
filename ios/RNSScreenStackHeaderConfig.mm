@@ -91,10 +91,12 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 #ifdef RCT_NEW_ARCH_ENABLED
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
 + (void)load
 {
   [super load];
 }
+#endif
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
