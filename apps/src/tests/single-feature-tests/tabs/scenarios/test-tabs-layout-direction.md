@@ -1,7 +1,7 @@
 
 # direction — Manual Test Scenarios
 
-**File:** `test-tab-bar-layout-direction`  
+**File:** `test-tabs-layout-direction`  
 **Platform:** iOS + Android
 
 ## Prerequisites

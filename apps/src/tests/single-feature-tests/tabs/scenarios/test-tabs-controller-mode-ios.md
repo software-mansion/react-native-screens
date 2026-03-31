@@ -1,6 +1,6 @@
 ## tabBarControllerMode — Manual Test Scenarios
 
-**File:** `test-tab-bar-controller-mode-ios`
+**File:** `test-tabs-controller-mode-ios`
 **Platform:** iOS only
 
 ### Prerequisites
