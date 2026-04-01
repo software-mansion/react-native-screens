@@ -5,7 +5,7 @@
 
 @implementation UIView (RNSUtility)
 
-- (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)rnscreens_findTouchHandlerInAncestorChain
+- (nullable RCTSurfaceTouchHandler *)rnscreens_findTouchHandlerInAncestorChain
 {
   UIView *parent = self.superview;
 
@@ -30,7 +30,7 @@
   // so we should not be afraid of any performance hit here.
   for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
     if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
-      return static_cast<RNS_TOUCH_HANDLER_ARCH_TYPE *>(recognizer);
+      return static_cast<RCTSurfaceTouchHandler *>(recognizer);
     }
   }
 

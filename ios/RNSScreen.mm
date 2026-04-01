@@ -624,7 +624,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)touchHandler
+- (nullable RCTSurfaceTouchHandler *)touchHandler
 {
   if (_touchHandler != nil) {
     return _touchHandler;
