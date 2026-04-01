@@ -12,15 +12,15 @@
 
 namespace facebook::react {
 
-class JSI_EXPORT RNSStackHeaderConfigurationState final {
+class JSI_EXPORT RNSStackHeaderConfigState final {
  public:
-  using Shared = std::shared_ptr<const RNSStackHeaderConfigurationState>;
+  using Shared = std::shared_ptr<const RNSStackHeaderConfigState>;
 
-  RNSStackHeaderConfigurationState() {};
+  RNSStackHeaderConfigState() {};
 
 #ifdef ANDROID
-  RNSStackHeaderConfigurationState(
-      RNSStackHeaderConfigurationState const &previousState,
+  RNSStackHeaderConfigState(
+      RNSStackHeaderConfigState const &previousState,
       folly::dynamic data)
       : frameSize(
             Size{

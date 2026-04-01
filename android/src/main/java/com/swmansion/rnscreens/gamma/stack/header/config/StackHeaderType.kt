@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.configuration
+package com.swmansion.rnscreens.gamma.stack.header.config
 
 enum class StackHeaderType {
     SMALL,

@@ -1,8 +1,8 @@
-package com.swmansion.rnscreens.gamma.stack.header.configuration
+package com.swmansion.rnscreens.gamma.stack.header.config
 
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
-internal interface StackHeaderConfigurationProviding {
+internal interface StackHeaderConfigProviding {
     val type: StackHeaderType
     val title: String
     val hidden: Boolean

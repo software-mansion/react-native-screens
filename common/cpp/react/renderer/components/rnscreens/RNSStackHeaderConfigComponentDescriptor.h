@@ -6,30 +6,29 @@
 
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include "RNSStackHeaderConfigurationShadowNode.h"
+#include "RNSStackHeaderConfigShadowNode.h"
 
 namespace facebook::react {
 
-class RNSStackHeaderConfigurationComponentDescriptor final
-    : public ConcreteComponentDescriptor<
-          RNSStackHeaderConfigurationShadowNode> {
+class RNSStackHeaderConfigComponentDescriptor final
+    : public ConcreteComponentDescriptor<RNSStackHeaderConfigShadowNode> {
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(
-        dynamic_cast<RNSStackHeaderConfigurationShadowNode *>(&shadowNode));
+        dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
 
 #ifdef ANDROID
     auto &configShadowNode =
-        static_cast<RNSStackHeaderConfigurationShadowNode &>(shadowNode);
+        static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
     auto &layoutableShadowNode =
         static_cast<YogaLayoutableShadowNode &>(configShadowNode);
 
     auto state = std::static_pointer_cast<
-        const RNSStackHeaderConfigurationShadowNode::ConcreteState>(
+        const RNSStackHeaderConfigShadowNode::ConcreteState>(
         shadowNode.getState());
     auto stateData = state->getData();
 

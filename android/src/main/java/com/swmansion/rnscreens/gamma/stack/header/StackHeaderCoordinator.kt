@@ -15,8 +15,8 @@ import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfigurationProviding
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
@@ -32,7 +32,7 @@ internal class StackHeaderCoordinator(
 
     private var appBarLayout: StackHeaderAppBarLayout? = null
     private var currentHeaderTypeOrNull: StackHeaderType? = null
-    private var currentConfig: StackHeaderConfigurationProviding? = null
+    private var currentConfig: StackHeaderConfigProviding? = null
 
     private var attachedLeadingSubview: StackHeaderSubviewProviding? = null
     private var attachedCenterSubview: StackHeaderSubviewProviding? = null
@@ -49,9 +49,9 @@ internal class StackHeaderCoordinator(
     // render a subview to the leading side of the title.
     private var managedTitleView: AppCompatTextView? = null
 
-    internal fun applyHeaderConfiguration(
+    internal fun applyHeaderConfig(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding?,
+        config: StackHeaderConfigProviding?,
     ) {
         currentConfig = config
         if (config != null) {
@@ -64,7 +64,7 @@ internal class StackHeaderCoordinator(
 
     private fun updateHeader(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         if (requiresRebuild(config)) {
             rebuild(coordinatorLayout, config)
@@ -80,7 +80,7 @@ internal class StackHeaderCoordinator(
 
     // region Rebuild detection
 
-    private fun requiresRebuild(config: StackHeaderConfigurationProviding): Boolean {
+    private fun requiresRebuild(config: StackHeaderConfigProviding): Boolean {
         val desiredTypeOrNull = if (config.hidden) null else config.type
         if (desiredTypeOrNull != currentHeaderTypeOrNull) return true
         if (config.leadingSubview !== attachedLeadingSubview) return true
@@ -96,7 +96,7 @@ internal class StackHeaderCoordinator(
         return false
     }
 
-    private fun snapshotSubviewWidths(config: StackHeaderConfigurationProviding) {
+    private fun snapshotSubviewWidths(config: StackHeaderConfigProviding) {
         lastLeadingSubviewWidth = config.leadingSubview?.view?.width
         lastTrailingSubviewWidth = config.trailingSubview?.view?.width
     }
@@ -107,7 +107,7 @@ internal class StackHeaderCoordinator(
 
     private fun rebuild(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         teardown(coordinatorLayout)
 
@@ -162,7 +162,7 @@ internal class StackHeaderCoordinator(
 
     private fun populateAppBar(
         appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         val toolbar = appBar.toolbar
 
@@ -185,7 +185,7 @@ internal class StackHeaderCoordinator(
     private fun populateTitleOrCenter(
         appBar: StackHeaderAppBarLayout,
         toolbar: Toolbar,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         val centerSubview = config.centerSubview
         if (centerSubview != null) {
@@ -209,7 +209,7 @@ internal class StackHeaderCoordinator(
 
     private fun populateBackground(
         appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         val backgroundSubview = config.backgroundSubview ?: return
 
@@ -259,7 +259,7 @@ internal class StackHeaderCoordinator(
 
     // region In-place prop updates (no rebuild)
 
-    private fun applyProps(config: StackHeaderConfigurationProviding) {
+    private fun applyProps(config: StackHeaderConfigProviding) {
         val appBar = appBarLayout ?: return
 
         when (appBar) {
@@ -274,7 +274,7 @@ internal class StackHeaderCoordinator(
         }
     }
 
-    private fun applyBackgroundCollapseMode(config: StackHeaderConfigurationProviding) {
+    private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
         val backgroundSubview = config.backgroundSubview ?: return
         val params = backgroundSubview.view.layoutParams as? CollapsingToolbarLayout.LayoutParams ?: return
         val desired = backgroundSubview.collapseMode.toNativeCollapseMode()
@@ -289,7 +289,7 @@ internal class StackHeaderCoordinator(
 
     private fun applyContentBehavior(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         val needsBehavior = appBarLayout != null && !config.transparent && !config.hidden
         if (needsBehavior) {
@@ -338,7 +338,7 @@ internal class StackHeaderCoordinator(
         val config = currentConfig ?: return
         val appBar = appBarLayout ?: return
 
-        // For header configuration we need to:
+        // For header config we need to:
         // - cancel out the StackScreen's Y offset (contentTop),
         // - handle AppBarLayout's negative offset when collapsed.
         config.updateHeaderFrame(
@@ -353,7 +353,7 @@ internal class StackHeaderCoordinator(
 
     private fun updateSubviewOffsets(
         appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
     ) {
         config.leadingSubview?.let { updateSubviewOffset(it, appBar) }
         config.centerSubview?.let { updateSubviewOffset(it, appBar) }
@@ -383,7 +383,7 @@ internal class StackHeaderCoordinator(
 
     private fun maybeApplyRtlCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
+        config: StackHeaderConfigProviding,
         appBar: StackHeaderAppBarLayout,
     ) {
         // For collapsing headers, CTL lazily adds a MATCH_PARENT dummy view

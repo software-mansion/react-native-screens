@@ -8,8 +8,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -69,20 +69,20 @@ class StackScreen(
         frameHeight = height,
     )
 
-    internal var headerConfiguration: StackHeaderConfiguration? = null
+    internal var headerConfig: StackHeaderConfig? = null
         private set
 
-    internal var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
+    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
 
-    internal fun attachHeaderConfiguration(header: StackHeaderConfiguration) {
-        headerConfiguration = header
-        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigurationAttach(header)
+    internal fun attachHeaderConfig(header: StackHeaderConfig) {
+        headerConfig = header
+        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
     }
 
-    internal fun detachHeaderConfiguration(header: StackHeaderConfiguration) {
-        if (headerConfiguration === header) {
-            headerConfiguration = null
-            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigurationAttach(null)
+    internal fun detachHeaderConfig(header: StackHeaderConfig) {
+        if (headerConfig === header) {
+            headerConfig = null
+            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
         }
     }
 

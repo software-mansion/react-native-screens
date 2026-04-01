@@ -11,7 +11,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
@@ -36,8 +36,8 @@ class StackScreenViewManager :
         child: View,
         index: Int,
     ) {
-        if (child is StackHeaderConfiguration) {
-            parent.attachHeaderConfiguration(child)
+        if (child is StackHeaderConfig) {
+            parent.attachHeaderConfig(child)
         } else {
             super.addView(parent, child, index)
         }
@@ -47,35 +47,35 @@ class StackScreenViewManager :
         parent: StackScreen,
         view: View,
     ) {
-        if (view is StackHeaderConfiguration) {
-            parent.detachHeaderConfiguration(view)
+        if (view is StackHeaderConfig) {
+            parent.detachHeaderConfig(view)
         } else {
             super.removeView(parent, view)
         }
     }
 
-    // Header configuration is not added as a native child (it's stored as a reference
+    // Header config is not added as a native child (it's stored as a reference
     // on StackScreen), but React tracks it by index. Since it's always the last child
     // in the React tree, we only need to handle the last index specially.
     override fun removeViewAt(
         parent: StackScreen,
         index: Int,
     ) {
-        if (index == getChildCount(parent) - 1 && parent.headerConfiguration != null) {
-            parent.headerConfiguration?.let { parent.detachHeaderConfiguration(it) }
+        if (index == getChildCount(parent) - 1 && parent.headerConfig != null) {
+            parent.headerConfig?.let { parent.detachHeaderConfig(it) }
         } else {
             super.removeViewAt(parent, index)
         }
     }
 
-    override fun getChildCount(parent: StackScreen): Int = parent.childCount + if (parent.headerConfiguration != null) 1 else 0
+    override fun getChildCount(parent: StackScreen): Int = parent.childCount + if (parent.headerConfig != null) 1 else 0
 
     override fun getChildAt(
         parent: StackScreen,
         index: Int,
     ): View? {
-        if (index == parent.childCount && parent.headerConfiguration != null) {
-            return parent.headerConfiguration
+        if (index == parent.childCount && parent.headerConfig != null) {
+            return parent.headerConfig
         }
         return parent.getChildAt(index)
     }

@@ -85,10 +85,10 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
-                <Stack.Header.Configuration
+                <Stack.HeaderConfig
                   title="Hello, World! Hello, World! Hello, World! Hello, World!"
                   type="large">
-                  <Stack.Header.Subview
+                  {/*<Stack.Header.Subview
                     type="background"
                     collapseMode="parallax"
                     key="background">
@@ -120,8 +120,8 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
                     <PressableWithFeedback>
                       <Text>trailing</Text>
                     </PressableWithFeedback>
-                  </Stack.Header.Subview>
-                </Stack.Header.Configuration>
+                  </Stack.Header.Subview>*/}
+                </Stack.HeaderConfig>
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

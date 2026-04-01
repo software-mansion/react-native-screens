@@ -2,7 +2,7 @@ import { ViewProps } from 'react-native';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
-export type StackHeaderConfigurationProps = {
+export type StackHeaderConfigProps = {
   children?: ViewProps['children'];
 
   type?: StackHeaderTypeAndroid;

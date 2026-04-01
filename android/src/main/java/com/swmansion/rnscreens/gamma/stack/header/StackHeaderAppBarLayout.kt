@@ -12,7 +12,7 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderType
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.utils.resolveDimensionAttr
 
 internal sealed class StackHeaderAppBarLayout(
@@ -41,7 +41,7 @@ internal sealed class StackHeaderAppBarLayout(
                 elevation = 0f
                 layoutParams =
                     LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                        // TODO: debug only for small header, must be moved to configuration
+                        // TODO: debug only for small header, must be moved to config
                         scrollFlags = SCROLL_FLAG_NO_SCROLL
                     }
             }
@@ -86,7 +86,7 @@ internal sealed class StackHeaderAppBarLayout(
                             MATCH_PARENT,
                             resolveDimensionAttr(context, sizeAttr),
                         ).apply {
-                            // TODO: debug only for medium/large header, must be moved to configuration
+                            // TODO: debug only for medium/large header, must be moved to config
                             scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                         }
                     addView(toolbar)

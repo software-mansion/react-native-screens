@@ -5,9 +5,9 @@ import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationAttachListener
-import com.swmansion.rnscreens.gamma.stack.header.configuration.OnHeaderConfigurationChangeListener
-import com.swmansion.rnscreens.gamma.stack.header.configuration.StackHeaderConfiguration
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigChangeListener
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import java.lang.ref.WeakReference
@@ -23,34 +23,34 @@ internal class StackHeaderCoordinatorLayout(
         }
 
     /**
-     * This callback is used to detect when header configuration is attached.
-     * This allows us to configure listener for header configuration changes.
+     * This callback is used to detect when header config is attached.
+     * This allows us to configure listener for header config changes.
      */
-    private val onHeaderConfigurationAttach =
-        OnHeaderConfigurationAttachListener { config ->
-            handleHeaderConfigurationAttach(config)
+    private val onHeaderConfigAttach =
+        OnHeaderConfigAttachListener { config ->
+            handleHeaderConfigAttach(config)
         }
 
     private var isHeaderUpdatePending = false
 
     /**
-     * This callback is used to listen for header configuration changes.
+     * This callback is used to listen for header config changes.
      * We use [isHeaderUpdatePending] to batch changes and pass them to [headerCoordinator].
      */
-    private val onHeaderConfigurationChange =
-        OnHeaderConfigurationChangeListener {
+    private val onHeaderConfigChange =
+        OnHeaderConfigChangeListener {
             if (!isHeaderUpdatePending) {
                 isHeaderUpdatePending = true
-                // Read currentConfiguration when the runnable executes, not when it's posted,
+                // Read currentConfig when the runnable executes, not when it's posted,
                 // to avoid applying a stale config that was swapped out in the meantime.
                 post {
                     isHeaderUpdatePending = false
-                    headerCoordinator.applyHeaderConfiguration(this, currentConfiguration)
+                    headerCoordinator.applyHeaderConfig(this, currentConfig)
                 }
             }
         }
 
-    private var currentConfiguration: StackHeaderConfiguration? = null
+    private var currentConfig: StackHeaderConfig? = null
 
     internal var stackScreenWrapper: FrameLayout
 
@@ -70,8 +70,8 @@ internal class StackHeaderCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        stackScreen.onHeaderConfigurationAttachListener = WeakReference(onHeaderConfigurationAttach)
-        handleHeaderConfigurationAttach(stackScreen.headerConfiguration)
+        stackScreen.onHeaderConfigAttachListener = WeakReference(onHeaderConfigAttach)
+        handleHeaderConfigAttach(stackScreen.headerConfig)
     }
 
     internal fun maybeRequestLayoutContainer() {
@@ -81,15 +81,15 @@ internal class StackHeaderCoordinatorLayout(
         }
     }
 
-    private fun handleHeaderConfigurationAttach(config: StackHeaderConfiguration?) {
-        // Disconnect old configuration to prevent spurious updates from a detached config
-        currentConfiguration?.onConfigurationChangeListener = null
-        currentConfiguration = config
+    private fun handleHeaderConfigAttach(config: StackHeaderConfig?) {
+        // Disconnect old config to prevent spurious updates from a detached config
+        currentConfig?.onConfigChangeListener = null
+        currentConfig = config
 
         if (config != null) {
-            config.onConfigurationChangeListener = WeakReference(onHeaderConfigurationChange)
+            config.onConfigChangeListener = WeakReference(onHeaderConfigChange)
         }
-        headerCoordinator.applyHeaderConfiguration(this, config)
+        headerCoordinator.applyHeaderConfig(this, config)
     }
 
     /**

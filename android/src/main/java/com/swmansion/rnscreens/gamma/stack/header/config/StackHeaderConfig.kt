@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.configuration
+package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.annotation.SuppressLint
 import android.util.LayoutDirection
@@ -11,10 +11,10 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
-class StackHeaderConfiguration(
+class StackHeaderConfig(
     val reactContext: ReactContext,
 ) : ReactViewGroup(reactContext),
-    StackHeaderConfigurationProviding,
+    StackHeaderConfigProviding,
     OnStackHeaderSubviewChangeListener {
     override var type: StackHeaderType = StackHeaderType.SMALL
         internal set
@@ -53,13 +53,13 @@ class StackHeaderConfiguration(
         )
     }
 
-    internal var onConfigurationChangeListener: WeakReference<OnHeaderConfigurationChangeListener>? = null
+    internal var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
 
-    internal fun notifyConfigurationChanged() {
-        onConfigurationChangeListener?.get()?.onHeaderConfigurationChange(this)
+    internal fun notifyConfigChanged() {
+        onConfigChangeListener?.get()?.onHeaderConfigChange(this)
     }
 
-    override fun onStackHeaderSubviewChange() = notifyConfigurationChanged()
+    override fun onStackHeaderSubviewChange() = notifyConfigChanged()
 
     internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
         when (headerSubview.type) {
@@ -69,7 +69,7 @@ class StackHeaderConfiguration(
             StackHeaderSubviewType.TRAILING -> trailingSubview = headerSubview
         }
         headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
-        notifyConfigurationChanged()
+        notifyConfigChanged()
     }
 
     internal fun removeConfigSubview(headerSubview: StackHeaderSubview) {
@@ -80,7 +80,7 @@ class StackHeaderConfiguration(
             StackHeaderSubviewType.CENTER -> centerSubview = null
             StackHeaderSubviewType.TRAILING -> trailingSubview = null
         }
-        notifyConfigurationChanged()
+        notifyConfigChanged()
     }
 
     internal fun removeConfigSubviewAt(index: Int) {

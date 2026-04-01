@@ -24,7 +24,7 @@
 #include <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSSafeAreaViewComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
-#include <react/renderer/components/rnscreens/RNSStackHeaderConfigurationComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSStackHeaderSubviewComponentDescriptor.h>
 
 namespace facebook {

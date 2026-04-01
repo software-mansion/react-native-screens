@@ -12,9 +12,6 @@ export interface NativeProps extends ViewProps {
   transparent?: CT.WithDefault<boolean, false>;
 }
 
-export default codegenNativeComponent<NativeProps>(
-  'RNSStackHeaderConfiguration',
-  {
-    interfaceOnly: true,
-  },
-);
+export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfig', {
+  interfaceOnly: true,
+});

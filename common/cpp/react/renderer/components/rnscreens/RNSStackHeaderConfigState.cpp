@@ -1,9 +1,9 @@
-#include "RNSStackHeaderConfigurationState.h"
+#include "RNSStackHeaderConfigState.h"
 
 namespace facebook::react {
 
 #ifdef ANDROID
-folly::dynamic RNSStackHeaderConfigurationState::getDynamic() const {
+folly::dynamic RNSStackHeaderConfigState::getDynamic() const {
   return folly::dynamic::object("frameWidth", frameSize.width)(
       "frameHeight", frameSize.height)("contentOffsetX", contentOffset.x)(
       "contentOffsetY", contentOffset.y);
