@@ -369,6 +369,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
     if (![self isMoreNavigationControllerPresentInTabBar]) {
       // If the controller is not visible atm. we'll crash the app if we try to navigate to it.
+      RCTAssert(
+          _navigationState != nil,
+          @"[RNScreens] MoreNavigationController MUST NOT be used as an initially selected tab");
       [self.tabsHostComponentView tabBarController:self
                              rejectedStateUpdateTo:_pendingOperation
                                       currentState:_navigationState
