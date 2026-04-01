@@ -59,9 +59,11 @@ internal class ScreenDummyLayoutHelper(
 
         weakInstance = WeakReference(this)
         maybeInitDummyLayoutWithHeader(reactContext)
-        // We're adding lifecycleEventListener to have a chance to call onHostDestroy always,
-        // no matter whether activity was living or not - this ensures that onHostDestroy will
-        // consistently clean up resources
+        // We register as lifecycleEventListener to retry initialization in onHostResume if the
+        // activity wasn't yet available. Once initialization succeeds, onHostResume removes this listener
+        // from that point on cleanup is handled exclusively by ActivityLifecycleCallbacks registered on the
+        // Application. onHostDestroy here acts only as a defensive fallback to unregister in the rare case
+        // where init never succeeded and the lifecycleEventListener was therefore never removed.
         reactContext.addLifecycleEventListener(this)
     }
 
