@@ -134,6 +134,9 @@ export interface TabsHostPropsBase {
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
    *
+   * `SCREEN_KEY_MORE_NAV_CTRL` MUST NOT be used during initial render to indicate default
+   * selected tab.
+   *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.
    */

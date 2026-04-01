@@ -1,7 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
-#import <RNSTabsNavigationState.h>
+#import "RNSTabsNavigationState.h"
 
 // Hide C++ symbols from C compiler used when building Swift module
 #if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
