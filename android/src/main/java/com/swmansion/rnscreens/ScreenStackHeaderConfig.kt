@@ -21,6 +21,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 import kotlin.math.max
+import kotlin.properties.Delegates
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -35,21 +36,17 @@ class ScreenStackHeaderConfig(
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
 
-    var consumeTopInset = false
-        set(value) {
-            if (field != value) {
-                field = value
-                if (isAttachedToWindow) toolbar.requestApplyInsets()
-            }
+    var consumeTopInset by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
         }
+    }
 
-    var legacyTopInsetBehavior = false
-        set(value) {
-            if (field != value) {
-                field = value
-                if (isAttachedToWindow) toolbar.requestApplyInsets()
-            }
+    var legacyTopInsetBehavior by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
         }
+    }
 
     private var title: String? = null
     private var titleColor = 0
