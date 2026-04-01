@@ -22,7 +22,7 @@ export type TabsHostNavState = {
    *
    * @description
    * The provenance value establishes a relationship between different navigation state instances
-   * held by different state holders. The assumption here is that when the navigation
+   * held by given state holder. The assumption here is that when the navigation
    * state is progressed (modified), the provenance number is incremented.
    * This creates a relationship where we can say that:
    *
@@ -32,6 +32,13 @@ export type TabsHostNavState = {
    *
    * This allows us to mitigate and resolve state conflicts that can happen with
    * asynchronous navigation.
+   *
+   * Currently, the native implementation of TabsHost is the state holder.
+   *
+   * When you use object of this shape to trigger a navigation via {@link TabsHostPropsBase#navState},
+   * pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
+   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance number
+   * of last confirmed state you base your update request on.
    */
   provenance: number;
 };
@@ -119,8 +126,8 @@ export interface TabsHostPropsBase {
   // Control
   /**
    * @summary
-   * The navigation state for the tabs host to align to. It also determines
-   * initial navigation state after first render.
+   * Allows to pass desired navigation state request to the native side.
+   * It also determines initial navigation state after first render.
    *
    * @description
    * This prop can be thought of as a "next navigation state suggestion for the native side".
@@ -133,15 +140,19 @@ export interface TabsHostPropsBase {
   navState: TabsHostNavState;
   /**
    * @summary If true, the native side will reject any navigation state updates coming from JS
-   * if the provenance of the update is stale.
+   * if they are stale.
    *
-   * @description A navigation state update is considered stale if its provenance is older
-   * than the provenance of the currently active navigation state.
+   * @description A navigation state update is considered stale if it is based of an stale state
+   * (@{link TabsHostNavState#provenance} indicates the base state).
+   * A state is stale, when at the time of executing update, there already had been accepted a newer state
+   * of different origin.
    *
    * This can happen, when an update from JS is dispatched, but before it reaches the native
    * side, another update happens on UI thread, e.g. user selects another tab. For such
    * situations, where to-be-applied navigation state update had been dispatched w/o
-   * full context of actual navigation state you can toggle this prop.
+   * full context of actual navigation state you can toggle this prop. Please note,
+   * that above definition means, that an JS update won't be rejected if you send a series of
+   * udpates with the same provenance, unless some action has been taken by the user "in the meantime".
    *
    * If an update is rejected due to being stale, the `onTabSelectionRejected` event will be
    * emitted with details of the rejected update and the currently active navigation state.
