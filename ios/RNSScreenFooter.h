@@ -2,21 +2,17 @@
 
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
+#import "RNSReactBaseView.h"
 
 #if defined(__cplusplus)
 #import <React/RCTFabricComponentsPlugins.h>
-#import <React/RCTViewComponentView.h>
 #endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^OnLayoutCallback)(CGRect frame);
 
-#if defined(__cplusplus)
-@interface RNSScreenFooter : RCTViewComponentView
-#else
-@interface RNSScreenFooter : UIView
-#endif // __cplusplus
+@interface RNSScreenFooter : RNSReactBaseView
 
 @property (nonatomic, copy, nullable) OnLayoutCallback onLayout;
 

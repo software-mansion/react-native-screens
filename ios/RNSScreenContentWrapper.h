@@ -3,10 +3,10 @@
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 #import "RNSDefines.h"
+#import "RNSReactBaseView.h"
 
 #if defined(__cplusplus)
 #import <React/RCTFabricComponentsPlugins.h>
-#import <React/RCTViewComponentView.h>
 #endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,11 +28,7 @@ typedef struct {
   UIView *contentContainerView;
 } RNSScrollViewSearchResult;
 
-#if defined(__cplusplus)
-@interface RNSScreenContentWrapper : RCTViewComponentView
-#else
-@interface RNSScreenContentWrapper : UIView
-#endif // __cplusplus
+@interface RNSScreenContentWrapper : RNSReactBaseView
 
 @property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 

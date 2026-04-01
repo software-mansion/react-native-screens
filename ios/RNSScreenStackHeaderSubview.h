@@ -1,21 +1,13 @@
 #pragma once
 
-#if defined(__cplusplus)
-#import <React/RCTViewComponentView.h>
-#endif // __cplusplus
-
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
 #import "RNSEnums.h"
+#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHeaderSubview :
-#if defined(__cplusplus)
-    RCTViewComponentView
-#else
-    UIView
-#endif // __cplusplus
+@interface RNSScreenStackHeaderSubview : RNSReactBaseView
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
