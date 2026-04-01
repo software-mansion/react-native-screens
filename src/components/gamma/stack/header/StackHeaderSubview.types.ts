@@ -6,13 +6,11 @@ export type StackHeaderSubviewTypeAndroid =
   | 'center'
   | 'trailing';
 
-export type StackHeaderSubviewBackgroundCollapseModeAndroid =
-  | 'off'
-  | 'parallax';
+export type StackHeaderSubviewCollapseModeAndroid = 'off' | 'parallax';
 
 export type StackHeaderSubviewProps = {
   children?: ViewProps['children'];
 
   type?: StackHeaderSubviewTypeAndroid;
-  collapseMode?: StackHeaderSubviewBackgroundCollapseModeAndroid;
+  collapseMode?: StackHeaderSubviewCollapseModeAndroid;
 };
