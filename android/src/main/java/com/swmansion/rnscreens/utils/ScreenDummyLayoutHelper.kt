@@ -276,11 +276,6 @@ internal class ScreenDummyLayoutHelper(
             lazyMessage ?: { "[RNScreens] Attempt to require missing react context" },
         )
 
-    private fun requireActivity(): Activity =
-        requireNotNull(requireReactContext().currentActivity) {
-            "[RNScreens] Attempt to use context detached from activity"
-        }
-
     companion object {
         const val TAG = "ScreenDummyLayoutHelper"
 
@@ -325,7 +320,7 @@ internal class ScreenDummyLayoutHelper(
     }
 
     @Synchronized
-    private fun cleanUpViews(application: Application? = reactContextRef.get()?.currentActivity?.application) {
+    private fun cleanUpViews(application: Application) {
         coordinatorLayout = null
         appBarLayout = null
         dummyContentView = null
@@ -336,7 +331,7 @@ internal class ScreenDummyLayoutHelper(
         isLayoutInitialized = false
 
         val callbacks = activityLifecycleCallbacks
-        if (callbacks != null && application != null) {
+        if (callbacks != null) {
             application.unregisterActivityLifecycleCallbacks(callbacks)
             activityLifecycleCallbacks = null
         }
