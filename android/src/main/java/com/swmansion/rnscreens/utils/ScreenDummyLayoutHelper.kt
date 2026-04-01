@@ -234,6 +234,9 @@ internal class ScreenDummyLayoutHelper(
         return headerHeight
     }
 
+    // We use Application.ActivityLifecycleCallbacks instead of ReactNative's LifecycleEventListener
+    // for cleanup because it is registered on the Application object directly. We're relying on the native
+    // lifecycle, rather than React's lifecycle.
     private fun registerActivityLifecycleListener(activity: Activity) {
         if (activityLifecycleCallbacks != null) return
 
