@@ -11,6 +11,9 @@ internal class TabsHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
+    /**
+     * Emits `onTabSelected` event to JS with the current navigation state and selection context.
+     */
     fun emitOnTabSelectedEvent(
         selectedScreenKey: String,
         provenance: Int,
@@ -31,6 +34,10 @@ internal class TabsHostEventEmitter(
         )
     }
 
+    /**
+     * Emits `onTabSelectionRejected` event to JS when a navigation state update is rejected.
+     * Carries both the active state and the rejected update so that JS can reconcile.
+     */
     fun emitOnTabSelectionRejectedEvent(
         currentNavState: TabsNavState,
         rejectedNavState: TabsNavState,

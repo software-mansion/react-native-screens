@@ -7,6 +7,13 @@ import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 
+/**
+ * React Native event dispatched to JS when a tab selection request is rejected by the container.
+ *
+ * Carries the currently active navigation state ([currentNavState]), the rejected update
+ * ([rejectedNavState]), and the [rejectionReason]. This event is never coalesced — every
+ * rejection is delivered individually so the JS side has a complete picture of state transitions.
+ */
 class TabsHostTabSelectionRejectedEvent(
     surfaceId: Int,
     viewId: Int,

@@ -40,25 +40,63 @@ export type TabsHostNavState = {
 
 // #region General helpers
 
+/**
+ * @summary Payload of the event emitted when a tab selection occurs on the native side.
+ *
+ * @description
+ * This event is emitted both for user-initiated and programmatic tab changes.
+ * It carries the resulting navigation state along with metadata about the selection context.
+ */
 export type TabSelectedEvent = {
+  /** Screen key of the newly selected tab. */
   selectedScreenKey: string;
+  /** Provenance of the navigation state after the selection. */
   provenance: number;
+  /** Whether the same tab that was already selected has been selected again. */
   isRepeated: boolean;
+  /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
   hasTriggeredSpecialEffect: boolean;
+  /** Whether the selection was initiated by a native user action (tap) as opposed to a JS-driven update. */
   isNativeAction: boolean;
 };
 
+/**
+ * @summary Reason why a tab selection request was rejected by the native side.
+ *
+ * - `other` — unspecified reason.
+ * - `stale` — the update was based on a stale navigation state,
+ *   meaning a newer state has already been applied. Only reported when
+ *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
+ * - `repeated` — the requested tab is already selected.
+ * - `more-tab-not-available` — the iOS "More" navigation controller was requested
+ *   but is not available in the current configuration.
+ */
 export type TabSelectionRejectionReason =
   | 'other'
   | 'stale'
   | 'repeated'
   | 'more-tab-not-available';
 
+/**
+ * @summary Payload of the event emitted when the native side rejects a tab selection request.
+ *
+ * @description
+ * Contains the currently active navigation state (`selectedScreenKey`, `provenance`)
+ * alongside the rejected request details, so that the JS side can reconcile its state.
+ *
+ * @see {@link TabSelectionRejectionReason} for possible rejection reasons.
+ * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
+ */
 export type TabSelectionRejectedEvent = {
+  /** Screen key of the currently selected (active) tab. */
   selectedScreenKey: string;
+  /** Provenance of the currently active navigation state. */
   provenance: number;
+  /** Screen key of the tab whose selection was rejected. */
   rejectedScreenKey: string;
+  /** Provenance of the rejected navigation state update. */
   rejectedProvenance: number;
+  /** Reason the selection was rejected. */
   rejectionReason: TabSelectionRejectionReason;
 };
 
