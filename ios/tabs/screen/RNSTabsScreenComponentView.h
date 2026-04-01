@@ -57,7 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
 
-@property (nonatomic) BOOL isSelectedScreen;
 @property (nonatomic, nullable) NSString *screenKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 

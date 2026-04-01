@@ -7,13 +7,13 @@ import {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 enableFreeze(true);
 
@@ -44,18 +44,20 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarItemBadgeBackgroundColor: Colors.RedDark40,
 };
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
-    tabScreenProps: {
+    name: 'Tab1',
+    Component: Tab1,
+    options: {
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       ios: {
@@ -85,15 +87,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'First Tab Screen',
       tabBarItemTestID: 'tab-item-1-id',
       tabBarItemAccessibilityLabel: 'First Tab Item',
-      screenKey: 'Tab1',
       title: 'Tab1',
-      isFocused: true,
     },
-    component: Tab1,
   },
   {
-    tabScreenProps: {
-      screenKey: 'Tab2',
+    name: 'Tab2',
+    Component: Tab2,
+    options: {
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
       accessibilityLabel: 'Second Tab Screen',
@@ -158,26 +158,26 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         icon: {
           type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon.png'),
+          templateSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          templateSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       title: 'Tab2',
-    },
-    component: Tab2,
-    safeAreaConfiguration: {
-      edges: {
-        top: true,
-        bottom: true,
+      safeAreaConfiguration: {
+        edges: {
+          top: true,
+          bottom: true,
+        },
       },
     },
   },
   {
-    tabScreenProps: {
-      screenKey: 'Tab3',
+    name: 'Tab3',
+    Component: Tab3,
+    options: {
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
       accessibilityLabel: 'Third Tab Screen',
@@ -199,22 +199,22 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       title: 'Tab3',
@@ -222,11 +222,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // systemItem: 'contacts', // iOS specific
       // systemItem: 'history', // iOS specific
     },
-    component: Tab3,
   },
   {
-    tabScreenProps: {
-      screenKey: 'Tab4',
+    name: 'Tab4',
+    Component: Tab4,
+    options: {
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
@@ -262,7 +262,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: Tab4,
   },
 ];
 
@@ -277,8 +276,9 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
-        tabConfigs={TAB_CONFIGS}
+      <TabsContainer
+        routeConfigs={TAB_CONFIGS}
+        defaultRouteName="Tab1"
         ios={{
           tabBarTintColor: Colors.YellowLight100,
           tabBarMinimizeBehavior: 'onScrollDown',

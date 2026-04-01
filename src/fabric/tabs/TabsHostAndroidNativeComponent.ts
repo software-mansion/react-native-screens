@@ -5,9 +5,17 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // #region General helpers
 
-type NativeFocusChangeEvent = {
-  screenKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
+type TabSelectedEvent = {
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  isRepeated: boolean;
+  hasTriggeredSpecialEffect: boolean;
+  isNativeAction: boolean;
+};
+
+type NavigationState = {
+  selectedScreenKey: string;
+  provenance: CT.Int32;
 };
 
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
@@ -19,8 +27,11 @@ type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 // #endregion Android-specific helpers
 
 export interface NativeProps extends ViewProps {
+  // Control
+  navState: NavigationState;
+
   // Events
-  onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;

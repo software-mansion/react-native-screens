@@ -20,7 +20,7 @@ import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
-import SafeAreaView from './safe-area/SafeAreaView';
+import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
 
@@ -45,6 +45,7 @@ function ScreenStackItem(
     style,
     screenId,
     onHeaderHeightChange,
+    scrollEdgeEffects,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -79,10 +80,8 @@ function ScreenStackItem(
   }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
 
   const hasEdgeEffects =
-    rest?.scrollEdgeEffects === undefined ||
-    Object.values(rest.scrollEdgeEffects).some(
-      propValue => propValue !== 'hidden',
-    );
+    scrollEdgeEffects === undefined ||
+    Object.values(scrollEdgeEffects).some(propValue => propValue !== 'hidden');
   const hasBlurEffect =
     headerConfig?.blurEffect !== undefined &&
     headerConfig.blurEffect !== 'none';
@@ -177,6 +176,7 @@ function ScreenStackItem(
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
+      scrollEdgeEffects={isHeaderInModal ? undefined : scrollEdgeEffects}
       onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
@@ -187,6 +187,7 @@ function ScreenStackItem(
             activityState={activityState}
             shouldFreeze={shouldFreeze}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
+            scrollEdgeEffects={scrollEdgeEffects}
             style={StyleSheet.absoluteFill}
             onHeaderHeightChange={onHeaderHeightChange}>
             {content}

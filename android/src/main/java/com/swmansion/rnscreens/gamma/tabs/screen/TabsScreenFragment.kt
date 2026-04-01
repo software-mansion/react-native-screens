@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 class TabsScreenFragment(
     internal val tabsScreen: TabsScreen,
 ) : Fragment() {
+    internal val requireScreenKey: String by tabsScreen::requireScreenKey
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -2,7 +2,7 @@ import React, {
   createContext,
   useContext,
   useState,
-  useMemo,
+  useEffect,
   type Dispatch,
   type SetStateAction,
 } from 'react';
@@ -16,15 +16,16 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import Colors from '../../shared/styling/Colors';
+  TabsContainer,
+  type TabRouteConfig,
+  useTabsNavigationContext,
+} from '@apps/shared/gamma/containers/tabs';
+import Colors from '@apps/shared/styling/Colors';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
-import LongText from '../../shared/LongText';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+import LongText from '@apps/shared/LongText';
 import { someExtensiveComputation } from './TestBottomTabs/utils';
 
 type ScreenKey = 'Tab2' | 'Tab3' | 'Tab4';
@@ -449,14 +450,95 @@ function ConfigScreen() {
 }
 
 function ScreenTab2() {
+  const { config } = useBackgroundTestContext();
+  const { setRouteOptions } = useTabsNavigationContext();
+
+  useEffect(() => {
+    setRouteOptions('Tab2', {
+      style: { backgroundColor: config.tabs.Tab2.navBackground },
+    });
+  }, [config.tabs.Tab2.navBackground, setRouteOptions]);
+
   return <TestScreenRenderer screenKey="Tab2" />;
 }
 function ScreenTab3() {
+  const { config } = useBackgroundTestContext();
+  const { setRouteOptions } = useTabsNavigationContext();
+
+  useEffect(() => {
+    setRouteOptions('Tab3', {
+      style: { backgroundColor: config.tabs.Tab3.navBackground },
+    });
+  }, [config.tabs.Tab3.navBackground, setRouteOptions]);
+
   return <TestScreenRenderer screenKey="Tab3" />;
 }
 function ScreenTab4() {
+  const { config } = useBackgroundTestContext();
+  const { setRouteOptions } = useTabsNavigationContext();
+
+  useEffect(() => {
+    setRouteOptions('Tab4', {
+      style: { backgroundColor: config.tabs.Tab4.navBackground },
+    });
+  }, [config.tabs.Tab4.navBackground, setRouteOptions]);
+
   return <TestScreenRenderer screenKey="Tab4" />;
 }
+
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: ConfigScreen,
+    options: {
+      title: 'Config',
+      ios: {
+        icon: {
+          type: 'sfSymbol',
+          name: 'gear',
+        },
+      },
+      style: { backgroundColor: Colors.White },
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: ScreenTab2,
+    options: {
+      title: 'Tab 2',
+      ios: {
+        icon: {
+          type: 'sfSymbol',
+          name: 'square',
+        },
+      },
+      style: { backgroundColor: INITIAL_CONFIG.tabs.Tab2.navBackground },
+    },
+  },
+  {
+    name: 'Tab3',
+    Component: ScreenTab3,
+    options: {
+      title: 'Tab 3',
+      ios: { icon: { type: 'sfSymbol', name: 'triangle' } },
+      style: { backgroundColor: INITIAL_CONFIG.tabs.Tab3.navBackground },
+    },
+  },
+  {
+    name: 'Tab4',
+    Component: ScreenTab4,
+    options: {
+      title: 'Tab 4',
+      ios: {
+        icon: {
+          type: 'sfSymbol',
+          name: 'circle',
+        },
+      },
+      style: { backgroundColor: INITIAL_CONFIG.tabs.Tab4.navBackground },
+    },
+  },
+];
 
 function Tabs() {
   const [tabsConfig, setTabsConfig] = React.useState<Configuration>(
@@ -464,58 +546,14 @@ function Tabs() {
   );
   const { config } = useBackgroundTestContext();
 
-  const dynamicTabConfigs = useMemo<TabConfiguration[]>(
-    () => [
-      {
-        tabScreenProps: {
-          screenKey: 'Tab1',
-          title: 'Config',
-          icon: {
-            ios: { type: 'sfSymbol', name: 'gear' },
-          },
-          style: { backgroundColor: Colors.White },
-        },
-        component: ConfigScreen,
-      },
-      {
-        tabScreenProps: {
-          screenKey: 'Tab2',
-          title: 'Tab 2',
-          icon: { ios: { type: 'sfSymbol', name: 'square' } },
-          style: { backgroundColor: config.tabs.Tab2.navBackground },
-        },
-        component: ScreenTab2,
-      },
-      {
-        tabScreenProps: {
-          screenKey: 'Tab3',
-          title: 'Tab 3',
-          icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
-          style: { backgroundColor: config.tabs.Tab3.navBackground },
-        },
-        component: ScreenTab3,
-      },
-      {
-        tabScreenProps: {
-          screenKey: 'Tab4',
-          title: 'Tab 4',
-          icon: { ios: { type: 'sfSymbol', name: 'circle' } },
-          style: { backgroundColor: config.tabs.Tab4.navBackground },
-        },
-        component: ScreenTab4,
-      },
-    ],
-    [config],
-  );
-
   return (
     <ConfigWrapperContext.Provider
       value={{
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer
-        tabConfigs={dynamicTabConfigs}
+      <TabsContainer
+        routeConfigs={ROUTE_CONFIGS}
         nativeContainerStyle={{ backgroundColor: config.containerBackground }}
       />
     </ConfigWrapperContext.Provider>

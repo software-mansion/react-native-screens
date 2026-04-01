@@ -6,6 +6,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSTabsHostComponentViewManager.h"
 #import "RNSTabsHostEventEmitter.h"
+#import "RNSTabsNavigationState.h"
 
 #if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
@@ -13,7 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsScreenComponentView;
 @class RNSTabBarController;
 @class RCTImageLoader;
 
@@ -45,6 +45,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsHostComponentView ()
 
+/**
+ * Last navigation state requested by JS. Will be nonnull after first prop update.
+ */
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
@@ -75,9 +80,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter;
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
-
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks
 
@@ -92,6 +94,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsHostComponentView ()
 
 - (nullable RCTImageLoader *)reactImageLoader;
+
+@end
+
+#pragma mark - RNSTabBarControllerDelegate
+
+@interface RNSTabsHostComponentView (RNSTabBarControllerDelegate)
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+        didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
+             withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
 
 @end
 

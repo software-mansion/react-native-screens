@@ -1,0 +1,213 @@
+import React from 'react';
+import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
+import {
+  SCREEN_KEY_MORE_NAV_CTRL,
+  type TabSelectedEvent,
+  Tabs,
+  type TabsHostNavState,
+} from 'react-native-screens';
+import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
+import type {
+  SelectTabMethod,
+  TabRoute,
+  TabRouteConfig,
+  TabRouteOptions,
+  TabsContainerProps,
+  TabsContainerState,
+  TabsNavigationAction,
+} from './TabsContainer.types';
+import {
+  TabsNavigationContext,
+  type TabsNavigationContextPayload,
+} from './contexts/TabsNavigationContext';
+import {
+  tabsNavigationReducerWithLogging,
+  determineInitialTabsContainerState,
+} from './reducer';
+import { RNSLog } from 'react-native-screens/private';
+
+export function TabsContainer(props: TabsContainerProps) {
+  RNSLog.info('TabsContainer render');
+
+  const {
+    routeConfigs,
+    defaultRouteName,
+    experimentalControlNavigationStateInJS,
+    onTabSelected,
+    ...restProps
+  } = props;
+
+  useSanitizeRouteConfigs(routeConfigs);
+
+  const [tabsNavState, dispatch]: [
+    TabsContainerState,
+    React.Dispatch<TabsNavigationAction>,
+  ] = React.useReducer(
+    tabsNavigationReducerWithLogging,
+    { routeConfigs, defaultRouteName },
+    determineInitialTabsContainerState,
+  );
+
+  const setRouteOptions = React.useCallback(
+    (routeKey: string, options: Partial<TabRouteOptions>) => {
+      dispatch({ type: 'set-options', routeKey, options });
+    },
+    [],
+  );
+
+  const hostNavState = useTabsHostNavState(tabsNavState);
+
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
+      // First call user provided callback
+      onTabSelected?.(event);
+
+      // Perform our logic
+      const screenKey = event.nativeEvent.selectedScreenKey;
+      console.log(`[Tabs] onTabSelectedCallback: ${screenKey}`);
+
+      // Please note that the `useTransition` hook can not be used here,
+      // because it intruduces additional renders, which lead
+      // to blank screens / placeholders being visible (on slower render)
+      // for a few frames!
+      React.startTransition(() => {
+        RNSLog.info(`Starting transition to ${screenKey}`);
+        dispatch({
+          type: 'native-tab-select',
+          routeKey: screenKey,
+          nativeEvent: event.nativeEvent,
+        });
+      });
+    },
+    [onTabSelected],
+  );
+
+  const selectTabMethod: SelectTabMethod = React.useCallback(
+    (routeKey: string) => {
+      dispatch({ type: 'tab-select', routeKey });
+    },
+    [],
+  );
+
+  return (
+    <Tabs.Host
+      // Use controlled tabs by default, but allow to overwrite if user wants to
+      navState={hostNavState}
+      onTabSelected={onTabSelectedCallback}
+      experimentalControlNavigationStateInJS={
+        experimentalControlNavigationStateInJS
+      }
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      {...restProps}>
+      {tabsNavState.routes.map((route: TabRoute) => {
+        const isSelected =
+          route.routeKey === tabsNavState.confirmedState.selectedRouteKey;
+        const pendingForUpdate =
+          route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
+
+        RNSLog.info(
+          `TabsContainer map to component -> ${route.routeKey} ${isSelected ? '(selected)' : ''
+          }`,
+        );
+
+        const tabsNavigationContext: TabsNavigationContextPayload = {
+          routeKey: route.routeKey,
+          routeOptions: { ...route.options },
+          setRouteOptions,
+          selectTab: selectTabMethod,
+          isSelected: isSelected,
+          shouldRenderContents: isSelected || pendingForUpdate,
+        };
+
+        const { safeAreaConfiguration, ...nativeOptions } = route.options ?? {};
+
+        return (
+          <Tabs.Screen
+            key={route.routeKey}
+            {...nativeOptions}
+            screenKey={route.routeKey}>
+            <TabsNavigationContext value={tabsNavigationContext}>
+              {getContent(route.Component, safeAreaConfiguration)}
+            </TabsNavigationContext>
+          </Tabs.Screen>
+        );
+      })}
+    </Tabs.Host>
+  );
+}
+
+function getContent(
+  Component: TabRouteConfig['Component'],
+  safeAreaConfiguration: SafeAreaViewProps | undefined,
+) {
+  const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
+    safeAreaConfiguration?.edges,
+  );
+
+  const anySAVEdgeSet = Object.values(safeAreaConfigurationWithDefault).some(
+    edge => edge === true,
+  );
+
+  if (anySAVEdgeSet) {
+    return (
+      <SafeAreaView {...safeAreaConfiguration}>
+        <Component />
+      </SafeAreaView>
+    );
+  }
+
+  return <Component />;
+}
+
+function getSafeAreaViewEdges(
+  edges?: SafeAreaViewProps['edges'],
+): NonNullable<SafeAreaViewProps['edges']> {
+  let defaultEdges: SafeAreaViewProps['edges'];
+
+  switch (Platform.OS) {
+    case 'android':
+      defaultEdges = { bottom: true };
+      break;
+    default:
+      defaultEdges = {};
+      break;
+  }
+
+  return { ...defaultEdges, ...edges };
+}
+
+function useTabsHostNavState(
+  tabsNavState: TabsContainerState,
+): TabsHostNavState {
+  const hostNavState: TabsHostNavState = React.useMemo(() => {
+    return {
+      selectedScreenKey: tabsNavState.suggestedState.selectedRouteKey,
+      provenance: tabsNavState.suggestedState.provenance,
+    };
+  }, [tabsNavState.suggestedState]);
+
+  return hostNavState;
+}
+
+function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
+  if (routeConfigs.length === 0) {
+    throw new Error('[Tabs] There must be at least one tab defined');
+  }
+
+  const areNamesUnique = React.useMemo(() => {
+    const names = routeConfigs.map(c => c.name);
+    return names.length === new Set(names).size;
+  }, [routeConfigs]);
+
+  const noNameUsesReservedRouteKey = React.useMemo(() => {
+    return routeConfigs.every(c => c.name !== SCREEN_KEY_MORE_NAV_CTRL);
+  }, [routeConfigs]);
+
+  if (!areNamesUnique) {
+    throw new Error('[Tabs] All tabs must have unique names');
+  }
+
+  if (!noNameUsesReservedRouteKey) {
+    throw new Error(`[Tabs] Tab name "${SCREEN_KEY_MORE_NAV_CTRL}" is reserved and can not be used`);
+  }
+}

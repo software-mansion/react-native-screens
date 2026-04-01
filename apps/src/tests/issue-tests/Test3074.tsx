@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View, Animated, useAnimatedValue } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 import { useTransitionProgress } from 'react-native-screens';
 
 type StackRouteParamList = {

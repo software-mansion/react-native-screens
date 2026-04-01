@@ -60,6 +60,7 @@ namespace react = facebook::react;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
 - (BOOL)isRemovedFromParent;
+- (void)notifyPresentedControllerDismissed;
 
 @end
 

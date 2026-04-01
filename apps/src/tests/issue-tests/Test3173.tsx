@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, Button } from 'react-native';
 import { Screen, ScreenStack, ScreenStackHeaderConfig } from '../../../../src';
 import { useState } from 'react';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 function HomeScreen({ add }: { add: () => void }) {
   console.log('Render home');

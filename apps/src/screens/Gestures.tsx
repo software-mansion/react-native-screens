@@ -14,8 +14,8 @@ import {
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
 import RNRestart from 'react-native-restart';
-import { Button, SettingsSwitch } from '../shared';
-import { SettingsMultiInput } from '../shared/SettingsMultiInput';
+import { Button, SettingsSwitch } from '@apps/shared';
+import { SettingsMultiInput } from '@apps/shared/SettingsMultiInput';
 
 type StackParamList = {
   Main: undefined;

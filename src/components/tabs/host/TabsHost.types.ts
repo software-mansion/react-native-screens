@@ -3,11 +3,49 @@ import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
 import type { ColorScheme, Direction } from '../../shared/types';
 
+// #region Control
+
+export type TabsHostNavState = {
+  /**
+   * @summary Valid screen key.
+   *
+   * @description
+   * It must correspond to one of the keys you assign to the `TabsScreens`.
+   * There is one notable exception of `SCREEN_KEY_MORE_NAV_CTRL`, which can be
+   * used on iOS to select the {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/morenavigationcontroller?language=objc moreNavigationController}.
+   *
+   * @see `SCREEN_KEY_MORE_NAV_CTRL` in `./constants`.
+   */
+  selectedScreenKey: string;
+  /**
+   * @summary A number describing the provenance of the state instance.
+   *
+   * @description
+   * The provenance value establishes a relationship between different navigation state instances
+   * held by different state holders. The assumption here is that when the navigation
+   * state is progressed (modified), the provenance number is incremented.
+   * This creates a relationship where we can say that:
+   *
+   * 1. State with provenance = n + 1 has been derived from state with provenance = n.
+   * 2. For two given navigation states A and B, we can say that A *is stale* iff
+   * A.provenance <= B.provenance.
+   *
+   * This allows us to mitigate and resolve state conflicts that can happen with
+   * asynchronous navigation.
+   */
+  provenance: number;
+};
+
+// #endregion Control
+
 // #region General helpers
 
-export type NativeFocusChangeEvent = {
-  screenKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
+export type TabSelectedEvent = {
+  selectedScreenKey: string;
+  provenance: number;
+  isRepeated: boolean;
+  hasTriggeredSpecialEffect: boolean;
+  isNativeAction: boolean;
 };
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';
@@ -26,6 +64,21 @@ export type TabsHostNativeContainerStyleProps = {
 // #endregion General helpers
 
 export interface TabsHostPropsBase {
+  // Control
+  /**
+   * @summary
+   * The navigation state for the tabs host to align to. It also determines
+   * initial navigation state after first render.
+   *
+   * @description
+   * This prop can be thought of as a "next navigation state suggestion for the native side".
+   * Depending on configuration and the provenance of the update
+   * the update might get accepted or rejected.
+   *
+   * @see {@link TabsHostNavState} for description of the type model & accepted values.
+   */
+  navState: TabsHostNavState;
+
   // General
   children?: ViewProps['children'];
   /**
@@ -107,13 +160,11 @@ export interface TabsHostPropsBase {
 
   // Events
   /**
-   * A callback that gets invoked when user requests change of focused tab screen.
+   * @summary A callback that gets invoked when the selected tab changes.
    *
    * @platform android, ios
    */
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {

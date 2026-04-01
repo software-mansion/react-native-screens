@@ -6,13 +6,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Scenario } from '../../shared/helpers';
-import { createAutoConfiguredTabs } from '../../shared/tabs';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
-import { SettingsPicker, SettingsSwitch } from '../../../shared';
-import { TabsHostProps } from 'react-native-screens';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
-import { DummyScreen } from '../../shared/DummyScreens';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import type { TabsHostProps } from 'react-native-screens';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/gamma/containers/tabs';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const SCENARIO: Scenario = {
   name: 'Layout Direction',
@@ -25,30 +29,10 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TabsParamList = {
-  Config: undefined;
-  Tab2: undefined;
-};
-
 function ConfigScreen() {
-  const [config, dispatch] = useTabsConfigState<TabsParamList>();
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactForceRtl, setReactForceRtl] = useState(false);
   const [reactAllowRtl, setReactAllowRtl] = useState(true);
-
-  // TODO: Tabs.Autoconfig should allow initial prop configuration.
-  useEffect(() => {
-    dispatch({
-      type: 'tabScreen',
-      screenKey: 'Config',
-      config: {
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
-          },
-        },
-      },
-    });
-  }, [dispatch]);
 
   useEffect(() => {
     I18nManager.forceRTL(reactForceRtl);
@@ -119,15 +103,8 @@ function ConfigScreen() {
         <Text style={styles.heading}>TabsHost layout direction</Text>
         <SettingsPicker<NonNullable<TabsHostProps['direction']>>
           label={'direction'}
-          value={config.direction ?? 'inherit'}
-          onValueChange={function (value: TabsHostProps['direction']): void {
-            dispatch({
-              type: 'tabBar',
-              config: {
-                direction: value,
-              },
-            });
-          }}
+          value={hostConfig.direction ?? 'inherit'}
+          onValueChange={value => updateHostConfig({ direction: value })}
           items={['inherit', 'ltr', 'rtl']}
         />
       </View>
@@ -135,17 +112,32 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({
-  Config: ConfigScreen,
-  Tab2: DummyScreen,
-});
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Config',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Config',
+      safeAreaConfiguration: {
+        edges: {
+          bottom: true,
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: DummyScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({

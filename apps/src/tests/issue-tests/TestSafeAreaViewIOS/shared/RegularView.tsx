@@ -1,4 +1,4 @@
-import Colors from '../../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

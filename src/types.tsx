@@ -218,7 +218,7 @@ export interface ScreenProps extends ViewProps {
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
    * for the specified edge of the ScrollView.
    *
-   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * When set in nested containers, i.e. Stack inside Tabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
    *
    * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
@@ -1291,6 +1291,3 @@ export interface GestureProviderProps extends GestureProps {
   children?: React.ReactNode;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
-
-export type * from './components/tabs';
-export type * from './components/shared/types';

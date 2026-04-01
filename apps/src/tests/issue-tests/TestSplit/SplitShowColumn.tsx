@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { Split, SplitHostCommands } from 'react-native-screens/experimental';
-import { Colors } from '../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling/Colors';
 
 const SplitShowColumn = () => {
   const splitRef = useRef<SplitHostCommands>(null);

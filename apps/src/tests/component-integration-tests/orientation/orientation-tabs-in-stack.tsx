@@ -1,18 +1,19 @@
-import { SettingsPicker } from '../../../shared/SettingsPicker';
+import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { DummyScreen } from '../../shared/DummyScreens';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
-import useStackConfigState from '../../shared/hooks/stack-config';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
-  createAutoConfiguredStack,
-  findStackScreenOptions,
-} from '../../shared/stack';
+  StackContainer,
+  type StackRouteConfig,
+  useStackNavigationContext,
+} from '@apps/shared/gamma/containers/stack';
 import {
-  createAutoConfiguredTabs,
-  findTabScreenOptions,
-} from '../../shared/tabs';
-import { Scenario } from '../../shared/helpers';
+  TabsContainer,
+  type TabRouteConfig,
+  useTabsNavigationContext,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'TabsInStack',
@@ -25,52 +26,37 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type StackParamList = {
-  Screen1: undefined;
-};
-
-type TabsParamList = {
-  Tab1: undefined;
-  Tab2: undefined;
-};
-
 function ConfigScreen() {
-  const [tabsConfig, tabsDispatch] = useTabsConfigState<TabsParamList>();
-  const [stackConfig, stackDispatch] = useStackConfigState<StackParamList>();
+  const {
+    routeKey: stackRouteKey,
+    routeOptions: stackRouteOptions,
+    setRouteOptions: setStackRouteOptions,
+  } = useStackNavigationContext();
+  const {
+    routeKey: tabRouteKey,
+    routeOptions: tabRouteOptions,
+    setRouteOptions: setTabRouteOptions,
+  } = useTabsNavigationContext();
 
   return (
     <ScrollView style={{ padding: 40 }}>
       <SettingsPicker
         label="Stack Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
-        value={
-          findStackScreenOptions(stackConfig, 'Screen1')?.orientation ??
-          'undefined'
-        }
+        value={stackRouteOptions.orientation ?? 'undefined'}
         onValueChange={value =>
-          stackDispatch({
-            type: 'screen',
-            name: 'Screen1',
-            config: { orientation: value === 'undefined' ? undefined : value },
+          setStackRouteOptions(stackRouteKey, {
+            orientation: value === 'undefined' ? undefined : value,
           })
         }
       />
       <SettingsPicker
         label="Tab Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
-        value={
-          findTabScreenOptions(tabsConfig, 'Tab1')?.tabScreenProps
-            .orientation ?? 'undefined'
-        }
+        value={tabRouteOptions.orientation ?? 'undefined'}
         onValueChange={value =>
-          tabsDispatch({
-            type: 'tabScreen',
-            screenKey: 'Tab1',
-            config: {
-              tabScreenProps: {
-                orientation: value === 'undefined' ? undefined : value,
-              },
-            },
+          setTabRouteOptions(tabRouteKey, {
+            orientation: value === 'undefined' ? undefined : value,
           })
         }
       />
@@ -78,27 +64,37 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabsParamList>({
-  Tab1: ConfigScreen,
-  Tab2: DummyScreen,
-});
+const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab1',
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: DummyScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
+    },
+  },
+];
 
 function TabsScreen() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
 
-const Stack = createAutoConfiguredStack<StackParamList>({
-  Screen1: TabsScreen,
-});
+const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
+  {
+    name: 'Screen1',
+    Component: TabsScreen,
+    options: {},
+  },
+];
 
 export function Apps() {
-  return (
-    <Stack.Provider>
-      <Stack.Autoconfig />
-    </Stack.Provider>
-  );
+  return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
