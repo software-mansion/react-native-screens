@@ -16,10 +16,9 @@ class RNSStackHeaderConfigComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
+#ifdef ANDROID
     react_native_assert(
         dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
-
-#ifdef ANDROID
     auto &configShadowNode =
         static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
     react_native_assert(

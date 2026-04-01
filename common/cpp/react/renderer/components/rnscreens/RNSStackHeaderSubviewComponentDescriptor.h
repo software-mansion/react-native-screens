@@ -12,8 +12,6 @@ class RNSStackHeaderSubviewComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(
-        dynamic_cast<RNSStackHeaderSubviewShadowNode *>(&shadowNode));
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

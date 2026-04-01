@@ -21,6 +21,7 @@ class JSI_EXPORT RNSStackHeaderSubviewShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
+#ifdef ANDROID
 #pragma mark - ShadowNode overrides
 
   Point getContentOriginOffset(bool includeTransform) const override;
@@ -30,6 +31,7 @@ class JSI_EXPORT RNSStackHeaderSubviewShadowNode final
 #pragma mark - Custom interface
  private:
   void applyFrameCorrections();
+#endif // ANDROID
 };
 
 } // namespace facebook::react

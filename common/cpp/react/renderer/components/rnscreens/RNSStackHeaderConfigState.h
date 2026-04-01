@@ -16,7 +16,7 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
  public:
   using Shared = std::shared_ptr<const RNSStackHeaderConfigState>;
 
-  RNSStackHeaderConfigState() {};
+  RNSStackHeaderConfigState() {}
 
 #ifdef ANDROID
   RNSStackHeaderConfigState(
@@ -29,7 +29,7 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
         contentOffset(
             Point{
                 (Float)data["contentOffsetX"].getDouble(),
-                (Float)data["contentOffsetY"].getDouble()}) {};
+                (Float)data["contentOffsetY"].getDouble()}) {}
 
   Size frameSize{};
   Point contentOffset{};
@@ -37,7 +37,7 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
-  };
+  }
 #endif // ANDROID
 };
 

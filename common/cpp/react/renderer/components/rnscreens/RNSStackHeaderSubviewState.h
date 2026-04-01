@@ -16,7 +16,7 @@ class JSI_EXPORT RNSStackHeaderSubviewState final {
  public:
   using Shared = std::shared_ptr<const RNSStackHeaderSubviewState>;
 
-  RNSStackHeaderSubviewState() {};
+  RNSStackHeaderSubviewState() {}
 
 #ifdef ANDROID
   RNSStackHeaderSubviewState(
@@ -25,14 +25,14 @@ class JSI_EXPORT RNSStackHeaderSubviewState final {
       : contentOffset(
             Point{
                 (Float)data["contentOffsetX"].getDouble(),
-                (Float)data["contentOffsetY"].getDouble()}) {};
+                (Float)data["contentOffsetY"].getDouble()}) {}
 
   Point contentOffset{};
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
-  };
+  }
 #endif // ANDROID
 };
 
