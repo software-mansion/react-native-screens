@@ -14,6 +14,7 @@ const SCENARIO: Scenario = {
   key: 'test-tabs-hidden',
   platforms: ['ios', 'android'],
   AppComponent: App,
+  testID: 'TabBarHidden',
 };
 
 export default SCENARIO;
@@ -24,7 +25,8 @@ function ConfigScreen() {
   return (
     <ScrollView style={{ padding: 40}}>
       <Text style={{textAlign: 'center'}}>Change flag value by clicking on button.</Text>
-      <SettingsSwitch 
+      <SettingsSwitch
+        testID='tabBarHiddenSwitch'
         style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
         value={hostConfig.tabBarHidden ?? false}

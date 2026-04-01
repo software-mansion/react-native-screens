@@ -16,53 +16,54 @@ Assumption: default iPadOS and iPhone behavior is working correctly. Here only t
 
 **Baseline**
 
-1. Launch the app and navigate to the scenario
-   Expected: Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
+1. 
 
----
 **iPad**
 
-1. Set tabBarControllerMode = `automatic`
+1. Launch the app and navigate to the scenario
+   Expected: Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
+2. Set tabBarControllerMode = `automatic`
    
    Expected: Tab bar displayed according to iPadOS default behavior for current orientation
-2. Change app window size to correspond to iPhone view. 
+3. Change app window size to correspond to iPhone view. 
    
    Expected: Tab bar displayed at the **bottom**
-3. Resize app to full screen.
+4. Resize app to full screen.
    Set tabBarControllerMode = `tabBar`
 
    Expected: Tab bar displayed without sidebar option - even if iPadOS would default do it
 
-4. Change app window size to correspond to iPhone view.
+5. Change app window size to correspond to iPhone view.
    
    Expected: Tab bar displayed at the **bottom**
-5. Resize app to full screen.
+6. Resize app to full screen.
    Set TabsHost tabBarControllerMode = `tabSidebar`,test on **iPad landscape** orientation
    
    Expected: Navigation displayed as a **sidebar** on the leading edge
-6. Keep TabsHost tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
+7. Keep TabsHost tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
    
    Expected: Sidebar adapts or collapses — tab items still accessible
-7. Change app window size to correspond to iPhone view.
+8. Change app window size to correspond to iPhone view.
 
    Expected: Tab bar displayed without sidebar option.
 
-8. Resize app to full screen.
+9. Resize app to full screen.
    Cycle through `automatic` → `tabBar` → `tabSidebar` → `automatic` on iPad
    
    Expected: UI transitions immediately with each change, no crash or layout freeze
 
-9.  Switch tabs (Tab1 ↔ Tab2) while cycling through all modes
+10.  Switch tabs (Tab1 ↔ Tab2) while cycling through all modes
+    
     Expected: Tab switching works correctly in all three modes
 
 **Smoke on iPhone**
-1. Set TabsHost tabBarControllerMode = `automatic`, test on **iPhone**
+1.  Set TabsHost tabBarControllerMode = `automatic`
    
    Expected: Tab bar displayed at the **bottom**
    
-4. Set TabsHost tabBarControllerMode = `tabBar`, test on **iPhone**
+2.  Set TabsHost tabBarControllerMode = `tabBar`
    
    Expected: Tab bar displayed at the **bottom**
-6. Set TabsHost tabBarControllerMode = `tabSidebar`, test on **iPhone**
+3.  Set TabsHost tabBarControllerMode = `tabSidebar`
    
    Expected: Tab bar displayed at the **bottom**

@@ -26,6 +26,8 @@ export interface Scenario {
    * as top-level application component & it should remain functional.
    */
   AppComponent: React.ComponentType;
+
+  testID?: string;
 }
 
 export interface ScenarioGroup<K extends string> {
