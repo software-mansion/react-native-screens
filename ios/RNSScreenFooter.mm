@@ -110,11 +110,4 @@ Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
 
 @implementation RNSScreenFooterManager
 
-RCT_EXPORT_MODULE()
-
-- (UIView *)view
-{
-  return [RNSScreenFooter new];
-}
-
 @end

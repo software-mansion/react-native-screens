@@ -57,6 +57,4 @@ Class<RCTComponentViewProtocol> RNSScreenNavigationContainerCls(void)
 
 @implementation RNSScreenNavigationContainerManager
 
-RCT_EXPORT_MODULE()
-
 @end

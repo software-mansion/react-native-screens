@@ -236,8 +236,4 @@ Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
 
 @implementation RNSFullWindowOverlayManager
 
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(accessibilityContainerViewIsModal, BOOL)
-
 @end

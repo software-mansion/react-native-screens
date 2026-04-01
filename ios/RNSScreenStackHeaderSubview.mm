@@ -304,11 +304,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 @implementation RNSScreenStackHeaderSubviewManager
 
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
-RCT_EXPORT_VIEW_PROPERTY(hidesSharedBackground, BOOL)
-
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)

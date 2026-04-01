@@ -325,6 +325,4 @@ Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)
 
 @implementation RNSScreenContainerManager
 
-RCT_EXPORT_MODULE()
-
 @end

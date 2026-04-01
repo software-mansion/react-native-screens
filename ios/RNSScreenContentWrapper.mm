@@ -193,11 +193,4 @@ Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
 
 @implementation RNSScreenContentWrapperManager
 
-RCT_EXPORT_MODULE()
-
-- (UIView *)view
-{
-  return [RNSScreenContentWrapper new];
-}
-
 @end

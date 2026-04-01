@@ -2057,53 +2057,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 RCT_EXPORT_MODULE()
 
-// we want to handle the case when activityState is nil
-RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
-RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
-RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
-RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
-RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
-RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
-RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
-RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
-RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
-
-RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onHeaderHeightChange, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onSheetDetentChanged, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(ios26AllowInteractionsDuringTransition, BOOL);
-
-#if !TARGET_OS_TV
-RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
-RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
-RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
-RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
-
-RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
-RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
-RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
-RCT_EXPORT_VIEW_PROPERTY(sheetInitialDetent, NSInteger);
-RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
-#endif
-
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 // See:
 // 1. https://github.com/software-mansion/react-native-screens/pull/1543
