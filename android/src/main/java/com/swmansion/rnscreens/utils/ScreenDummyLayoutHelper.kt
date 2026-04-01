@@ -322,8 +322,6 @@ internal class ScreenDummyLayoutHelper(
 
     override fun onHostDestroy() {
         reactContextRef.get()?.removeLifecycleEventListener(this)
-
-        cleanUpViews()
     }
 
     @Synchronized
