@@ -49,17 +49,25 @@ internal class StackHeaderCoordinator(
     // render a subview to the leading side of the title.
     private var managedTitleView: AppCompatTextView? = null
 
+    private var shouldRequestLayout = false
+
     internal fun applyHeaderConfig(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigProviding?,
     ) {
+        shouldRequestLayout = false
+
         currentConfig = config
         if (config != null) {
             updateHeader(coordinatorLayout, config)
         } else {
             removeHeader(coordinatorLayout)
         }
-        coordinatorLayout.maybeRequestLayoutContainer()
+
+        if (shouldRequestLayout) {
+            coordinatorLayout.maybeRequestLayoutContainer()
+            shouldRequestLayout = false
+        }
     }
 
     private fun updateHeader(
@@ -76,6 +84,7 @@ internal class StackHeaderCoordinator(
     private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
         teardown(coordinatorLayout)
         removeContentBehavior(coordinatorLayout)
+        shouldRequestLayout = true
     }
 
     // region Rebuild detection
@@ -130,6 +139,8 @@ internal class StackHeaderCoordinator(
         attachedTrailingSubview = config.trailingSubview
         attachedBackgroundSubview = config.backgroundSubview
         snapshotSubviewWidths(config)
+
+        shouldRequestLayout = true
     }
 
     private fun teardown(coordinatorLayout: StackHeaderCoordinatorLayout) {
@@ -265,6 +276,9 @@ internal class StackHeaderCoordinator(
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
                 managedTitleView?.text = config.title
+
+                // Changing small title requires layout
+                shouldRequestLayout = true
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
@@ -308,6 +322,7 @@ internal class StackHeaderCoordinator(
                     updateShadowState(contentTop, dependency)
                 }
             coordinatorLayout.stackScreenWrapper.layoutParams = params
+            shouldRequestLayout = true
         }
     }
 
@@ -317,6 +332,7 @@ internal class StackHeaderCoordinator(
             params.behavior = null
             coordinatorLayout.stackScreenWrapper.layoutParams = params
             onHeaderHeightChanged(0)
+            shouldRequestLayout = true
         }
     }
 
