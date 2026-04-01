@@ -173,12 +173,12 @@ class TabsHost(
     override fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
         rejectedNavState: TabsNavState,
-        reason: TabsNavStateUpdateRejectionReason
+        reason: TabsNavStateUpdateRejectionReason,
     ) {
         eventEmitter.emitOnTabSelectionRejectedEvent(
             currentNavState,
             rejectedNavState,
-            reason
+            reason,
         )
     }
 

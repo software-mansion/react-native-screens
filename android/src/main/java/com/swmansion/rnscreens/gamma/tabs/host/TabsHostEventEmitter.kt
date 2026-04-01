@@ -49,7 +49,7 @@ internal class TabsHostEventEmitter(
                 viewTag,
                 currentNavState,
                 rejectedNavState,
-                rejectionReason
+                rejectionReason,
             ),
         )
     }

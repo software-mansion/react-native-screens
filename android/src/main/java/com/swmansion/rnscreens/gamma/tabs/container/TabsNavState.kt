@@ -1,5 +1,10 @@
 package com.swmansion.rnscreens.gamma.tabs.container
 
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.MORE_TAB_NOT_AVAILABLE
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.OTHER
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.REPEATED
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.STALE
+
 /**
  * Describes navigation state of a tabs container.
  *
@@ -8,7 +13,6 @@ package com.swmansion.rnscreens.gamma.tabs.container
  *   State with provenance `N + 1` is derived from state with provenance `N`.
  *   This allows detecting stale updates.
  */
-// Must be public - TabsHost uses it in public methods.
 data class TabsNavState(
     val selectedKey: String,
     val provenance: Int,
@@ -26,23 +30,23 @@ data class TabsNavState(
  * Reason why a navigation state update was rejected by the container.
  *
  * - [OTHER] — unspecified reason.
- * - [STALE] — the update's provenance indicates that is is based on a stale state.
+ * - [STALE] — the update's provenance indicates that it is based on a stale state.
  * - [REPEATED] — the requested tab is already selected.
  * - [MORE_TAB_NOT_AVAILABLE] — the iOS "More" navigation controller was requested but is not available.
- *  This should not happen on Android.
+ *   This should not happen on Android.
  */
 enum class TabsNavStateUpdateRejectionReason {
     OTHER,
     STALE,
     REPEATED,
-    MORE_TAB_NOT_AVAILABLE;
+    MORE_TAB_NOT_AVAILABLE,
+    ;
 
-    override fun toString(): String {
-        return when (this) {
+    override fun toString(): String =
+        when (this) {
             OTHER -> "other"
             STALE -> "stale"
             REPEATED -> "repeated"
             MORE_TAB_NOT_AVAILABLE -> "more-tab-not-available"
         }
-    }
 }

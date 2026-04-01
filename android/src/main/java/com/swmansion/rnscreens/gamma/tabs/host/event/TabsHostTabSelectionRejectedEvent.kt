@@ -23,6 +23,7 @@ class TabsHostTabSelectionRejectedEvent(
 ) : Event<TabsHostTabSelectionRejectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
+
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
 
     // This event should never be coalesced. It informs JS side of all navigation events that happen.
@@ -48,6 +49,7 @@ class TabsHostTabSelectionRejectedEvent(
         private const val EK_REJECTION_REASON = "rejectionReason"
 
         override fun getEventName() = EVENT_NAME
+
         override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
     }
 }

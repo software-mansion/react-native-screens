@@ -80,7 +80,10 @@ class TabsHostViewManager :
         view.updateJSNavState(TabsNavState(selectedScreenKey, provenance))
     }
 
-    override fun setRejectStaleNavStateUpdates(view: TabsHost, value: Boolean) {
+    override fun setRejectStaleNavStateUpdates(
+        view: TabsHost,
+        value: Boolean,
+    ) {
         view.rejectStaleNavStateUpdates = value
     }
 

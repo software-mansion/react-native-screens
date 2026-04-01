@@ -22,12 +22,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
-  /// This property is nullable until first container udpate. Later it MUST NOT be nil.
+  /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _navigationState;
 
   /// Holds last state that has been a result of UI-side navigation (user request).
   ///
-  /// This property is nullable until first container udpate. Later it MUST NOT be nil.
+  /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _lastUINavigationState;
 
   RNSTabsNavigationState *_Nullable _pendingOperation;
