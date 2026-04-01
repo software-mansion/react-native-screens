@@ -24,6 +24,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   /// This property is nullable until first container udpate. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _navigationState;
+
+  /// Holds last state that has been a result of UI-side navigation (user request).
+  ///
+  /// This property is nullable until first container udpate. Later it MUST NOT be nil.
+  RNSTabsNavigationState *_Nullable _lastUINavigationState;
+
   RNSTabsNavigationState *_Nullable _pendingOperation;
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -159,10 +165,11 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   UIViewController *currSelectedViewController = self.selectedViewController;
 
-  RCTAssert(![NSString rnscreens_isBlankOrNull:screenKey],
-            @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
+  RCTAssert(
+      ![NSString rnscreens_isBlankOrNull:screenKey],
+      @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
-  [self progressNavigationState:screenKey];
+  [self progressNavigationState:screenKey withSource:RNSTabsNavigationStateUpdateSourceExternal];
 
   if (currSelectedViewController == nextSelectedViewController) {
     return YES;
@@ -180,13 +187,14 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  */
 - (void)updateNavigationStateOnModelUpdate
 {
-  [self progressNavigationState:[self screenKeyForSelectedViewController]];
+  [self progressNavigationState:[self screenKeyForSelectedViewController]
+                     withSource:RNSTabsNavigationStateUpdateSourceUser];
 }
 
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
 {
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
   [self updateNavigationStateOnModelUpdate];
 
@@ -209,8 +217,8 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
 {
   // At this moment the `UITabBarController` model is already updated.
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
   [self updateNavigationStateOnModelUpdate];
 
@@ -236,10 +244,11 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   RCTAssert(tabBarController == self, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class] ||
-                [viewController isKindOfClass:UINavigationController.class],
-            @"[RNScreens] Unexpected type of controller: %@",
-            viewController.class);
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
+          [viewController isKindOfClass:UINavigationController.class],
+      @"[RNScreens] Unexpected type of controller: %@",
+      viewController.class);
 
   // TODO: handle enforcing orientation with natively-driven tabs
 
@@ -286,9 +295,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
                     animated:(BOOL)animated
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  RCTAssert(self.moreNavigationController == navigationController,
-            @"[RNScreens] Unexpected view controller called delegate method: %@",
-            navigationController);
+  RCTAssert(
+      self.moreNavigationController == navigationController,
+      @"[RNScreens] Unexpected view controller called delegate method: %@",
+      navigationController);
 
   // The root view controller is of different type.
   if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
@@ -358,10 +368,11 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
     if (![self isMoreNavigationControllerPresentInTabBar]) {
-      // If the controller is not visible atm. we'll crash the app.
+      // If the controller is not visible atm. we'll crash the app if we try to navigate to it.
       [self.tabsHostComponentView tabBarController:self
                              rejectedStateUpdateTo:_pendingOperation
-                                      currentState:_navigationState];
+                                      currentState:_navigationState
+                                        withReason:RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable];
       return;
     }
     nextSelectedViewController = [self resolveMoreNavigationController];
@@ -371,9 +382,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
   }
 
-  RCTAssert(nextSelectedViewController != nil,
-            @"[RNScreens] Failed to determine next selected view controller for key: %@",
-            nextSelectedViewControllerKey);
+  RCTAssert(
+      nextSelectedViewController != nil,
+      @"[RNScreens] Failed to determine next selected view controller for key: %@",
+      nextSelectedViewControllerKey);
 
   RCTAssert(
       isNextMoreNavigationController || [nextSelectedViewController isKindOfClass:RNSTabsScreenViewController.class],
@@ -384,7 +396,8 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingOperation]) {
     [self.tabsHostComponentView tabBarController:self
                            rejectedStateUpdateTo:_pendingOperation
-                                    currentState:_navigationState];
+                                    currentState:_navigationState
+                                      withReason:RNSTabsNavigationStateRejectionReasonStale];
     return;
   }
 
@@ -393,7 +406,8 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     // we're during first render.
     [self.tabsHostComponentView tabBarController:self
                            rejectedStateUpdateTo:_pendingOperation
-                                    currentState:_navigationState];
+                                    currentState:_navigationState
+                                      withReason:RNSTabsNavigationStateRejectionReasonRepeated];
     return;
   }
 
@@ -480,9 +494,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     return nil;
   }
   for (UIViewController *viewController in self.viewControllers) {
-    RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-              @"[RNScreens] Unexpected type of controller: %@",
-              viewController.class);
+    RCTAssert(
+        [viewController isKindOfClass:RNSTabsScreenViewController.class],
+        @"[RNScreens] Unexpected type of controller: %@",
+        viewController.class);
     auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
     if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
       return screenViewController;
@@ -492,6 +507,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 }
 
 - (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey
+                     withSource:(RNSTabsNavigationStateUpdateSource)updateSource
 {
   RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
 
@@ -502,6 +518,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
                                                              provenance:_navigationState.provenance + 1];
+
+  if (updateSource == RNSTabsNavigationStateUpdateSourceUser) {
+    _lastUINavigationState = [_navigationState cloneState];
+  }
 }
 
 /**
@@ -510,9 +530,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  */
 - (RNSTabsScreenViewController *)selectedScreenViewController
 {
-  RCTAssert([self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of selectedViewController: %@",
-            self.selectedViewController.class);
+  RCTAssert(
+      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] Unexpected type of selectedViewController: %@",
+      self.selectedViewController.class);
   return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
 }
 
@@ -522,25 +543,31 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     return kMoreNavigationControllerScreenKey;
   }
 
-  RCTAssert([self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Expected selected view controller to be of class %@, got: %@",
-            RNSTabsScreenViewController.class,
-            self.selectedViewController.class);
+  RCTAssert(
+      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] Expected selected view controller to be of class %@, got: %@",
+      RNSTabsScreenViewController.class,
+      self.selectedViewController.class);
 
   auto *screenKey = static_cast<RNSTabsScreenViewController *>(self.selectedViewController).getScreenKeyOrNull;
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
   return screenKey;
 }
 
+/**
+ * This function assumes that the source of the state is NOT user. In current model, user update is never stale.
+ */
 - (BOOL)isNavigationStateUpdateStale:(nullable RNSTabsNavigationState *)newState
 {
   if (newState == nil) {
     return YES;
-  } else if (_navigationState == nil) {
-    return NO;
-  } else {
-    return newState.provenance <= _navigationState.provenance;
   }
+
+  if (_navigationState == nil || _lastUINavigationState == nil) {
+    return NO;
+  }
+
+  return newState.provenance < _lastUINavigationState.provenance;
 }
 
 #pragma mark-- More Navigation Controller
@@ -701,8 +728,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 
-  RCTAssert(self.parentViewController != nil,
-            @"[RNScreens] Expected non-null parent view controller for layout direction update.");
+  RCTAssert(
+      self.parentViewController != nil,
+      @"[RNScreens] Expected non-null parent view controller for layout direction update.");
   [self.parentViewController
       setOverrideTraitCollection:[UITraitCollection
                                      traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]

@@ -16,6 +16,7 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabSelectOp
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
@@ -171,11 +172,13 @@ class TabsHost(
 
     override fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState
+        rejectedNavState: TabsNavState,
+        reason: TabsNavStateUpdateRejectionReason
     ) {
         eventEmitter.emitOnTabSelectionRejectedEvent(
             currentNavState,
             rejectedNavState,
+            reason
         )
     }
 

@@ -109,7 +109,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
     rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState;
+             currentState:(nonnull RNSTabsNavigationState *)currentNavState
+               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
 
 @end
 

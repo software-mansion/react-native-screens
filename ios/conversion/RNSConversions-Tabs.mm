@@ -218,6 +218,25 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 
 #endif // Check for iOS >= 18
 
+react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
+RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+    RNSTabsNavigationStateRejectionReason reason)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason;
+  switch (reason) {
+    case RNSTabsNavigationStateRejectionReasonOther:
+      return Other;
+    case RNSTabsNavigationStateRejectionReasonStale:
+      return Stale;
+    case RNSTabsNavigationStateRejectionReasonRepeated:
+      return Repeated;
+    case RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable:
+      return MoreTabNotAvailable;
+    default:
+      return Other;
+  }
+}
+
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
 {
   using enum facebook::react::RNSTabsScreenIOSIconType;

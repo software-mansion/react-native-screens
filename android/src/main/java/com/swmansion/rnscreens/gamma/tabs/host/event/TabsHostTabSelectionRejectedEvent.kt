@@ -5,12 +5,14 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 
 class TabsHostTabSelectionRejectedEvent(
     surfaceId: Int,
     viewId: Int,
     val currentNavState: TabsNavState,
-    val rejectedNavState: TabsNavState
+    val rejectedNavState: TabsNavState,
+    val rejectionReason: TabsNavStateUpdateRejectionReason,
 ) : Event<TabsHostTabSelectionRejectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
@@ -25,6 +27,7 @@ class TabsHostTabSelectionRejectedEvent(
             putInt(EK_PROVENANCE, currentNavState.provenance)
             putString(EK_REJECTED_KEY, rejectedNavState.selectedKey)
             putInt(EK_REJECTED_PROVENANCE, rejectedNavState.provenance)
+            putString(EK_REJECTION_REASON, rejectionReason.toString())
         }
 
     companion object : NamingAwareEventType {
@@ -35,6 +38,7 @@ class TabsHostTabSelectionRejectedEvent(
         private const val EK_PROVENANCE = "provenance"
         private const val EK_REJECTED_KEY = "rejectedScreenKey"
         private const val EK_REJECTED_PROVENANCE = "rejectedProvenance"
+        private const val EK_REJECTION_REASON = "rejectionReason"
 
         override fun getEventName() = EVENT_NAME
         override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME

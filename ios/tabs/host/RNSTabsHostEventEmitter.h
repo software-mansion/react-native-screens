@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
   RNSTabsNavigationState *_Nonnull currentNavState;
   RNSTabsNavigationState *_Nonnull rejectedNavState;
+  RNSTabsNavigationStateRejectionReason rejectionReason;
 } OnTabSelectionRejectedPayload;
 
 @interface RNSTabsHostEventEmitter : NSObject

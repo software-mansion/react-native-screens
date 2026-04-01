@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.tabs.host
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 
@@ -33,6 +34,7 @@ internal class TabsHostEventEmitter(
     fun emitOnTabSelectionRejectedEvent(
         currentNavState: TabsNavState,
         rejectedNavState: TabsNavState,
+        rejectionReason: TabsNavStateUpdateRejectionReason,
     ) {
         reactEventDispatcher.dispatchEvent(
             TabsHostTabSelectionRejectedEvent(
@@ -40,6 +42,7 @@ internal class TabsHostEventEmitter(
                 viewTag,
                 currentNavState,
                 rejectedNavState,
+                rejectionReason
             ),
         )
     }

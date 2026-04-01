@@ -71,6 +71,7 @@ internal class TabsContainer(
     }
 
     private var navState: TabsNavState = TabsNavState.EMPTY
+    private var lastUINavState: TabsNavState = TabsNavState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
     internal var rejectOpsWithStaleNavState: Boolean = false
 
@@ -263,7 +264,11 @@ internal class TabsContainer(
             }
 
         if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.navState)) {
-            delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
+            delegate.onNavStateUpdateRejected(
+                navState,
+                tabSelectOp.navState,
+                TabsNavStateUpdateRejectionReason.STALE,
+            )
             pendingOperation = null
             return
         }
@@ -274,7 +279,11 @@ internal class TabsContainer(
             bottomNavigationView.selectedItemId = nextSelectedMenuItemId
             isInExternalOperationContext = false
         } else {
-            delegate.onNavStateUpdateRejected(navState, tabSelectOp.navState)
+            delegate.onNavStateUpdateRejected(
+                navState,
+                tabSelectOp.navState,
+                TabsNavStateUpdateRejectionReason.REPEATED,
+            )
         }
 
         pendingOperation = null
@@ -319,11 +328,11 @@ internal class TabsContainer(
         val currentSelectedFragment = selectedTab
 
         if (nextSelectedFragment === currentSelectedFragment) {
-            navState = TabsNavState(navState.selectedKey, navState.provenance + 1)
+            progressNavigationState(navState.selectedKey)
             return true
         }
 
-        navState = TabsNavState(nextSelectedFragment.requireScreenKey, navState.provenance + 1)
+        progressNavigationState(nextSelectedFragment.requireScreenKey)
         requireFragmentManager
             .createTransactionWithReordering()
             .let {
@@ -332,6 +341,13 @@ internal class TabsContainer(
             }.commitNowAllowingStateLoss()
 
         return true
+    }
+
+    private fun progressNavigationState(selectedKey: String) {
+        navState = TabsNavState(selectedKey, navState.provenance + 1)
+        if (!isInExternalOperationContext) {
+            lastUINavState = navState
+        }
     }
 
     private fun onMenuItemSelected(item: MenuItem): Boolean {
@@ -522,7 +538,10 @@ internal class TabsContainer(
         fragmentManager = null
     }
 
-    private fun isNavStateStale(state: TabsNavState): Boolean = state.provenance <= navState.provenance
+    private fun isNavStateStale(state: TabsNavState): Boolean {
+        if (navState.isEmpty() || lastUINavState.isEmpty()) return false
+        return state.provenance < lastUINavState.provenance
+    }
 
     companion object {
         const val TAG = "TabsContainer"

@@ -39,4 +39,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+typedef NS_ENUM(NSInteger, RNSTabsNavigationStateUpdateSource) {
+  RNSTabsNavigationStateUpdateSourceUser = 0,
+  RNSTabsNavigationStateUpdateSourceExternal
+};
+
+typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
+  RNSTabsNavigationStateRejectionReasonOther = 0,
+  RNSTabsNavigationStateRejectionReasonStale,
+  RNSTabsNavigationStateRejectionReasonRepeated,
+  RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable
+};
+
 NS_ASSUME_NONNULL_END

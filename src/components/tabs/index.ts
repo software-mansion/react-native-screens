@@ -5,6 +5,7 @@ export type {
   TabsHostNavState,
   TabSelectedEvent,
   TabSelectionRejectedEvent,
+  TabSelectionRejectionReason,
   TabsHostColorScheme,
   TabsHostDirection,
   TabsHostNativeContainerStyleProps,

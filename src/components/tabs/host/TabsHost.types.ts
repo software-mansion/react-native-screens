@@ -48,11 +48,18 @@ export type TabSelectedEvent = {
   isNativeAction: boolean;
 };
 
+export type TabSelectionRejectionReason =
+  | 'other'
+  | 'stale'
+  | 'repeated'
+  | 'more-tab-not-available';
+
 export type TabSelectionRejectedEvent = {
   selectedScreenKey: string;
   provenance: number;
   rejectedScreenKey: string;
   rejectedProvenance: number;
+  rejectionReason: TabSelectionRejectionReason;
 };
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';

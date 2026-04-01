@@ -618,12 +618,14 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
     rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
              currentState:(nonnull RNSTabsNavigationState *)currentNavState
+               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
 {
   RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
   RCTAssert(rejectedNavState.selectedScreenKey != nil, @"[RNScreens] Rejected state screenKey MUST NOT be nil");
 
-  [self.reactEventEmitter
-      emitOnTabSelectionRejected:{.currentNavState = currentNavState, .rejectedNavState = rejectedNavState}];
+  [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
+                                                      .rejectedNavState = rejectedNavState,
+                                                      .rejectionReason = reasonCode}];
 }
 
 @end

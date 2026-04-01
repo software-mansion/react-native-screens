@@ -11,5 +11,6 @@ internal interface TabsContainerDelegate {
     fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
         rejectedNavState: TabsNavState,
+        reason: TabsNavStateUpdateRejectionReason
     )
 }
