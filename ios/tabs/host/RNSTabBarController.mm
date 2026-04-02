@@ -1,6 +1,8 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import <objc/message.h>
+#import <objc/runtime.h>
 #import "NSString+RNSUtility.h"
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
@@ -18,6 +20,46 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 // We need this to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UINavigationControllerDelegate>
 @end
+
+// We need this to handle navigation within `moreNavigationController`
+@interface RNSTabBarController ()
+
+/// Consulted by the ISA-swizzled `pushViewController:animated:` on `moreNavigationController`
+/// to decide whether a push should proceed.
+- (BOOL)moreNavigationController:(UINavigationController *)navigationController
+        shouldPushViewController:(UIViewController *)viewController;
+
+@end
+
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+/**
+ * Key used to store a weak (ASSIGN) reference back to the owning RNSTabBarController
+ * as an associated object on the moreNavigationController instance.
+ */
+static const void *kRNSTabBarControllerAssociationKey = &kRNSTabBarControllerAssociationKey;
+
+/**
+ * Replacement implementation for `pushViewController:animated:` injected into
+ * a dynamic subclass of `UIMoreNavigationController` via ISA-swizzle.
+ *
+ * Before allowing the push, this function consults the owning `RNSTabBarController`
+ * to check whether the push should be prevented (e.g. due to `preventNativeSelection`).
+ */
+static void
+rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
+{
+  RNSTabBarController *tabBarController = objc_getAssociatedObject(self, kRNSTabBarControllerAssociationKey);
+
+  if ([tabBarController moreNavigationController:self shouldPushViewController:viewController]) {
+    struct objc_super superInfo = {
+        .receiver = self,
+        .super_class = class_getSuperclass(object_getClass(self)),
+    };
+    ((void (*)(struct objc_super *, SEL, UIViewController *, BOOL))objc_msgSendSuper)(
+        &superInfo, _cmd, viewController, animated);
+  }
+}
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
@@ -569,12 +611,12 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   }
 
   RCTAssert(
-      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      [viewController isKindOfClass:RNSTabsScreenViewController.class],
       @"[RNScreens] Expected selected view controller to be of class %@, got: %@",
       RNSTabsScreenViewController.class,
-      self.selectedViewController.class);
+      viewController.class);
 
-  auto *screenKey = static_cast<RNSTabsScreenViewController *>(self.selectedViewController).getScreenKeyOrNull;
+  auto *screenKey = static_cast<RNSTabsScreenViewController *>(viewController).getScreenKeyOrNull;
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
   return screenKey;
 }
@@ -684,8 +726,88 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   if (self.moreNavigationController.delegate == nil) {
     self.moreNavigationController.delegate = self;
+    [self installPushInterceptorOnMoreNavigationController];
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+/// Creates a dynamic subclass of the runtime class of `moreNavigationController`
+/// (which is the private `UIMoreNavigationController`) and overrides `pushViewController:animated:`
+/// with our gating implementation. The dynamic subclass is created once and reused.
+- (void)installPushInterceptorOnMoreNavigationController
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  static const char *kDynamicSubclassName = "RNS_UIMoreNavigationController";
+  Class dynamicSubclass = objc_getClass(kDynamicSubclassName);
+
+  if (dynamicSubclass == nil) {
+    Class originalClass = object_getClass(self.moreNavigationController);
+    dynamicSubclass = objc_allocateClassPair(originalClass, kDynamicSubclassName, 0);
+    RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %@", originalClass);
+
+    Method pushMethod = class_getInstanceMethod(originalClass, @selector(pushViewController:animated:));
+    class_addMethod(
+        dynamicSubclass,
+        @selector(pushViewController:animated:),
+        (IMP)rns_pushViewController,
+        method_getTypeEncoding(pushMethod));
+
+    objc_registerClassPair(dynamicSubclass);
+  }
+
+  object_setClass(self.moreNavigationController, dynamicSubclass);
+
+  // Store a back-reference so the C function can reach this controller.
+  // OBJC_ASSOCIATION_ASSIGN: no retain cycle — self owns moreNavigationController and outlives it.
+  objc_setAssociatedObject(
+      self.moreNavigationController, kRNSTabBarControllerAssociationKey, self, OBJC_ASSOCIATION_ASSIGN);
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+/// Decides whether `moreNavigationController` should be allowed to push `viewController`.
+/// This mirrors the logic in `shouldPreventNativeTabSelection:` for the More list context.
+- (BOOL)moreNavigationController:(UINavigationController *)navigationController
+        shouldPushViewController:(UIViewController *)viewController
+{
+  BOOL shouldPrevent = [self shouldPreventNativeTabSelection:viewController];
+
+  if (shouldPrevent) {
+    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+    [self deselectMoreListSelectionInNavigationController:navigationController];
+  }
+
+  return !shouldPrevent;
+}
+
+/// When we prevent a push from the More list, the tapped table view cell stays highlighted
+/// because UIKit expects the push to handle deselection on return. We deselect it manually.
+- (void)deselectMoreListSelectionInNavigationController:(UINavigationController *)navigationController
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  UIViewController *topVC = navigationController.topViewController;
+  UITableView *tableView = [self findTableViewInView:topVC.view];
+
+  if (tableView != nil) {
+    NSIndexPath *selectedIndexPath = tableView.indexPathForSelectedRow;
+    if (selectedIndexPath != nil) {
+      [tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
+    }
+  }
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (nullable UITableView *)findTableViewInView:(UIView *)view
+{
+  if ([view isKindOfClass:UITableView.class]) {
+    return (UITableView *)view;
+  }
+  for (UIView *subview in view.subviews) {
+    UITableView *result = [self findTableViewInView:subview];
+    if (result != nil) {
+      return result;
+    }
+  }
+  return nil;
 }
 
 /**
