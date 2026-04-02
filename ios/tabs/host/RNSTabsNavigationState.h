@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
   /** The requested tab is already selected. */
   RNSTabsNavigationStateRejectionReasonRepeated,
   /** The iOS "More" navigation controller was requested but is not available. */
-  RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable
+  RNSTabsNavigationStateRejectionReasonMoreNavCtrlNotAvailable
 };
 
 NS_ASSUME_NONNULL_END

@@ -74,13 +74,13 @@ export type TabSelectedEvent = {
  *   meaning a newer state has already been applied. Only reported when
  *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
  * - `repeated` — the requested tab is already selected.
- * - `more-tab-not-available` — the iOS "More" navigation controller was requested
+ * - `more-nav-ctrl-not-available` — the iOS "More" navigation controller was requested
  *   but is not available in the current configuration.
  */
 export type TabSelectionRejectionReason =
   | 'stale'
   | 'repeated'
-  | 'more-tab-not-available';
+  | 'more-nav-ctrl-not-available';
 
 /**
  * @summary Payload of the event emitted when the native side rejects a tab selection request.

@@ -228,8 +228,8 @@ RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReaso
       return Stale;
     case RNSTabsNavigationStateRejectionReasonRepeated:
       return Repeated;
-    case RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable:
-      return MoreTabNotAvailable;
+    case RNSTabsNavigationStateRejectionReasonMoreNavCtrlNotAvailable:
+      return MoreNavCtrlNotAvailable;
     default:
       return Stale;
   }

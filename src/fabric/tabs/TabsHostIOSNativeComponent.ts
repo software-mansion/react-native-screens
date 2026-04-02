@@ -23,7 +23,7 @@ type TabSelectionRejectedEvent = Readonly<{
   provenance: CT.Int32;
   rejectedScreenKey: string;
   rejectedProvenance: CT.Int32;
-  rejectionReason: 'stale' | 'repeated' | 'more-tab-not-available';
+  rejectionReason: 'stale' | 'repeated' | 'more-nav-ctrl-not-available';
 }>;
 
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';

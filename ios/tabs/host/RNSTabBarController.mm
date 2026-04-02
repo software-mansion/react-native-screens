@@ -375,7 +375,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
       [self.tabsHostComponentView tabBarController:self
                              rejectedStateUpdateTo:_pendingOperation
                                       currentState:_navigationState
-                                        withReason:RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable];
+                                        withReason:RNSTabsNavigationStateRejectionReasonMoreNavCtrlNotAvailable];
       return;
     }
     nextSelectedViewController = [self resolveMoreNavigationController];
