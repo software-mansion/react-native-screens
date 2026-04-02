@@ -189,7 +189,6 @@ RNS_IGNORE_SUPER_CALL_END
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
 }
 
-// Used by Fabric
 - (void)invalidate
 {
   [self invalidateUIBarButtonItem];
