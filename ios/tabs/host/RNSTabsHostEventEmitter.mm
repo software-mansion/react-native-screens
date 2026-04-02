@@ -4,6 +4,7 @@
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
+#import "RNSConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -45,6 +46,25 @@ namespace react = facebook::react;
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnTabSelected event emission due to nullish emitter");
+    return NO;
+  }
+}
+
+- (BOOL)emitOnTabSelectionRejected:(OnTabSelectionRejectedPayload)payload
+{
+  if (_reactEventEmitter != nullptr) {
+    auto convertedReason =
+        rnscreens::conversion::RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+            payload.rejectionReason);
+    _reactEventEmitter->onTabSelectionRejected(
+        {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
+         .provenance = payload.currentNavState.provenance,
+         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedNavState.selectedScreenKey),
+         .rejectedProvenance = payload.rejectedNavState.provenance,
+         .rejectionReason = convertedReason});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnTabSelectionRejected event emission due to nullish emitter");
     return NO;
   }
 }

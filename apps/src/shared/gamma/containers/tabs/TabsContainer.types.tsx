@@ -89,8 +89,12 @@ export type TabsContainerProps = Omit<
 > & {
   routeConfigs: TabRouteConfig[];
   /**
+   * @summary 
    * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
+   *
+   * @description
+   * It MUST NOT be the `SCREEN_KEY_MORE_NAV_CTRL`.
    */
   defaultRouteName?: string;
   /**

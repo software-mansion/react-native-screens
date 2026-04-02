@@ -10,6 +10,7 @@ import TestTabsLayoutDirection from './test-tabs-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
+import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -22,6 +23,7 @@ const scenarios = {
   TestTabsIMEInsets,
   TestTabsSimpleNav,
   TestTabsMoreNavigationController,
+  TestTabsStaleStateUpdateRejection,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
