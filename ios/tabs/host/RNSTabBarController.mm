@@ -70,6 +70,10 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
   RNSTabsNavigationState *_Nullable _pendingOperation;
 
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  BOOL _didInstallPushInterceptor;
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -100,6 +104,19 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     _tabsHostComponentView = tabsHostComponentView;
   }
   return self;
+}
+
+- (void)dealloc
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  // Clear the OBJC_ASSOCIATION_ASSIGN back-reference to self stored on moreNavigationController.
+  // This is a safety measure — moreNavigationController should never outlive us, but if it ever does
+  // (e.g. due to UIKit lifecycle changes), we avoid leaving a dangling pointer behind.
+  if (_didInstallPushInterceptor) {
+    objc_setAssociatedObject(
+        self.moreNavigationController, kRNSTabBarControllerAssociationKey, nil, OBJC_ASSOCIATION_ASSIGN);
+  }
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 #pragma mark - UIKit callbacks
@@ -278,11 +295,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
 - (BOOL)shouldPreventNativeTabSelection:(nonnull UIViewController *)nextViewController
 {
-  // This handles the tabsHostComponentView nullability
-  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
-    return YES;
-  }
-
   if (![nextViewController isKindOfClass:RNSTabsScreenViewController.class]) {
     // Allow for more view controller selection
     return NO;
@@ -321,6 +333,13 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
     [self userDidRepeatViewControllerSelection:viewController];
 
+    return NO;
+  }
+
+  // This handles the tabsHostComponentView nullability
+  // TODO: This if is likely to be removed, since we want to roll back the support
+  // for "controlled mode", at least initially.
+  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
     return NO;
   }
 
@@ -729,17 +748,30 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
 /// Creates a dynamic subclass of the runtime class of `moreNavigationController`
 /// (which is the private `UIMoreNavigationController`) and overrides `pushViewController:animated:`
-/// with our gating implementation. The dynamic subclass is created once and reused.
+/// with our gating implementation.
+///
+/// The subclass name is derived from the actual runtime class of `moreNavigationController`
+/// (e.g. `RNS_UIMoreNavigationController`), so if another library ISA-swizzles it first or Apple
+/// changes the private class, each distinct original class gets its own correct dynamic subclass.
 - (void)installPushInterceptorOnMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  static const char *kDynamicSubclassName = "RNS_UIMoreNavigationController";
-  Class dynamicSubclass = objc_getClass(kDynamicSubclassName);
+  RCTAssert(
+      _didInstallPushInterceptor == NO,
+      @"[RNScreens] installPushInterceptorOnMoreNavigationController MUST NOT be called twice");
+
+  Class originalClass = object_getClass(self.moreNavigationController);
+  const char *originalClassName = class_getName(originalClass);
+
+  // Build a unique subclass name per original runtime class: "RNS_<originalClassName>"
+  char dynamicSubclassName[256];
+  snprintf(dynamicSubclassName, sizeof(dynamicSubclassName), "RNS_%s", originalClassName);
+
+  Class dynamicSubclass = objc_getClass(dynamicSubclassName);
 
   if (dynamicSubclass == nil) {
-    Class originalClass = object_getClass(self.moreNavigationController);
-    dynamicSubclass = objc_allocateClassPair(originalClass, kDynamicSubclassName, 0);
-    RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %@", originalClass);
+    dynamicSubclass = objc_allocateClassPair(originalClass, dynamicSubclassName, 0);
+    RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %s", originalClassName);
 
     Method pushMethod = class_getInstanceMethod(originalClass, @selector(pushViewController:animated:));
     class_addMethod(
@@ -757,6 +789,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   // OBJC_ASSOCIATION_ASSIGN: no retain cycle — self owns moreNavigationController and outlives it.
   objc_setAssociatedObject(
       self.moreNavigationController, kRNSTabBarControllerAssociationKey, self, OBJC_ASSOCIATION_ASSIGN);
+  _didInstallPushInterceptor = YES;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
