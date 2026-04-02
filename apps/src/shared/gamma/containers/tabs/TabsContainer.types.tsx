@@ -50,7 +50,7 @@ export type TabsContainerState = {
   suggestedState: TabsNavState;
 };
 
-/// Navigation actions
+/// Navigation actions (reducer)
 
 export type TabsNavigationActionSelectTab = {
   type: 'tab-select';
@@ -110,3 +110,10 @@ export type SetTabOptionsMethod = (
 ) => void;
 
 export type SelectTabMethod = (routeKey: string) => void;
+
+/// Navigation methods (user facing)
+
+export type TabsNavigationMethods = {
+  setRouteOptions: SetTabOptionsMethod;
+  selectTab: SelectTabMethod;
+}
