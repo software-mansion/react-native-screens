@@ -118,16 +118,14 @@ open class CustomToolbar(
     }
 
     private fun applyDecorViewTopInsetIfNeeded() {
-        if (config.legacyTopInsetBehavior || !config.consumeTopInset) return
+        if (config.legacyTopInsetBehavior || !config.consumeTopInset || insetsAppliedFromListener) return
 
         val activity = (context as? ThemedReactContext)?.currentActivity ?: return
         val decorView = activity.window.decorView
         val topInset = getDecorViewTopInset(decorView)
 
         if (topInset > 0) {
-            if (!insetsAppliedFromListener) {
-                applyExactPadding(paddingLeft, topInset, paddingRight, paddingBottom)
-            }
+            applyExactPadding(paddingLeft, topInset, paddingRight, paddingBottom)
         }
     }
 
