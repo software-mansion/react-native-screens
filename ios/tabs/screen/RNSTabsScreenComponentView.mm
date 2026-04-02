@@ -348,6 +348,10 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
 
+  if (newComponentProps.preventNativeSelection != oldComponentProps.preventNativeSelection) {
+    _preventNativeSelection = newComponentProps.preventNativeSelection;
+  }
+
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=
       oldComponentProps.overrideScrollViewContentInsetAdjustmentBehavior) {
     _overrideScrollViewContentInsetAdjustmentBehavior =
