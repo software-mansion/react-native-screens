@@ -57,6 +57,8 @@ function TabsNavigationButtons() {
       <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
       <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
       <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
+      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')} />
+      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')} />
     </View>
   );
 }
@@ -81,6 +83,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'Fourth',
     Component: ContentView,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
+  },
+  {
+    name: 'Fifth',
+    Component: ContentView,
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
+  },
+  {
+    name: 'Sixth',
+    Component: ContentView,
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
   },
 ];
 
