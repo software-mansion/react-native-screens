@@ -5,7 +5,6 @@ import StackHeaderConfig from './header/StackHeaderConfig';
 export * from './StackHost.types';
 export * from './StackScreen.types';
 export * from './header/StackHeaderConfig.types';
-export * from './header/StackHeaderSubview.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
