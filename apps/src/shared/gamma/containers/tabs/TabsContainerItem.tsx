@@ -1,17 +1,11 @@
 import React from 'react';
 import { Tabs } from "react-native-screens";
-import type { TabRoute, TabRouteConfig, TabsNavigationMethods } from './TabsContainer.types';
+import type { TabRouteConfig } from './TabsContainer.types';
+import type { TabsContainerItemProps } from './TabsContainerItem.types';
 import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental';
 import { Platform } from 'react-native';
 import { TabsNavigationContext } from './contexts/TabsNavigationContext';
 import { RNSLog } from 'react-native-screens/private';
-
-export type TabsContainerItemProps = {
-  route: TabRoute;
-  navMethods: TabsNavigationMethods;
-  isSelected: boolean;
-  pendingForUpdate: boolean;
-}
 
 export const TabsContainerItem = React.memo(TabsContainerItemImpl);
 
