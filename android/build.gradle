@@ -30,14 +30,6 @@ def isRunningInContextOfScreensRepo() {
     return project == rootProject
 }
 
-def isNewArchitectureEnabled() {
-    // To opt-in for the New Architecture, you can either:
-    // - Set `newArchEnabled` to true inside the `gradle.properties` file
-    // - Invoke gradle with `-newArchEnabled=true`
-    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
-    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
-}
-
 def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
 }
@@ -90,9 +82,7 @@ if (isRunningInContextOfScreensRepo()) {
     apply from: 'spotless.gradle'
 }
 
-if (isNewArchitectureEnabled()) {
-    apply plugin: "com.facebook.react"
-}
+apply plugin: "com.facebook.react"
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -114,8 +104,6 @@ file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { rea
 def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
 def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
 
-def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
-
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
     namespace "com.swmansion.rnscreens"
@@ -134,7 +122,6 @@ android {
         targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
         buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
@@ -143,7 +130,6 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared",
-                        "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}",
                         "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
             }
         }

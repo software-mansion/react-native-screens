@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.9.0)
 
 project(rnscreens)
 
-if(${RNS_NEW_ARCH_ENABLED})
 add_library(rnscreens
     SHARED
     ../cpp/RNScreensTurboModule.cpp
@@ -11,13 +10,6 @@ add_library(rnscreens
     ./src/main/cpp/NativeProxy.cpp
     ./src/main/cpp/OnLoad.cpp
 )
-else()
-add_library(rnscreens
-    SHARED
-    ../cpp/RNScreensTurboModule.cpp
-    ./src/main/cpp/jni-adapter.cpp
-)
-endif()
 
 include_directories(
     ../cpp
@@ -37,18 +29,11 @@ target_compile_definitions(
 )
 
 find_package(ReactAndroid REQUIRED CONFIG)
+find_package(fbjni REQUIRED CONFIG)
 
-if(${RNS_NEW_ARCH_ENABLED})
-    find_package(fbjni REQUIRED CONFIG)
-    target_link_libraries(rnscreens
-        ReactAndroid::reactnative
-        ReactAndroid::jsi
-        fbjni::fbjni
-        android
-    )
-else()
-    target_link_libraries(rnscreens
-        ReactAndroid::jsi
-        android
-    )
-endif()
+target_link_libraries(rnscreens
+    ReactAndroid::reactnative
+    ReactAndroid::jsi
+    fbjni::fbjni
+    android
+)
