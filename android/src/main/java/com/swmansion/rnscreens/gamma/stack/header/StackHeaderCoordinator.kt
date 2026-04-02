@@ -33,17 +33,17 @@ internal class StackHeaderCoordinator(
         )
 
     private var appBarLayout: StackHeaderAppBarLayout? = null
-    private var currentHeaderTypeOrNull: StackHeaderType? = null
     private var currentConfig: StackHeaderConfigProviding? = null
 
+    // Cached values used by requiresRebuild() to detect when the header
+    // hierarchy needs to be torn down and recreated.
+    private var lastHeaderType: StackHeaderType? = null
+    private var lastHidden: Boolean = false
+    private var lastTransparent: Boolean = false
     private var attachedLeadingSubview: StackHeaderSubviewProviding? = null
     private var attachedCenterSubview: StackHeaderSubviewProviding? = null
     private var attachedTrailingSubview: StackHeaderSubviewProviding? = null
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
-
-    // Width snapshots for collapsing header rebuild detection.
-    // CollapsingToolbarLayout can't resize custom views at runtime,
-    // so we must rebuild the hierarchy when toolbar subview widths change.
     private var lastLeadingSubviewWidth: Int? = null
     private var lastTrailingSubviewWidth: Int? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
@@ -81,7 +81,6 @@ internal class StackHeaderCoordinator(
             rebuild(coordinatorLayout, config)
         }
         applyProps(config)
-        applyContentBehavior(coordinatorLayout, config)
     }
 
     private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
@@ -93,8 +92,9 @@ internal class StackHeaderCoordinator(
     // region Rebuild detection
 
     private fun requiresRebuild(config: StackHeaderConfigProviding): Boolean {
-        val desiredTypeOrNull = if (config.hidden) null else config.type
-        if (desiredTypeOrNull != currentHeaderTypeOrNull) return true
+        if (config.type != lastHeaderType) return true
+        if (config.hidden != lastHidden) return true
+        if (config.transparent != lastTransparent) return true
         if (config.leadingSubview !== attachedLeadingSubview) return true
         if (config.centerSubview !== attachedCenterSubview) return true
         if (config.trailingSubview !== attachedTrailingSubview) return true
@@ -109,12 +109,6 @@ internal class StackHeaderCoordinator(
         return false
     }
 
-    private fun snapshotSubviewProperties(config: StackHeaderConfigProviding) {
-        lastLeadingSubviewWidth = config.leadingSubview?.view?.width
-        lastTrailingSubviewWidth = config.trailingSubview?.view?.width
-        lastBackgroundSubviewCollapseMode = config.backgroundSubview?.collapseMode
-    }
-
     // endregion
 
     // region Full rebuild
@@ -125,26 +119,26 @@ internal class StackHeaderCoordinator(
     ) {
         teardown(coordinatorLayout)
 
-        val desiredTypeOrNull = if (config.hidden) null else config.type
-
-        if (desiredTypeOrNull != null) {
-            val appBar = StackHeaderAppBarLayout.create(wrappedContext, desiredTypeOrNull)
+        if (!config.hidden) {
+            val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
             appBarLayout = appBar
-            coordinatorLayout.addView(appBar, 0)
+
+            if (config.transparent) {
+                removeContentBehavior(coordinatorLayout)
+                coordinatorLayout.addView(appBar)
+            } else {
+                coordinatorLayout.addView(appBar, 0)
+                setContentBehavior(coordinatorLayout)
+            }
+
             appBar.requestApplyInsets()
-
             maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
-
             populateAppBar(appBar, config)
+        } else {
+            removeContentBehavior(coordinatorLayout)
         }
 
-        currentHeaderTypeOrNull = desiredTypeOrNull
-        attachedLeadingSubview = config.leadingSubview
-        attachedCenterSubview = config.centerSubview
-        attachedTrailingSubview = config.trailingSubview
-        attachedBackgroundSubview = config.backgroundSubview
-        snapshotSubviewProperties(config)
-
+        cacheRebuildTriggers(config)
         shouldRequestLayout = true
     }
 
@@ -153,11 +147,33 @@ internal class StackHeaderCoordinator(
         appBarLayout?.let { coordinatorLayout.removeView(it) }
         appBarLayout = null
         managedTitleView = null
-        currentHeaderTypeOrNull = null
+        clearCachedRebuildTriggers()
+    }
+
+    private fun cacheRebuildTriggers(config: StackHeaderConfigProviding) {
+        lastHeaderType = config.type
+        lastHidden = config.hidden
+        lastTransparent = config.transparent
+        attachedLeadingSubview = config.leadingSubview
+        attachedCenterSubview = config.centerSubview
+        attachedTrailingSubview = config.trailingSubview
+        attachedBackgroundSubview = config.backgroundSubview
+        lastLeadingSubviewWidth = config.leadingSubview?.view?.width
+        lastTrailingSubviewWidth = config.trailingSubview?.view?.width
+        lastBackgroundSubviewCollapseMode = config.backgroundSubview?.collapseMode
+    }
+
+    private fun clearCachedRebuildTriggers() {
+        lastHeaderType = null
+        lastHidden = false
+        lastTransparent = false
         attachedLeadingSubview = null
         attachedCenterSubview = null
         attachedTrailingSubview = null
         attachedBackgroundSubview = null
+        lastLeadingSubviewWidth = null
+        lastTrailingSubviewWidth = null
+        lastBackgroundSubviewCollapseMode = null
     }
 
     private fun detachSubviews() {
@@ -322,18 +338,6 @@ internal class StackHeaderCoordinator(
     // endregion
 
     // region Content behavior
-
-    private fun applyContentBehavior(
-        coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigProviding,
-    ) {
-        val needsBehavior = appBarLayout != null && !config.transparent && !config.hidden
-        if (needsBehavior) {
-            setContentBehavior(coordinatorLayout)
-        } else {
-            removeContentBehavior(coordinatorLayout)
-        }
-    }
 
     private fun setContentBehavior(coordinatorLayout: StackHeaderCoordinatorLayout) {
         val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
