@@ -1,17 +1,11 @@
 #pragma once
 
 #import <React/RCTViewManager.h>
+#import "RNSReactBaseView.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTInvalidating.h>
-#import <React/RCTView.h>
-#endif
-
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 @interface RNSFullWindowOverlayManager : RCTViewManager
 
@@ -21,18 +15,13 @@ namespace react = facebook::react;
 
 @end
 
-@interface RNSFullWindowOverlay :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
-#else
-    RCTView <RCTInvalidating>
-#endif // RCT_NEW_ARCH_ENABLED
+@interface RNSFullWindowOverlay : RNSReactBaseView
 
 @property (nonatomic) BOOL accessibilityContainerViewIsModal;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 @end

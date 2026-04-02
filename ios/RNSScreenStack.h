@@ -1,12 +1,6 @@
 #pragma once
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTUIManagerObserverCoordinator.h>
-#import <React/RCTViewManager.h>
-#endif
-
+#import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
@@ -27,12 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenStackView :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <RNSScreenContainerDelegate>
-#else
-    UIView <RNSScreenContainerDelegate, RCTInvalidating>
-#endif
+@interface RNSScreenStackView : RNSReactBaseView <RNSScreenContainerDelegate>
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
@@ -45,11 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
 @property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedModals;
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-@property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
@@ -65,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
+@interface RNSScreenStackManager : RCTViewManager
 
 @end
 
