@@ -83,7 +83,7 @@ function getSubviewDimensions(size: SubviewSize): {
     case 'sm':
       return { width: 24, height: 24 };
     case 'md':
-      return { width: 40, height: 40 };
+      return { width: 24, height: 40 };
     case 'lg':
       return { width: 80, height: 40 };
     default:

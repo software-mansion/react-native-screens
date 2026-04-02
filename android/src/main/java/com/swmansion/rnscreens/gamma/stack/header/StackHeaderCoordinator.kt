@@ -44,8 +44,9 @@ internal class StackHeaderCoordinator(
     private var attachedCenterSubview: StackHeaderSubviewProviding? = null
     private var attachedTrailingSubview: StackHeaderSubviewProviding? = null
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
-    private var lastLeadingSubviewWidth: Int? = null
-    private var lastTrailingSubviewWidth: Int? = null
+    private var lastLeadingSubviewSize: Pair<Int, Int>? = null
+    private var lastCenterSubviewSize: Pair<Int, Int>? = null
+    private var lastTrailingSubviewSize: Pair<Int, Int>? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
     // For small header, we need to use custom title view in order to
@@ -100,9 +101,11 @@ internal class StackHeaderCoordinator(
         if (config.trailingSubview !== attachedTrailingSubview) return true
         if (config.backgroundSubview !== attachedBackgroundSubview) return true
 
+        if (config.leadingSubview?.viewSize != lastLeadingSubviewSize) return true
+        if (config.centerSubview?.viewSize != lastCenterSubviewSize) return true
+        if (config.trailingSubview?.viewSize != lastTrailingSubviewSize) return true
+
         if (appBarLayout is StackHeaderAppBarLayout.Collapsing) {
-            if (config.leadingSubview?.view?.width != lastLeadingSubviewWidth) return true
-            if (config.trailingSubview?.view?.width != lastTrailingSubviewWidth) return true
             if (config.backgroundSubview?.collapseMode != lastBackgroundSubviewCollapseMode) return true
         }
 
@@ -158,8 +161,9 @@ internal class StackHeaderCoordinator(
         attachedCenterSubview = config.centerSubview
         attachedTrailingSubview = config.trailingSubview
         attachedBackgroundSubview = config.backgroundSubview
-        lastLeadingSubviewWidth = config.leadingSubview?.view?.width
-        lastTrailingSubviewWidth = config.trailingSubview?.view?.width
+        lastLeadingSubviewSize = config.leadingSubview?.viewSize
+        lastCenterSubviewSize = config.centerSubview?.viewSize
+        lastTrailingSubviewSize = config.trailingSubview?.viewSize
         lastBackgroundSubviewCollapseMode = config.backgroundSubview?.collapseMode
     }
 
@@ -171,8 +175,9 @@ internal class StackHeaderCoordinator(
         attachedCenterSubview = null
         attachedTrailingSubview = null
         attachedBackgroundSubview = null
-        lastLeadingSubviewWidth = null
-        lastTrailingSubviewWidth = null
+        lastLeadingSubviewSize = null
+        lastCenterSubviewSize = null
+        lastTrailingSubviewSize = null
         lastBackgroundSubviewCollapseMode = null
     }
 
@@ -490,3 +495,6 @@ internal class StackHeaderCoordinator(
         private const val TAG = "StackHeaderCoordinator"
     }
 }
+
+private val StackHeaderSubviewProviding.viewSize: Pair<Int, Int>
+    get() = view.width to view.height

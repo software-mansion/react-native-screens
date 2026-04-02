@@ -39,7 +39,7 @@ class StackHeaderSubview(
 
     internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
 
-    private var lastNotifiedWidth: Int = 0
+    private var lastNotifiedSize: Pair<Int, Int>? = null
 
     override fun onLayout(
         changed: Boolean,
@@ -49,9 +49,9 @@ class StackHeaderSubview(
         bottom: Int,
     ) {
         super.onLayout(changed, left, top, right, bottom)
-        val newWidth = right - left
-        if (newWidth != lastNotifiedWidth) {
-            lastNotifiedWidth = newWidth
+        val newSize = (right - left) to (bottom - top)
+        if (lastNotifiedSize != newSize) {
+            lastNotifiedSize = newSize
             onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
         }
     }
