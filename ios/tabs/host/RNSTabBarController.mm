@@ -265,7 +265,14 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
     return NO;
   }
 
-  return ![self shouldPreventNativeTabSelection];
+  BOOL shouldPreventTabSelection = [self shouldPreventNativeTabSelection:viewController];
+
+  if (shouldPreventTabSelection) {
+    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
+    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+  }
+
+  return !shouldPreventTabSelection;
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -307,10 +314,25 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (BOOL)shouldPreventNativeTabSelection
+- (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
+{
+  [self.tabsHostComponentView tabBarController:self preventedSelectionOf:screenKey currentState:_navigationState];
+}
+
+- (BOOL)shouldPreventNativeTabSelection:(nonnull UIViewController *)nextViewController
 {
   // This handles the tabsHostComponentView nullability
-  return [self.tabsHostComponentView experimental_controlNavigationStateInJS] ?: NO;
+  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
+    return YES;
+  }
+
+  if (![nextViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    // Allow for more view controller selection
+    return NO;
+  }
+
+  auto *screenViewController = static_cast<RNSTabsScreenViewController *>(nextViewController);
+  return screenViewController.isPreventNativeSelectionEnabled;
 }
 
 #pragma mark - Signals related
@@ -540,9 +562,9 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
 }
 
-- (nonnull NSString *)screenKeyForSelectedViewController
+- (nonnull NSString *)screenKeyForViewController:(nonnull UIViewController *)viewController
 {
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+  if ([self isViewControllerTheMoreNavigationController:viewController]) {
     return kMoreNavigationControllerScreenKey;
   }
 
@@ -555,6 +577,11 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   auto *screenKey = static_cast<RNSTabsScreenViewController *>(self.selectedViewController).getScreenKeyOrNull;
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
   return screenKey;
+}
+
+- (nonnull NSString *)screenKeyForSelectedViewController
+{
+  return [self screenKeyForViewController:self.selectedViewController];
 }
 
 /**
@@ -593,13 +620,18 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   return [screenKey isEqualToString:kMoreNavigationControllerScreenKey];
 }
 
-- (BOOL)isSelectedViewControllerTheMoreNavigationController
+- (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  return [self canHaveMoreNavigationController] && self.selectedViewController == self.moreNavigationController;
+  return [self canHaveMoreNavigationController] && viewController == self.moreNavigationController;
 #else
   return NO;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (BOOL)isSelectedViewControllerTheMoreNavigationController
+{
+  return [self isViewControllerTheMoreNavigationController:self.selectedViewController];
 }
 
 - (BOOL)isMoreNavigationControllerRequestedByOperation:(nullable RNSTabsNavigationState *)navState

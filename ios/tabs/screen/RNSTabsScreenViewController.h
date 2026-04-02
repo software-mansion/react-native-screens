@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSTabBarController;
+
 @interface RNSTabsScreenViewController : UIViewController
 #if !TARGET_OS_TV
                                          <RNSOrientationProviding>
@@ -17,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
-
-- (nullable NSString *)getScreenKeyOrNull;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
@@ -47,6 +47,14 @@ NS_ASSUME_NONNULL_BEGIN
  * already changed (to other delegate or nil), this method does nothing.
  */
 - (void)clearTabsSpecialEffectsDelegateIfNeeded:(nonnull id<RNSTabsSpecialEffectsSupporting>)delegate;
+
+@end
+
+@interface RNSTabsScreenViewController (ScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull;
+
+- (BOOL)isPreventNativeSelectionEnabled;
 
 @end
 

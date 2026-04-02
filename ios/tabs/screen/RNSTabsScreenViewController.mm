@@ -6,11 +6,6 @@
 
 @implementation RNSTabsScreenViewController
 
-- (nullable NSString *)getScreenKeyOrNull
-{
-  return self.tabScreenComponentView.screenKey;
-}
-
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *_Nullable>(self.tabBarController);
@@ -124,5 +119,19 @@
 }
 
 #endif // !TARGET_OS_TV
+
+@end
+
+@implementation RNSTabsScreenViewController (ScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull
+{
+  return self.tabScreenComponentView.screenKey;
+}
+
+- (BOOL)isPreventNativeSelectionEnabled
+{
+  return self.tabScreenComponentView.preventNativeSelection;
+}
 
 @end
