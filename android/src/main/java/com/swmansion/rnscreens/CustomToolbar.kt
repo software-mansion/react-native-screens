@@ -107,7 +107,7 @@ open class CustomToolbar(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        applyDecorViewTopInset()
+        applyDecorViewTopInsetIfNeeded()
     }
 
     override fun onDetachedFromWindow() {
@@ -117,7 +117,7 @@ open class CustomToolbar(
         clearPaddingIfNeeded()
     }
 
-    private fun applyDecorViewTopInset() {
+    private fun applyDecorViewTopInsetIfNeeded() {
         if (config.legacyTopInsetBehavior || !config.consumeTopInset) return
 
         val activity = (context as? ThemedReactContext)?.currentActivity ?: return
