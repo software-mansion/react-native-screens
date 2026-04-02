@@ -179,17 +179,45 @@ internal class StackHeaderCoordinator(
     private fun detachSubviews() {
         val appBar = appBarLayout ?: return
 
-        attachedLeadingSubview?.let { appBar.toolbar.removeView(it.view) }
-        attachedCenterSubview?.let { appBar.toolbar.removeView(it.view) }
-        attachedTrailingSubview?.let { appBar.toolbar.removeView(it.view) }
+        attachedLeadingSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
+        attachedCenterSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
+        attachedTrailingSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
 
         if (appBar is StackHeaderAppBarLayout.Collapsing) {
             attachedBackgroundSubview?.let {
-                val wrapper = it.view.parent as? FrameLayout
-                wrapper?.removeView(it.view)
-                appBar.collapsingToolbarLayout.removeView(wrapper)
+                unwrapAndRemoveFrom(it, appBar.collapsingToolbarLayout)
             }
         }
+    }
+
+    // endregion
+
+    // region Subview wrapping
+    //
+    // All subviews are wrapped in a FrameLayout before being added to the
+    // toolbar or collapsing toolbar layout. This ensures the React view has
+    // a relative offset of (0,0) within its native parent, matching what
+    // Yoga expects (it always thinks views are at origin).
+
+    private fun wrapSubview(
+        subview: StackHeaderSubviewProviding,
+        context: Context,
+        wrapperWidth: Int = WRAP_CONTENT,
+        wrapperHeight: Int = WRAP_CONTENT,
+    ): FrameLayout {
+        subview.view.detachFromCurrentParent()
+        return FrameLayout(context).apply {
+            addView(subview.view, FrameLayout.LayoutParams(wrapperWidth, wrapperHeight))
+        }
+    }
+
+    private fun unwrapAndRemoveFrom(
+        subview: StackHeaderSubviewProviding,
+        parent: android.view.ViewGroup,
+    ) {
+        val wrapper = subview.view.parent as? FrameLayout ?: return
+        wrapper.removeView(subview.view)
+        parent.removeView(wrapper)
     }
 
     // endregion
@@ -205,13 +233,13 @@ internal class StackHeaderCoordinator(
         // Toolbar measures children in insertion order. Leading and trailing go first so the
         // title/center gets the remaining space.
         config.leadingSubview?.let {
-            it.view.detachFromCurrentParent()
-            toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
+            val wrapper = wrapSubview(it, toolbar.context)
+            toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
         }
 
         config.trailingSubview?.let {
-            it.view.detachFromCurrentParent()
-            toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
+            val wrapper = wrapSubview(it, toolbar.context)
+            toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
         populateTitleOrCenter(appBar, toolbar, config)
@@ -229,8 +257,8 @@ internal class StackHeaderCoordinator(
                 toolbar.removeView(managedTitleView)
                 managedTitleView = null
 
-                centerSubview.view.detachFromCurrentParent()
-                toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
+                val wrapper = wrapSubview(centerSubview, toolbar.context)
+                toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
             } else {
                 Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
             }
@@ -254,20 +282,15 @@ internal class StackHeaderCoordinator(
             return
         }
 
-        backgroundSubview.view.detachFromCurrentParent()
-
         // Wrap in a FrameLayout so that CollapsingToolbarLayout's ViewOffsetHelper
         // attaches to the disposable wrapper, not the reused React view. This avoids
         // stale parallax offsets persisting across collapse mode rebuilds therefore allowing
         // runtime changes to this property.
         val wrapper =
-            FrameLayout(appBar.context).apply {
+            wrapSubview(backgroundSubview, appBar.context, MATCH_PARENT, MATCH_PARENT).apply {
+                // We're setting `fitsSystemWindows` so that the background renders behind status bar (edge-to-edge).
                 fitsSystemWindows = true
             }
-        wrapper.addView(
-            backgroundSubview.view,
-            FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT),
-        )
 
         appBar.collapsingToolbarLayout.addView(
             wrapper,
