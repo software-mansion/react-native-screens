@@ -57,10 +57,8 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateUpdateSource) {
 
 /** Reason why a navigation state update was rejected by the container. */
 typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
-  /** Unspecified reason. */
-  RNSTabsNavigationStateRejectionReasonOther = 0,
   /** The update's provenance is based on a stale state. */
-  RNSTabsNavigationStateRejectionReasonStale,
+  RNSTabsNavigationStateRejectionReasonStale = 0,
   /** The requested tab is already selected. */
   RNSTabsNavigationStateRejectionReasonRepeated,
   /** The iOS "More" navigation controller was requested but is not available. */

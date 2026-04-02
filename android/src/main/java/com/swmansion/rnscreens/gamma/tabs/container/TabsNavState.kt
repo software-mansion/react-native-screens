@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs.container
 
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.MORE_TAB_NOT_AVAILABLE
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.OTHER
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.REPEATED
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.STALE
 
@@ -29,14 +28,12 @@ data class TabsNavState(
 /**
  * Reason why a navigation state update was rejected by the container.
  *
- * - [OTHER] — unspecified reason.
  * - [STALE] — the update's provenance indicates that it is based on a stale state.
  * - [REPEATED] — the requested tab is already selected.
  * - [MORE_TAB_NOT_AVAILABLE] — the iOS "More" navigation controller was requested but is not available.
  *   This should not happen on Android.
  */
 enum class TabsNavStateUpdateRejectionReason {
-    OTHER,
     STALE,
     REPEATED,
     MORE_TAB_NOT_AVAILABLE,
@@ -44,7 +41,6 @@ enum class TabsNavStateUpdateRejectionReason {
 
     override fun toString(): String =
         when (this) {
-            OTHER -> "other"
             STALE -> "stale"
             REPEATED -> "repeated"
             MORE_TAB_NOT_AVAILABLE -> "more-tab-not-available"

@@ -70,7 +70,6 @@ export type TabSelectedEvent = {
 /**
  * @summary Reason why a tab selection request was rejected by the native side.
  *
- * - `other` — unspecified reason.
  * - `stale` — the update was based on a stale navigation state,
  *   meaning a newer state has already been applied. Only reported when
  *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
@@ -79,7 +78,6 @@ export type TabSelectedEvent = {
  *   but is not available in the current configuration.
  */
 export type TabSelectionRejectionReason =
-  | 'other'
   | 'stale'
   | 'repeated'
   | 'more-tab-not-available';

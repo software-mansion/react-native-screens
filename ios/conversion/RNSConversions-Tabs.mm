@@ -224,8 +224,6 @@ RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReaso
 {
   using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason;
   switch (reason) {
-    case RNSTabsNavigationStateRejectionReasonOther:
-      return Other;
     case RNSTabsNavigationStateRejectionReasonStale:
       return Stale;
     case RNSTabsNavigationStateRejectionReasonRepeated:
@@ -233,7 +231,7 @@ RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReaso
     case RNSTabsNavigationStateRejectionReasonMoreTabNotAvailable:
       return MoreTabNotAvailable;
     default:
-      return Other;
+      return Stale;
   }
 }
 
