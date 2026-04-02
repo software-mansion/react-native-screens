@@ -14,14 +14,10 @@
  */
 static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavigationController";
 
-@interface RNSTabBarController () <UITabBarControllerDelegate>
+// We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
+@interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
 @end
 
-// We need this to handle navigation within `moreNavigationController`
-@interface RNSTabBarController () <UINavigationControllerDelegate>
-@end
-
-// We need this to handle navigation within `moreNavigationController`
 @interface RNSTabBarController ()
 
 /// Consulted by the ISA-swizzled `pushViewController:animated:` on `moreNavigationController`
@@ -275,6 +271,27 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
 }
 
+- (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
+{
+  [self.tabsHostComponentView tabBarController:self preventedSelectionOf:screenKey currentState:_navigationState];
+}
+
+- (BOOL)shouldPreventNativeTabSelection:(nonnull UIViewController *)nextViewController
+{
+  // This handles the tabsHostComponentView nullability
+  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
+    return YES;
+  }
+
+  if (![nextViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    // Allow for more view controller selection
+    return NO;
+  }
+
+  auto *screenViewController = static_cast<RNSTabsScreenViewController *>(nextViewController);
+  return screenViewController.isPreventNativeSelectionEnabled;
+}
+
 #pragma mark - UITabBarControllerDelegate
 
 // These methods are not called on programatic selection!
@@ -354,27 +371,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     [self userDidSelectViewController:viewController];
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-}
-
-- (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
-{
-  [self.tabsHostComponentView tabBarController:self preventedSelectionOf:screenKey currentState:_navigationState];
-}
-
-- (BOOL)shouldPreventNativeTabSelection:(nonnull UIViewController *)nextViewController
-{
-  // This handles the tabsHostComponentView nullability
-  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
-    return YES;
-  }
-
-  if (![nextViewController isKindOfClass:RNSTabsScreenViewController.class]) {
-    // Allow for more view controller selection
-    return NO;
-  }
-
-  auto *screenViewController = static_cast<RNSTabsScreenViewController *>(nextViewController);
-  return screenViewController.isPreventNativeSelectionEnabled;
 }
 
 #pragma mark - Signals related
