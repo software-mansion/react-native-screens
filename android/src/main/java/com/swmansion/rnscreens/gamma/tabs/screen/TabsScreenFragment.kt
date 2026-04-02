@@ -45,5 +45,4 @@ class TabsScreenFragment(
         // Handle theme change through RN's Appearance.setColorScheme
         tabsScreen.onFragmentConfigurationChange(this, newConfig)
     }
-
 }

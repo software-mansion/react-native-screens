@@ -184,7 +184,7 @@ class TabsHost(
 
     override fun onNavStateUpdatePrevented(
         currentNavState: TabsNavState,
-        preventedScreenKey: String
+        preventedScreenKey: String,
     ) {
         eventEmitter.emitOnTabSelectionPreventedEvent(currentNavState, preventedScreenKey)
     }

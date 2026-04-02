@@ -43,6 +43,6 @@ internal interface TabsContainerDelegate {
      */
     fun onNavStateUpdatePrevented(
         currentNavState: TabsNavState,
-        preventedScreenKey: String
+        preventedScreenKey: String,
     )
 }
