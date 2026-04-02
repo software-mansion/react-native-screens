@@ -5,15 +5,14 @@ export const TopInsetConsumptionContext = React.createContext({
   isTopInsetConsumed: false,
 });
 
-export function useTopInsetConsumption(isHeaderHidden: boolean | undefined) {
+export function useTopInsetConsumption(wantsToConsumeTopInset?: boolean) {
   const insetContext = React.useContext(TopInsetConsumptionContext);
   const useLegacyBehavior =
     featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
 
-  const hasVisibleHeader = isHeaderHidden !== true;
   const consumesTopInset = useLegacyBehavior
     ? true
-    : !insetContext.isTopInsetConsumed && hasVisibleHeader;
+    : !insetContext.isTopInsetConsumed && wantsToConsumeTopInset === true;
 
   const nextContextValue = React.useMemo(
     () => ({
