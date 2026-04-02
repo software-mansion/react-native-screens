@@ -151,6 +151,10 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
 }
 
 export function App() {
+  return <StackSetup />;
+}
+
+function StackSetup() {
   // TODO: NavigationContainer is used only in order to make SettingsSwitch/Picker work.
   //       Those components shouldn't rely on react-navigation in the future.
   return (
