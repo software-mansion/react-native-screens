@@ -11,6 +11,7 @@ class TabsScreenFragment(
     internal val tabsScreen: TabsScreen,
 ) : Fragment() {
     internal val requireScreenKey: String by tabsScreen::requireScreenKey
+    internal val isPreventNativeSelectionEnabled: Boolean by tabsScreen::preventNativeSelection
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,4 +45,5 @@ class TabsScreenFragment(
         // Handle theme change through RN's Appearance.setColorScheme
         tabsScreen.onFragmentConfigurationChange(this, newConfig)
     }
+
 }

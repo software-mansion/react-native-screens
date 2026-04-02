@@ -361,6 +361,12 @@ internal class TabsContainer(
 
         val isRepeated = nextSelectedFragment === currSelectedFragment
 
+        // If this is user action we test whether it should be prevented before we progress the state.
+        if (!isRepeated && !isInExternalOperationContext && nextSelectedFragment.isPreventNativeSelectionEnabled) {
+            delegate.onNavStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
+            return false
+        }
+
         val stateChanged = updateSelectedFragment(nextSelectedFragment)
 
         val hasTriggeredSpecialEffect =
