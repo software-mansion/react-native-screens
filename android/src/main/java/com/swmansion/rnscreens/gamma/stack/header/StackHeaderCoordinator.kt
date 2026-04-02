@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
@@ -18,6 +19,7 @@ import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
 internal class StackHeaderCoordinator(
@@ -44,6 +46,7 @@ internal class StackHeaderCoordinator(
     // so we must rebuild the hierarchy when toolbar subview widths change.
     private var lastLeadingSubviewWidth: Int? = null
     private var lastTrailingSubviewWidth: Int? = null
+    private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
     // For small header, we need to use custom title view in order to
     // render a subview to the leading side of the title.
@@ -100,14 +103,16 @@ internal class StackHeaderCoordinator(
         if (appBarLayout is StackHeaderAppBarLayout.Collapsing) {
             if (config.leadingSubview?.view?.width != lastLeadingSubviewWidth) return true
             if (config.trailingSubview?.view?.width != lastTrailingSubviewWidth) return true
+            if (config.backgroundSubview?.collapseMode != lastBackgroundSubviewCollapseMode) return true
         }
 
         return false
     }
 
-    private fun snapshotSubviewWidths(config: StackHeaderConfigProviding) {
+    private fun snapshotSubviewProperties(config: StackHeaderConfigProviding) {
         lastLeadingSubviewWidth = config.leadingSubview?.view?.width
         lastTrailingSubviewWidth = config.trailingSubview?.view?.width
+        lastBackgroundSubviewCollapseMode = config.backgroundSubview?.collapseMode
     }
 
     // endregion
@@ -138,7 +143,7 @@ internal class StackHeaderCoordinator(
         attachedCenterSubview = config.centerSubview
         attachedTrailingSubview = config.trailingSubview
         attachedBackgroundSubview = config.backgroundSubview
-        snapshotSubviewWidths(config)
+        snapshotSubviewProperties(config)
 
         shouldRequestLayout = true
     }
@@ -163,7 +168,11 @@ internal class StackHeaderCoordinator(
         attachedTrailingSubview?.let { appBar.toolbar.removeView(it.view) }
 
         if (appBar is StackHeaderAppBarLayout.Collapsing) {
-            attachedBackgroundSubview?.let { appBar.collapsingToolbarLayout.removeView(it.view) }
+            attachedBackgroundSubview?.let {
+                val wrapper = it.view.parent as? FrameLayout
+                wrapper?.removeView(it.view)
+                appBar.collapsingToolbarLayout.removeView(wrapper)
+            }
         }
     }
 
@@ -231,13 +240,25 @@ internal class StackHeaderCoordinator(
 
         backgroundSubview.view.detachFromCurrentParent()
 
-        // Needed to extend the background under the status bar
-        backgroundSubview.view.fitsSystemWindows = true
+        // Wrap in a FrameLayout so that CollapsingToolbarLayout's ViewOffsetHelper
+        // attaches to the disposable wrapper, not the reused React view. This avoids
+        // stale parallax offsets persisting across collapse mode rebuilds therefore allowing
+        // runtime changes to this property.
+        val wrapper =
+            FrameLayout(appBar.context).apply {
+                fitsSystemWindows = true
+            }
+        wrapper.addView(
+            backgroundSubview.view,
+            FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT),
+        )
 
         appBar.collapsingToolbarLayout.addView(
-            backgroundSubview.view,
+            wrapper,
             0,
-            CollapsingToolbarLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT),
+            CollapsingToolbarLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
+                collapseMode = backgroundSubview.collapseMode.toNativeCollapseMode()
+            },
         )
     }
 
@@ -290,7 +311,8 @@ internal class StackHeaderCoordinator(
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
         val backgroundSubview = config.backgroundSubview ?: return
-        val params = backgroundSubview.view.layoutParams as? CollapsingToolbarLayout.LayoutParams ?: return
+        val wrapper = backgroundSubview.view.parent as? FrameLayout ?: return
+        val params = wrapper.layoutParams as? CollapsingToolbarLayout.LayoutParams ?: return
         val desired = backgroundSubview.collapseMode.toNativeCollapseMode()
         if (params.collapseMode != desired) {
             params.collapseMode = desired
