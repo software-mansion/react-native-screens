@@ -9,11 +9,11 @@ const Home = () => <View style={{ flex: 1 }} />;
 const HomeStack = () => (
   <Stack.Navigator>
     <Stack.Screen
+      name="Home"
+      component={Home}
       // TODO: @t0maboro - add `disableHeaderTopInsetConsumption` to react-navigation after 4.25 release
       // @ts-ignore - this prop needs to be added to react-navigation
       options={{ disableHeaderTopInsetConsumption: true }}
-      name="Home"
-      component={Home}
     />
   </Stack.Navigator>
 );
@@ -27,7 +27,6 @@ const App = () => (
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
-        options={{ tabBarButtonTestID: 'bottom-tabs-A-tab' }}
       />
     </Tab.Navigator>
   </NavigationContainer>
