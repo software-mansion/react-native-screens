@@ -20,8 +20,6 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
-import { Text, View } from 'react-native';
-import PressableWithFeedback from '../../../../../src/shared/PressableWithFeedback';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
@@ -63,7 +61,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ Component, options, activityMode, routeKey }) => {
+        ({ Component, options: { headerConfig, ...options }, activityMode, routeKey }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -84,49 +82,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
-                <Stack.HeaderConfig
-                  title="Hello, World! Hello, World! Hello, World! Hello, World!"
-                  type="large"
-                  backgroundSubview={{
-                    collapseMode: 'parallax',
-                    Component: (
-                      <View
-                        style={{
-                          backgroundColor: 'blue',
-                          flex: 1,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          // width: '50%',
-                          // height: '100%',
-                        }}>
-                        <PressableWithFeedback>
-                          <Text>Pressable</Text>
-                        </PressableWithFeedback>
-                      </View>
-                    ),
-                  }}
-                  leadingSubview={{
-                    Component: (
-                      <PressableWithFeedback>
-                        <Text>leading</Text>
-                      </PressableWithFeedback>
-                    ),
-                  }}
-                  centerSubview={{
-                    Component: (
-                      <PressableWithFeedback>
-                        <Text>center</Text>
-                      </PressableWithFeedback>
-                    ),
-                  }}
-                  trailingSubview={{
-                    Component: (
-                      <PressableWithFeedback>
-                        <Text>trailing</Text>
-                      </PressableWithFeedback>
-                    ),
-                  }}
-                />
+                {headerConfig !== undefined && (
+                  <Stack.HeaderConfig {...headerConfig} />
+                )}
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );
