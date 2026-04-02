@@ -77,12 +77,14 @@ def resolveReactNativeDirectory() {
             "You should set project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native.")
 }
 
-// spotless is only accessible within react-native-screens repo
+// spotless is only accessible within react-native-screens repo, while the RN Gradle
+// plugin is registered by the host app's settings.gradle — it's not on the classpath
+// in standalone repo context, so applying it here would fail during Gradle configuration.
 if (isRunningInContextOfScreensRepo()) {
     apply from: 'spotless.gradle'
+} else {
+    apply plugin: "com.facebook.react"
 }
-
-apply plugin: "com.facebook.react"
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
