@@ -15,6 +15,8 @@ type OnPressHeaderBarButtonMenuItemEvent = Readonly<{ menuId: string }>;
 
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 
+type LargeTitleDisplayMode = 'none' | 'automatic' | 'always' | 'never' | 'inlineLarge';
+
 type BlurEffect =
   | 'none'
   | 'extraLight'
@@ -53,6 +55,7 @@ export interface NativeProps extends ViewProps {
   hidden?: boolean;
   hideShadow?: boolean;
   largeTitle?: boolean;
+  largeTitleDisplayMode?: CT.WithDefault<LargeTitleDisplayMode, 'none'>;
   largeTitleFontFamily?: string;
   largeTitleFontSize?: CT.Int32;
   largeTitleFontWeight?: string;

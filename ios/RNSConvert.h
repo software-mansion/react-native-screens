@@ -20,6 +20,9 @@ namespace react = facebook::react;
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 
++ (RNSLargeTitleDisplayMode)RNSLargeTitleDisplayModeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigLargeTitleDisplayMode)largeTitleDisplayMode;
+
 + (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
     (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled;
 
