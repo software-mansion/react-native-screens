@@ -5,7 +5,7 @@ import {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { Button, SettingsPicker } from '../shared';
+import { Button, SettingsPicker } from '@apps/shared';
 
 type StackParamList = {
   ScreenA: undefined;

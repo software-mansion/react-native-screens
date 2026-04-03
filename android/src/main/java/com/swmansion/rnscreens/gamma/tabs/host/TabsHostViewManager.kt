@@ -13,6 +13,7 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
@@ -58,6 +59,7 @@ class TabsHostViewManager :
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(TabsHostTabSelectedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionRejectedEvent),
         )
 
     override fun addEventEmitters(
@@ -76,6 +78,13 @@ class TabsHostViewManager :
         val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
         val provenance = requireNotNull(navStateMap.getInt("provenance"))
         view.updateJSNavState(TabsNavState(selectedScreenKey, provenance))
+    }
+
+    override fun setRejectStaleNavStateUpdates(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.rejectStaleNavStateUpdates = value
     }
 
     override fun setTabBarHidden(

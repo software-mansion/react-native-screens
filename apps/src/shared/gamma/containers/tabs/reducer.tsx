@@ -73,7 +73,7 @@ function tabsActionSelectTabHandler(
 
   return navStateWithSuggestedState(state, {
     selectedRouteKey: action.routeKey,
-    provenance: Math.max(state.suggestedState.provenance, state.confirmedState.provenance) + 1,
+    provenance: state.confirmedState.provenance,
   });
 }
 

@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, ScrollView } from 'react-native';
-import LongText from '../../shared/LongText';
+import LongText from '@apps/shared/LongText';
 
 type RouteParamList = {
   Screen1: undefined;

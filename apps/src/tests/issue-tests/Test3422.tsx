@@ -65,7 +65,7 @@ function Screen3({ navigation }: StackNavigationProp) {
 
 const backImage = _ => (
   <Image
-    source={require('../../../assets/backButton.png')} // can be regular view instead of image
+    source={require('@assets/backButton.png')} // can be regular view instead of image
     style={{ width: 40, height: 40 }}
   />
 );

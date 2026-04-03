@@ -5,7 +5,7 @@ import {
   ScrollEdgeEffectsConfigContext,
 } from './context';
 import { NavigationContainer } from '@react-navigation/native';
-import { TabsContainer } from '../../../shared/gamma/containers/tabs';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
 import { Config } from './Config';
 import { StackScenario } from './StackScenario';
 import { ScrollView } from 'react-native';

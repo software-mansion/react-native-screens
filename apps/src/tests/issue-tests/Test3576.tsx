@@ -3,12 +3,12 @@ import { View, Text, Button, ScrollView } from 'react-native';
 import {
   BatchableNavigationAction,
   StackRouteConfig,
-} from '../../shared/gamma/containers/stack/StackContainer.types';
+} from '@apps/shared/gamma/containers/stack/StackContainer.types';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '../../shared/gamma/containers/stack';
-import Colors from '../../shared/styling/Colors';
+} from '@apps/shared/gamma/containers/stack';
+import Colors from '@apps/shared/styling/Colors';
 
 type ScenarioConfig = {
   id: string;

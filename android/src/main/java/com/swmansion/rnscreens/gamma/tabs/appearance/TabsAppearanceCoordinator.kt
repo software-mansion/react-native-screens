@@ -34,7 +34,7 @@ internal class TabsAppearanceCoordinator(
                 checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
                     "[RNScreens] Missing MenuItem for id: $menuItemId"
                 }
-            check(menuItem.itemId == menuItemIdForFragmentAtIndex(index)) { "[RNScreens] Illegal state: menu items are shuffled" }
+            check(menuItem.itemId == menuItemId) { "[RNScreens] Illegal state: menu items are shuffled" }
             updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
         }
     }

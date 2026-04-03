@@ -2,8 +2,8 @@ import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
-import { Spacer } from '../../shared';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import { Spacer } from '@apps/shared';
 
 type ItemData = {
   id: number,

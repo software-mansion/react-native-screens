@@ -1,4 +1,4 @@
-import type { ScenarioGroup } from '../../shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
@@ -10,10 +10,7 @@ import TestTabsLayoutDirection from './test-tabs-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
-import TestTabsControllerMode from './test-tabs-controller-mode-ios';
-import TestTabBarMinimizeBehavior from './test-tabs-minimize-behavior-ios';
-import TestTabBarDarkExperimentalUserInterfaceStyle from './test-tabs-dark-experimental-userInterfaceStyle-ios';
-import TestTabBarLightExperimentalUserInterfaceStyle from './test-tabs-light-experimental-userInterfaceStyle-ios';
+import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -26,6 +23,7 @@ const scenarios = {
   TestTabsIMEInsets,
   TestTabsSimpleNav,
   TestTabsMoreNavigationController,
+  TestTabsStaleStateUpdateRejection,
   TestTabsControllerMode,
   TestTabBarMinimizeBehavior,
   TestTabBarDarkExperimentalUserInterfaceStyle,

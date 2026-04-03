@@ -1,8 +1,6 @@
 #import "RNSModule.h"
 #import <React/RCTBridge+Private.h>
 #import <React/RCTBridge.h>
-#import <React/RCTUIManager.h>
-#import <React/RCTUIManagerUtils.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
 #import "RNSScreenStack.h"
@@ -16,9 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
 @synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
-#endif // RCT_NEW_ARCH_ENABLED
 @synthesize bridge = _bridge;
 
 - (dispatch_queue_t)methodQueue
@@ -42,12 +38,7 @@ RCT_EXPORT_MODULE()
 - (RNSScreenStackView *)getScreenStackView:(NSNumber *)reactTag
 {
   RCTAssertMainQueue();
-  RNSScreenStackView *view;
-#ifdef RCT_NEW_ARCH_ENABLED
-  view = (RNSScreenStackView *)[self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
-#else
-  view = (RNSScreenStackView *)[self.bridge.uiManager viewForReactTag:reactTag];
-#endif // RCT_NEW_ARCH_ENABLED
+  RNSScreenStackView *view = (RNSScreenStackView *)[self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
   return view;
 }
 
@@ -66,11 +57,7 @@ RCT_EXPORT_MODULE()
     UIView *belowTopScreen = screens[screenCount - 2].view;
     belowTopScreen.transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
     isActiveTransition = true;
-#ifdef RCT_NEW_ARCH_ENABLED
     screenTags = @[ @(topScreen.tag), @(belowTopScreen.tag) ];
-#else
-    screenTags = @[ topScreen.reactTag, belowTopScreen.reactTag ];
-#endif // RCT_NEW_ARCH_ENABLED
     [stackView startScreenTransition];
   }
   return screenTags;
@@ -122,21 +109,17 @@ RCT_EXPORT_MODULE()
   return view;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   [self installHostObject];
   return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
 }
-#endif
 
 - (void)installHostObject
 {
   /*
-   installHostObject method is called from constantsToExport and getTurboModule,
-   because depending on the selected architecture, only one method will be called.
-   For `Paper`, it will be constantsToExport, and for `Fabric`, it will be getTurboModule.
+   installHostObject method is called from constantsToExport and getTurboModule.
 */
   RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
   if (cxxBridge != nil) {

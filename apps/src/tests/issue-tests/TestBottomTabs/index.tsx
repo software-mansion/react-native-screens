@@ -7,13 +7,13 @@ import {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '../../../shared/gamma/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 enableFreeze(true);
 
@@ -53,11 +53,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       ios: {
@@ -158,11 +158,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
         },
         icon: {
           type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon.png'),
+          templateSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          templateSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       title: 'Tab2',
@@ -199,22 +199,22 @@ const TAB_CONFIGS: TabRouteConfig[] = [
         },
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('@assets/variableIcons/icon.png'),
         },
         selectedIcon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
         },
       },
       title: 'Tab3',

@@ -6,7 +6,7 @@ import {
 } from 'react-native-screens/experimental';
 import type { SplitPrimaryBackgroundStyle } from 'react-native-screens/experimental';
 import type { SplitBaseConfig } from './helpers/types';
-import { Colors } from '../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling/Colors';
 
 const ConfigPanel = ({
   setPrimaryBgStyle,

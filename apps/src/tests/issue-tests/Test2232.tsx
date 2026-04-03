@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { Button, Square } from '../../shared';
+import { Button, Square } from '@apps/shared';
 import { NavigationContainer } from '@react-navigation/native';
 
 const MainScreen = ({ navigation }: any) => (
