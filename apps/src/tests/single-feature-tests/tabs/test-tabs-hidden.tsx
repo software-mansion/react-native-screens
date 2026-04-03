@@ -1,6 +1,6 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
@@ -11,7 +11,7 @@ import {
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
-  key: 'tab-bar-hidden',
+  key: 'test-tabs-hidden',
   platforms: ['ios', 'android'],
   AppComponent: App,
 };
@@ -23,7 +23,9 @@ function ConfigScreen() {
 
   return (
     <ScrollView style={{ padding: 40 }}>
+      <Text style={{ textAlign: 'center' }}>Change flag value by clicking on button.</Text>
       <SettingsSwitch
+        style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
         value={hostConfig.tabBarHidden ?? false}
         onValueChange={value => updateHostConfig({ tabBarHidden: value })}
