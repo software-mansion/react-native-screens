@@ -278,6 +278,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   [self updateNavigationStateOnModelUpdate];
 
   if ([self isSelectedViewControllerTheMoreNavigationController]) {
+    [self disableNavigationBarInMoreNavigationController];
     [self setupMoreNavigationControllerDelegateIfNeeded];
   }
 
@@ -348,9 +349,23 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   if (shouldPreventTabSelection) {
     // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
     [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+    return NO;
   }
 
-  return !shouldPreventTabSelection;
+  // If we're gonna allow navigation to `moreNavigationController`, then we need to ensure
+  // that on top of its stack there is no controller with preventNativeSelection enabled.
+  // In such case, we want to pop to root.
+  // We do it here, because in `tabBarController:didSelectViewController:` we won't receive
+  // `moreNavigationController` in case there is already a tab pushed on the stack.
+  if ([self isViewControllerTheMoreNavigationController:viewController]) {
+    auto *poppedViewController = [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES animated:NO];
+    if (poppedViewController != nil) {
+      // We actually popped something -> let's notify JS realm of this fact.
+      [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:poppedViewController]];
+    }
+  }
+
+  return YES;
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -365,10 +380,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       [viewController isKindOfClass:RNSTabsScreenViewController.class] || isNextViewControllerMoreNavigationController,
       @"[RNScreens] Unexpected type of controller: %@",
       viewController.class);
-
-  if (isNextViewControllerMoreNavigationController) {
-    [self disableNavigationBarInMoreNavigationController];
-  }
 
   [self userDidSelectViewController:viewController];
 }
@@ -513,7 +524,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
     // Animate only if we're currently in context of more view controller.
     BOOL shouldAnimate = [self isMoreNavigationControllerTabBarItemSelected];
-    [self popToRootInMoreNavigationControllerIfNeededAnimated:shouldAnimate];
+    [self popToRootInMoreNavigationControllerRespectSelectionPrevention:NO animated:shouldAnimate];
 
     // Also disable the header - we don't control it, but it impacts the layout
     // in ways Yoga is not aware of. The simplest option here is to disable it.
@@ -722,18 +733,56 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 - (void)disableNavigationBarInMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+  if (!self.moreNavigationController.navigationBar.isHidden) {
+    [self.moreNavigationController setNavigationBarHidden:YES animated:NO];
+  }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (void)popToRootInMoreNavigationControllerIfNeededAnimated:(BOOL)isAnimated
+- (nullable UIViewController *)popToRootInMoreNavigationControllerRespectSelectionPrevention:
+                                   (BOOL)shouldRespectSelectionPrevention
+                                                                                    animated:(BOOL)shouldAnimate
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   if ([self isMoreNavigationControllerPresentInTabBar] && self.moreNavigationController.viewControllers.count > 1) {
     // We quietly assume here, that the root view controller is the `UIMoreListViewController`.
-    [self.moreNavigationController popToRootViewControllerAnimated:isAnimated];
+    if (shouldRespectSelectionPrevention) {
+      UIViewController *topViewController = self.moreNavigationController.topViewController;
+      RCTAssert(
+          [topViewController isKindOfClass:RNSTabsScreenViewController.class],
+          @"[RNScreens] Unexpected type of view controller on moreNavigationControllerStack: %@",
+          topViewController.class);
+      RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(topViewController);
+      if (screenController.isPreventNativeSelectionEnabled) {
+        return [self popToRootMoreNavigationController:self.moreNavigationController animated:shouldAnimate];
+      }
+    } else {
+      return [self popToRootMoreNavigationController:self.moreNavigationController animated:shouldAnimate];
+    }
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  return nil;
+}
+
+/**
+ * Pops the top view controller from more navigation controller. We expect at most two controllers on the stack of more
+ * navigation controller. If this assumption ever becomes invalid, this method needs to be updated.
+ *
+ * @returns nil if there was nothing to pop, the topViewController otherwise.
+ */
+- (nullable UIViewController *)popToRootMoreNavigationController:
+                                   (nonnull UINavigationController *)moreNavigationController
+                                                        animated:(BOOL)animated
+{
+  if (moreNavigationController.viewControllers.count < 2) {
+    return nil;
+  }
+
+  auto *poppedViewControllers = [moreNavigationController popToRootViewControllerAnimated:animated];
+  RCTAssert(
+      poppedViewControllers != nil && poppedViewControllers.count == 1,
+      @"[RNScreens] Expected exactly one view controller to be popped");
+  return [poppedViewControllers firstObject];
 }
 
 - (void)setupMoreNavigationControllerDelegateIfNeeded
