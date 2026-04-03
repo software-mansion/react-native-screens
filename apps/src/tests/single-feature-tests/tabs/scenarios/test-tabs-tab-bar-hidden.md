@@ -1,4 +1,3 @@
-
 ## tabBarHidden — Test Scenarios
 
 **E2E test:** No - to be automated

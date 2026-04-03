@@ -2,7 +2,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
-import TestTabsHidden from './test-tabs-hidden';
+import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsColorScheme from './test-tabs-color-scheme';
@@ -16,7 +16,7 @@ const scenarios = {
   BottomAccessoryScenario,
   OverrideScrollViewContentInsetScenario,
   TabBarAppearanceDefinedBySelectedTabScenario,
-  TestTabsHidden,
+  TestTabsTabBarHidden,
   TabsScreenOrientationScenario,
   TestTabsColorScheme,
   TestTabsLayoutDirection,
