@@ -44,6 +44,7 @@ static const void *kRNSTabBarControllerAssociationKey = &kRNSTabBarControllerAss
 static void
 rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
 {
+  NSLog(@"MoreNavigationController pushViewController");
   RNSTabBarController *tabBarController = objc_getAssociatedObject(self, kRNSTabBarControllerAssociationKey);
 
   if ([tabBarController moreNavigationController:self shouldPushViewController:viewController]) {
@@ -71,7 +72,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RNSTabsNavigationState *_Nullable _pendingOperation;
 
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  BOOL _didInstallPushInterceptor;
+  BOOL _didAccessMoreNavigationController;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -112,9 +113,17 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   // Clear the OBJC_ASSOCIATION_ASSIGN back-reference to self stored on moreNavigationController.
   // This is a safety measure — moreNavigationController should never outlive us, but if it ever does
   // (e.g. due to UIKit lifecycle changes), we avoid leaving a dangling pointer behind.
-  if (_didInstallPushInterceptor) {
-    objc_setAssociatedObject(
-        self.moreNavigationController, kRNSTabBarControllerAssociationKey, nil, OBJC_ASSOCIATION_ASSIGN);
+  //
+  // We guard with _didAccessMoreNavigationController to avoid lazy creation of
+  // moreNavigationController during teardown. We also check the isa prefix because UIKit may have
+  // already reset it (e.g. iPad resize), in which case there's no associated object to clean up.
+  if (_didAccessMoreNavigationController) {
+    Class currentClass = object_getClass(self.moreNavigationController);
+    const char *className = class_getName(currentClass);
+    if (strncmp(className, "RNS_", 4) == 0) {
+      objc_setAssociatedObject(
+          self.moreNavigationController, kRNSTabBarControllerAssociationKey, nil, OBJC_ASSOCIATION_ASSIGN);
+    }
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
@@ -279,7 +288,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
   if ([self isSelectedViewControllerTheMoreNavigationController]) {
     [self disableNavigationBarInMoreNavigationController];
-    [self setupMoreNavigationControllerDelegateIfNeeded];
+    [self prepareForMoreNavigationControllerHandlingIfNeeded];
   }
 
   auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
@@ -530,7 +539,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     // in ways Yoga is not aware of. The simplest option here is to disable it.
     [self disableNavigationBarInMoreNavigationController];
 
-    [self setupMoreNavigationControllerDelegateIfNeeded];
+    [self prepareForMoreNavigationControllerHandlingIfNeeded];
   }
 
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
@@ -785,13 +794,17 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   return [poppedViewControllers firstObject];
 }
 
-- (void)setupMoreNavigationControllerDelegateIfNeeded
+- (void)prepareForMoreNavigationControllerHandlingIfNeeded
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+  // This can be called multiple times in lifetime of `RNSTabBarController`.
+  // UIKit reuses the same `UIMoreNavigationController` instance, but resets both
+  // the delegate and the isa pointer when the More controller disappears from the
+  // tab bar (e.g. user resizing the app on iPad). We re-apply both unconditionally.
   if (self.moreNavigationController.delegate == nil) {
     self.moreNavigationController.delegate = self;
-    [self installPushInterceptorOnMoreNavigationController];
   }
+  [self ensurePushInterceptorOnMoreNavigationController];
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
@@ -802,13 +815,14 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 /// The subclass name is derived from the actual runtime class of `moreNavigationController`
 /// (e.g. `RNS_UIMoreNavigationController`), so if another library ISA-swizzles it first or Apple
 /// changes the private class, each distinct original class gets its own correct dynamic subclass.
-- (void)installPushInterceptorOnMoreNavigationController
+///
+/// This method is idempotent — safe to call multiple times. The dynamic subclass is created once
+/// and reused; `object_setClass` and `objc_setAssociatedObject` are re-applied on each call.
+/// This is necessary because UIKit resets the isa pointer of `moreNavigationController` during
+/// tab bar reconfiguration (e.g. iPad app resize crossing the >5 tab threshold).
+- (void)ensurePushInterceptorOnMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  RCTAssert(
-      _didInstallPushInterceptor == NO,
-      @"[RNScreens] installPushInterceptorOnMoreNavigationController MUST NOT be called twice");
-
   Class originalClass = object_getClass(self.moreNavigationController);
   const char *originalClassName = class_getName(originalClass);
 
@@ -838,7 +852,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   // OBJC_ASSOCIATION_ASSIGN: no retain cycle — self owns moreNavigationController and outlives it.
   objc_setAssociatedObject(
       self.moreNavigationController, kRNSTabBarControllerAssociationKey, self, OBJC_ASSOCIATION_ASSIGN);
-  _didInstallPushInterceptor = YES;
+  _didAccessMoreNavigationController = YES;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
