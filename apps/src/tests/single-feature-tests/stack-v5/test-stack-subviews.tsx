@@ -14,7 +14,6 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
 } from 'react-native-screens/experimental';
-import { NavigationContainer } from '@react-navigation/native';
 
 const SCENARIO: Scenario = {
   name: 'Stack Subviews',
@@ -155,20 +154,16 @@ export function App() {
 }
 
 function StackSetup() {
-  // TODO: NavigationContainer is used only in order to make SettingsSwitch/Picker work.
-  //       Those components shouldn't rely on react-navigation in the future.
   return (
-    <NavigationContainer>
-      <StackContainer
-        routeConfigs={[
-          {
-            name: 'Home',
-            Component: ConfigScreen,
-            options: {},
-          },
-        ]}
-      />
-    </NavigationContainer>
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'Home',
+          Component: ConfigScreen,
+          options: {},
+        },
+      ]}
+    />
   );
 }
 
