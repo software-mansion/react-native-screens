@@ -138,14 +138,16 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     : undefined;
 
   return {
-    type: config.type,
     title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
     hidden: config.hidden,
     transparent: config.transparent,
-    backgroundSubview,
-    leadingSubview: makeToolbarSubview(config.leadingSize, 'L'),
-    centerSubview: makeToolbarSubview(config.centerSize, 'C'),
-    trailingSubview: makeToolbarSubview(config.trailingSize, 'T'),
+    android: {
+      type: config.type,
+      backgroundSubview,
+      leadingSubview: makeToolbarSubview(config.leadingSize, 'L'),
+      centerSubview: makeToolbarSubview(config.centerSize, 'C'),
+      trailingSubview: makeToolbarSubview(config.trailingSize, 'T'),
+    },
   };
 }
 
