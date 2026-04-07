@@ -830,27 +830,38 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 /// (e.g. `RNS_UIMoreNavigationController`), so if another library ISA-swizzles it first or Apple
 /// changes the private class, each distinct original class gets its own correct dynamic subclass.
 ///
-/// This method is idempotent — safe to call multiple times. The dynamic subclass is created once
-/// and reused; `object_setClass` and `objc_setAssociatedObject` are re-applied on each call.
-/// This is necessary because UIKit resets the isa pointer of `moreNavigationController` during
-/// tab bar reconfiguration (e.g. iPad app resize crossing the >5 tab threshold).
+/// This method is idempotent — safe to call multiple times regardless of whether UIKit has
+/// reset the ISA between calls. When the ISA already carries our `RNS_` prefix, only the
+/// associated-object back-reference is refreshed. When UIKit has reset the ISA (e.g. iPad
+/// app resize crossing the >5 tab threshold), the dynamic subclass is looked up (or created)
+/// and re-applied.
 - (void)ensurePushInterceptorOnMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  Class originalClass = object_getClass(self.moreNavigationController);
-  const char *originalClassName = class_getName(originalClass);
+  Class currentClass = object_getClass(self.moreNavigationController);
+  const char *currentClassName = class_getName(currentClass);
+
+  // If the ISA already points to our dynamic subclass, the interceptor is in place.
+  // Just refresh the associated object (it uses ASSIGN semantics, so it's cheap)
+  // and return early. Without this guard, repeated calls when UIKit has NOT reset
+  // the ISA would stack `RNS_RNS_...` subclasses, causing infinite recursion in
+  // rns_pushViewController's objc_msgSendSuper call.
+  if (strncmp(currentClassName, "RNS_", 4) == 0) {
+    [self installSelfAssociationWithMoreNavigationController];
+    return;
+  }
 
   // Build a unique subclass name per original runtime class: "RNS_<originalClassName>"
   char dynamicSubclassName[256];
-  snprintf(dynamicSubclassName, sizeof(dynamicSubclassName), "RNS_%s", originalClassName);
+  snprintf(dynamicSubclassName, sizeof(dynamicSubclassName), "RNS_%s", currentClassName);
 
   Class dynamicSubclass = objc_getClass(dynamicSubclassName);
 
   if (dynamicSubclass == nil) {
-    dynamicSubclass = objc_allocateClassPair(originalClass, dynamicSubclassName, 0);
-    RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %s", originalClassName);
+    dynamicSubclass = objc_allocateClassPair(currentClass, dynamicSubclassName, 0);
+    RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %s", currentClassName);
 
-    Method pushMethod = class_getInstanceMethod(originalClass, @selector(pushViewController:animated:));
+    Method pushMethod = class_getInstanceMethod(currentClass, @selector(pushViewController:animated:));
     class_addMethod(
         dynamicSubclass,
         @selector(pushViewController:animated:),
@@ -861,9 +872,15 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   }
 
   object_setClass(self.moreNavigationController, dynamicSubclass);
+  [self installSelfAssociationWithMoreNavigationController];
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
 
-  // Store a back-reference so the C function can reach this controller.
-  // OBJC_ASSOCIATION_ASSIGN: no retain cycle — self owns moreNavigationController and outlives it.
+/// Stores a weak (ASSIGN) back-reference from `moreNavigationController` to `self`
+/// so that `rns_pushViewController` can reach the owning `RNSTabBarController`.
+- (void)installSelfAssociationWithMoreNavigationController
+{
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   objc_setAssociatedObject(
       self.moreNavigationController, kRNSTabBarControllerAssociationKey, self, OBJC_ASSOCIATION_ASSIGN);
   _didAccessMoreNavigationController = YES;
