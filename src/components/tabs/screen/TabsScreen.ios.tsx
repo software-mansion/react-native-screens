@@ -40,7 +40,6 @@ function TabsScreen(props: TabsScreenProps) {
     onWillAppear,
     onWillDisappear,
     children,
-    isFocused = false,
     style,
     ...filteredBaseProps
   } = baseProps;
@@ -52,8 +51,7 @@ function TabsScreen(props: TabsScreenProps) {
       onDidDisappear,
       onWillAppear,
       onWillDisappear,
-      isFocused,
-      tabKey: filteredBaseProps.tabKey,
+      screenKey: filteredBaseProps.screenKey,
     });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
@@ -62,7 +60,6 @@ function TabsScreen(props: TabsScreenProps) {
     <TabsScreenIOSNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
-      isFocused={isFocused}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...lifecycleCallbacks}

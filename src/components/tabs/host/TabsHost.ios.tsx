@@ -6,7 +6,7 @@ import TabsHostIOSNativeComponent, {
   type NativeProps as TabsHostIOSNativeComponentProps,
 } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../../private/logging';
+import { RNSLog } from '../../../private';
 import TabsBottomAccessory from '../bottom-accessory/TabsBottomAccessory';
 import { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
 import TabsBottomAccessoryContent from '../bottom-accessory/TabsBottomAccessoryContent';
@@ -17,7 +17,7 @@ import { useTabsHost } from './useTabsHost';
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function TabsHost(props: TabsHostProps) {
-  bottomTabsDebugLog(`TabsHost render`);
+  RNSLog.log(`TabsHost render`);
 
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,18 +28,19 @@ function TabsHost(props: TabsHostProps) {
     direction,
     experimentalControlNavigationStateInJS,
     nativeContainerStyle,
-    onNativeFocusChange,
+    onTabSelected,
+    navState,
     ...filteredBaseProps
   } = baseProps;
 
   const componentNodeRef =
     React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);
 
-  const { controlNavigationStateInJS, onNativeFocusChangeCallback } =
+  const { controlNavigationStateInJS, onTabSelected: onTabSelectedCallback } =
     useTabsHost<TabsHostIOSNativeComponentProps>({
       componentNodeRef,
       controlNavigationStateInJS: experimentalControlNavigationStateInJS,
-      onNativeFocusChange,
+      onTabSelected,
     });
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
@@ -48,7 +49,8 @@ function TabsHost(props: TabsHostProps) {
   return (
     <TabsHostIOSNativeComponent
       style={styles.fillParent}
-      onNativeFocusChange={onNativeFocusChangeCallback}
+      navState={navState}
+      onTabSelected={onTabSelectedCallback}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}

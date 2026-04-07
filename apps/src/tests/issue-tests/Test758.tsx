@@ -38,7 +38,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
 
   const [search, setSearch] = React.useState('');
 
-  const searchBarOptions = {
+  const searchBarOptions: SearchBarProps = {
     barTintColor: 'powderblue',
     tintColor: 'red',
     textColor: 'red',
@@ -46,11 +46,11 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     obscureBackground: false,
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
-    placeholder: 'Some text',
+    placeholder: 'Placeholder text',
     // Added in https://github.com/software-mansion/react-native-screens/pull/3186
     // to preserve test's original search bar configuration.
     placement: 'stacked',
-    cancelButtonText: 'Some text',
+    cancelButtonText: 'Cancel text',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),

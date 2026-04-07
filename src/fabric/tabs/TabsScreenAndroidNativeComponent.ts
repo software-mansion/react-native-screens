@@ -13,11 +13,6 @@ import type {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-type LifecycleStateChangeEvent = Readonly<{
-  previousState: CT.Int32;
-  newState: CT.Int32;
-}>;
-
 // #endregion General helpers
 
 // #region Android-specific helpers
@@ -72,15 +67,13 @@ export type Appearance = {
 
 export interface NativeProps extends ViewProps {
   // Events
-  onLifecycleStateChange?: CT.DirectEventHandler<LifecycleStateChangeEvent>;
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 
   // Control
-  isFocused?: boolean;
-  tabKey: string;
+  screenKey: string;
 
   // General
   title?: string | undefined | null;

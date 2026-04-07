@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { Scenario } from '../../shared/helpers';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
-import Colors from '../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Appearance',
@@ -78,12 +78,12 @@ function TabScreen() {
 
 export function App() {
   return (
-    <BottomTabsContainer
-      tabConfigs={[
+    <TabsContainer
+      routeConfigs={[
         {
-          component: TabScreen,
-          tabScreenProps: {
-            tabKey: 'Tab1',
+          name: 'Tab1',
+          Component: TabScreen,
+          options: {
             title: 'Tab1',
             ios: {
               icon: {
@@ -100,25 +100,25 @@ export function App() {
             android: {
               icon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon.png'),
+                imageSource: require('@assets/variableIcons/icon.png'),
               },
               selectedIcon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: DEFAULT_APPEARANCE_ANDROID,
             },
           },
         },
         {
-          component: TabScreen,
-          tabScreenProps: {
-            tabKey: 'Tab2',
+          name: 'Tab2',
+          Component: TabScreen,
+          options: {
             title: 'Tab2',
             ios: {
               icon: {
                 type: 'templateSource',
-                templateSource: require('../../../../assets/variableIcons/icon.png'),
+                templateSource: require('@assets/variableIcons/icon.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_IOS,
@@ -192,14 +192,14 @@ export function App() {
           },
         },
         {
-          component: TabScreen,
-          tabScreenProps: {
-            tabKey: 'Tab3',
+          name: 'Tab3',
+          Component: TabScreen,
+          options: {
             title: 'Tab3',
             ios: {
               icon: {
                 type: 'templateSource',
-                templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                templateSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_IOS,
@@ -225,7 +225,7 @@ export function App() {
             android: {
               icon: {
                 type: 'imageSource',
-                imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
               },
               standardAppearance: {
                 ...DEFAULT_APPEARANCE_ANDROID,

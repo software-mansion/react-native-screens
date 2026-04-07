@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, View } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 import { TestBottomTabs } from '.';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Button title="Go to Bottom Tabs" onPress={() => setIndex(1)} />
+          <Button title="Go to Tabs" onPress={() => setIndex(1)} />
         </View>
       ) : (
         <TestBottomTabs />

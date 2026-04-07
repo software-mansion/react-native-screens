@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSTabBarAppearanceCoordinator.h"
+#import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
 
 #if !TARGET_OS_TV
@@ -41,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Get reference to the host component view that owns this tab bar controller.
  *
  * Might return null in cases where the controller view hierararchy is not attached to parent.
+ * The reference is retained strongly and it is expected to be managed by `TabsHost`.
  */
 @property (nonatomic, readonly, nullable) RNSTabsHostComponentView *tabsHostComponentView;
 
@@ -51,13 +53,40 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong, nonnull) RNSTabBarAppearanceCoordinator *tabBarAppearanceCoordinator;
 
 /**
+ * Represents current navigation state.
+ *
+ * After each model update, the container (controller) updates the navigation state. The `provenance` part is
+ * incremented monotonically with each state update.
+ *
+ * The controller manages this state. It MUST NOT be overwritten by any external actor.
+ */
+@property (nonatomic, readonly, strong, nullable) RNSTabsNavigationState *navigationState;
+
+/**
+ *
+ * If true, the controller will reject any navigation state updates
+ * if the provenance of the update is stale.
+ *
+ * A navigation state update is considered stale if its provenance is older
+ * than the provenance of the currently active navigation state.
+ *
+ * This can happen, e.g. when an update from JS is dispatched, but before it reaches the native
+ * side, another update happens on UI thread, e.g. user selects another tab. For such
+ * situations, where to-be-applied navigation state update had been dispatched w/o
+ * full context of actual navigation state you can toggle this prop.
+ *
+ * If an update is rejected due to being stale, the controller will notify its delegate.
+ */
+@property (nonatomic, readwrite) BOOL rejectStaleNavigationStateUpdates;
+
+/**
  * Update tab controller state with previously provided children.
  *
  * This method does nothing if the children have not been changed / update has not been requested before.
  * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
  * invalidation signal & let the controller decide when to flush the updates.
  */
-- (void)updateReactChildrenControllersIfNeeded;
+- (void)updateChildViewControllersIfNeeded;
 
 /**
  * Force update of the tab controller state with previously provided children.
@@ -68,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateReactChildrenControllers;
 
 /**
- * Find out which tab bar controller is currently focused & select it.
+ * If any state update operation is pending - perform it.
  *
  * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
@@ -77,7 +106,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateSelectedViewControllerIfNeeded;
 
 /**
- * Find out which tab bar controller is currently focused & select it.
+ * Update the selected view controller to what's currently requested.
+ *
+ * To request update use `setPendingNavigationStateUpdate`.
  *
  * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
  * invalidation signal & let the controller decide when to flush the updates.
@@ -161,18 +192,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)childViewControllersHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
 
 /**
- * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * updated.
+ * Request navigation state update from the controller to the given one.
  *
- * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
+ * If you want to execute multiple updates in sequence you must flush the container after each one separately.
  */
-@property (nonatomic, readwrite) bool needsUpdateOfReactChildrenControllers;
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState;
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
  * updated.
+ *
+ * Do not raise this signal only when you want to modify selected view controller. Use `setPendingNavigationStateUpdate`
+ * instead.
  */
-@property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
+@property (nonatomic, readwrite) bool needsUpdateOfChildViewControllers;
 
 /**
  * Tell the controller that some configuration regarding the tab bar apperance has changed & the appearance requires

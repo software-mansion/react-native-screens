@@ -4,6 +4,7 @@
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
+#import "RNSConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -33,31 +34,39 @@ namespace react = facebook::react;
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
-- (BOOL)emitOnNativeFocusChange:(OnNativeFocusChangePayload)payload
+- (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload
 {
-#if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onNativeFocusChange(
-        {.tabKey = RCTStringFromNSString(payload.tabKey),
-         .repeatedSelectionHandledBySpecialEffect =
-             static_cast<bool>(payload.repeatedSelectionHandledBySpecialEffect)});
+    _reactEventEmitter->onTabSelected(
+        {.selectedScreenKey = RCTStringFromNSString(payload.selectedScreenKey),
+         .provenance = payload.provenance,
+         .isRepeated = static_cast<bool>(payload.isRepeated),
+         .hasTriggeredSpecialEffect = static_cast<bool>(payload.hasTriggeredSpecialEffect),
+         .isNativeAction = static_cast<bool>(payload.isNativeAction)});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnNativeFocusChange event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnTabSelected event emission due to nullish emitter");
     return NO;
   }
-#else
-  if (self.onNativeFocusChange) {
-    self.onNativeFocusChange(@{
-      @"tabKey" : payload.tabKey,
-      @"repeatedSelectionHandledBySpecialEffect" : @(payload.repeatedSelectionHandledBySpecialEffect)
-    });
+}
+
+- (BOOL)emitOnTabSelectionRejected:(OnTabSelectionRejectedPayload)payload
+{
+  if (_reactEventEmitter != nullptr) {
+    auto convertedReason =
+        rnscreens::conversion::RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+            payload.rejectionReason);
+    _reactEventEmitter->onTabSelectionRejected(
+        {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
+         .provenance = payload.currentNavState.provenance,
+         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedNavState.selectedScreenKey),
+         .rejectedProvenance = payload.rejectedNavState.provenance,
+         .rejectionReason = convertedReason});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnNativeFocusChange event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnTabSelectionRejected event emission due to nullish emitter");
     return NO;
   }
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 @end

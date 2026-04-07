@@ -2,7 +2,10 @@
 // is loaded.
 import './fabric/NativeScreensModule';
 
-export * from './types';
+/*
+ * V4 types
+ */
+export type * from './types';
 
 /**
  * Core
@@ -60,11 +63,7 @@ export { compatibilityFlags, featureFlags } from './flags';
 export { default as useTransitionProgress } from './useTransitionProgress';
 
 /**
- * RNSLog
- */
-export { RNSLog } from './utils';
-
-/**
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
  */
-export { default as Tabs } from './components/tabs';
+export * from './components/tabs';
+export type * from './components/shared/types';

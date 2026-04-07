@@ -48,7 +48,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
   _props = defaultProps;
 
   // container state

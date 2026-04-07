@@ -6,14 +6,14 @@ import TabsHostAndroidNativeComponent, {
   type NativeProps as TabsHostAndroidNativeComponentProps,
 } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
-import { bottomTabsDebugLog } from '../../../private/logging';
+import { RNSLog } from '../../../private';
 import { useTabsHost } from './useTabsHost';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function TabsHost(props: TabsHostProps) {
-  bottomTabsDebugLog(`TabsHost render`);
+  RNSLog.log(`TabsHost render`);
 
   // android props (even if unused for now) are extracted - these should be handled separately from base props
   // ios props are safely dropped
@@ -25,28 +25,32 @@ function TabsHost(props: TabsHostProps) {
     direction,
     experimentalControlNavigationStateInJS,
     nativeContainerStyle,
-    onNativeFocusChange,
+    onTabSelected,
+    navState,
     ...filteredBaseProps
   } = baseProps;
 
   const componentNodeRef =
     React.useRef<React.Component<TabsHostAndroidNativeComponentProps>>(null);
 
-  const { onNativeFocusChangeCallback } =
+  const { onTabSelected: onTabSelectedCallback } =
     useTabsHost<TabsHostAndroidNativeComponentProps>({
       componentNodeRef,
       controlNavigationStateInJS: experimentalControlNavigationStateInJS,
-      onNativeFocusChange,
+      onTabSelected,
     });
 
   return (
     <TabsHostAndroidNativeComponent
       style={[styles.fillParent, { direction }]}
-      onNativeFocusChange={onNativeFocusChangeCallback}
+      navState={navState}
+      onTabSelected={onTabSelectedCallback}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
-      {...filteredBaseProps}>
+      {...filteredBaseProps}
+      // Android-specific
+      tabBarRespectsIMEInsets={android?.tabBarRespectsIMEInsets}>
       {children}
     </TabsHostAndroidNativeComponent>
   );

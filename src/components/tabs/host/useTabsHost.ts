@@ -3,8 +3,8 @@ import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import featureFlags from '../../../flags';
-import { bottomTabsDebugLog } from '../../../private/logging';
-import type { NativeFocusChangeEvent } from './TabsHost.types';
+import { RNSLog } from '../../../private';
+import type { TabSelectedEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
   | TabsHostAndroidNativeComponentProps
@@ -13,15 +13,13 @@ type TabsHostPlatformNativeComponentProps =
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
   controlNavigationStateInJS?: boolean;
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   componentNodeRef,
   controlNavigationStateInJS,
-  onNativeFocusChange,
+  onTabSelected,
 }: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -34,22 +32,22 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
     }
   }, []);
 
-  const onNativeFocusChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      bottomTabsDebugLog(
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
+      RNSLog.log(
         `TabsHost [${
           componentNodeHandle.current ?? -1
-        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
+        }] onTabSelected: ${JSON.stringify(event.nativeEvent)}`,
       );
-      onNativeFocusChange?.(event);
+      onTabSelected?.(event);
     },
-    [onNativeFocusChange],
+    [onTabSelected],
   );
 
   return {
     controlNavigationStateInJS:
       controlNavigationStateInJS ??
       featureFlags.experiment.controlledBottomTabs,
-    onNativeFocusChangeCallback,
+    onTabSelected: onTabSelectedCallback,
   };
 }

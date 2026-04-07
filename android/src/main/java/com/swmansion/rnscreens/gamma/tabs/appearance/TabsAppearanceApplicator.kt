@@ -15,12 +15,11 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.resolveColorAttr
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
-class TabsAppearanceApplicator(
+internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
     private val states =
@@ -33,11 +32,10 @@ class TabsAppearanceApplicator(
 
     fun updateSharedAppearance(
         context: Context,
-        tabsHost: TabsHost,
+        tabBarAppearance: TabsAppearance?,
+        isTabBarHidden: Boolean,
     ) {
-        val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
-
-        bottomNavigationView.isVisible = !tabsHost.tabBarHidden
+        bottomNavigationView.isVisible = !isTabBarHidden
         bottomNavigationView.setBackgroundColor(
             tabBarAppearance?.tabBarBackgroundColor
                 ?: resolveColorAttr(context, R.attr.colorSurfaceContainer),
@@ -115,9 +113,8 @@ class TabsAppearanceApplicator(
 
     fun updateFontStyles(
         context: Context,
-        tabsHost: TabsHost,
+        tabBarAppearance: TabsAppearance?,
     ) {
-        val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
         for (menuItem in bottomNavigationMenuView.children) {
@@ -203,11 +200,11 @@ class TabsAppearanceApplicator(
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
     ) {
-        val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
+        val menuItemId = menuItem.itemId
         val badgeValue = tabsScreen.badgeValue
 
         if (badgeValue == null) {
-            val badge = bottomNavigationView.getBadge(menuItemIndex)
+            val badge = bottomNavigationView.getBadge(menuItemId)
             badge?.isVisible = false
 
             return
@@ -215,7 +212,7 @@ class TabsAppearanceApplicator(
 
         val badgeValueNumber = badgeValue.toIntOrNull()
 
-        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+        val badge = bottomNavigationView.getOrCreateBadge(menuItemId)
         badge.isVisible = true
 
         badge.clearText()

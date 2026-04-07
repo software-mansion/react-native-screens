@@ -5,10 +5,26 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // #region General helpers
 
-type NativeFocusChangeEvent = {
-  tabKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
-};
+type TabSelectedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  isRepeated: boolean;
+  hasTriggeredSpecialEffect: boolean;
+  isNativeAction: boolean;
+}>;
+
+type NavigationState = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+}>;
+
+type TabSelectionRejectedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  rejectedScreenKey: string;
+  rejectedProvenance: CT.Int32;
+  rejectionReason: 'stale' | 'repeated' | 'more-nav-ctrl-not-available';
+}>;
 
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
@@ -29,8 +45,13 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
+  // Control
+  navState: NavigationState;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
+
   // Events
-  onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
+  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
@@ -40,8 +61,6 @@ export interface NativeProps extends ViewProps {
   // We can't use `direction` name for this prop as it's also used by
   // direction style View prop.
   layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
-
-  // Control
 
   // Experimental support
   controlNavigationStateInJS?: CT.WithDefault<boolean, false>;

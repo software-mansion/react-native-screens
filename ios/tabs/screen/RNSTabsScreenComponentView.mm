@@ -78,7 +78,6 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -270,14 +269,9 @@ RNS_IGNORE_SUPER_CALL_END
     tabScreenOrientationNeedsUpdate = YES;
   }
 
-  if (newComponentProps.tabKey != oldComponentProps.tabKey) {
-    RCTAssert(!newComponentProps.tabKey.empty(), @"[RNScreens] tabKey must not be empty!");
-    _tabKey = RCTNSStringFromString(newComponentProps.tabKey);
-  }
-
-  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isSelectedScreen = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
+  if (newComponentProps.screenKey != oldComponentProps.screenKey) {
+    RCTAssert(!newComponentProps.screenKey.empty(), @"[RNScreens] screenKey must not be empty!");
+    _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
@@ -514,7 +508,7 @@ RNS_IGNORE_SUPER_CALL_END
   // enabling us to warn users that dynamic changes are not supported.
   // On Paper, setter for the prop may not be called (when it is undefined in JS).
   // Therefore we set the flag in didSetProps to make sure to handle this case as well.
-  // didSetProps will always be called because tabKey prop is required.
+  // didSetProps will always be called because screenKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
   if (_tabBarItemNeedsRecreation) {
@@ -559,10 +553,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setTabKey:(NSString *)tabKey
+- (void)setScreenKey:(NSString *)screenKey
 {
-  RCTAssert([NSString rnscreens_isBlankOrNull:tabKey] == NO, @"[RNScreens] tabKey must not be empty");
-  _tabKey = tabKey;
+  RCTAssert([NSString rnscreens_isBlankOrNull:screenKey] == NO, @"[RNScreens] screenKey must not be empty");
+  _screenKey = screenKey;
 }
 
 - (void)setTitle:(NSString *)title

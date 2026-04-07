@@ -1,4 +1,4 @@
-import type { ScenarioGroup } from '../../shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 import BottomAccessoryScenario from './bottom-accessory-layout';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
@@ -7,6 +7,10 @@ import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsColorScheme from './test-tabs-color-scheme';
 import TestTabsLayoutDirection from './test-tabs-layout-direction';
+import TestTabsIMEInsets from './test-tabs-ime-insets';
+import TestTabsSimpleNav from './test-tabs-simple-nav';
+import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
+import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -16,6 +20,10 @@ const scenarios = {
   TabsScreenOrientationScenario,
   TestTabsColorScheme,
   TestTabsLayoutDirection,
+  TestTabsIMEInsets,
+  TestTabsSimpleNav,
+  TestTabsMoreNavigationController,
+  TestTabsStaleStateUpdateRejection,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

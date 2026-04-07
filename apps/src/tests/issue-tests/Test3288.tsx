@@ -9,11 +9,11 @@ import React, {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
 import {
   ColorValue,
   Pressable,
@@ -23,9 +23,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SettingsPicker, SettingsSwitch } from '../../shared';
-import Colors from '../../shared/styling/Colors';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import Colors from '@apps/shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import type {
   TabBarMinimizeBehavior,
   TabsBottomAccessoryEnvironment,
@@ -133,10 +133,11 @@ function TestScreen() {
   );
 }
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
-    tabScreenProps: {
-      tabKey: 'Tab1',
+    name: 'Tab1',
+    Component: Config,
+    options: {
       title: 'Config',
       ios: {
         icon: {
@@ -145,11 +146,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: Config,
   },
   {
-    tabScreenProps: {
-      tabKey: 'Tab2',
+    name: 'Tab2',
+    Component: TestScreen,
+    options: {
       title: 'Test',
       ios: {
         icon: {
@@ -158,7 +159,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: TestScreen,
   },
 ];
 
@@ -226,8 +226,8 @@ function Tabs() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
-        tabConfigs={TAB_CONFIGS}
+      <TabsContainer
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,
           bottomAccessory: bottomAccessoryConfig.shown

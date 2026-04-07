@@ -1,5 +1,3 @@
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #include "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 
 @implementation RCTImageComponentView (RNSScreenStackHeaderConfig)
@@ -10,5 +8,3 @@
 }
 
 @end
-
-#endif // RCT_NEW_ARCH_ENABLED

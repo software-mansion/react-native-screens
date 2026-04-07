@@ -22,14 +22,6 @@ abstract class FabricEnabledViewGroup(
         mStateWrapper = wrapper
     }
 
-    protected fun updateScreenSizeFabric(
-        width: Int,
-        height: Int,
-        headerHeight: Int,
-    ) {
-        updateState(width, height, headerHeight)
-    }
-
     @UiThread
     fun updateState(
         width: Int,

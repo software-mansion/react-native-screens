@@ -6,7 +6,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPS
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 
@@ -138,28 +137,13 @@ fun Screen.isSheetFitToContents(): Boolean =
 fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET
 
 fun Screen.requiresEnterTransitionPostponing(): Boolean {
-    // On old architecture the content wrapper might not have received its frame yet,
-    // which is required to determine height of the sheet after animation. Therefore
-    // we delay the transition and trigger it after views receive the layout.
-    // This is used only for formSheet presentation, because we use value animators
-    // there. Tween animations have some magic way to make this work (maybe they
-    // postpone the transition internally, dunno).
-    //
     // On Fabric, system insets are applied after the initial layout pass. However,
     // the BottomSheet height might be measured earlier due to internal BottomSheet logic
     // or layout callbacks, before those insets are applied.
     // To ensure the BottomSheet height respects the top inset we delay starting the enter
     // transition until both layout and insets are fully applied.
 
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !this.sheetShouldOverflowTopInset && this.usesFormSheetPresentation()) {
-        return true
-    }
-
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
-        return false
-    }
-    // Assumes that formSheet uses content wrapper
-    return !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
+    return !this.sheetShouldOverflowTopInset && this.usesFormSheetPresentation()
 }
 
 fun Screen.sheetShouldUseDimmingView(): Boolean {

@@ -17,6 +17,7 @@ import {
 } from './contexts/StackNavigationContext';
 import {
   type NativeComponentGenericRef,
+  RNSLog,
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
@@ -44,7 +45,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
 
   const onScreenDismissed = React.useCallback(
     (screenKey: string) => {
-      console.log(`onScreenDismissed for ${screenKey}`);
+      RNSLog.log(`onScreenDismissed for ${screenKey}`);
       navMethods.popCompletedAction(screenKey);
     },
     [navMethods],
@@ -52,7 +53,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
 
   const onScreenNativelyDismissed = React.useCallback(
     (screenKey: string) => {
-      console.log(`onScreenNativelyDismissed for ${screenKey}`);
+      RNSLog.log(`onScreenNativelyDismissed for ${screenKey}`);
       navMethods.popNativeAction(screenKey);
     },
     [navMethods],

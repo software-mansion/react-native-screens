@@ -14,7 +14,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import LongText from '../../shared/LongText';
+import LongText from '@apps/shared/LongText';
 import {
   ScreenStack,
   ScreenStackHeaderSearchBarView,
@@ -23,20 +23,20 @@ import {
   SearchBarPlacement,
   StackPresentationTypes,
 } from 'react-native-screens';
-import Colors from '../../shared/styling/Colors';
-import { SettingsPicker, SettingsSwitch } from '../../shared';
+import Colors from '@apps/shared/styling/Colors';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
 import {
   createNativeStackNavigator,
-  NativeStackNavigationProp,
+  type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
 
@@ -461,10 +461,11 @@ function HeaderHeightTabsWrapper() {
     DEFAULT_GLOBAL_CONFIGURATION,
   );
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
-      tabScreenProps: {
-        tabKey: 'Tab1',
+      name: 'Tab1',
+      Component: HeaderHeightTest,
+      options: {
         title: 'Tab 1',
         ios: {
           icon: {
@@ -479,11 +480,11 @@ function HeaderHeightTabsWrapper() {
           },
         },
       },
-      component: HeaderHeightTest,
     },
     {
-      tabScreenProps: {
-        tabKey: 'Tab2',
+      name: 'Tab2',
+      Component: HeaderHeightTest,
+      options: {
         title: 'Tab 2',
         ios: {
           icon: {
@@ -498,7 +499,6 @@ function HeaderHeightTabsWrapper() {
           },
         },
       },
-      component: HeaderHeightTest,
     },
   ];
 
@@ -508,7 +508,7 @@ function HeaderHeightTabsWrapper() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }
