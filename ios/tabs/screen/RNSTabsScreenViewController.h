@@ -10,8 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabBarController;
-
 @interface RNSTabsScreenViewController : UIViewController
 #if !TARGET_OS_TV
                                          <RNSOrientationProviding>
