@@ -96,7 +96,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

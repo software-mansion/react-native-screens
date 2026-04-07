@@ -266,7 +266,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 #pragma mark - RCTComponentViewProtocol
 

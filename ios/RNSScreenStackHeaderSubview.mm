@@ -128,7 +128,7 @@ namespace react = facebook::react;
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

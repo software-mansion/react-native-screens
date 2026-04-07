@@ -37,7 +37,7 @@
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

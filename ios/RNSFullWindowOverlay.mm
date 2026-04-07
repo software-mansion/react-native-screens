@@ -86,7 +86,7 @@
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
