@@ -214,7 +214,7 @@ Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 #endif // RCT_NEW_ARCH_ENABLED
 
 @end
