@@ -1,27 +1,13 @@
-import { ReactNode } from 'react';
-import { StackHeaderSubviewCollapseModeAndroid } from './StackHeaderSubview.types';
+import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
+import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
-export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
-
-export type StackHeaderToolbarSubviewAndroid = {
-  Component: ReactNode;
-};
-
-export type StackHeaderBackgroundSubviewCollapseModeAndroid =
-  StackHeaderSubviewCollapseModeAndroid;
-
-export type StackHeaderBackgroundSubviewAndroid = {
-  collapseMode?: StackHeaderSubviewCollapseModeAndroid;
-  Component: ReactNode;
-};
-
-export type StackHeaderConfigProps = {
-  type?: StackHeaderTypeAndroid;
+export interface StackHeaderConfigPropsBase {
   title?: string;
   hidden?: boolean;
   transparent?: boolean;
-  backgroundSubview?: StackHeaderBackgroundSubviewAndroid;
-  leadingSubview?: StackHeaderToolbarSubviewAndroid;
-  centerSubview?: StackHeaderToolbarSubviewAndroid;
-  trailingSubview?: StackHeaderToolbarSubviewAndroid;
-};
+}
+
+export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
+  android?: StackHeaderConfigPropsAndroid;
+  ios?: StackHeaderConfigPropsIOS;
+}

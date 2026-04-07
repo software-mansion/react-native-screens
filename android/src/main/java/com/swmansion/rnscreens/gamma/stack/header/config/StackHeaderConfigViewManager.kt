@@ -8,18 +8,18 @@ import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.viewmanagers.RNSStackHeaderConfigManagerDelegate
-import com.facebook.react.viewmanagers.RNSStackHeaderConfigManagerInterface
+import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
     ViewGroupManager<StackHeaderConfig>(),
-    RNSStackHeaderConfigManagerInterface<StackHeaderConfig> {
+    RNSStackHeaderConfigAndroidManagerInterface<StackHeaderConfig> {
     private val delegate: ViewManagerDelegate<StackHeaderConfig>
 
     init {
-        delegate = RNSStackHeaderConfigManagerDelegate<StackHeaderConfig, StackHeaderConfigViewManager>(this)
+        delegate = RNSStackHeaderConfigAndroidManagerDelegate<StackHeaderConfig, StackHeaderConfigViewManager>(this)
     }
 
     override fun getName() = REACT_CLASS
@@ -116,6 +116,6 @@ open class StackHeaderConfigViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSStackHeaderConfig"
+        const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }
 }

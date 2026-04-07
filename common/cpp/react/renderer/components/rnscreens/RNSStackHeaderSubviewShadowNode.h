@@ -14,8 +14,8 @@ JSI_EXPORT extern const char RNSStackHeaderSubviewComponentName[];
 class JSI_EXPORT RNSStackHeaderSubviewShadowNode final
     : public ConcreteViewShadowNode<
           RNSStackHeaderSubviewComponentName,
-          RNSStackHeaderSubviewProps,
-          RNSStackHeaderSubviewEventEmitter,
+          RNSStackHeaderSubviewAndroidProps,
+          RNSStackHeaderSubviewAndroidEventEmitter,
           RNSStackHeaderSubviewState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;

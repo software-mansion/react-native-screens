@@ -3,7 +3,7 @@
 namespace facebook::react {
 
 extern const char RNSStackHeaderSubviewComponentName[] =
-    "RNSStackHeaderSubview";
+    "RNSStackHeaderSubviewAndroid";
 
 #ifdef ANDROID
 Point RNSStackHeaderSubviewShadowNode::getContentOriginOffset(

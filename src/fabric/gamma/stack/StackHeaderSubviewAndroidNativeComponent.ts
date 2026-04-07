@@ -18,6 +18,10 @@ export interface NativeProps extends ViewProps {
   >;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSStackHeaderSubview', {
-  interfaceOnly: true,
-});
+export default codegenNativeComponent<NativeProps>(
+  'RNSStackHeaderSubviewAndroid',
+  {
+    interfaceOnly: true,
+    excludedPlatforms: ['iOS'],
+  },
+);

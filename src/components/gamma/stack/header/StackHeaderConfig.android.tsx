@@ -1,25 +1,31 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { StackHeaderConfigProps } from './StackHeaderConfig.types';
-import StackHeaderConfigNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigNativeComponent';
-import StackHeaderSubview from './StackHeaderSubview';
+import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
+import StackHeaderSubview from './android/StackHeaderSubview.android';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function StackHeaderConfig(props: StackHeaderConfigProps) {
+  // ios props are safely dropped
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { android, ios, ...baseProps } = props;
+
   const {
     backgroundSubview,
     leadingSubview,
     centerSubview,
     trailingSubview,
-    ...filteredProps
-  } = props;
+    ...filteredAndroidProps
+  } = android ?? {};
+
   return (
-    <StackHeaderConfigNativeComponent
+    <StackHeaderConfigAndroidNativeComponent
       collapsable={false}
       style={StyleSheet.absoluteFill}
-      {...filteredProps}>
+      {...baseProps}
+      {...filteredAndroidProps}>
       {backgroundSubview && (
         <StackHeaderSubview
           type="background"
@@ -42,7 +48,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
           {trailingSubview.Component}
         </StackHeaderSubview>
       )}
-    </StackHeaderConfigNativeComponent>
+    </StackHeaderConfigAndroidNativeComponent>
   );
 }
 

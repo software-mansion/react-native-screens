@@ -1,8 +1,8 @@
-import StackHost from './StackHost';
-import StackScreen from './StackScreen';
-import StackHeaderConfig from './header/StackHeaderConfig';
+import { StackHost } from './host';
+import { StackScreen } from './screen';
+import { StackHeaderConfig } from './header';
 
-export type { StackHostProps } from './StackHost.types';
+export type { StackHostProps } from './host';
 
 export type {
   OnDismissEventPayload,
@@ -11,15 +11,20 @@ export type {
   StackScreenActivityMode,
   StackScreenEventHandler,
   StackScreenProps,
-} from './StackScreen.types';
+} from './screen';
 
 export type {
-  StackHeaderTypeAndroid,
-  StackHeaderToolbarSubviewAndroid,
-  StackHeaderBackgroundSubviewCollapseModeAndroid,
-  StackHeaderBackgroundSubviewAndroid,
+  StackHeaderConfigPropsBase,
   StackHeaderConfigProps,
-} from './header/StackHeaderConfig.types';
+  // Android
+  StackHeaderTypeAndroid,
+  StackHeaderBackgroundSubviewCollapseModeAndroid,
+  StackHeaderToolbarSubviewAndroid,
+  StackHeaderBackgroundSubviewAndroid,
+  StackHeaderConfigPropsAndroid,
+  // iOS
+  StackHeaderConfigPropsIOS,
+} from './header';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

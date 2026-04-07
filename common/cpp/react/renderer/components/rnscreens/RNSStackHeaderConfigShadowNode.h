@@ -13,8 +13,13 @@ JSI_EXPORT extern const char RNSStackHeaderConfigComponentName[];
 class JSI_EXPORT RNSStackHeaderConfigShadowNode final
     : public ConcreteViewShadowNode<
           RNSStackHeaderConfigComponentName,
-          RNSStackHeaderConfigProps,
-          RNSStackHeaderConfigEventEmitter,
+#if !defined(ANDROID)
+          RNSStackHeaderConfigIOSProps,
+          RNSStackHeaderConfigIOSEventEmitter,
+#else // !defined(ANDROID)
+          RNSStackHeaderConfigAndroidProps,
+          RNSStackHeaderConfigAndroidEventEmitter,
+#endif // !defined(ANDROID)
           RNSStackHeaderConfigState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;

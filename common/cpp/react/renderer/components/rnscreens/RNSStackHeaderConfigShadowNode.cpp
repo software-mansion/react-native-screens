@@ -2,7 +2,13 @@
 
 namespace facebook::react {
 
-extern const char RNSStackHeaderConfigComponentName[] = "RNSStackHeaderConfig";
+#if !defined(ANDROID)
+extern const char RNSStackHeaderConfigComponentName[] =
+    "RNSStackHeaderConfigIOS";
+#else // !defined(ANDROID)
+extern const char RNSStackHeaderConfigComponentName[] =
+    "RNSStackHeaderConfigAndroid";
+#endif // !defined(ANDROID)
 
 #ifdef ANDROID
 Point RNSStackHeaderConfigShadowNode::getContentOriginOffset(

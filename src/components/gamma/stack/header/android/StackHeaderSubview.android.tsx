@@ -1,7 +1,7 @@
 import React from 'react';
-import { StackHeaderSubviewProps } from './StackHeaderSubview.types';
-import StackHeaderSubviewNativeComponent from '../../../../fabric/gamma/stack/StackHeaderSubviewNativeComponent';
+import { StackHeaderSubviewProps } from './StackHeaderSubview.android.types';
 import { StyleSheet } from 'react-native';
+import StackHeaderSubviewAndroidNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderSubviewAndroidNativeComponent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -9,7 +9,7 @@ import { StyleSheet } from 'react-native';
 function StackHeaderSubview(props: StackHeaderSubviewProps) {
   const { children, ...filteredProps } = props;
   return (
-    <StackHeaderSubviewNativeComponent
+    <StackHeaderSubviewAndroidNativeComponent
       collapsable={false}
       style={
         filteredProps.type === 'background'
@@ -18,7 +18,7 @@ function StackHeaderSubview(props: StackHeaderSubviewProps) {
       }
       {...filteredProps}>
       {children}
-    </StackHeaderSubviewNativeComponent>
+    </StackHeaderSubviewAndroidNativeComponent>
   );
 }
 
