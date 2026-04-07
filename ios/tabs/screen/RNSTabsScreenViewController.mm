@@ -28,21 +28,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+  [super viewWillAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  [super viewDidAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+  [super viewWillDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillDisappear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+  [super viewDidDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidDisappear];
 }
 
