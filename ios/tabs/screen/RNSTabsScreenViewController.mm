@@ -126,7 +126,7 @@
 
 @end
 
-@implementation RNSTabsScreenViewController (ScreenPropsForwarding)
+@implementation RNSTabsScreenViewController (TabsScreenPropsForwarding)
 
 - (nullable NSString *)getScreenKeyOrNull
 {

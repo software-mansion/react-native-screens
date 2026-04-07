@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSTabsScreenViewController (ScreenPropsForwarding)
+@interface RNSTabsScreenViewController (TabsScreenPropsForwarding)
 
 - (nullable NSString *)getScreenKeyOrNull;
 
