@@ -31,7 +31,7 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

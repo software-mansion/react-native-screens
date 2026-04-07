@@ -482,6 +482,14 @@ RNS_IGNORE_SUPER_CALL_END
   [super unmountChildComponentView:childComponentView index:index];
 }
 
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();

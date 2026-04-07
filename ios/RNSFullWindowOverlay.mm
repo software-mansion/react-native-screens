@@ -77,7 +77,7 @@
 {
   [super load];
 }
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 - (instancetype)init
 {
