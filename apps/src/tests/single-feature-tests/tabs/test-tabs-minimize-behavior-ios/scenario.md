@@ -1,7 +1,9 @@
 # Test Scenario: tabBarMinimizeBehavior
+
 **E2E test:** NO
 
 ## Prerequisites
+
 - iOS 26+ device or simulator
 
 ## Note
@@ -27,7 +29,7 @@
 
 - [ ] Expected: Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
-1. Scroll back **up** on **Tab2**.
+3. Scroll back **up** on **Tab2**.
 
 - [ ] Expected: Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
@@ -39,7 +41,7 @@
 
 - [ ] Expected: Tab bar minimizes as the user scrolls down.
 
-1. Scroll back **up** on **Tab2**.
+5. Scroll back **up** on **Tab2**.
 
 - [ ] Expected: Tab bar reappears when scrolling up.
 
@@ -78,11 +80,3 @@
 11.  Navigate to **Tab1** and switch back to **Tab2**.
 
 - [ ] Expected: **Tab2** scroll position is preserved — no crash or blank screen.
-
----
-
-### Switching between values dynamically
-
-10. While on **Tab2**, switch back to **Tab1** and cycle through all values: `automatic` → `onScrollDown` → `onScrollUp` → `never` → `automatic`. After each change, switch to **Tab2** and scroll both down and up.
-
-- [ ] Expected: The tab bar minimize behavior updates immediately after each change with no crash, layout freeze, or visual glitch.
