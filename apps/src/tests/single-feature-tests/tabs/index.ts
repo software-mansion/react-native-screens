@@ -6,11 +6,12 @@ import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsColorScheme from './test-tabs-color-scheme';
-import TestTabsLayoutDirection from './test-tabs-layout-direction';
+import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
+import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -19,11 +20,12 @@ const scenarios = {
   TestTabsTabBarHidden,
   TabsScreenOrientationScenario,
   TestTabsColorScheme,
-  TestTabsLayoutDirection,
+  TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSimpleNav,
   TestTabsMoreNavigationController,
   TestTabsStaleStateUpdateRejection,
+  TestTabsTabBarMinimizeBehavior,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
