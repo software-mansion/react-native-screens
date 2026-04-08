@@ -82,11 +82,10 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
@@ -103,11 +102,10 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
@@ -121,9 +119,8 @@ namespace react = facebook::react;
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
     [_stackOperationCoordinator addPopOperation:stackScreen];
   } else {
-    RNSLog(
-        @"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed",
-        [stackScreen.screenKey cStringUsingEncoding:NSUTF8StringEncoding]);
+    RNSLog(@"[RNScreens] ignoring pop operation of %s, already not attached or natively dismissed",
+           [stackScreen.screenKey cStringUsingEncoding:NSUTF8StringEncoding]);
   }
 }
 
@@ -140,12 +137,6 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  // noop
-}
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
