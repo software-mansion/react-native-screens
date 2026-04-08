@@ -12,7 +12,7 @@ import { TabBarMinimizeBehavior } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Minimize Behavior',
-    key: 'test-tabs-minimize-behavior-ios',
+    key: 'test-tabs-tab-bar-minimize-behavior-ios',
     details: 'Test tab bar minimize behavior for iOS 26+.',
     platforms: ['ios'],
     AppComponent: App,

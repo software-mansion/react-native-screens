@@ -17,7 +17,7 @@
 
 ### Baseline
 
-1. Launch the app and navigate to the Tab Bar Minimize Behavior screen.
+1. Launch the app and navigate to the **Tab Bar Minimize Behavior** screen.
 
 - [ ] Expected: **Tab1** is selected. The `tabBarMinimizeBehavior` picker defaults to `automatic`.
 
