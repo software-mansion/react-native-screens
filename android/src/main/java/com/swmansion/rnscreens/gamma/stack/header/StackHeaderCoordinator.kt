@@ -50,25 +50,15 @@ internal class StackHeaderCoordinator(
     // render a subview to the leading side of the title.
     private var managedTitleView: AppCompatTextView? = null
 
-    private var shouldRequestLayout = false
-
     internal fun applyHeaderConfig(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigProviding?,
     ) {
-        shouldRequestLayout = false
-
         currentConfig = config
         if (config != null) {
             updateHeader(coordinatorLayout, config)
         } else {
             removeHeader(coordinatorLayout)
-        }
-
-        // TODO: move to specific places
-        if (shouldRequestLayout) {
-            appBarLayout?.toolbar?.requestLayout()
-            shouldRequestLayout = false
         }
     }
 
@@ -85,7 +75,7 @@ internal class StackHeaderCoordinator(
     private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
         teardown(coordinatorLayout)
         removeContentBehavior(coordinatorLayout)
-        shouldRequestLayout = true
+        coordinatorLayout.requestLayout()
     }
 
     // region Rebuild detection
@@ -133,12 +123,13 @@ internal class StackHeaderCoordinator(
 
             populateAppBar(appBar, config)
             maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
+            appBar.toolbar.requestLayout()
         } else {
             removeContentBehavior(coordinatorLayout)
+            coordinatorLayout.requestLayout()
         }
 
         cacheRebuildTriggers(config)
-        shouldRequestLayout = true
     }
 
     private fun teardown(coordinatorLayout: StackHeaderCoordinatorLayout) {
@@ -306,9 +297,7 @@ internal class StackHeaderCoordinator(
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
                 managedTitleView?.text = config.title
-
-                // Changing small title requires layout
-                shouldRequestLayout = true
+                managedTitleView?.requestLayout()
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
@@ -341,7 +330,7 @@ internal class StackHeaderCoordinator(
                     updateShadowState(contentTop, dependency)
                 }
             coordinatorLayout.stackScreenWrapper.layoutParams = params
-            shouldRequestLayout = true
+            coordinatorLayout.stackScreenWrapper.requestLayout()
         }
     }
 
@@ -351,7 +340,7 @@ internal class StackHeaderCoordinator(
             params.behavior = null
             coordinatorLayout.stackScreenWrapper.layoutParams = params
             onHeaderHeightChanged(0)
-            shouldRequestLayout = true
+            coordinatorLayout.stackScreenWrapper.requestLayout()
         }
     }
 
@@ -447,6 +436,8 @@ internal class StackHeaderCoordinator(
     private fun moveDummyViewToFront(toolbar: Toolbar) {
         for (i in 0 until toolbar.childCount) {
             val child = toolbar.getChildAt(i)
+            // Assumes only StackHeaderSubview children exist in Collapsing toolbar besides
+            // the CTL dummy view.
             if (child !is StackHeaderSubview) {
                 val lp = child.layoutParams
                 toolbar.removeViewAt(i)
