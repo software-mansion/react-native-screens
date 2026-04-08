@@ -1,4 +1,4 @@
-## Test Scenario: tabBarHidden
+# Test Scenario: tabBarHidden
 
 **E2E test:** No - to be automated
 
@@ -6,9 +6,7 @@
 - iOS 18+ device or simulator
 - Android emulator
 
----
-
-### Steps
+## Steps
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
