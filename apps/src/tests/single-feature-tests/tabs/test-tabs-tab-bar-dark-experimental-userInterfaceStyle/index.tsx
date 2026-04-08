@@ -26,7 +26,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Experimental UIStyle: dark',
-    key: 'test-tabs-dark-experimental-userInterfaceStyle-ios',
+    key: 'test-tabs-tab-bar-dark-experimental-userInterfaceStyle-ios',
     platforms: ['ios'],
     AppComponent: App,
 };
