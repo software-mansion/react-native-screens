@@ -1,4 +1,4 @@
-## Test Scenario: tabBarHidden
+# Test Scenario: tabBarHidden
 
 **E2E test:** No - to be automated
 
@@ -8,7 +8,7 @@
 
 ---
 
-### Steps
+## Steps
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
