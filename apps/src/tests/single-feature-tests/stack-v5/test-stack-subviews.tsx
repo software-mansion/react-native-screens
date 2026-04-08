@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { I18nManager, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Scenario } from '../../shared/helpers';
 import {
   StackContainer,
@@ -25,9 +25,10 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-const SHORT_TITLE = 'Hello';
-const LONG_TITLE =
-  'A Very Long Title That Should Ellipsize When There Is Not Enough Space Available';
+const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';
+const LONG_TITLE = I18nManager.isRTL
+  ? 'عنوان طويل جدا يجب أن يتم اقتطاعه عندما لا تتوفر مساحة كافية لعرضه بالكامل'
+  : 'A Very Long Title That Should Ellipsize When There Is Not Enough Space Available';
 
 type SubviewSize = 'none' | 'sm' | 'md' | 'lg';
 type HitSlopValue = '0' | '10' | '30';

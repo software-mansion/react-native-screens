@@ -234,7 +234,8 @@ internal class StackHeaderCoordinator(
             // Toolbar's native title - it would be laid out to the leading side of leading subview.
             val titleView = createManagedTitleView(toolbar)
             managedTitleView = titleView
-            toolbar.addView(titleView)
+            val index = if (config.isRtl) 0 else -1
+            toolbar.addView(titleView, index, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
         }
     }
 
