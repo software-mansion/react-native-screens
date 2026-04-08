@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.header.subview
 import android.annotation.SuppressLint
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -39,6 +40,9 @@ class StackHeaderSubview(
 
     internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
 
+    private var yogaWidth: Int = 0
+    private var yogaHeight: Int = 0
+
     private var lastNotifiedSize: Pair<Int, Int>? = null
 
     override fun onLayout(
@@ -48,7 +52,6 @@ class StackHeaderSubview(
         right: Int,
         bottom: Int,
     ) {
-        super.onLayout(changed, left, top, right, bottom)
         val newSize = (right - left) to (bottom - top)
         if (lastNotifiedSize != newSize) {
             lastNotifiedSize = newSize
@@ -61,10 +64,37 @@ class StackHeaderSubview(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
     ) {
-        if (width > 0 && height > 0) {
-            setMeasuredDimension(width, height)
+        var invalidated = false
+
+        // SurfaceMountingManager always delivers Yoga dimensions as EXACTLY specs.
+        // Cache them so we can report the correct size when the Toolbar remeasures us.
+        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
+            yogaWidth = MeasureSpec.getSize(widthMeasureSpec)
+            invalidated = true
+        }
+        if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+            yogaHeight = MeasureSpec.getSize(heightMeasureSpec)
+            invalidated = true
+        }
+
+        if (yogaWidth > 0 && yogaHeight > 0) {
+            setMeasuredDimension(yogaWidth, yogaHeight)
+            if (invalidated) {
+                requestLayout()
+            }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
+    }
+
+    override fun requestLayout() {
+        // This super is called to avoid a warning but ReactViewGroup.requestLayout is a no-op.
+        super.requestLayout()
+
+        // Invalidate layout flags.
+        forceLayout()
+
+        // Rely on parent to request the layout.
+        parentAsView()?.requestLayout()
     }
 }

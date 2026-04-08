@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
@@ -100,4 +101,15 @@ class StackHeaderConfig(
     // The order of the subviews MUST match the order of JS StackHeaderConfig children.
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
         listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+
+    override fun requestLayout() {
+        // This super is called to avoid a warning but ReactViewGroup.requestLayout is a no-op.
+        super.requestLayout()
+
+        // Invalidate layout flags.
+        forceLayout()
+
+        // Rely on parent to request the layout.
+        parentAsView()?.requestLayout()
+    }
 }

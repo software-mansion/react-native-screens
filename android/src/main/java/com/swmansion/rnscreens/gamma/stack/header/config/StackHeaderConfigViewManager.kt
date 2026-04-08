@@ -28,6 +28,12 @@ open class StackHeaderConfigViewManager :
 
     override fun getDelegate(): ViewManagerDelegate<StackHeaderConfig> = delegate
 
+    /**
+     * Subviews need to be positioned by native layout from Toolbar and CollapsingToolbarLayout.
+     * Even with this option enabled, we receive dimensions calculated by Yoga via onMeasure.
+     */
+    override fun needsCustomLayoutForChildren() = true
+
     override fun addView(
         parent: StackHeaderConfig,
         child: View,

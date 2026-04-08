@@ -44,9 +44,6 @@ internal class StackHeaderCoordinator(
     private var attachedCenterSubview: StackHeaderSubviewProviding? = null
     private var attachedTrailingSubview: StackHeaderSubviewProviding? = null
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
-    private var lastLeadingSubviewSize: Pair<Int, Int>? = null
-    private var lastCenterSubviewSize: Pair<Int, Int>? = null
-    private var lastTrailingSubviewSize: Pair<Int, Int>? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
     // For small header, we need to use custom title view in order to
@@ -68,8 +65,9 @@ internal class StackHeaderCoordinator(
             removeHeader(coordinatorLayout)
         }
 
+        // TODO: move to specific places
         if (shouldRequestLayout) {
-            coordinatorLayout.maybeRequestLayoutContainer()
+            appBarLayout?.toolbar?.requestLayout()
             shouldRequestLayout = false
         }
     }
@@ -100,10 +98,6 @@ internal class StackHeaderCoordinator(
         if (config.centerSubview !== attachedCenterSubview) return true
         if (config.trailingSubview !== attachedTrailingSubview) return true
         if (config.backgroundSubview !== attachedBackgroundSubview) return true
-
-        if (config.leadingSubview?.viewSize != lastLeadingSubviewSize) return true
-        if (config.centerSubview?.viewSize != lastCenterSubviewSize) return true
-        if (config.trailingSubview?.viewSize != lastTrailingSubviewSize) return true
 
         if (appBarLayout is StackHeaderAppBarLayout.Collapsing) {
             if (config.backgroundSubview?.collapseMode != lastBackgroundSubviewCollapseMode) return true
@@ -137,8 +131,8 @@ internal class StackHeaderCoordinator(
             // Make sure that we receive insets, necessary when changing header mode in runtime.
             appBar.requestApplyInsets()
 
-            maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
             populateAppBar(appBar, config)
+            maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
         } else {
             removeContentBehavior(coordinatorLayout)
         }
@@ -163,9 +157,6 @@ internal class StackHeaderCoordinator(
         attachedCenterSubview = config.centerSubview
         attachedTrailingSubview = config.trailingSubview
         attachedBackgroundSubview = config.backgroundSubview
-        lastLeadingSubviewSize = config.leadingSubview?.viewSize
-        lastCenterSubviewSize = config.centerSubview?.viewSize
-        lastTrailingSubviewSize = config.trailingSubview?.viewSize
         lastBackgroundSubviewCollapseMode = config.backgroundSubview?.collapseMode
     }
 
@@ -177,54 +168,23 @@ internal class StackHeaderCoordinator(
         attachedCenterSubview = null
         attachedTrailingSubview = null
         attachedBackgroundSubview = null
-        lastLeadingSubviewSize = null
-        lastCenterSubviewSize = null
-        lastTrailingSubviewSize = null
         lastBackgroundSubviewCollapseMode = null
     }
 
     private fun detachSubviews() {
         val appBar = appBarLayout ?: return
 
-        attachedLeadingSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
-        attachedCenterSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
-        attachedTrailingSubview?.let { unwrapAndRemoveFrom(it, appBar.toolbar) }
+        attachedLeadingSubview?.let { appBar.toolbar.removeView(it.view) }
+        attachedCenterSubview?.let { appBar.toolbar.removeView(it.view) }
+        attachedTrailingSubview?.let { appBar.toolbar.removeView(it.view) }
 
         if (appBar is StackHeaderAppBarLayout.Collapsing) {
             attachedBackgroundSubview?.let {
-                unwrapAndRemoveFrom(it, appBar.collapsingToolbarLayout)
+                val wrapper = it.view.parent as? FrameLayout ?: return
+                wrapper.removeView(it.view)
+                appBar.collapsingToolbarLayout.removeView(wrapper)
             }
         }
-    }
-
-    // endregion
-
-    // region Subview wrapping
-    //
-    // All subviews are wrapped in a FrameLayout before being added to the
-    // toolbar or collapsing toolbar layout. This ensures the React view has
-    // a relative offset of (0,0) within its native parent, matching what
-    // Yoga expects (it always thinks views are at origin).
-
-    private fun wrapSubview(
-        subview: StackHeaderSubviewProviding,
-        context: Context,
-        wrapperWidth: Int = WRAP_CONTENT,
-        wrapperHeight: Int = WRAP_CONTENT,
-    ): FrameLayout {
-        subview.view.detachFromCurrentParent()
-        return FrameLayout(context).apply {
-            addView(subview.view, FrameLayout.LayoutParams(wrapperWidth, wrapperHeight))
-        }
-    }
-
-    private fun unwrapAndRemoveFrom(
-        subview: StackHeaderSubviewProviding,
-        parent: android.view.ViewGroup,
-    ) {
-        val wrapper = subview.view.parent as? FrameLayout ?: return
-        wrapper.removeView(subview.view)
-        parent.removeView(wrapper)
     }
 
     // endregion
@@ -240,13 +200,13 @@ internal class StackHeaderCoordinator(
         // Toolbar measures children in insertion order. Leading and trailing go first so the
         // title/center gets the remaining space.
         config.leadingSubview?.let {
-            val wrapper = wrapSubview(it, toolbar.context)
-            toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
+            it.view.detachFromCurrentParent()
+            toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
         }
 
         config.trailingSubview?.let {
-            val wrapper = wrapSubview(it, toolbar.context)
-            toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
+            it.view.detachFromCurrentParent()
+            toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
         populateTitleOrCenter(appBar, toolbar, config)
@@ -264,8 +224,8 @@ internal class StackHeaderCoordinator(
                 toolbar.removeView(managedTitleView)
                 managedTitleView = null
 
-                val wrapper = wrapSubview(centerSubview, toolbar.context)
-                toolbar.addView(wrapper, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
+                centerSubview.view.detachFromCurrentParent()
+                toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
             } else {
                 Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
             }
@@ -293,10 +253,12 @@ internal class StackHeaderCoordinator(
         // attaches to the disposable wrapper, not the reused React view. This avoids
         // stale parallax offsets persisting across collapse mode rebuilds therefore allowing
         // runtime changes to this property.
+        backgroundSubview.view.detachFromCurrentParent()
         val wrapper =
-            wrapSubview(backgroundSubview, appBar.context, MATCH_PARENT, MATCH_PARENT).apply {
+            FrameLayout(appBar.context).apply {
                 // We're setting `fitsSystemWindows` so that the background renders behind status bar (edge-to-edge).
                 fitsSystemWindows = true
+                addView(backgroundSubview.view, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
             }
 
         appBar.collapsingToolbarLayout.addView(

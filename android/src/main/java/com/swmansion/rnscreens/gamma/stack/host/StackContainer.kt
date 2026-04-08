@@ -251,15 +251,6 @@ internal class StackContainer(
         }
     }
 
-    internal fun forceSubtreeMeasureAndLayoutPass() {
-        measure(
-            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
-        )
-
-        layout(left, top, right, bottom)
-    }
-
     companion object {
         const val TAG = "StackContainer"
     }

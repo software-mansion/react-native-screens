@@ -74,12 +74,6 @@ internal class StackHeaderCoordinatorLayout(
         handleHeaderConfigAttach(stackScreen.headerConfig)
     }
 
-    internal fun maybeRequestLayoutContainer() {
-        post {
-            stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()
-        }
-    }
-
     private fun handleHeaderConfigAttach(config: StackHeaderConfig?) {
         // Disconnect old config to prevent spurious updates from a detached config
         currentConfig?.onConfigChangeListener = null
