@@ -95,6 +95,19 @@ open class ScreenViewManager :
         view.onFinalizePropsUpdate()
     }
 
+    // Belt-and-braces fragmentWrapper cleanup, in case Fabric drops the view
+    // without ScreenFragment.onDestroy firing on schedule. Breaks the
+    // Screen->fragmentWrapper retain cycle so SurfaceMountingManager doesn't
+    // keep the destroyed fragment alive. Guarded so we only null when no
+    // fragment is currently attached.
+    // See: https://github.com/software-mansion/react-native-screens/issues/3755
+    override fun onDropViewInstance(view: Screen) {
+        if (view.fragmentWrapper?.fragment?.isAdded != true) {
+            view.fragmentWrapper = null
+        }
+        super.onDropViewInstance(view)
+    }
+
     fun setActivityState(
         view: Screen,
         activityState: Int,
