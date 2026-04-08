@@ -14,11 +14,11 @@
 
 2. With system appearance set to **light**, tap **"Push screen with style: dark"** and observe tab bar.
 
-- [ ] Expected: `DarkScreen` is pushed. The tab bar appears **dark** without flash, flicker, or reversion to light style.
+- [ ] Expected: `DarkScreen` is pushed. The tab bar reflects a **dark** style and appear without flash, flicker, or reversion to light style.
 
 1. Pop back to `Screen1`. Push **"Push screen with style: dark"** again and observe back button in navigation bar.
 
-- [ ] Expected: The navigation bar with back button also reflects a dark style and appear without flash, flicker, or reversion to light style.
+- [ ] Expected: The navigation bar with back button also reflects a **dark** style and appear without flash, flicker, or reversion to light style.
 
 4. Switch between **Tab1** and **Tab2** on the pushed screen.
 
