@@ -64,26 +64,14 @@
   [_pendingPushOperations removeAllObjects];
 }
 
-- (NSMutableArray<id<RNSStackOperation>> *)orderedOperations:(nonnull NSMutableArray<id<RNSStackOperation>> *)operations
-                                             withIndicesFrom:
-                                                 (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
+- (NSArray<id<RNSStackOperation>> *)orderedOperations:(nonnull NSMutableArray<id<RNSStackOperation>> *)operations
+                                      withIndicesFrom:
+                                          (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
 {
-  NSMutableArray<NSDictionary *> *operationsWithIndices = [NSMutableArray array];
-  for (id<RNSStackOperation> operation in operations) {
-    NSInteger index = [stackScreens indexOfObject:operation.stackScreen];
-    [operationsWithIndices addObject:@{@"index" : @(index), @"operation" : operation}];
-  }
-
-  [operationsWithIndices sortUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
-    return [obj1[@"index"] compare:obj2[@"index"]];
+  return [operations sortedArrayUsingComparator:^NSComparisonResult(id<RNSStackOperation> obj1,
+                                                                    id<RNSStackOperation> obj2) {
+    return [@([stackScreens indexOfObject:obj1.stackScreen]) compare:@([stackScreens indexOfObject:obj2.stackScreen])];
   }];
-
-  NSMutableArray<id<RNSStackOperation>> *orderedOperations = [NSMutableArray new];
-  for (NSDictionary *dict in operationsWithIndices) {
-    [orderedOperations addObject:dict[@"operation"]];
-  }
-
-  return orderedOperations;
 }
 
 @end
