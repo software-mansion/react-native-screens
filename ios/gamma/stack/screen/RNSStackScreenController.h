@@ -5,7 +5,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackScreenComponentView;
-@class RNSStackController;
 
 @interface RNSStackScreenController : UIViewController
 

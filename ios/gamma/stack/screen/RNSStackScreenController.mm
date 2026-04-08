@@ -17,11 +17,6 @@
   return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-  return nil;
-}
-
 - (RNSStackScreenComponentEventEmitter *)reactEventEmitter
 {
   return [_screenView reactEventEmitter];
