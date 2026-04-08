@@ -134,7 +134,9 @@ internal class StackHeaderCoordinator(
                 setContentBehavior(coordinatorLayout)
             }
 
+            // Make sure that we receive insets, necessary when changing header mode in runtime.
             appBar.requestApplyInsets()
+
             maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
             populateAppBar(appBar, config)
         } else {
