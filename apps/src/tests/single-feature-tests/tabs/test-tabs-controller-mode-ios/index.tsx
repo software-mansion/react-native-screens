@@ -13,7 +13,7 @@ import {TabBarControllerMode } from 'react-native-screens';
 const SCENARIO: Scenario = {
     name: 'Tab Bar Controller Mode',
     key: 'test-tabs-controller-mode-ios',
-    details: 'Test different tabBarControllerMode values.',
+    details: 'Test different tab bar modes.',
     platforms: ['ios'],
     AppComponent: App,
 };
