@@ -53,6 +53,6 @@ internal class ShadowStateProxy(
     }
 
     companion object {
-        private const val DELTA = 0.9f
+        private const val DELTA = 0.1f
     }
 }
