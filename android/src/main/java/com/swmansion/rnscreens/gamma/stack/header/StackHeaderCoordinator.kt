@@ -180,7 +180,7 @@ internal class StackHeaderCoordinator(
 
         if (appBar is StackHeaderAppBarLayout.Collapsing) {
             attachedBackgroundSubview?.let {
-                val wrapper = it.view.parent as? FrameLayout ?: return
+                val wrapper = it.view.parent as? FrameLayout ?: return@let
                 wrapper.removeView(it.view)
                 appBar.collapsingToolbarLayout.removeView(wrapper)
             }
@@ -460,6 +460,3 @@ internal class StackHeaderCoordinator(
         private const val TAG = "StackHeaderCoordinator"
     }
 }
-
-private val StackHeaderSubviewProviding.viewSize: Pair<Int, Int>
-    get() = view.width to view.height

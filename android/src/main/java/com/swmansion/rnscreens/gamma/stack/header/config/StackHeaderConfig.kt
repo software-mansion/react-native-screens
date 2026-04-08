@@ -101,15 +101,4 @@ class StackHeaderConfig(
     // The order of the subviews MUST match the order of JS StackHeaderConfig children.
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
         listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
-
-    override fun requestLayout() {
-        // This super is called to avoid a warning but ReactViewGroup.requestLayout is a no-op.
-        super.requestLayout()
-
-        // Invalidate layout flags.
-        forceLayout()
-
-        // Rely on parent to request the layout.
-        parentAsView()?.requestLayout()
-    }
 }

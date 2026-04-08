@@ -52,6 +52,7 @@ class StackHeaderSubview(
         right: Int,
         bottom: Int,
     ) {
+        // We don't call super.onLayout here because ReactViewGroup.onLayout is a no-op.
         val newSize = (right - left) to (bottom - top)
         if (lastNotifiedSize != newSize) {
             lastNotifiedSize = newSize
@@ -69,17 +70,24 @@ class StackHeaderSubview(
         // SurfaceMountingManager always delivers Yoga dimensions as EXACTLY specs.
         // Cache them so we can report the correct size when the Toolbar remeasures us.
         if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
-            yogaWidth = MeasureSpec.getSize(widthMeasureSpec)
-            invalidated = true
+            val newWidth = MeasureSpec.getSize(widthMeasureSpec)
+            if (newWidth != yogaWidth) {
+                yogaWidth = newWidth
+                invalidated = true
+            }
         }
+
         if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
-            yogaHeight = MeasureSpec.getSize(heightMeasureSpec)
-            invalidated = true
+            val newHeight = MeasureSpec.getSize(heightMeasureSpec)
+            if (newHeight != yogaHeight) {
+                yogaHeight = newHeight
+                invalidated = true
+            }
         }
 
         if (yogaWidth > 0 && yogaHeight > 0) {
             setMeasuredDimension(yogaWidth, yogaHeight)
-            if (invalidated) {
+            if (invalidated && !isInLayout) {
                 requestLayout()
             }
         } else {
