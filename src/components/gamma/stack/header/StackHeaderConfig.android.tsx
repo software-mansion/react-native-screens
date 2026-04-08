@@ -26,6 +26,10 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       style={StyleSheet.absoluteFill}
       {...baseProps}
       {...filteredAndroidProps}>
+      {/*
+        Please note that the order of the subviews MUST match
+        the order in native StackHeaderConfig.getConfigSubviewAt.
+        */}
       {backgroundSubview && (
         <StackHeaderSubview
           type="background"
