@@ -14,7 +14,6 @@ Note:
 - App restart is required after changing forceRTL / allowRTL
 - Assumption: system and RN settings are working correctly. Here only react-native-screens prop is tested.
 
----
 
 ## Steps
 
