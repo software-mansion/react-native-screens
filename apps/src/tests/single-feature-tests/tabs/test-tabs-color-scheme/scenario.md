@@ -9,9 +9,10 @@
   - `adb shell "cmd uimode night yes"`
   - `adb shell "cmd uimode night no"`
 
-Assumption: system and RN color scheme settings are working correctly. Here only the `colorScheme` prop on TabsHost is tested, verified against different system/RN combinations.
+Assumption: 
 
----
+- System and RN color scheme settings are working correctly.
+- Here only the `colorScheme` prop on TabsHost is tested, verified against different system/RN combinations.
 
 ## Steps
 
