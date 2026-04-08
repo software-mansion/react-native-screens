@@ -18,7 +18,7 @@ Assumption:
 
 ### Baseline
 
-1. Launch the app and navigate to the scenario
+1. Launch the app and navigate to the **Tab Bar Color Scheme** screen.
    
 - [ ] Expected: Config tab is shown. Pickers default to `unspecified` / `inherit`
 

@@ -5,7 +5,7 @@ import OverrideScrollViewContentInsetScenario from './override-scroll-view-conte
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
-import TestTabsColorScheme from './test-tabs-color-scheme';
+import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
@@ -19,7 +19,7 @@ const scenarios = {
   TabBarAppearanceDefinedBySelectedTabScenario,
   TestTabsTabBarHidden,
   TabsScreenOrientationScenario,
-  TestTabsColorScheme,
+  TestTabsTabBarColorScheme,
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSimpleNav,
