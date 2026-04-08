@@ -11,6 +11,7 @@ import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
+import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsControllerMode from './test-tabs-controller-mode-ios';
 
 const scenarios = {
@@ -25,6 +26,7 @@ const scenarios = {
   TestTabsSimpleNav,
   TestTabsMoreNavigationController,
   TestTabsStaleStateUpdateRejection,
+  TestTabsTabBarMinimizeBehavior,
   TestTabsControllerMode,
 };
 
