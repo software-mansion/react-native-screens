@@ -12,7 +12,7 @@ import {TabBarControllerMode } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Controller Mode',
-    key: 'test-tabs-controller-mode-ios',
+    key: 'test-tabs-tab-bar-controller-mode-ios',
     details: 'Test different tab bar modes.',
     platforms: ['ios'],
     AppComponent: App,
@@ -27,8 +27,7 @@ function ConfigScreen() {
             <View>
                 <Text style={styles.description}>
                     Controls whether the tab bar is displayed as a bar or
-                    sidebar. 
-                    {'\n'}Test tabSidebar on iPad — on iPhone it collapses
+                    sidebar.{'\n'}Test tabSidebar on iPad — on iPhone it collapses
                     back to a tab bar automatically.
                 </Text>
                 <SettingsPicker<TabBarControllerMode>
