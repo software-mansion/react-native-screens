@@ -1,8 +1,8 @@
-## Test Scenario: colorScheme
+# Test Scenario: colorScheme
 
 **E2E test:** NO
 
-### Prerequisites
+## Prerequisites
 
 - iOS device/simulator (use Cmd+Shift+A to toggle appearance on simulator)
 - Android emulator (use CLI):
@@ -13,9 +13,9 @@ Assumption: system and RN color scheme settings are working correctly. Here only
 
 ---
 
-### Steps
+## Steps
 
-**Baseline**
+### Baseline
 
 1. Launch the app and navigate to the scenario
    
@@ -23,7 +23,7 @@ Assumption: system and RN color scheme settings are working correctly. Here only
 
 ---
 
-**TabsHost `inherit` — follows RN/system**
+### TabsHost `inherit` — follows RN/system
 
 2. Set system/RN to **light**, TabsHost colorScheme = `inherit`
    
@@ -35,7 +35,7 @@ Assumption: system and RN color scheme settings are working correctly. Here only
 
 ---
 
-**TabsHost `light` — overrides RN/system**
+### TabsHost `light` — overrides RN/system
 
 4. Set system/RN to **dark**, set TabsHost colorScheme = `light`
    
@@ -51,7 +51,7 @@ Assumption: system and RN color scheme settings are working correctly. Here only
 
 ---
 
-**TabsHost `dark` — overrides RN/system**
+### TabsHost `dark` — overrides RN/system
 
 7. Set system/RN to **light**, set TabsHost colorScheme = `dark`
    
@@ -65,7 +65,7 @@ Assumption: system and RN color scheme settings are working correctly. Here only
 
 ---
 
-**Keyboard tab — smoke**
+### Keyboard tab — simple check
 
 10. Switch to the **Keyboard** tab, open the keyboard via TextInput (or Cmd+K on iOS simulator)
    
