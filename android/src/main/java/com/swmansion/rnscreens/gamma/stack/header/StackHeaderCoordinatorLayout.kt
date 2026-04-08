@@ -75,7 +75,6 @@ internal class StackHeaderCoordinatorLayout(
     }
 
     internal fun maybeRequestLayoutContainer() {
-        // TODO: do we need to rely on parent here?
         post {
             stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()
         }

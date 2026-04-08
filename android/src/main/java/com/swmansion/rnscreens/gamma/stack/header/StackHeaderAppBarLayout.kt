@@ -98,7 +98,7 @@ internal sealed class StackHeaderAppBarLayout(
                 type == StackHeaderType.MEDIUM ||
                     type == StackHeaderType.LARGE,
             ) {
-                "[RNScreens] Collapsing StackScreenAppBarLayout must be MEDIUM or LARGE type."
+                "[RNScreens] Collapsing StackHeaderAppBarLayout must be MEDIUM or LARGE type."
             }
             addView(collapsingToolbarLayout)
         }
