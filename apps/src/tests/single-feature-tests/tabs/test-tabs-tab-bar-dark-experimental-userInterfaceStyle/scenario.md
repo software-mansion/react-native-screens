@@ -16,7 +16,7 @@
 
 - [ ] Expected: `DarkScreen` is pushed. The tab bar appears **dark** without flash, flicker, or reversion to light style.
 
-3. Pop back to `Screen1`. Set system appearance to **dark**. Push **"Push screen with style: dark"** again and observe back button in navigation bar.
+1. Pop back to `Screen1`. Push **"Push screen with style: dark"** again and observe back button in navigation bar.
 
 - [ ] Expected: The navigation bar with back button also reflects a dark style and appear without flash, flicker, or reversion to light style.
 
