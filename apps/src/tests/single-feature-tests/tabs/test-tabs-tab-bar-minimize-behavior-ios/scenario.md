@@ -1,6 +1,6 @@
 # Test Scenario: tabBarMinimizeBehavior
 
-**E2E test:** NO
+**E2E test:** ongoing research
 
 ## Prerequisites
 
