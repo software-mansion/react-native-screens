@@ -70,6 +70,7 @@ Note:
 ---
 
 ### Precedence chain verification
+
 10.  System = RTL, forceRTL=false, allowRTL=false, TabsHost = inherit
     
 - [ ] Expected: Tab bar is LTR (allowRTL=false blocks system RTL)
