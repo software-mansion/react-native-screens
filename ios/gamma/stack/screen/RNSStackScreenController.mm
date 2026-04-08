@@ -1,4 +1,5 @@
 #import "RNSStackScreenController.h"
+#import "RNSLog.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentEventEmitter.h"
@@ -54,7 +55,7 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  NSLog(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
+  RNSLog(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
