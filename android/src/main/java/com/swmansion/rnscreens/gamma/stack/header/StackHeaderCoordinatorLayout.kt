@@ -8,7 +8,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
-import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import java.lang.ref.WeakReference
 
@@ -84,9 +83,4 @@ internal class StackHeaderCoordinatorLayout(
         }
         headerCoordinator.applyHeaderConfig(this, config)
     }
-
-    /**
-     * Will crash in case parent is not StackContainer.
-     */
-    private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
 }
