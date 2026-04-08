@@ -16,7 +16,7 @@
 
 - [ ] Expected: Tab bar displayed at the top with Tab1 and Tab2. Picker defaults to `automatic`
 
-2. Set tabBarControllerMode = `automatic`
+2. Ensure that tabBarControllerMode = `automatic`
 
 - [ ] Expected: Tab bar displayed according to iPadOS default behavior for current orientation
 
@@ -34,11 +34,11 @@
 - [ ] Expected: Tab bar displayed at the **bottom**
 
 6. Resize app to full screen.
-   Set tabBarControllerMode = `tabSidebar`,test on **iPad landscape** orientation
+   Set tabBarControllerMode = `tabSidebar`, test on **iPad landscape** orientation
 
 - [ ] Expected: Navigation displayed as a **sidebar** on the leading edge
 
-1. Keep tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
+7. Keep tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
 
 - [ ] Expected: Sidebar adapts or collapses — tab items still accessible
 
@@ -47,11 +47,11 @@
 - [ ] Expected: Tab bar displayed at the **bottom** without sidebar option.
 
 9. Resize app to full screen.
-   Cycle through `automatic` → `tabBar` → `tabSidebar` → `automatic` on iPad
+   Cycle through `automatic` → `tabBar` → `tabSidebar` → `automatic`
 
 - [ ] Expected: UI transitions immediately with each change, no crash or layout freeze
 
-10.   Switch tabs (Tab1 ↔ Tab2) while cycling through all modes.
+10. Switch tabs (Tab1 ↔ Tab2) while cycling through all modes.
 
 - [ ] Expected: Tab switching works correctly in all three modes.
 
