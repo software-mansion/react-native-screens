@@ -23,6 +23,7 @@ Note:
     
 - [ ] Expected: Config and Tab2 are shown in LTR order (Config on left, Tab2 to its right). All controls default to forceRTL=false, allowRTL=true, TabsHost direction = inherit
 
+---
 
 ### TabsHost inherit — follows RN/system 
 
@@ -33,6 +34,8 @@ Note:
 3. Set system/RN to RTL (I18nManager.isRTL == true), keep TabsHost direction = inherit
     
 - [ ] Expected: Tab bar displays in RTL order — (Config on right, Tab2 to its left)
+
+---
 
 ### TabsHost ltr
 
@@ -48,6 +51,8 @@ Note:
     
 - [ ] Expected: Tab bar direction updates immediately with each change, no crash or layout freeze
 
+---
+
 ### TabsHost rtl
 
 7. Set system/RN to LTR, set TabsHost direction = rtl
@@ -61,6 +66,8 @@ Note:
 9. Cycle through inherit → ltr → rtl → ltr → inherit
     
 - [ ] Expected: Tab bar direction updates immediately with each change, no crash or layout freeze
+
+---
 
 ### Precedence chain verification
 10.  System = RTL, forceRTL=false, allowRTL=false, TabsHost = inherit
