@@ -71,12 +71,9 @@
 
 - (void)dumpStackModel
 {
-  RNSLog(@"[RNScreens] StackContainer [%pv] MODEL BEGIN", self);
+  RNSLog(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLog(
-        @"[RNScreens] %s",
-        [static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey
-            cStringUsingEncoding:NSUTF8StringEncoding]);
+    RNSLog(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
   }
 }
 

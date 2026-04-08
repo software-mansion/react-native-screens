@@ -44,7 +44,7 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
   _hasUpdatedActivityMode = NO;
-  self.isNativelyDismissed = NO;
+  _isNativelyDismissed = NO;
 }
 
 - (void)resetProps
