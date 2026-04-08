@@ -18,14 +18,14 @@ Note:
 
 ## Steps
 
-**Baseline**
+### Baseline
 
 1. Launch the app and navigate to the scenario
     
 - [ ] Expected: Config and Tab2 are shown in LTR order (Config on left, Tab2 to its right). All controls default to forceRTL=false, allowRTL=true, TabsHost direction = inherit
 
 
-**TabsHost inherit — follows RN/system**
+### TabsHost inherit — follows RN/system 
 
 2. Ensure system/RN is LTR (I18nManager.isRTL == false), set TabsHost direction = inherit
     
@@ -35,7 +35,7 @@ Note:
     
 - [ ] Expected: Tab bar displays in RTL order — (Config on right, Tab2 to its left)
 
-**TabsHost ltr**
+### TabsHost ltr
 
 4. Set system/RN to RTL, set TabsHost direction = ltr
     
@@ -49,7 +49,7 @@ Note:
     
 - [ ] Expected: Tab bar direction updates immediately with each change, no crash or layout freeze
 
-**TabsHost rtl**
+### TabsHost rtl
 
 7. Set system/RN to LTR, set TabsHost direction = rtl
     
@@ -63,7 +63,7 @@ Note:
     
 - [ ] Expected: Tab bar direction updates immediately with each change, no crash or layout freeze
 
-**Precedence chain verification**
+### Precedence chain verification
 10.  System = RTL, forceRTL=false, allowRTL=false, TabsHost = inherit
     
 - [ ] Expected: Tab bar is LTR (allowRTL=false blocks system RTL)
