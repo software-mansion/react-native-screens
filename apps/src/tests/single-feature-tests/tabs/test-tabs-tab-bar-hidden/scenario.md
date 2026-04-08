@@ -6,8 +6,6 @@
 - iOS 18+ device or simulator
 - Android emulator
 
----
-
 ## Steps
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
