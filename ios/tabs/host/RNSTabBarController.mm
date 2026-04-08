@@ -44,7 +44,6 @@ static const void *kRNSTabBarControllerAssociationKey = &kRNSTabBarControllerAss
 static void
 rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
 {
-  NSLog(@"MoreNavigationController pushViewController");
   RNSTabBarController *tabBarController = objc_getAssociatedObject(self, kRNSTabBarControllerAssociationKey);
 
   if ([tabBarController moreNavigationController:self shouldPushViewController:viewController]) {
@@ -278,18 +277,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
 }
 
-- (void)setSelectedViewController:(__kindof UIViewController *)selectedViewController
-{
-  NSLog(@"setSelectedViewController:%@", selectedViewController);
-  [super setSelectedViewController:selectedViewController];
-}
-
-- (void)setSelectedIndex:(NSUInteger)selectedIndex
-{
-  NSLog(@"setSelectedIndex:%ld", selectedIndex);
-  [super setSelectedIndex:selectedIndex];
-}
-
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
 {
   // At this moment the `UITabBarController` model is already updated.
@@ -334,7 +321,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 - (BOOL)tabBarController:(UITabBarController *)tabBarController
     shouldSelectViewController:(UIViewController *)viewController
 {
-  NSLog(@"shouldSelectViewController:%@", viewController);
   RCTAssert(tabBarController == self, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
   // Can be UINavigationController in case of MoreNavigationController
@@ -393,7 +379,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 - (void)tabBarController:(UITabBarController *)tabBarController
     didSelectViewController:(UIViewController *)viewController
 {
-  NSLog(@"didSelectViewController:%@", viewController);
   RCTAssert(self == tabBarController, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
   BOOL isNextViewControllerMoreNavigationController = [viewController isKindOfClass:UINavigationController.class];
