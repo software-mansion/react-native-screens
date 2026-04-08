@@ -20,7 +20,7 @@ import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const SCENARIO: Scenario = {
   name: 'Layout Direction',
-  key: 'test-tabs-layout-direction',
+  key: 'test-tabs-tab-bar-layout-direction',
   details:
     'Tests how tabs handle system, React Native and prop layout direction.',
   platforms: ['android', 'ios'],
