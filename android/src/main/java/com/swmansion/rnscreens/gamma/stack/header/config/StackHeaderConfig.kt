@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview

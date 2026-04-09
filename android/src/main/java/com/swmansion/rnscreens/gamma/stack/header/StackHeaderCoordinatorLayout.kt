@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigChangeListener
-import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import java.lang.ref.WeakReference
