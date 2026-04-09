@@ -113,9 +113,9 @@ internal class ScreenDummyLayoutHelper(
      * to initialize the AppBarLayout.
      */
     private fun initDummyLayoutWithHeader(contextWithTheme: Context) {
-        coordinatorLayout = CoordinatorLayout(contextWithTheme)
+        val newCoordinatorLayout = CoordinatorLayout(contextWithTheme)
 
-        appBarLayout =
+        val newAppBarLayout =
             AppBarLayout(contextWithTheme).apply {
                 layoutParams =
                     CoordinatorLayout.LayoutParams(
@@ -124,7 +124,7 @@ internal class ScreenDummyLayoutHelper(
                     )
             }
 
-        toolbar =
+        val newToolbar =
             Toolbar(contextWithTheme).apply {
                 title = DEFAULT_HEADER_TITLE
                 layoutParams =
@@ -135,14 +135,17 @@ internal class ScreenDummyLayoutHelper(
                         ).apply { scrollFlags = 0 }
             }
 
-        // We know that the layout hierarchy parts (appBarLayout, toolbar, coordinatorLayout) are non-null at this point.
         // We know the title text view will be there, cause we've just set title.
-        defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar!!)!!.textSize
-        defaultContentInsetStartWithNavigation = toolbar!!.contentInsetStartWithNavigation
+        val titleTextView =
+            checkNotNull(ScreenStackHeaderConfig.findTitleTextViewInToolbar(newToolbar)) {
+                "[RNScreens] Failed to find TextView in children of Toolbar"
+            }
+        defaultFontSize = titleTextView.textSize
+        defaultContentInsetStartWithNavigation = newToolbar.contentInsetStartWithNavigation
 
-        appBarLayout!!.addView(toolbar)
+        newAppBarLayout.addView(newToolbar)
 
-        dummyContentView =
+        val newDummyContentView =
             View(contextWithTheme).apply {
                 layoutParams =
                     CoordinatorLayout.LayoutParams(
@@ -151,10 +154,15 @@ internal class ScreenDummyLayoutHelper(
                     )
             }
 
-        coordinatorLayout!!.apply {
-            addView(appBarLayout)
-            addView(dummyContentView)
+        newCoordinatorLayout.apply {
+            addView(newAppBarLayout)
+            addView(newDummyContentView)
         }
+
+        coordinatorLayout = newCoordinatorLayout
+        appBarLayout = newAppBarLayout
+        toolbar = newToolbar
+        dummyContentView = newDummyContentView
 
         isLayoutInitialized = true
     }
