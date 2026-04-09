@@ -126,7 +126,12 @@ export type ScreenStackNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container.
    *
-   * @platform android, ios
+   * On iOS, this configures the background color of the UINavigationController's view,
+   * which is a separate native view from the ScreenStack itself. On Android, the native
+   * view hierarchy differs — ScreenStack is used directly as the container, so this prop
+   * is a noop. Use `style.backgroundColor` on ScreenStack instead.
+   *
+   * @platform ios
    */
   backgroundColor?: ColorValue;
 };

@@ -82,12 +82,13 @@ class ScreenStackViewManager :
         value: Boolean,
     ) = Unit
 
+    // nativeContainerBackgroundColor is iOS-only because the native view hierarchy
+    // differs between platforms. On Android, ScreenStack is used directly as the
+    // container, so `style.backgroundColor` achieves the same effect.
     override fun setNativeContainerBackgroundColor(
         view: ScreenStack,
         value: Int?,
-    ) {
-        view.nativeContainerBackgroundColor = value
-    }
+    ) = Unit
 
     companion object {
         const val REACT_CLASS = "RNSScreenStack"
