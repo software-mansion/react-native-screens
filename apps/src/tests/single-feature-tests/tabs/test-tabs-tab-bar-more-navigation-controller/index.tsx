@@ -12,7 +12,7 @@ import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'More navigation controller',
-  key: 'test-tabs-more-navigation-controller',
+  key: 'test-tabs-tab-bar-more-navigation-controller',
   details: 'Test navigation and interactions with "More Naviagation Controller"',
   platforms: ['ios'],
   AppComponent: App,
