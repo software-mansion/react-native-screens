@@ -811,6 +811,13 @@ This prop has been **deprecated** due to [edge-to-edge enforcement starting from
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
+### `disableHeaderTopInsetConsumption` (Android only)
+
+When set to `true`, this screen's header will not consume the top inset and applies internal padding to ensure the header content avoids overlapping with the status bar.
+By default, the topmost visible header in the hierarchy consumes the top inset. Use this prop to opt-out from that behavior for this specific header without disabling it globally.
+
+Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
+
 ### `translucent`
 
 When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
