@@ -10,7 +10,7 @@ import type { SafeAreaViewProps } from '../../../../../../src/components/safe-ar
 
 export type TabRouteOptions = Omit<
   TabsScreenProps,
-  'children' | 'screenKey' | 'isFocused'
+  'children' | 'screenKey'
 > & {
   safeAreaConfiguration?: SafeAreaViewProps;
 };
