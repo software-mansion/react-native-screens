@@ -797,9 +797,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   topInsetEnabled?: boolean;
   /**
-   * When set to `true`, this screen's header will not consume the top inset
-   * and applies internal padding to ensure the header content avoids overlapping
-   * with the status bar.
+   * When set to `true`, the header ignores the top inset and does not apply padding
+   * to offset content below the status bar.
    *
    * By default the topmost visible header in the hierarchy consumes the top inset.
    * Use this prop to opt-out from that behavior for this specific header
