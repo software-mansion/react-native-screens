@@ -39,7 +39,8 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 static void
 rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
 {
-  UITabBarController *rawTabBarController = ((UIViewController *)self).tabBarController;
+  UITabBarController *rawTabBarController = static_cast<UIViewController *>(self).tabBarController;
+
   RCTAssert(
       [rawTabBarController isKindOfClass:RNSTabBarController.class],
       @"[RNScreens] Expected tabBarController to be of class %@, got: %@",
@@ -52,8 +53,9 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
         .receiver = self,
         .super_class = class_getSuperclass(object_getClass(self)),
     };
-    ((void (*)(struct objc_super *, SEL, UIViewController *, BOOL))objc_msgSendSuper)(
-        &superInfo, _cmd, viewController, animated);
+    const auto msgSendSuperPushViewController =
+        reinterpret_cast<void (*)(struct objc_super *, SEL, UIViewController *, BOOL)>(objc_msgSendSuper);
+    msgSendSuperPushViewController(&superInfo, _cmd, viewController, animated);
   }
 }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
