@@ -1,4 +1,5 @@
 #import "RNSScreenStack.h"
+#import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
