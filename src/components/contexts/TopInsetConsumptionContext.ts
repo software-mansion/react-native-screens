@@ -7,8 +7,8 @@ export const TopInsetConsumptionContext = React.createContext({
 });
 
 export function useTopInsetConsumption(
-  wantsToConsumeTopInset?: boolean,
-  disablesSubtreeIfOutermost?: boolean,
+  wantsToConsumeTopInset: boolean = false,
+  disablesSubtreeIfOutermost: boolean = false,
 ) {
   const insetContext = React.useContext(TopInsetConsumptionContext);
   const useLegacyBehavior =
@@ -26,15 +26,13 @@ export function useTopInsetConsumption(
 
   const consumesTopInset = useLegacyBehavior
     ? true
-    : isOutermostStack && wantsToConsumeTopInset === true;
+    : isOutermostStack && wantsToConsumeTopInset;
 
   // If this is the outermost stack and it explicitly opts out of inset
   // consumption, propagate the disabled state to the whole subtree so that
   // nested stacks cannot consume the inset either.
   const outermostStackDisablesSubtree =
-    !useLegacyBehavior &&
-    isOutermostStack &&
-    disablesSubtreeIfOutermost === true;
+    !useLegacyBehavior && isOutermostStack && disablesSubtreeIfOutermost;
 
   const nextContextValue = React.useMemo(
     () => ({
