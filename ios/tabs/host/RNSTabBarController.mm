@@ -900,10 +900,16 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     if (selectedIndexPath != nil) {
       [tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
     }
+  } else {
+    RCTLogWarn(@"[RNScreens] Failed to find a table view to clear focus!");
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
+/**
+ * Unbounded DFS looking for ANY `UITableView` in the subtree rooted at view.
+ * The `view` parameter is included in the search.
+ */
 - (nullable UITableView *)findTableViewInView:(UIView *)view
 {
   if ([view isKindOfClass:UITableView.class]) {
