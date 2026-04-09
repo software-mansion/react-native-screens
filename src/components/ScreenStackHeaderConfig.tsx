@@ -35,7 +35,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   ScreenStackHeaderConfigProps
 >((props, ref) => {
   const { consumesTopInset, useLegacyBehavior } = useTopInsetConsumption(
-    !props.hidden && !props.disableHeaderTopInsetConsumption,
+    !props.hidden && !props.disableTopInsetConsumption,
   );
 
   const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
