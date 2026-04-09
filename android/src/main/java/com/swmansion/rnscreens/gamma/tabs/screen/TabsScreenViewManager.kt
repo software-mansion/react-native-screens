@@ -97,6 +97,13 @@ class TabsScreenViewManager :
         view.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = scrollToTop
     }
 
+    override fun setPreventNativeSelection(
+        view: TabsScreen,
+        value: Boolean,
+    ) {
+        view.preventNativeSelection = value
+    }
+
     override fun setTabBarItemTestID(
         view: TabsScreen,
         value: String?,

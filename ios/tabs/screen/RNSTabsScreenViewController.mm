@@ -6,11 +6,6 @@
 
 @implementation RNSTabsScreenViewController
 
-- (nullable NSString *)getScreenKeyOrNull
-{
-  return self.tabScreenComponentView.screenKey;
-}
-
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *_Nullable>(self.tabBarController);
@@ -33,21 +28,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+  [super viewWillAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  [super viewDidAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+  [super viewWillDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillDisappear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+  [super viewDidDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidDisappear];
 }
 
@@ -124,5 +123,19 @@
 }
 
 #endif // !TARGET_OS_TV
+
+@end
+
+@implementation RNSTabsScreenViewController (TabsScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull
+{
+  return self.tabScreenComponentView.screenKey;
+}
+
+- (BOOL)isPreventNativeSelectionEnabled
+{
+  return self.tabScreenComponentView.preventNativeSelection;
+}
 
 @end

@@ -26,6 +26,12 @@ type TabSelectionRejectedEvent = Readonly<{
   rejectionReason: 'stale' | 'repeated' | 'more-nav-ctrl-not-available';
 }>;
 
+type TabSelectionPreventedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  preventedScreenKey: string;
+}>;
+
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
 // #endregion General helpers
@@ -42,6 +48,7 @@ export interface NativeProps extends ViewProps {
   // Events
   onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
   onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
+  onTabSelectionPrevented?: CT.DirectEventHandler<TabSelectionPreventedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;

@@ -13,6 +13,7 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
@@ -59,6 +60,7 @@ class TabsHostViewManager :
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(TabsHostTabSelectedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionPreventedEvent),
             makeEventRegistrationInfo(TabsHostTabSelectionRejectedEvent),
         )
 
