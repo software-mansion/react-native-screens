@@ -81,3 +81,23 @@
 13. Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third** → **More** .
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. Tabs behind More (Fifth, Sixth, More) show the More tab as selected. No visual glitches or stale route key labels.
+
+---
+
+### iPad without More tab displayed - quick check
+
+14. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
+
+- [ ] Expected: Tab bar shows all six tabs. The **First** tab is selected. The content area displays `First` as the route key.
+
+15. Navigate between tabs using tab items from tab bar.
+
+- [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
+
+16.  Navigate between tabs using buttons from screen.
+
+- [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
+
+17. Tap **"Select MoreTab"**.
+
+- [ ] Expected: Nothing change, previously selected tab is still selected in tab bar and content area displays it's name as the route key.
