@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.gamma.stack.screen
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -44,6 +46,15 @@ class StackScreenViewManager :
             makeEventRegistrationInfo(StackScreenDismissEvent),
             makeEventRegistrationInfo(StackScreenNativeDismissPreventedEvent),
         )
+
+    override fun updateState(
+        view: StackScreen,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?,
+    ): Any? {
+        view.stateWrapper = stateWrapper
+        return super.updateState(view, props, stateWrapper)
+    }
 
     override fun setActivityMode(
         view: StackScreen,
