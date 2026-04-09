@@ -356,6 +356,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
   if (shouldPreventTabSelection) {
     // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
+    // As long as we emit the event asynchronously this is rather fine.
     [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
     return NO;
   }
