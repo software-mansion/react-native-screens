@@ -1,18 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Button,
-} from 'react-native';
+import { View, Text, ScrollView, Pressable, Button } from 'react-native';
 import {
   Screen,
   ScreenStack,
   ScreenStackHeaderConfig,
 } from 'react-native-screens';
-import Colors from '../../shared/styling/Colors';
-import LongText from '../../shared/LongText';
+import Colors from '@apps/shared/styling/Colors';
+import LongText from '@apps/shared/LongText';
 
 type ScreenKey = 'ScreenView' | 'ScreenScroll';
 
@@ -207,7 +201,9 @@ export default function App() {
             key={`${screenKey}-${i}`}
             activityState={2}
             isNativeStack
-            style={{ backgroundColor: config.screens[screenKey].nativeBackground }}>
+            style={{
+              backgroundColor: config.screens[screenKey].nativeBackground,
+            }}>
             <ScreenStackHeaderConfig title={screenKey} />
             <PushedScreen
               screenKey={screenKey}
