@@ -171,6 +171,10 @@ internal class ScreenDummyLayoutHelper(
      * Triggers layout pass on dummy view hierarchy, taking into consideration selected
      * ScreenStackHeaderConfig props that might have impact on final header height.
      *
+     * It's called from C++ via JNI on a background thread; @Synchronized guards against concurrent `cleanUpViews`
+     * running on the main thread (activity lifecycle), which would flip `isLayoutInitialized` and clear
+     * the cache while a measurement is in progress.
+     *
      * @param fontSize font size value as passed from JS
      * @return header height in dp as consumed by Yoga
      */
@@ -331,6 +335,8 @@ internal class ScreenDummyLayoutHelper(
         reactContextRef.get()?.removeLifecycleEventListener(this)
     }
 
+    // Called from `onActivityDestroyed` on the main thread; @Synchronized guards against concurrent
+    // `computeDummyLayout` running on a JNI background thread, which could write a stale cache entry after cleanup.
     @Synchronized
     private fun cleanUpViews(application: Application) {
         coordinatorLayout = null
