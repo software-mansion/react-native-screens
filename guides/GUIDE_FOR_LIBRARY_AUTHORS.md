@@ -811,10 +811,11 @@ This prop has been **deprecated** due to [edge-to-edge enforcement starting from
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
-### `disableHeaderTopInsetConsumption` (Android only)
+### `disableTopInsetConsumption` (Android only)
 
-When set to `true`, the header ignores the top inset and does not apply padding to offset content below the status bar.
-By default, the topmost visible header in the hierarchy consumes the top inset. Use this prop to opt-out from that behavior for this specific header without disabling it globally.
+When set to `true` on the outermost stack with a **visible** header, disables top inset consumption for that header and the entire subtree.
+
+This prop only takes effect on the outermost visible header in the hierarchy. Setting it on an inner stack has no additional impact because a parent stack has already made the decision (whether inset should be consumed or not).
 
 Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
 

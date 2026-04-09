@@ -797,18 +797,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   topInsetEnabled?: boolean;
   /**
-   * When set to `true`, the header ignores the top inset and does not apply padding
-   * to offset content below the status bar.
+   * When set to `true` on the outermost stack with a **visible** header, disables top inset
+   * consumption for that header and the entire subtree.
    *
-   * By default the topmost visible header in the hierarchy consumes the top inset.
-   * Use this prop to opt-out from that behavior for this specific header
-   * without disabling it globally.
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be consumed or not).
    *
    * Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
    *
    * @platform android
    */
-  disableHeaderTopInsetConsumption?: boolean;
+  disableTopInsetConsumption?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */
