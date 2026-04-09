@@ -198,10 +198,14 @@ internal class ScreenDummyLayoutHelper(
             return cache.headerHeight
         }
 
-        val currentCoordinatorLayout = coordinatorLayout ?: return 0.0f
-        val currentAppBarLayout = appBarLayout ?: return 0.0f
-        val currentToolbar = toolbar ?: return 0.0f
-        val currentActivity = reactContextRef.get()?.currentActivity ?: return 0.0f
+        // components below are always initialized and cleared together.
+        val currentCoordinatorLayout = coordinatorLayout
+        val currentAppBarLayout = appBarLayout
+        val currentToolbar = toolbar
+        val currentActivity = reactContextRef.get()?.currentActivity
+        if (currentCoordinatorLayout == null || currentAppBarLayout == null || currentToolbar == null || currentActivity == null) {
+            return 0.0f
+        }
 
         val topLevelDecorView = currentActivity.window.decorView
         val topInset = getDecorViewTopInset(topLevelDecorView)
