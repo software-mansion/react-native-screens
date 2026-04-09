@@ -1,8 +1,9 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import java.lang.ref.WeakReference
 
-internal interface StackHeaderConfigProviding {
+interface StackHeaderConfigProviding {
     val type: StackHeaderType
     val title: String
     val hidden: Boolean
@@ -19,4 +20,6 @@ internal interface StackHeaderConfigProviding {
         height: Int,
         contentOffsetY: Int,
     )
+
+    var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>?
 }

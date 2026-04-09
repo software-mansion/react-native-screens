@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
@@ -120,6 +121,7 @@ internal class StackHeaderCoordinator(
 
             // Make sure that we receive insets, necessary when changing header mode in runtime.
             appBar.requestApplyInsets()
+            attachAppBarListeners(appBar)
 
             populateAppBar(appBar, config)
             maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
@@ -134,7 +136,10 @@ internal class StackHeaderCoordinator(
 
     private fun teardown(coordinatorLayout: StackHeaderCoordinatorLayout) {
         detachSubviews()
-        appBarLayout?.let { coordinatorLayout.removeView(it) }
+        appBarLayout?.let {
+            detachAppBarListeners(it)
+            coordinatorLayout.removeView(it)
+        }
         appBarLayout = null
         managedTitleView = null
         clearCachedRebuildTriggers()
@@ -325,9 +330,8 @@ internal class StackHeaderCoordinator(
         val params = coordinatorLayout.stackScreenWrapper.layoutParams as CoordinatorLayout.LayoutParams
         if (params.behavior == null) {
             params.behavior =
-                StackHeaderScrollingViewBehavior { contentTop, dependency ->
+                StackHeaderScrollingViewBehavior { contentTop, _ ->
                     onHeaderHeightChanged(contentTop)
-                    updateShadowState(contentTop, dependency)
                 }
             coordinatorLayout.stackScreenWrapper.layoutParams = params
             coordinatorLayout.stackScreenWrapper.requestLayout()
@@ -346,32 +350,55 @@ internal class StackHeaderCoordinator(
 
     // endregion
 
-    // region Shadow state updates (Yoga synchronization)
+    // region Shadow state synchronization
+    //
+    // Shadow state (header frame + subview offsets) must be kept in sync with Yoga.
+    // For non-transparent headers the ScrollingViewBehavior drives content positioning,
+    // but shadow state is always driven by these two AppBarLayout listeners which cover
+    // all change scenarios:
+    // - OnOffsetChangedListener: fires when the appbar's scroll offset changes
+    // - OnLayoutChangeListener: fires when the appbar's bounds change (e.g. size change)
+
+    private val appBarOffsetListener =
+        AppBarLayout.OnOffsetChangedListener { _, _ ->
+            syncShadowState()
+        }
+
+    private val appBarLayoutChangeListener =
+        View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            syncShadowState()
+        }
+
+    private fun attachAppBarListeners(appBar: StackHeaderAppBarLayout) {
+        appBar.addOnOffsetChangedListener(appBarOffsetListener)
+        appBar.addOnLayoutChangeListener(appBarLayoutChangeListener)
+    }
+
+    private fun detachAppBarListeners(appBar: StackHeaderAppBarLayout) {
+        appBar.removeOnOffsetChangedListener(appBarOffsetListener)
+        appBar.removeOnLayoutChangeListener(appBarLayoutChangeListener)
+    }
 
     /**
-     * Called on every AppBarLayout change (scroll, size, position) via
-     * [StackHeaderScrollingViewBehavior.onDependentViewChanged].
-     *
-     * @param contentTop Y position of the content area (StackScreen wrapper) in the CoordinatorLayout
-     * @param dependency the AppBarLayout view
+     * Synchronizes the header config and subview shadow state with the current
+     * native layout. Called from both [appBarOffsetListener] and [appBarLayoutChangeListener].
      */
-    private fun updateShadowState(
-        contentTop: Int,
-        dependency: View,
-    ) {
+    private fun syncShadowState() {
         val config = currentConfig ?: return
         val appBar = appBarLayout ?: return
 
-        // For header config we need to:
-        // - cancel out the StackScreen's Y offset (contentTop),
-        // - handle AppBarLayout's negative offset when collapsed.
+        // When config is transparent, the StackScreen is static so we need to offset the header
+        // config by the offset of the AppBarLayout (which is 0 or is negative). When config is
+        // opaque, the Screen always moves with the config, that's why we need to offset the header
+        // config by the negative value of AppBarLayout's height.
+        val configOffset = if (config.transparent) appBar.top else appBar.top - appBar.bottom
+
         config.updateHeaderFrame(
             width = appBar.width,
             height = appBar.height,
-            contentOffsetY = appBar.top - contentTop,
+            contentOffsetY = configOffset,
         )
 
-        // For subviews report position relative to AppBarLayout
         updateSubviewOffsets(appBar, config)
     }
 

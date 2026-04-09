@@ -43,23 +43,6 @@ class StackHeaderSubview(
     private var yogaWidth: Int = 0
     private var yogaHeight: Int = 0
 
-    private var lastNotifiedSize: Pair<Int, Int>? = null
-
-    override fun onLayout(
-        changed: Boolean,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-    ) {
-        // We don't call super.onLayout here because ReactViewGroup.onLayout is a no-op.
-        val newSize = (right - left) to (bottom - top)
-        if (lastNotifiedSize != newSize) {
-            lastNotifiedSize = newSize
-            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
-        }
-    }
-
     // Rely on Yoga layout instead of native Toolbar layout which stretches subview to match parent.
     override fun onMeasure(
         widthMeasureSpec: Int,

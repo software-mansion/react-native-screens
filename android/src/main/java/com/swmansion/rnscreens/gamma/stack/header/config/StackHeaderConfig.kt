@@ -54,7 +54,7 @@ class StackHeaderConfig(
         )
     }
 
-    internal var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
+    override var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
 
     internal fun notifyConfigChanged() {
         onConfigChangeListener?.get()?.onHeaderConfigChange(this)

@@ -8,6 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import java.lang.ref.WeakReference
 
@@ -49,7 +50,7 @@ internal class StackHeaderCoordinatorLayout(
             }
         }
 
-    private var currentConfig: StackHeaderConfig? = null
+    private var currentConfig: StackHeaderConfigProviding? = null
 
     internal var stackScreenWrapper: FrameLayout
 
@@ -73,7 +74,7 @@ internal class StackHeaderCoordinatorLayout(
         handleHeaderConfigAttach(stackScreen.headerConfig)
     }
 
-    private fun handleHeaderConfigAttach(config: StackHeaderConfig?) {
+    private fun handleHeaderConfigAttach(config: StackHeaderConfigProviding?) {
         // Disconnect old config to prevent spurious updates from a detached config
         currentConfig?.onConfigChangeListener = null
         currentConfig = config
@@ -81,6 +82,9 @@ internal class StackHeaderCoordinatorLayout(
         if (config != null) {
             config.onConfigChangeListener = WeakReference(onHeaderConfigChange)
         }
+
+        // We run this even if config is null to properly remove the header if config
+        // is removed in runtime.
         headerCoordinator.applyHeaderConfig(this, config)
     }
 }
