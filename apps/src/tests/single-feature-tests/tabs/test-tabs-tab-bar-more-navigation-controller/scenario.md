@@ -1,4 +1,4 @@
-# Test Scenario: More Naviagation Controller
+# Test Scenario: More Navigation Controller
 
 **E2E test:** ongoing research
 
