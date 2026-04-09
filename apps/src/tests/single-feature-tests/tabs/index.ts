@@ -9,7 +9,7 @@ import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
-import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
+import TestTabsTabBarMoreNavigationController from './test-tabs-tab-bar-more-navigation-controller';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
@@ -24,7 +24,7 @@ const scenarios = {
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSimpleNav,
-  TestTabsMoreNavigationController,
+  TestTabsTabBarMoreNavigationController,
   TestTabsStaleStateUpdateRejection,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
