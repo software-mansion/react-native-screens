@@ -12,7 +12,7 @@ import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
-import TestTabsTabBarDarkExperimentalUserInterfaceStyle from './test-tabs-tab-bar-dark-experimental-userInterfaceStyle';
+import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-userInterfaceStyle';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -27,7 +27,7 @@ const scenarios = {
   TestTabsMoreNavigationController,
   TestTabsStaleStateUpdateRejection,
   TestTabsTabBarMinimizeBehavior,
-  TestTabsTabBarDarkExperimentalUserInterfaceStyle,
+  TestTabsTabBarExperimentalUserInterfaceStyle,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

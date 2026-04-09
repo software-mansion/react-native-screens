@@ -4,64 +4,50 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { Button, View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
-
+import Colors from '@apps/shared/styling/Colors';
 import {
     createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-
 import {
     useNavigation,
     type NavigationProp,
-    ThemeProvider,
-    DarkTheme,
 } from '@react-navigation/native';
 
 type RootStackParamList = {
     Screen1: undefined;
-    DarkScreen: undefined;
+    LightScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-const SCENARIO: Scenario = {
-    name: 'Tab Bar Experimental UIStyle: dark',
-    key: 'test-tabs-tab-bar-dark-experimental-userInterfaceStyle-ios',
-    platforms: ['ios'],
-    AppComponent: App,
-};
-
-export default SCENARIO;
-
 
 function Screen1() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     return (
         <ScrollView style={{ padding: 40 }}>
             <View>
+
                 <Text style={styles.sectionHeader}>
                     experimental_userInterfaceStyle
                 </Text>
                 <Text style={styles.description}>
-                    Enable system light mode and observe the tab bar and back
+                    Enable system dark mode and observe the tab bar and back
                     button on the pushed screen.
                 </Text>
                 <Button
-                    title="Push screen with style: dark"
-                    onPress={() => navigation.navigate('DarkScreen')}
+                    title="Push screen with style: light"
+                    onPress={() => navigation.navigate('LightScreen')}
                 />
             </View>
         </ScrollView>
     );
 }
 
-function DarkStyleTabContent() {
+function LightStyleTabScreen() {
     return (
-        <View style={styles.centeredDarkScreen}>
-            <Text style={styles.screenLabel}>
-                experimental_userInterfaceStyle: dark</Text>
+        <View style={styles.centeredLightScreen}>
+            <Text style={styles.screenLabel}>experimental_userInterfaceStyle: light</Text>
             <Text style={styles.screenHint}>
-                This screen forces dark interface style regardless of system setting.
+                This screen forces light interface style regardless of system setting.
                 Observe the tab bar and navigation bar appearance.
             </Text>
         </View>
@@ -71,7 +57,7 @@ function DarkStyleTabContent() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
     {
         name: 'Tab1',
-        Component: DarkStyleTabContent,
+        Component: LightStyleTabScreen,
         options: {
             title: 'Tab1',
             ios: {
@@ -79,13 +65,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
                     type: 'sfSymbol',
                     name: 'house',
                 },
-                experimental_userInterfaceStyle: 'dark'
-            }
+                experimental_userInterfaceStyle: 'light'
+            },
         },
     },
     {
         name: 'Tab2',
-        Component: DarkStyleTabContent,
+        Component: LightStyleTabScreen,
         options: {
             title: 'Tab2',
             ios: {
@@ -93,13 +79,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
                     type: 'sfSymbol',
                     name: 'star',
                 },
-                experimental_userInterfaceStyle: 'dark'
+                experimental_userInterfaceStyle: 'light'
             },
         },
     },
 ];
 
-function DarkInterfaceStyleScreen() {
+function LightInterfaceStyleScreen() {
     return (
         <TabsContainerWithHostConfigContext
             routeConfigs={ROUTE_CONFIGS}
@@ -109,26 +95,24 @@ function DarkInterfaceStyleScreen() {
 
 export function App() {
     return (
-        <ThemeProvider value={DarkTheme}>
-            <Stack.Navigator>
-                <Stack.Screen
-                    name="Screen1"
-                    component={Screen1}
-                    options={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: 'black' }
-                    }}
-                />
-                <Stack.Screen
-                    name="DarkScreen"
-                    component={DarkInterfaceStyleScreen}
-                    options={{
-                        title: 'Dark Interface Style',
-                        statusBarStyle: "light",
-                    }}
-                />
-            </Stack.Navigator>
-        </ThemeProvider>
+        <Stack.Navigator>
+            <Stack.Screen
+                name="Screen1"
+                component={Screen1}
+                options={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: 'white' }
+                }}
+            />
+            <Stack.Screen
+                name="LightScreen"
+                component={LightInterfaceStyleScreen}
+                options={{
+                    title: 'Light Interface Style',
+                    statusBarStyle: "dark",
+                }}
+            />
+        </Stack.Navigator>
     );
 }
 
@@ -148,19 +132,24 @@ const styles = {
         marginBottom: 6,
         marginTop: 12,
     },
-    centeredDarkScreen: {
+    scrollItem: {
+        padding: 16,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#e0e0e0',
+    },
+    centeredLightScreen: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 40,
         gap: 12,
-        backgroundColor: 'black'
+        backgroundColor: Colors.cardBackground
     },
     screenLabel: {
         fontSize: 17,
         fontWeight: '600',
         textAlign: 'center',
-        color: 'white'
+        color: 'gray'
     },
     screenHint: {
         fontSize: 14,
