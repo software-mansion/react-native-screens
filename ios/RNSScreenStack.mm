@@ -214,6 +214,7 @@ namespace react = facebook::react;
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+  _nativeContainerBackgroundColor = nil;
   _iosPreventReattachmentOfDismissedScreens = YES;
   _iosPreventReattachmentOfDismissedModals = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
