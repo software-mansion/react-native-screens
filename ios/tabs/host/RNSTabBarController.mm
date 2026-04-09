@@ -29,22 +29,23 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 /**
- * Key used to store a weak (ASSIGN) reference back to the owning RNSTabBarController
- * as an associated object on the moreNavigationController instance.
- */
-static const void *kRNSTabBarControllerAssociationKey = &kRNSTabBarControllerAssociationKey;
-
-/**
  * Replacement implementation for `pushViewController:animated:` injected into
  * a dynamic subclass of `UIMoreNavigationController` via ISA-swizzle.
  *
  * Before allowing the push, this function consults the owning `RNSTabBarController`
+ * (reached via UIKit's `tabBarController` property on the parent chain)
  * to check whether the push should be prevented (e.g. due to `preventNativeSelection`).
  */
 static void
 rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
 {
-  RNSTabBarController *tabBarController = objc_getAssociatedObject(self, kRNSTabBarControllerAssociationKey);
+  UITabBarController *rawTabBarController = ((UIViewController *)self).tabBarController;
+  RCTAssert(
+      [rawTabBarController isKindOfClass:RNSTabBarController.class],
+      @"[RNScreens] Expected tabBarController to be of class %@, got: %@",
+      RNSTabBarController.class,
+      rawTabBarController.class);
+  RNSTabBarController *tabBarController = static_cast<RNSTabBarController *>(rawTabBarController);
 
   if ([tabBarController moreNavigationController:self shouldPushViewController:viewController]) {
     struct objc_super superInfo = {
@@ -69,10 +70,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RNSTabsNavigationState *_Nullable _lastUINavigationState;
 
   RNSTabsNavigationState *_Nullable _pendingOperation;
-
-#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  BOOL _didAccessMoreNavigationController;
-#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
@@ -104,27 +101,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     _tabsHostComponentView = tabsHostComponentView;
   }
   return self;
-}
-
-- (void)dealloc
-{
-#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  // Clear the OBJC_ASSOCIATION_ASSIGN back-reference to self stored on moreNavigationController.
-  // This is a safety measure — moreNavigationController should never outlive us, but if it ever does
-  // (e.g. due to UIKit lifecycle changes), we avoid leaving a dangling pointer behind.
-  //
-  // We guard with _didAccessMoreNavigationController to avoid lazy creation of
-  // moreNavigationController during teardown. We also check the isa prefix because UIKit may have
-  // already reset it (e.g. iPad resize), in which case there's no associated object to clean up.
-  if (_didAccessMoreNavigationController) {
-    Class currentClass = object_getClass(self.moreNavigationController);
-    const char *className = class_getName(currentClass);
-    if (strncmp(className, "RNS_", 4) == 0) {
-      objc_setAssociatedObject(
-          self.moreNavigationController, kRNSTabBarControllerAssociationKey, nil, OBJC_ASSOCIATION_ASSIGN);
-    }
-  }
-#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
 #pragma mark - UIKit callbacks
@@ -817,10 +793,9 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 /// changes the private class, each distinct original class gets its own correct dynamic subclass.
 ///
 /// This method is idempotent — safe to call multiple times regardless of whether UIKit has
-/// reset the ISA between calls. When the ISA already carries our `RNS_` prefix, only the
-/// associated-object back-reference is refreshed. When UIKit has reset the ISA (e.g. iPad
-/// app resize crossing the >5 tab threshold), the dynamic subclass is looked up (or created)
-/// and re-applied.
+/// reset the ISA between calls. When the ISA already carries our `RNS_` prefix, we return
+/// early. When UIKit has reset the ISA (e.g. iPad app resize crossing the >5 tab threshold),
+/// the dynamic subclass is looked up (or created) and re-applied.
 - (void)ensurePushInterceptorOnMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
@@ -828,12 +803,10 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   const char *currentClassName = class_getName(currentClass);
 
   // If the ISA already points to our dynamic subclass, the interceptor is in place.
-  // Just refresh the associated object (it uses ASSIGN semantics, so it's cheap)
-  // and return early. Without this guard, repeated calls when UIKit has NOT reset
-  // the ISA would stack `RNS_RNS_...` subclasses, causing infinite recursion in
-  // rns_pushViewController's objc_msgSendSuper call.
+  // Without this guard, repeated calls when UIKit has NOT reset the ISA would stack
+  // `RNS_RNS_...` subclasses, causing infinite recursion in rns_pushViewController's
+  // objc_msgSendSuper call.
   if (strncmp(currentClassName, "RNS_", 4) == 0) {
-    [self installSelfAssociationWithMoreNavigationController];
     return;
   }
 
@@ -858,18 +831,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   }
 
   object_setClass(self.moreNavigationController, dynamicSubclass);
-  [self installSelfAssociationWithMoreNavigationController];
-#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-}
-
-/// Stores a weak (ASSIGN) back-reference from `moreNavigationController` to `self`
-/// so that `rns_pushViewController` can reach the owning `RNSTabBarController`.
-- (void)installSelfAssociationWithMoreNavigationController
-{
-#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  objc_setAssociatedObject(
-      self.moreNavigationController, kRNSTabBarControllerAssociationKey, self, OBJC_ASSOCIATION_ASSIGN);
-  _didAccessMoreNavigationController = YES;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
