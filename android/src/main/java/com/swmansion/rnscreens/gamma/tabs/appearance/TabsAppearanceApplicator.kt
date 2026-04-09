@@ -200,11 +200,11 @@ internal class TabsAppearanceApplicator(
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
     ) {
-        val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
+        val menuItemId = menuItem.itemId
         val badgeValue = tabsScreen.badgeValue
 
         if (badgeValue == null) {
-            val badge = bottomNavigationView.getBadge(menuItemIndex)
+            val badge = bottomNavigationView.getBadge(menuItemId)
             badge?.isVisible = false
 
             return
@@ -212,7 +212,7 @@ internal class TabsAppearanceApplicator(
 
         val badgeValueNumber = badgeValue.toIntOrNull()
 
-        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+        val badge = bottomNavigationView.getOrCreateBadge(menuItemId)
         badge.isVisible = true
 
         badge.clearText()

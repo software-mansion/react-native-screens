@@ -7,38 +7,24 @@
 #import "RNSSafeAreaProviding.h"
 #import "RNSSafeAreaViewNotifications.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>
 #import <rnscreens/RNSSafeAreaViewState.h>
-#else
-#import <React/RCTUIManager.h>
-#import "RNSSafeAreaViewEdges.h"
-#import "RNSSafeAreaViewLocalData.h"
-#endif // RCT_NEW_ARCH_ENABLED
 
-#if RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold);
 
 #pragma mark - View implementation
 
 @implementation RNSSafeAreaViewComponentView {
-#if RCT_NEW_ARCH_ENABLED
   facebook::react::RNSSafeAreaViewShadowNode::ConcreteState::Shared _state;
-#else
-  __weak RCTBridge *_bridge;
-  RNSSafeAreaViewEdges _edges;
-#endif // RCT_NEW_ARCH_ENABLED
   UIEdgeInsets _currentSafeAreaInsets;
   __weak UIView<RNSSafeAreaProviding> *_Nullable _providerView;
 }
 
-#if RCT_NEW_ARCH_ENABLED
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
 + (void)load
 {
@@ -52,29 +38,11 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   }
   return self;
 }
-#else
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super initWithFrame:CGRectZero]) {
-    _bridge = bridge;
-    [self initState];
-  }
-
-  return self;
-}
-
-RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder *)decoder)
-RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)initState
 {
-#if RCT_NEW_ARCH_ENABLED
   static const auto defaultProps = std::make_shared<const react::RNSSafeAreaViewProps>();
   _props = defaultProps;
-#else
-  _edges = RNSSafeAreaViewEdgesMake(false, false, false, false);
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)didMoveToWindow
@@ -131,14 +99,9 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
   }
 
   _currentSafeAreaInsets = safeAreaInsets;
-#if RCT_NEW_ARCH_ENABLED
   [self updateState];
-#else
-  [self updateLocalData];
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
-#if RCT_NEW_ARCH_ENABLED
 - (void)updateState
 {
   using facebook::react::RNSSafeAreaViewShadowNode;
@@ -156,16 +119,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 #endif // REACT_NATIVE_VERSION_MINOR >= 82
   );
 }
-#else
-- (void)updateLocalData
-{
-  RNSSafeAreaViewLocalData *localData = [[RNSSafeAreaViewLocalData alloc] initWithInsets:_currentSafeAreaInsets
-                                                                                   edges:_edges];
-  [_bridge.uiManager setLocalData:localData forView:self];
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -199,15 +153,6 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
   _currentSafeAreaInsets = UIEdgeInsetsZero;
 }
 
-#else
-#pragma mark - Paper props / LEGACY RCTComponent protocol
-
-- (void)setEdges:(RNSSafeAreaViewEdges)edges
-{
-  _edges = edges;
-  [self updateLocalData];
-}
-#endif
 @end
 
 #pragma mark - Utility functions
@@ -218,11 +163,9 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
       ABS(insets1.top - insets2.top) <= threshold && ABS(insets1.bottom - insets2.bottom) <= threshold;
 }
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSSafeAreaView(void)
 {
   return RNSSafeAreaViewComponentView.class;
 }
-#endif // RCT_NEW_ARCH_ENABLED

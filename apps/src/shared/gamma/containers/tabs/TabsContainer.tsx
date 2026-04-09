@@ -1,12 +1,11 @@
 import React from 'react';
-import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
+import { I18nManager, type NativeSyntheticEvent } from 'react-native';
 import {
   SCREEN_KEY_MORE_NAV_CTRL,
   type TabSelectedEvent,
   Tabs,
   type TabsHostNavState,
 } from 'react-native-screens';
-import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental'
 import type {
   SelectTabMethod,
   TabRoute,
@@ -15,16 +14,14 @@ import type {
   TabsContainerProps,
   TabsContainerState,
   TabsNavigationAction,
+  TabsNavigationMethods,
 } from './TabsContainer.types';
-import {
-  TabsNavigationContext,
-  type TabsNavigationContextPayload,
-} from './contexts/TabsNavigationContext';
 import {
   tabsNavigationReducerWithLogging,
   determineInitialTabsContainerState,
 } from './reducer';
 import { RNSLog } from 'react-native-screens/private';
+import { TabsContainerItem } from './TabsContainerItem';
 
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
@@ -46,13 +43,6 @@ export function TabsContainer(props: TabsContainerProps) {
     tabsNavigationReducerWithLogging,
     { routeConfigs, defaultRouteName },
     determineInitialTabsContainerState,
-  );
-
-  const setRouteOptions = React.useCallback(
-    (routeKey: string, options: Partial<TabRouteOptions>) => {
-      dispatch({ type: 'set-options', routeKey, options });
-    },
-    [],
   );
 
   const hostNavState = useTabsHostNavState(tabsNavState);
@@ -82,12 +72,7 @@ export function TabsContainer(props: TabsContainerProps) {
     [onTabSelected],
   );
 
-  const selectTabMethod: SelectTabMethod = React.useCallback(
-    (routeKey: string) => {
-      dispatch({ type: 'tab-select', routeKey });
-    },
-    [],
-  );
+  const navMethods = useTabsNavigationMethods(dispatch);
 
   return (
     <Tabs.Host
@@ -105,75 +90,10 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        RNSLog.info(
-          `TabsContainer map to component -> ${route.routeKey} ${isSelected ? '(selected)' : ''
-          }`,
-        );
-
-        const tabsNavigationContext: TabsNavigationContextPayload = {
-          routeKey: route.routeKey,
-          routeOptions: { ...route.options },
-          setRouteOptions,
-          selectTab: selectTabMethod,
-          isSelected: isSelected,
-          shouldRenderContents: isSelected || pendingForUpdate,
-        };
-
-        const { safeAreaConfiguration, ...nativeOptions } = route.options ?? {};
-
-        return (
-          <Tabs.Screen
-            key={route.routeKey}
-            {...nativeOptions}
-            screenKey={route.routeKey}>
-            <TabsNavigationContext value={tabsNavigationContext}>
-              {getContent(route.Component, safeAreaConfiguration)}
-            </TabsNavigationContext>
-          </Tabs.Screen>
-        );
+        return <TabsContainerItem key={route.routeKey} route={route} navMethods={navMethods} isSelected={isSelected} pendingForUpdate={pendingForUpdate} />
       })}
     </Tabs.Host>
   );
-}
-
-function getContent(
-  Component: TabRouteConfig['Component'],
-  safeAreaConfiguration: SafeAreaViewProps | undefined,
-) {
-  const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
-    safeAreaConfiguration?.edges,
-  );
-
-  const anySAVEdgeSet = Object.values(safeAreaConfigurationWithDefault).some(
-    edge => edge === true,
-  );
-
-  if (anySAVEdgeSet) {
-    return (
-      <SafeAreaView {...safeAreaConfiguration}>
-        <Component />
-      </SafeAreaView>
-    );
-  }
-
-  return <Component />;
-}
-
-function getSafeAreaViewEdges(
-  edges?: SafeAreaViewProps['edges'],
-): NonNullable<SafeAreaViewProps['edges']> {
-  let defaultEdges: SafeAreaViewProps['edges'];
-
-  switch (Platform.OS) {
-    case 'android':
-      defaultEdges = { bottom: true };
-      break;
-    default:
-      defaultEdges = {};
-      break;
-  }
-
-  return { ...defaultEdges, ...edges };
 }
 
 function useTabsHostNavState(
@@ -210,4 +130,26 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
   if (!noNameUsesReservedRouteKey) {
     throw new Error(`[Tabs] Tab name "${SCREEN_KEY_MORE_NAV_CTRL}" is reserved and can not be used`);
   }
+}
+
+function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>): TabsNavigationMethods {
+  const setRouteOptions = React.useCallback(
+    (routeKey: string, options: Partial<TabRouteOptions>) => {
+      dispatch({ type: 'set-options', routeKey, options });
+    },
+    [dispatch],
+  );
+
+  const selectTab: SelectTabMethod = React.useCallback(
+    (routeKey: string) => {
+      dispatch({ type: 'tab-select', routeKey });
+    },
+    [dispatch],
+  );
+
+
+  return React.useMemo(() => ({
+    setRouteOptions,
+    selectTab
+  }), [setRouteOptions, selectTab]);
 }

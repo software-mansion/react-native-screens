@@ -2,12 +2,18 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 
 internal class TabsHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
+    /**
+     * Emits `onTabSelected` event to JS with the current navigation state and selection context.
+     */
     fun emitOnTabSelectedEvent(
         selectedScreenKey: String,
         provenance: Int,
@@ -24,6 +30,26 @@ internal class TabsHostEventEmitter(
                 isRepeated,
                 hasTriggeredSpecialEffect,
                 isNativeAction,
+            ),
+        )
+    }
+
+    /**
+     * Emits `onTabSelectionRejected` event to JS when a navigation state update is rejected.
+     * Carries both the active state and the rejected update so that JS can reconcile.
+     */
+    fun emitOnTabSelectionRejectedEvent(
+        currentNavState: TabsNavState,
+        rejectedNavState: TabsNavState,
+        rejectionReason: TabsNavStateUpdateRejectionReason,
+    ) {
+        reactEventDispatcher.dispatchEvent(
+            TabsHostTabSelectionRejectedEvent(
+                surfaceId,
+                viewTag,
+                currentNavState,
+                rejectedNavState,
+                rejectionReason,
             ),
         )
     }

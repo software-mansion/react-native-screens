@@ -5,18 +5,26 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // #region General helpers
 
-type TabSelectedEvent = {
+type TabSelectedEvent = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
   isNativeAction: boolean;
-};
+}>;
 
-type NavigationState = {
+type NavigationState = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
-};
+}>;
+
+type TabSelectionRejectedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  rejectedScreenKey: string;
+  rejectedProvenance: CT.Int32;
+  rejectionReason: 'stale' | 'repeated' | 'more-nav-ctrl-not-available';
+}>;
 
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
@@ -39,9 +47,11 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 export interface NativeProps extends ViewProps {
   // Control
   navState: NavigationState;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
   onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
+  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;

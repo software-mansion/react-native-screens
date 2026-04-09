@@ -103,6 +103,7 @@ namespace react = facebook::react;
   _tabBarTintColor = nil;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
+  _rejectStaleNavStateUpdates = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -275,6 +276,11 @@ namespace react = facebook::react;
     _jsNavState = [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
                                                           provenance:newComponentProps.navState.provenance];
     [_controller setPendingNavigationStateUpdate:[_jsNavState cloneState]];
+  }
+
+  if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
+    _rejectStaleNavStateUpdates = static_cast<BOOL>(newComponentProps.rejectStaleNavStateUpdates);
+    [_controller setRejectStaleNavigationStateUpdates:_rejectStaleNavStateUpdates];
   }
 
   if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
@@ -607,6 +613,19 @@ RNS_IGNORE_SUPER_CALL_END
                                              .isRepeated = context.isRepeated,
                                              .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
                                              .isNativeAction = context.isNativeAction}];
+}
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
+             currentState:(nonnull RNSTabsNavigationState *)currentNavState
+               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
+{
+  RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
+  RCTAssert(rejectedNavState.selectedScreenKey != nil, @"[RNScreens] Rejected state screenKey MUST NOT be nil");
+
+  [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
+                                                      .rejectedNavState = rejectedNavState,
+                                                      .rejectionReason = reasonCode}];
 }
 
 @end

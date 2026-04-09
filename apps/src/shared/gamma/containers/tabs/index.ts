@@ -11,6 +11,10 @@ export type {
   TabsContainerState,
 } from './TabsContainer.types';
 
+export type {
+  TabsContainerItemProps
+} from './TabsContainerItem.types.ts'
+
 export type { TabsNavigationContextPayload } from './contexts/TabsNavigationContext';
 export type { TabsHostConfigContextPayload } from './contexts/TabsHostConfigContext';
 

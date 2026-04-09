@@ -1,13 +1,7 @@
 #pragma once
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTViewComponentView.h>
-#else
-#import <React/RCTShadowView.h>
-#import <React/RCTViewManager.h>
-#endif
-
 #import <React/RCTConvert.h>
+#import "RNSReactBaseView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
@@ -18,20 +12,11 @@
 
 @end
 
-@interface RNSScreenStackHeaderConfig :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
-#else
-    UIView
-#endif
+@interface RNSScreenStackHeaderConfig : RNSReactBaseView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 @property (nonatomic) BOOL show;
-#else
-@property (nonatomic) BOOL hide;
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -63,10 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
-#if !RCT_NEW_ARCH_ENABLED
-@property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonItem;
-@property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonMenuItem;
-#endif
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 NS_ASSUME_NONNULL_END
@@ -92,12 +73,7 @@ NS_ASSUME_NONNULL_END
 - (BOOL)hasSubviewLeft;
 
 /**
- * Returns
- * - `YES` on Paper, when `self.hide == NO`
- * - `YES` on Fabric, when `self.show == YES`
- * - `NO` otherwise.
- *
- * Convenience method, so that we do not need ifdefs in every callsite.
+ * Returns `YES` when `self.show == YES`, `NO` otherwise.
  */
 - (BOOL)shouldHeaderBeVisible;
 
@@ -107,7 +83,6 @@ NS_ASSUME_NONNULL_END
  */
 - (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 /**
  * Allows to send information with size to the corresponding node in shadow tree.
  * This method updates state of header config shadow node only.
@@ -119,13 +94,6 @@ NS_ASSUME_NONNULL_END
  * When `navBar == nil` this method does nothing.
  */
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
-#else
-/**
- * Allows to send information with insets to the corresponding node in shadow tree.
- * Currently only horizontal insets are send through. Vertical ones are filtered out.
- */
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
-#endif
 
 @end
 
@@ -142,31 +110,6 @@ NS_ASSUME_NONNULL_END
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-
-#pragma mark - Legacy Shadow View
-/**
- * Used as local data send to shadow view on Paper. This helps us to provide Yoga
- * with knowledge of native insets in the navigation bar.
- */
-@interface RNSHeaderConfigInsetsPayload : NSObject
-
-@property (nonatomic) NSDirectionalEdgeInsets insets;
-
-- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets NS_DESIGNATED_INITIALIZER;
-
-@end
-
-/**
- * Custom shadow view for header config. This is used on Paper to provide Yoga
- * with knowledge of native header insets (horizontal padding).
- */
-@interface RNSScreenStackHeaderConfigShadowView : RCTShadowView
-
-@end
-#endif
 
 #pragma mark - RCTConvert
 

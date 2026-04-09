@@ -1,7 +1,10 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTFont.h>
 #import <React/RCTImageComponentView.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTImageSource.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
@@ -14,40 +17,18 @@
 #import <react/utils/ManagedObjectWrapper.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
-#import "UINavigationBar+RNSUtility.h"
-#else
-#import <React/RCTImageView.h>
-#import <React/RCTShadowView.h>
-#import <React/RCTUIManager.h>
-#import <React/RCTUIManagerUtils.h>
-#import <utility>
-#endif
-#import <React/RCTBridge.h>
-#import <React/RCTFont.h>
-#import <React/RCTImageLoader.h>
-#import <React/RCTImageSource.h>
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
+#import "UINavigationBar+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 static const NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
 static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
-
-#if !defined(RCT_NEW_ARCH_ENABLED)
-// Some RN private method hacking below. Couldn't figure out better way to access image data
-// of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
-@interface RCTImageView (Private)
-- (UIImage *)image;
-@end
-#endif // !RCT_NEW_ARCH_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
@@ -65,14 +46,11 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 @interface RNSScreenStackHeaderConfig () <RCTMountingTransactionObserving>
 @end
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-#ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 
   react::RNSScreenStackHeaderConfigState _lastSendState;
@@ -82,13 +60,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
   RCTImageLoader *_imageLoader;
-#else
-  NSDirectionalEdgeInsets _lastHeaderInsets;
-  __weak RCTBridge *_bridge;
-#endif
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
 + (void)load
@@ -109,26 +81,6 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   }
   return self;
 }
-#else
-- (instancetype)init
-{
-  if (self = [super init]) {
-    _translucent = YES;
-    [self initProps];
-  }
-  return self;
-}
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-    _translucent = YES;
-    [self initProps];
-  }
-  return self;
-}
-#endif
 
 - (void)initProps
 {
@@ -221,7 +173,6 @@ RNS_IGNORE_SUPER_CALL_END
   [navctr.view setNeedsLayout];
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateShadowStateWithSize:(CGSize)size edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
 {
   // I believe Yoga handles RTL internally & .left will be treated as .right in RTL etc.
@@ -276,16 +227,6 @@ RNS_IGNORE_SUPER_CALL_END
   return edgeInsets;
 }
 
-#else
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
-{
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
-    _lastHeaderInsets = std::move(insets);
-  }
-}
-#endif // RCT_NEW_ARCH_ENABLED
-
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
 {
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
@@ -304,11 +245,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (BOOL)shouldHeaderBeVisible
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   return self.show;
-#else
-  return !self.hide;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar
@@ -340,11 +277,7 @@ RNS_IGNORE_SUPER_CALL_END
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
-#ifdef RCT_NEW_ARCH_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
-#else
-      RCTImageView *imageView = subview.subviews[0];
-#endif // RCT_NEW_ARCH_ENABLED
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
@@ -378,21 +311,13 @@ RNS_IGNORE_SUPER_CALL_END
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-#ifdef RCT_NEW_ARCH_ENABLED
         RCTImageLoader *imageLoader = _imageLoader;
-#else
-        RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
-#endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
                    size:imageSource.size
                   scale:imageSource.scale
-#ifdef RCT_NEW_ARCH_ENABLED
              resizeMode:resizeModeFromCppEquiv(
                             std::static_pointer_cast<const react::ImageProps>(imageView.props)->resizeMode)];
-#else
-             resizeMode:imageView.resizeMode];
-#endif // RCT_NEW_ARCH_ENABLED
       }
 #endif // !NDEBUG
       if (image == nil) {
@@ -865,7 +790,6 @@ RNS_IGNORE_SUPER_CALL_END
     if (dict[@"buttonId"] || dict[@"menu"]) {
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
           action:^(NSString *buttonId) {
-#if RCT_NEW_ARCH_ENABLED
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
                 self->_eventEmitter);
             if (eventEmitter && buttonId) {
@@ -873,14 +797,8 @@ RNS_IGNORE_SUPER_CALL_END
                   facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
                       .buttonId = std::string([buttonId UTF8String])});
             }
-#else
-            if (self.onPressHeaderBarButtonItem && buttonId) {
-              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
-            }
-#endif
           }
           menuAction:^(NSString *menuId) {
-#if RCT_NEW_ARCH_ENABLED
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
                 self->_eventEmitter);
             if (eventEmitter && menuId) {
@@ -888,17 +806,8 @@ RNS_IGNORE_SUPER_CALL_END
                   facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
                       .menuId = std::string([menuId UTF8String])});
             }
-#else
-            if (self.onPressHeaderBarButtonMenuItem && menuId) {
-              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
-            }
-#endif
           }
-#if RCT_NEW_ARCH_ENABLED
           imageLoader:_imageLoader];
-#else
-          imageLoader:_bridge.imageLoader];
-#endif
       NSNumber *index = dict[@"index"];
       if (index.integerValue < items.count) {
         [items insertObject:item atIndex:index.integerValue];
@@ -935,7 +844,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1054,10 +962,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
 }
 
-/**
- * Fabric implementation of helper method for +loadBackButtonImageInViewController:withConfig:
- * There is corresponding Paper implementation (with different parameter type) in Paper specific section.
- */
 + (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
 {
   const auto &imageProps = *std::static_pointer_cast<const react::ImageProps>(view.props);
@@ -1078,11 +982,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   [super prepareForRecycle];
   _initialPropsSet = NO;
 
-#ifdef RCT_NEW_ARCH_ENABLED
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
-#else
-  _lastHeaderInsets = NSDirectionalEdgeInsets{};
-#endif
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -1213,139 +1113,16 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
 }
 
-#else
-#pragma mark - Paper specific
-
-- (void)didUpdateReactSubviews
-{
-  [self updateViewControllerIfNeeded];
-}
-
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-  [super didSetProps:changedProps];
-  [self updateViewControllerIfNeeded];
-  // We need to layout navigation controller view after translucent prop changes, because otherwise
-  // frame of RNSScreen will not be changed and screen content will remain the same size.
-  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
-  if ([changedProps containsObject:@"translucent"]) {
-    [self layoutNavigationControllerView];
-  }
-}
-
-/**
- * Paper implementation of helper method for +loadBackButtonImageInViewController:withConfig:
- * There is corresponding Fabric implementation (with different parameter type) in Fabric specific section.
- */
-+ (RCTImageSource *)imageSourceFromImageView:(RCTImageView *)view
-{
-  return view.imageSources[0];
-}
-
-#endif
-
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfig.class;
 }
-#endif
 
 @implementation RNSScreenStackHeaderConfigManager
 
-RCT_EXPORT_MODULE()
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-
-- (UIView *)view
-{
-  return [[RNSScreenStackHeaderConfig alloc] initWithBridge:self.bridge];
-}
-
-- (RCTShadowView *)shadowView
-{
-  return [RNSScreenStackHeaderConfigShadowView new];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
-
-RCT_EXPORT_VIEW_PROPERTY(title, NSString)
-RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
-RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(titleFontWeight, NSString)
-RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
-RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
-RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(backTitleVisible, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(blurEffect, RNSBlurEffectStyle)
-RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
-RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleFontWeight, NSString)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleBackgroundColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
-RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
-RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
-RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
-RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
-RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonMenuItem, RCTDirectEventBlock);
-
 @end
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-
-@implementation RNSHeaderConfigInsetsPayload
-
-- (instancetype)init
-{
-  return [self initWithInsets:NSDirectionalEdgeInsets{}];
-}
-
-- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets
-{
-  if (self = [super init]) {
-    self.insets = insets;
-  }
-  return self;
-}
-
-@end
-
-@implementation RNSScreenStackHeaderConfigShadowView {
-}
-
-- (void)setLocalData:(NSObject *)localData
-{
-  if ([localData isKindOfClass:RNSHeaderConfigInsetsPayload.class]) {
-    RNSHeaderConfigInsetsPayload *payload = (RNSHeaderConfigInsetsPayload *)localData;
-    [self setPaddingStart:YGValue{.value = (float)payload.insets.leading, .unit = YGUnitPoint}];
-    [self setPaddingEnd:YGValue{.value = (float)payload.insets.trailing, .unit = YGUnitPoint}];
-
-    // Trigger layout prop recomputation
-    [self didSetProps:@[]];
-  } else {
-    [super setLocalData:localData];
-  }
-}
-
-@end
-#endif
 
 @implementation RCTConvert (RNSScreenStackHeader)
 

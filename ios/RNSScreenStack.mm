@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSScreenStack.h"
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -10,20 +10,9 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTSurfaceTouchHandler+RNSUtility.h"
-#else
-#import <React/RCTBridge.h>
-#import <React/RCTRootContentView.h>
-#import <React/RCTShadowView.h>
-#import <React/RCTTouchHandler.h>
-#import <React/RCTUIManager.h>
-#import <React/RCTUIManagerUtils.h>
-#import "RCTTouchHandler+RNSUtility.h"
-#endif // RCT_NEW_ARCH_ENABLED
-
 #import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
-#import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
@@ -35,21 +24,15 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @interface RNSScreenStackView () <
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate,
-    RNSViewInteractionAware
-#ifdef RCT_NEW_ARCH_ENABLED
-    ,
-    RCTMountingTransactionObserving
-#endif
-    >
+    RNSViewInteractionAware,
+    RCTMountingTransactionObserving>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -133,25 +116,7 @@ namespace react = facebook::react;
     return;
   }
 
-#ifdef RCT_NEW_ARCH_ENABLED
   [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
-#else
-  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins =
-      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
-
-  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
-
-  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
-  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
-  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
-
-  [headerConfig updateHeaderConfigState:NSDirectionalEdgeInsets{
-                                            .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                (isDisplayingBackButton ? platformBackButtonWidth : 0),
-                                            .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                        }];
-#endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
 
@@ -215,8 +180,6 @@ namespace react = facebook::react;
   UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
 + (void)load
 {
@@ -233,7 +196,6 @@ namespace react = facebook::react;
 
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
@@ -283,28 +245,20 @@ namespace react = facebook::react;
 
 - (void)emitOnFinishTransitioningEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenStackEventEmitter>(_eventEmitter)
         ->onFinishTransitioning(react::RNSScreenStackEventEmitter::OnFinishTransitioning{});
   }
-#else
-  if (self.onFinishTransitioning) {
-    self.onFinishTransitioning(nil);
-  }
-#endif
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (![viewController.view isKindOfClass:[RNSScreenView class]]) {
     // if the current view is a snapshot, config was already removed so we don't trigger the method
     return;
   }
-#endif
   auto *screenView = static_cast<RNSScreenView *>(viewController.view);
   [RNSScreenStackHeaderConfig willShowViewController:viewController
                                             animated:animated
@@ -322,22 +276,7 @@ namespace react = facebook::react;
     [_presentedModals removeObject:presentationController.presentedViewController];
 
     _updatingModals = NO;
-#ifdef RCT_NEW_ARCH_ENABLED
     [self emitOnFinishTransitioningEvent];
-#else
-    // we double check if there are no new controllers pending to be presented since someone could
-    // have tried to push another one during the transition.
-    // We don't do it on Fabric since update of container will be triggered from "unmount" method afterwards
-    [self updateContainer];
-    if (self.onFinishTransitioning) {
-      // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
-      // main queue. We do that because onDismiss event is also enqueued and we want for the transition
-      // finish event to arrive later than onDismiss (see RNSScreen#notifyDismiss)
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [self emitOnFinishTransitioningEvent];
-      });
-    }
-#endif
   }
 }
 
@@ -351,17 +290,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-#ifdef RCT_NEW_ARCH_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
-#else
-  if (!_invalidated) {
-    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
-    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
-    // to a window despite the fact it has been removed from the React Native view hierarchy.
-    [self maybeAddToParentAndUpdateContainer];
-  }
-#endif
   if (self.window == nil) {
     // When hot reload happens that would remove the whole stack, disabling the interaction on a screen out transition
     // will not be matched with enabling the interactions on another screen's in transition. We need to make sure
@@ -696,11 +626,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   UIViewController *top = controllers.lastObject;
-#ifdef RCT_NEW_ARCH_ENABLED
   UIViewController *previousTop = _controller.topViewController;
-#else
-  UIViewController *previousTop = _controller.viewControllers.lastObject;
-#endif
 
   // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
@@ -718,7 +644,6 @@ RNS_IGNORE_SUPER_CALL_END
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-#ifdef RCT_NEW_ARCH_ENABLED
         // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
         // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
         // to add it to the wrong superview (where it should be UIViewControllerWrapperView, but it's
@@ -726,9 +651,6 @@ RNS_IGNORE_SUPER_CALL_END
         // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
         // transition of previous replacement.
         [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
-#else
-        [_controller setViewControllers:controllers animated:YES];
-#endif // RCT_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -831,16 +753,6 @@ RNS_IGNORE_SUPER_CALL_END
       modal.view.frame = correctFrame;
     }
   }
-}
-
-- (void)dismissOnReload
-{
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self invalidate];
-  });
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark methods connected to transitioning
@@ -1385,7 +1297,6 @@ RNS_IGNORE_SUPER_CALL_END
   return ids;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -1515,73 +1426,14 @@ RNS_IGNORE_SUPER_CALL_END
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackComponentDescriptor>();
 }
-#else
-#pragma mark - Paper specific
-
-- (void)invalidate
-{
-  _invalidated = YES;
-  [self dismissAllRelatedModals];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
-}
-
-// This method aims to dismiss all modals for which presentation process
-// has been initiated in this navigation controller, i. e. either a Screen
-// with modal presentation or foreign modal presented from inside a Screen.
-- (void)dismissAllRelatedModals
-{
-  [_controller.presentedViewController dismissViewControllerAnimated:YES completion:nil];
-
-  // This loop seems to be excessive. Above message send to `_controller` should
-  // be enough, because system dismisses the controllers recursively,
-  // however better safe than sorry & introduce a regression, thus it is left here.
-  for (UIViewController *controller in [_presentedModals reverseObjectEnumerator]) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
-  }
-  [_presentedModals removeAllObjects];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackView.class;
 }
-#endif
 
-@implementation RNSScreenStackManager {
-  NSPointerArray *_stacks;
-}
-
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedScreens, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedModals, BOOL);
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (UIView *)view
-{
-  RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
-  if (!_stacks) {
-    _stacks = [NSPointerArray weakObjectsPointerArray];
-  }
-  [_stacks addPointer:(__bridge void *)view];
-  return view;
-}
-#endif // RCT_NEW_ARCH_ENABLED
-
-- (void)invalidate
-{
-  for (RNSScreenStackView *stack in _stacks) {
-    [stack dismissOnReload];
-  }
-  _stacks = nil;
-}
+@implementation RNSScreenStackManager
 
 @end

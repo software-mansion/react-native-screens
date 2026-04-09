@@ -22,8 +22,14 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
-  /// This property is nullable until first container udpate. Later it MUST NOT be nil.
+  /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _navigationState;
+
+  /// Holds last state that has been a result of UI-side navigation (user request).
+  ///
+  /// This property is nullable until first container update. Later it MUST NOT be nil.
+  RNSTabsNavigationState *_Nullable _lastUINavigationState;
+
   RNSTabsNavigationState *_Nullable _pendingOperation;
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -163,7 +169,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
       ![NSString rnscreens_isBlankOrNull:screenKey],
       @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
-  [self progressNavigationState:screenKey];
+  [self progressNavigationState:screenKey withSource:RNSTabsNavigationStateUpdateSourceExternal];
 
   if (currSelectedViewController == nextSelectedViewController) {
     return YES;
@@ -181,7 +187,8 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
  */
 - (void)updateNavigationStateOnModelUpdate
 {
-  [self progressNavigationState:[self screenKeyForSelectedViewController]];
+  [self progressNavigationState:[self screenKeyForSelectedViewController]
+                     withSource:RNSTabsNavigationStateUpdateSourceUser];
 }
 
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
@@ -342,7 +349,17 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   }
 
   RNSLog(@"TabBarCtrl updateSelectedViewController");
+  [self updateSelectedViewControllerInner];
+  _pendingOperation = nil;
+}
 
+/**
+ * NEVER call this method directly. Call the proper function `updateSelectedViewController`
+ *
+ * The logic is extracted to an inner method to correctly manage _pendingOperation cleanup.
+ */
+- (void)updateSelectedViewControllerInner
+{
   UIViewController *_Nonnull currSelectedViewController = self.selectedViewController;
 
   NSString *_Nonnull nextSelectedViewControllerKey = _pendingOperation.selectedScreenKey;
@@ -351,9 +368,14 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   if ([self isMoreNavigationControllerRequestedByOperation:_pendingOperation]) {
     if (![self isMoreNavigationControllerPresentInTabBar]) {
-      // If the controller is not visible atm. we'll crash the app.
-      // TODO: Emit rejection event
-      _pendingOperation = nil;
+      // If the controller is not visible atm. we'll crash the app if we try to navigate to it.
+      RCTAssert(
+          _navigationState != nil,
+          @"[RNScreens] MoreNavigationController MUST NOT be used as an initially selected tab");
+      [self.tabsHostComponentView tabBarController:self
+                             rejectedStateUpdateTo:_pendingOperation
+                                      currentState:_navigationState
+                                        withReason:RNSTabsNavigationStateRejectionReasonMoreNavCtrlNotAvailable];
       return;
     }
     nextSelectedViewController = [self resolveMoreNavigationController];
@@ -374,11 +396,21 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
       RNSTabsScreenViewController.class,
       nextSelectedViewController.class);
 
+  if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingOperation]) {
+    [self.tabsHostComponentView tabBarController:self
+                           rejectedStateUpdateTo:_pendingOperation
+                                    currentState:_navigationState
+                                      withReason:RNSTabsNavigationStateRejectionReasonStale];
+    return;
+  }
+
   if (currSelectedViewController == nextSelectedViewController && _navigationState != nil) {
     // Nothing to do, we don't allow for programmatic repeat selection, unless
     // we're during first render.
-    // TODO: Should we emit here that an update has been rejected?
-    _pendingOperation = nil;
+    [self.tabsHostComponentView tabBarController:self
+                           rejectedStateUpdateTo:_pendingOperation
+                                    currentState:_navigationState
+                                      withReason:RNSTabsNavigationStateRejectionReasonRepeated];
     return;
   }
 
@@ -414,7 +446,6 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey];
-  _pendingOperation = nil;
 
   if (hasStateProgressed) {
     RNSTabsNavigationStateUpdateContext *context =
@@ -479,6 +510,7 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 }
 
 - (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey
+                     withSource:(RNSTabsNavigationStateUpdateSource)updateSource
 {
   RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
 
@@ -489,6 +521,10 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
 
   _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
                                                              provenance:_navigationState.provenance + 1];
+
+  if (updateSource == RNSTabsNavigationStateUpdateSourceUser) {
+    _lastUINavigationState = [_navigationState cloneState];
+  }
 }
 
 /**
@@ -519,6 +555,22 @@ static NSString *const kMoreNavigationControllerScreenKey = @"rnscreens_moreNavi
   auto *screenKey = static_cast<RNSTabsScreenViewController *>(self.selectedViewController).getScreenKeyOrNull;
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
   return screenKey;
+}
+
+/**
+ * This function assumes that the source of the state is NOT user. In current model, user update is never stale.
+ */
+- (BOOL)isNavigationStateUpdateStale:(nullable RNSTabsNavigationState *)newState
+{
+  if (newState == nil) {
+    return YES;
+  }
+
+  if (_navigationState == nil || _lastUINavigationState == nil) {
+    return NO;
+  }
+
+  return newState.provenance < _lastUINavigationState.provenance;
 }
 
 #pragma mark-- More Navigation Controller

@@ -50,7 +50,7 @@ export type TabsContainerState = {
   suggestedState: TabsNavState;
 };
 
-/// Navigation actions
+/// Navigation actions (reducer)
 
 export type TabsNavigationActionSelectTab = {
   type: 'tab-select';
@@ -89,8 +89,12 @@ export type TabsContainerProps = Omit<
 > & {
   routeConfigs: TabRouteConfig[];
   /**
+   * @summary 
    * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
+   *
+   * @description
+   * It MUST NOT be the `SCREEN_KEY_MORE_NAV_CTRL`.
    */
   defaultRouteName?: string;
   /**
@@ -106,3 +110,10 @@ export type SetTabOptionsMethod = (
 ) => void;
 
 export type SelectTabMethod = (routeKey: string) => void;
+
+/// Navigation methods (user facing)
+
+export type TabsNavigationMethods = {
+  setRouteOptions: SetTabOptionsMethod;
+  selectTab: SelectTabMethod;
+}
