@@ -803,7 +803,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Use this prop to opt-out from that behavior for this specific header
    * without disabling it globally.
    *
-   * Has no effect when `androidLegacyTopInsetBehavior` is enabled.
+   * Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
    *
    * @platform android
    */
