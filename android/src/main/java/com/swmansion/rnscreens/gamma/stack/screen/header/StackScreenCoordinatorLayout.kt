@@ -47,29 +47,6 @@ internal class StackScreenCoordinatorLayout(
                 override val isTransparent = false
             },
         )
-
-        // TODO: debug only, until we expose props via JS
-//        postDelayed({
-//            applyHeaderConfiguration(
-//                object : StackScreenHeaderConfigurationProviding {
-//                    override val headerType = StackScreenHeaderType.LARGE
-//                    override val title = "Hello, World!"
-//                    override val isHidden = true
-//                    override val isTransparent = false
-//                },
-//            )
-//
-//            postDelayed({
-//                applyHeaderConfiguration(
-//                    object : StackScreenHeaderConfigurationProviding {
-//                        override val headerType = StackScreenHeaderType.LARGE
-//                        override val title = "Hello, World!"
-//                        override val isHidden = false
-//                        override val isTransparent = false
-//                    },
-//                )
-//            }, 3000)
-//        }, 3000)
     }
 
     /**
@@ -77,7 +54,6 @@ internal class StackScreenCoordinatorLayout(
      */
     private fun stackContainerOrNull(): StackContainer? = this.parent as StackContainer?
 
-    // TODO: do we need to rely on parent here?
     internal fun maybeRequestLayoutContainer() {
         post {
             stackContainerOrNull()?.forceSubtreeMeasureAndLayoutPass()

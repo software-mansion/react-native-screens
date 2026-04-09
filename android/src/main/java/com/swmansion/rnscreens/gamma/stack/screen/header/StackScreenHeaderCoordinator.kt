@@ -60,7 +60,6 @@ internal class StackScreenHeaderCoordinator(
         appBarLayout: StackScreenAppBarLayout,
         title: String,
     ) {
-        // TODO: diffing mechanism?
         when (appBarLayout) {
             is StackScreenAppBarLayout.Small -> {
                 appBarLayout.toolbar.title = title
