@@ -82,6 +82,20 @@ class ScreenStackHeaderConfigViewManager :
         parent.onUpdate()
     }
 
+    override fun setConsumeTopInset(
+        config: ScreenStackHeaderConfig,
+        consumeTopInset: Boolean,
+    ) {
+        config.consumeTopInset = consumeTopInset
+    }
+
+    override fun setLegacyTopInsetBehavior(
+        config: ScreenStackHeaderConfig,
+        legacyTopInsetBehavior: Boolean,
+    ) {
+        config.legacyTopInsetBehavior = legacyTopInsetBehavior
+    }
+
     override fun setTitle(
         config: ScreenStackHeaderConfig,
         title: String?,

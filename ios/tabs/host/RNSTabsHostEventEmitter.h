@@ -40,6 +40,14 @@ typedef struct {
   RNSTabsNavigationStateRejectionReason rejectionReason;
 } OnTabSelectionRejectedPayload;
 
+/** Payload for the `onTabSelectionPrevented` event emitted when a tab selection is prevented. */
+typedef struct {
+  /** The currently active navigation state that was kept. */
+  RNSTabsNavigationState *_Nonnull currentNavState;
+  /** Screen key of the tab whose selection was prevented. */
+  NSString *_Nonnull preventedScreenKey;
+} OnTabSelectionPreventedPayload;
+
 @interface RNSTabsHostEventEmitter : NSObject
 
 /** Emits `onTabSelected` event to JS. Returns YES if the event was dispatched successfully. */
@@ -47,6 +55,9 @@ typedef struct {
 
 /** Emits `onTabSelectionRejected` event to JS. Returns YES if the event was dispatched successfully. */
 - (BOOL)emitOnTabSelectionRejected:(OnTabSelectionRejectedPayload)payload;
+
+/** Emits `onTabSelectionPrevented` event to JS. Returns YES if the event was dispatched successfully. */
+- (BOOL)emitOnTabSelectionPrevented:(OnTabSelectionPreventedPayload)payload;
 
 @end
 
