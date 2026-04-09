@@ -14,12 +14,8 @@ export function useTopInsetConsumption(
   const useLegacyBehavior =
     featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
 
-  // If nothing consumed the top inset above and nothing disabled consuming that
-  // it means that there's no header above us, which has configured one of the following:
-  //
-  // - headerShown: true - which would result in inset consumption higher in the view hierarchy
-  // - disableTopInsetConsumption: true - which would block inset consumption (only in the case
-  //   when the header is visible from the perspective of ScreenStackItem)
+  // We're the outermost stack (the one that will make a decision about applying the padding to its header)
+  // if no component higher in the hierarchy consumed the top inset, and no component prevented consuming that.
   const isOutermostStack =
     !insetContext.isTopInsetConsumed &&
     !insetContext.isTopInsetConsumptionDisabled;
