@@ -1,12 +1,12 @@
-import { useTheme } from '@react-navigation/native';
+import * as React from 'react';
+import { ThemeContext } from '@react-navigation/core';
 import { DarkTheme, LightTheme } from '../../Colors';
 
 export function useReactNavigationTheme() {
-  try {
-    const theme = useTheme();
-    return theme.dark ? DarkTheme : LightTheme;
-  } catch (error) {
+  const theme = React.useContext(ThemeContext);
+  if (theme == null) {
     console.log('Returning undefined from useReactNavigationTheme');
+    return undefined;
   }
-  return undefined;
+  return theme.dark ? DarkTheme : LightTheme;
 }
