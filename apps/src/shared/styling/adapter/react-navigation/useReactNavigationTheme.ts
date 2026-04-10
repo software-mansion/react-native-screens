@@ -5,9 +5,7 @@ export function useReactNavigationTheme() {
     const theme = useTheme();
     return theme;
   } catch (error) {
-    console.log(
-      "useReactNavigationTheme: Couldn't find a React Navigation theme. Returning default theme.",
-    );
+    console.log('Returning default theme from useReactNavigationTheme');
   }
   return DefaultTheme;
 }
