@@ -30,3 +30,13 @@ export async function selectIssueTestScreen(screenName: string) {
   await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
+
+export async function selectSingleFeatureTestsScreen(screenKey: string) {
+  await scrollTo('root-screen-single-feature-tests');
+  await element(by.id('root-screen-single-feature-tests')).tap();
+
+  await waitFor(element(by.id('single-feature-tests-scrollview'))).toBeVisible();
+
+  await expect(element(by.id(`single-feature-tests-${screenKey}`))).toBeVisible();
+  await element(by.id(`single-feature-tests-${screenKey}`)).tap();
+}

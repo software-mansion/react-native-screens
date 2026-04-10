@@ -13,6 +13,7 @@ const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
   key: 'test-tabs-tab-bar-hidden',
   platforms: ['ios', 'android'],
+  testID: 'single-feature-tests-test-tabs-tab-bar-hidden',
   AppComponent: App,
 };
 
@@ -22,7 +23,8 @@ function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
-    <ScrollView style={{ padding: 40 }}>
+    <ScrollView style={{ padding: 40 }}
+    testID='tab-bar-hidden-config-screen'>
       <Text style={{ textAlign: 'center' }}>Change flag value by clicking on button.</Text>
       <SettingsSwitch
         style={{ marginTop: 20, marginBottom: 15 }}
