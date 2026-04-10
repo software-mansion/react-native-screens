@@ -1,7 +1,5 @@
 package com.swmansion.rnscreens
 
-import androidx.appcompat.widget.Toolbar
-
 interface ScreenStackFragmentWrapper : ScreenFragmentWrapper {
     // Toolbar management
     fun removeToolbar()
