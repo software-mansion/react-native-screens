@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -58,6 +59,7 @@ class ScreenStackHeaderConfig(
     private var isBackButtonHidden = false
     private var isShadowHidden = false
     private var isDestroyed = false
+    private var actionBar: ActionBar? = null
     private var backButtonInCustomView = false
     private var tintColor = 0
     private var isAttachedToWindow = false
@@ -111,6 +113,17 @@ class ScreenStackHeaderConfig(
 
     fun destroy() {
         isDestroyed = true
+    }
+
+    internal fun clearActionBarIfOwned(activity: AppCompatActivity?) {
+        actionBar?.let { ownedActionBar ->
+            activity?.let { appCompat ->
+                if (appCompat.supportActionBar === ownedActionBar) {
+                    appCompat.setSupportActionBar(null)
+                }
+            }
+        }
+        actionBar = null
     }
 
     /**
@@ -243,17 +256,16 @@ class ScreenStackHeaderConfig(
 
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
-        val actionBar = requireNotNull(activity.supportActionBar)
-        // notify the fragment so it can clear this action bar reference when being removed.
-        screenFragment?.onActionBarSet(actionBar)
+        val newActionBar = requireNotNull(activity.supportActionBar)
+        actionBar = newActionBar
 
         // hide back button
-        actionBar.setDisplayHomeAsUpEnabled(
+        newActionBar.setDisplayHomeAsUpEnabled(
             screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
         )
 
         // title
-        actionBar.title = title
+        newActionBar.title = title
         if (TextUtils.isEmpty(title)) {
             isTitleEmpty = true
         }
@@ -327,7 +339,7 @@ class ScreenStackHeaderConfig(
                         ?: throw JSApplicationIllegalArgumentException(
                             "Back button header config view should have Image as first child",
                         )
-                actionBar.setHomeAsUpIndicator(firstChild.drawable)
+                newActionBar.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
             }
