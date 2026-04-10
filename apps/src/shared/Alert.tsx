@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import useThemeColorPallette from './styling/adapter/react-navigation/useColorPallette';
+import useThemeColorPallette from './styling/theme-provider/useColorPallette';
 
 export const Alert = (): React.JSX.Element => {
   const navigation = useNavigation();

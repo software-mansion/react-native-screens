@@ -23,6 +23,10 @@ import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
+import {
+  TopInsetConsumptionContext,
+  useTopInsetConsumption,
+} from './contexts/TopInsetConsumptionContext';
 
 type Props = Omit<
   ScreenProps,
@@ -52,6 +56,8 @@ function ScreenStackItem(
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
+  const { nextContextValue } = useTopInsetConsumption(!headerConfig?.hidden);
+
   const currentScreenRef = React.useRef<View | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
@@ -115,18 +121,20 @@ function ScreenStackItem(
 
   const content = (
     <>
-      <DebugContainer
-        contentStyle={contentStyle}
-        style={debugContainerStyle}
-        stackPresentation={stackPresentationWithDefault}>
-        {shouldUseSafeAreaView ? (
-          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
-            {children}
-          </SafeAreaView>
-        ) : (
-          children
-        )}
-      </DebugContainer>
+      <TopInsetConsumptionContext.Provider value={nextContextValue}>
+        <DebugContainer
+          contentStyle={contentStyle}
+          style={debugContainerStyle}
+          stackPresentation={stackPresentationWithDefault}>
+          {shouldUseSafeAreaView ? (
+            <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+              {children}
+            </SafeAreaView>
+          ) : (
+            children
+          )}
+        </DebugContainer>
+      </TopInsetConsumptionContext.Provider>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
        * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`

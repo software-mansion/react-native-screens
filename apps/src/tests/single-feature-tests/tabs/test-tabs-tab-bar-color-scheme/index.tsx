@@ -20,8 +20,8 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
-  name: 'Color Scheme',
-  key: 'test-tabs-color-scheme',
+  name: 'Tab Bar Color Scheme',
+  key: 'test-tabs-tab-bar-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
   platforms: ['android', 'ios'],
   AppComponent: App,
