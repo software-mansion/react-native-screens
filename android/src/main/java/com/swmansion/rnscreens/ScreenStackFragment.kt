@@ -14,6 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.LinearLayout
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -56,6 +58,8 @@ class ScreenStackFragment :
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
+
+    private var ownedActionBar: ActionBar? = null
 
     private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
 
@@ -299,6 +303,37 @@ class ScreenStackFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    internal fun onActionBarSet(actionBar: ActionBar) {
+        ownedActionBar = actionBar
+    }
+
+    override fun onDestroyView() {
+        // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
+        // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
+        // its mActionBar field for the lifetime of the activity. When a screen is popped and the new
+        // top screen does not install a replacement action bar (e.g. headerShown: false),
+        // the stale ToolbarActionBar — and the entire object graph hanging off the toolbar is never released.
+        // When this fragment is being removed, we're clearing the activity's support action bar if it
+        // still belongs to us. This will break the retention chain:
+        // - AppCompatDelegateImpl.mActionBar
+        // - ToolbarActionBar.mDecorToolbar
+        // - ToolbarWidgetWrapper.mToolbar
+        // - DebugMenuToolbar.config
+        // - ScreenStackHeaderConfig.mParent
+        // - Screen.fragment
+        if (isRemoving) {
+            ownedActionBar?.let { owned ->
+                (activity as? AppCompatActivity)?.let { appCompat ->
+                    if (appCompat.supportActionBar === owned) {
+                        appCompat.setSupportActionBar(null)
+                    }
+                }
+            }
+            ownedActionBar = null
+        }
+        super.onDestroyView()
     }
 
     override fun onCreateAnimation(

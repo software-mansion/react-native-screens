@@ -244,6 +244,8 @@ class ScreenStackHeaderConfig(
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
+        // notify the fragment so it can clear this action bar reference when being removed.
+        screenFragment?.onActionBarSet(actionBar)
 
         // hide back button
         actionBar.setDisplayHomeAsUpEnabled(
