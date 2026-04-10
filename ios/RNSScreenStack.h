@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, nonnull) NSArray<NSString *> *screenIds;
 
+@property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
+
 @end
 
 @interface RNSScreenStackManager : RCTViewManager
