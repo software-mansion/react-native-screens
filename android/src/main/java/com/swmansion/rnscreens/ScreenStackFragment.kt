@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.LinearLayout
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -59,7 +58,7 @@ class ScreenStackFragment :
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
 
-    private var ownedActionBar: ActionBar? = null
+    private var lastActiveHeaderConfig: ScreenStackHeaderConfig? = null
 
     private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
 
@@ -107,7 +106,8 @@ class ScreenStackFragment :
         toolbar = null
     }
 
-    override fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: CustomToolbar) {
+        lastActiveHeaderConfig = toolbar.config
         appBarLayout?.addView(toolbar)
         toolbar.layoutParams =
             AppBarLayout
@@ -305,10 +305,6 @@ class ScreenStackFragment :
         super.onViewCreated(view, savedInstanceState)
     }
 
-    internal fun onActionBarSet(actionBar: ActionBar) {
-        ownedActionBar = actionBar
-    }
-
     override fun onDestroyView() {
         // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
         // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
@@ -323,16 +319,8 @@ class ScreenStackFragment :
         // - DebugMenuToolbar.config
         // - ScreenStackHeaderConfig.mParent
         // - Screen.fragment
-        if (isRemoving) {
-            ownedActionBar?.let { owned ->
-                (activity as? AppCompatActivity)?.let { appCompat ->
-                    if (appCompat.supportActionBar === owned) {
-                        appCompat.setSupportActionBar(null)
-                    }
-                }
-            }
-            ownedActionBar = null
-        }
+        lastActiveHeaderConfig?.clearActionBarIfOwned(activity as? AppCompatActivity)
+        lastActiveHeaderConfig = null
         super.onDestroyView()
     }
 

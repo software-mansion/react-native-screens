@@ -6,7 +6,7 @@ interface ScreenStackFragmentWrapper : ScreenFragmentWrapper {
     // Toolbar management
     fun removeToolbar()
 
-    fun setToolbar(toolbar: Toolbar)
+    fun setToolbar(toolbar: CustomToolbar)
 
     fun setToolbarShadowHidden(hidden: Boolean)
 
