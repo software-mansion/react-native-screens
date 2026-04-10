@@ -4,6 +4,7 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenComponentView.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 
 @implementation RNSStackScreenController {
   RNSStackScreenComponentView *_Nonnull _screenView;
@@ -13,6 +14,7 @@
 {
   if (self = [super initWithNibName:nil bundle:nil]) {
     _screenView = componentView;
+    _headerCoordinator = [[RNSStackScreenHeaderCoordinator alloc] initWithScreenController:self];
   }
   return self;
 }
@@ -27,6 +29,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  [_headerCoordinator applyBarConfigurationIfNeeded:animated];
   [[self reactEventEmitter] emitOnWillAppear];
 }
 

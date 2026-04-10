@@ -1,6 +1,8 @@
 #import "RNSStackNavigationController.h"
 #import "RNSLog.h"
 #import "RNSStackOperation.h"
+#import "RNSStackScreenController.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 #import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
@@ -20,6 +22,11 @@
 {
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
+
+  // We have to initialize viewControllers with a non-empty array for
+  // largeTitle header to render in the opened state. If it is empty,
+  // the header will render in collapsed state — a UIKit bug.
+  [self setViewControllers:@[ [UIViewController new] ]];
 }
 
 - (BOOL)hasPendingOperations
@@ -57,7 +64,15 @@
 
     for (RNSPushOperation *op in _pendingPushOperations) {
       UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
-      [self pushViewController:controller animated:true];
+      BOOL isFirstPush = ![self.topViewController isKindOfClass:RNSStackScreenController.class];
+      if (isFirstPush) {
+        // For the first real push (replacing the dummy VC), use
+        // setViewControllers: without animation. Using pushViewController:
+        // on the dummy stack causes large title to render collapsed.
+        [self setViewControllers:@[ controller ] animated:NO];
+      } else {
+        [self pushViewController:controller animated:true];
+      }
     }
 
     RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
@@ -68,6 +83,27 @@
     [_pendingPushOperations removeAllObjects];
   }
 }
+
+#pragma mark - Layout
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+
+  UIViewController *topVC = self.topViewController;
+  if (topVC == nil) {
+    return;
+  }
+
+  // The screen controller's header delegate orchestrate
+  // updates for the header config and its items (props & shadow state).
+  if ([topVC isKindOfClass:RNSStackScreenController.class]) {
+    auto *screenController = static_cast<RNSStackScreenController *>(topVC);
+    [screenController.headerCoordinator updateShadowStatesToMatchNavigationBar:self.navigationBar];
+  }
+}
+
+#pragma mark - Debug
 
 - (void)dumpStackModel
 {
