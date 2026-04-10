@@ -168,10 +168,20 @@ open class CustomToolbar(
         // We want to handle display cutout always, no matter the HeaderConfig prop values.
         // If there are no cutout displays, we want to apply the additional padding to
         // respect the status bar.
+        //
+        // Use rootWindowInsets as a fallback for status bar top height when unhandledInsets
+        // reports 0. This can happen when an ancestor view (e.g. SafeAreaProvider from
+        // react-native-safe-area-context) has already consumed the top systemBars inset, causing
+        // unhandledInsets.top == 0 and the toolbar title to render behind the status bar.
+        // rootWindowInsets always contains the raw window insets regardless of consumption by ancestors.
+        val statusBarTop = if (shouldApplyTopInset) {
+            val fromUnhandled = systemBarInsets.top
+            if (fromUnhandled > 0) fromUnhandled else resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars()).top
+        } else 0
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
+                max(cutoutInsets.top, statusBarTop),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
