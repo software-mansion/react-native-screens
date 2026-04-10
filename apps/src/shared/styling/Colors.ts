@@ -1,4 +1,5 @@
 import { ColorValue } from 'react-native';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 
 export const Palette = {
   NavyLight100: '#001a72',
@@ -97,11 +98,12 @@ export const Palette = {
 } as const;
 
 export type ColorPallette = typeof Palette & {
-  background: ColorValue,
-  offBackground: ColorValue,
-  primary: ColorValue,
-  cardBackground: ColorValue,
-  cardBorder: ColorValue,
+  background: ColorValue;
+  offBackground: ColorValue;
+  primary: ColorValue;
+  text: ColorValue;
+  cardBackground: ColorValue;
+  cardBorder: ColorValue;
 };
 
 export const Colors: ColorPallette = {
@@ -109,6 +111,7 @@ export const Colors: ColorPallette = {
   background: Palette.White,
   offBackground: Palette.OffWhite,
   primary: Palette.NavyLight100,
+  text: Palette.NavyLight100,
   cardBackground: Palette.White,
   cardBorder: Palette.NavyLight20,
 };
@@ -120,10 +123,31 @@ export const DarkColors: ColorPallette = {
   background: Palette.Navy,
   offBackground: Palette.OffNavy,
   primary: Palette.NavyLight10,
+  text: Palette.NavyLight10,
   cardBackground: Palette.Navy,
   cardBorder: Palette.NavyDark60,
 };
 
+export const ScreensLightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: LightColors.primary as string,
+    background: LightColors.background as string,
+    card: LightColors.cardBackground as string,
+    border: LightColors.cardBorder as string,
+  },
+};
+
+export const ScreensDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: DarkColors.primary as string,
+    background: DarkColors.background as string,
+    card: DarkColors.cardBackground as string,
+    border: DarkColors.cardBorder as string,
+  },
+};
+
 export default Colors;
-
-

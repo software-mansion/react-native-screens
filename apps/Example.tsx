@@ -33,7 +33,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
-} from './src/shared/styling/adapter/react-navigation';
+} from './src/shared/styling/Colors';
 
 import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';

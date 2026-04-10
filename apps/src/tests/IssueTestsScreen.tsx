@@ -10,7 +10,7 @@ import { ListItem } from '@apps/shared';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
-} from '@apps/shared/styling/adapter/react-navigation';
+} from '@apps/shared/styling/Colors';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const SCREENS: Record<
