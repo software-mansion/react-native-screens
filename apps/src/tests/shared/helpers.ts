@@ -21,7 +21,7 @@ export interface Scenario {
    */
   platforms?: ('android' | 'ios')[];
   /**
-   * Test ID for the scenario
+   * testID for the scenario
    */
   testID?: string;
   /**
