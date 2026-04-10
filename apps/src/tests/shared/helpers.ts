@@ -21,6 +21,10 @@ export interface Scenario {
    */
   platforms?: ('android' | 'ios')[];
   /**
+   * Test ID for the scenario
+   */
+  testID?: string;
+  /**
    * Component that will render the test scenario. It should be standalone!
    * That means it should be possible to render this w/o any additional harness
    * as top-level application component & it should remain functional.
