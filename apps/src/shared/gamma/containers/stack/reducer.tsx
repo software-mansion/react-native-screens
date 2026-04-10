@@ -16,6 +16,7 @@ import type {
   StackState,
 } from './StackContainer.types';
 import { generateID } from '../shared/id-generator';
+import { safeStringify } from '../shared/safe-stringify';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -60,15 +61,13 @@ export function navigationStateReducerWithLogging(
   state: StackNavigationState,
   action: NavigationAction,
 ): StackNavigationState {
-  console.debug(`[Stack] Handling action: ${JSON.stringify(action)}`);
-  console.debug(`[Stack] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
+  console.debug(`[Stack] Handling action: ${safeStringify(action)}`);
+  console.debug(`[Stack] BEFORE state: ${safeStringify(state, 2)}`);
   const newState = navigationStateReducer(state, action);
   if (state === newState) {
     console.debug('[Stack] AFTER state: unchanged');
   } else {
-    console.debug(
-      `[Stack] AFTER state: ${JSON.stringify(newState, undefined, 2)}`,
-    );
+    console.debug(`[Stack] AFTER state: ${safeStringify(newState, 2)}`);
   }
   return newState;
 }
