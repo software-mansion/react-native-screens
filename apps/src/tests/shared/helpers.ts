@@ -10,6 +10,7 @@ export interface Scenario {
    * Globally unique key identifying this scenario.
    * Must be in kebab-case.
    * Should match the filename of the scenario file.
+   * This is also used as a testID in scenario.
    */
   key: string;
   /**
@@ -20,10 +21,6 @@ export interface Scenario {
    * What platforms does this test cover.
    */
   platforms?: ('android' | 'ios')[];
-  /**
-   * testID for the scenario
-   */
-  testID?: string;
   /**
    * Component that will render the test scenario. It should be standalone!
    * That means it should be possible to render this w/o any additional harness
