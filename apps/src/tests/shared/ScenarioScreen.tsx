@@ -11,14 +11,14 @@ import {
 function ScenarioSelect(props: { scenarios: Scenario[] }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.values(props.scenarios).map(({ name, key, details, platforms, testID }) => (
+      {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
         <ScenarioButton
           title={name}
           details={details}
           route={key}
           key={key}
           platformsHint={platforms}
-          testID={testID}
+          testID={key}
         />
       ))}
     </ScrollView>
