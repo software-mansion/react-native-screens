@@ -1604,6 +1604,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
     [self.screenView updateBounds];
   }
+
+  if (self.screenView.isPresentedAsNativeModal) {
+    UIView *superview = self.view.superview;
+    if (superview != nil) {
+      // UIKit presents modals inside a UITransitionView. In RTL that container can be mirrored and
+      // report a negative origin. Copying the frame directly would offset the React view, so align
+      // it with the container's bounds to stay centered.
+      CGRect targetFrame = superview.bounds;
+      if (!CGRectEqualToRect(self.view.frame, targetFrame)) {
+        self.view.frame = targetFrame;
+      }
+    }
+  }
 }
 
 - (BOOL)isModalWithHeader
