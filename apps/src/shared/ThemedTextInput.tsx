@@ -1,13 +1,13 @@
-import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { TextInput, TextInputProps } from 'react-native';
+import useThemeColorPalette from './styling/theme/useColorPalette';
 
 export const ThemedTextInput = ({ style, ...props }: TextInputProps) => {
-  const { colors } = useTheme();
+  const { colors } = useThemeColorPalette();
 
   return (
     <TextInput
-      style={[{ borderColor: colors.border, color: colors.text }, style]}
+      style={[{ borderColor: colors.cardBorder, color: colors.text }, style]}
       {...props}
     />
   );

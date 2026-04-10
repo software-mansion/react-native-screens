@@ -96,34 +96,52 @@ export const Palette = {
   Navy: '#232736',
 } as const;
 
-export type ColorPallette = typeof Palette & {
-  background: ColorValue,
-  offBackground: ColorValue,
-  primary: ColorValue,
-  cardBackground: ColorValue,
-  cardBorder: ColorValue,
+export type ColorPalette = typeof Palette & {
+  background: ColorValue;
+  offBackground: ColorValue;
+  primary: ColorValue;
+  text: ColorValue;
+  cardBackground: ColorValue;
+  cardBorder: ColorValue;
 };
 
-export const Colors: ColorPallette = {
+export const Colors: ColorPalette = {
   ...Palette,
   background: Palette.White,
   offBackground: Palette.OffWhite,
   primary: Palette.NavyLight100,
+  text: Palette.NavyLight100,
   cardBackground: Palette.White,
   cardBorder: Palette.NavyLight20,
 };
 
-export const LightColors: ColorPallette = Colors;
+export const LightColors: ColorPalette = Colors;
 
-export const DarkColors: ColorPallette = {
+export const DarkColors: ColorPalette = {
   ...Palette,
   background: Palette.Navy,
   offBackground: Palette.OffNavy,
   primary: Palette.NavyLight10,
+  text: Palette.NavyLight10,
   cardBackground: Palette.Navy,
   cardBorder: Palette.NavyDark60,
 };
 
+export type ThemeName = 'light' | 'dark';
+
+export type Theme = {
+  theme: ThemeName;
+  colors: ColorPalette;
+};
+
+export const LightTheme: Theme = {
+  theme: 'light',
+  colors: LightColors,
+};
+
+export const DarkTheme: Theme = {
+  theme: 'dark',
+  colors: DarkColors,
+};
+
 export default Colors;
-
-

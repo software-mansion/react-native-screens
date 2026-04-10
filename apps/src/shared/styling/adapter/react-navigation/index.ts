@@ -23,3 +23,4 @@ export const ScreensDarkTheme = {
   },
 };
 
+export { useReactNavigationTheme } from './useReactNavigationTheme';

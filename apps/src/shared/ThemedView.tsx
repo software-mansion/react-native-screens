@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, ViewProps } from 'react-native';
-import useThemeColorPallette from './styling/adapter/react-navigation/useColorPallette';
+import useThemeColorPalette from './styling/theme/useColorPalette';
 
 export const ThemedView = ({ children, style, ...props }: ViewProps) => {
-  const { colors } = useThemeColorPallette();
+  const { colors } = useThemeColorPalette();
   return (
     <View style={[{ backgroundColor: colors.offBackground }, style]} {...props}>
       {children}
