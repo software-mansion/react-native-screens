@@ -26,6 +26,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
+@property (nonatomic) BOOL isNativelyDismissed;
 
 @end
 
