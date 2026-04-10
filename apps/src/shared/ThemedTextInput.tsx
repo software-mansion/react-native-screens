@@ -1,9 +1,9 @@
 import React from 'react';
 import { TextInput, TextInputProps } from 'react-native';
-import useThemeColorPallette from './styling/theme/useColorPallette';
+import useThemeColorPalette from './styling/theme/useColorPalette';
 
 export const ThemedTextInput = ({ style, ...props }: TextInputProps) => {
-  const { colors } = useThemeColorPallette();
+  const { colors } = useThemeColorPalette();
 
   return (
     <TextInput

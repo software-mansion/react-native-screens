@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text, TextProps } from 'react-native';
-import useThemeColorPallette from './styling/theme/useColorPallette';
+import useThemeColorPalette from './styling/theme/useColorPalette';
 
 export const ThemedText = ({ children, style, ...props }: TextProps) => {
-  const { colors } = useThemeColorPallette();
+  const { colors } = useThemeColorPalette();
 
   return (
     <Text style={[{ color: colors.text }, style]} {...props}>

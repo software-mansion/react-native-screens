@@ -1,11 +1,12 @@
-import { useTheme, DefaultTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
+import { DarkTheme, LightTheme } from '../../Colors';
 
 export function useReactNavigationTheme() {
   try {
     const theme = useTheme();
-    return theme;
+    return theme.dark ? DarkTheme : LightTheme;
   } catch (error) {
-    console.log('Returning default theme from useReactNavigationTheme');
+    console.log('Returning undefined from useReactNavigationTheme');
   }
-  return DefaultTheme;
+  return undefined;
 }

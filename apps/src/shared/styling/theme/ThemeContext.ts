@@ -1,9 +1,7 @@
 import * as React from 'react';
 
-export type ThemeName = 'light' | 'dark';
+import { Theme } from '../Colors';
 
-export const ThemeContext = React.createContext<ThemeName | undefined>(
-  undefined,
-);
+export const ThemeContext = React.createContext<Theme | undefined>(undefined);
 
 ThemeContext.displayName = 'ThemeContext';

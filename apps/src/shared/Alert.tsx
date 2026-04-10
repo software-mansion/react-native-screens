@@ -1,11 +1,11 @@
 import React from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import useThemeColorPallette from './styling/theme/useColorPallette';
+import useThemeColorPalette from './styling/theme/useColorPalette';
 
 export const Alert = (): React.JSX.Element => {
   const navigation = useNavigation();
-  const { colors } = useThemeColorPallette();
+  const { colors } = useThemeColorPalette();
 
   const backgrounds = [
     colors.BlueLight80,
