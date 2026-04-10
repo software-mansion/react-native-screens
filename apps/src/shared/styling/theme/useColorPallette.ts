@@ -2,26 +2,27 @@ import * as React from 'react';
 import { ThemeContext } from './ThemeContext';
 import type { ThemeName } from './ThemeContext';
 import { ColorPallette, DarkColors, LightColors } from '../Colors';
-import { useTheme } from '@react-navigation/native';
+import { useReactNavigationTheme } from '../adapter/react-navigation';
 
 /**
- * Requires `ThemeContext` (from react-navigation) presence.
- * However, it is possible to override theme by wrapping part of the app in `ThemeProvider` and passing desired theme as a prop.
+ * Get the current theme from the context. If there is no theme provided, get it from React Navigation theme.
  * Use this to get whole collor pallete current theme is based on.
  */
 export default function useThemeColorPallette(): {
   theme: ThemeName;
   colors: ColorPallette;
 } {
-  const navigationTheme = useTheme();
-  let theme: ThemeName = navigationTheme.dark ? 'dark' : 'light';
+  const navigationTheme = useReactNavigationTheme();
 
   const providedTheme = React.useContext(ThemeContext);
   if (providedTheme !== undefined) {
-    theme = providedTheme;
+    return {
+      theme: providedTheme,
+      colors: providedTheme === 'dark' ? DarkColors : LightColors,
+    };
   }
   return {
-    theme: theme,
-    colors: theme === 'dark' ? DarkColors : LightColors,
+    theme: navigationTheme.dark ? 'dark' : 'light',
+    colors: navigationTheme.dark ? DarkColors : LightColors,
   };
 }
