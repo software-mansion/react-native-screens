@@ -292,8 +292,10 @@ open class ScreenFragment :
         // since we subscribe to parent's animation start/end and dispatch events in child from there
         // check for `isTransitioning` should be enough since the child's animation should take only
         // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
+        // When the parent is not a ScreenFragment (e.g. when RN is loaded inside a ReactFragment
+        // in a brownfield setup), we always dispatch. Such parents don't participate in screen transitions.
         val parent = parentFragment
-        if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
+        if (parent == null || parent !is ScreenFragment || (parent is ScreenFragment && !parent.isTransitioning)) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
