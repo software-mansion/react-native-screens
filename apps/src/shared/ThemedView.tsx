@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ViewProps } from 'react-native';
-import useThemeColorPallette from './styling/theme-provider/useColorPallette';
+import useThemeColorPallette from './styling/theme/useColorPallette';
 
 export const ThemedView = ({ children, style, ...props }: ViewProps) => {
   const { colors } = useThemeColorPallette();
