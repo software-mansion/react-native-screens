@@ -69,6 +69,10 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
   RNSTabsNavigationState *_Nullable _pendingOperation;
 
+  /// When YES, the controller is inside an explicit selection-changing code path (container update,
+  /// delegate handling). Setter overrides skip reconciliation while this flag is set.
+  BOOL _isHandlingExplicitSelectionUpdate;
+
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -115,6 +119,22 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
   RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
+}
+
+- (void)setSelectedIndex:(NSUInteger)selectedIndex
+{
+  [super setSelectedIndex:selectedIndex];
+  if (!_isHandlingExplicitSelectionUpdate) {
+    [self reconcileNavigationStateWithUIKitState];
+  }
+}
+
+- (void)setSelectedViewController:(__kindof UIViewController *)selectedViewController
+{
+  [super setSelectedViewController:selectedViewController];
+  if (!_isHandlingExplicitSelectionUpdate) {
+    [self reconcileNavigationStateWithUIKitState];
+  }
 }
 
 #pragma mark - Signals
@@ -176,8 +196,11 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
 - (void)performContainerUpdate
 {
+  _isHandlingExplicitSelectionUpdate = YES;
   [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
+  _isHandlingExplicitSelectionUpdate = NO;
+
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
@@ -351,6 +374,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     }
   }
 
+  _isHandlingExplicitSelectionUpdate = YES;
   return YES;
 }
 
@@ -367,6 +391,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       viewController.class);
 
   [self userDidSelectViewController:viewController];
+  _isHandlingExplicitSelectionUpdate = NO;
 }
 
 #pragma mark - UINavigationControllerDelegate
@@ -560,7 +585,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
                                                              provenance:_navigationState.provenance + 1];
 
-  if (updateSource == RNSTabsNavigationStateUpdateSourceUser) {
+  if (updateSource != RNSTabsNavigationStateUpdateSourceExternal) {
     _lastUINavigationState = [_navigationState cloneState];
   }
 }
@@ -594,6 +619,58 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 - (nonnull NSString *)screenKeyForSelectedViewController
 {
   return [self screenKeyForViewController:self.selectedViewController];
+}
+
+/**
+ * Detect and fix any mismatch between `_navigationState` and UIKit's actual selected view controller.
+ *
+ * This is called from the `setSelectedIndex:` / `setSelectedViewController:` overrides when
+ * the change was NOT initiated by a known code path (container update, delegate handling).
+ * The primary case is UIKit restoring a tab when the More navigation controller disappears
+ * during a horizontal size class transition on iPad.
+ */
+- (void)reconcileNavigationStateWithUIKitState
+{
+  if (_navigationState == nil) {
+    // Before the first container update, _navigationState is nil — there is no established baseline
+    // to drift from. The normal initialization path (performContainerUpdate → progressNavigationState:)
+    // handles the nil → first state transition. Reconciling here would prematurely initialize state
+    // and emit a delegate notification before the controller is fully set up.
+    return;
+  }
+
+  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+    // We don't want to progress the state in case of more navigation controller.
+    // If we're reconciling here, it means that it won't be handled correctly.
+    // I'm not aware of any flow where this could happen, hence assertion.
+    RCTAssert(NO, @"[RNScreens] Unexpected state reconciliation with More Navigation Controller");
+    return;
+  }
+
+  if (![self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    RCTAssert(
+        NO,
+        @"[RNScreens] Unexpected controller type during state reconciliation: %@",
+        self.selectedViewController.class);
+    return;
+  }
+
+  NSString *selectedScreenKey = [self screenKeyForSelectedViewController];
+  if ([_navigationState.selectedScreenKey isEqualToString:selectedScreenKey]) {
+    return;
+  }
+
+  RNSLog(
+      @"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
+      _navigationState.selectedScreenKey,
+      selectedScreenKey);
+  [self progressNavigationState:selectedScreenKey withSource:RNSTabsNavigationStateUpdateSourceImplicit];
+
+  auto *context = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
+                                                                     isRepeated:NO
+                                                      hasTriggeredSpecialEffect:NO
+                                                                 isNativeAction:YES];
+  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
 }
 
 /**
