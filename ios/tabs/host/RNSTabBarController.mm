@@ -232,7 +232,11 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RCTAssert(
       self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
-  [self updateNavigationStateOnModelUpdate];
+  BOOL isSelectedViewControllerTheMoreNavigationController = [self isSelectedViewControllerTheMoreNavigationController];
+
+  if (!isSelectedViewControllerTheMoreNavigationController) {
+    [self updateNavigationStateOnModelUpdate];
+  }
 
   // After state progression we trigger the special effect.
   BOOL repeatedSelectionHandledBySpecialEffect = NO;
@@ -256,9 +260,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RCTAssert(
       self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
-  BOOL isSelectedViewControllerTheMoreNavigationController = [self isSelectedViewControllerTheMoreNavigationController];
-
-  if (isSelectedViewControllerTheMoreNavigationController) {
+  if ([self isSelectedViewControllerTheMoreNavigationController]) {
     [self disableNavigationBarInMoreNavigationController];
     [self prepareForMoreNavigationControllerHandlingIfNeeded];
 
