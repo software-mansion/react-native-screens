@@ -83,4 +83,17 @@ namespace react = facebook::react;
   }
 }
 
+- (BOOL)emitOnMoreTabSelected:(OnMoreTabSelectedPayload)payload
+{
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onMoreTabSelected(
+        {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
+         .provenance = payload.currentNavState.provenance});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnMoreTabSelected event emission due to nullish emitter");
+    return NO;
+  }
+}
+
 @end
