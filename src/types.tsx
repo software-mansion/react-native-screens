@@ -300,7 +300,10 @@ export interface ScreenProps extends ViewProps {
   /**
    * An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
    *
-   * @platform ios
+   * On Android this fires after the sheet bounces back from a prevented drag-to-dismiss
+   * gesture (only applicable when `stackPresentation` is `"formSheet"`).
+   *
+   * @platform ios, android
    */
   onNativeDismissCancelled?: (
     e: NativeSyntheticEvent<{ dismissCount: number }>,
@@ -326,10 +329,20 @@ export interface ScreenProps extends ViewProps {
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * Boolean indicating whether to prevent current screen from being dismissed.
-   * Defaults to `false`.
+   * Boolean indicating whether to prevent current screen from being dismissed by a drag
+   * gesture.  Defaults to `false`.
    *
-   * @platform ios
+   * On iOS this delegates to `UIAdaptivePresentationControllerDelegate
+   * .presentationControllerShouldDismiss`, which synchronously cancels the gesture before
+   * any visual motion occurs.
+   *
+   * On Android this is supported for `formSheet` presentation.  When `true`,
+   * `BottomSheetBehavior.isHideable` is set to `false` so the sheet bounces back to its
+   * last stable detent rather than reaching `STATE_HIDDEN`.  The
+   * `onNativeDismissCancelled` callback fires after the sheet settles, giving the JS layer
+   * a chance to respond (e.g. show a "Discard changes?" confirmation sheet).
+   *
+   * @platform ios, android (formSheet only)
    */
   preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;

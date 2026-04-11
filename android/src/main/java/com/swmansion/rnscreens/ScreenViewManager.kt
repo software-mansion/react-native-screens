@@ -21,6 +21,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.events.ScreenNativeDismissCancelledEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
@@ -291,7 +292,9 @@ open class ScreenViewManager :
     override fun setPreventNativeDismiss(
         view: Screen?,
         value: Boolean,
-    ) = Unit
+    ) {
+        view?.isPreventNativeDismiss = value
+    }
 
     override fun setSwipeDirection(
         view: Screen?,
@@ -403,6 +406,7 @@ open class ScreenViewManager :
             HeaderBackButtonClickedEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderBackButtonClicked"),
             ScreenTransitionProgressEvent.EVENT_NAME to hashMapOf("registrationName" to "onTransitionProgress"),
             SheetDetentChangedEvent.EVENT_NAME to hashMapOf("registrationName" to "onSheetDetentChanged"),
+            ScreenNativeDismissCancelledEvent.EVENT_NAME to hashMapOf("registrationName" to "onNativeDismissCancelled"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
