@@ -160,8 +160,28 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
+
+  // When activityState is driven by an Animated.Value interpolation (as react-navigation
+  // does for tab animations), each screen's state updates frame-by-frame independently.
+  // During rapid tab switching there is a transient window where ALL screens report
+  // activityState == 0 because the leaving screen's value has already crossed the
+  // threshold while the arriving screen's value has not yet risen above it.
+  // Detaching the leaving screen in that window leaves no visible screen, producing a
+  // blank-screen flash.  We therefore only detach an in-tree screen when at least one
+  // other screen is already active or transitioning, guaranteeing a screen stays visible.
+  // Orphaned screens (removed from the React tree entirely) are always detached
+  // immediately since they can never become active again.
+  BOOL hasActiveScreen = NO;
   for (RNSScreenView *screen in _reactSubviews) {
-    if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
+    if (screen.activityState != RNSActivityStateInactive) {
+      hasActiveScreen = YES;
+      break;
+    }
+  }
+
+  for (RNSScreenView *screen in _reactSubviews) {
+    if (hasActiveScreen && screen.activityState == RNSActivityStateInactive &&
+        [_activeScreens containsObject:screen]) {
       screenRemoved = YES;
       [self detachScreen:screen];
     }
