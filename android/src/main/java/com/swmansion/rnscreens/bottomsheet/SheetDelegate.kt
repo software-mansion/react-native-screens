@@ -202,7 +202,7 @@ class SheetDelegate(
             // detent, giving us a window to detect the attempt and notify JS via
             // onNativeDismissCancelled (mirrors iOS presentationControllerShouldDismiss logic).
             isHideable = !screen.isPreventNativeDismiss
-            isDraggable = screen.isGestureEnabled
+            isDraggable = true
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
