@@ -386,20 +386,15 @@ open class ScreenContainer(
                     }.fragments,
                 )
 
-            // When activityState is driven by an Animated.Value interpolation (as
-            // react-navigation does for tab animations), each screen's state updates
-            // frame-by-frame independently. During rapid tab switching there can be a
-            // transient window where ALL screens report INACTIVE because the leaving
-            // screen's value has already crossed the threshold while the arriving
-            // screen's value has not yet risen above it. Detaching the leaving screen
-            // in that window leaves no visible screen, producing a blank-screen flash.
-            // We therefore only detach an in-tree screen when at least one other screen
-            // is already active or transitioning. Orphaned screens (removed from the
-            // React tree entirely) are always detached immediately.
-            val hasActiveScreen = screenWrappers.any { getActivityState(it) !== ActivityState.INACTIVE }
+            // When activityState is driven by Animated.Value interpolations (as react-navigation
+            // does for tab animations), each screen's value updates independently, frame by frame.
+            // Rapid tab switching can create a transient window where ALL screens are inactive
+            // simultaneously — the leaving screen crossed the threshold while the arriving one
+            // has not yet risen above it. Only detach when at least one screen remains visible.
+            val hasVisibleScreen = screenWrappers.any { getActivityState(it) !== ActivityState.INACTIVE }
 
             for (fragmentWrapper in screenWrappers) {
-                if (hasActiveScreen &&
+                if (hasVisibleScreen &&
                     getActivityState(fragmentWrapper) === ActivityState.INACTIVE &&
                     fragmentWrapper.fragment.isAdded
                 ) {
