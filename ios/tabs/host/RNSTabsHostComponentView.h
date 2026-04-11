@@ -116,6 +116,9 @@ NS_ASSUME_NONNULL_BEGIN
     preventedSelectionOf:(nonnull NSString *)screenKey
             currentState:(nonnull RNSTabsNavigationState *)currentNavState;
 
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState;
+
 @end
 
 NS_ASSUME_NONNULL_END

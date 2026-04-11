@@ -60,7 +60,8 @@ function TabsHost(props: TabsHostProps) {
       layoutDirection={direction}
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
-      tabBarTintColor={ios?.tabBarTintColor}>
+      tabBarTintColor={ios?.tabBarTintColor}
+      onMoreTabSelected={ios?.onMoreTabSelected}>
       {children}
       {ios?.bottomAccessory &&
         isIOS26OrHigher &&

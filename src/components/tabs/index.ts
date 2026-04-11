@@ -14,6 +14,7 @@ export type {
   // Android
   TabsHostPropsAndroid,
   // iOS
+  MoreTabSelectedEvent,
   TabsBottomAccessoryComponentFactory,
   TabBarMinimizeBehavior,
   TabBarControllerMode,

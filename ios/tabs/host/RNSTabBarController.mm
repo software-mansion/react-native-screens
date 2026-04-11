@@ -263,7 +263,8 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     [self prepareForMoreNavigationControllerHandlingIfNeeded];
 
     // We don't want to progress state in case a user selected the more navigation controller.
-    // TODO: Send an event, that the more navigation controller has been selected.
+    // Instead, we emit a dedicated event so JS knows the More tab was tapped.
+    [self.tabsHostComponentView tabBarController:self didSelectMoreTabWithCurrentState:_navigationState];
   } else {
     [self updateNavigationStateOnModelUpdate];
     auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
