@@ -25,6 +25,8 @@ class ScreenEventEmitter(
 
     fun dispatchOnDismissed() = reactEventDispatcher?.dispatchEvent(ScreenDismissedEvent(reactSurfaceId, screen.id))
 
+    fun dispatchOnNativeDismissCancelled() = reactEventDispatcher?.dispatchEvent(ScreenNativeDismissCancelledEvent(reactSurfaceId, screen.id))
+
     fun dispatchTransitionProgress(
         progress: Float,
         isExitAnimation: Boolean,

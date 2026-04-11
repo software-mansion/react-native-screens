@@ -197,8 +197,12 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
-            isDraggable = true
+            // When preventNativeDismiss is true the sheet must not be able to reach STATE_HIDDEN
+            // via a drag gesture.  BottomSheetBehavior will then snap back to the last stable
+            // detent, giving us a window to detect the attempt and notify JS via
+            // onNativeDismissCancelled (mirrors iOS presentationControllerShouldDismiss logic).
+            isHideable = !screen.isPreventNativeDismiss
+            isDraggable = screen.isGestureEnabled
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
@@ -627,17 +631,49 @@ class SheetDelegate(
     }
 
     private inner class SheetStateObserver : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(
-            bottomSheet: View,
-            newState: Int,
-        ) {
-            this@SheetDelegate.onSheetStateChanged(newState)
-        }
+        // Tracks whether the user dragged the sheet past the lowest stable detent during
+        // the current gesture, which is the signal we use to detect a dismiss attempt when
+        // isHideable = false (i.e. preventNativeDismiss = true).
+        private var hasDraggedTowardDismiss = false
 
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
-        ) = Unit
+        ) {
+            // slideOffset == 0 corresponds to the lowest stable detent; negative means the
+            // sheet has been pulled below that point toward dismissal.  We use a small
+            // negative threshold rather than exactly 0 to avoid false positives from
+            // incidental micro-movements at the boundary.
+            if (slideOffset < DISMISS_ATTEMPT_SLIDE_THRESHOLD) {
+                hasDraggedTowardDismiss = true
+            }
+        }
+
+        override fun onStateChanged(
+            bottomSheet: View,
+            newState: Int,
+        ) {
+            val wasDraggingTowardDismiss = hasDraggedTowardDismiss
+
+            // Reset the flag whenever we land on any stable state (hidden or expanded).
+            if (SheetUtils.isStateStable(newState)) {
+                hasDraggedTowardDismiss = false
+            }
+
+            this@SheetDelegate.onSheetStateChanged(newState)
+
+            // A prevented dismiss looks like: user drags past the lowest detent, sheet
+            // settles back to a non-hidden stable state because isHideable = false.
+            // At that point we fire onNativeDismissCancelled so JS can respond
+            // (e.g. present a "discard changes?" confirmation).
+            if (screen.isPreventNativeDismiss &&
+                wasDraggingTowardDismiss &&
+                SheetUtils.isStateStable(newState) &&
+                !shouldDismissSheetInState(newState)
+            ) {
+                ScreenEventEmitter(screen).dispatchOnNativeDismissCancelled()
+            }
+        }
     }
 
     internal data class SheetAnimationContext(
@@ -649,5 +685,11 @@ class SheetDelegate(
 
     companion object {
         const val TAG = "SheetDelegate"
+
+        // The slideOffset value below which we consider the user to be attempting a dismiss
+        // gesture.  slideOffset == 0 is the lowest stable detent; values < 0 indicate the
+        // sheet has been pulled below that point.  A small negative threshold avoids false
+        // positives from micro-movements at the detent boundary.
+        private const val DISMISS_ATTEMPT_SLIDE_THRESHOLD = -0.05f
     }
 }

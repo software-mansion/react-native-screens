@@ -69,6 +69,24 @@ class Screen(
     var isBeingRemoved = false
 
     // Props for controlling modal presentation
+
+    /**
+     * When `true`, the `formSheet` presentation will not be dismissed by a drag gesture.
+     * Instead, the gesture will bounce the sheet back to its last stable detent and fire the
+     * `onNativeDismissCancelled` event so the JS layer can respond (e.g., show a confirmation
+     * dialog).  Mirrors the iOS `preventNativeDismiss` behaviour powered by
+     * `UIAdaptivePresentationControllerDelegate.presentationControllerShouldDismiss`.
+     *
+     * Only takes effect when `stackPresentation` is `formSheet`.
+     */
+    var isPreventNativeDismiss: Boolean = false
+        set(value) {
+            field = value
+            // Keep BottomSheetBehavior in sync when the prop changes at runtime
+            // (e.g., when a form becomes dirty after initial mount).
+            sheetBehavior?.isHideable = !value
+        }
+
     var isSheetGrabberVisible: Boolean = false
 
     // corner radius must be updated after all props prop updates from a single transaction
