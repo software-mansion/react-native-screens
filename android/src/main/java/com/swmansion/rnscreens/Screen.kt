@@ -80,12 +80,6 @@ class Screen(
      * Only takes effect when `stackPresentation` is `formSheet`.
      */
     var isPreventNativeDismiss: Boolean = false
-        set(value) {
-            field = value
-            // Keep BottomSheetBehavior in sync when the prop changes at runtime
-            // (e.g., when a form becomes dirty after initial mount).
-            sheetBehavior?.isHideable = !value
-        }
 
     var isSheetGrabberVisible: Boolean = false
 
