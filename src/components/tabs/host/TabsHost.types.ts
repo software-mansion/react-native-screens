@@ -11,10 +11,6 @@ export type TabsHostNavState = {
    *
    * @description
    * It must correspond to one of the keys you assign to the `TabsScreens`.
-   * There is one notable exception of `SCREEN_KEY_MORE_NAV_CTRL`, which can be
-   * used on iOS to select the {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/morenavigationcontroller?language=objc moreNavigationController}.
-   *
-   * @see `SCREEN_KEY_MORE_NAV_CTRL` in `./constants`.
    */
   selectedScreenKey: string;
   /**
@@ -144,9 +140,6 @@ export interface TabsHostPropsBase {
    * This prop can be thought of as a "next navigation state suggestion for the native side".
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
-   *
-   * `SCREEN_KEY_MORE_NAV_CTRL` MUST NOT be used during initial render to indicate default
-   * selected tab.
    *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.
