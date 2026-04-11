@@ -1,13 +1,16 @@
 import React from 'react';
 import type { Scenario } from '@apps/tests/shared/helpers';
-import { Button, Text, View } from 'react-native';
+import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {
-  TabsContainer,
+  TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import { ToastProvider, useToast } from '@apps/shared/';
+import Colors from '@apps/shared/styling/Colors';
+import type { MoreTabSelectedEvent } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'More navigation controller',
@@ -80,5 +83,26 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
+  return (
+    <ToastProvider>
+      <AppContents />
+    </ToastProvider>
+  );
+}
+
+function AppContents() {
+  const toast = useToast();
+
+  return (
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      ios={{
+        onMoreTabSelected: (event: NativeSyntheticEvent<MoreTabSelectedEvent>) => {
+          const message = `onMoreTabSelected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`;
+          console.warn(message);
+          toast.push({ message, backgroundColor: Colors.GreenLight60 });
+        },
+      }}
+    />
+  );
 }
