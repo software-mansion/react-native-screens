@@ -385,8 +385,17 @@ open class ScreenContainer(
                         "fragment manager is null when performing update in ScreenContainer"
                     }.fragments,
                 )
+
+            // When activityState is driven by Animated.Value interpolations (as react-navigation
+            // does for tab animations), each screen's value updates independently, frame by frame.
+            // Rapid tab switching can create a transient window where ALL screens are inactive
+            // simultaneously — the leaving screen crossed the threshold while the arriving one
+            // has not yet risen above it. Only detach when at least one screen remains visible.
+            val hasVisibleScreen = screenWrappers.any { getActivityState(it) !== ActivityState.INACTIVE }
+
             for (fragmentWrapper in screenWrappers) {
-                if (getActivityState(fragmentWrapper) === ActivityState.INACTIVE &&
+                if (hasVisibleScreen &&
+                    getActivityState(fragmentWrapper) === ActivityState.INACTIVE &&
                     fragmentWrapper.fragment.isAdded
                 ) {
                     detachScreen(it, fragmentWrapper.fragment)
