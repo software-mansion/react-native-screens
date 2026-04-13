@@ -122,6 +122,20 @@ export type PlatformIconAndroid =
     }
   | PlatformIconShared;
 
+export type ScreenStackNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container.
+   *
+   * On iOS, this configures the background color of the UINavigationController's view,
+   * which is a separate native view from the ScreenStack itself. On Android, the native
+   * view hierarchy differs — ScreenStack is used directly as the container, so this prop
+   * is a noop. Use `style.backgroundColor` on ScreenStack instead.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -629,6 +643,7 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.MutableRefObject<React.Ref<View>>;
+  nativeContainerStyle?: ScreenStackNativeContainerStyleProps;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

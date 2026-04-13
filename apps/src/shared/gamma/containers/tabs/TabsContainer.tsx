@@ -1,7 +1,6 @@
 import React from 'react';
 import { I18nManager, type NativeSyntheticEvent } from 'react-native';
 import {
-  SCREEN_KEY_MORE_NAV_CTRL,
   type TabSelectedEvent,
   Tabs,
   type TabsHostNavState,
@@ -119,16 +118,8 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
     return names.length === new Set(names).size;
   }, [routeConfigs]);
 
-  const noNameUsesReservedRouteKey = React.useMemo(() => {
-    return routeConfigs.every(c => c.name !== SCREEN_KEY_MORE_NAV_CTRL);
-  }, [routeConfigs]);
-
   if (!areNamesUnique) {
     throw new Error('[Tabs] All tabs must have unique names');
-  }
-
-  if (!noNameUsesReservedRouteKey) {
-    throw new Error(`[Tabs] Tab name "${SCREEN_KEY_MORE_NAV_CTRL}" is reserved and can not be used`);
   }
 }
 
