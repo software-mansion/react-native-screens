@@ -13,7 +13,7 @@ export function useTopInsetApplication(
 
   // We want to apply the inset if:
   // - legacy mode (androidLegacyTopInsetBehavior)
-  // - or when no ancestor applied it yet abd our header is visible
+  // - or when no ancestor applied it yet and our header is visible
   const wantsToApplyInset =
     useLegacyBehavior || (!alreadyApplied && headerVisible);
 
