@@ -8,8 +8,6 @@ import {
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-import Colors from '@apps/shared/styling/Colors';
-
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
