@@ -182,6 +182,13 @@ class TabsHost(
         )
     }
 
+    override fun onNavStateUpdatePrevented(
+        currentNavState: TabsNavState,
+        preventedScreenKey: String,
+    ) {
+        eventEmitter.emitOnTabSelectionPreventedEvent(currentNavState, preventedScreenKey)
+    }
+
     override fun didMountItems(uiManager: UIManager) {
         container.performContainerUpdateIfNeeded()
     }
