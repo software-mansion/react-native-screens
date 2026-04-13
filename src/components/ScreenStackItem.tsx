@@ -24,9 +24,9 @@ import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
 import {
-  TopInsetConsumptionContext,
-  useTopInsetConsumption,
-} from './contexts/TopInsetConsumptionContext';
+  TopInsetApplicationContext,
+  useTopInsetApplication,
+} from './contexts/TopInsetApplicationContext';
 
 type Props = Omit<
   ScreenProps,
@@ -57,10 +57,11 @@ function ScreenStackItem(
   ref: React.ForwardedRef<View>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const headerTopInsetDisabled = headerConfig?.disableTopInsetHandling ?? false;
-  const { nextContextValue } = useTopInsetConsumption(
-    headerVisible && !headerTopInsetDisabled,
-    headerVisible && headerTopInsetDisabled,
+  const headerTopInsetDisabled =
+    headerConfig?.disableTopInsetApplication ?? false;
+  const { nextContextValue } = useTopInsetApplication(
+    headerVisible,
+    headerTopInsetDisabled,
   );
 
   const currentScreenRef = React.useRef<View | null>(null);
@@ -126,7 +127,7 @@ function ScreenStackItem(
 
   const content = (
     <>
-      <TopInsetConsumptionContext.Provider value={nextContextValue}>
+      <TopInsetApplicationContext.Provider value={nextContextValue}>
         <DebugContainer
           contentStyle={contentStyle}
           style={debugContainerStyle}
@@ -139,7 +140,7 @@ function ScreenStackItem(
             children
           )}
         </DebugContainer>
-      </TopInsetConsumptionContext.Provider>
+      </TopInsetApplicationContext.Provider>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
        * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`

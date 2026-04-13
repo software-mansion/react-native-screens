@@ -115,7 +115,7 @@ const NestedStack = () => {
       screenOptions={{
         title: 'Inner Stack',
         headerShown: config.innerShown,
-        disableTopInsetConsumption: config.disableInset,
+        disableTopInsetApplication: config.disableInset,
       }}>
       <InnerStack.Screen name="Home" component={Home} />
     </InnerStack.Navigator>
@@ -130,7 +130,7 @@ const MainStack = () => {
       screenOptions={{
         title: 'Outer Stack',
         headerShown: config.outerShown,
-        disableTopInsetConsumption: config.disableInset,
+        disableTopInsetApplication: config.disableInset,
       }}>
       <OuterStack.Screen name="NestedStack" component={NestedStack} />
     </OuterStack.Navigator>
