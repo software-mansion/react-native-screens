@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
+import com.swmansion.rnscreens.gamma.stack.screen.header.StackScreenCoordinatorLayout
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
@@ -43,7 +44,7 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = stackScreen
+    ): View = StackScreenCoordinatorLayout(requireContext(), stackScreen)
 
     override fun onViewCreated(
         view: View,

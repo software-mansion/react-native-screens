@@ -122,6 +122,20 @@ export type PlatformIconAndroid =
     }
   | PlatformIconShared;
 
+export type ScreenStackNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container.
+   *
+   * On iOS, this configures the background color of the UINavigationController's view,
+   * which is a separate native view from the ScreenStack itself. On Android, the native
+   * view hierarchy differs — ScreenStack is used directly as the container, so this prop
+   * is a noop. Use `style.backgroundColor` on ScreenStack instead.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -629,6 +643,7 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.MutableRefObject<React.Ref<View>>;
+  nativeContainerStyle?: ScreenStackNativeContainerStyleProps;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -796,6 +811,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
+  /**
+   * When set to `true` on the outermost stack with a **visible** header, disables top inset
+   * handling for that header and the entire subtree.
+   *
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be applied or not).
+   *
+   * Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
+   *
+   * @platform android
+   */
+  disableTopInsetApplication?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */

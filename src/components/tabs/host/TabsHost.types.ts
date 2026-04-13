@@ -11,10 +11,6 @@ export type TabsHostNavState = {
    *
    * @description
    * It must correspond to one of the keys you assign to the `TabsScreens`.
-   * There is one notable exception of `SCREEN_KEY_MORE_NAV_CTRL`, which can be
-   * used on iOS to select the {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/morenavigationcontroller?language=objc moreNavigationController}.
-   *
-   * @see `SCREEN_KEY_MORE_NAV_CTRL` in `./constants`.
    */
   selectedScreenKey: string;
   /**
@@ -74,13 +70,8 @@ export type TabSelectedEvent = {
  *   meaning a newer state has already been applied. Only reported when
  *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
  * - `repeated` — the requested tab is already selected.
- * - `more-nav-ctrl-not-available` — the iOS "More" navigation controller was requested
- *   but is not available in the current configuration.
  */
-export type TabSelectionRejectionReason =
-  | 'stale'
-  | 'repeated'
-  | 'more-nav-ctrl-not-available';
+export type TabSelectionRejectionReason = 'stale' | 'repeated';
 
 /**
  * @summary Payload of the event emitted when the native side rejects a tab selection request.
@@ -103,6 +94,19 @@ export type TabSelectionRejectedEvent = {
   rejectedProvenance: number;
   /** Reason the selection was rejected. */
   rejectionReason: TabSelectionRejectionReason;
+};
+
+/**
+ * @summary Payload of the event emitted when the native side prevents a tab selection
+ * because the target screen has `preventNativeSelection` enabled.
+ */
+export type TabSelectionPreventedEvent = {
+  /** Screen key of the currently selected (active) tab. */
+  selectedScreenKey: string;
+  /** Provenance of the currently active navigation state. */
+  provenance: number;
+  /** Screen key of the tab whose selection was prevented. */
+  preventedScreenKey: string;
 };
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';
@@ -131,9 +135,6 @@ export interface TabsHostPropsBase {
    * This prop can be thought of as a "next navigation state suggestion for the native side".
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
-   *
-   * `SCREEN_KEY_MORE_NAV_CTRL` MUST NOT be used during initial render to indicate default
-   * selected tab.
    *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.
@@ -257,6 +258,17 @@ export interface TabsHostPropsBase {
    */
   onTabSelectionRejected?: (
     event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
+  ) => void;
+
+  /**
+   * @summary
+   * A callback that gets invoked when the native side prevents a tab selection
+   * because the target screen has `preventNativeSelection` enabled.
+   *
+   * @see {@link TabSelectionPreventedEvent}
+   */
+  onTabSelectionPrevented?: (
+    event: NativeSyntheticEvent<TabSelectionPreventedEvent>,
   ) => void;
 }
 

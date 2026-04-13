@@ -12,9 +12,10 @@
 #import <React/RCTInvalidating.h>
 #endif
 
+#import "RNSTabBarController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -26,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate
+                                          RNSScreenContainerDelegate,
+                                          RNSTabBarControllerDelegate
 #if !RCT_NEW_ARCH_ENABLED
                                           ,
                                           RCTInvalidating
@@ -96,21 +98,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsHostComponentView ()
 
 - (nullable RCTImageLoader *)reactImageLoader;
-
-@end
-
-#pragma mark - RNSTabBarControllerDelegate
-
-@interface RNSTabsHostComponentView (RNSTabBarControllerDelegate)
-
-- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-        didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
-             withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
-
-- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState
-               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
 
 @end
 

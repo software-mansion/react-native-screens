@@ -10,7 +10,7 @@ import type { SafeAreaViewProps } from '../../../../../../src/components/safe-ar
 
 export type TabRouteOptions = Omit<
   TabsScreenProps,
-  'children' | 'screenKey' | 'isFocused'
+  'children' | 'screenKey'
 > & {
   safeAreaConfiguration?: SafeAreaViewProps;
 };
@@ -89,12 +89,9 @@ export type TabsContainerProps = Omit<
 > & {
   routeConfigs: TabRouteConfig[];
   /**
-   * @summary 
+   * @summary
    * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
-   *
-   * @description
-   * It MUST NOT be the `SCREEN_KEY_MORE_NAV_CTRL`.
    */
   defaultRouteName?: string;
   /**

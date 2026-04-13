@@ -32,4 +32,17 @@ internal interface TabsContainerDelegate {
         rejectedNavState: TabsNavState,
         reason: TabsNavStateUpdateRejectionReason,
     )
+
+    /**
+     * Called when a native user action (tap) attempts to select a tab that has
+     * [com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen.preventNativeSelection] enabled.
+     * The navigation state remains unchanged.
+     *
+     * @param currentNavState The currently active navigation state that was kept.
+     * @param preventedScreenKey The screen key of the tab whose selection was prevented.
+     */
+    fun onNavStateUpdatePrevented(
+        currentNavState: TabsNavState,
+        preventedScreenKey: String,
+    )
 }

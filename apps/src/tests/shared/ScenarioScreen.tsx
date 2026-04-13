@@ -18,6 +18,7 @@ function ScenarioSelect(props: { scenarios: Scenario[] }) {
           route={key}
           key={key}
           platformsHint={platforms}
+          testID={key}
         />
       ))}
     </ScrollView>
