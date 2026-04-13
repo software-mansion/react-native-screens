@@ -811,7 +811,7 @@ This prop has been **deprecated** due to [edge-to-edge enforcement starting from
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
-### `disableTopInsetConsumption` (Android only)
+### `disableTopInsetHandling` (Android only)
 
 When set to `true` on the outermost stack with a **visible** header, disables top inset consumption for that header and the entire subtree.
 

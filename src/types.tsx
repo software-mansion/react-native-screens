@@ -823,7 +823,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform android
    */
-  disableTopInsetConsumption?: boolean;
+  disableTopInsetHandling?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */

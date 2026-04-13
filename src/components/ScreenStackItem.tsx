@@ -57,8 +57,7 @@ function ScreenStackItem(
   ref: React.ForwardedRef<View>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const headerTopInsetDisabled =
-    headerConfig?.disableTopInsetConsumption ?? false;
+  const headerTopInsetDisabled = headerConfig?.disableTopInsetHandling ?? false;
   const { nextContextValue } = useTopInsetConsumption(
     headerVisible && !headerTopInsetDisabled,
     headerVisible && headerTopInsetDisabled,
