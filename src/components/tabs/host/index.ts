@@ -4,5 +4,3 @@ export type * from './TabsHost.types';
 
 export type * from './TabsHost.android.types';
 export type * from './TabsHost.ios.types';
-
-export { SCREEN_KEY_MORE_NAV_CTRL } from './constants';

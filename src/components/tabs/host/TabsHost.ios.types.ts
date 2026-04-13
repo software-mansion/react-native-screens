@@ -1,6 +1,25 @@
 import type { ReactNode } from 'react';
 import type { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
-import type { ColorValue } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent } from 'react-native';
+
+/**
+ * @summary Payload of the event emitted when the user taps the "More" tab bar item.
+ *
+ * @description
+ * This event fires when the user taps the system-generated "More" tab bar item.
+ * It does NOT fire when a tab is selected from within the More list — that triggers
+ * the normal `onTabSelected` event instead.
+ *
+ * The payload carries the navigation state that was active at the moment the "More" tab was tapped.
+ *
+ * @platform ios
+ */
+export type MoreTabSelectedEvent = {
+  /** Screen key of the tab that was active when "More" was tapped. */
+  selectedScreenKey: string;
+  /** Provenance of the navigation state when "More" was tapped. */
+  provenance: number;
+};
 
 export type TabsBottomAccessoryComponentFactory = (
   environment: TabsBottomAccessoryEnvironment,
@@ -101,4 +120,20 @@ export interface TabsHostPropsIOS {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
+  /**
+   * @summary
+   * A callback that gets invoked when the user taps the "More" tab bar item.
+   *
+   * @description
+   * This event fires when the user taps the system-generated "More" tab bar item.
+   * It does NOT fire when a tab is selected from within the More list — that triggers
+   * the normal `onTabSelected` event instead.
+   *
+   * @see {@link MoreTabSelectedEvent}
+   *
+   * @platform ios
+   */
+  onMoreTabSelected?: (
+    event: NativeSyntheticEvent<MoreTabSelectedEvent>,
+  ) => void;
 }

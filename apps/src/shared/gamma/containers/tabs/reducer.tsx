@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import type {
   TabRoute,
   TabRouteConfig,
@@ -9,7 +8,6 @@ import type {
   TabsNavigationActionNativeSelectTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
-import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -60,7 +58,7 @@ function tabsActionSelectTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
+  if (routeIndex === NOT_FOUND_INDEX) {
     console.error(
       `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -85,7 +83,7 @@ function tabsActionNativeSelectTabHandler(
     r => r.routeKey === action.routeKey,
   );
 
-  if (routeIndex === NOT_FOUND_INDEX && !doesRouteKeyPointToMoreNavigationController(action.routeKey)) {
+  if (routeIndex === NOT_FOUND_INDEX) {
     console.error(
       `[Tabs] select-tab: route with key "${action.routeKey}" not found in state. Ignoring.`,
     );
@@ -206,9 +204,5 @@ function navStateWithConfirmedState(
     confirmedState: confirmedState,
     suggestedState: state.suggestedState,
   };
-}
-
-function doesRouteKeyPointToMoreNavigationController(routeKey: string): boolean {
-  return Platform.OS === 'ios' && routeKey === SCREEN_KEY_MORE_NAV_CTRL;
 }
 
