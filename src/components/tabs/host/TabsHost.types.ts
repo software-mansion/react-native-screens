@@ -59,7 +59,10 @@ export type TabSelectedEvent = {
   isRepeated: boolean;
   /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
   hasTriggeredSpecialEffect: boolean;
-  /** Whether the selection was initiated by a native user action (tap) as opposed to a JS-driven update. */
+  /**
+   * False in case the event is a result of JS-driven update. True otherwise, e.g. in case of user action (tap)
+   * or implicit UIKit action (app resize, orientation change, etc.).
+   */
   isNativeAction: boolean;
 };
 
