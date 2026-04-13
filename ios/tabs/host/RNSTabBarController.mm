@@ -735,8 +735,8 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 ///
 /// This method is idempotent — safe to call multiple times regardless of whether UIKit has
 /// reset the ISA between calls. When the ISA already carries our `RNS_` prefix, we return
-/// early. When UIKit has reset the ISA (e.g. iPad app resize crossing the >5 tab threshold),
-/// the dynamic subclass is looked up (or created) and re-applied.
+/// early. When UIKit has reset the ISA (e.g. iPad app resize crossing the threshold at which UIKit introduces the More
+/// controller (currently >5 tabs)), the dynamic subclass is looked up (or created) and re-applied.
 - (void)ensurePushInterceptorOnMoreNavigationController
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE

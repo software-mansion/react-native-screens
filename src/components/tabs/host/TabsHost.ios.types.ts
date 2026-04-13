@@ -6,9 +6,9 @@ import type { ColorValue, NativeSyntheticEvent } from 'react-native';
  * @summary Payload of the event emitted when the user taps the "More" tab bar item.
  *
  * @description
- * This event fires when there are more than 5 tabs and the user taps
- * the system-generated "More" tab bar item. It does NOT fire when a tab is selected
- * from within the More list — that triggers the normal `onTabSelected` event instead.
+ * This event fires when the user taps the system-generated "More" tab bar item.
+ * It does NOT fire when a tab is selected from within the More list — that triggers
+ * the normal `onTabSelected` event instead.
  *
  * The payload carries the navigation state that was active at the moment the "More" tab was tapped.
  *
@@ -125,10 +125,9 @@ export interface TabsHostPropsIOS {
    * A callback that gets invoked when the user taps the "More" tab bar item.
    *
    * @description
-   * This event fires when there are more than 5 tabs and the user taps
-   * the system-generated "More" tab bar item. It does NOT fire when a tab
-   * is selected from within the More list — that triggers the normal
-   * `onTabSelected` event instead.
+   * This event fires when the user taps the system-generated "More" tab bar item.
+   * It does NOT fire when a tab is selected from within the More list — that triggers
+   * the normal `onTabSelected` event instead.
    *
    * @see {@link MoreTabSelectedEvent}
    *
