@@ -112,10 +112,6 @@ NS_ASSUME_NONNULL_BEGIN
              currentState:(nonnull RNSTabsNavigationState *)currentNavState
                withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
 
-- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    preventedSelectionOf:(nonnull NSString *)screenKey
-            currentState:(nonnull RNSTabsNavigationState *)currentNavState;
-
 @end
 
 NS_ASSUME_NONNULL_END

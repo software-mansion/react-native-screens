@@ -94,8 +94,6 @@ class TabsScreen(
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
-    var preventNativeSelection: Boolean = false
-
     private fun <T> updateMenuItemAttributesIfNeeded(
         oldValue: T,
         newValue: T,

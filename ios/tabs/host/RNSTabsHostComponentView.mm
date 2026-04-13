@@ -628,22 +628,6 @@ RNS_IGNORE_SUPER_CALL_END
                                                       .rejectionReason = reasonCode}];
 }
 
-- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    preventedSelectionOf:(nonnull NSString *)screenKey
-            currentState:(nonnull RNSTabsNavigationState *)currentNavState
-{
-  RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
-  RCTAssert(screenKey != nil, @"[RNScreens] Expected NON NIL screenKey");
-  RCTAssert(
-      currentNavState != nil && currentNavState.selectedScreenKey != nil,
-      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
-
-  [self.reactEventEmitter emitOnTabSelectionPrevented:{
-                                                          .currentNavState = currentNavState,
-                                                          .preventedScreenKey = screenKey,
-  }];
-}
-
 @end
 
 #pragma mark - Modified React Subviews implementation

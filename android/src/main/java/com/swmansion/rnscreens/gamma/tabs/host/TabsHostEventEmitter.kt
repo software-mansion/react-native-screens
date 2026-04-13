@@ -5,7 +5,6 @@ import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
-import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 
 internal class TabsHostEventEmitter(
@@ -51,24 +50,6 @@ internal class TabsHostEventEmitter(
                 currentNavState,
                 rejectedNavState,
                 rejectionReason,
-            ),
-        )
-    }
-
-    /**
-     * Emits `onTabSelectionPrevented` event to JS when a tab selection is prevented
-     * because the target screen has `preventNativeSelection` enabled.
-     */
-    fun emitOnTabSelectionPreventedEvent(
-        currentNavState: TabsNavState,
-        preventedScreenKey: String,
-    ) {
-        reactEventDispatcher.dispatchEvent(
-            TabsHostTabSelectionPreventedEvent(
-                surfaceId,
-                viewTag,
-                currentNavState,
-                preventedScreenKey,
             ),
         )
     }

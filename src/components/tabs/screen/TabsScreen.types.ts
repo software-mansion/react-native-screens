@@ -30,14 +30,6 @@ export interface TabsScreenPropsBase {
    * @platform android, ios
    */
   screenKey: string;
-  /**
-   * @summary When set to `true`, prevents native tab selection for this screen.
-   *
-   * @default false
-   *
-   * @platform android, ios
-   */
-  preventNativeSelection?: boolean;
 
   // General
   children?: ViewProps['children'];

@@ -105,19 +105,6 @@ export type TabSelectionRejectedEvent = {
   rejectionReason: TabSelectionRejectionReason;
 };
 
-/**
- * @summary Payload of the event emitted when the native side prevents a tab selection
- * because the target screen has `preventNativeSelection` enabled.
- */
-export type TabSelectionPreventedEvent = {
-  /** Screen key of the currently selected (active) tab. */
-  selectedScreenKey: string;
-  /** Provenance of the currently active navigation state. */
-  provenance: number;
-  /** Screen key of the tab whose selection was prevented. */
-  preventedScreenKey: string;
-};
-
 export type TabsHostColorScheme = ColorScheme | 'inherit';
 
 export type TabsHostDirection = Direction | 'inherit';
@@ -270,17 +257,6 @@ export interface TabsHostPropsBase {
    */
   onTabSelectionRejected?: (
     event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
-  ) => void;
-
-  /**
-   * @summary
-   * A callback that gets invoked when the native side prevents a tab selection
-   * because the target screen has `preventNativeSelection` enabled.
-   *
-   * @see {@link TabSelectionPreventedEvent}
-   */
-  onTabSelectionPrevented?: (
-    event: NativeSyntheticEvent<TabSelectionPreventedEvent>,
   ) => void;
 }
 

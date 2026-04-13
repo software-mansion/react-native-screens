@@ -69,18 +69,4 @@ namespace react = facebook::react;
   }
 }
 
-- (BOOL)emitOnTabSelectionPrevented:(OnTabSelectionPreventedPayload)payload
-{
-  if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onTabSelectionPrevented(
-        {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
-         .provenance = payload.currentNavState.provenance,
-         .preventedScreenKey = RCTStringFromNSString(payload.preventedScreenKey)});
-    return YES;
-  } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnTabSelectionPrevented event emission due to nullish emitter");
-    return NO;
-  }
-}
-
 @end
