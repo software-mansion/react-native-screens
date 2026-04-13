@@ -63,6 +63,8 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RNSTabsNavigationState *_Nullable _navigationState;
 
   /// Holds last state that has been a result of UI-side navigation (user request).
+  /// This one is also updated in cases where UIKit modifies the selected tab implicitly,
+  /// e.g. when user resizes the app and more tab disappears.
   ///
   /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _lastUINavigationState;
