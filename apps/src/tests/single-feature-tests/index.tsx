@@ -28,7 +28,6 @@ function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic"
       testID="single-feature-tests-scrollview"> 
-      {/* it might be not needed, but it is added to be sure that the scroll view is rendered and can be scrolled in tests */}
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
         <ScenarioButton
           key={key}
