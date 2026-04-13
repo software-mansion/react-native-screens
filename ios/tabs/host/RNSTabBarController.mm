@@ -232,19 +232,15 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   RCTAssert(
       self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
-  BOOL isSelectedViewControllerTheMoreNavigationController = [self isSelectedViewControllerTheMoreNavigationController];
-
-  if (!isSelectedViewControllerTheMoreNavigationController) {
-    [self updateNavigationStateOnModelUpdate];
+  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+    // We don't want to run neither state update nor side effects.
+    return;
   }
+
+  [self updateNavigationStateOnModelUpdate];
 
   // After state progression we trigger the special effect.
-  BOOL repeatedSelectionHandledBySpecialEffect = NO;
-
-  if (![self isSelectedViewControllerTheMoreNavigationController]) {
-    // Do not perform special effects on `moreNavigationController`.
-    repeatedSelectionHandledBySpecialEffect = [[self selectedScreenViewController] tabScreenSelectedRepeatedly];
-  }
+  BOOL repeatedSelectionHandledBySpecialEffect = [[self selectedScreenViewController] tabScreenSelectedRepeatedly];
 
   auto *updateContext =
       [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
