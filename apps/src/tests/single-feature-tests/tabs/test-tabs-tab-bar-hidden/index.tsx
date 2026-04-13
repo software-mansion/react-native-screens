@@ -8,12 +8,13 @@ import {
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+import Colors from '@apps/shared/styling/Colors';
+
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
   key: 'test-tabs-tab-bar-hidden',
   platforms: ['ios', 'android'],
-  testID: 'single-feature-tests-test-tabs-tab-bar-hidden',
   AppComponent: App,
 };
 
@@ -24,13 +25,15 @@ function ConfigScreen() {
 
   return (
     <ScrollView style={{ padding: 40 }}
-    testID='tab-bar-hidden-config-screen'>
-      <Text style={{ textAlign: 'center' }}>Change flag value by clicking on button.</Text>
+      testID="tab-bar-hidden-scrollview">
+      <Text style={{ textAlign: 'center' }}>
+        Change flag value by clicking on button.</Text>
       <SettingsSwitch
         style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
         value={hostConfig.tabBarHidden ?? false}
         onValueChange={value => updateHostConfig({ tabBarHidden: value })}
+        testID="tab-bar-hidden-switch"
       />
     </ScrollView>
   );
@@ -42,6 +45,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: ConfigScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
+      tabBarItemTestID: 'tab-bar-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
       title: 'Tab1',
     },
   },
