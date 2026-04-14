@@ -1,10 +1,10 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { StackHeaderConfigProps } from './StackHeaderConfig.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
-import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
+import type { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

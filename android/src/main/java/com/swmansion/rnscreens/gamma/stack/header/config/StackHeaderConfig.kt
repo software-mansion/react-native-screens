@@ -32,13 +32,8 @@ class StackHeaderConfig(
         internal set
     override var backButtonTintColor: Int? = null
         internal set
-    override var backButtonIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        // We need to call notifyConfigChanged because icons are loaded asynchronously
-        // and regular update path might execute too early.
-        if (oldValue !== newValue) {
-            notifyConfigChanged()
-        }
-    }
+    override var backButtonIcon: Drawable? = null
+        internal set
 
     // Staging fields for back button icon resolution.
     // Both props may arrive in any order within a single update batch.
@@ -55,6 +50,9 @@ class StackHeaderConfig(
         } else if (uri != null) {
             loadImage(context, uri) { drawable ->
                 backButtonIcon = drawable
+                // We need to call notifyConfigChanged because icons are loaded asynchronously
+                // and regular update path might execute too early.
+                notifyConfigChanged()
             }
         } else {
             backButtonIcon = null
