@@ -25,7 +25,7 @@
 
 ### Baseline
 
-1. Launch the app and navigate to the **More navigation controller** scenario.
+1. Launch the app and navigate to the **More navigation controller** scenario. Open DevTools.
 
 - [ ] Expected: Tab bar shows **First**, **Second**, **Third**, **Fourth**, and **More**. The **First** tab is selected. The content area displays `First` as the route key.
 
@@ -35,7 +35,7 @@
 
 2. Tap the **More** tab in the tab bar.
 
-- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. On the bottom green toast appear with `onMoreTabSelected` message.
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. On the bottom green toast appear with `onMoreTabSelected` message. In Console log onMoreTabSelected event should appear with 'First' as selectedScreenKey.
 
 3. Tap **Fifth** in the More screen list.
 
