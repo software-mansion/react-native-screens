@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -10,6 +11,8 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
@@ -126,6 +129,41 @@ open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.backButtonHidden = value
+    }
+
+    override fun setBackButtonTintColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColor = value
+    }
+
+    override fun setBackButtonTinting(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.backButtonTinting = value
+    }
+
+    override fun setBackButtonDrawableIconResourceName(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.backButtonIcon = getSystemDrawableResource(view.context, value)
+    }
+
+    override fun setBackButtonImageIconResource(
+        view: StackHeaderConfig,
+        value: ReadableMap?,
+    ) {
+        val uri = value?.getString("uri")
+        if (uri != null) {
+            loadImage(view.context, uri) { drawable ->
+                view.backButtonIcon = drawable
+            }
+        } else {
+            view.backButtonIcon = null
+        }
     }
 
     companion object {

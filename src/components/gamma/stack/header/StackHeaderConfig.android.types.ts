@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
+import { ColorValue } from 'react-native';
 import { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
+import { PlatformIconAndroid } from '../../../../types';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
@@ -21,4 +23,17 @@ export interface StackHeaderConfigPropsAndroid {
   leadingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
   centerSubview?: StackHeaderToolbarSubviewAndroid | undefined;
   trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  /**
+   * Tint color for the back button icon.
+   * - `undefined` — use Material theme default tint
+   * - `ColorValue` — apply a custom tint color
+   * - `null` — no tinting (use original icon colors)
+   */
+  backButtonTintColor?: ColorValue | null | undefined;
+  /**
+   * Custom icon for the back button.
+   * - `undefined` — use the native default back arrow
+   * - `PlatformIconAndroid` — use a custom icon (drawableResource or imageSource)
+   */
+  backButtonIcon?: PlatformIconAndroid | undefined;
 }

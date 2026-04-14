@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
@@ -9,6 +10,7 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewCh
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import java.lang.ref.WeakReference
+import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor")
 class StackHeaderConfig(
@@ -25,6 +27,18 @@ class StackHeaderConfig(
     override var transparent: Boolean = false
         internal set
     override var backButtonHidden: Boolean = false
+        internal set
+    override var backButtonTintColor: Int? = null
+        internal set
+    override var backButtonTinting: Boolean = true
+        internal set
+    override var backButtonIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
+        // We need to call notifyConfigChanged because icons are loaded asynchronously
+        // and regular update path might execute too early.
+        if (oldValue !== newValue) {
+            notifyConfigChanged()
+        }
+    }
         internal set
 
     override var backgroundSubview: StackHeaderSubview? = null
