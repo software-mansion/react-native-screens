@@ -1,6 +1,16 @@
 # Test Scenario: More Navigation Controller
 
+## Details
+
+**Description:** Test cover chech
+
 **E2E test:** ongoing research
+
+## Technical information
+
+**PR introducing functionality:** [#3785](https://github.com/software-mansion/react-native-screens/pull/3785) [#3813](https://github.com/software-mansion/react-native-screens/pull/3813) refactor: [#3875](https://github.com/software-mansion/react-native-screens/pull/3875) [#3877](https://github.com/software-mansion/react-native-screens/pull/3877)
+
+**OS test creation version:** iOS18.6 and iOS26.2
 
 ## Prerequisites
 
