@@ -81,7 +81,7 @@ function navigationActionPushHandler(
   const stack = state.stack;
   const renderedRouteIndex = stack.findIndex(
     route =>
-      route.name === action.routeName && route.activityMode === 'detached',
+      route.name === action.routeName && route.activityMode === 'detached' && !route.isMarkedForDismissal,
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
@@ -167,6 +167,7 @@ function navigationActionPopHandler(
   // EDIT: not sure really whether this is really a problem or not, since the updates are queued
   // and the original state won't be immediatelly affected.
   route.activityMode = 'detached';
+  route.isMarkedForDismissal = true;
 
   return stateWithStack(state, newStack);
 }
@@ -266,6 +267,7 @@ function createRouteFromConfig(
     ...config,
     activityMode,
     routeKey: generateRouteKeyForRouteName(config.name),
+    isMarkedForDismissal: false,
   };
 }
 
