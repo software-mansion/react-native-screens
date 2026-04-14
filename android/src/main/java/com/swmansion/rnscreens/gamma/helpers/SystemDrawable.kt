@@ -28,6 +28,6 @@ internal fun getSystemDrawableResource(
         return AppCompatResources.getDrawable(context, systemDrawableId)
     }
 
-    Log.w(TAG, "TabsScreen could not resolve drawable resource with the name $iconName")
+    Log.w(TAG, "[RNScreens] Unable to resolve drawable resource with the name $iconName")
     return null
 }

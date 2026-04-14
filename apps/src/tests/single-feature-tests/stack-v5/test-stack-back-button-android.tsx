@@ -93,7 +93,6 @@ function resolveIcon(
 }
 
 function buildHeaderConfig(config: Config): StackHeaderConfigProps {
-  console.log('[dbg123]', resolveTintColor(config.tintColor));
   return {
     title: 'Back Button Test',
     backButtonHidden: config.backButtonHidden,
