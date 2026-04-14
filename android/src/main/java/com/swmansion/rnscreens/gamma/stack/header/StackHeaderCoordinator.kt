@@ -52,13 +52,8 @@ internal class StackHeaderCoordinator(
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
-    private val defaultBackButtonIcon: Drawable? by lazy {
-        resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
-    }
-
     private var lastBackButtonVisible: Boolean? = null
     private var lastBackButtonTintColor: Int? = null
-    private var lastBackButtonTinting: Boolean = true
     private var lastBackButtonIcon: Drawable? = null
 
     // For small header, we need to use custom title view in order to
@@ -158,7 +153,6 @@ internal class StackHeaderCoordinator(
         managedTitleView = null
         lastBackButtonVisible = null
         lastBackButtonTintColor = null
-        lastBackButtonTinting = true
         lastBackButtonIcon = null
         clearCachedRebuildTriggers()
     }
@@ -353,16 +347,13 @@ internal class StackHeaderCoordinator(
         val visible = canNavigateBack && !config.backButtonHidden
         val visibilityChanged = visible != lastBackButtonVisible
         val iconChanged = config.backButtonIcon !== lastBackButtonIcon
-        val tintChanged =
-            config.backButtonTintColor != lastBackButtonTintColor ||
-                config.backButtonTinting != lastBackButtonTinting
+        val tintChanged = config.backButtonTintColor != lastBackButtonTintColor
 
         if (!visibilityChanged && !iconChanged && !tintChanged) return
 
         lastBackButtonVisible = visible
         lastBackButtonIcon = config.backButtonIcon
         lastBackButtonTintColor = config.backButtonTintColor
-        lastBackButtonTinting = config.backButtonTinting
 
         if (!visible) {
             toolbar.navigationIcon = null
@@ -370,16 +361,14 @@ internal class StackHeaderCoordinator(
             return
         }
 
-        // Icon: custom or default
-        toolbar.navigationIcon = config.backButtonIcon ?: defaultBackButtonIcon
+        // Clear previous tint before setting icon to ensure clean state
+        toolbar.clearNavigationIconTint()
 
-        // Tint via MaterialToolbar API (order matters: set icon first, then tint)
-        if (!config.backButtonTinting) {
-            toolbar.clearNavigationIconTint()
-        } else if (config.backButtonTintColor != null) {
-            toolbar.setNavigationIconTint(config.backButtonTintColor!!)
+        toolbar.navigationIcon = config.backButtonIcon ?: resolveDefaultBackButtonIcon()
+
+        config.backButtonTintColor?.let {
+            toolbar.setNavigationIconTint(it)
         }
-        // else: default → Material theme tint (no call needed)
 
         toolbar.setNavigationOnClickListener { onNavigationIconClick() }
     }
@@ -535,6 +524,8 @@ internal class StackHeaderCoordinator(
             }
         }
     }
+
+    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
 
     companion object {
         private const val TAG = "StackHeaderCoordinator"

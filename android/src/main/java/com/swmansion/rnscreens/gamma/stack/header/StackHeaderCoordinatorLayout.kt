@@ -27,8 +27,9 @@ internal class StackHeaderCoordinatorLayout(
                 stackScreen.updateStateIfNeeded(y = headerHeight)
             },
             onNavigationIconClick = {
-                val activity = (stackScreen.context as? ReactContext)?.currentActivity
-                    as? OnBackPressedDispatcherOwner
+                val activity =
+                    (stackScreen.context as? ReactContext)?.currentActivity
+                        as? OnBackPressedDispatcherOwner
                 activity?.onBackPressedDispatcher?.onBackPressed()
             },
         )

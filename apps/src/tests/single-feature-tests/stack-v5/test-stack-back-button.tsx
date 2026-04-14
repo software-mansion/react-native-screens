@@ -22,7 +22,7 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TintColorOption = 'default' | 'purple' | 'red' | 'green' | 'noTinting';
+type TintColorOption = 'default' | 'purple' | 'red' | 'green';
 type IconOption = 'default' | 'imageSource' | 'drawableResource';
 
 const TINT_COLOR_OPTIONS: TintColorOption[] = [
@@ -30,7 +30,6 @@ const TINT_COLOR_OPTIONS: TintColorOption[] = [
   'purple',
   'red',
   'green',
-  'noTinting',
 ];
 
 const ICON_OPTIONS: IconOption[] = [
@@ -69,8 +68,6 @@ function resolveTintColor(
       return Colors.RedLight100;
     case 'green':
       return Colors.GreenLight100;
-    case 'noTinting':
-      return null;
     default:
       return undefined;
   }
@@ -88,7 +85,7 @@ function resolveIcon(
     case 'drawableResource':
       return {
         type: 'drawableResource',
-        name: 'sunny',
+        name: 'sym_call_missed',
       };
     default:
       return undefined;

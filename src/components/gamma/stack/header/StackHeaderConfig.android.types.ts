@@ -25,11 +25,10 @@ export interface StackHeaderConfigPropsAndroid {
   trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
   /**
    * Tint color for the back button icon.
-   * - `undefined` — use Material theme default tint
+   * - `undefined` — use default tint (for custom images, no tint is applied)
    * - `ColorValue` — apply a custom tint color
-   * - `null` — no tinting (use original icon colors)
    */
-  backButtonTintColor?: ColorValue | null | undefined;
+  backButtonTintColor?: ColorValue | undefined;
   /**
    * Custom icon for the back button.
    * - `undefined` — use the native default back arrow
