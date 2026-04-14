@@ -8,41 +8,11 @@
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitNavigatorComponentView.h"
+#import "RNSSplitHeaderConfigComponentView.h"
 
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
-
-// Helper: parse a CSS hex color string (#RRGGBB or #RRGGBBAA) to UIColor.
-static UIColor *_Nullable RNSUIColorFromHexString(NSString *_Nullable hexString)
-{
-  if (hexString.length == 0) {
-    return nil;
-  }
-
-  NSString *hex = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
-  if (hex.length != 6 && hex.length != 8) {
-    return nil;
-  }
-
-  unsigned long long rgbValue = 0;
-  NSScanner *scanner = [NSScanner scannerWithString:hex];
-  if (![scanner scanHexLongLong:&rgbValue]) {
-    return nil;
-  }
-
-  if (hex.length == 6) {
-    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16) / 255.0
-                           green:((rgbValue & 0x00FF00) >> 8) / 255.0
-                            blue:(rgbValue & 0x0000FF) / 255.0
-                           alpha:1.0];
-  } else {
-    return [UIColor colorWithRed:((rgbValue & 0xFF000000) >> 24) / 255.0
-                           green:((rgbValue & 0x00FF00) >> 8) / 255.0
-                            blue:(rgbValue & 0x0000FF) / 255.0
-                           alpha:((rgbValue & 0xFF00) >> 8) / 255.0];
-  }
-}
 
 @implementation RNSSplitScreenComponentView {
   RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
@@ -92,8 +62,6 @@ static UIColor *_Nullable RNSUIColorFromHexString(NSString *_Nullable hexString)
 
   _activityMode = RNSSplitScreenActivityModeDetached;
   [self updateScreenKey:nil];
-  _title = nil;
-  _headerBackgroundColor = nil;
   _preventNativeDismiss = NO;
 }
 
@@ -145,6 +113,18 @@ static UIColor *_Nullable RNSUIColorFromHexString(NSString *_Nullable hexString)
   [self dispatchSafeAreaDidChangeNotification];
 }
 
+#pragma mark - Header
+
+- (nullable RNSSplitHeaderConfigComponentView *)findHeaderConfig
+{
+  for (UIView *subview in self.subviews) {
+    if ([subview isKindOfClass:RNSSplitHeaderConfigComponentView.class]) {
+      return (RNSSplitHeaderConfigComponentView *)subview;
+    }
+  }
+  return nil;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -165,17 +145,6 @@ static UIColor *_Nullable RNSUIColorFromHexString(NSString *_Nullable hexString)
 
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
     [self updateScreenKey:RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey)];
-  }
-
-  if (oldComponentProps.title != newComponentProps.title) {
-    _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    _controller.title = _title;
-  }
-
-  if (oldComponentProps.headerBackgroundColor != newComponentProps.headerBackgroundColor) {
-    NSString *colorString = RCTNSStringFromStringNilIfEmpty(newComponentProps.headerBackgroundColor);
-    _headerBackgroundColor = RNSUIColorFromHexString(colorString);
-    _controller.headerBackgroundColor = _headerBackgroundColor;
   }
 
   if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {

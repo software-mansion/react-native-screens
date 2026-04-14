@@ -3,6 +3,7 @@
 #import "RNSBaseScreenComponentView.h"
 #import "RNSEnums.h"
 #import "RNSSafeAreaProviding.h"
+#import "RNSSplitHeaderConfigComponentView.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nonnull) RNSSplitScreenController *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitNavigatorComponentView *splitNavigator;
 
+- (nullable RNSSplitHeaderConfigComponentView *)findHeaderConfig;
+
 @end
 
 #pragma mark - Props
@@ -38,17 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) RNSSplitScreenActivityMode activityMode;
 
 // screenKey is inherited from RNSBaseScreenComponentView
-
-/**
- * @brief Title to display in the navigation bar while this screen is shown.
- */
-@property (nonatomic, strong, readonly, nullable) NSString *title;
-
-/**
- * @brief Background color for the navigation bar while this screen is shown.
- * Nil means no override — the navigation bar keeps its default appearance.
- */
-@property (nonatomic, strong, readonly, nullable) UIColor *headerBackgroundColor;
 
 /**
  * @brief Whether native back-gesture dismiss is suppressed for this screen.

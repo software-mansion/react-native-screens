@@ -17,10 +17,6 @@ interface NativeProps extends ViewProps {
   activityMode?: CT.WithDefault<SplitScreenActivityMode, 'detached'>;
   screenKey: string;
 
-  // Screen-level header config
-  title?: CT.WithDefault<string, ''>;
-  headerBackgroundColor?: CT.WithDefault<string, ''>;
-
   // Dismiss control
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
 

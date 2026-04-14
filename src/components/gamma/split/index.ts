@@ -2,6 +2,7 @@ import SplitHost from './SplitHost';
 import SplitNavigator from './SplitNavigator';
 import SplitScreen from './SplitScreen';
 import SplitView from './SplitView';
+import SplitHeaderConfig from './SplitHeaderConfig';
 
 export type {
   DisplayModeWillChangeEvent, // TODO: This event should be renamed to match the convention
@@ -38,6 +39,7 @@ export type {
 export const Split = {
   Host: SplitHost,
   Navigator: SplitNavigator,
+  HeaderConfig: SplitHeaderConfig,
 };
 
-export { SplitView, SplitScreen, SplitNavigator };
+export { SplitView, SplitScreen, SplitNavigator, SplitHeaderConfig };

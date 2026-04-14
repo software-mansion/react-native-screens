@@ -8,15 +8,14 @@ import UIKit
 /// Shadow Tree, emits React lifecycle events, and interacts with the SplitHost hierarchy.
 @objc
 public class RNSSplitScreenController: RNSBaseScreenController {
-  let splitScreenComponentView: RNSSplitScreenComponentView
+  @objc public let splitScreenComponentView: RNSSplitScreenComponentView
 
-  /// Per-screen header background color, set by the component view when the prop changes.
-  /// If nil, no header appearance override is applied by the navigator.
-  @objc public var headerBackgroundColor: UIColor?
+  @objc public private(set) var headerCoordinator: RNSSplitScreenHeaderCoordinator!
 
   @objc public required init(splitScreenComponentView: RNSSplitScreenComponentView) {
     self.splitScreenComponentView = splitScreenComponentView
     super.init(nibName: nil, bundle: nil)
+    self.headerCoordinator = RNSSplitScreenHeaderCoordinator(screenController: self)
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -76,5 +75,12 @@ public class RNSSplitScreenController: RNSBaseScreenController {
   @objc
   public func setNeedsLifecycleStateUpdate() {
     splitScreenComponentView.splitNavigator?.controller.setNeedsUpdateOfChildViewControllers()
+  }
+
+  // MARK: Lifecycle (header coordinator)
+
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    headerCoordinator.applyBarConfigurationIfNeeded(animated)
   }
 }

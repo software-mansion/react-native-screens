@@ -8,13 +8,6 @@
 
 namespace rnscreens::conversion {
 
-template <typename TargetType, typename InputType>
-TargetType convert(InputType) {
-  static_assert(
-      rnscreens::always_false<TargetType>::value,
-      "[RNScreens] Missing template specialisation for demanded types!");
-}
-
 template <>
 RNSStackScreenActivityMode convert(react::RNSStackScreenActivityMode mode);
 

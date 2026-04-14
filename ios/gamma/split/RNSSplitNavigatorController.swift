@@ -76,14 +76,16 @@ extension RNSSplitNavigatorController: UINavigationControllerDelegate {
     willShow viewController: UIViewController,
     animated: Bool
   ) {
-    // Apply per-screen header background color.
-    guard let screen = viewController as? RNSSplitScreenController,
-          let bg = screen.headerBackgroundColor else { return }
+    guard let screen = viewController as? RNSSplitScreenController else { return }
+    screen.headerCoordinator.applyBarConfigurationIfNeeded(animated)
+  }
 
-    let appearance = UINavigationBarAppearance()
-    appearance.configureWithOpaqueBackground()
-    appearance.backgroundColor = bg
-    navigationBar.standardAppearance = appearance
-    navigationBar.scrollEdgeAppearance = appearance
+  public func navigationController(
+    _ navigationController: UINavigationController,
+    didShow viewController: UIViewController,
+    animated: Bool
+  ) {
+    guard let screen = viewController as? RNSSplitScreenController else { return }
+    screen.headerCoordinator.updateShadowStates(toMatch: navigationBar)
   }
 }

@@ -217,6 +217,15 @@
         "RNSSplitScreen": {
           "className": "RNSSplitScreenComponentView"
         },
+        "RNSSplitHeaderConfig": {
+          "className": "RNSSplitHeaderConfigComponentView"
+        },
+        "RNSSplitHeaderItemIOS": {
+          "className": "RNSSplitHeaderItemComponentView"
+        },
+        "RNSSplitHeaderItemSpacerIOS": {
+          "className": "RNSSplitHeaderItemSpacerComponentView"
+        },
         "RNSSafeAreaView": {
           "className": "RNSSafeAreaViewComponentView"
         },

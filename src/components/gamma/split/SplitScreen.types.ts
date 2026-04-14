@@ -22,10 +22,6 @@ export interface SplitScreenProps extends ViewProps {
   activityMode: SplitScreenActivityMode;
   screenKey: string;
 
-  // Header configuration
-  title?: string;
-  headerBackgroundColor?: string;
-
   // Dismiss control
   preventNativeDismiss?: boolean;
 

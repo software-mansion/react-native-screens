@@ -16,9 +16,6 @@ function SplitScreen({
   // Control
   activityMode,
   screenKey,
-  // Header config
-  title,
-  headerBackgroundColor,
   // Dismiss control
   preventNativeDismiss,
   // Lifecycle events
@@ -47,8 +44,6 @@ function SplitScreen({
       style={StyleSheet.absoluteFill}
       activityMode={activityMode}
       screenKey={screenKey}
-      title={title}
-      headerBackgroundColor={headerBackgroundColor}
       preventNativeDismiss={preventNativeDismiss}
       onWillAppear={onWillAppear}
       onDidAppear={onDidAppear}

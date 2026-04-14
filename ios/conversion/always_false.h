@@ -28,4 +28,18 @@ struct always_false<do_not_use::DoNotUseThis> : std::true_type {};
 
 }; // namespace rnscreens
 
+namespace rnscreens::conversion {
+
+/// Primary template for type-safe enum conversions.
+/// Every conversion must have an explicit specialisation — missing one
+/// triggers the static_assert at instantiation time.
+template <typename TargetType, typename InputType>
+TargetType convert(InputType) {
+  static_assert(
+      rnscreens::always_false<TargetType>::value,
+      "[RNScreens] Missing template specialisation for demanded types!");
+}
+
+}; // namespace rnscreens::conversion
+
 #endif // defined(__cplusplus)

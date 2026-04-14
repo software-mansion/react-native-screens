@@ -1,7 +1,61 @@
 import React from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SplitScreen, SplitView } from 'react-native-screens/experimental';
+import {
+  SplitHeaderConfig,
+  SplitScreen,
+  SplitView,
+} from 'react-native-screens/experimental';
 import { SplitBaseConfig } from './helpers/types';
+
+import { Pressable } from 'react-native';
+
+function ItemBlueComponent() {
+  return (
+    <Pressable
+      style={{ width: 30, height: 30, backgroundColor: 'blue' }}
+      onPressIn={() => console.log('blue pressable in')}
+      onPress={() => console.log('blue pressable click')}
+      onPressOut={() => console.log('blue pressable out')}
+    />
+  );
+}
+
+function HorizontalGreenItem() {
+  return (
+    <Pressable
+      style={{ width: 100, height: 20, backgroundColor: 'green' }}
+      onPressIn={() => console.log('green pressable in')}
+      onPress={() => console.log('green pressable click')}
+      onPressOut={() => console.log('green pressable out')}
+    />
+  );
+}
+
+function HorizontalPinkItem() {
+  return (
+    <Pressable
+      style={{ width: 80, height: 10, backgroundColor: 'pink' }}
+      onPressIn={() => console.log('pink pressable in')}
+      onPress={() => console.log('pink pressable click')}
+      onPressOut={() => console.log('pink pressable out')}
+    />
+  );
+}
+
+function ItemRedComponent() {
+  return (
+    <Pressable
+      style={{
+        width: 20,
+        height: 20,
+        backgroundColor: 'red',
+      }}
+      onPressIn={() => console.log('red pressable in')}
+      onPress={() => console.log('red pressable click')}
+      onPressOut={() => console.log('red pressable out')}
+    />
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -102,7 +156,9 @@ const InspectorContent = ({
 }) => (
   <View style={styles.screen}>
     <Text style={styles.title}>{title}</Text>
-    <Text style={styles.body}>Metadata and attributes for the selected item.</Text>
+    <Text style={styles.body}>
+      Metadata and attributes for the selected item.
+    </Text>
     <View style={styles.metaBlock}>
       <Text style={styles.metaLabel}>Type</Text>
       <Text style={styles.metaValue}>Document</Text>
@@ -152,9 +208,29 @@ const SplitBaseApp = ({
             key={screen.key}
             screenKey={screen.key}
             activityMode="attached"
-            title={screen.title}
-            headerBackgroundColor={screen.bg}
             onNativeDismiss={makeNativeDismissHandler(setPrimaryStack)}>
+            <SplitHeaderConfig
+              title={'Hello World'}
+              largeTitleEnabled={true}
+              titleItem={{ key: 'title', component: HorizontalGreenItem }}
+              subtitleItem={{
+                key: 'subtitle',
+                component: HorizontalPinkItem,
+              }}
+              largeSubtitleItem={{
+                key: 'largeSubtitle',
+                component: HorizontalGreenItem,
+              }}
+              hidden={false}
+              leftItems={[
+                { key: 'left-0', component: ItemRedComponent },
+                { key: 'left-1', spacer: 'fixed', width: 100 },
+                { key: 'left-2', component: ItemRedComponent },
+                { key: 'left-3', component: ItemBlueComponent },
+                { key: 'left-4', label: 'An item' },
+              ]}
+              rightItems={[{ key: 'right-0', component: ItemRedComponent }]}
+            />
             {index === 0 ? (
               <CategoryListContent
                 onSelectCategory={(title, bg) =>
@@ -178,9 +254,29 @@ const SplitBaseApp = ({
             key={screen.key}
             screenKey={screen.key}
             activityMode="attached"
-            title={screen.title}
-            headerBackgroundColor={screen.bg}
             onNativeDismiss={makeNativeDismissHandler(setSuppStack)}>
+            <SplitHeaderConfig
+              title={'Hello World'}
+              largeTitleEnabled={true}
+              titleItem={{ key: 'title', component: HorizontalGreenItem }}
+              subtitleItem={{
+                key: 'subtitle',
+                component: HorizontalPinkItem,
+              }}
+              largeSubtitleItem={{
+                key: 'largeSubtitle',
+                component: HorizontalGreenItem,
+              }}
+              hidden={false}
+              leftItems={[
+                { key: 'left-0', component: ItemRedComponent },
+                { key: 'left-1', spacer: 'fixed', width: 100 },
+                { key: 'left-2', component: ItemRedComponent },
+                { key: 'left-3', component: ItemBlueComponent },
+                { key: 'left-4', label: 'An item' },
+              ]}
+              rightItems={[{ key: 'right-0', component: ItemRedComponent }]}
+            />
             <SupplementaryContent
               title={screen.title}
               isTop={index === suppStack.length - 1}
@@ -206,9 +302,29 @@ const SplitBaseApp = ({
             key={screen.key}
             screenKey={screen.key}
             activityMode="attached"
-            title={screen.title}
-            headerBackgroundColor={screen.bg}
             onNativeDismiss={makeNativeDismissHandler(setSecondaryStack)}>
+            <SplitHeaderConfig
+              title={'Hello World'}
+              largeTitleEnabled={true}
+              titleItem={{ key: 'title', component: HorizontalGreenItem }}
+              subtitleItem={{
+                key: 'subtitle',
+                component: HorizontalPinkItem,
+              }}
+              largeSubtitleItem={{
+                key: 'largeSubtitle',
+                component: HorizontalGreenItem,
+              }}
+              hidden={false}
+              leftItems={[
+                { key: 'left-0', component: ItemRedComponent },
+                { key: 'left-1', spacer: 'fixed', width: 100 },
+                { key: 'left-2', component: ItemRedComponent },
+                { key: 'left-3', component: ItemBlueComponent },
+                { key: 'left-4', label: 'An item' },
+              ]}
+              rightItems={[{ key: 'right-0', component: ItemRedComponent }]}
+            />
             <SecondaryContent
               title={screen.title}
               isTop={index === secondaryStack.length - 1}
@@ -236,9 +352,29 @@ const SplitBaseApp = ({
             key={screen.key}
             screenKey={screen.key}
             activityMode="attached"
-            title={screen.title}
-            headerBackgroundColor={screen.bg}
             onNativeDismiss={makeNativeDismissHandler(setInspectorStack)}>
+            <SplitHeaderConfig
+              title={'Hello World'}
+              largeTitleEnabled={true}
+              titleItem={{ key: 'title', component: HorizontalGreenItem }}
+              subtitleItem={{
+                key: 'subtitle',
+                component: HorizontalPinkItem,
+              }}
+              largeSubtitleItem={{
+                key: 'largeSubtitle',
+                component: HorizontalGreenItem,
+              }}
+              hidden={false}
+              leftItems={[
+                { key: 'left-0', component: ItemRedComponent },
+                { key: 'left-1', spacer: 'fixed', width: 100 },
+                { key: 'left-2', component: ItemRedComponent },
+                { key: 'left-3', component: ItemBlueComponent },
+                { key: 'left-4', label: 'An item' },
+              ]}
+              rightItems={[{ key: 'right-0', component: ItemRedComponent }]}
+            />
             <InspectorContent
               title={screen.title}
               isTop={index === inspectorStack.length - 1}
