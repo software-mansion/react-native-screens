@@ -81,7 +81,7 @@ function navigationActionPushHandler(
   const stack = state.stack;
   const renderedRouteIndex = stack.findIndex(
     route =>
-      route.name === action.routeName && route.activityMode === 'detached',
+      route.name === action.routeName && route.activityMode === 'detached' && !route.isMarkedForDismissal,
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
@@ -161,12 +161,21 @@ function navigationActionPopHandler(
     return state;
   }
 
+  // Pop operation on not-top screen is forbidden and might crash.
+  const topAttachedRouteIndex = state.stack.findLastIndex(r => r.activityMode === 'attached');
+
+  if (topAttachedRouteIndex > routeIndex) {
+    console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - not a top screen`);
+    return state;
+  }
+
   const newStack = [...stack];
   // NOTE: This modifies existing state, possibly impacting calculations done before new state is updated.
   // Consider doing deep copy of the state here.
   // EDIT: not sure really whether this is really a problem or not, since the updates are queued
   // and the original state won't be immediatelly affected.
   route.activityMode = 'detached';
+  route.isMarkedForDismissal = true;
 
   return stateWithStack(state, newStack);
 }
@@ -266,6 +275,7 @@ function createRouteFromConfig(
     ...config,
     activityMode,
     routeKey: generateRouteKeyForRouteName(config.name),
+    isMarkedForDismissal: false,
   };
 }
 
@@ -312,7 +322,7 @@ function applyPush(state: StackState, newRoute: StackRoute): StackState {
     route => route.activityMode === 'attached',
   );
 
-  if (lastAttachedIndex === -1) {
+  if (lastAttachedIndex === NOT_FOUND_INDEX) {
     throw new Error(
       `[Stack] Invalid stack state: there should be at least one attached route on the stack.`,
     );
