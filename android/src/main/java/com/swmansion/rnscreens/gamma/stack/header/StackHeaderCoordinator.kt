@@ -52,11 +52,14 @@ internal class StackHeaderCoordinator(
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
-    private val defaultNavigationIcon: Drawable? by lazy {
+    private val defaultBackButtonIcon: Drawable? by lazy {
         resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
     }
 
-    private var lastNavIconVisible: Boolean? = null
+    private var lastBackButtonVisible: Boolean? = null
+    private var lastBackButtonTintColor: Int? = null
+    private var lastBackButtonTinting: Boolean = true
+    private var lastBackButtonIcon: Drawable? = null
 
     // For small header, we need to use custom title view in order to
     // render a subview to the leading side of the title.
@@ -153,7 +156,10 @@ internal class StackHeaderCoordinator(
         }
         appBarLayout = null
         managedTitleView = null
-        lastNavIconVisible = null
+        lastBackButtonVisible = null
+        lastBackButtonTintColor = null
+        lastBackButtonTinting = true
+        lastBackButtonIcon = null
         clearCachedRebuildTriggers()
     }
 
@@ -323,7 +329,7 @@ internal class StackHeaderCoordinator(
             }
         }
 
-        applyNavigationIcon(appBar.toolbar, config)
+        applyBackButton(appBar.toolbar, config)
     }
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
@@ -338,23 +344,44 @@ internal class StackHeaderCoordinator(
 
     // endregion
 
-    // region Navigation icon
+    // region Back button
 
-    private fun applyNavigationIcon(
+    private fun applyBackButton(
         toolbar: MaterialToolbar,
         config: StackHeaderConfigProviding,
     ) {
         val visible = canNavigateBack && !config.backButtonHidden
-        if (visible == lastNavIconVisible) return
-        lastNavIconVisible = visible
+        val visibilityChanged = visible != lastBackButtonVisible
+        val iconChanged = config.backButtonIcon !== lastBackButtonIcon
+        val tintChanged =
+            config.backButtonTintColor != lastBackButtonTintColor ||
+                config.backButtonTinting != lastBackButtonTinting
 
-        if (visible) {
-            toolbar.navigationIcon = defaultNavigationIcon
-            toolbar.setNavigationOnClickListener { onNavigationIconClick() }
-        } else {
+        if (!visibilityChanged && !iconChanged && !tintChanged) return
+
+        lastBackButtonVisible = visible
+        lastBackButtonIcon = config.backButtonIcon
+        lastBackButtonTintColor = config.backButtonTintColor
+        lastBackButtonTinting = config.backButtonTinting
+
+        if (!visible) {
             toolbar.navigationIcon = null
             toolbar.setNavigationOnClickListener(null)
+            return
         }
+
+        // Icon: custom or default
+        toolbar.navigationIcon = config.backButtonIcon ?: defaultBackButtonIcon
+
+        // Tint via MaterialToolbar API (order matters: set icon first, then tint)
+        if (!config.backButtonTinting) {
+            toolbar.clearNavigationIconTint()
+        } else if (config.backButtonTintColor != null) {
+            toolbar.setNavigationIconTint(config.backButtonTintColor!!)
+        }
+        // else: default → Material theme tint (no call needed)
+
+        toolbar.setNavigationOnClickListener { onNavigationIconClick() }
     }
 
     // endregion
