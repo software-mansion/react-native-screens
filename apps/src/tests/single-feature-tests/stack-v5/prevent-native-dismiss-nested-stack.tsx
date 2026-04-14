@@ -41,7 +41,11 @@ function StackSetup() {
         {
           name: 'A',
           Component: AScreen,
-          options: {},
+          options: {
+            headerConfig: {
+              title: 'A',
+            },
+          },
         },
         {
           name: 'B',
@@ -54,6 +58,9 @@ function StackSetup() {
                 message: 'Native dismiss prevented - B',
                 backgroundColor: Colors.GreenLight60,
               });
+            },
+            headerConfig: {
+              title: 'B',
             },
           },
         },
@@ -133,7 +140,11 @@ function NestedStackScreen() {
         {
           name: 'NestedA',
           Component: NestedAScreen,
-          options: {},
+          options: {
+            headerConfig: {
+              title: 'NestedA',
+            },
+          },
         },
         {
           name: 'NestedB',
@@ -146,6 +157,9 @@ function NestedStackScreen() {
                 message: 'Native dismiss prevented - NestedB',
                 backgroundColor: Colors.GreenLight60,
               });
+            },
+            headerConfig: {
+              title: 'NestedB',
             },
           },
         },
