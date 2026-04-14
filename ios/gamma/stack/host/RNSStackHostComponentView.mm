@@ -69,6 +69,7 @@ namespace react = facebook::react;
 
 - (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
 {
+  RCTAssert(stackScreen != nil, @"[RNScreens] Expected non nill stackScreen");
   switch (stackScreen.activityMode) {
     case RNSStackScreenActivityModeAttached:
       [_stackOperationCoordinator addPushOperation:stackScreen];

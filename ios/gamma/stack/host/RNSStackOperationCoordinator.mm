@@ -68,8 +68,8 @@
                                       withIndicesFrom:
                                           (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
 {
-  return [operations sortedArrayUsingComparator:^NSComparisonResult(id<RNSStackOperation> obj1,
-                                                                    id<RNSStackOperation> obj2) {
+  return [operations sortedArrayUsingComparator:^NSComparisonResult(
+                         id<RNSStackOperation> obj1, id<RNSStackOperation> obj2) {
     return [@([stackScreens indexOfObject:obj1.stackScreen]) compare:@([stackScreens indexOfObject:obj2.stackScreen])];
   }];
 }
