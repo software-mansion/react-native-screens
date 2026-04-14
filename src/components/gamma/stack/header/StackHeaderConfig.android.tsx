@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, processColor, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
@@ -24,11 +24,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     ...filteredAndroidProps
   } = android ?? {};
 
-  const backButtonTintColorProps =
-    parseBackButtonTintColorToNativeProps(backButtonTintColor);
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
-
-  console.log('[dbg123] asdf', backButtonTintColorProps);
 
   return (
     <StackHeaderConfigAndroidNativeComponent
@@ -36,7 +32,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       style={StyleSheet.absoluteFill}
       {...baseProps}
       {...filteredAndroidProps}
-      {...backButtonTintColorProps}
+      backButtonTintColor={backButtonTintColor}
       {...backButtonIconProps}>
       {/*
         Please note that the order of the subviews MUST match
@@ -66,21 +62,6 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       )}
     </StackHeaderConfigAndroidNativeComponent>
   );
-}
-
-function parseBackButtonTintColorToNativeProps(
-  value: StackHeaderConfigPropsAndroid['backButtonTintColor'],
-): Pick<
-  StackHeaderConfigAndroidNativeComponentProps,
-  'backButtonTintColor' | 'backButtonTinting'
-> {
-  if (value === undefined) {
-    return {};
-  }
-  if (value === null) {
-    return { backButtonTinting: false };
-  }
-  return { backButtonTintColor: processColor(value) };
 }
 
 function parseBackButtonIconToNativeProps(

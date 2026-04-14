@@ -1,9 +1,9 @@
 'use client';
 
 import type {
+  ColorValue,
   CodegenTypes as CT,
   ImageSource,
-  ProcessedColorValue,
   ViewProps,
 } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
@@ -19,8 +19,7 @@ export interface NativeProps extends ViewProps {
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;
 
-  backButtonTintColor?: ProcessedColorValue | null;
-  backButtonTinting?: CT.WithDefault<boolean, true>;
+  backButtonTintColor?: ColorValue;
   backButtonDrawableIconResourceName?: string;
   backButtonImageIconResource?: ImageSource;
 }

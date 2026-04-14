@@ -11,7 +11,6 @@ interface StackHeaderConfigProviding {
     val transparent: Boolean
     val backButtonHidden: Boolean
     val backButtonTintColor: Int?
-    val backButtonTinting: Boolean
     val backButtonIcon: Drawable?
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
