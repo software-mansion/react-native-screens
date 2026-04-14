@@ -8,7 +8,7 @@ import { useReactNavigationTheme } from '../adapter/react-navigation';
  * If there is no theme provided by React Navigation, return the light theme as default.
  * Use this to get whole color palette current theme is based on.
  */
-export default function useThemeColorPalette(): {
+export function useThemeColorPalette(): {
   theme: ThemeType;
   colors: ColorPalette;
 } {
