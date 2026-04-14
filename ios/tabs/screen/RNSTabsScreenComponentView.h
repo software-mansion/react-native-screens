@@ -8,9 +8,7 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -24,10 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                            RNSViewControllerInvalidating
-#else
+                                            RNSSafeAreaProviding
+#if !RCT_NEW_ARCH_ENABLED
+                                            ,
                                             RCTInvalidating
 #endif
                                             >
@@ -60,8 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
 
-@property (nonatomic) BOOL isSelectedScreen;
-@property (nonatomic, nullable) NSString *tabKey;
+@property (nonatomic, nullable) NSString *screenKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
 @property (nonatomic, nullable) NSString *tabBarItemTestID;
@@ -84,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+
+@property (nonatomic) BOOL preventNativeSelection;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 

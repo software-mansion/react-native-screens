@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSFullWindowOverlay.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -11,9 +10,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
-#else
-#import <React/RCTTouchHandler.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSFullWindowOverlayContainer
 
@@ -70,14 +66,9 @@
 @end
 
 @implementation RNSFullWindowOverlay {
-  __weak RCTBridge *_bridge;
   RNSFullWindowOverlayContainer *_container;
   CGRect _reactFrame;
-#ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
-#else
-  RCTTouchHandler *_touchHandler;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -86,7 +77,6 @@
   [super load];
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -96,17 +86,6 @@
   }
   return self;
 }
-#else
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-    [self initCommonProps];
-  }
-
-  return self;
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)initCommonProps
 {
@@ -154,11 +133,7 @@
       UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, _container);
     }
     if (_touchHandler == nil) {
-#ifdef RCT_NEW_ARCH_ENABLED
       _touchHandler = [RCTSurfaceTouchHandler new];
-#else
-      _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
-#endif
     }
     [_touchHandler attachToView:_container];
 
@@ -193,7 +168,6 @@
   }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric Specific
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -228,7 +202,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
 
-  // Due to view flattening on new architecture there are situations
+  // Due to view flattening there are situations
   // when we receive frames with origin different from (0, 0).
   // We account for this frame manipulation in shadow node by setting
   // RootNodeKind trait for the shadow node making state consistent
@@ -253,44 +227,13 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateProps:props oldProps:oldProps];
 }
 
-#else
-#pragma mark - Paper specific
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  _reactFrame = frame;
-  [_container setFrame:frame];
-}
-
-- (void)invalidate
-{
-  [_container removeFromSuperview];
-  _container = nil;
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
-
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
 {
   return RNSFullWindowOverlay.class;
 }
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSFullWindowOverlayManager
-
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(accessibilityContainerViewIsModal, BOOL)
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (UIView *)view
-{
-  return [[RNSFullWindowOverlay alloc] initWithBridge:self.bridge];
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end

@@ -21,9 +21,7 @@
     "lint-swift": "sh scripts/swift-format-helper.sh lint",
     "lint": "yarn lint-js && yarn lint-android && yarn lint-swift",
     "release": "yarn prepare && npm login && release-it",
-    "prepare": "bob build && husky install",
-    "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
-    "sync-architectures": "node ./scripts/codegen-sync-archs.js"
+    "prepare": "bob build && husky install"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -45,7 +43,6 @@
     "android/src/main/jni/",
     "android/src/main/res",
     "android/src/fabric/",
-    "android/src/paper/",
     "android/src/versioned/",
     "android/build.gradle",
     "android/CMakeLists.txt",
@@ -78,7 +75,7 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": ">=0.81.0"
+    "react-native": ">=0.82.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -86,10 +83,11 @@
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
     "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.81.5",
-    "@react-native/eslint-config": "0.81.5",
-    "@react-native/metro-config": "0.81.5",
-    "@react-native/typescript-config": "0.81.5",
+    "@react-native/babel-preset": "0.85.0",
+    "@react-native/eslint-config": "0.85.0",
+    "@react-native/jest-preset": "0.85.0",
+    "@react-native/metro-config": "0.85.0",
+    "@react-native/typescript-config": "0.85.0",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^29.5.13",
@@ -112,7 +110,7 @@
     "prettier": "^2.8.8",
     "react": "19.2.3",
     "react-dom": "^19.1.0",
-    "react-native": "0.81.5",
+    "react-native": "0.85.0",
     "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^2.28.0",
     "react-native-reanimated": "^3.19.0",
@@ -131,8 +129,7 @@
     "cpp/**/*.{h,cpp}": "yarn format-cpp",
     "android/src/main/cpp/.{cpp, h}": "yarn format-android-cpp",
     "android/**/*.kt": "yarn format-android",
-    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios-cpp",
-    "src/fabric/*.ts": "yarn sync-architectures"
+    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios-cpp"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -200,10 +197,10 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
-        "RNSTabsScreen": {
+        "RNSTabsScreenIOS": {
           "className": "RNSTabsScreenComponentView"
         },
-        "RNSTabsHost": {
+        "RNSTabsHostIOS": {
           "className": "RNSTabsHostComponentView"
         },
         "RNSTabsBottomAccessory": {

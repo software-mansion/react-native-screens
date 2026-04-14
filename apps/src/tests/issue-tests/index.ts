@@ -25,11 +25,10 @@ export { default as Test662 } from './Test662'; // [E2E skipped]: can't check an
 export { default as Test691 } from './Test691'; // [E2E created](iOS): issue related to iOS modal behavior
 export { default as Test702 } from './Test702'; // [E2E skipped]: can't check animation in a meaningful way
 export { default as Test706 } from './Test706'; // [E2E skipped]: can't check font weight
-export { default as Test713 } from './Test713'; // [E2E skipped]: issue still present
 export { default as Test726 } from './Test726'; // [E2E created](iOS): issue related to iOS
-export { default as Test748 } from './Test748';
-export { default as Test750 } from './Test750';
-export { default as Test758 } from './Test758';
+export { default as Test748 } from './Test748'; // [E2E skipped]: issue unclear, Test432 covers more complex cases already
+export { default as Test750 } from './Test750'; // [E2E skipped]: can't check insets
+export { default as Test758 } from './Test758'; // [E2E created](iOS): PR related to iOS search bar
 export { default as Test761 } from './Test761'; // [E2E skipped]: can't check animation in a meaningful way
 export { default as Test779 } from './Test779'; // [E2E skipped]: can't check animation in a meaningful way
 export { default as Test780 } from './Test780'; // [E2E skipped]: can't use native swipe back gesture
@@ -177,10 +176,19 @@ export { default as Test3521 } from './Test3521';
 export { default as Test3522 } from './Test3522';
 export { default as Test3564 } from './Test3564';
 export { default as Test3566 } from './Test3566';
+export { default as Test3568 } from './Test3568';
 export { default as Test3576 } from './Test3576';
 export { default as Test3596 } from './Test3596';
 export { default as Test3611 } from './Test3611';
 export { default as Test3617 } from './Test3617';
+export { default as Test3636 } from './Test3636';
+export { default as Test3760 } from './Test3760';
+export { default as Test3770 } from './Test3770';
+export { default as Test3793 } from './Test3793';
+export { default as Test3816 } from './Test3816';
+export { default as Test3833 } from './Test3833';
+export { default as Test3835 } from './Test3835';
+export { default as Test3867 } from './Test3867';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/native-stack';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Square } from '../../shared';
+import { Square } from '@apps/shared';
 
 type FirstStackParamList = {
   Home: undefined;

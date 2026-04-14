@@ -4,8 +4,8 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { BottomTabsContainer } from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import type { Scenario } from '../../shared/helpers';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import type { Scenario } from '@apps/tests/shared/helpers';
 
 const SCENARIO: Scenario = {
   name: 'Override ScrollView Content Inset',
@@ -54,32 +54,36 @@ function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
-        <BottomTabsContainer
-          tabConfigs={[
+        <TabsContainer
+          routeConfigs={[
             {
-              component: FalseTab,
-              tabScreenProps: {
-                tabKey: 'False',
+              name: 'False',
+              Component: FalseTab,
+              options: {
                 title: 'False',
-                overrideScrollViewContentInsetAdjustmentBehavior: false,
-                icon: { ios: { type: 'sfSymbol', name: 'xmark.circle' } },
+                ios: {
+                  overrideScrollViewContentInsetAdjustmentBehavior: false,
+                  icon: { type: 'sfSymbol', name: 'xmark.circle' },
+                },
               },
             },
             {
-              component: TrueTab,
-              tabScreenProps: {
-                tabKey: 'True',
+              name: 'True',
+              Component: TrueTab,
+              options: {
                 title: 'True',
-                overrideScrollViewContentInsetAdjustmentBehavior: true,
-                icon: { ios: { type: 'sfSymbol', name: 'checkmark.circle' } },
+                ios: {
+                  overrideScrollViewContentInsetAdjustmentBehavior: true,
+                  icon: { type: 'sfSymbol', name: 'checkmark.circle' },
+                },
               },
             },
             {
-              component: DefaultTab,
-              tabScreenProps: {
-                tabKey: 'Default',
+              name: 'Default',
+              Component: DefaultTab,
+              options: {
                 title: 'Default',
-                icon: { ios: { type: 'sfSymbol', name: 'circle.dashed' } },
+                ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },
             },
           ]}

@@ -8,22 +8,22 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSDefines.h"
+#import "RNSLog.h"
 
+#import "RNSStackNavigationController.h"
+#import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
-static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews);
-
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackController *_Nonnull _controller;
-  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _reactSubviews;
-
-  bool _hasModifiedReactSubviewsInCurrentTransaction;
+  RNSStackNavigationController *_Nonnull _stackNavigationController;
+  RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
+  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -36,20 +36,102 @@ static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *r
 
 - (void)initState
 {
-  _controller = [[RNSStackController alloc] initWithStackHostComponentView:self];
-  _hasModifiedReactSubviewsInCurrentTransaction = false;
-  _reactSubviews = [NSMutableArray new];
+  _stackNavigationController = [RNSStackNavigationController new];
+  _stackOperationCoordinator = [RNSStackOperationCoordinator new];
+  _renderedScreens = [NSMutableArray new];
 }
+
+#pragma mark - UIKit Callbacks
 
 - (void)didMoveToWindow
 {
-  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-
-  [self reactAddControllerToClosestParent:_controller];
+  RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
+  [self reactAddControllerToClosestParent:_stackNavigationController];
 }
 
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
+#pragma mark - Communication with StackScreen
+
+- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
 {
+  RCTAssert(stackScreen != nil, @"[RNScreens] Expected non nill stackScreen");
+  switch (stackScreen.activityMode) {
+    case RNSStackScreenActivityModeAttached:
+      [_stackOperationCoordinator addPushOperation:stackScreen];
+      break;
+    case RNSStackScreenActivityModeDetached:
+      [_stackOperationCoordinator addPopOperation:stackScreen];
+      break;
+    default:
+      RCTAssert(NO, @"[RNScreens] Unexpected value of activityMode: %d", stackScreen.activityMode);
+      return;
+  }
+}
+
+#pragma mark - RCTComponentViewProtocol
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
+  childScreen.stackHost = self;
+  [_renderedScreens insertObject:childScreen atIndex:index];
+  [self addPushOperationIfNeeded:childScreen];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
+  [_renderedScreens removeObject:childScreen];
+  childScreen.stackHost = nil;
+  [self addPopOperationIfNeeded:childScreen];
+}
+
+- (void)addPopOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
+{
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached && !stackScreen.isNativelyDismissed) {
+    // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
+    [_stackOperationCoordinator addPopOperation:stackScreen];
+  } else {
+    RNSLog(
+        @"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed", stackScreen.screenKey);
+  }
+}
+
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSStackHostComponentDescriptor>();
+}
+
++ (BOOL)shouldBeRecycled
+{
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
+}
+
+#pragma mark - Utils
+
+- (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
+{
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
+    [_stackOperationCoordinator addPushOperation:stackScreen];
+  }
+}
+
+- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
+{
+  RCTAssert(controller != nil, @"[RNScreens] Attempt to move to a nullish controller");
   if (!controller.parentViewController) {
     UIView *parentView = (UIView *)self.reactSuperview;
     while (parentView) {
@@ -65,99 +147,13 @@ static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *r
   }
 }
 
-RNS_IGNORE_SUPER_CALL_BEGIN
-- (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews
-{
-  return _reactSubviews;
-}
-RNS_IGNORE_SUPER_CALL_END
-
-- (nonnull RNSStackController *)stackController
-{
-  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
-  return _controller;
-}
-
-#pragma mark - Communication with StackScreen
-
-- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  [_controller setNeedsUpdateOfChildViewControllers];
-}
-
-#pragma mark - RCTComponentViewProtocol
-
-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
-
-  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
-  childScreen.stackHost = self;
-  [_reactSubviews insertObject:childScreen atIndex:index];
-  _hasModifiedReactSubviewsInCurrentTransaction = true;
-
-  NSLog(
-      @"StackHost [%ld] mount: StackScreen [%ld] (%@) at %ld",
-      self.tag,
-      childComponentView.tag,
-      childScreen.screenKey,
-      index);
-}
-
-- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
-
-  auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
-  [_reactSubviews removeObject:childScreen];
-  childScreen.stackHost = nil;
-  _hasModifiedReactSubviewsInCurrentTransaction = true;
-
-  NSLog(
-      @"StackHost [%ld] unmount: StackScreen [%ld] (%@) at %ld",
-      self.tag,
-      childComponentView.tag,
-      childScreen.screenKey,
-      index);
-}
-
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSStackHostComponentDescriptor>();
-}
-
-+ (BOOL)shouldBeRecycled
-{
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
-  return NO;
-}
-
 #pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  _hasModifiedReactSubviewsInCurrentTransaction = false;
-  [_controller reactMountingTransactionWillMount];
-}
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
-    [_controller setNeedsUpdateOfChildViewControllers];
-    dumpStackHostSubviewsState(_reactSubviews);
-  }
-  [_controller reactMountingTransactionDidMount];
+  [_stackOperationCoordinator executePendingOperationsIfNeeded:_stackNavigationController
+                                           withRenderedScreens:_renderedScreens];
 }
 
 @end
@@ -165,16 +161,4 @@ RNS_IGNORE_SUPER_CALL_END
 Class<RCTComponentViewProtocol> RNSStackHostCls(void)
 {
   return RNSStackHostComponentView.class;
-}
-
-static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews)
-{
-  NSMutableArray<NSString *> *descs = [[NSMutableArray alloc] initWithCapacity:reactSubviews.count];
-  for (RNSStackScreenComponentView *screen in reactSubviews) {
-    [descs addObject:[NSString stringWithFormat:@"StackScreen [%ld] %@ activityMode=%d",
-                                                screen.tag,
-                                                screen.screenKey,
-                                                screen.activityMode]];
-  }
-  NSLog(@"%@", descs);
 }

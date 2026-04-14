@@ -1,16 +1,22 @@
-import type { ScenarioGroup } from '../../shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import PreventNativeDismissSingleStack from './prevent-native-dismiss-single-stack';
 import PreventNativeDismissNestedStack from './prevent-native-dismiss-nested-stack';
 import AnimationAndroid from './test-animation-android';
+import TestStackHeaderModes from './test-stack-header-modes';
+import TestStackSimpleNav from './test-stack-simple-nav';
 
-const StackScenarioGroup: ScenarioGroup = {
+const scenarios = {
+  PreventNativeDismissSingleStack,
+  PreventNativeDismissNestedStack,
+  AnimationAndroid,
+  TestStackHeaderModes,
+  TestStackSimpleNav,
+};
+
+const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'Stack v5',
   details: 'Single feature tests for new stack implementation',
-  scenarios: [
-    PreventNativeDismissSingleStack,
-    PreventNativeDismissNestedStack,
-    AnimationAndroid,
-  ],
+  scenarios,
 };
 
 export default StackScenarioGroup;

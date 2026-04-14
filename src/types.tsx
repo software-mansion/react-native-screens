@@ -10,6 +10,8 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import type {
+  BlurEffect,
+  Direction,
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
@@ -45,28 +47,7 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
-export type BlurEffectTypes =
-  | 'none'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
+export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =
@@ -141,11 +122,19 @@ export type PlatformIconAndroid =
     }
   | PlatformIconShared;
 
-export interface PlatformIcon {
-  ios?: PlatformIconIOS;
-  android?: PlatformIconAndroid;
-  shared?: PlatformIconShared;
-}
+export type ScreenStackNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container.
+   *
+   * On iOS, this configures the background color of the UINavigationController's view,
+   * which is a separate native view from the ScreenStack itself. On Android, the native
+   * view hierarchy differs — ScreenStack is used directly as the container, so this prop
+   * is a noop. Use `style.backgroundColor` on ScreenStack instead.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue;
+};
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -243,7 +232,7 @@ export interface ScreenProps extends ViewProps {
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
    * for the specified edge of the ScrollView.
    *
-   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * When set in nested containers, i.e. Stack inside Tabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
    *
    * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
@@ -654,6 +643,7 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.MutableRefObject<React.Ref<View>>;
+  nativeContainerStyle?: ScreenStackNativeContainerStyleProps;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -708,7 +698,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  direction?: 'rtl' | 'ltr';
+  direction?: Direction;
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios
@@ -821,6 +811,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
+  /**
+   * When set to `true` on the outermost stack with a **visible** header, disables top inset
+   * handling for that header and the entire subtree.
+   *
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be applied or not).
+   *
+   * Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
+   *
+   * @platform android
+   */
+  disableTopInsetApplication?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */
@@ -1316,6 +1319,3 @@ export interface GestureProviderProps extends GestureProps {
   children?: React.ReactNode;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
-
-export type * from './components/tabs';
-export type * from './components/shared/types';

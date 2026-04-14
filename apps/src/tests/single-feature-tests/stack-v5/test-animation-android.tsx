@@ -1,9 +1,9 @@
 import React from 'react';
-import { Scenario } from '../../shared/helpers';
-import { StackContainer } from '../../../shared/gamma/containers/stack';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import Colors from '../../../shared/styling/Colors';
-import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
+import type { Scenario } from '@apps/tests/shared/helpers';
+import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import Colors from '@apps/shared/styling/Colors';
+import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
 const SCENARIO: Scenario = {
   name: 'Animation Android',

@@ -2,10 +2,13 @@ const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
+const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
+const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS = true;
 const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
+const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
 
@@ -54,17 +57,24 @@ const _featureFlags = {
       RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
     synchronousHeaderSubviewUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+    androidLegacyTopInsetBehavior:
+      RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
     iosPreventReattachmentOfDismissedScreens:
       RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
+    iosPreventReattachmentOfDismissedModals:
+      RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS,
     ios26AllowInteractionsDuringTransition:
       RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   },
-  stable: {},
+  stable: {
+    debugLogging: RNS_DEBUG_LOGGING,
+  },
 };
 
 type EXPERIMENTAL_FF = keyof typeof _featureFlags.experiment;
+type STABLE_FF = keyof typeof _featureFlags.stable;
 
 const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
   key: T,
@@ -88,6 +98,28 @@ const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
   };
 };
 
+const createStableFeatureFlagAccessor = <T extends STABLE_FF>(
+  key: T,
+  defaultValue: (typeof _featureFlags.stable)[T],
+) => {
+  return {
+    get() {
+      return _featureFlags.stable[key];
+    },
+    set(value: (typeof _featureFlags.stable)[T]) {
+      if (
+        value !== _featureFlags.stable[key] &&
+        _featureFlags.stable[key] !== defaultValue
+      ) {
+        console.error(
+          `[RNScreens] ${key} feature flag modified for a second time; this might lead to unexpected effects`,
+        );
+      }
+      _featureFlags.stable[key] = value;
+    },
+  };
+};
+
 const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
   'controlledBottomTabs',
   RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
@@ -106,6 +138,11 @@ const synchronousHeaderSubviewUpdatesAccessor =
     'synchronousHeaderSubviewUpdatesEnabled',
     RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   );
+const androidLegacyTopInsetBehaviorAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'androidLegacyTopInsetBehavior',
+    RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
+  );
 const androidResetScreenShadowStateOnOrientationChangeAccessor =
   createExperimentalFeatureFlagAccessor(
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
@@ -116,11 +153,20 @@ const iosPreventReattachmentOfDismissedScreensAccessor =
     'iosPreventReattachmentOfDismissedScreens',
     RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
   );
+const iosPreventReattachmentOfDismissedModalsAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'iosPreventReattachmentOfDismissedModals',
+    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS,
+  );
 const ios26AllowInteractionsDuringTransitionAccessor =
   createExperimentalFeatureFlagAccessor(
     'ios26AllowInteractionsDuringTransition',
     RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   );
+const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
+  'debugLogging',
+  RNS_DEBUG_LOGGING,
+);
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -156,6 +202,12 @@ export const featureFlags = {
     set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
       synchronousHeaderSubviewUpdatesAccessor.set(value);
     },
+    get androidLegacyTopInsetBehavior() {
+      return androidLegacyTopInsetBehaviorAccessor.get();
+    },
+    set androidLegacyTopInsetBehavior(value: boolean) {
+      androidLegacyTopInsetBehaviorAccessor.set(value);
+    },
     get androidResetScreenShadowStateOnOrientationChangeEnabled() {
       return androidResetScreenShadowStateOnOrientationChangeAccessor.get();
     },
@@ -175,6 +227,16 @@ export const featureFlags = {
       iosPreventReattachmentOfDismissedScreensAccessor.set(value);
     },
     /**
+     * Enables the fix for native / JS state desynchronization for Modals. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3760
+     */
+    get iosPreventReattachmentOfDismissedModals() {
+      return iosPreventReattachmentOfDismissedModalsAccessor.get();
+    },
+    set iosPreventReattachmentOfDismissedModals(value: boolean) {
+      iosPreventReattachmentOfDismissedModalsAccessor.set(value);
+    },
+    /**
      * Disables the behavior that blocks interactions during Stack Screen transition.
      * The application should immediately react to user gestures, dismissing more screens at once, etc.
      * Use only with `iosPreventReattachmentOfDismissedScreens = true` to enable the fix
@@ -191,7 +253,14 @@ export const featureFlags = {
   /**
    * Section for stable flags, which can be used to configure library behaviour.
    */
-  stable: {},
+  stable: {
+    get debugLogging() {
+      return rnsDebugLoggingAccessor.get();
+    },
+    set debugLogging(value: boolean) {
+      rnsDebugLoggingAccessor.set(value);
+    },
+  },
 };
 
 export default featureFlags;

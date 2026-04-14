@@ -55,7 +55,7 @@ namespace react = facebook::react;
 - (void)initState
 {
 #if RCT_NEW_ARCH_ENABLED
-  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenIOSProps>();
   _props = defaultProps;
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -78,7 +78,6 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -113,28 +112,26 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
+- (void)invalidateImpl
 {
-  _controller = nil;
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  // For tabs, Host is responsible for invalidating children.
-  return NO;
-}
-
-#else
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
 - (void)invalidate
 {
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -245,8 +242,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(props);
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
@@ -272,14 +269,9 @@ RNS_IGNORE_SUPER_CALL_END
     tabScreenOrientationNeedsUpdate = YES;
   }
 
-  if (newComponentProps.tabKey != oldComponentProps.tabKey) {
-    RCTAssert(!newComponentProps.tabKey.empty(), @"[RNScreens] tabKey must not be empty!");
-    _tabKey = RCTNSStringFromString(newComponentProps.tabKey);
-  }
-
-  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isSelectedScreen = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
+  if (newComponentProps.screenKey != oldComponentProps.screenKey) {
+    RCTAssert(!newComponentProps.screenKey.empty(), @"[RNScreens] screenKey must not be empty!");
+    _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
@@ -354,6 +346,10 @@ RNS_IGNORE_SUPER_CALL_END
       oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
     _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect =
         newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
+  }
+
+  if (newComponentProps.preventNativeSelection != oldComponentProps.preventNativeSelection) {
+    _preventNativeSelection = newComponentProps.preventNativeSelection;
   }
 
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=
@@ -458,7 +454,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenIOSEventEmitter>(eventEmitter)];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -488,7 +484,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -496,6 +492,11 @@ RNS_IGNORE_SUPER_CALL_END
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)invalidate
+{
+  [self invalidateImpl];
 }
 
 #else
@@ -511,7 +512,7 @@ RNS_IGNORE_SUPER_CALL_END
   // enabling us to warn users that dynamic changes are not supported.
   // On Paper, setter for the prop may not be called (when it is undefined in JS).
   // Therefore we set the flag in didSetProps to make sure to handle this case as well.
-  // didSetProps will always be called because tabKey prop is required.
+  // didSetProps will always be called because screenKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
   if (_tabBarItemNeedsRecreation) {
@@ -556,10 +557,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setTabKey:(NSString *)tabKey
+- (void)setScreenKey:(NSString *)screenKey
 {
-  RCTAssert([NSString rnscreens_isBlankOrNull:tabKey] == NO, @"[RNScreens] tabKey must not be empty");
-  _tabKey = tabKey;
+  RCTAssert([NSString rnscreens_isBlankOrNull:screenKey] == NO, @"[RNScreens] screenKey must not be empty");
+  _screenKey = screenKey;
 }
 
 - (void)setTitle:(NSString *)title

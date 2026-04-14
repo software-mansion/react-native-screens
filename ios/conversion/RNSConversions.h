@@ -7,6 +7,7 @@
 #import <optional>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
+#import "RNSTabsNavigationState.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <folly/dynamic.h>
@@ -36,7 +37,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
-    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior);
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
@@ -50,7 +51,7 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
-    react::RNSTabsHostTabBarControllerMode tabBarControllerMode);
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);
@@ -58,21 +59,25 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 
 #endif // Check for iOS >= 18
 
-RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIconType iconType);
+react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
+RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+    RNSTabsNavigationStateRejectionReason reason);
+
+RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
-    react::RNSTabsScreenSystemItem systemItem);
+    react::RNSTabsScreenIOSSystemItem systemItem);
 
 UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem);
 
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenBottomScrollEdgeEffect edgeEffect);
+    react::RNSTabsScreenIOSBottomScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenLeftScrollEdgeEffect edgeEffect);
+    react::RNSTabsScreenIOSLeftScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenRightScrollEdgeEffect edgeEffect);
+    react::RNSTabsScreenIOSRightScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenTopScrollEdgeEffect edgeEffect);
+    react::RNSTabsScreenIOSTopScrollEdgeEffect edgeEffect);
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
@@ -94,19 +99,24 @@ NSString *_Nullable RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAcc
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
-    react::RNSTabsScreenUserInterfaceStyle userInterfaceStyle);
+    react::RNSTabsScreenIOSUserInterfaceStyle userInterfaceStyle);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSTabsIconType iconType);
 
-RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOrientation orientation);
+RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation);
 
 #if !TARGET_OS_TV
 UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation);
 
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
 #endif // !TARGET_OS_TV
+
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostIOSLayoutDirection layoutDirection);
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostIOSColorScheme colorScheme);
 
 #pragma mark SplitHost props
 

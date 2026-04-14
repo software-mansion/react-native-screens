@@ -9,7 +9,7 @@ import { Alert, LogBox } from 'react-native';
 import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 type DataItem = {
   title: string;

@@ -21,12 +21,6 @@ class StackScreen(
         ATTACHED,
     }
 
-    init {
-        // Needed when Transition API is in use to ensure that shadows do not disappear,
-        // views do not jump around the screen and whole sub-tree is animated as a whole.
-        isTransitionGroup = true
-    }
-
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
@@ -55,6 +49,17 @@ class StackScreen(
             ) { "[RNScreens] StackScreen can't change its screenKey." }
             field = value
         }
+
+    private val shadowStateProxy = StackScreenShadowStateProxy()
+
+    var stateWrapper by shadowStateProxy::stateWrapper
+
+    fun updateStateIfNeeded(
+        x: Int? = null,
+        y: Int? = null,
+        width: Int? = null,
+        height: Int? = null,
+    ) = shadowStateProxy.updateStateIfNeeded(x, y, width, height)
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -89,7 +94,9 @@ class StackScreen(
         t: Int,
         r: Int,
         b: Int,
-    ) = Unit
+    ) {
+        shadowStateProxy.updateStateIfNeeded(width = r - l, height = b - t)
+    }
 
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {

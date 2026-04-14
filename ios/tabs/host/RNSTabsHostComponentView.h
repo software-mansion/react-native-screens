@@ -6,17 +6,16 @@
 #import "RNSScreenContainer.h"
 #import "RNSTabsHostComponentViewManager.h"
 #import "RNSTabsHostEventEmitter.h"
+#import "RNSTabsNavigationState.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
+#import "RNSTabBarController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsScreenComponentView;
-@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -29,9 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabsHostComponentView : RNSReactBaseView <
                                           RNSScreenContainerDelegate,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                          RNSViewControllerInvalidating
-#else
+                                          RNSTabBarControllerDelegate
+#if !RCT_NEW_ARCH_ENABLED
+                                          ,
                                           RCTInvalidating
 #endif
                                           >
@@ -48,13 +47,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsHostComponentView ()
 
+/**
+ * Last navigation state requested by JS. Will be nonnull after first prop update.
+ */
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+
+@property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
+
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
 
+@property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
+
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
+
+@property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
@@ -73,9 +83,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter;
-
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks

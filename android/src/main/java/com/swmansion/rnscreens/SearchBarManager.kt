@@ -5,7 +5,6 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSSearchBarManagerDelegate
 import com.facebook.react.viewmanagers.RNSSearchBarManagerInterface
 import com.swmansion.rnscreens.events.SearchBarBlurEvent
@@ -36,7 +35,6 @@ class SearchBarManager :
         view.onUpdate()
     }
 
-    @ReactProp(name = "autoCapitalize")
     override fun setAutoCapitalize(
         view: SearchBarView,
         autoCapitalize: String?,
@@ -53,7 +51,6 @@ class SearchBarManager :
             }
     }
 
-    @ReactProp(name = "autoFocus")
     override fun setAutoFocus(
         view: SearchBarView,
         autoFocus: Boolean,
@@ -61,7 +58,6 @@ class SearchBarManager :
         view.autoFocus = autoFocus
     }
 
-    @ReactProp(name = "barTintColor", customType = "Color")
     override fun setBarTintColor(
         view: SearchBarView,
         color: Int?,
@@ -69,7 +65,6 @@ class SearchBarManager :
         view.tintColor = color
     }
 
-    @ReactProp(name = "disableBackButtonOverride")
     override fun setDisableBackButtonOverride(
         view: SearchBarView,
         disableBackButtonOverride: Boolean,
@@ -77,7 +72,6 @@ class SearchBarManager :
         view.shouldOverrideBackButton = disableBackButtonOverride != true
     }
 
-    @ReactProp(name = "inputType")
     override fun setInputType(
         view: SearchBarView,
         inputType: String?,
@@ -94,7 +88,6 @@ class SearchBarManager :
             }
     }
 
-    @ReactProp(name = "placeholder")
     override fun setPlaceholder(
         view: SearchBarView,
         placeholder: String?,
@@ -104,7 +97,6 @@ class SearchBarManager :
         }
     }
 
-    @ReactProp(name = "textColor", customType = "Color")
     override fun setTextColor(
         view: SearchBarView,
         color: Int?,
@@ -112,7 +104,6 @@ class SearchBarManager :
         view.textColor = color
     }
 
-    @ReactProp(name = "headerIconColor", customType = "Color")
     override fun setHeaderIconColor(
         view: SearchBarView,
         color: Int?,
@@ -120,7 +111,6 @@ class SearchBarManager :
         view.headerIconColor = color
     }
 
-    @ReactProp(name = "hintTextColor", customType = "Color")
     override fun setHintTextColor(
         view: SearchBarView,
         color: Int?,
@@ -128,7 +118,6 @@ class SearchBarManager :
         view.hintTextColor = color
     }
 
-    @ReactProp(name = "shouldShowHintSearchIcon")
     override fun setShouldShowHintSearchIcon(
         view: SearchBarView,
         shouldShowHintSearchIcon: Boolean,

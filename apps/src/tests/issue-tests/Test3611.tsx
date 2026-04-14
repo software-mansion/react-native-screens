@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, ScrollView, Text, TextInput, View } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 const TEST_CASES = [

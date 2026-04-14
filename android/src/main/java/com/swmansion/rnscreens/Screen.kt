@@ -9,7 +9,6 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -18,12 +17,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
@@ -38,9 +35,7 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
-import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
-import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -57,8 +52,6 @@ class Screen(
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
-
-    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -99,10 +92,6 @@ class Screen(
     var sheetDefaultResizeAnimationEnabled = true
 
     /**
-     * On Paper, when using form sheet presentation we want to delay enter transition in order
-     * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy.
-     *
      * On Fabric, the view layout is completed before window insets are applied.
      * To ensure the BottomSheet correctly respects insets during its enter transition,
      * we delay the transition until both layout and insets have been applied.
@@ -171,18 +160,15 @@ class Screen(
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
             }
-
-            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                // On old architecture we delay enter transition in order to wait for initial frame.
-                shouldTriggerPostponedTransitionAfterLayout = true
-                val parent = parentAsViewGroup()
-                if (parent != null && !parent.isInLayout) {
-                    // There are reported cases (irreproducible) when Screen is not laid out after
-                    // maxHeight is set on behaviour.
-                    parent.requestLayout()
-                }
-            }
         }
+    }
+
+    private fun updateShadowNodeScreenSize(
+        width: Int,
+        height: Int,
+        headerHeight: Int,
+    ) {
+        updateState(width, height, headerHeight)
     }
 
     /**
@@ -300,9 +286,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
-        }
+        updateShadowNodeScreenSize(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -358,20 +342,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
-                val topLevelDecorView =
-                    requireNotNull(
-                        reactContext.currentActivity?.window?.decorView,
-                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
-
-                val topInset = getDecorViewTopInset(topLevelDecorView)
-                val correctedHeight = height - topInset
-                val correctedOffsetY = t + topInset
-
-                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
-            } else {
-                dispatchShadowStateUpdate(width, height, t)
-            }
+            updateShadowNodeScreenSize(width, height, t)
         }
     }
 
@@ -387,24 +358,17 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            dispatchShadowStateUpdate(width, height, top)
+            updateShadowNodeScreenSize(width, height, top)
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
-
-        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // When using form sheet presentation we want to delay enter transition **on Paper** in order
-            // to wait for initial layout from React, otherwise the animator-based animation will look
-            // glitchy. *This seems to not be needed on Fabric*.
-            triggerPostponedEnterTransitionIfNeeded()
-        }
     }
 
     // On Fabric, the view layout is completed before window insets are applied.
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
     internal fun requestTriggeringPostponedEnterTransition() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
+        if (!sheetShouldOverflowTopInset) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }
     }
@@ -414,36 +378,6 @@ class Screen(
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
-        }
-    }
-
-    private fun updateScreenSizePaper(
-        width: Int,
-        height: Int,
-    ) {
-        reactContext.runOnNativeModulesQueueThread(
-            object : GuardedRunnable(reactContext.exceptionHandler) {
-                override fun runGuarded() {
-                    reactContext
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.updateNodeSize(id, width, height)
-                }
-            },
-        )
-    }
-
-    /**
-     * @param offsetY ignored on old architecture
-     */
-    private fun dispatchShadowStateUpdate(
-        width: Int,
-        height: Int,
-        offsetY: Int,
-    ) {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, offsetY)
-        } else {
-            updateScreenSizePaper(width, height)
         }
     }
 
@@ -705,7 +639,7 @@ class Screen(
         dispatchSheetDetentChanged(detentIndex, isStable)
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
+        if (isStable) {
             onSheetYTranslationChanged()
         }
 
@@ -718,16 +652,8 @@ class Screen(
     }
 
     internal fun onSheetYTranslationChanged() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // Translation is relative to the bottom edge, therefore it returns negative values.
-            updateScreenSizeFabric(width, height, top + translationY.toInt())
-        }
-    }
-
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        insetsApplied = true
-
-        return super.onApplyWindowInsets(insets)
+        // Translation is relative to the bottom edge, therefore it returns negative values.
+        updateShadowNodeScreenSize(width, height, top + translationY.toInt())
     }
 
     override fun onAttachedToWindow() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import BottomTabsSAVExample from '../bottom-tabs';
+import TabsSAVExample from '../tabs';
 import StackV4SAVExample from '../stack-v4';
 import RegularView from './RegularView';
 import ScrollViewAutomatic from './ScrollViewAutomatic';
@@ -22,7 +22,7 @@ export function mapContentStringToComponent(content: ContentType) {
     case 'scrollViewAutomatic':
       return <ScrollViewAutomatic />;
     case 'tabs':
-      return <BottomTabsSAVExample />;
+      return <TabsSAVExample />;
     case 'stack':
       return <StackV4SAVExample />;
     default:

@@ -1,22 +1,27 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.view.View
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSTabsHostManagerDelegate
-import com.facebook.react.viewmanagers.RNSTabsHostManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
+import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostNativeFocusChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
     ViewGroupManager<TabsHost>(),
-    RNSTabsHostManagerInterface<TabsHost> {
-    private val delegate: ViewManagerDelegate<TabsHost> = RNSTabsHostManagerDelegate<TabsHost, TabsHostViewManager>(this)
+    RNSTabsHostAndroidManagerInterface<TabsHost> {
+    private val delegate: ViewManagerDelegate<TabsHost> = RNSTabsHostAndroidManagerDelegate<TabsHost, TabsHostViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -54,7 +59,9 @@ class TabsHostViewManager :
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            makeEventRegistrationInfo(TabsHostNativeFocusChangeEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionPreventedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionRejectedEvent),
         )
 
     override fun addEventEmitters(
@@ -65,85 +72,23 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    // These should be ignored or another component, dedicated for Android should be used
-
-    @ReactProp(name = "tabBarBackgroundColor", customType = "Color")
-    override fun setTabBarBackgroundColor(
+    override fun setNavState(
         view: TabsHost,
-        value: Int?,
+        value: ReadableMap?,
     ) {
-        view.tabBarBackgroundColor = value
+        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
+        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
+        val provenance = requireNotNull(navStateMap.getInt("provenance"))
+        view.updateJSNavState(TabsNavState(selectedScreenKey, provenance))
     }
 
-    override fun setTabBarTintColor(
+    override fun setRejectStaleNavStateUpdates(
         view: TabsHost,
-        value: Int?,
-    ) = Unit
-
-    @ReactProp(name = "tabBarItemTitleFontSize")
-    override fun setTabBarItemTitleFontSize(
-        view: TabsHost?,
-        value: Float,
-    ) {
-        view?.tabBarItemTitleFontSize = value
-    }
-
-    override fun setControlNavigationStateInJS(
-        view: TabsHost?,
         value: Boolean,
-    ) = Unit
-
-    @ReactProp(name = "tabBarItemTitleFontFamily")
-    override fun setTabBarItemTitleFontFamily(
-        view: TabsHost,
-        value: String?,
     ) {
-        view.tabBarItemTitleFontFamily = value
+        view.rejectStaleNavStateUpdates = value
     }
 
-    @ReactProp(name = "tabBarItemTitleFontWeight")
-    override fun setTabBarItemTitleFontWeight(
-        view: TabsHost,
-        value: String?,
-    ) {
-        view.tabBarItemTitleFontWeight = value
-    }
-
-    @ReactProp(name = "tabBarItemTitleFontStyle")
-    override fun setTabBarItemTitleFontStyle(
-        view: TabsHost,
-        value: String?,
-    ) {
-        view.tabBarItemTitleFontStyle = value
-    }
-
-    @ReactProp(name = "tabBarItemTitleFontColor", customType = "Color")
-    override fun setTabBarItemTitleFontColor(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemTitleFontColor = value
-    }
-
-    @ReactProp(name = "tabBarItemIconColor", customType = "Color")
-    override fun setTabBarItemIconColor(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemIconColor = value
-    }
-
-    override fun setTabBarMinimizeBehavior(
-        view: TabsHost,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarControllerMode(
-        view: TabsHost,
-        value: String?,
-    ) = Unit
-
-    @ReactProp(name = "tabBarHidden")
     override fun setTabBarHidden(
         view: TabsHost,
         value: Boolean,
@@ -151,7 +96,6 @@ class TabsHostViewManager :
         view.tabBarHidden = value
     }
 
-    @ReactProp(name = "nativeContainerBackgroundColor", customType = "Color")
     override fun setNativeContainerBackgroundColor(
         view: TabsHost,
         value: Int?,
@@ -159,65 +103,26 @@ class TabsHostViewManager :
         view.nativeContainerBackgroundColor = value
     }
 
-    // Android additional
-
-    @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")
-    override fun setTabBarItemTitleFontColorActive(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemTitleFontColorActive = value
-    }
-
-    @ReactProp(name = "tabBarItemActiveIndicatorColor", customType = "Color")
-    override fun setTabBarItemActiveIndicatorColor(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemActiveIndicatorColor = value
-    }
-
-    @ReactProp(name = "tabBarItemActiveIndicatorEnabled")
-    override fun setTabBarItemActiveIndicatorEnabled(
+    override fun setTabBarRespectsIMEInsets(
         view: TabsHost,
         value: Boolean,
     ) {
-        view.isTabBarItemActiveIndicatorEnabled = value
+        view.tabBarRespectsIMEInsets = value
     }
 
-    @ReactProp(name = "tabBarItemIconColorActive", customType = "Color")
-    override fun setTabBarItemIconColorActive(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemIconColorActive = value
-    }
-
-    @ReactProp(name = "tabBarItemTitleFontSizeActive")
-    override fun setTabBarItemTitleFontSizeActive(
-        view: TabsHost?,
-        value: Float,
-    ) {
-        view?.tabBarItemTitleFontSizeActive = value
-    }
-
-    @ReactProp(name = "tabBarItemRippleColor", customType = "Color")
-    override fun setTabBarItemRippleColor(
-        view: TabsHost,
-        value: Int?,
-    ) {
-        view.tabBarItemRippleColor = value
-    }
-
-    @ReactProp(name = "tabBarItemLabelVisibilityMode")
-    override fun setTabBarItemLabelVisibilityMode(
+    override fun setColorScheme(
         view: TabsHost,
         value: String?,
     ) {
-        view.tabBarItemLabelVisibilityMode = value
+        when (value) {
+            "inherit" -> view.colorScheme = ColorScheme.INHERIT
+            "light" -> view.colorScheme = ColorScheme.LIGHT
+            "dark" -> view.colorScheme = ColorScheme.DARK
+            else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid color scheme: $value.")
+        }
     }
 
     companion object {
-        const val REACT_CLASS = "RNSTabsHost"
+        const val REACT_CLASS = "RNSTabsHostAndroid"
     }
 }

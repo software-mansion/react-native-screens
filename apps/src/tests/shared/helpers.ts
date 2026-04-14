@@ -10,6 +10,7 @@ export interface Scenario {
    * Globally unique key identifying this scenario.
    * Must be in kebab-case.
    * Should match the filename of the scenario file.
+   * This is also used as the testID for the scenario.
    */
   key: string;
   /**
@@ -28,7 +29,7 @@ export interface Scenario {
   AppComponent: React.ComponentType;
 }
 
-export interface ScenarioGroup {
+export interface ScenarioGroup<K extends string> {
   /**
    * Name of this scenario group
    */
@@ -37,7 +38,7 @@ export interface ScenarioGroup {
    * Additional description of what this group of scenarios is related to.
    */
   details?: string;
-  scenarios: Scenario[];
+  scenarios: Record<K, Scenario>;
 }
 
 export type KeyList = Record<keyof any, undefined>;

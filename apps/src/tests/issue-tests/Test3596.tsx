@@ -4,63 +4,77 @@ import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 enableFreeze(true);
 
-const ICON = require('../../../assets/variableIcons/globe_oversized.png');
+const ICON = require('@assets/variableIcons/globe_oversized.png');
 
 function makeTab(title: string) {
   return function Tab() {
     return (
-      <CenteredLayoutView style={{backgroundColor: Colors.PurpleLight60}}>
+      <CenteredLayoutView style={{ backgroundColor: Colors.PurpleLight60 }}>
         <Text>{title}</Text>
       </CenteredLayoutView>
     );
   };
 }
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
-    tabScreenProps: {
-      tabKey: 'Tab1',
+    name: 'Tab1',
+    Component: makeTab('Tab 1'),
+    options: {
       title: 'Tab 1',
-      icon: {
-        shared: {
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
           type: 'imageSource',
           imageSource: ICON,
         },
       },
     },
-    component: makeTab('Tab 1'),
   },
   {
-    tabScreenProps: {
-      tabKey: 'Tab2',
+    name: 'Tab2',
+    Component: makeTab('Tab 2'),
+    options: {
       title: 'Tab 2',
-      icon: {
-        shared: {
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
           type: 'imageSource',
           imageSource: ICON,
         },
       },
     },
-    component: makeTab('Tab 2'),
   },
   {
-    tabScreenProps: {
-      tabKey: 'Tab3',
+    name: 'Tab3',
+    Component: makeTab('Tab 3'),
+    options: {
       title: 'Tab 3',
-      systemItem: 'search',
+      ios: {
+        systemItem: 'search',
+      },
     },
-    component: makeTab('Tab 3'),
   },
 ];
 
@@ -75,7 +89,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

@@ -1,0 +1,53 @@
+import React from 'react';
+import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
+import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
+import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
+import featureFlags from '../../../flags';
+import { RNSLog } from '../../../private';
+import type { TabSelectedEvent } from './TabsHost.types';
+
+type TabsHostPlatformNativeComponentProps =
+  | TabsHostAndroidNativeComponentProps
+  | TabsHostIOSNativeComponentProps;
+
+interface TabsHostConfig<T> {
+  componentNodeRef: React.RefObject<React.Component<T> | null>;
+  controlNavigationStateInJS?: boolean;
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+}
+
+export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
+  componentNodeRef,
+  controlNavigationStateInJS,
+  onTabSelected,
+}: TabsHostConfig<T>) {
+  const componentNodeHandle = React.useRef<number>(-1);
+
+  React.useEffect(() => {
+    if (componentNodeRef.current != null) {
+      componentNodeHandle.current =
+        findNodeHandle(componentNodeRef.current) ?? -1;
+    } else {
+      componentNodeHandle.current = -1;
+    }
+  }, []);
+
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
+      RNSLog.log(
+        `TabsHost [${
+          componentNodeHandle.current ?? -1
+        }] onTabSelected: ${JSON.stringify(event.nativeEvent)}`,
+      );
+      onTabSelected?.(event);
+    },
+    [onTabSelected],
+  );
+
+  return {
+    controlNavigationStateInJS:
+      controlNavigationStateInJS ??
+      featureFlags.experiment.controlledBottomTabs,
+    onTabSelected: onTabSelectedCallback,
+  };
+}
