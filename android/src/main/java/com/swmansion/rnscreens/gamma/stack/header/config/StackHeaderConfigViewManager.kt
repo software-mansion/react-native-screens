@@ -85,7 +85,7 @@ open class StackHeaderConfigViewManager :
 
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
-        view.resolveBackButtonIcon()
+        view.resolveBackButtonIconIfNeeded()
         view.notifyConfigChanged()
     }
 
