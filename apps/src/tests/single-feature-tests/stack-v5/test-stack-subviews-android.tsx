@@ -1,14 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { I18nManager, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  I18nManager,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Scenario } from '../../shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
 } from '../../../shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '../../../shared';
-import PressableWithFeedback from '../../../../src/shared/PressableWithFeedback';
-import Colors from '../../../../src/shared/styling/Colors';
-import LongText from '../../../../src/shared/LongText';
+import PressableWithFeedback from '../../../shared/PressableWithFeedback';
+import Colors from '../../../shared/styling/Colors';
+import LongText from '../../../shared/LongText';
 import type {
   StackHeaderConfigProps,
   StackHeaderTypeAndroid,
@@ -17,7 +24,7 @@ import type {
 
 const SCENARIO: Scenario = {
   name: 'Stack Subviews',
-  key: 'test-stack-subviews',
+  key: 'test-stack-subviews-android',
   details: 'Tests header config and subview customization.',
   platforms: ['android'],
   AppComponent: App,
