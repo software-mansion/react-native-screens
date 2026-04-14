@@ -1,9 +1,11 @@
 #import "RNSStackOperation.h"
+#import <React/RCTAssert.h>
 
-@implementation RNSPushOperation
+@implementation RNSStackOperation
 
 - (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen
 {
+  RCTAssert(stackScreen != nil, @"[RNScreens] Expected nonnull stackScreen!");
   if (self = [super init]) {
     _stackScreen = stackScreen;
   }
@@ -12,14 +14,8 @@
 
 @end
 
+@implementation RNSPushOperation
+@end
+
 @implementation RNSPopOperation
-
-- (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  if (self = [super init]) {
-    _stackScreen = stackScreen;
-  }
-  return self;
-}
-
 @end

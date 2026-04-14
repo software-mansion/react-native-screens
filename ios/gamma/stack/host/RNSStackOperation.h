@@ -4,13 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol RNSStackOperation
-
-@property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
-
-@end
-
-@interface RNSPushOperation : NSObject <RNSStackOperation>
+@interface RNSStackOperation : NSObject
 
 @property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
 
@@ -18,11 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSPopOperation : NSObject <RNSStackOperation>
+@interface RNSPushOperation : RNSStackOperation
+
+@end
+
+@interface RNSPopOperation : RNSStackOperation
 
 @property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
-
-- (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen;
 
 @end
 

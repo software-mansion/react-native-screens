@@ -46,15 +46,17 @@
     return;
   }
 
-  auto popOperations = [[[self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPopOperations
+  auto popOperations = [[[self orderedOperations:(NSMutableArray<RNSStackOperation *> *)_pendingPopOperations
                                  withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects];
-  for (id<RNSStackOperation> operation in popOperations) {
+
+  for (RNSStackOperation *operation in popOperations) {
     [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).stackScreen];
   }
 
-  auto pushOperations = [self orderedOperations:(NSMutableArray<id<RNSStackOperation>> *)_pendingPushOperations
+  auto pushOperations = [self orderedOperations:(NSMutableArray<RNSStackOperation *> *)_pendingPushOperations
                                 withIndicesFrom:renderedScreens];
-  for (id<RNSStackOperation> operation in pushOperations) {
+
+  for (RNSStackOperation *operation in pushOperations) {
     [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
   }
 
@@ -64,12 +66,11 @@
   [_pendingPushOperations removeAllObjects];
 }
 
-- (NSArray<id<RNSStackOperation>> *)orderedOperations:(nonnull NSMutableArray<id<RNSStackOperation>> *)operations
-                                      withIndicesFrom:
-                                          (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
+- (NSArray<RNSStackOperation *> *)orderedOperations:(nonnull NSMutableArray<RNSStackOperation *> *)operations
+                                    withIndicesFrom:
+                                        (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
 {
-  return [operations sortedArrayUsingComparator:^NSComparisonResult(
-                         id<RNSStackOperation> obj1, id<RNSStackOperation> obj2) {
+  return [operations sortedArrayUsingComparator:^NSComparisonResult(RNSStackOperation *obj1, RNSStackOperation *obj2) {
     return [@([stackScreens indexOfObject:obj1.stackScreen]) compare:@([stackScreens indexOfObject:obj2.stackScreen])];
   }];
 }

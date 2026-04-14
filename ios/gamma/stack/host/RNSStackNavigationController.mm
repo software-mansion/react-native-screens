@@ -47,26 +47,28 @@
   //
   // The assertions below work under this assumption
 
-  if ([self hasPendingOperations]) {
-    for (RNSPopOperation *op in _pendingPopOperations) {
-      UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
-      RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-      RCTAssert(self.topViewController == controller, @"[RNScreens] Attempt to pop non-top screen");
-      [self popViewControllerAnimated:true];
-    }
-
-    for (RNSPushOperation *op in _pendingPushOperations) {
-      UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
-      [self pushViewController:controller animated:true];
-    }
-
-    RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
-
-    [self dumpStackModel];
-
-    [_pendingPopOperations removeAllObjects];
-    [_pendingPushOperations removeAllObjects];
+  if (![self hasPendingOperations]) {
+    return;
   }
+
+  for (RNSPopOperation *op in _pendingPopOperations) {
+    UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
+    RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
+    RCTAssert(self.topViewController == controller, @"[RNScreens] Attempt to pop non-top screen");
+    [self popViewControllerAnimated:YES];
+  }
+
+  for (RNSPushOperation *op in _pendingPushOperations) {
+    UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
+    [self pushViewController:controller animated:YES];
+  }
+
+  RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
+
+  [self dumpStackModel];
+
+  [_pendingPopOperations removeAllObjects];
+  [_pendingPushOperations removeAllObjects];
 }
 
 - (void)dumpStackModel
