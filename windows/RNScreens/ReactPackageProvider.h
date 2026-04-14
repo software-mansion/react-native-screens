@@ -2,13 +2,13 @@
 
 #include "ReactPackageProvider.g.h"
 
-using namespace winrt::Microsoft::ReactNative;
-
 namespace winrt::ReactNativeScreens::implementation {
 struct ReactPackageProvider : ReactPackageProviderT<ReactPackageProvider> {
   ReactPackageProvider() = default;
 
-  void CreatePackage(const IReactPackageBuilder &packageBuilder) noexcept;
+  void CreatePackage(
+      const Microsoft::ReactNative::IReactPackageBuilder &packageBuilder)
+      noexcept;
 };
 } // namespace winrt::ReactNativeScreens::implementation
 

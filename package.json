@@ -115,7 +115,7 @@
     "react-native-gesture-handler": "^2.28.0",
     "react-native-reanimated": "^3.19.0",
     "react-native-safe-area-context": "5.6.0",
-    "react-native-windows": "^0.81.4",
+    "react-native-windows": "^0.82.3",
     "react-test-renderer": "19.2.3",
     "release-it": "^15.6.0",
     "shelljs": "^0.9.2",
