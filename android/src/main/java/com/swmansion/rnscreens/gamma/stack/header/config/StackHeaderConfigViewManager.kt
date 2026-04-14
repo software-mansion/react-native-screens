@@ -121,6 +121,13 @@ open class StackHeaderConfigViewManager :
         view.transparent = value
     }
 
+    override fun setBackButtonHidden(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.backButtonHidden = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }

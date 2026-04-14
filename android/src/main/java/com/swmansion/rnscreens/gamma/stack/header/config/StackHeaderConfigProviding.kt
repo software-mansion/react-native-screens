@@ -8,6 +8,7 @@ interface StackHeaderConfigProviding {
     val title: String
     val hidden: Boolean
     val transparent: Boolean
+    val backButtonHidden: Boolean
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
