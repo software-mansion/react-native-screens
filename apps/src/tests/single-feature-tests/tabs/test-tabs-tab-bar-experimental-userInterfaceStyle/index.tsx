@@ -39,8 +39,6 @@ function LightRootScreenContent() {
     return <LightRootScreen onPush={() => navigation.push('lightPushed')} />;
 }
 
-// ─── Route config ────────────────────────────────────────────────────────────
-
 const ROUTE_CONFIGS: StackRouteConfig[] = [
     { name: 'home', Component: HomeScreen, options: {} },
     { name: 'darkRoot', Component: DarkRootScreenContent, options: {} },
@@ -48,8 +46,6 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
     { name: 'lightRoot', Component: LightRootScreenContent, options: {} },
     { name: 'lightPushed', Component: LightInterfaceStyleScreen, options: {} },
 ];
-
-// ─── App ─────────────────────────────────────────────────────────────────────
 
 export function App() {
     return (
