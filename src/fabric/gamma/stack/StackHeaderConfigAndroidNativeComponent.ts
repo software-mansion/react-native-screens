@@ -9,6 +9,7 @@ export interface NativeProps extends ViewProps {
   title?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
+  backButtonHidden?: CT.WithDefault<boolean, false>;
 
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;

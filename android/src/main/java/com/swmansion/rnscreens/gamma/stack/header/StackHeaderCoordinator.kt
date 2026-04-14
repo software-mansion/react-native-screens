@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -16,16 +17,20 @@ import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderCoordinator(
     context: Context,
+    private val canNavigateBack: Boolean,
     private val onHeaderHeightChanged: (headerHeight: Int) -> Unit,
+    private val onNavigationIconClick: () -> Unit,
 ) {
     private val wrappedContext =
         ContextThemeWrapper(
@@ -46,6 +51,12 @@ internal class StackHeaderCoordinator(
     private var attachedTrailingSubview: StackHeaderSubviewProviding? = null
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
+
+    private val defaultNavigationIcon: Drawable? by lazy {
+        resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
+    }
+
+    private var lastNavIconVisible: Boolean? = null
 
     // For small header, we need to use custom title view in order to
     // render a subview to the leading side of the title.
@@ -142,6 +153,7 @@ internal class StackHeaderCoordinator(
         }
         appBarLayout = null
         managedTitleView = null
+        lastNavIconVisible = null
         clearCachedRebuildTriggers()
     }
 
@@ -310,6 +322,8 @@ internal class StackHeaderCoordinator(
                 applyBackgroundCollapseMode(config)
             }
         }
+
+        applyNavigationIcon(appBar.toolbar, config)
     }
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
@@ -319,6 +333,27 @@ internal class StackHeaderCoordinator(
         val desired = backgroundSubview.collapseMode.toNativeCollapseMode()
         if (params.collapseMode != desired) {
             params.collapseMode = desired
+        }
+    }
+
+    // endregion
+
+    // region Navigation icon
+
+    private fun applyNavigationIcon(
+        toolbar: MaterialToolbar,
+        config: StackHeaderConfigProviding,
+    ) {
+        val visible = canNavigateBack && !config.backButtonHidden
+        if (visible == lastNavIconVisible) return
+        lastNavIconVisible = visible
+
+        if (visible) {
+            toolbar.navigationIcon = defaultNavigationIcon
+            toolbar.setNavigationOnClickListener { onNavigationIconClick() }
+        } else {
+            toolbar.navigationIcon = null
+            toolbar.setNavigationOnClickListener(null)
         }
     }
 

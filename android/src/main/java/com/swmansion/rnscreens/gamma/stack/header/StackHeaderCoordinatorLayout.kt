@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
@@ -15,11 +17,21 @@ import java.lang.ref.WeakReference
 internal class StackHeaderCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
+    canNavigateBack: Boolean,
 ) : CoordinatorLayout(context) {
     private val headerCoordinator =
-        StackHeaderCoordinator(context) { headerHeight ->
-            stackScreen.updateStateIfNeeded(y = headerHeight)
-        }
+        StackHeaderCoordinator(
+            context = context,
+            canNavigateBack = canNavigateBack,
+            onHeaderHeightChanged = { headerHeight ->
+                stackScreen.updateStateIfNeeded(y = headerHeight)
+            },
+            onNavigationIconClick = {
+                val activity = (stackScreen.context as? ReactContext)?.currentActivity
+                    as? OnBackPressedDispatcherOwner
+                activity?.onBackPressedDispatcher?.onBackPressed()
+            },
+        )
 
     /**
      * This callback is used to detect when header config is attached.

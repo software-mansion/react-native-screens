@@ -24,6 +24,8 @@ class StackHeaderConfig(
         internal set
     override var transparent: Boolean = false
         internal set
+    override var backButtonHidden: Boolean = false
+        internal set
 
     override var backgroundSubview: StackHeaderSubview? = null
         private set
