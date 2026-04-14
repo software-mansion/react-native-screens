@@ -41,28 +41,12 @@ namespace react = facebook::react;
   _renderedScreens = [NSMutableArray new];
 }
 
+#pragma mark - UIKit Callbacks
+
 - (void)didMoveToWindow
 {
   RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
   [self reactAddControllerToClosestParent:_stackNavigationController];
-}
-
-- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
-{
-  RCTAssert(controller != nil, @"[RNScreens] Attempt to move to a nullish controller");
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
-    }
-    return;
-  }
 }
 
 #pragma mark - Communication with StackScreen
@@ -97,13 +81,6 @@ namespace react = facebook::react;
   childScreen.stackHost = self;
   [_renderedScreens insertObject:childScreen atIndex:index];
   [self addPushOperationIfNeeded:childScreen];
-}
-
-- (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
-    [_stackOperationCoordinator addPushOperation:stackScreen];
-  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -141,6 +118,33 @@ namespace react = facebook::react;
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+#pragma mark - Utils
+
+- (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
+{
+  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
+    [_stackOperationCoordinator addPushOperation:stackScreen];
+  }
+}
+
+- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
+{
+  RCTAssert(controller != nil, @"[RNScreens] Attempt to move to a nullish controller");
+  if (!controller.parentViewController) {
+    UIView *parentView = (UIView *)self.reactSuperview;
+    while (parentView) {
+      if (parentView.reactViewController) {
+        [parentView.reactViewController addChildViewController:controller];
+        [self addSubview:controller.view];
+        [controller didMoveToParentViewController:parentView.reactViewController];
+        break;
+      }
+      parentView = (UIView *)parentView.reactSuperview;
+    }
+    return;
+  }
 }
 
 #pragma mark - RCTMountingTransactionObserving
