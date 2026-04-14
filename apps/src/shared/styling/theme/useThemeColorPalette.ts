@@ -8,7 +8,7 @@ import { DarkTheme, LightTheme } from './themes';
 
 /**
  * Get the current theme from the context. If there is no theme provided, get it from React Navigation theme.
- * If there is no theme provided by React Navigation, return the light theme as default.
+ * If there is no theme provided by React Navigation, return theme based on color scheme.
  * Use this to get whole color palette current theme is based on.
  */
 export function useThemeColorPalette(): {
