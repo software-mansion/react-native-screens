@@ -6,7 +6,7 @@ import android.util.Log
 import android.util.TypedValue
 import androidx.appcompat.content.res.AppCompatResources
 
-private const val TAG = "RNScreensDrawableUtils"
+private const val TAG = "DrawableUtils"
 
 internal fun resolveDrawableAttr(
     context: Context,

@@ -19,7 +19,6 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     leadingSubview,
     centerSubview,
     trailingSubview,
-    backButtonTintColor,
     backButtonIcon,
     ...filteredAndroidProps
   } = android ?? {};
@@ -32,7 +31,6 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       style={StyleSheet.absoluteFill}
       {...baseProps}
       {...filteredAndroidProps}
-      backButtonTintColor={backButtonTintColor}
       {...backButtonIconProps}>
       {/*
         Please note that the order of the subviews MUST match

@@ -6,7 +6,7 @@ import {
   useStackNavigationContext,
 } from '../../../shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '../../../shared';
-import Colors from '../../../../src/shared/styling/Colors';
+import Colors from '../../../shared/styling/Colors';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigPropsAndroid,

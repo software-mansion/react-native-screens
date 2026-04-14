@@ -6,7 +6,7 @@ import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 
-private const val TAG = "RNScreensColorUtils"
+private const val TAG = "ColorUtils"
 
 internal fun resolveColorAttr(
     context: Context,
