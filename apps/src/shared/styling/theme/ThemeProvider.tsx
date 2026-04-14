@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { ThemeContext } from './ThemeContext';
-import { LightTheme, DarkTheme } from '../Colors';
-import type { ThemeType } from '../Colors';
+import { LightTheme, DarkTheme } from './themes';
+import type { ThemeType } from './themes';
 
 type Props = {
   theme: ThemeType;

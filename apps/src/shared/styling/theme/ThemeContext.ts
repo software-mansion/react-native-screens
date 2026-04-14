@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Theme } from '../Colors';
+import { Theme } from './themes';
 
 export const ThemeContext = React.createContext<Theme | undefined>(undefined);
 
