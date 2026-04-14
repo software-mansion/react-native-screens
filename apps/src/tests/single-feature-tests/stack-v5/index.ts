@@ -3,12 +3,14 @@ import PreventNativeDismissSingleStack from './prevent-native-dismiss-single-sta
 import PreventNativeDismissNestedStack from './prevent-native-dismiss-nested-stack';
 import AnimationAndroid from './test-animation-android';
 import TestStackHeaderModes from './test-stack-header-modes';
+import TestStackSimpleNav from './test-stack-simple-nav';
 
 const scenarios = {
   PreventNativeDismissSingleStack,
   PreventNativeDismissNestedStack,
   AnimationAndroid,
   TestStackHeaderModes,
+  TestStackSimpleNav,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
