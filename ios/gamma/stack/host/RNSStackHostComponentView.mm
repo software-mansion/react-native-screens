@@ -77,6 +77,9 @@ namespace react = facebook::react;
     case RNSStackScreenActivityModeDetached:
       [_stackOperationCoordinator addPopOperation:stackScreen];
       break;
+    default:
+      RCTAssert(NO, @"[RNScreens] Unexpected value of activityMode: %d", stackScreen.activityMode);
+      return;
   }
 }
 
