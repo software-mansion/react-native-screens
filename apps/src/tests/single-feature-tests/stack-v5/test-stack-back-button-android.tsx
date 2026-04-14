@@ -115,20 +115,6 @@ export function App() {
 
   return (
     <ConfigContext.Provider value={{ config, updateConfig }}>
-      <StackSetup config={config} updateConfig={updateConfig} />
-    </ConfigContext.Provider>
-  );
-}
-
-function StackSetup({
-  config,
-  updateConfig,
-}: {
-  config: Config;
-  updateConfig: <K extends keyof Config>(key: K, value: Config[K]) => void;
-}) {
-  return (
-    <ConfigContext.Provider value={{ config, updateConfig }}>
       <StackContainer
         routeConfigs={[
           {
