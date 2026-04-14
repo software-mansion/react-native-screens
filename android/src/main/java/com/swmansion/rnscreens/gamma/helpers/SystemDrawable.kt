@@ -4,7 +4,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen.Companion.TAG
+
+private const val TAG = "SystemDrawable"
 
 internal fun getSystemDrawableResource(
     context: Context,
