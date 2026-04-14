@@ -1,4 +1,5 @@
 #import "RNSScreenStack.h"
+#import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -214,6 +215,7 @@ namespace react = facebook::react;
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+  _nativeContainerBackgroundColor = nil;
   _iosPreventReattachmentOfDismissedScreens = YES;
   _iosPreventReattachmentOfDismissedModals = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -1313,6 +1315,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (newScreenProps.iosPreventReattachmentOfDismissedModals !=
       oldScreenProps.iosPreventReattachmentOfDismissedModals) {
     [self setIosPreventReattachmentOfDismissedModals:newScreenProps.iosPreventReattachmentOfDismissedModals];
+  }
+
+  if (newScreenProps.nativeContainerBackgroundColor != oldScreenProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.nativeContainerBackgroundColor);
+    _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
   [super updateProps:props oldProps:oldProps];
