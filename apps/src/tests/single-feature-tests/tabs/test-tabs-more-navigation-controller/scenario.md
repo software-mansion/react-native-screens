@@ -14,15 +14,16 @@
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone and iPad
+- iOS device or simulator: iPhone and iPad (iOS18.6 and iOS26.2)
 
 ## Note
 
-- On iPad: to display **More** tab - app window size has to correspond to iPhone view.
+- On iPad: to display **More** tab - app window size has to correspond to iPhone view. To resize app on iOS18 and lower split view with other app has to be trigger.
+- New toast should appear only after steps where expected section mention this.
 
-## Steps
+## Steps - iPhone
 
-### iPhone baseline
+### Baseline
 
 1. Launch the app and navigate to the **More navigation controller** scenario.
 
@@ -34,7 +35,7 @@
 
 2. Tap the **More** tab in the tab bar.
 
-- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs.
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. On the bottom green toast appear with `onMoreTabSelected` message.
 
 3. Tap **Fifth** in the More screen list.
 
@@ -50,7 +51,7 @@
 
 6. Tap the **More** tab again.
 
-- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs.
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. New green toast appear with `onMoreTabSelected` message.
 
 7. Tap **Sixth** in the More screen list.
 
@@ -76,26 +77,92 @@
 
 ### Round-trip navigation
 
-1.  Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
+11.  Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. Tabs behind More (Fifth, Sixth, More) show the More tab as selected. No visual glitches or stale route key labels.
 
 ---
 
-### iPad without More tab displayed - quick check
+## Steps - iPad
 
-14. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
+### Baseline - without More navigation controler displayed
+
+1. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
 
 - [ ] Expected: Tab bar shows all six tabs. The **First** tab is selected. The content area displays `First` as the route key.
 
-15. Navigate between tabs using tab items from tab bar.
+2. Navigate between tabs using tab items from tab bar.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
 
-16.  Navigate between tabs using buttons from screen.
+3.  Navigate between tabs using buttons from screen. 
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
 
-17. Tap **"Select MoreTab"**.
+---
 
-- [ ] Expected: Nothing change, previously selected tab is still selected in tab bar and content area displays it's name as the route key.
+### More tab — tap interaction
+
+4. Select `First` tab and resize app to iPhone size view.
+
+- [ ] Expected: Tab bar shows **First**, **Second**, **Third**, **Fourth**, and **More**. The **First** tab is selected. The content area displays `First` as the route key.
+
+5. Tap the **More** tab in the tab bar.
+
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. On the bottom green toast appear with `onMoreTabSelected` message.
+
+6. Tap **Fifth** in the More screen list.
+
+- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. The More tab remains selected in the tab bar.
+
+7. Tap **Third** tab in the tab bar.
+
+- [ ] Expected: **Third** tab becomes active. Tab bar selection updates. Route key label reads `Third`.
+
+8. Tap the **More** tab in the tab bar.
+
+- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. Tab bar selection updates - More tab is selected.
+
+9. Tap the **More** tab again.
+
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. New green toast appear with `onMoreTabSelected` message.
+
+10. Tap **Sixth** in the More screen list.
+
+- [ ] Expected: The **Sixth** tab content is shown. The route key label reads `Sixth`.
+
+---
+
+### Navigation with app resizing 
+
+11. Tap **Second** tab in the tab bar.
+
+- [ ] Expected: **Second** tab becomes active. Tab bar selection updates. Route key label reads `Second`.
+
+12. Tap **"More"** tab bar item and select **"Sixth"** from the More list.
+
+- [ ] Expected: **Sixth** tab content is shown. Route key label reads `Sixth`. The More tab is selected in the tab bar. No crash or blank screen.
+
+13. Tap the **More** tab again.
+
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. New green toast appear with `onMoreTabSelected` message.
+
+14. Resize app to full size.
+
+- [ ] Expected: More tab disappear, tab bar shows all six tabs on top of the screen. **Second** tab becomes active. Route key label reads `Second`.
+
+15. Select **Third** tab and switch to **Fifth**
+
+- [ ] Expected: **Fifth** tab is selected. Route key label reads `Fifth`.
+
+16. Resize app to iPhone size view.
+
+- [ ] Expected: **More** tab appears and becomes active. Route key label reads `Fifth`.
+
+17. Tap the **More** tab again.
+
+- [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. New green toast appear with `onMoreTabSelected` message.
+
+18. Resize app to full size.
+
+- [ ] Expected: More tab disappear, tab bar shows all six tabs on top of the screen. **Second** tab becomes active. Route key label reads `Second`.
