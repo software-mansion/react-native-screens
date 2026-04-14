@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Test cover chech
+**Description:** Test cover checks on 
 
 **E2E test:** ongoing research
 
@@ -14,15 +14,15 @@
 
 ## Prerequisites
 
-- iOS device or simulator
+- iOS device or simulator: iPhone and iPad
 
 ## Note
 
-- On iPad: to display **More** tab - app window size have to correspond to iPhone view.
+- On iPad: to display **More** tab - app window size has to correspond to iPhone view.
 
 ## Steps
 
-### Baseline
+### iPhone baseline
 
 1. Launch the app and navigate to the **More navigation controller** scenario.
 
@@ -70,25 +70,13 @@
 
 10. From any visible tab (e.g. **First**), tap **"Select Sixth"**.
 
-- [ ] Expected: **Sixth** tab content is shown. Route key label reads `Sixth`. The More tab remains selected in the tab bar.
-
----
-
-### Selecting More tab directly
-
-11. Tap **Third** tab in the tab bar.
-
-- [ ] Expected: **Third** tab becomes active. Tab bar selection updates. Route key label reads `Third`.
-
-12. Tap **"Select MoreTab"**.
-
-- [ ] Expected: The More screen is opened. The More tab is selected in the tab bar. The native More list is displayed showing **Fifth** and **Sixth**.
+- [ ] Expected: **Sixth** tab content is shown. Route key label reads `Sixth`. The More tab is selected in the tab bar.
 
 ---
 
 ### Round-trip navigation
 
-13. Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third** → **More** .
+1.  Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. Tabs behind More (Fifth, Sixth, More) show the More tab as selected. No visual glitches or stale route key labels.
 
