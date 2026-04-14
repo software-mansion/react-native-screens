@@ -3,7 +3,8 @@ import { ThemeContext } from './ThemeContext';
 import { ColorPalette } from '../palette';
 import type { ThemeType } from './themes';
 import { useReactNavigationTheme } from '../adapter/react-navigation';
-import { LightTheme } from './themes';
+import { useColorScheme } from 'react-native';
+import { DarkTheme, LightTheme } from './themes';
 
 /**
  * Get the current theme from the context. If there is no theme provided, get it from React Navigation theme.
@@ -16,6 +17,7 @@ export function useThemeColorPalette(): {
 } {
   const providedTheme = React.useContext(ThemeContext);
   const navigationTheme = useReactNavigationTheme();
+  const colorScheme = useColorScheme();
 
   if (providedTheme !== undefined) {
     return providedTheme;
@@ -23,5 +25,5 @@ export function useThemeColorPalette(): {
   if (navigationTheme !== undefined) {
     return navigationTheme;
   }
-  return LightTheme;
+  return colorScheme === 'dark' ? DarkTheme : LightTheme;
 }
