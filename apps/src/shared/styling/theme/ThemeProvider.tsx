@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import { ThemeContext } from './ThemeContext';
 import { LightTheme, DarkTheme } from '../Colors';
-import type { ThemeName } from '../Colors';
+import type { ThemeType } from '../Colors';
 
 type Props = {
-  theme: ThemeName;
+  theme: ThemeType;
   children: React.ReactNode;
 };
 

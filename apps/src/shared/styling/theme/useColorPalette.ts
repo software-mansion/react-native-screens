@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeContext } from './ThemeContext';
-import { ColorPalette, LightTheme, ThemeName } from '../Colors';
+import { ColorPalette, LightTheme, ThemeType } from '../Colors';
 import { useReactNavigationTheme } from '../adapter/react-navigation';
 
 /**
@@ -9,7 +9,7 @@ import { useReactNavigationTheme } from '../adapter/react-navigation';
  * Use this to get whole color palette current theme is based on.
  */
 export default function useThemeColorPalette(): {
-  theme: ThemeName;
+  theme: ThemeType;
   colors: ColorPalette;
 } {
   const providedTheme = React.useContext(ThemeContext);

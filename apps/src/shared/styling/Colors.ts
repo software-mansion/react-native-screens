@@ -127,10 +127,10 @@ export const DarkColors: ColorPalette = {
   cardBorder: Palette.NavyDark60,
 };
 
-export type ThemeName = 'light' | 'dark';
+export type ThemeType = 'light' | 'dark';
 
 export type Theme = {
-  theme: ThemeName;
+  theme: ThemeType;
   colors: ColorPalette;
 };
 
