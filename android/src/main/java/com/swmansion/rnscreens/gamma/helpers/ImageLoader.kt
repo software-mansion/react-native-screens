@@ -18,7 +18,7 @@ import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import java.util.Locale
 
-private const val TAG = "RNSImageLoader"
+private const val TAG = "ImageLoader"
 
 internal fun loadImage(
     context: Context,
