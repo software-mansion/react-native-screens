@@ -12,7 +12,6 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewCh
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import java.lang.ref.WeakReference
-import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor")
 class StackHeaderConfig(
@@ -37,13 +36,23 @@ class StackHeaderConfig(
 
     // Staging fields for back button icon resolution.
     // Both props may arrive in any order within a single update batch.
-    // Resolution happens in resolveBackButtonIcon(), called from onAfterUpdateTransaction.
+    // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
 
-    internal fun resolveBackButtonIcon() {
+    private var lastResolvedDrawableIconResourceName: String? = null
+    private var lastResolvedImageIconUri: String? = null
+
+    internal fun resolveBackButtonIconIfNeeded() {
         val name = backButtonDrawableIconResourceName
         val uri = backButtonImageIconUri
+
+        if (name == lastResolvedDrawableIconResourceName && uri == lastResolvedImageIconUri) {
+            return
+        }
+
+        lastResolvedDrawableIconResourceName = name
+        lastResolvedImageIconUri = uri
 
         if (name != null) {
             backButtonIcon = getSystemDrawableResource(context, name)
