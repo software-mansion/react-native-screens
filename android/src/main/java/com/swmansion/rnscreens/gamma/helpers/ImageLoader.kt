@@ -25,6 +25,9 @@ internal fun loadImage(
     uri: String,
     onLoaded: (Drawable) -> Unit,
 ) {
+    // Since image loading might happen on a background thread
+    // ref. https://frescolib.org/docs/intro-image-pipeline.html
+    // We should schedule rendering the result on the UI thread
     val resolvedUri = ImageSource(context, uri).getUri(context) ?: return
     loadImageInternal(context, resolvedUri) { drawable ->
         Handler(Looper.getMainLooper()).post {
