@@ -32,13 +32,13 @@
  
 4. Tap **"Push screen with style: dark"** and observe tab bar.
 
-- [ ] Expected: `DarkScreen` is pushed. The tab bar reflects a **dark** style and appears without flash, flicker, or reversion to light style.
+- [ ] Expected: The dark-styled tab screen is pushed, showing **Tab1** and **Tab2**. The tab bar reflects a **dark** style and appears without flash, flicker, or reversion to light style.
 
 5. Switch between **Tab1** and **Tab2** on the pushed screen.
 
 - [ ] Expected: Both tabs maintain the dark interface style. No flash, flicker, or reversion to light style on tab switch.
 
-6. Pop back to `Screen1` and then to `Home` screen.
+1. Pop back to previous `Dark` screen and then pop back to the `Home` screen.
 
 - [ ] Expected: `Home` screen is shown with two buttons `Dark` and `Light`.
 
@@ -54,4 +54,4 @@
 
 9. Switch between **Tab1** and **Tab2** on the pushed screen.
 
-- [ ] Expected: Both tabs maintain the light interface style. No flash, flicker, or reversion to light style on tab switch.
+- [ ] Expected: Both tabs maintain the light interface style. No flash, flicker, or reversion to dark style on tab switch.
