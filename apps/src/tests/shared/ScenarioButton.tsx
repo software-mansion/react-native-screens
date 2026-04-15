@@ -7,6 +7,7 @@ export function ScenarioButton(props: {
   title: string;
   details?: string;
   platformsHint?: ('ios' | 'android')[];
+  testID?: string;
 }) {
   const navigation = useNavigation<any>();
   const hasAndroid =
@@ -17,6 +18,7 @@ export function ScenarioButton(props: {
 
   return (
     <TouchableOpacity
+      testID={props.testID}
       style={styles.button}
       onPress={() => navigation.navigate(props.route)}>
       <View style={styles.descriptionContainer}>

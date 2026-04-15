@@ -14,6 +14,7 @@ export type {
   // Android
   TabsHostPropsAndroid,
   // iOS
+  MoreTabSelectedEvent,
   TabsBottomAccessoryComponentFactory,
   TabBarMinimizeBehavior,
   TabBarControllerMode,
@@ -40,8 +41,6 @@ export type {
 } from './screen';
 
 export type { TabsBottomAccessoryEnvironment } from './bottom-accessory';
-
-export { SCREEN_KEY_MORE_NAV_CTRL } from './host';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

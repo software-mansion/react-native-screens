@@ -52,7 +52,10 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateUpdateSource) {
   /** Update initiated by a native user interaction (e.g. tab tap). */
   RNSTabsNavigationStateUpdateSourceUser = 0,
   /** Update initiated externally (e.g. from JS via props). */
-  RNSTabsNavigationStateUpdateSourceExternal
+  RNSTabsNavigationStateUpdateSourceExternal,
+  /** Update detected implicitly — UIKit changed the selection as a side effect of another operation
+   *  (e.g. More navigation controller disappearing during a horizontal size class transition on iPad). */
+  RNSTabsNavigationStateUpdateSourceImplicit
 };
 
 /** Reason why a navigation state update was rejected by the container. */
@@ -61,8 +64,6 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
   RNSTabsNavigationStateRejectionReasonStale = 0,
   /** The requested tab is already selected. */
   RNSTabsNavigationStateRejectionReasonRepeated,
-  /** The iOS "More" navigation controller was requested but is not available. */
-  RNSTabsNavigationStateRejectionReasonMoreNavCtrlNotAvailable
 };
 
 NS_ASSUME_NONNULL_END

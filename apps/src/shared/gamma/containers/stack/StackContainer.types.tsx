@@ -25,6 +25,7 @@ export type StackRouteConfig = {
 export type StackRoute = StackRouteConfig & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
+  isMarkedForDismissal: Boolean, // whether this route is during or after dismissal process
 };
 
 /// StackContainer props

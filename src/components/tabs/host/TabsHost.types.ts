@@ -11,10 +11,6 @@ export type TabsHostNavState = {
    *
    * @description
    * It must correspond to one of the keys you assign to the `TabsScreens`.
-   * There is one notable exception of `SCREEN_KEY_MORE_NAV_CTRL`, which can be
-   * used on iOS to select the {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/morenavigationcontroller?language=objc moreNavigationController}.
-   *
-   * @see `SCREEN_KEY_MORE_NAV_CTRL` in `./constants`.
    */
   selectedScreenKey: string;
   /**
@@ -63,7 +59,10 @@ export type TabSelectedEvent = {
   isRepeated: boolean;
   /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
   hasTriggeredSpecialEffect: boolean;
-  /** Whether the selection was initiated by a native user action (tap) as opposed to a JS-driven update. */
+  /**
+   * False in case the event is a result of JS-driven update. True otherwise, e.g. in case of user action (tap)
+   * or implicit UIKit action (app resize, orientation change, etc.).
+   */
   isNativeAction: boolean;
 };
 
@@ -74,13 +73,8 @@ export type TabSelectedEvent = {
  *   meaning a newer state has already been applied. Only reported when
  *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
  * - `repeated` — the requested tab is already selected.
- * - `more-nav-ctrl-not-available` — the iOS "More" navigation controller was requested
- *   but is not available in the current configuration.
  */
-export type TabSelectionRejectionReason =
-  | 'stale'
-  | 'repeated'
-  | 'more-nav-ctrl-not-available';
+export type TabSelectionRejectionReason = 'stale' | 'repeated';
 
 /**
  * @summary Payload of the event emitted when the native side rejects a tab selection request.
@@ -144,9 +138,6 @@ export interface TabsHostPropsBase {
    * This prop can be thought of as a "next navigation state suggestion for the native side".
    * Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
-   *
-   * `SCREEN_KEY_MORE_NAV_CTRL` MUST NOT be used during initial render to indicate default
-   * selected tab.
    *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavState} for description of the type model & accepted values.

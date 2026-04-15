@@ -11,6 +11,29 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSTabsHostComponentView;
+@class RNSTabBarController;
+
+@protocol RNSTabBarControllerDelegate <NSObject>
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+        didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
+             withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
+             currentState:(nonnull RNSTabsNavigationState *)currentNavState
+               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    preventedSelectionOf:(nonnull NSString *)screenKey
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState;
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState;
+
+@end
+
 @protocol RNSReactTransactionObserving
 
 - (void)reactMountingTransactionWillMount;

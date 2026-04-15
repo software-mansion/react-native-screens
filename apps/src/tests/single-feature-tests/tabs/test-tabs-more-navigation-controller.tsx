@@ -1,19 +1,21 @@
 import React from 'react';
 import type { Scenario } from '@apps/tests/shared/helpers';
-import { Button, Text, View } from 'react-native';
+import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {
-  TabsContainer,
+  TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
-import { SCREEN_KEY_MORE_NAV_CTRL } from 'react-native-screens';
+import { ToastProvider, useToast } from '@apps/shared/';
+import Colors from '@apps/shared/styling/Colors';
+import type { MoreTabSelectedEvent } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'More navigation controller',
   key: 'test-tabs-more-navigation-controller',
-  details: 'Test navigation and interactions with "More Naviagation Controller"',
+  details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
   AppComponent: App,
 };
@@ -43,7 +45,6 @@ function TabsNavigationButtons() {
       <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
       <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')} />
       <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')} />
-      <Button title="Select MoreTab" onPress={() => nav.selectTab(SCREEN_KEY_MORE_NAV_CTRL)} />
     </View>
   );
 }
@@ -82,5 +83,26 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
+  return (
+    <ToastProvider>
+      <AppContents />
+    </ToastProvider>
+  );
+}
+
+function AppContents() {
+  const toast = useToast();
+
+  return (
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      ios={{
+        onMoreTabSelected: (event: NativeSyntheticEvent<MoreTabSelectedEvent>) => {
+          const message = `onMoreTabSelected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`;
+          console.warn(message);
+          toast.push({ message, backgroundColor: Colors.GreenLight60 });
+        },
+      }}
+    />
+  );
 }

@@ -644,6 +644,19 @@ RNS_IGNORE_SUPER_CALL_END
   }];
 }
 
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState
+{
+  RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
+  RCTAssert(
+      currentNavState != nil && currentNavState.selectedScreenKey != nil,
+      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+
+  [self.reactEventEmitter emitOnMoreTabSelected:{
+                                                    .currentNavState = currentNavState,
+  }];
+}
+
 @end
 
 #pragma mark - Modified React Subviews implementation
