@@ -1,10 +1,10 @@
 # Test Scenario: tabBarHidden
 
-**E2E test:** Yes, covers all manual scenario steps.
+**E2E test:** Yes, covers all manual scenario steps. For iOS test are covered only for iPhone, e2e is not suitable for iPad execution due to use 'UITabBar' type (on iPad new tab bar at the top is not an instance of UITabBar).
 
 ## Prerequisites
 
-- iOS 18+ device or simulator
+- iOS device or simulator
 - Android emulator
 
 ## Steps
