@@ -13,7 +13,8 @@ internal fun resolveDrawableAttr(
     attrId: Int,
 ): Drawable? {
     val typedValue = TypedValue()
-    if (!context.theme.resolveAttribute(attrId, typedValue, true)) {
+    if (!context.theme.resolveAttribute(attrId, typedValue, true)
+        || typedValue.resourceId == 0) {
         Log.w(TAG, "[RNScreens] Failed to resolve drawable attribute.")
         return null
     }
