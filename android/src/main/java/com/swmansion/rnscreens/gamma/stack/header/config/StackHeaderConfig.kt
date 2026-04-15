@@ -58,10 +58,12 @@ class StackHeaderConfig(
             backButtonIcon = getSystemDrawableResource(context, name)
         } else if (uri != null) {
             loadImage(context, uri) { drawable ->
-                backButtonIcon = drawable
-                // We need to call notifyConfigChanged because icons are loaded asynchronously
-                // and regular update path might execute too early.
-                notifyConfigChanged()
+                if (uri == lastResolvedImageIconUri) {
+                    backButtonIcon = drawable
+                    // We need to call notifyConfigChanged because icons are loaded asynchronously
+                    // and regular update path might execute too early.
+                    notifyConfigChanged()
+                }
             }
         } else {
             backButtonIcon = null
