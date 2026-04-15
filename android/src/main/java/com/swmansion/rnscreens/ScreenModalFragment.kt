@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 import android.view.WindowManager
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -187,7 +186,7 @@ class ScreenModalFragment :
 
     override fun removeToolbar(): Unit = throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
-    override fun setToolbar(toolbar: Toolbar): Unit =
+    override fun setToolbar(toolbar: CustomToolbar): Unit =
         throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
     override fun setToolbarShadowHidden(hidden: Boolean): Unit =

@@ -6,11 +6,6 @@ import androidx.fragment.app.Fragment
 internal interface TabsScreenDelegate {
     fun onAppearanceChanged(tabsScreen: TabsScreen)
 
-    fun onTabFocusChangedFromJS(
-        tabsScreen: TabsScreen,
-        isFocused: Boolean,
-    )
-
     fun onMenuItemAttributesChange(tabsScreen: TabsScreen)
 
     /**

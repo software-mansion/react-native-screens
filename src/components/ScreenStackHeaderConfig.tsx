@@ -25,6 +25,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
+import { useTopInsetApplication } from './contexts/TopInsetApplicationContext';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -33,6 +34,11 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
+  const { appliesTopInset, useLegacyBehavior } = useTopInsetApplication(
+    !props.hidden,
+    props.disableTopInsetApplication ?? false,
+  );
+
   const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
 
   const preparedHeaderLeftBarButtonItems =
@@ -123,6 +129,8 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       synchronousShadowStateUpdatesEnabled={
         featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled
       }
+      consumeTopInset={appliesTopInset}
+      legacyTopInsetBehavior={useLegacyBehavior}
     />
   );
 });

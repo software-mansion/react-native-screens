@@ -1,13 +1,7 @@
 #import "RNSConvert.h"
 #import <React/RCTLog.h>
 
-#ifndef RCT_NEW_ARCH_ENABLED
-#import <React/RCTAssert.h>
-#endif // !RCT_NEW_ARCH_ENABLED
-
 @implementation RNSConvert
-
-#ifdef RCT_NEW_ARCH_ENABLED
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction
 {
@@ -386,17 +380,9 @@
   return nil;
 }
 
-#endif // RCT_NEW_ARCH_ENABLED
-
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   react_native_assert(blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault);
-#else
-  RCTAssert(
-      blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault,
-      @"RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault variants are not convertible to UIBlurEffectStyle");
-#endif // RCT_NEW_ARCH_ENABLED
 
   // Cast safety: RNSBlurEffectStyle is defined in such way that its values map 1:1 with
   // UIBlurEffectStyle, except RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault which are excluded above.

@@ -5,10 +5,32 @@ import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // #region General helpers
 
-type NativeFocusChangeEvent = {
-  screenKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
+type TabSelectedEvent = {
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  isRepeated: boolean;
+  hasTriggeredSpecialEffect: boolean;
+  isNativeAction: boolean;
 };
+
+type NavigationState = {
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+};
+
+type TabSelectionRejectedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  rejectedScreenKey: string;
+  rejectedProvenance: CT.Int32;
+  rejectionReason: 'stale' | 'repeated';
+}>;
+
+type TabSelectionPreventedEvent = Readonly<{
+  selectedScreenKey: string;
+  provenance: CT.Int32;
+  preventedScreenKey: string;
+}>;
 
 type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
@@ -19,8 +41,14 @@ type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 // #endregion Android-specific helpers
 
 export interface NativeProps extends ViewProps {
+  // Control
+  navState: NavigationState;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
+
   // Events
-  onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
+  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
+  onTabSelectionPrevented?: CT.DirectEventHandler<TabSelectionPreventedEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;

@@ -6,15 +6,16 @@
 #import "RNSScreenContainer.h"
 #import "RNSTabsHostComponentViewManager.h"
 #import "RNSTabsHostEventEmitter.h"
+#import "RNSTabsNavigationState.h"
 
 #if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
+#import "RNSTabBarController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsScreenComponentView;
-@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -26,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate
+                                          RNSScreenContainerDelegate,
+                                          RNSTabBarControllerDelegate
 #if !RCT_NEW_ARCH_ENABLED
                                           ,
                                           RCTInvalidating
@@ -44,6 +46,13 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Props
 
 @interface RNSTabsHostComponentView ()
+
+/**
+ * Last navigation state requested by JS. Will be nonnull after first prop update.
+ */
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+
+@property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
@@ -74,9 +83,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter;
-
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks

@@ -1,13 +1,14 @@
-import { SettingsPicker } from '../../../shared/SettingsPicker';
+import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { DummyScreen } from '../../shared/DummyScreens';
-import useTabsConfigState from '../../shared/hooks/tabs-config';
+import { DummyScreen } from '@apps/tests/shared/DummyScreens';
+import type { Scenario } from '@apps/tests/shared/helpers';
 import {
-  createAutoConfiguredTabs,
-  findTabScreenOptions,
-} from '../../shared/tabs';
-import { Scenario } from '../../shared/helpers';
+  TabsContainer,
+  type TabRouteConfig,
+  useTabsNavigationContext,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/gamma/containers/tabs';
 
 const SCENARIO: Scenario = {
   name: 'Tabs Screen Orientation',
@@ -18,32 +19,18 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-type TabParamList = {
-  Tab1: undefined;
-  Tab2: undefined;
-};
-
 function ConfigScreen() {
-  const [config, dispatch] = useTabsConfigState<TabParamList>();
+  const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
 
   return (
     <ScrollView style={{ padding: 40 }}>
       <SettingsPicker
         label="orientation"
         items={['portrait', 'landscape', 'undefined']}
-        value={
-          findTabScreenOptions(config, 'Tab1')?.options.orientation ??
-          'undefined'
-        }
+        value={routeOptions.orientation ?? 'undefined'}
         onValueChange={value =>
-          dispatch({
-            type: 'tabScreen',
-            screenKey: 'Tab1',
-            config: {
-              options: {
-                orientation: value === 'undefined' ? undefined : value,
-              },
-            },
+          setRouteOptions(routeKey, {
+            orientation: value === 'undefined' ? undefined : value,
           })
         }
       />
@@ -51,15 +38,25 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createAutoConfiguredTabs<TabParamList>({
-  Tab1: ConfigScreen,
-  Tab2: DummyScreen,
-});
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: ConfigScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab1',
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: DummyScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
+    },
+  },
+];
 
 export function App() {
-  return (
-    <Tabs.Provider>
-      <Tabs.Autoconfig />
-    </Tabs.Provider>
-  );
+  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }

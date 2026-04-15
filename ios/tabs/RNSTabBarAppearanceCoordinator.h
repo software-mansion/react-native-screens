@@ -1,8 +1,9 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
-#import "RNSTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
+
+@class RNSTabsHostComponentView;
 
 NS_ASSUME_NONNULL_BEGIN
 

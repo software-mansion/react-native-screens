@@ -33,9 +33,7 @@ class RNScreensPackage : BaseReactPackage() {
         // installing its C++ bindings - so we are safe in terms of creating this helper
         // before RN starts creating shadow nodes.
         // See https://github.com/software-mansion/react-native-screens/pull/2169
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
-        }
+        screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
 
         // Proxy needs to register for lifecycle events in order to unregister itself
         // on activity restarts.
@@ -73,7 +71,6 @@ class RNScreensPackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider =
         ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-            val isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
             moduleInfos[ScreensModule.NAME] =
                 ReactModuleInfo(
                     ScreensModule.NAME,
@@ -82,7 +79,7 @@ class RNScreensPackage : BaseReactPackage() {
                     false, // needsEagerInit
                     true, // hasConstants
                     false, // isCxxModule
-                    isTurboModule,
+                    true, // isTurboModule
                 )
             moduleInfos
         }

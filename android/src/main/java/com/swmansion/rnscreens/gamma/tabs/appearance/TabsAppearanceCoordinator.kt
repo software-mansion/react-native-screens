@@ -1,15 +1,14 @@
 package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.content.Context
-import android.view.Menu
 import android.view.MenuItem
-import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
+import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
+import com.swmansion.rnscreens.gamma.tabs.container.menuItemIdForFragmentAtIndex
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
-class TabsAppearanceCoordinator(
+internal class TabsAppearanceCoordinator(
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
 ) {
@@ -17,26 +16,26 @@ class TabsAppearanceCoordinator(
 
     fun updateTabAppearance(
         context: Context,
-        tabsHost: TabsHost,
+        tabsContainer: TabsContainer,
     ) {
-        appearanceApplicator.updateSharedAppearance(context, tabsHost)
-        updateMenuItems(context, tabsHost)
-        appearanceApplicator.updateFontStyles(context, tabsHost) // It needs to be updated after updateMenuItems
+        val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
+        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
+        updateMenuItems(context, selectedTabAppearance)
+        appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }
 
     private fun updateMenuItems(
         context: Context,
-        tabsHost: TabsHost,
+        tabsAppearance: TabsAppearance?,
     ) {
-        if (bottomNavigationView.menu.size != tabsScreenFragments.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            bottomNavigationView.menu.clear()
-        }
-        val appearance = tabsHost.currentFocusedTab.tabsScreen.appearance
         tabsScreenFragments.forEachIndexed { index, fragment ->
-            val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabsScreen)
-            check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, appearance)
+            val menuItemId = menuItemIdForFragmentAtIndex(index)
+            val menuItem =
+                checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
+                    "[RNScreens] Missing MenuItem for id: $menuItemId"
+                }
+            check(menuItem.itemId == menuItemId) { "[RNScreens] Illegal state: menu items are shuffled" }
+            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
         }
     }
 
@@ -50,8 +49,3 @@ class TabsAppearanceCoordinator(
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }
-
-private fun Menu.getOrCreateMenuItem(
-    index: Int,
-    tabsScreen: TabsScreen,
-): MenuItem = this.findItem(index) ?: this.add(Menu.NONE, index, Menu.NONE, tabsScreen.tabTitle)

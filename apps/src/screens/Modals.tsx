@@ -4,7 +4,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { Button, Alert } from '../shared';
+import { Button, Alert } from '@apps/shared';
 
 type StackParamList = {
   Main: undefined;

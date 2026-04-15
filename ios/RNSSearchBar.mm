@@ -44,12 +44,6 @@ namespace react = facebook::react;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -466,6 +460,16 @@ namespace react = facebook::react;
 
 #else
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

@@ -41,6 +41,9 @@ class TabsScreen(
                 }
         }
 
+    internal val requireScreenKey: String
+        get() = checkNotNull(screenKey) { "[RNScreens] screenKey MUST NOT be null" }
+
     var tabTitle: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
@@ -91,6 +94,8 @@ class TabsScreen(
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
+    var preventNativeSelection: Boolean = false
+
     private fun <T> updateMenuItemAttributesIfNeeded(
         oldValue: T,
         newValue: T,
@@ -105,23 +110,11 @@ class TabsScreen(
         super.onAttachedToWindow()
     }
 
-    var isFocusedTab: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                onTabFocusChangedFromJS()
-            }
-        }
-
     internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
         tabsScreenDelegate = WeakReference(delegate)
     }
 
     override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
-
-    private fun onTabFocusChangedFromJS() {
-        tabsScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
-    }
 
     private fun onMenuItemAttributesChange() {
         tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)

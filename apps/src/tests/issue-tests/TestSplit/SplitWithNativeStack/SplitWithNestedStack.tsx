@@ -3,8 +3,8 @@ import { Split } from 'react-native-screens/experimental';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
-import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
-import Colors from '../../../../shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import Colors from '@apps/shared/styling/Colors';
 import { SplitBaseConfig } from '../helpers/types';
 
 type StackOuterParamList = {

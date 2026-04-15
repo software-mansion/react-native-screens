@@ -14,7 +14,7 @@ import {
 } from './StackV4SAVExampleContext';
 import ConfigScreen from './ConfigScreen';
 import TestScreen from './TestScreen';
-import Colors from '../../../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 type RouteParamList = {
   ConfigScreen: undefined;

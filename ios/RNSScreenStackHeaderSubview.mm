@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -13,20 +12,12 @@
 #import <React/RCTFabricComponentsPlugins.h>
 
 #import <rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
-#ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderSubview {
-#if RCT_NEW_ARCH_ENABLED
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
-#endif // RCT_NEW_ARCH_ENABLED
-#if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  CGSize _lastReactFrameSize;
-#endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // This is a strong reference to UIBarButtonItem which creates a retain cycle.
   // The cycle is cleared via `invalidateUIBarButtonItem` method, called by `invalidate` callback.
   UIBarButtonItem *_barButtonItem;
@@ -65,16 +56,13 @@ namespace react = facebook::react;
 
   UIView *toLayoutView = [self findNavigationBar];
 
-  // TODO: It is possible, that this needs to be called only on old architecture.
-  // Make sure that Test432 keeps working.
+  // TODO: It is possible, that this call is no longer necessary. Make sure that Test432 keeps working.
   [toLayoutView setNeedsLayout];
 
   // TODO: Determine why this must be called & deferring layout to next "update cycle"
-  // is not sufficient. See Test2552 and Test432. (Talking Paper here).
+  // is not sufficient. See Test2552 and Test432.
   [toLayoutView layoutIfNeeded];
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
 
@@ -120,12 +108,6 @@ namespace react = facebook::react;
 {
   [super layoutSubviews];
   [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
-}
-
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -200,30 +182,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
 }
-#else // RCT_NEW_ARCH_ENABLED
-#pragma mark - Paper specific
 
-- (void)reactSetFrame:(CGRect)frame
-{
-  // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
-  // makes UINavigationBar the only one to control the position of header content.
-  if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    if (self.needsAutoLayout) {
-      _lastReactFrameSize = frame.size;
-      [self invalidateIntrinsicContentSize];
-    } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    {
-      [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-    }
-    [self layoutNavigationBar];
-  }
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
-
-// Used by both Fabric & Paper
 - (void)invalidate
 {
   [self invalidateUIBarButtonItem];
@@ -313,11 +272,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (CGSize)intrinsicContentSize
 {
-#if RCT_NEW_ARCH_ENABLED
   return RCTCGSizeFromSize(_layoutMetrics.frame.size);
-#else // RCT_NEW_ARCH_ENABLED
-  return _lastReactFrameSize;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
@@ -338,31 +293,26 @@ RNS_IGNORE_SUPER_CALL_END
   [self configureBarButtonItem];
 }
 
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
 
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
-RCT_EXPORT_VIEW_PROPERTY(hidesSharedBackground, BOOL)
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (UIView *)view
-{
-  return [RNSScreenStackHeaderSubview new];
-}
-#endif
-
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;
 }
-#endif
 
 @implementation RCTConvert (RNSScreenStackHeaderSubview)
 

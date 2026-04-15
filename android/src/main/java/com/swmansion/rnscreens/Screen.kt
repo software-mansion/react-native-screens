@@ -9,7 +9,6 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -18,12 +17,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
@@ -39,7 +36,6 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
-import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -56,8 +52,6 @@ class Screen(
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
-
-    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -167,6 +161,14 @@ class Screen(
                 }
             }
         }
+    }
+
+    private fun updateShadowNodeScreenSize(
+        width: Int,
+        height: Int,
+        headerHeight: Int,
+    ) {
+        updateState(width, height, headerHeight)
     }
 
     /**
@@ -284,7 +286,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
+        updateShadowNodeScreenSize(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -340,20 +342,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
-                val topLevelDecorView =
-                    requireNotNull(
-                        reactContext.currentActivity?.window?.decorView,
-                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
-
-                val topInset = getDecorViewTopInset(topLevelDecorView)
-                val correctedHeight = height - topInset
-                val correctedOffsetY = t + topInset
-
-                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
-            } else {
-                dispatchShadowStateUpdate(width, height, t)
-            }
+            updateShadowNodeScreenSize(width, height, t)
         }
     }
 
@@ -369,7 +358,7 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            dispatchShadowStateUpdate(width, height, top)
+            updateShadowNodeScreenSize(width, height, top)
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
@@ -389,36 +378,6 @@ class Screen(
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
-        }
-    }
-
-    private fun updateScreenSizePaper(
-        width: Int,
-        height: Int,
-    ) {
-        reactContext.runOnNativeModulesQueueThread(
-            object : GuardedRunnable(reactContext.exceptionHandler) {
-                override fun runGuarded() {
-                    reactContext
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.updateNodeSize(id, width, height)
-                }
-            },
-        )
-    }
-
-    /**
-     * @param offsetY ignored on old architecture
-     */
-    private fun dispatchShadowStateUpdate(
-        width: Int,
-        height: Int,
-        offsetY: Int,
-    ) {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, offsetY)
-        } else {
-            updateScreenSizePaper(width, height)
         }
     }
 
@@ -694,13 +653,7 @@ class Screen(
 
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
-        updateScreenSizeFabric(width, height, top + translationY.toInt())
-    }
-
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        insetsApplied = true
-
-        return super.onApplyWindowInsets(insets)
+        updateShadowNodeScreenSize(width, height, top + translationY.toInt())
     }
 
     override fun onAttachedToWindow() {

@@ -17,7 +17,6 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
-#import "RNSTabBarControllerDelegate.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 #import "RNSTabsScreenComponentView.h"
@@ -42,7 +41,6 @@ namespace react = facebook::react;
 
 @implementation RNSTabsHostComponentView {
   RNSTabBarController *_Nonnull _controller;
-  RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
@@ -54,6 +52,8 @@ namespace react = facebook::react;
   BOOL _hasModifiedTabsScreensInCurrentTransaction;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
+
+  RNSTabsNavigationState *_Nullable _jsNavState;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -85,8 +85,6 @@ namespace react = facebook::react;
   [self resetProps];
 
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
-  _controllerDelegate = [RNSTabBarControllerDelegate new];
-  _controller.delegate = _controllerDelegate;
 
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSTabsHostEventEmitter new];
@@ -105,6 +103,7 @@ namespace react = facebook::react;
   _tabBarTintColor = nil;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
+  _rejectStaleNavStateUpdates = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -249,16 +248,8 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect
-{
-  return [_reactEventEmitter
-      emitOnNativeFocusChange:OnNativeFocusChangePayload{
-                                  .screenKey = tabScreen.screenKey,
-                                  .repeatedSelectionHandledBySpecialEffect = repeatedSelectionHandledBySpecialEffect}];
-}
-
 #pragma mark - RCTComponentViewProtocol
+
 #if RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -276,6 +267,21 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(props);
+
+  if (newComponentProps.navState.selectedScreenKey != oldComponentProps.navState.selectedScreenKey ||
+      newComponentProps.navState.provenance != oldComponentProps.navState.provenance) {
+    NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navState.selectedScreenKey);
+    RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
+    RCTAssert(newComponentProps.navState.provenance >= 0, @"[RNScreens] provenance MUST BE >= 0]");
+    _jsNavState = [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
+                                                          provenance:newComponentProps.navState.provenance];
+    [_controller setPendingNavigationStateUpdate:[_jsNavState cloneState]];
+  }
+
+  if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
+    _rejectStaleNavStateUpdates = static_cast<BOOL>(newComponentProps.rejectStaleNavStateUpdates);
+    [_controller setRejectStaleNavigationStateUpdates:_rejectStaleNavStateUpdates];
+  }
 
   if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
     _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
@@ -593,6 +599,73 @@ RNS_IGNORE_SUPER_CALL_END
 {
   return _imageLoader;
 }
+
+#pragma mark - RNSTabBarControllerDelegate
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+        didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
+             withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context
+{
+  RCTAssert(navState.selectedScreenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
+
+  [self.reactEventEmitter emitOnTabSelected:{.selectedScreenKey = navState.selectedScreenKey,
+                                             .provenance = navState.provenance,
+                                             .isRepeated = context.isRepeated,
+                                             .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
+                                             .isNativeAction = context.isNativeAction}];
+}
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
+             currentState:(nonnull RNSTabsNavigationState *)currentNavState
+               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
+{
+  RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
+  RCTAssert(rejectedNavState.selectedScreenKey != nil, @"[RNScreens] Rejected state screenKey MUST NOT be nil");
+
+  [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
+                                                      .rejectedNavState = rejectedNavState,
+                                                      .rejectionReason = reasonCode}];
+}
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    preventedSelectionOf:(nonnull NSString *)screenKey
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+{
+  RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
+  RCTAssert(screenKey != nil, @"[RNScreens] Expected NON NIL screenKey");
+  RCTAssert(
+      currentNavState != nil && currentNavState.selectedScreenKey != nil,
+      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+
+  [self.reactEventEmitter emitOnTabSelectionPrevented:{
+                                                          .currentNavState = currentNavState,
+                                                          .preventedScreenKey = screenKey,
+  }];
+}
+
+- (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState
+{
+  RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
+  RCTAssert(
+      currentNavState != nil && currentNavState.selectedScreenKey != nil,
+      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+
+  [self.reactEventEmitter emitOnMoreTabSelected:{
+                                                    .currentNavState = currentNavState,
+  }];
+}
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

@@ -16,18 +16,6 @@
   return static_cast<RNSTabsScreenComponentView *>(self.view);
 }
 
-- (void)tabScreenFocusHasChanged
-{
-  RNSLog(
-      @"TabScreen [%ld] changed focus: %d",
-      self.tabScreenComponentView.tag,
-      self.tabScreenComponentView.isSelectedScreen);
-
-  // The focus of owned tab has been updated from react. We tell the parent controller that it should update the
-  // container.
-  [[self findTabBarController] setNeedsUpdateOfSelectedTab:true];
-}
-
 - (void)tabItemAppearanceHasChanged
 {
   [[self findTabBarController] setNeedsUpdateOfTabBarAppearance:true];
@@ -40,21 +28,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+  [super viewWillAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  [super viewDidAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+  [super viewWillDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillDisappear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+  [super viewDidDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidDisappear];
 }
 
@@ -131,5 +123,19 @@
 }
 
 #endif // !TARGET_OS_TV
+
+@end
+
+@implementation RNSTabsScreenViewController (TabsScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull
+{
+  return self.tabScreenComponentView.screenKey;
+}
+
+- (BOOL)isPreventNativeSelectionEnabled
+{
+  return self.tabScreenComponentView.preventNativeSelection;
+}
 
 @end

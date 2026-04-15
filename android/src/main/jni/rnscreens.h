@@ -23,6 +23,7 @@
 #include <react/renderer/components/rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSSafeAreaViewComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 namespace facebook {
 namespace react {

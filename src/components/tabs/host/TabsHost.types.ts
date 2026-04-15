@@ -3,11 +3,113 @@ import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
 import type { ColorScheme, Direction } from '../../shared/types';
 
+// #region Control
+
+export type TabsHostNavState = {
+  /**
+   * @summary Valid screen key.
+   *
+   * @description
+   * It must correspond to one of the keys you assign to the `TabsScreens`.
+   */
+  selectedScreenKey: string;
+  /**
+   * @summary A number describing the provenance of the state instance.
+   *
+   * @description
+   * The provenance value establishes a relationship between different navigation state instances
+   * held by given state holder. The assumption here is that when the navigation
+   * state is progressed (modified), the provenance number is incremented.
+   * This creates a relationship where we can say that:
+   *
+   * 1. State with provenance = n + 1 has been derived from state with provenance = n.
+   * 2. For two given navigation states A and B, we can say that A *is stale* iff
+   * A.provenance <= B.provenance.
+   *
+   * This allows us to mitigate and resolve state conflicts that can happen with
+   * asynchronous navigation.
+   *
+   * Currently, the native implementation of TabsHost is the state holder.
+   *
+   * When you use object of this shape to trigger a navigation via {@link TabsHostPropsBase#navState},
+   * pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
+   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance number
+   * of last confirmed state you base your update request on.
+   */
+  provenance: number;
+};
+
+// #endregion Control
+
 // #region General helpers
 
-export type NativeFocusChangeEvent = {
-  screenKey: string;
-  repeatedSelectionHandledBySpecialEffect: boolean;
+/**
+ * @summary Payload of the event emitted when a tab selection occurs on the native side.
+ *
+ * @description
+ * This event is emitted both for user-initiated and programmatic tab changes.
+ * It carries the resulting navigation state along with metadata about the selection context.
+ */
+export type TabSelectedEvent = {
+  /** Screen key of the newly selected tab. */
+  selectedScreenKey: string;
+  /** Provenance of the navigation state after the selection. */
+  provenance: number;
+  /** Whether the same tab that was already selected has been selected again. */
+  isRepeated: boolean;
+  /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
+  hasTriggeredSpecialEffect: boolean;
+  /**
+   * False in case the event is a result of JS-driven update. True otherwise, e.g. in case of user action (tap)
+   * or implicit UIKit action (app resize, orientation change, etc.).
+   */
+  isNativeAction: boolean;
+};
+
+/**
+ * @summary Reason why a tab selection request was rejected by the native side.
+ *
+ * - `stale` — the update was based on a stale navigation state,
+ *   meaning a newer state has already been applied. Only reported when
+ *   {@link TabsHostPropsBase#rejectStaleNavStateUpdates} is enabled.
+ * - `repeated` — the requested tab is already selected.
+ */
+export type TabSelectionRejectionReason = 'stale' | 'repeated';
+
+/**
+ * @summary Payload of the event emitted when the native side rejects a tab selection request.
+ *
+ * @description
+ * Contains the currently active navigation state (`selectedScreenKey`, `provenance`)
+ * alongside the rejected request details, so that the JS side can reconcile its state.
+ *
+ * @see {@link TabSelectionRejectionReason} for possible rejection reasons.
+ * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
+ */
+export type TabSelectionRejectedEvent = {
+  /** Screen key of the currently selected (active) tab. */
+  selectedScreenKey: string;
+  /** Provenance of the currently active navigation state. */
+  provenance: number;
+  /** Screen key of the tab whose selection was rejected. */
+  rejectedScreenKey: string;
+  /** Provenance of the rejected navigation state update. */
+  rejectedProvenance: number;
+  /** Reason the selection was rejected. */
+  rejectionReason: TabSelectionRejectionReason;
+};
+
+/**
+ * @summary Payload of the event emitted when the native side prevents a tab selection
+ * because the target screen has `preventNativeSelection` enabled.
+ */
+export type TabSelectionPreventedEvent = {
+  /** Screen key of the currently selected (active) tab. */
+  selectedScreenKey: string;
+  /** Provenance of the currently active navigation state. */
+  provenance: number;
+  /** Screen key of the tab whose selection was prevented. */
+  preventedScreenKey: string;
 };
 
 export type TabsHostColorScheme = ColorScheme | 'inherit';
@@ -26,6 +128,44 @@ export type TabsHostNativeContainerStyleProps = {
 // #endregion General helpers
 
 export interface TabsHostPropsBase {
+  // Control
+  /**
+   * @summary
+   * Allows to pass desired navigation state request to the native side.
+   * It also determines initial navigation state after first render.
+   *
+   * @description
+   * This prop can be thought of as a "next navigation state suggestion for the native side".
+   * Depending on configuration and the provenance of the update
+   * the update might get accepted or rejected.
+   *
+   * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
+   * @see {@link TabsHostNavState} for description of the type model & accepted values.
+   */
+  navState: TabsHostNavState;
+  /**
+   * @summary If true, the native side will reject any navigation state updates coming from JS
+   * if they are stale.
+   *
+   * @description A navigation state update is considered stale if it is based of an stale state
+   * (@{link TabsHostNavState#provenance} indicates the base state).
+   * A state is stale, when at the time of executing update, there already had been accepted a newer state
+   * of different origin.
+   *
+   * This can happen, when an update from JS is dispatched, but before it reaches the native
+   * side, another update happens on UI thread, e.g. user selects another tab. For such
+   * situations, where to-be-applied navigation state update had been dispatched w/o
+   * full context of actual navigation state you can toggle this prop. Please note,
+   * that above definition means, that an JS update won't be rejected if you send a series of
+   * udpates with the same provenance, unless some action has been taken by the user "in the meantime".
+   *
+   * If an update is rejected due to being stale, the `onTabSelectionRejected` event will be
+   * emitted with details of the rejected update and the currently active navigation state.
+   *
+   * @default false
+   */
+  rejectStaleNavStateUpdates?: boolean;
+
   // General
   children?: ViewProps['children'];
   /**
@@ -107,12 +247,31 @@ export interface TabsHostPropsBase {
 
   // Events
   /**
-   * A callback that gets invoked when user requests change of focused tab screen.
+   * @summary A callback that gets invoked when the selected tab changes.
    *
    * @platform android, ios
    */
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
+  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+
+  /**
+   * @summary
+   * A callback that gets invoked when the native side rejects a tab selection request.
+   *
+   * @see {@link TabSelectionRejectedEvent}
+   */
+  onTabSelectionRejected?: (
+    event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
+  ) => void;
+
+  /**
+   * @summary
+   * A callback that gets invoked when the native side prevents a tab selection
+   * because the target screen has `preventNativeSelection` enabled.
+   *
+   * @see {@link TabSelectionPreventedEvent}
+   */
+  onTabSelectionPrevented?: (
+    event: NativeSyntheticEvent<TabSelectionPreventedEvent>,
   ) => void;
 }
 

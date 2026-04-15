@@ -4,18 +4,18 @@ import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import Colors from '../../shared/styling/Colors';
+import Colors from '@apps/shared/styling/Colors';
 
 enableFreeze(true);
 
-const ICON = require('../../../assets/variableIcons/globe_oversized.png');
+const ICON = require('@assets/variableIcons/globe_oversized.png');
 
 function makeTab(title: string) {
   return function Tab() {
@@ -27,10 +27,11 @@ function makeTab(title: string) {
   };
 }
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
+    name: 'Tab1',
+    Component: makeTab('Tab 1'),
     options: {
-      screenKey: 'Tab1',
       title: 'Tab 1',
       ios: {
         icon: {
@@ -45,11 +46,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: makeTab('Tab 1'),
   },
   {
+    name: 'Tab2',
+    Component: makeTab('Tab 2'),
     options: {
-      screenKey: 'Tab2',
       title: 'Tab 2',
       ios: {
         icon: {
@@ -64,17 +65,16 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
     },
-    component: makeTab('Tab 2'),
   },
   {
+    name: 'Tab3',
+    Component: makeTab('Tab 3'),
     options: {
-      screenKey: 'Tab3',
       title: 'Tab 3',
       ios: {
         systemItem: 'search',
       },
     },
-    component: makeTab('Tab 3'),
   },
 ];
 
@@ -89,7 +89,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <TabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

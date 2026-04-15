@@ -25,24 +25,19 @@ export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
 export interface TabsScreenPropsBase {
   // Control
   /**
-   * @summary Determines selected tab.
-   *
-   * In controlled container mode, determines if tab screen is currently
-   * focused.
-   *
-   * In managed container mode, it only indicates initially selected tab.
-   *
-   * There should be exactly one focused screen at any given time.
-   *
-   * @platform android, ios
-   */
-  isFocused?: boolean;
-  /**
    * @summary Identifies screen, e.g. when receiving onNativeFocusChange event.
    *
    * @platform android, ios
    */
   screenKey: string;
+  /**
+   * @summary When set to `true`, prevents native tab selection for this screen.
+   *
+   * @default false
+   *
+   * @platform android, ios
+   */
+  preventNativeSelection?: boolean;
 
   // General
   children?: ViewProps['children'];

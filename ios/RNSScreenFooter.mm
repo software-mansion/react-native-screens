@@ -1,14 +1,9 @@
 #import "RNSScreenFooter.h"
-#import "RNSScreen.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-
-#endif // RCT_NEW_ARCH_ENABLED
+#import "RNSScreen.h"
 
 @implementation RNSScreenFooter {
   RNSScreenView *_parent;
@@ -95,16 +90,6 @@
   //  }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma Fabric specific
-
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenFooterComponentDescriptor>();
@@ -115,28 +100,18 @@ Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
   return RNSScreenFooter.class;
 }
 
-#else
+#pragma mark - Dynamic frameworks support
 
-#pragma Paper specific
-
-- (void)reactSetFrame:(CGRect)frame
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
 {
-  // ignore frame from react
-  // this view should be layouted by it's parent screen
-  //  [super reactSetFrame:frame];
+  [super load];
 }
-
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
 @implementation RNSScreenFooterManager
-
-RCT_EXPORT_MODULE()
-
-- (UIView *)view
-{
-  return [RNSScreenFooter new];
-}
 
 @end

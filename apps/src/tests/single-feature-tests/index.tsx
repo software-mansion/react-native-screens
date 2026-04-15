@@ -10,8 +10,8 @@ import TabsScenarioGroup from './tabs';
 import SplitScenarioGroup from './split';
 import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
-import { ScenarioButton } from '../shared/ScenarioButton';
-import ScenarioSelectionScreen from '../shared/ScenarioScreen';
+import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
+import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
 export const COMPONENT_SCENARIOS = {
   Tabs: TabsScenarioGroup,
