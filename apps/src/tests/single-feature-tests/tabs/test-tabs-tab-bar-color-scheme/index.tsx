@@ -39,7 +39,8 @@ function ConfigScreen() {
   }, [reactColorScheme]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}
+      testID="tab-bar-color-scheme-scrollview">
       <View style={styles.section}>
         <Text style={styles.text}>
           There are 3 sources of color scheme, in ascending order of precedence:
@@ -64,6 +65,7 @@ function ConfigScreen() {
             setReactColorScheme(value);
           }}
           items={['unspecified', 'light', 'dark']}
+          testID='tab-bar-color-scheme-picker'
         />
       </View>
 

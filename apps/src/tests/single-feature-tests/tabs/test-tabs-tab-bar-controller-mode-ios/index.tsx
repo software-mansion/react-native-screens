@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Scenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
-import {TabBarControllerMode } from 'react-native-screens';
+import { TabBarControllerMode } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Controller Mode',
@@ -23,7 +23,8 @@ export default SCENARIO;
 function ConfigScreen() {
     const { hostConfig, updateHostConfig } = useTabsHostConfig();
     return (
-        <ScrollView style={{ padding: 40 }}>
+        <ScrollView style={{ padding: 40 }}
+            testID="tab-bar-controller-mode-scrollview">
             <View>
                 <Text style={styles.description}>
                     Controls whether the tab bar is displayed as a bar or
@@ -37,8 +38,9 @@ function ConfigScreen() {
                         updateHostConfig({ ios: { tabBarControllerMode: value } })
                     }
                     items={['automatic', 'tabBar', 'tabSidebar']}
+                    testID="tab-bar-controller-mode-picker"
                 />
-        </View>
+            </View>
         </ScrollView >
     );
 }
@@ -73,7 +75,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab2',
-
+            tabBarItemTestID: 'tab-bar-item-2-id',
+            tabBarItemAccessibilityLabel:'tab-bar-item-2-id',
         },
     },
 ];

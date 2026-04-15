@@ -43,7 +43,8 @@ function ConfigScreen() {
   }, [reactAllowRtl]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}
+      testID='tab-bar-layout-direction-scrollview'>
       <View style={styles.section}>
         <Text>
           There are 3 sources of layout direction: system, React Native and our
@@ -106,6 +107,7 @@ function ConfigScreen() {
           value={hostConfig.direction ?? 'inherit'}
           onValueChange={value => updateHostConfig({ direction: value })}
           items={['inherit', 'ltr', 'rtl']}
+          testID='tab-bar-layout-direction-picker'
         />
       </View>
     </ScrollView>
@@ -119,6 +121,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
+      tabBarItemAccessibilityLabel: 'tab-bar-item-1-label',
       safeAreaConfiguration: {
         edges: {
           bottom: true,
@@ -132,6 +135,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemAccessibilityLabel: 'tab-bar-item-2-label',
     },
   },
 ];

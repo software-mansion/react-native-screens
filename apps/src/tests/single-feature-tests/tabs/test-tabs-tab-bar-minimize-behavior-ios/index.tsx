@@ -23,7 +23,8 @@ export default SCENARIO;
 function ConfigScreen() {
     const { hostConfig, updateHostConfig } = useTabsHostConfig();
     return (
-        <ScrollView style={{ padding: 40 }}>
+        <ScrollView style={{ padding: 40 }}
+            testID="tab-bar-minimize-behavior-scrollview">
             <View>
                 <Text style={styles.description}>
                     Controls when the tab bar minimizes. Switch to Tab2 and
@@ -36,6 +37,7 @@ function ConfigScreen() {
                         updateHostConfig({ ios: { tabBarMinimizeBehavior: value } })
                     }
                     items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
+                    testID='tab-bar-minimize-behavior-picker'
                 />
             </View>
         </ScrollView >
@@ -49,7 +51,8 @@ function TestScreen() {
             contentInsetAdjustmentBehavior="automatic"
             testID="test-screen-scroll">
             {Array.from({ length: 40 }, (_, i) => (
-                <View key={i} style={styles.scrollItem}>
+                <View key={i} style={styles.scrollItem}
+                    testID={`row-${i}`}>
                     <Text>Row {i + 1} — scroll to test tabBarMinimizeBehavior</Text>
                 </View>
             ))}
@@ -64,6 +67,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab1',
+            tabBarItemAccessibilityLabel: 'tab-bar-item-1-label',
+            testID: 'tab-bar-item-1-id',
         },
     },
     {
@@ -72,7 +77,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab2',
-
+            tabBarItemAccessibilityLabel: 'tab-bar-item-2-label',
+            testID: 'tab-bar-item-2-id',
         },
     },
 ];
