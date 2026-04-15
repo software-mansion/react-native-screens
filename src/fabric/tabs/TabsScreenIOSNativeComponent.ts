@@ -52,7 +52,7 @@ export type Appearance = {
 
   tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
   tabBarShadowColor?: ProcessedColorValue | null | undefined;
-  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'> | undefined;
+  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
 };
 
 type BlurEffect =
@@ -120,12 +120,12 @@ export interface NativeProps extends ViewProps {
 
   // Control
   screenKey: string;
-  preventNativeSelection?: CT.WithDefault<boolean, false> | undefined;
+  preventNativeSelection?: CT.WithDefault<boolean, false>;
 
   // General
   title?: string | undefined | null;
   badgeValue?: string | undefined;
-  orientation?: CT.WithDefault<Orientation, 'inherit'> | undefined;
+  orientation?: CT.WithDefault<Orientation, 'inherit'>;
 
   // Accessibility
   tabBarItemTestID?: string | undefined;
@@ -136,8 +136,8 @@ export interface NativeProps extends ViewProps {
     | {
         repeatedTabSelection?:
           | {
-              popToRoot?: CT.WithDefault<boolean, true> | undefined;
-              scrollToTop?: CT.WithDefault<boolean, true> | undefined;
+              popToRoot?: CT.WithDefault<boolean, true>;
+              scrollToTop?: CT.WithDefault<boolean, true>;
             }
           | undefined;
       }
@@ -145,41 +145,32 @@ export interface NativeProps extends ViewProps {
 
   // iOS-specific props
   // Tab config
-  isTitleUndefined?: CT.WithDefault<boolean, true> | undefined;
-  systemItem?: CT.WithDefault<SystemItem, 'none'> | undefined;
+  isTitleUndefined?: CT.WithDefault<boolean, true>;
+  systemItem?: CT.WithDefault<SystemItem, 'none'>;
 
   // Appearance
   standardAppearance?: UnsafeMixed<Appearance> | undefined;
   scrollEdgeAppearance?: UnsafeMixed<Appearance> | undefined;
 
   // Icons
-  iconType?: CT.WithDefault<IconType, 'sfSymbol'> | undefined;
+  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
   iconImageSource?: ImageSource | undefined;
   iconResourceName?: string | undefined;
   selectedIconImageSource?: ImageSource | undefined;
   selectedIconResourceName?: string | undefined;
 
   // ScrollView interactions
-  overrideScrollViewContentInsetAdjustmentBehavior?:
-    | CT.WithDefault<boolean, true>
-    | undefined;
-  bottomScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  leftScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  rightScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  topScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
+  overrideScrollViewContentInsetAdjustmentBehavior?: CT.WithDefault<
+    boolean,
+    true
+  >;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
 
   // Experimental
-  userInterfaceStyle?:
-    | CT.WithDefault<UserInterfaceStyle, 'unspecified'>
-    | undefined;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenIOS', {

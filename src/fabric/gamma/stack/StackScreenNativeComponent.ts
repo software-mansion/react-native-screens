@@ -16,7 +16,7 @@ export interface NativeProps extends ViewProps {
   // Control
 
   // Codegen does not currently support non-optional enum.
-  activityMode?: CT.WithDefault<ActivityMode, 'detached'> | undefined;
+  activityMode?: CT.WithDefault<ActivityMode, 'detached'>;
   screenKey: string;
 
   // Events
@@ -34,7 +34,7 @@ export interface NativeProps extends ViewProps {
 
   // Configuration
 
-  preventNativeDismiss?: CT.WithDefault<boolean, false> | undefined;
+  preventNativeDismiss?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {

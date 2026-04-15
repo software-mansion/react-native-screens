@@ -10,7 +10,7 @@ type SplitScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config
-  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'> | undefined;
+  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'>;
 
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;

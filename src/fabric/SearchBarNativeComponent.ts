@@ -48,15 +48,13 @@ export interface NativeProps extends ViewProps {
     | null
     | undefined;
   onChangeText?: CT.DirectEventHandler<ChangeTextEvent> | null | undefined;
-  hideWhenScrolling?: CT.WithDefault<boolean, true> | undefined;
-  autoCapitalize?:
-    | CT.WithDefault<AutoCapitalizeType, 'systemDefault'>
-    | undefined;
+  hideWhenScrolling?: CT.WithDefault<boolean, true>;
+  autoCapitalize?: CT.WithDefault<AutoCapitalizeType, 'systemDefault'>;
   placeholder?: string | undefined;
-  placement?: CT.WithDefault<SearchBarPlacement, 'automatic'> | undefined;
-  allowToolbarIntegration?: CT.WithDefault<boolean, true> | undefined;
-  obscureBackground?: CT.WithDefault<OptionalBoolean, 'undefined'> | undefined;
-  hideNavigationBar?: CT.WithDefault<OptionalBoolean, 'undefined'> | undefined;
+  placement?: CT.WithDefault<SearchBarPlacement, 'automatic'>;
+  allowToolbarIntegration?: CT.WithDefault<boolean, true>;
+  obscureBackground?: CT.WithDefault<OptionalBoolean, 'undefined'>;
+  hideNavigationBar?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   cancelButtonText?: string | undefined;
   // TODO: implement these on iOS
   barTintColor?: ColorValue | undefined;
@@ -64,7 +62,7 @@ export interface NativeProps extends ViewProps {
   textColor?: ColorValue | undefined;
 
   // Android only
-  autoFocus?: CT.WithDefault<boolean, false> | undefined;
+  autoFocus?: CT.WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean | undefined;
   // TODO: consider creating enum here
   inputType?: string | undefined;
@@ -72,7 +70,7 @@ export interface NativeProps extends ViewProps {
   onOpen?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
   hintTextColor?: ColorValue | undefined;
   headerIconColor?: ColorValue | undefined;
-  shouldShowHintSearchIcon?: CT.WithDefault<boolean, true> | undefined;
+  shouldShowHintSearchIcon?: CT.WithDefault<boolean, true>;
 }
 
 type ComponentType = HostComponent<NativeProps>;

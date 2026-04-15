@@ -16,7 +16,7 @@ export interface NativeProps extends ViewProps {
       }>
     | undefined;
   // Android-only
-  insetType?: CT.WithDefault<InsetType, 'all'> | undefined;
+  insetType?: CT.WithDefault<InsetType, 'all'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSafeAreaView', {

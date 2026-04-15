@@ -12,11 +12,9 @@ export type HeaderSubviewTypes =
   | 'searchBar';
 
 export interface NativeProps extends ViewProps {
-  type?: CT.WithDefault<HeaderSubviewTypes, 'left'> | undefined;
+  type?: CT.WithDefault<HeaderSubviewTypes, 'left'>;
   hidesSharedBackground?: boolean | undefined;
-  synchronousShadowStateUpdatesEnabled?:
-    | CT.WithDefault<boolean, false>
-    | undefined;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>(

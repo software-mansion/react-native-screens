@@ -36,9 +36,10 @@ export type Appearance = {
   tabBarItemRippleColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Label layout
-  tabBarItemLabelVisibilityMode?:
-    | CT.WithDefault<TabBarItemLabelVisibilityMode, 'auto'>
-    | undefined;
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
 
   // TabBarItem - State-dependent appearance
   normal?: ItemStateAppearance | undefined;
@@ -48,7 +49,7 @@ export type Appearance = {
 
   // TabBarItem - Active Indicator
   tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
-  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true> | undefined;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
 
   // TabBarItem - Label
   tabBarItemTitleFontFamily?: string | undefined;
@@ -73,7 +74,7 @@ export interface NativeProps extends ViewProps {
 
   // Control
   screenKey: string;
-  preventNativeSelection?: CT.WithDefault<boolean, false> | undefined;
+  preventNativeSelection?: CT.WithDefault<boolean, false>;
 
   // General
   title?: string | undefined | null;
@@ -88,8 +89,8 @@ export interface NativeProps extends ViewProps {
     | {
         repeatedTabSelection?:
           | {
-              popToRoot?: CT.WithDefault<boolean, true> | undefined;
-              scrollToTop?: CT.WithDefault<boolean, true> | undefined;
+              popToRoot?: CT.WithDefault<boolean, true>;
+              scrollToTop?: CT.WithDefault<boolean, true>;
             }
           | undefined;
       }

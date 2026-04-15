@@ -83,26 +83,22 @@ export interface NativeProps extends ViewProps {
   onSheetDetentChanged?:
     | CT.DirectEventHandler<SheetDetentChangedEvent>
     | undefined;
-  screenId?: CT.WithDefault<string, ''> | undefined;
+  screenId?: CT.WithDefault<string, ''>;
   sheetAllowedDetents?: number[] | undefined;
-  sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1> | undefined;
-  sheetGrabberVisible?: CT.WithDefault<boolean, false> | undefined;
-  sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0> | undefined;
-  sheetExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, false> | undefined;
-  sheetInitialDetent?: CT.WithDefault<CT.Int32, 0> | undefined;
-  sheetElevation?: CT.WithDefault<CT.Int32, 24> | undefined;
-  sheetShouldOverflowTopInset?: CT.WithDefault<boolean, false> | undefined;
-  sheetDefaultResizeAnimationEnabled?:
-    | CT.WithDefault<boolean, true>
-    | undefined;
+  sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
+  sheetGrabberVisible?: CT.WithDefault<boolean, false>;
+  sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
+  sheetExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, false>;
+  sheetInitialDetent?: CT.WithDefault<CT.Int32, 0>;
+  sheetElevation?: CT.WithDefault<CT.Int32, 24>;
+  sheetShouldOverflowTopInset?: CT.WithDefault<boolean, false>;
+  sheetDefaultResizeAnimationEnabled?: CT.WithDefault<boolean, true>;
   customAnimationOnSwipe?: boolean | undefined;
-  fullScreenSwipeEnabled?:
-    | CT.WithDefault<OptionalBoolean, 'undefined'>
-    | undefined;
-  fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true> | undefined;
+  fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
+  fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean | undefined;
   preventNativeDismiss?: boolean | undefined;
-  gestureEnabled?: CT.WithDefault<boolean, true> | undefined;
+  gestureEnabled?: CT.WithDefault<boolean, true>;
   statusBarColor?: ColorValue | undefined;
   statusBarHidden?: boolean | undefined;
   screenOrientation?: string | undefined;
@@ -110,32 +106,22 @@ export interface NativeProps extends ViewProps {
   statusBarStyle?: string | undefined;
   statusBarTranslucent?: boolean | undefined;
   gestureResponseDistance?: GestureResponseDistanceType | undefined;
-  stackPresentation?: CT.WithDefault<StackPresentation, 'push'> | undefined;
-  stackAnimation?: CT.WithDefault<StackAnimation, 'default'> | undefined;
-  transitionDuration?: CT.WithDefault<CT.Int32, 500> | undefined;
-  replaceAnimation?: CT.WithDefault<ReplaceAnimation, 'pop'> | undefined;
-  swipeDirection?: CT.WithDefault<SwipeDirection, 'horizontal'> | undefined;
+  stackPresentation?: CT.WithDefault<StackPresentation, 'push'>;
+  stackAnimation?: CT.WithDefault<StackAnimation, 'default'>;
+  transitionDuration?: CT.WithDefault<CT.Int32, 500>;
+  replaceAnimation?: CT.WithDefault<ReplaceAnimation, 'pop'>;
+  swipeDirection?: CT.WithDefault<SwipeDirection, 'horizontal'>;
   hideKeyboardOnSwipe?: boolean | undefined;
-  activityState?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  activityState?: CT.WithDefault<CT.Float, -1.0>;
   navigationBarColor?: ColorValue | undefined;
   navigationBarTranslucent?: boolean | undefined;
   navigationBarHidden?: boolean | undefined;
   nativeBackButtonDismissalEnabled?: boolean | undefined;
-  bottomScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  leftScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  rightScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  topScrollEdgeEffect?:
-    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
-    | undefined;
-  synchronousShadowStateUpdatesEnabled?:
-    | CT.WithDefault<boolean, false>
-    | undefined;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {

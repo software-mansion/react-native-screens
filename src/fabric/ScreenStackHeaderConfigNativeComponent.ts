@@ -47,9 +47,9 @@ export interface NativeProps extends ViewProps {
   backTitle?: string | undefined;
   backTitleFontFamily?: string | undefined;
   backTitleFontSize?: CT.Int32 | undefined;
-  backTitleVisible?: CT.WithDefault<boolean, 'true'> | undefined;
+  backTitleVisible?: CT.WithDefault<boolean, 'true'>;
   color?: ColorValue | undefined;
-  direction?: CT.WithDefault<DirectionType, 'ltr'> | undefined;
+  direction?: CT.WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean | undefined;
   hideShadow?: boolean | undefined;
   largeTitle?: boolean | undefined;
@@ -66,12 +66,10 @@ export interface NativeProps extends ViewProps {
   titleFontWeight?: string | undefined;
   titleColor?: ColorValue | undefined;
   disableBackButtonMenu?: boolean | undefined;
-  backButtonDisplayMode?:
-    | CT.WithDefault<BackButtonDisplayMode, 'default'>
-    | undefined;
+  backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean | undefined;
   backButtonInCustomView?: boolean | undefined;
-  blurEffect?: CT.WithDefault<BlurEffect, 'none'> | undefined;
+  blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean | undefined;
   headerLeftBarButtonItems?: CT.UnsafeMixed[] | undefined;
@@ -82,14 +80,10 @@ export interface NativeProps extends ViewProps {
   onPressHeaderBarButtonMenuItem?:
     | CT.DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>
     | undefined;
-  synchronousShadowStateUpdatesEnabled?:
-    | CT.WithDefault<boolean, false>
-    | undefined;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 
   // Experimental
-  userInterfaceStyle?:
-    | CT.WithDefault<UserInterfaceStyle, 'unspecified'>
-    | undefined;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
   consumeTopInset?: boolean | undefined;
   legacyTopInsetBehavior?: boolean | undefined;
 }

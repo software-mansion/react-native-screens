@@ -58,7 +58,7 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 export interface NativeProps extends ViewProps {
   // Control
   navState: NavigationState;
-  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false> | undefined;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
   onTabSelected?: CT.DirectEventHandler<TabSelectedEvent> | undefined;
@@ -71,25 +71,21 @@ export interface NativeProps extends ViewProps {
   onMoreTabSelected?: CT.DirectEventHandler<MoreTabSelectedEvent> | undefined;
 
   // General
-  tabBarHidden?: CT.WithDefault<boolean, false> | undefined;
+  tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue | undefined;
-  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'> | undefined;
+  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // We can't use `direction` name for this prop as it's also used by
   // direction style View prop.
-  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'> | undefined;
+  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
   // Experimental support
-  controlNavigationStateInJS?: CT.WithDefault<boolean, false> | undefined;
+  controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
 
   // iOS-specific props
   tabBarTintColor?: ColorValue | undefined;
-  tabBarMinimizeBehavior?:
-    | CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>
-    | undefined;
-  tabBarControllerMode?:
-    | CT.WithDefault<TabBarControllerMode, 'automatic'>
-    | undefined;
+  tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {

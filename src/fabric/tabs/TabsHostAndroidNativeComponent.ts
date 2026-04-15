@@ -43,7 +43,7 @@ type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 export interface NativeProps extends ViewProps {
   // Control
   navState: NavigationState;
-  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false> | undefined;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
   onTabSelected?: CT.DirectEventHandler<TabSelectedEvent> | undefined;
@@ -55,12 +55,12 @@ export interface NativeProps extends ViewProps {
     | undefined;
 
   // General
-  tabBarHidden?: CT.WithDefault<boolean, false> | undefined;
+  tabBarHidden?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue | undefined;
-  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'> | undefined;
+  colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // Android-specific props
-  tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false> | undefined;
+  tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostAndroid', {
