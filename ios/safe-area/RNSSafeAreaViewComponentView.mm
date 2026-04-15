@@ -25,12 +25,6 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   __weak UIView<RNSSafeAreaProviding> *_Nullable _providerView;
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -152,6 +146,16 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   _providerView = nil;
   _currentSafeAreaInsets = UIEdgeInsetsZero;
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
