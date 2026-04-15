@@ -34,12 +34,13 @@ export async function selectIssueTestScreen(screenName: string) {
 export async function selectSingleFeatureTestsScreen(scenarioGroup: string, screenKey: string) {
   await scrollTo('root-screen-single-feature-tests');
   await element(by.id('root-screen-single-feature-tests')).tap();
-
   await waitFor(element(by.id('single-feature-tests-scrollview'))).toBeVisible();
 
+  await scrollTo(`single-feature-tests-${scenarioGroup}`);
   await expect(element(by.id(`single-feature-tests-${scenarioGroup}`))).toBeVisible();
   await element(by.id(`single-feature-tests-${scenarioGroup}`)).tap();
 
+  await scrollTo(`${screenKey}`);
   await expect(element(by.id(`${screenKey}`))).toBeVisible();
   await element(by.id(`${screenKey}`)).tap();
 }
