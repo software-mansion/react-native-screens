@@ -71,14 +71,6 @@
   RCTSurfaceTouchHandler *_touchHandler;
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-#ifdef RCT_DYNAMIC_FRAMEWORKS
-+ (void)load
-{
-  [super load];
-}
-#endif // RCT_DYNAMIC_FRAMEWORKS
-
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -228,6 +220,16 @@ RNS_IGNORE_SUPER_CALL_END
 
   [super updateProps:props oldProps:oldProps];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

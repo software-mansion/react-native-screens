@@ -93,14 +93,6 @@ namespace react = facebook::react;
 
 #endif // REACT_NATIVE_VERSION_MINOR >= 82
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-#ifdef RCT_DYNAMIC_FRAMEWORKS
-+ (void)load
-{
-  [super load];
-}
-#endif // RCT_DYNAMIC_FRAMEWORKS
-
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSTabsBottomAccessoryContentComponentDescriptor>();
@@ -116,6 +108,16 @@ namespace react = facebook::react;
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

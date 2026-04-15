@@ -482,14 +482,6 @@ RNS_IGNORE_SUPER_CALL_END
   [super unmountChildComponentView:childComponentView index:index];
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-#ifdef RCT_DYNAMIC_FRAMEWORKS
-+ (void)load
-{
-  [super load];
-}
-#endif // RCT_DYNAMIC_FRAMEWORKS
-
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();
@@ -758,6 +750,16 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 #undef RNS_FAILING_EVENT_GETTER
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
