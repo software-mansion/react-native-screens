@@ -86,9 +86,11 @@ function parseBackButtonIconToNativeProps(
     return {
       backButtonDrawableIconResourceName: icon.name,
     };
+  } else {
+    throw new Error(
+      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
+    );
   }
-
-  return {};
 }
 
 export default StackHeaderConfig;
