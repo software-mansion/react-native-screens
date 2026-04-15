@@ -7,7 +7,7 @@ import { Scenario } from '@apps/tests/shared/helpers';
 
 const SCENARIO: Scenario = {
     name: 'Tab Bar Experimental UIStyle',
-    key: 'test-tabs-tab-bar-experimental-userInterfaceStyle-ios',
+    key: 'test-tabs-tab-bar-experimental-user-interface-style-ios',
     platforms: ['ios'],
     AppComponent: App,
 };
