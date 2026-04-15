@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Colors } from '../../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling/Colors';
 
 export function TabPlaceholder() {
   console.info('TabPlaceholder render');

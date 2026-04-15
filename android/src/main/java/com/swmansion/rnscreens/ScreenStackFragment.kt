@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -52,10 +53,12 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-    private var appBarLayout: CustomAppBarLayout? = null
+    private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
+
+    private var lastActiveHeaderConfig: ScreenStackHeaderConfig? = null
 
     private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
 
@@ -103,7 +106,8 @@ class ScreenStackFragment :
         toolbar = null
     }
 
-    override fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: CustomToolbar) {
+        lastActiveHeaderConfig = toolbar.config
         appBarLayout?.addView(toolbar)
         toolbar.layoutParams =
             AppBarLayout
@@ -204,7 +208,7 @@ class ScreenStackFragment :
 
         if (!screen.usesFormSheetPresentation()) {
             appBarLayout =
-                context?.let { CustomAppBarLayout(it) }?.apply {
+                context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
                     // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
                     // role. On top of that it breaks screens animations when alfa offscreen compositing is off
@@ -299,6 +303,25 @@ class ScreenStackFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
+        // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
+        // its mActionBar field for the lifetime of the activity. When a screen is popped and the new
+        // top screen does not install a replacement action bar (e.g. headerShown: false),
+        // the stale ToolbarActionBar — and the entire object graph hanging off the toolbar is never released.
+        // When this fragment is being removed, we're clearing the activity's support action bar if it
+        // still belongs to us. This will break the retention chain:
+        // - AppCompatDelegateImpl.mActionBar
+        // - ToolbarActionBar.mDecorToolbar
+        // - ToolbarWidgetWrapper.mToolbar
+        // - DebugMenuToolbar.config
+        // - ScreenStackHeaderConfig.mParent
+        // - Screen.fragment
+        lastActiveHeaderConfig?.clearActionBarIfOwned(activity as? AppCompatActivity)
+        lastActiveHeaderConfig = null
+        super.onDestroyView()
     }
 
     override fun onCreateAnimation(

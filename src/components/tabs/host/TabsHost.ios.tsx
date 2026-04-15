@@ -28,18 +28,19 @@ function TabsHost(props: TabsHostProps) {
     direction,
     experimentalControlNavigationStateInJS,
     nativeContainerStyle,
-    onNativeFocusChange,
+    onTabSelected,
+    navState,
     ...filteredBaseProps
   } = baseProps;
 
   const componentNodeRef =
     React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);
 
-  const { controlNavigationStateInJS, onNativeFocusChangeCallback } =
+  const { controlNavigationStateInJS, onTabSelected: onTabSelectedCallback } =
     useTabsHost<TabsHostIOSNativeComponentProps>({
       componentNodeRef,
       controlNavigationStateInJS: experimentalControlNavigationStateInJS,
-      onNativeFocusChange,
+      onTabSelected,
     });
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
@@ -48,7 +49,8 @@ function TabsHost(props: TabsHostProps) {
   return (
     <TabsHostIOSNativeComponent
       style={styles.fillParent}
-      onNativeFocusChange={onNativeFocusChangeCallback}
+      navState={navState}
+      onTabSelected={onTabSelectedCallback}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
@@ -58,7 +60,8 @@ function TabsHost(props: TabsHostProps) {
       layoutDirection={direction}
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
-      tabBarTintColor={ios?.tabBarTintColor}>
+      tabBarTintColor={ios?.tabBarTintColor}
+      onMoreTabSelected={ios?.onMoreTabSelected}>
       {children}
       {ios?.bottomAccessory &&
         isIOS26OrHigher &&

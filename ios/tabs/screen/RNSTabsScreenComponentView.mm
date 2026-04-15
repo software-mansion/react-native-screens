@@ -78,7 +78,6 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -275,11 +274,6 @@ RNS_IGNORE_SUPER_CALL_END
     _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
-  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isSelectedScreen = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
-  }
-
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     tabBarItemNeedsUpdate = YES;
@@ -352,6 +346,10 @@ RNS_IGNORE_SUPER_CALL_END
       oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
     _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect =
         newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
+  }
+
+  if (newComponentProps.preventNativeSelection != oldComponentProps.preventNativeSelection) {
+    _preventNativeSelection = newComponentProps.preventNativeSelection;
   }
 
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=
@@ -752,6 +750,16 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 #undef RNS_FAILING_EVENT_GETTER
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

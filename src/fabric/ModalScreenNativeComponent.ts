@@ -59,6 +59,8 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
@@ -115,6 +117,10 @@ export interface NativeProps extends ViewProps {
   navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 }
 

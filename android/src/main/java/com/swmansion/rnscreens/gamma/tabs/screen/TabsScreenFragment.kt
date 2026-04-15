@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 class TabsScreenFragment(
     internal val tabsScreen: TabsScreen,
 ) : Fragment() {
+    internal val requireScreenKey: String by tabsScreen::requireScreenKey
+    internal val isPreventNativeSelectionEnabled: Boolean by tabsScreen::preventNativeSelection
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

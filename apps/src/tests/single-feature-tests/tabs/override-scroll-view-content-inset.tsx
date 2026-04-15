@@ -4,8 +4,8 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { TabsContainer } from '../../../shared/gamma/containers/tabs/TabsContainer';
-import type { Scenario } from '../../shared/helpers';
+import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import type { Scenario } from '@apps/tests/shared/helpers';
 
 const SCENARIO: Scenario = {
   name: 'Override ScrollView Content Inset',
@@ -55,11 +55,11 @@ function App() {
     <NavigationIndependentTree>
       <NavigationContainer>
         <TabsContainer
-          tabConfigs={[
+          routeConfigs={[
             {
-              component: FalseTab,
+              name: 'False',
+              Component: FalseTab,
               options: {
-                screenKey: 'False',
                 title: 'False',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: false,
@@ -68,9 +68,9 @@ function App() {
               },
             },
             {
-              component: TrueTab,
+              name: 'True',
+              Component: TrueTab,
               options: {
-                screenKey: 'True',
                 title: 'True',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: true,
@@ -79,9 +79,9 @@ function App() {
               },
             },
             {
-              component: DefaultTab,
+              name: 'Default',
+              Component: DefaultTab,
               options: {
-                screenKey: 'Default',
                 title: 'Default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },

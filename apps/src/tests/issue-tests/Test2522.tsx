@@ -6,8 +6,8 @@ import type {
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Spacer } from '../../shared';
-import Colors from '../../shared/styling/Colors';
+import { Spacer } from '@apps/shared';
+import Colors from '@apps/shared/styling/Colors';
 import { featureFlags } from 'react-native-screens';
 
 // For keeping the reference to the original value from the global scope,

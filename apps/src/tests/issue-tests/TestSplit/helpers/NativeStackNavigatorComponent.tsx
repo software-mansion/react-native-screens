@@ -2,8 +2,8 @@ import React from 'react';
 import { createNativeStackNavigator, NativeStackNavigationProp, type NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
-import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
-import Colors from '../../../../shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import Colors from '@apps/shared/styling/Colors';
 
 type StackParamList = {
   ScreenOne: undefined;

@@ -1,4 +1,4 @@
-import { ScenarioGroup } from '../../shared/helpers';
+import { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 const scenarios = {};
 

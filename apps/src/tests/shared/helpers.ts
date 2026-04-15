@@ -10,6 +10,7 @@ export interface Scenario {
    * Globally unique key identifying this scenario.
    * Must be in kebab-case.
    * Should match the filename of the scenario file.
+   * This is also used as the testID for the scenario.
    */
   key: string;
   /**

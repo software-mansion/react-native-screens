@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 import kotlin.math.max
+import kotlin.properties.Delegates
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -34,6 +36,19 @@ class ScreenStackHeaderConfig(
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
+
+    var consumeTopInset by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
+        }
+    }
+
+    var legacyTopInsetBehavior by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
+        }
+    }
+
     private var title: String? = null
     private var titleColor = 0
     private var titleFontFamily: String? = null
@@ -44,6 +59,7 @@ class ScreenStackHeaderConfig(
     private var isBackButtonHidden = false
     private var isShadowHidden = false
     private var isDestroyed = false
+    private var actionBar: ActionBar? = null
     private var backButtonInCustomView = false
     private var tintColor = 0
     private var isAttachedToWindow = false
@@ -99,6 +115,17 @@ class ScreenStackHeaderConfig(
         isDestroyed = true
     }
 
+    internal fun clearActionBarIfOwned(activity: AppCompatActivity?) {
+        actionBar?.let { ownedActionBar ->
+            activity?.let { appCompat ->
+                if (appCompat.supportActionBar === ownedActionBar) {
+                    appCompat.setSupportActionBar(null)
+                }
+            }
+        }
+        actionBar = null
+    }
+
     /**
      * Native toolbar should notify the header config component that it has completed its layout.
      */
@@ -130,7 +157,6 @@ class ScreenStackHeaderConfig(
 
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
 
-        // Note that implementation of the callee differs between architectures.
         updateHeaderConfigState(
             toolbar.width,
             toolbar.height,
@@ -230,15 +256,16 @@ class ScreenStackHeaderConfig(
 
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
-        val actionBar = requireNotNull(activity.supportActionBar)
+        val newActionBar = requireNotNull(activity.supportActionBar)
+        actionBar = newActionBar
 
         // hide back button
-        actionBar.setDisplayHomeAsUpEnabled(
+        newActionBar.setDisplayHomeAsUpEnabled(
             screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
         )
 
         // title
-        actionBar.title = title
+        newActionBar.title = title
         if (TextUtils.isEmpty(title)) {
             isTitleEmpty = true
         }
@@ -312,7 +339,7 @@ class ScreenStackHeaderConfig(
                         ?: throw JSApplicationIllegalArgumentException(
                             "Back button header config view should have Image as first child",
                         )
-                actionBar.setHomeAsUpIndicator(firstChild.drawable)
+                newActionBar.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
             }
@@ -431,17 +458,10 @@ class ScreenStackHeaderConfig(
         config: ScreenStackHeaderConfig,
     ) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                (context.applicationContext as ReactApplication)
-                    .reactHost
-                    ?.devSupportManager
-                    ?.showDevOptionsDialog()
-            } else {
-                (context.applicationContext as ReactApplication)
-                    .reactNativeHost
-                    .reactInstanceManager
-                    .showDevOptionsDialog()
-            }
+            (context.applicationContext as ReactApplication)
+                .reactHost
+                ?.devSupportManager
+                ?.showDevOptionsDialog()
             return true
         }
     }

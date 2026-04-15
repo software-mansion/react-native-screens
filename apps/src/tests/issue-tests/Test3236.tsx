@@ -4,14 +4,14 @@ import { TabBarControllerMode } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import { Button } from '../../shared';
+import { Button } from '@apps/shared';
 
 function makeTab(
   title: string,
@@ -51,10 +51,11 @@ function App() {
   const [controllerMode, setControllerMode] =
     useState<TabBarControllerMode>('automatic');
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'Tab1',
+      Component: makeTab('Tab 1', controllerMode, setControllerMode),
       options: {
-        screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
           icon: {
@@ -69,11 +70,11 @@ function App() {
           },
         },
       },
-      component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
     {
+      name: 'Tab2',
+      Component: makeTab('Tab 2', controllerMode, setControllerMode),
       options: {
-        screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {
           icon: {
@@ -88,7 +89,6 @@ function App() {
           },
         },
       },
-      component: makeTab('Tab 2', controllerMode, setControllerMode),
     },
   ];
 
@@ -99,7 +99,7 @@ function App() {
         setConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarControllerMode: controllerMode,
         }}

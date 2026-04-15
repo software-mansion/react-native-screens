@@ -2,8 +2,8 @@ import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
-import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
-import Colors from '../../../../shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import Colors from '@apps/shared/styling/Colors';
 import { SplitBaseConfig } from '../helpers/types';
 
 const ScreenOne = ({ navigation }: ScreenOneProps) => (

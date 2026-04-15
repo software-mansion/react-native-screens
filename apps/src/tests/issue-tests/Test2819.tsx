@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 

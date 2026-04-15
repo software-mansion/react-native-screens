@@ -5,11 +5,11 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ScenarioButton } from '../shared/ScenarioButton';
+import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 
 import OrientationScenarioGroup from './orientation';
 import ScrollViewScenarioGroup from './scroll-view';
-import ScenarioSelectionScreen from '../shared/ScenarioScreen';
+import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,

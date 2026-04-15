@@ -2,13 +2,11 @@
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSContainerNavigationController
 
@@ -38,36 +36,29 @@ namespace react = facebook::react;
 }
 
 #pragma mark-- Fabric specific
-#ifdef RCT_NEW_ARCH_ENABLED
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenNavigationContainerComponentDescriptor>();
 }
 
+#pragma mark - Dynamic frameworks support
+
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
 + (void)load
 {
   [super load];
 }
-
-#endif
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenNavigationContainerCls(void)
 {
   return RNSScreenNavigationContainerView.class;
 }
-#endif
 
 @implementation RNSScreenNavigationContainerManager
-
-RCT_EXPORT_MODULE()
-
-- (UIView *)view
-{
-  return [[RNSScreenNavigationContainerView alloc] init];
-}
 
 @end

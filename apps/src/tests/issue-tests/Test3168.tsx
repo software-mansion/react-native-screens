@@ -16,16 +16,16 @@ import React, {
 } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
-import { ListItem, SettingsPicker, SettingsSwitch } from '../../shared';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+import { ListItem, SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import {
   TabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
+  TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -199,10 +199,11 @@ function TabsStackComponent() {
   );
   const { searchBarConfig } = useSearchBarConfig();
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'main',
+      Component: () => Menu({ tabsMode: true }),
       options: {
-        screenKey: 'main',
         title: 'Main',
         ios: {
           icon: {
@@ -211,11 +212,11 @@ function TabsStackComponent() {
           },
         },
       },
-      component: () => Menu({ tabsMode: true }),
     },
     {
+      name: 'another',
+      Component: AnotherTab,
       options: {
-        screenKey: 'another',
         title: 'Another',
         ios: {
           icon: {
@@ -224,11 +225,11 @@ function TabsStackComponent() {
           },
         },
       },
-      component: AnotherTab,
     },
     {
+      name: 'examples',
+      Component: () => ExamplesStackComponent({ showMenu: false }),
       options: {
-        screenKey: 'examples',
         title: 'Search',
         ios: {
           icon: {
@@ -238,7 +239,6 @@ function TabsStackComponent() {
           systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
         },
       },
-      component: () => ExamplesStackComponent({ showMenu: false }),
     },
   ];
 
@@ -248,7 +248,7 @@ function TabsStackComponent() {
         config,
         setConfig,
       }}>
-      <TabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

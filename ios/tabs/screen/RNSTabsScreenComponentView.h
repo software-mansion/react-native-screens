@@ -57,7 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
 
-@property (nonatomic) BOOL isSelectedScreen;
 @property (nonatomic, nullable) NSString *screenKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
@@ -81,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+
+@property (nonatomic) BOOL preventNativeSelection;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 

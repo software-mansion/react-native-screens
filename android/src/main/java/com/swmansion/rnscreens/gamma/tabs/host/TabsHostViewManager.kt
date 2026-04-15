@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -10,7 +11,10 @@ import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostNativeFocusChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
+import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
@@ -55,7 +59,9 @@ class TabsHostViewManager :
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            makeEventRegistrationInfo(TabsHostNativeFocusChangeEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionPreventedEvent),
+            makeEventRegistrationInfo(TabsHostTabSelectionRejectedEvent),
         )
 
     override fun addEventEmitters(
@@ -64,6 +70,23 @@ class TabsHostViewManager :
     ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
+    }
+
+    override fun setNavState(
+        view: TabsHost,
+        value: ReadableMap?,
+    ) {
+        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
+        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
+        val provenance = requireNotNull(navStateMap.getInt("provenance"))
+        view.updateJSNavState(TabsNavState(selectedScreenKey, provenance))
+    }
+
+    override fun setRejectStaleNavStateUpdates(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.rejectStaleNavStateUpdates = value
     }
 
     override fun setTabBarHidden(

@@ -55,6 +55,7 @@ function ScreenStack(props: ScreenStackProps) {
     currentScreenId,
     transitionAnimation,
     screenEdgeGesture,
+    nativeContainerStyle,
     onFinishTransitioning,
     children,
     ...rest
@@ -102,6 +103,10 @@ function ScreenStack(props: ScreenStackProps) {
           iosPreventReattachmentOfDismissedScreens={
             featureFlags.experiment.iosPreventReattachmentOfDismissedScreens
           }
+          iosPreventReattachmentOfDismissedModals={
+            featureFlags.experiment.iosPreventReattachmentOfDismissedModals
+          }
+          nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
           /**
            * This messy override is to conform NativeProps used by codegen and
            * our Public API. To see reasoning go to this PR:

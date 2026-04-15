@@ -7,6 +7,7 @@
 #import <optional>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
+#import "RNSTabsNavigationState.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <folly/dynamic.h>
@@ -57,6 +58,10 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 #endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 18
+
+react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
+RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+    RNSTabsNavigationStateRejectionReason reason);
 
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
