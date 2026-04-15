@@ -6,10 +6,18 @@ import { codegenNativeComponent } from 'react-native';
 type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 interface NativeProps extends ViewProps {
-  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  topScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  rightScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  bottomScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScrollViewMarker');

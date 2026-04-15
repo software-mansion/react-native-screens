@@ -50,57 +50,68 @@ type SplitViewTopColumnForCollapsing =
   | 'secondary';
 
 interface ColumnMetrics {
-  minimumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  maximumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  preferredPrimaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
-  minimumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  maximumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  preferredSupplementaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
+  minimumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  maximumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  preferredPrimaryColumnWidthOrFraction?:
+    | CT.WithDefault<CT.Float, -1.0>
+    | undefined;
+  minimumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  maximumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  preferredSupplementaryColumnWidthOrFraction?:
+    | CT.WithDefault<CT.Float, -1.0>
+    | undefined;
 
   // iOS 26 only
-  minimumSecondaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  preferredSecondaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
-  minimumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  maximumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
-  preferredInspectorColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
+  minimumSecondaryColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  preferredSecondaryColumnWidthOrFraction?:
+    | CT.WithDefault<CT.Float, -1.0>
+    | undefined;
+  minimumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  maximumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0> | undefined;
+  preferredInspectorColumnWidthOrFraction?:
+    | CT.WithDefault<CT.Float, -1.0>
+    | undefined;
 }
 
 interface NativeProps extends ViewProps {
   // Appearance
 
-  preferredDisplayMode?: CT.WithDefault<SplitViewDisplayMode, 'automatic'>;
-  preferredSplitBehavior?: CT.WithDefault<SplitViewSplitBehavior, 'automatic'>;
-  primaryEdge?: CT.WithDefault<SplitViewPrimaryEdge, 'leading'>;
-  showSecondaryToggleButton?: CT.WithDefault<boolean, false>;
-  displayModeButtonVisibility?: CT.WithDefault<
-    SplitViewDisplayModeButtonVisibility,
-    'automatic'
-  >;
-  columnMetrics?: ColumnMetrics;
-  orientation?: CT.WithDefault<SplitViewOrientation, 'inherit'>;
-  primaryBackgroundStyle?: CT.WithDefault<
-    SplitViewPrimaryBackgroundStyle,
-    'default'
-  >;
+  preferredDisplayMode?:
+    | CT.WithDefault<SplitViewDisplayMode, 'automatic'>
+    | undefined;
+  preferredSplitBehavior?:
+    | CT.WithDefault<SplitViewSplitBehavior, 'automatic'>
+    | undefined;
+  primaryEdge?: CT.WithDefault<SplitViewPrimaryEdge, 'leading'> | undefined;
+  showSecondaryToggleButton?: CT.WithDefault<boolean, false> | undefined;
+  displayModeButtonVisibility?:
+    | CT.WithDefault<SplitViewDisplayModeButtonVisibility, 'automatic'>
+    | undefined;
+  columnMetrics?: ColumnMetrics | undefined;
+  orientation?: CT.WithDefault<SplitViewOrientation, 'inherit'> | undefined;
+  primaryBackgroundStyle?:
+    | CT.WithDefault<SplitViewPrimaryBackgroundStyle, 'default'>
+    | undefined;
 
   // Behavior
 
-  topColumnForCollapsing?: CT.WithDefault<
-    SplitViewTopColumnForCollapsing,
-    'default'
-  >;
+  topColumnForCollapsing?:
+    | CT.WithDefault<SplitViewTopColumnForCollapsing, 'default'>
+    | undefined;
 
   // Interactions
 
-  presentsWithGesture?: CT.WithDefault<boolean, true>;
-  showInspector?: CT.WithDefault<boolean, false>;
+  presentsWithGesture?: CT.WithDefault<boolean, true> | undefined;
+  showInspector?: CT.WithDefault<boolean, false> | undefined;
 
   // Custom events
 
-  onCollapse?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDisplayModeWillChange?: CT.DirectEventHandler<DisplayModeWillChangeEvent>;
-  onExpand?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onCollapse?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDisplayModeWillChange?:
+    | CT.DirectEventHandler<DisplayModeWillChangeEvent>
+    | undefined;
+  onExpand?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 type ComponentType = HostComponent<NativeProps>;

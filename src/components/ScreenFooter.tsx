@@ -10,7 +10,7 @@ function ScreenFooter(props: ViewProps) {
 }
 
 type FooterProps = {
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
 };
 
 export function FooterComponent({ children }: FooterProps) {

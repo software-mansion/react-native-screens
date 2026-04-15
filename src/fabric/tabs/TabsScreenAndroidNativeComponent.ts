@@ -36,10 +36,9 @@ export type Appearance = {
   tabBarItemRippleColor?: ProcessedColorValue | null | undefined;
 
   // TabBarItem - Label layout
-  tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityMode,
-    'auto'
-  >;
+  tabBarItemLabelVisibilityMode?:
+    | CT.WithDefault<TabBarItemLabelVisibilityMode, 'auto'>
+    | undefined;
 
   // TabBarItem - State-dependent appearance
   normal?: ItemStateAppearance | undefined;
@@ -49,7 +48,7 @@ export type Appearance = {
 
   // TabBarItem - Active Indicator
   tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
-  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true> | undefined;
 
   // TabBarItem - Label
   tabBarItemTitleFontFamily?: string | undefined;
@@ -67,10 +66,10 @@ export type Appearance = {
 
 export interface NativeProps extends ViewProps {
   // Events
-  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 
   // Control
   screenKey: string;
@@ -87,10 +86,12 @@ export interface NativeProps extends ViewProps {
   // Effects
   specialEffects?:
     | {
-        repeatedTabSelection?: {
-          popToRoot?: CT.WithDefault<boolean, true>;
-          scrollToTop?: CT.WithDefault<boolean, true>;
-        };
+        repeatedTabSelection?:
+          | {
+              popToRoot?: CT.WithDefault<boolean, true> | undefined;
+              scrollToTop?: CT.WithDefault<boolean, true> | undefined;
+            }
+          | undefined;
       }
     | undefined;
 

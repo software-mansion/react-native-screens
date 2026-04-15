@@ -41,37 +41,39 @@ type BlurEffect =
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
-  onAttached?: CT.DirectEventHandler<OnAttachedEvent>;
-  onDetached?: CT.DirectEventHandler<OnDetachedEvent>;
-  backgroundColor?: ColorValue;
-  backTitle?: string;
-  backTitleFontFamily?: string;
-  backTitleFontSize?: CT.Int32;
-  backTitleVisible?: CT.WithDefault<boolean, 'true'>;
-  color?: ColorValue;
-  direction?: CT.WithDefault<DirectionType, 'ltr'>;
-  hidden?: boolean;
-  hideShadow?: boolean;
-  largeTitle?: boolean;
-  largeTitleFontFamily?: string;
-  largeTitleFontSize?: CT.Int32;
-  largeTitleFontWeight?: string;
-  largeTitleBackgroundColor?: ColorValue;
-  largeTitleHideShadow?: boolean;
-  largeTitleColor?: ColorValue;
-  translucent?: boolean;
-  title?: string;
-  titleFontFamily?: string;
-  titleFontSize?: CT.Int32;
-  titleFontWeight?: string;
-  titleColor?: ColorValue;
-  disableBackButtonMenu?: boolean;
-  backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
-  hideBackButton?: boolean;
-  backButtonInCustomView?: boolean;
-  blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
+  onAttached?: CT.DirectEventHandler<OnAttachedEvent> | undefined;
+  onDetached?: CT.DirectEventHandler<OnDetachedEvent> | undefined;
+  backgroundColor?: ColorValue | undefined;
+  backTitle?: string | undefined;
+  backTitleFontFamily?: string | undefined;
+  backTitleFontSize?: CT.Int32 | undefined;
+  backTitleVisible?: CT.WithDefault<boolean, 'true'> | undefined;
+  color?: ColorValue | undefined;
+  direction?: CT.WithDefault<DirectionType, 'ltr'> | undefined;
+  hidden?: boolean | undefined;
+  hideShadow?: boolean | undefined;
+  largeTitle?: boolean | undefined;
+  largeTitleFontFamily?: string | undefined;
+  largeTitleFontSize?: CT.Int32 | undefined;
+  largeTitleFontWeight?: string | undefined;
+  largeTitleBackgroundColor?: ColorValue | undefined;
+  largeTitleHideShadow?: boolean | undefined;
+  largeTitleColor?: ColorValue | undefined;
+  translucent?: boolean | undefined;
+  title?: string | undefined;
+  titleFontFamily?: string | undefined;
+  titleFontSize?: CT.Int32 | undefined;
+  titleFontWeight?: string | undefined;
+  titleColor?: ColorValue | undefined;
+  disableBackButtonMenu?: boolean | undefined;
+  backButtonDisplayMode?:
+    | CT.WithDefault<BackButtonDisplayMode, 'default'>
+    | undefined;
+  hideBackButton?: boolean | undefined;
+  backButtonInCustomView?: boolean | undefined;
+  blurEffect?: CT.WithDefault<BlurEffect, 'none'> | undefined;
   // TODO: implement this props on iOS
-  topInsetEnabled?: boolean;
+  topInsetEnabled?: boolean | undefined;
   headerLeftBarButtonItems?: CT.UnsafeMixed[] | undefined;
   headerRightBarButtonItems?: CT.UnsafeMixed[] | undefined;
   onPressHeaderBarButtonItem?:
@@ -80,12 +82,16 @@ export interface NativeProps extends ViewProps {
   onPressHeaderBarButtonMenuItem?:
     | CT.DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>
     | undefined;
-  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
+  synchronousShadowStateUpdatesEnabled?:
+    | CT.WithDefault<boolean, false>
+    | undefined;
 
   // Experimental
-  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
-  consumeTopInset?: boolean;
-  legacyTopInsetBehavior?: boolean;
+  userInterfaceStyle?:
+    | CT.WithDefault<UserInterfaceStyle, 'unspecified'>
+    | undefined;
+  consumeTopInset?: boolean | undefined;
+  legacyTopInsetBehavior?: boolean | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>(

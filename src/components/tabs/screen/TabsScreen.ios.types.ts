@@ -31,7 +31,7 @@ export interface TabsScreenAppearanceIOS {
    *
    * @platform ios
    */
-  stacked?: TabsScreenItemAppearanceIOS;
+  stacked?: TabsScreenItemAppearanceIOS | undefined;
   /**
    * @summary Specifies the appearance of tab bar items when they are in inline layout.
    *
@@ -43,7 +43,7 @@ export interface TabsScreenAppearanceIOS {
    *
    * @platform ios
    */
-  inline?: TabsScreenItemAppearanceIOS;
+  inline?: TabsScreenItemAppearanceIOS | undefined;
   /**
    * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
    *
@@ -55,7 +55,7 @@ export interface TabsScreenAppearanceIOS {
    *
    * @platform ios
    */
-  compactInline?: TabsScreenItemAppearanceIOS;
+  compactInline?: TabsScreenItemAppearanceIOS | undefined;
 
   /**
    * @summary Specifies the background color for the entire tab bar when tab screen is selected.
@@ -65,7 +65,7 @@ export interface TabsScreenAppearanceIOS {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBackgroundColor?: ColorValue;
+  tabBarBackgroundColor?: ColorValue | undefined;
   /**
    * @summary Specifies the blur effect applied to the tab bar when tab screen is selected.
    *
@@ -87,7 +87,7 @@ export interface TabsScreenAppearanceIOS {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBlurEffect?: TabsScreenBlurEffect;
+  tabBarBlurEffect?: TabsScreenBlurEffect | undefined;
   /**
    * @summary Specifies the shadow color for the tab bar when tab screen is selected.
    *
@@ -96,7 +96,7 @@ export interface TabsScreenAppearanceIOS {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarShadowColor?: ColorValue;
+  tabBarShadowColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenItemAppearanceIOS {
@@ -106,28 +106,28 @@ export interface TabsScreenItemAppearanceIOS {
    *
    * @platform ios
    */
-  normal?: TabsScreenItemStateAppearanceIOS;
+  normal?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for the tab bar item that is currently active.
    * The appearance is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
-  selected?: TabsScreenItemStateAppearanceIOS;
+  selected?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for a tab bar item when it receives focus.
    * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  focused?: TabsScreenItemStateAppearanceIOS;
+  focused?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for tab bar items when they are disabled.
    * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  disabled?: TabsScreenItemStateAppearanceIOS;
+  disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
 
 export interface TabsScreenItemStateAppearanceIOS {
@@ -137,28 +137,28 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * @platform ios
    */
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * @summary Specifies the font size used for the title of each tab bar item
    * when tab screen is selected.
    *
    * @platform ios
    */
-  tabBarItemTitleFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * @summary Specifies the font weight used for the title of each tab bar item
    * when tab screen is selected.
    *
    * @platform ios
    */
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * @summary Specifies the font style used for the title of each tab bar item
    * when tab screen is selected.
    *
    * @platform ios
    */
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * @summary Specifies the font color used for the title of each tab bar item
    * when tab screen is selected.
@@ -167,7 +167,7 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * @platform ios
    */
-  tabBarItemTitleFontColor?: TextStyle['color'];
+  tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
    * @summary Specifies the title offset for each tab bar item when tab screen
    * is selected.
@@ -177,10 +177,12 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * @platform ios
    */
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
+  tabBarItemTitlePositionAdjustment?:
+    | {
+        horizontal?: number | undefined;
+        vertical?: number | undefined;
+      }
+    | undefined;
   /**
    * @summary Specifies the icon color for each tab bar item when tab screen
    * is selected.
@@ -195,14 +197,14 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * @platform ios
    */
-  tabBarItemIconColor?: ColorValue;
+  tabBarItemIconColor?: ColorValue | undefined;
   /**
    * @summary Specifies the background color of badges for each tab bar item
    * when tab screen is selected.
    *
    * @platform ios
    */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenPropsIOS {
@@ -214,7 +216,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  standardAppearance?: TabsScreenAppearanceIOS;
+  standardAppearance?: TabsScreenAppearanceIOS | undefined;
   /**
    * @summary Specifies the tab bar appearace when edge of scrollable content aligns
    * with the edge of the tab bar.
@@ -227,7 +229,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  scrollEdgeAppearance?: TabsScreenAppearanceIOS;
+  scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
@@ -248,7 +250,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS;
+  icon?: PlatformIconIOS | undefined;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
@@ -258,7 +260,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  selectedIcon?: PlatformIconIOS;
+  selectedIcon?: PlatformIconIOS | undefined;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *
@@ -271,7 +273,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  systemItem?: TabsScreenSystemItem;
+  systemItem?: TabsScreenSystemItem | undefined;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
@@ -288,7 +290,7 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
+  overrideScrollViewContentInsetAdjustmentBehavior?: boolean | undefined;
   /**
    * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
@@ -315,12 +317,14 @@ export interface TabsScreenPropsIOS {
    *
    * @supported iOS 26 or higher
    */
-  scrollEdgeEffects?: {
-    bottom?: ScrollEdgeEffect;
-    left?: ScrollEdgeEffect;
-    right?: ScrollEdgeEffect;
-    top?: ScrollEdgeEffect;
-  };
+  scrollEdgeEffects?:
+    | {
+        bottom?: ScrollEdgeEffect | undefined;
+        left?: ScrollEdgeEffect | undefined;
+        right?: ScrollEdgeEffect | undefined;
+        top?: ScrollEdgeEffect | undefined;
+      }
+    | undefined;
   /**
    * @summary Allows to override system appearance for the tab bar.
    *
@@ -342,5 +346,5 @@ export interface TabsScreenPropsIOS {
    *
    * @platform ios
    */
-  experimental_userInterfaceStyle?: UserInterfaceStyle;
+  experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
 }

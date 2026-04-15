@@ -30,8 +30,8 @@ export type ItemStateAppearance = {
   tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
   tabBarItemTitlePositionAdjustment?:
     | {
-        horizontal?: CT.Float;
-        vertical?: CT.Float;
+        horizontal?: CT.Float | undefined;
+        vertical?: CT.Float | undefined;
       }
     | undefined;
   tabBarItemIconColor?: ProcessedColorValue | null | undefined;
@@ -52,7 +52,7 @@ export type Appearance = {
 
   tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
   tabBarShadowColor?: ProcessedColorValue | null | undefined;
-  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
+  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'> | undefined;
 };
 
 type BlurEffect =
@@ -113,10 +113,10 @@ type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
   // Events
-  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 
   // Control
   screenKey: string;
@@ -125,7 +125,7 @@ export interface NativeProps extends ViewProps {
   // General
   title?: string | undefined | null;
   badgeValue?: string | undefined;
-  orientation?: CT.WithDefault<Orientation, 'inherit'>;
+  orientation?: CT.WithDefault<Orientation, 'inherit'> | undefined;
 
   // Accessibility
   tabBarItemTestID?: string | undefined;
@@ -134,41 +134,52 @@ export interface NativeProps extends ViewProps {
   // Effects
   specialEffects?:
     | {
-        repeatedTabSelection?: {
-          popToRoot?: CT.WithDefault<boolean, true>;
-          scrollToTop?: CT.WithDefault<boolean, true>;
-        };
+        repeatedTabSelection?:
+          | {
+              popToRoot?: CT.WithDefault<boolean, true> | undefined;
+              scrollToTop?: CT.WithDefault<boolean, true> | undefined;
+            }
+          | undefined;
       }
     | undefined;
 
   // iOS-specific props
   // Tab config
-  isTitleUndefined?: CT.WithDefault<boolean, true>;
-  systemItem?: CT.WithDefault<SystemItem, 'none'>;
+  isTitleUndefined?: CT.WithDefault<boolean, true> | undefined;
+  systemItem?: CT.WithDefault<SystemItem, 'none'> | undefined;
 
   // Appearance
   standardAppearance?: UnsafeMixed<Appearance> | undefined;
   scrollEdgeAppearance?: UnsafeMixed<Appearance> | undefined;
 
   // Icons
-  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
+  iconType?: CT.WithDefault<IconType, 'sfSymbol'> | undefined;
   iconImageSource?: ImageSource | undefined;
   iconResourceName?: string | undefined;
   selectedIconImageSource?: ImageSource | undefined;
   selectedIconResourceName?: string | undefined;
 
   // ScrollView interactions
-  overrideScrollViewContentInsetAdjustmentBehavior?: CT.WithDefault<
-    boolean,
-    true
-  >;
-  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  overrideScrollViewContentInsetAdjustmentBehavior?:
+    | CT.WithDefault<boolean, true>
+    | undefined;
+  bottomScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  leftScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  rightScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
+  topScrollEdgeEffect?:
+    | CT.WithDefault<ScrollEdgeEffect, 'automatic'>
+    | undefined;
 
   // Experimental
-  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
+  userInterfaceStyle?:
+    | CT.WithDefault<UserInterfaceStyle, 'unspecified'>
+    | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenIOS', {

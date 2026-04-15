@@ -77,10 +77,10 @@ export type TransitionProgressEventType = {
 };
 
 export type GestureResponseDistanceType = {
-  start?: number;
-  end?: number;
-  top?: number;
-  bottom?: number;
+  start?: number | undefined;
+  end?: number | undefined;
+  top?: number | undefined;
+  bottom?: number | undefined;
 };
 
 export type SearchBarPlacement =
@@ -133,11 +133,11 @@ export type ScreenStackNativeContainerStyleProps = {
    *
    * @platform ios
    */
-  backgroundColor?: ColorValue;
+  backgroundColor?: ColorValue | undefined;
 };
 
 export interface ScreenProps extends ViewProps {
-  active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
+  active?: 0 | 1 | Animated.AnimatedInterpolation<number> | undefined;
   activityState?:
     | 0
     | 1
@@ -148,30 +148,30 @@ export interface ScreenProps extends ViewProps {
    * Boolean indicating that the screen should be frozen with `react-freeze`.
    */
   shouldFreeze?: boolean | undefined;
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
    * @platform ios
    */
-  customAnimationOnSwipe?: boolean;
+  customAnimationOnSwipe?: boolean | undefined;
   /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
-  enabled?: boolean;
+  enabled?: boolean | undefined;
   /**
    * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
    */
-  isNativeStack?: boolean;
+  isNativeStack?: boolean | undefined;
   /**
    * Internal boolean used to detect if current header has large title on iOS.
    */
-  hasLargeHeader?: boolean;
+  hasLargeHeader?: boolean | undefined;
   /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
    * When `enableFreeze()` is run at the top of the application defaults to `true`.
    */
-  freezeOnBlur?: boolean;
+  freezeOnBlur?: boolean | undefined;
   /**
    * Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
    *
@@ -186,7 +186,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  fullScreenSwipeEnabled?: boolean;
+  fullScreenSwipeEnabled?: boolean | undefined;
   /**
    * Whether the full screen dismiss gesture has shadow under view during transition.
    * When enabled, a custom shadow view is added during the transition which tries to mimic the
@@ -199,31 +199,31 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  fullScreenSwipeShadowEnabled?: boolean;
+  fullScreenSwipeShadowEnabled?: boolean | undefined;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    *
    * @platform ios
    */
-  gestureEnabled?: boolean;
+  gestureEnabled?: boolean | undefined;
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
    *
    * @platform ios
    */
-  gestureResponseDistance?: GestureResponseDistanceType;
+  gestureResponseDistance?: GestureResponseDistanceType | undefined;
   /**
    * Whether the home indicator should be hidden on this screen. Defaults to `false`.
    *
    * @platform ios
    */
-  homeIndicatorHidden?: boolean;
+  homeIndicatorHidden?: boolean | undefined;
   /**
    * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
    *
    * @platform ios
    */
-  hideKeyboardOnSwipe?: boolean;
+  hideKeyboardOnSwipe?: boolean | undefined;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
@@ -231,7 +231,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  nativeBackButtonDismissalEnabled?: boolean;
+  nativeBackButtonDismissalEnabled?: boolean | undefined;
   /**
    * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
@@ -260,46 +260,50 @@ export interface ScreenProps extends ViewProps {
    *
    * @supported iOS 26 or higher
    */
-  scrollEdgeEffects?: {
-    bottom: ScrollEdgeEffect;
-    left: ScrollEdgeEffect;
-    right: ScrollEdgeEffect;
-    top: ScrollEdgeEffect;
-  };
+  scrollEdgeEffects?:
+    | {
+        bottom: ScrollEdgeEffect;
+        left: ScrollEdgeEffect;
+        right: ScrollEdgeEffect;
+        top: ScrollEdgeEffect;
+      }
+    | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * For all apps targeting Android SDK 35 or above this prop has no effect.
    * See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
-  navigationBarColor?: ColorValue;
+  navigationBarColor?: ColorValue | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
    * See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
    */
-  navigationBarTranslucent?: boolean;
+  navigationBarTranslucent?: boolean | undefined;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
    * @platform android
    */
-  navigationBarHidden?: boolean;
+  navigationBarHidden?: boolean | undefined;
   /**
    * A callback that gets called when the current screen appears.
    */
-  onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  onComponentRef?: (view: unknown) => void;
+  onAppear?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
+  onComponentRef?: ((view: unknown) => void) | undefined;
   /**
    * A callback that gets called when the current screen disappears.
    */
-  onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onDisappear?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
   /**
    * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
-  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  onDismissed?:
+    | ((e: NativeSyntheticEvent<{ dismissCount: number }>) => void)
+    | undefined;
   /**
    * A callback that gets called when the header height has changed.
    */
@@ -309,56 +313,58 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called after swipe back is canceled.
    */
-  onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
+  onGestureCancel?: ((e: NativeSyntheticEvent<null>) => void) | undefined;
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
    * @platform android
    */
-  onHeaderBackButtonClicked?: () => void;
+  onHeaderBackButtonClicked?: (() => void) | undefined;
   /**
    * An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
    *
    * @platform ios
    */
-  onNativeDismissCancelled?: (
-    e: NativeSyntheticEvent<{ dismissCount: number }>,
-  ) => void;
+  onNativeDismissCancelled?:
+    | ((e: NativeSyntheticEvent<{ dismissCount: number }>) => void)
+    | undefined;
   /**
    * A callback that gets called when the current screen is in `formSheet` presentation and its detent has changed.
    */
-  onSheetDetentChanged?: (
-    e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
-  ) => void;
+  onSheetDetentChanged?:
+    | ((e: NativeSyntheticEvent<{ index: number; isStable: boolean }>) => void)
+    | undefined;
   /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
-  onTransitionProgress?: (
-    e: NativeSyntheticEvent<TransitionProgressEventType>,
-  ) => void;
+  onTransitionProgress?:
+    | ((e: NativeSyntheticEvent<TransitionProgressEventType>) => void)
+    | undefined;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
-  onWillAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onWillAppear?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
   /**
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
-  onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onWillDisappear?:
+    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
+    | undefined;
   /**
    * Boolean indicating whether to prevent current screen from being dismissed.
    * Defaults to `false`.
    *
    * @platform ios
    */
-  preventNativeDismiss?: boolean;
-  ref?: React.Ref<View>;
+  preventNativeDismiss?: boolean | undefined;
+  ref?: React.Ref<View> | undefined;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.
    * - "pop" – the new screen will perform pop animation.
    */
-  replaceAnimation?: ScreenReplaceTypes;
+  replaceAnimation?: ScreenReplaceTypes | undefined;
   /**
    * A way to identify the screen in native code. This value will be passed down to native side,
    * where it can be later consulted. Meant for native integration with the library.
@@ -381,7 +387,7 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_left" – landscape-left orientation is permitted
    * - "landscape_right" – landscape-right orientation is permitted
    */
-  screenOrientation?: ScreenOrientationTypes;
+  screenOrientation?: ScreenOrientationTypes | undefined;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `presentation` is set to `formSheet`.
@@ -424,7 +430,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform Android
    */
-  sheetElevation?: number;
+  sheetElevation?: number | undefined;
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -432,7 +438,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  sheetExpandsWhenScrolledToEdge?: boolean;
+  sheetExpandsWhenScrolledToEdge?: boolean | undefined;
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -443,7 +449,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  sheetCornerRadius?: number;
+  sheetCornerRadius?: number | undefined;
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -451,7 +457,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  sheetGrabberVisible?: boolean;
+  sheetGrabberVisible?: boolean | undefined;
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -485,7 +491,8 @@ export interface ScreenProps extends ViewProps {
     | 'last'
     | 'medium' // deprecated
     | 'large' // deprecated
-    | 'all'; // deprecated
+    | 'all' // deprecated
+    | undefined;
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -497,7 +504,7 @@ export interface ScreenProps extends ViewProps {
    *
    * Defaults to `0` - which represents first detent in the detents array.
    */
-  sheetInitialDetentIndex?: number | 'last';
+  sheetInitialDetentIndex?: number | 'last' | undefined;
   /**
    * Whether the sheet content should be rendered behind the Status Bar or display cutouts.
    *
@@ -513,7 +520,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  sheetShouldOverflowTopInset?: boolean;
+  sheetShouldOverflowTopInset?: boolean | undefined;
   /**
    * Whether the default native animation should be used when the sheet's with
    * `fitToContents` content size changes.
@@ -530,7 +537,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  sheetDefaultResizeAnimationEnabled?: boolean;
+  sheetDefaultResizeAnimationEnabled?: boolean | undefined;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -546,7 +553,7 @@ export interface ScreenProps extends ViewProps {
    * - "ios_from_left" - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
-  stackAnimation?: StackAnimationTypes;
+  stackAnimation?: StackAnimationTypes | undefined;
   /**
    * How should the screen be presented.
    * The following values are currently supported:
@@ -559,7 +566,7 @@ export interface ScreenProps extends ViewProps {
    * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS, on Android this will use Material BottomSheetBehaviour. On Android neested stack rendering is not yet supported.
    * - "pageSheet" – will use "UIModalPresentationPageSheet" modal style on iOS and will fallback to "modal" on Android.
    */
-  stackPresentation?: StackPresentationTypes;
+  stackPresentation?: StackPresentationTypes | undefined;
   /**
    * Sets the status bar animation (similar to the `StatusBar` component).
    * On Android, setting either `fade` or `slide` will set the transition of status bar color. On iOS, this option applies to appereance animation of the status bar.
@@ -567,31 +574,31 @@ export interface ScreenProps extends ViewProps {
    *
    * Defaults to `fade` on iOS and `none` on Android.
    */
-  statusBarAnimation?: 'none' | 'fade' | 'slide';
+  statusBarAnimation?: 'none' | 'fade' | 'slide' | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * For all apps targeting Android SDK 35 or above this prop has no effect.
    * See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
    */
-  statusBarColor?: ColorValue;
+  statusBarColor?: ColorValue | undefined;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
-  statusBarHidden?: boolean;
+  statusBarHidden?: boolean | undefined;
   /**
    * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    * `auto` and `inverted` are supported only on iOS. On Android, they will fallback to `light`.
    * Defaults to `auto` on iOS and `light` on Android.
    */
-  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark' | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this prop loses relevance.
    * See: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
-  statusBarTranslucent?: boolean;
+  statusBarTranslucent?: boolean | undefined;
   /**
    * Sets the direction in which you should swipe to dismiss the screen.
    * When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
@@ -601,14 +608,14 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  swipeDirection?: SwipeDirectionTypes;
+  swipeDirection?: SwipeDirectionTypes | undefined;
   /**
    * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
    * For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
    *
    * @platform ios
    */
-  transitionDuration?: number;
+  transitionDuration?: number | undefined;
   /**
    * Footer component that can be used alongside formSheet stack presentation style.
    *
@@ -621,19 +628,19 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  unstable_sheetFooter?: () => React.ReactNode;
+  unstable_sheetFooter?: (() => React.ReactNode) | undefined;
 }
 
 export interface ScreenContainerProps extends ViewProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
   /**
    * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
-  enabled?: boolean;
+  enabled?: boolean | undefined;
   /**
    * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
    */
-  hasTwoStates?: boolean;
+  hasTwoStates?: boolean | undefined;
 }
 
 export interface GestureDetectorBridge {
@@ -648,39 +655,41 @@ export interface GestureDetectorBridge {
 }
 
 export interface ScreenStackProps extends ViewProps, GestureProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
-  onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  ref?: React.MutableRefObject<React.Ref<View>>;
-  nativeContainerStyle?: ScreenStackNativeContainerStyleProps;
+  onFinishTransitioning?:
+    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
+    | undefined;
+  ref?: React.MutableRefObject<React.Ref<View>> | undefined;
+  nativeContainerStyle?: ScreenStackNativeContainerStyleProps | undefined;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether to show the back button with custom left side of the header.
    */
-  backButtonInCustomView?: boolean;
+  backButtonInCustomView?: boolean | undefined;
   /**
    * Controls the color of the navigation header.
    */
-  backgroundColor?: ColorValue;
+  backgroundColor?: ColorValue | undefined;
   /**
    * Title to display in the back button.
    * @platform ios.
    */
-  backTitle?: string;
+  backTitle?: string | undefined;
   /**
    * Allows for customizing font family to be used for back button title on iOS.
    * @platform ios
    */
-  backTitleFontFamily?: string;
+  backTitleFontFamily?: string | undefined;
   /**
    * Allows for customizing font size to be used for back button title on iOS.
    * @platform ios
    */
-  backTitleFontSize?: number;
+  backTitleFontSize?: number | undefined;
   /**
    * Whether the back button title should be visible or not. Defaults to `true`.
    *
@@ -689,7 +698,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  backTitleVisible?: boolean;
+  backTitleVisible?: boolean | undefined;
   /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
    *
@@ -697,24 +706,24 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  blurEffect?: BlurEffectTypes;
+  blurEffect?: BlurEffectTypes | undefined;
   /**
    * Pass HeaderLeft, HeaderRight and HeaderTitle
    */
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
   /**
    * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
    */
-  color?: ColorValue;
+  color?: ColorValue | undefined;
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  direction?: Direction;
+  direction?: Direction | undefined;
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios
    */
-  disableBackButtonMenu?: boolean;
+  disableBackButtonMenu?: boolean | undefined;
   /**
    * How the back button behaves. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set.
    * The following values are currently supported (they correspond to [UINavigationItemBackButtonDisplayMode](https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc)):
@@ -725,31 +734,31 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  backButtonDisplayMode?: BackButtonDisplayMode;
+  backButtonDisplayMode?: BackButtonDisplayMode | undefined;
   /**
    * Array of UIBarButtomItems to the left side of the header.
    *
    * @platform ios
    */
-  headerLeftBarButtonItems?: HeaderBarButtonItem[];
+  headerLeftBarButtonItems?: HeaderBarButtonItem[] | undefined;
   /**
    * Array of UIBarButtomItems to the right side of the header.
    *
    * @platform ios
    */
-  headerRightBarButtonItems?: HeaderBarButtonItem[];
+  headerRightBarButtonItems?: HeaderBarButtonItem[] | undefined;
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
-  hidden?: boolean;
+  hidden?: boolean | undefined;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
-  hideBackButton?: boolean;
+  hideBackButton?: boolean | undefined;
   /**
    * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
    */
-  hideShadow?: boolean;
+  hideShadow?: boolean | undefined;
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
    * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
@@ -758,70 +767,70 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  largeTitle?: boolean;
+  largeTitle?: boolean | undefined;
   /**
    * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
-  largeTitleBackgroundColor?: ColorValue;
+  largeTitleBackgroundColor?: ColorValue | undefined;
   /**
    * Customize the color to be used for the large title. By default uses the titleColor property.
    * @platform ios
    */
-  largeTitleColor?: ColorValue;
+  largeTitleColor?: ColorValue | undefined;
   /**
    * Customize font family to be used for the large title.
    * @platform ios
    */
-  largeTitleFontFamily?: string;
+  largeTitleFontFamily?: string | undefined;
   /**
    * Customize the size of the font to be used for the large title.
    * @platform ios
    */
-  largeTitleFontSize?: number;
+  largeTitleFontSize?: number | undefined;
   /**
    * Customize the weight of the font to be used for the large title.
    * @platform ios
    */
-  largeTitleFontWeight?: string;
+  largeTitleFontWeight?: string | undefined;
   /**
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
-  largeTitleHideShadow?: boolean;
+  largeTitleHideShadow?: boolean | undefined;
   /**
    * Callback which is executed when screen header is attached
    */
-  onAttached?: () => void;
+  onAttached?: (() => void) | undefined;
   /**
    * Callback which is executed when screen header is detached
    */
-  onDetached?: () => void;
+  onDetached?: (() => void) | undefined;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
-  title?: string;
+  title?: string | undefined;
   /**
    * Allows for setting text color of the title.
    */
-  titleColor?: ColorValue;
+  titleColor?: ColorValue | undefined;
   /**
    * Customize font family to be used for the title.
    */
-  titleFontFamily?: string;
+  titleFontFamily?: string | undefined;
   /**
    * Customize the size of the font to be used for the title.
    */
-  titleFontSize?: number;
+  titleFontSize?: number | undefined;
   /**
    * Customize the weight of the font to be used for the title.
    */
-  titleFontWeight?: string;
+  titleFontWeight?: string | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
    * therefore this prop loses its relevance.
    */
-  topInsetEnabled?: boolean;
+  topInsetEnabled?: boolean | undefined;
   /**
    * When set to `true` on the outermost stack with a **visible** header, disables top inset
    * handling for that header and the entire subtree.
@@ -834,11 +843,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform android
    */
-  disableTopInsetApplication?: boolean;
+  disableTopInsetApplication?: boolean | undefined;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */
-  translucent?: boolean;
+  translucent?: boolean | undefined;
   /**
    * Allows to override system appearance for the navigation bar.
    *
@@ -858,7 +867,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @default unspecified
    * @platform ios
    */
-  experimental_userInterfaceStyle?: UserInterfaceStyle;
+  experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
 }
 
 export interface SearchBarProps {
@@ -874,7 +883,7 @@ export interface SearchBarProps {
    * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
-  ref?: React.RefObject<SearchBarCommands | null>;
+  ref?: React.RefObject<SearchBarCommands | null> | undefined;
 
   /**
    * The auto-capitalization behavior.
@@ -888,23 +897,24 @@ export interface SearchBarProps {
     | 'none'
     | 'words'
     | 'sentences'
-    | 'characters';
+    | 'characters'
+    | undefined;
   /**
    * Automatically focuses search bar on mount
    *
    * @platform android
    */
-  autoFocus?: boolean;
+  autoFocus?: boolean | undefined;
   /**
    * The search field background color
    */
-  barTintColor?: ColorValue;
+  barTintColor?: ColorValue | undefined;
   /**
    * The color for the cursor caret and cancel button text.
    *
    * @platform ios
    */
-  tintColor?: ColorValue;
+  tintColor?: ColorValue | undefined;
   /**
    * The text to be used instead of default `Cancel` button text
    *
@@ -913,13 +923,13 @@ export interface SearchBarProps {
    *
    * @platform ios
    */
-  cancelButtonText?: string;
+  cancelButtonText?: string | undefined;
   /**
    * Specifies whether the back button should close search bar's text input or not.
    *
    * @platform android
    */
-  disableBackButtonOverride?: boolean;
+  disableBackButtonOverride?: boolean | undefined;
   /**
    * Indicates whether to hide the navigation bar.
    *
@@ -931,19 +941,19 @@ export interface SearchBarProps {
    *
    * @platform ios
    */
-  hideNavigationBar?: boolean;
+  hideNavigationBar?: boolean | undefined;
   /**
    * Indicates whether to hide the search bar when scrolling
    *
    * @platform ios
    */
-  hideWhenScrolling?: boolean;
+  hideWhenScrolling?: boolean | undefined;
   /**
    * Sets type of the input. Defaults to `text`.
    *
    * @platform android
    */
-  inputType?: 'text' | 'phone' | 'number' | 'email';
+  inputType?: 'text' | 'phone' | 'number' | 'email' | undefined;
   /**
    * Indicates whether to obscure the underlying content.
    *
@@ -955,49 +965,53 @@ export interface SearchBarProps {
    *
    * @platform ios
    */
-  obscureBackground?: boolean;
+  obscureBackground?: boolean | undefined;
   /**
    * A callback that gets called when search bar has lost focus
    */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onBlur?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
   /**
    * A callback that gets called when the cancel button is pressed
    *
    * @platform ios
    */
-  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onCancelButtonPress?:
+    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
+    | undefined;
 
   /**
    * A callback that gets called when the text changes. It receives the current text value of the search bar.
    */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onChangeText?:
+    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | undefined;
 
   /**
    * A callback that gets called when search bar is closed
    *
    * @platform android
    */
-  onClose?: () => void;
+  onClose?: (() => void) | undefined;
   /**
    * A callback that gets called when search bar has received focus
    */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onFocus?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
   /**
    * A callback that gets called when search bar is opened
    *
    * @platform android
    */
-  onOpen?: () => void;
+  onOpen?: (() => void) | undefined;
   /**
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
-  onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>,
-  ) => void;
+  onSearchButtonPress?:
+    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | undefined;
   /**
    * Text displayed when search field is empty
    */
-  placeholder?: string;
+  placeholder?: string | undefined;
   /**
    * Position of the search bar
    *
@@ -1030,7 +1044,7 @@ export interface SearchBarProps {
    *
    * @platform iOS (>= 16.0)
    */
-  placement?: SearchBarPlacement;
+  placement?: SearchBarPlacement | undefined;
   /**
    * Indicates whether the system can place the search bar among other toolbar items on iPhone.
    *
@@ -1043,30 +1057,30 @@ export interface SearchBarProps {
    *
    * @platform iOS (>= 26.0)
    */
-  allowToolbarIntegration?: boolean;
+  allowToolbarIntegration?: boolean | undefined;
   /**
    * The search field text color
    */
-  textColor?: ColorValue;
+  textColor?: ColorValue | undefined;
   /**
    * The search hint text color
    *
    * @plaform android
    */
-  hintTextColor?: ColorValue;
+  hintTextColor?: ColorValue | undefined;
   /**
    * The search and close icon color shown in the header
    *
    * @plaform android
    */
-  headerIconColor?: ColorValue;
+  headerIconColor?: ColorValue | undefined;
   /**
    * Show the search hint icon when search bar is focused
    *
    * @plaform android
    * @default true
    */
-  shouldShowHintSearchIcon?: boolean;
+  shouldShowHintSearchIcon?: boolean | undefined;
 }
 
 export interface ScreenStackHeaderSubviewProps {
@@ -1077,99 +1091,105 @@ export interface ScreenStackHeaderSubviewProps {
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
    */
-  hidesSharedBackground?: boolean;
+  hidesSharedBackground?: boolean | undefined;
 }
 
 interface SharedHeaderBarButtonItem {
   /**
    * Position of the item in the navigation items array.
    */
-  index?: number;
+  index?: number | undefined;
   /**
    * Title of the item.
    */
-  title?: string;
+  title?: string | undefined;
   /**
    * Style for the item label.
    */
-  titleStyle?: {
-    fontFamily?: string;
-    fontSize?: number;
-    fontWeight?: string;
-    color?: ColorValue;
-  };
+  titleStyle?:
+    | {
+        fontFamily?: string | undefined;
+        fontSize?: number | undefined;
+        fontWeight?: string | undefined;
+        color?: ColorValue | undefined;
+      }
+    | undefined;
   /**
    * Icon for the item
    */
-  icon?: PlatformIconIOS;
+  icon?: PlatformIconIOS | undefined;
   /**
    * The variant of the item.
    * "Prominent" only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
    */
-  variant?: 'plain' | 'done' | 'prominent';
+  variant?: 'plain' | 'done' | 'prominent' | undefined;
   /**
    * The tint color to apply to the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
    */
-  tintColor?: ColorValue;
+  tintColor?: ColorValue | undefined;
   /**
    * A Boolean value that indicates whether the item is in a disabled state.
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   /**
    * The width of the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
    */
-  width?: number;
+  width?: number | undefined;
   /**
    * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
    * Only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
    */
-  hidesSharedBackground?: boolean;
+  hidesSharedBackground?: boolean | undefined;
   /**
    * A boolean value indicating whether this item can share a background with other items in a navigation bar or a toolbar.
    * Only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
    */
-  sharesBackground?: boolean;
+  sharesBackground?: boolean | undefined;
   /**
    * An identifier used to match items across transitions in a navigation bar or toolbar.
    * Only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
    */
-  identifier?: string;
+  identifier?: string | undefined;
   /**
    * A badge to be rendered on a item.
    * Only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
    */
-  badge?: {
-    /**
-     * The text to display in the badge.
-     */
-    value: string;
-    /**
-     * Style of the badge.
-     */
-    style?: {
-      color?: ColorValue;
-      backgroundColor?: ColorValue;
-      fontFamily?: string;
-      fontSize?: number;
-      fontWeight?: string;
-    };
-  };
-  accessibilityLabel?: string;
-  accessibilityHint?: string;
+  badge?:
+    | {
+        /**
+         * The text to display in the badge.
+         */
+        value: string;
+        /**
+         * Style of the badge.
+         */
+        style?:
+          | {
+              color?: ColorValue | undefined;
+              backgroundColor?: ColorValue | undefined;
+              fontFamily?: string | undefined;
+              fontSize?: number | undefined;
+              fontWeight?: string | undefined;
+            }
+          | undefined;
+      }
+    | undefined;
+  accessibilityLabel?: string | undefined;
+  accessibilityHint?: string | undefined;
 }
 
 export interface HeaderBarButtonItemWithAction
@@ -1181,71 +1201,71 @@ export interface HeaderBarButtonItemWithAction
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
    */
-  selected?: boolean;
+  selected?: boolean | undefined;
 }
 
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
-  title?: string;
-  subtitle?: string;
+  title?: string | undefined;
+  subtitle?: string | undefined;
   onPress: () => void;
-  icon?: PlatformIconIOS;
+  icon?: PlatformIconIOS | undefined;
   /**
    * State of the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
    */
-  state?: 'on' | 'off' | 'mixed';
+  state?: 'on' | 'off' | 'mixed' | undefined;
   /**
    * Indicates whether to apply disabled style to the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   /**
    * Indicates whether to apply destructive style to the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
    */
-  destructive?: boolean;
+  destructive?: boolean | undefined;
   /**
    * Indicates whether to apply hidden style to the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
    */
-  hidden?: boolean;
+  hidden?: boolean | undefined;
   /**
    * Indicates whether to keep the menu presented after firing the element’s action.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
    */
-  keepsMenuPresented?: boolean;
+  keepsMenuPresented?: boolean | undefined;
   /**
    * Discoverability label of the menu item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
    */
-  discoverabilityLabel?: string;
+  discoverabilityLabel?: string | undefined;
 }
 
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
-  title?: string;
-  icon?: PlatformIconIOS;
+  title?: string | undefined;
+  icon?: PlatformIconIOS | undefined;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
-  displayInline?: boolean;
-  destructive?: boolean;
-  singleSelection?: boolean;
-  displayAsPalette?: boolean;
+  displayInline?: boolean | undefined;
+  destructive?: boolean | undefined;
+  singleSelection?: boolean | undefined;
+  displayAsPalette?: boolean | undefined;
 }
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
   type: 'menu';
   menu: {
-    title?: string;
+    title?: string | undefined;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
-    singleSelection?: boolean;
-    displayAsPalette?: boolean;
+    singleSelection?: boolean | undefined;
+    displayAsPalette?: boolean | undefined;
   };
   /**
    * A Boolean value that indicates whether the button title should indicate selection or not.
@@ -1253,7 +1273,7 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
    */
-  changesSelectionAsPrimaryAction?: boolean;
+  changesSelectionAsPrimaryAction?: boolean | undefined;
 }
 
 export interface HeaderBarButtonItemSpacing {
@@ -1327,6 +1347,6 @@ export interface GestureProps {
 }
 
 export interface GestureProviderProps extends GestureProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode | undefined;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }

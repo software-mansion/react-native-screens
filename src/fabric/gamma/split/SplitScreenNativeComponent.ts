@@ -10,13 +10,13 @@ type SplitScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config
-  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'>;
+  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'> | undefined;
 
   // Events
-  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitScreen', {

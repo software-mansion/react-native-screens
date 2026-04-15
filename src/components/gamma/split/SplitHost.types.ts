@@ -34,37 +34,37 @@ export interface SplitColumnMetrics {
    *
    * Specifies the minimum width for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
-  minimumPrimaryColumnWidth?: number;
+  minimumPrimaryColumnWidth?: number | undefined;
   /**
    * @summary Maximum width for the primary sidebar.
    *
    * Specifies the maximum width (in points) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
-  maximumPrimaryColumnWidth?: number;
+  maximumPrimaryColumnWidth?: number | undefined;
   /**
    * @summary Preferred width for the primary sidebar.
    *
    * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
-  preferredPrimaryColumnWidthOrFraction?: number;
+  preferredPrimaryColumnWidthOrFraction?: number | undefined;
   /**
    * @summary Minimum width for the intermediate sidebar.
    *
    * Specifies the minimum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
-  minimumSupplementaryColumnWidth?: number;
+  minimumSupplementaryColumnWidth?: number | undefined;
   /**
    * @summary Maximum width for the intermediate sidebar.
    *
    * Specifies the maximum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
-  maximumSupplementaryColumnWidth?: number;
+  maximumSupplementaryColumnWidth?: number | undefined;
   /**
    * @summary Preferred width for the intermediate sidebar.
    *
    * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
-  preferredSupplementaryColumnWidthOrFraction?: number;
+  preferredSupplementaryColumnWidthOrFraction?: number | undefined;
   /**
    * @summary Minimum width for the secondary component.
    *
@@ -72,7 +72,7 @@ export interface SplitColumnMetrics {
    *
    * @supported iOS 26 or higher
    */
-  minimumSecondaryColumnWidth?: number;
+  minimumSecondaryColumnWidth?: number | undefined;
   /**
    * @summary Preferred width for the secondary component.
    *
@@ -80,7 +80,7 @@ export interface SplitColumnMetrics {
    *
    * @supported iOS 26 or higher
    */
-  preferredSecondaryColumnWidthOrFraction?: number;
+  preferredSecondaryColumnWidthOrFraction?: number | undefined;
   /**
    * @summary Minimum width for the inspector component.
    *
@@ -88,7 +88,7 @@ export interface SplitColumnMetrics {
    *
    * @supported iOS 26 or higher
    */
-  minimumInspectorColumnWidth?: number;
+  minimumInspectorColumnWidth?: number | undefined;
   /**
    * @summary Maximum width for the inspector component.
    *
@@ -96,7 +96,7 @@ export interface SplitColumnMetrics {
    *
    * @supported iOS 26 or higher
    */
-  maximumInspectorColumnWidth?: number;
+  maximumInspectorColumnWidth?: number | undefined;
   /**
    * @summary Preferred width for the inspector component.
    *
@@ -104,7 +104,7 @@ export interface SplitColumnMetrics {
    *
    * @supported iOS 26 or higher
    */
-  preferredInspectorColumnWidthOrFraction?: number;
+  preferredInspectorColumnWidthOrFraction?: number | undefined;
 }
 export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
 
@@ -113,8 +113,8 @@ export type SplitHostCommands = {
 };
 
 export interface SplitHostProps extends ViewProps {
-  children?: React.ReactNode;
-  ref?: React.Ref<SplitHostCommands>;
+  children?: React.ReactNode | undefined;
+  ref?: React.Ref<SplitHostCommands> | undefined;
 
   /**
    * @summary An object describing bounds for column widths.
@@ -129,7 +129,7 @@ export interface SplitHostProps extends ViewProps {
    * - `secondary` - the view with the main content
    * - `inspector` - the view which is providing additional data about the secondary column
    */
-  columnMetrics?: SplitColumnMetrics;
+  columnMetrics?: SplitColumnMetrics | undefined;
   /**
    * @summary Determines whether the button for changing the Split display mode is visible on the screen.
    *
@@ -144,24 +144,26 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default automatic
    */
-  displayModeButtonVisibility?: SplitDisplayModeButtonVisibility;
+  displayModeButtonVisibility?: SplitDisplayModeButtonVisibility | undefined;
   /**
    * @summary A callback that gets invoked when the Split was collapsed to a single column.
    */
-  onCollapse?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
+  onCollapse?:
+    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
+    | undefined;
   /**
    * @summary A callback that gets invoked when the Split displayMode has changed.
    *
    * The purpose of this callback is tracking displayMode updates on host from the JS side.
    * These updates might be a consequence of some native interactions, like pressing native button or performing swipe gesture.
    */
-  onDisplayModeWillChange?: (
-    e: NativeSyntheticEvent<DisplayModeWillChangeEvent>,
-  ) => void;
+  onDisplayModeWillChange?:
+    | ((e: NativeSyntheticEvent<DisplayModeWillChangeEvent>) => void)
+    | undefined;
   /**
    * @summary A callback that gets invoked when the Split was expanded to multiple columns.
    */
-  onExpand?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
+  onExpand?: ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void) | undefined;
   /**
    * @summary A callback that gets invoked when the Split inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
    *
@@ -169,7 +171,9 @@ export interface SplitHostProps extends ViewProps {
    *
    * @supported iOS 26 or higher
    */
-  onInspectorHide?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
+  onInspectorHide?:
+    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
+    | undefined;
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -212,11 +216,11 @@ export interface SplitHostProps extends ViewProps {
    *
    * @platform ios
    */
-  orientation?: SplitHostOrientation;
+  orientation?: SplitHostOrientation | undefined;
   /**
    * @summary Determines whether gestures are enabled to change the display mode.
    */
-  presentsWithGesture?: boolean;
+  presentsWithGesture?: boolean | undefined;
   /**
    * @summary Specifies the display mode which will be preferred to use, if the layout requirements are met.
    *
@@ -237,7 +241,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredDisplayMode?: SplitDisplayMode;
+  preferredDisplayMode?: SplitDisplayMode | undefined;
   /**
    * @summary Specifies the split behavior which will be preferred to use, if the layout requirements are met.
    *
@@ -255,7 +259,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredSplitBehavior?: SplitBehavior;
+  preferredSplitBehavior?: SplitBehavior | undefined;
   /**
    * @summary Specifies the background style of the primary view controller.
    *
@@ -277,7 +281,7 @@ export interface SplitHostProps extends ViewProps {
    * @remarks
    * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
    */
-  primaryBackgroundStyle?: SplitPrimaryBackgroundStyle;
+  primaryBackgroundStyle?: SplitPrimaryBackgroundStyle | undefined;
   /**
    * @summary Indicates on which side primary sidebar is placed, affecting the split view layout.
    *
@@ -291,7 +295,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default leading
    */
-  primaryEdge?: SplitPrimaryEdge;
+  primaryEdge?: SplitPrimaryEdge | undefined;
   /**
    * @summary Determines whether inspector column should be displayed.
    *
@@ -300,11 +304,11 @@ export interface SplitHostProps extends ViewProps {
    *
    * @supported iOS 26 or higher
    */
-  showInspector?: boolean;
+  showInspector?: boolean | undefined;
   /**
    * @summary Determines whether a button to toggle to and from secondaryOnly display mode is visible.
    */
-  showSecondaryToggleButton?: boolean;
+  showSecondaryToggleButton?: boolean | undefined;
   /**
    * @summary Specifies which column should be shown when the split view collapses to a single column.
    *
@@ -319,5 +323,5 @@ export interface SplitHostProps extends ViewProps {
    * - `supplementary` - the supplementary sidebar is shown
    * - `secondary` - the secondary (main content) column is shown
    */
-  topColumnForCollapsing?: SplitNavigableColumn;
+  topColumnForCollapsing?: SplitNavigableColumn | undefined;
 }
