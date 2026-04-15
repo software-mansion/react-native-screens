@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verifies the experimental_userInterfaceStyle prop on iOS, which allows a screen to override the global system appearance (Light/Dark mode). Test focus on ensures that when a screen has a forced style (e.g., Dark) different from the system (e.g., Light), there is no "visual glitching," such as flickering, flashing, or momentary reversion to the system theme during pushes, pops, or tab switches.
+**Description:** This test verifies the experimental_userInterfaceStyle prop on iOS, which allows a screen to override the global system appearance (Light/Dark mode). It focuses on ensuring that when a screen has a forced style (for example, Dark) different from the system appearance (for example, Light), there is no visual glitching, such as flickering, flashing, or momentary reversion to the system theme during pushes, pops, or tab switches.
 **E2E test:** Not automated. Verification requires observing UI transitions (Tab Bar appearance and flicker detection) which are not reliably detectable by Detox snapshot or view-hierarchy testing.
 
 ## Technical information
