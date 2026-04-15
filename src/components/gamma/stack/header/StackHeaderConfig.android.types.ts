@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { ColorValue } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../../../types';
