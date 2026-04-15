@@ -295,7 +295,7 @@ open class ScreenFragment :
         // When the parent is not a ScreenFragment (e.g. when RN is loaded inside a ReactFragment
         // in a brownfield setup), we always dispatch. Such parents don't participate in screen transitions.
         val parent = parentFragment
-        if (parent == null || parent !is ScreenFragment || (parent is ScreenFragment && !parent.isTransitioning)) {
+        if (parent == null || parent !is ScreenFragment || !parent.isTransitioning) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
