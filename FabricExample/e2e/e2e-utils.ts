@@ -3,15 +3,15 @@ import { device, expect, element, by } from 'detox';
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
 
-async function scrollTo(id: string) {
+async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
-    .whileElement(by.id('root-screen-examples-scrollview'))
+    .whileElement(by.id(scrollViewId))
     .scroll(600, 'down', Number.NaN, 0.85);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
-  await scrollTo('root-screen-issue-tests');
+  await scrollUntilVisible('root-screen-issue-tests', 'root-screen-examples-scrollview');
   await element(by.id('root-screen-issue-tests')).tap();
 
   await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
@@ -32,15 +32,14 @@ export async function selectIssueTestScreen(screenName: string) {
 }
 
 export async function selectSingleFeatureTestsScreen(scenarioGroup: string, screenKey: string) {
-  await scrollTo('root-screen-single-feature-tests');
+  await scrollUntilVisible('root-screen-single-feature-tests', 'root-screen-examples-scrollview');
   await element(by.id('root-screen-single-feature-tests')).tap();
-  await waitFor(element(by.id('single-feature-tests-scrollview'))).toBeVisible();
+  await waitFor(element(by.id('single-feature-tests-scrollview'))).toBeVisible().withTimeout(3000);
 
-  await scrollTo(`single-feature-tests-${scenarioGroup}`);
-  await expect(element(by.id(`single-feature-tests-${scenarioGroup}`))).toBeVisible();
+  await scrollUntilVisible(`single-feature-tests-${scenarioGroup}`, 'single-feature-tests-scrollview');
   await element(by.id(`single-feature-tests-${scenarioGroup}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroup}-scenarios-scrollview`))).toBeVisible().withTimeout(3000);
 
-  await scrollTo(`${screenKey}`);
-  await expect(element(by.id(`${screenKey}`))).toBeVisible();
+  await scrollUntilVisible(`${screenKey}`, `${scenarioGroup}-scenarios-scrollview`,);
   await element(by.id(`${screenKey}`)).tap();
 }
