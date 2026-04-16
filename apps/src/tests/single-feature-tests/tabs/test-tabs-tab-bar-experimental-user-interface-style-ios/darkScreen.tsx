@@ -3,7 +3,7 @@ import {
   type TabRouteConfig,
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
-import { Button, View, Text, ScrollView } from 'react-native';
+import { Button, View, Text, ScrollView, StyleSheet } from 'react-native';
 
 export function DarkRootScreen({ onPush }: { onPush: () => void }) {
   return (
@@ -77,11 +77,11 @@ export function DarkInterfaceStyleScreen() {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create ({
   sectionHeader: {
     fontSize: 13,
-    fontWeight: '600' as const,
-    textTransform: 'uppercase' as const,
+    fontWeight: '600',
+    textTransform: 'uppercase',
     color: '#888',
     letterSpacing: 0.5,
     marginTop: 60,
@@ -89,8 +89,8 @@ const styles = {
   },
   centeredDarkScreen: {
     flex: 1,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 40,
     gap: 12,
   },
@@ -100,4 +100,4 @@ const styles = {
     marginBottom: 6,
     marginTop: 12,
   },
-};
+});
