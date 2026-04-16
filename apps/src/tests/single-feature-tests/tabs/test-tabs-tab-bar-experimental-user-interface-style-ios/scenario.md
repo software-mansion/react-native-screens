@@ -8,7 +8,7 @@
 ## Technical information
 
 **PR introducing functionality:** [#3342](https://github.com/software-mansion/react-native-screens/pull/3342)
-**OS test creation version:** iOS26.2
+**OS test creation version:** iOS 26.2
 
 ## Prerequisites
 
