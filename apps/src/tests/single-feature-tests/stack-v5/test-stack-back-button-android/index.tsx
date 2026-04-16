@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
-import { SettingsPicker, SettingsSwitch } from '../../../shared';
-import Colors from '../../../shared/styling/Colors';
+} from '@apps/shared/gamma/containers/stack';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigPropsAndroid,
@@ -80,7 +80,7 @@ function resolveIcon(
     case 'imageSource':
       return {
         type: 'imageSource',
-        imageSource: require('../../../../assets/backButton.png'),
+        imageSource: require('@assets/backButton.png'),
       };
     case 'drawableResource':
       return {
