@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
 import android.view.View
+import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -36,9 +37,20 @@ class StackScreenViewManager :
         child: View,
         index: Int,
     ) {
+        // HeaderConfig is not added to native hierarchy & it must be the last child of StackScreen.
         if (child is StackHeaderConfig) {
+            if (index < parent.childCount) {
+                throw JSApplicationCausedNativeException(
+                    "[RNScreens] StackHeaderConfig must be the last child of StackScreen. ",
+                )
+            }
             parent.attachHeaderConfig(child)
         } else {
+            if (index > parent.childCount) {
+                throw JSApplicationCausedNativeException(
+                    "[RNScreens] StackHeaderConfig must be the last child of StackScreen. ",
+                )
+            }
             super.addView(parent, child, index)
         }
     }
@@ -54,13 +66,11 @@ class StackScreenViewManager :
         }
     }
 
-    // Header config is not added as a native child (it's stored as a reference
-    // on StackScreen), but React tracks it by index. Since it's always the last child
-    // in the React tree, we only need to handle the last index specially.
     override fun removeViewAt(
         parent: StackScreen,
         index: Int,
     ) {
+        // HeaderConfig is not added to native hierarchy & it must be the last child of StackScreen.
         if (index == getChildCount(parent) - 1 && parent.headerConfig != null) {
             parent.headerConfig?.let { parent.detachHeaderConfig(it) }
         } else {
