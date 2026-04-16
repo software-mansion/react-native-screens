@@ -172,17 +172,6 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
-    /**
-     * @deprecated This flag is a noop kept for backward compatibility.
-     * The "controlled bottom tabs" mode has been removed.
-     * The getter always returns `false`; the setter is a noop.
-     */
-    get controlledBottomTabs() {
-      return false;
-    },
-    set controlledBottomTabs(_value: boolean) {
-      // noop
-    },
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },
