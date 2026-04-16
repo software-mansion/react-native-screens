@@ -1,7 +1,7 @@
 /**
  * Models single test scenario.
  */
-export interface Scenario {
+export interface ScenarioDescription {
   /**
    * Human readable name of the scenario. White spaces allowed.
    */
@@ -26,8 +26,11 @@ export interface Scenario {
    * That means it should be possible to render this w/o any additional harness
    * as top-level application component & it should remain functional.
    */
-  AppComponent: React.ComponentType;
 }
+
+export type Scenario = React.ComponentType & {
+  scenarioDescription: ScenarioDescription;
+};
 
 export interface ScenarioGroup<K extends string> {
   /**

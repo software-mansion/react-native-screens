@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ScrollView } from 'react-native';
-import { Scenario, ScenarioGroup } from './helpers';
+import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -11,16 +11,20 @@ import {
 function ScenarioSelect(props: { scenarios: Scenario[] }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
-        <ScenarioButton
-          title={name}
-          details={details}
-          route={key}
-          key={key}
-          platformsHint={platforms}
-          testID={key}
-        />
-      ))}
+      {Object.values(props.scenarios).map((ScenarioComponent: Scenario) => {
+        const { name, key, details, platforms } =
+          ScenarioComponent.scenarioDescription;
+        return (
+          <ScenarioButton
+            title={name}
+            details={details}
+            route={key}
+            key={key}
+            platformsHint={platforms}
+            testID={key}
+          />
+        );
+      })}
     </ScrollView>
   );
 }
@@ -44,9 +48,18 @@ export default function ScenarioSelectionScreen(props: {
             }}>
             {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
           </Stack.Screen>
-          {Object.values(props.scenarioGroup.scenarios).map(({ key, AppComponent }) => (
-            <Stack.Screen name={key} key={key} component={AppComponent} />
-          ))}
+          {Object.values(props.scenarioGroup.scenarios).map(
+            (ScenarioComponent: Scenario) => {
+              const { key } = ScenarioComponent.scenarioDescription;
+              return (
+                <Stack.Screen
+                  key={key}
+                  name={key}
+                  component={ScenarioComponent}
+                />
+              );
+            },
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
