@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Button, Switch } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Colors } from '../../shared/styling';
+import { Colors } from '@apps/shared/styling';
 
 interface HeaderConfigContextType {
   outerShown: boolean;

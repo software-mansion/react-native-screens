@@ -4,7 +4,7 @@ import { StackContainer } from '../../../shared/gamma/containers/stack';
 import { ScrollView, Text, View } from 'react-native';
 import LongText from '../../../../src/shared/LongText';
 import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
-import Colors from '../../../../src/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import PressableWithFeedback from '../../../../src/shared/PressableWithFeedback';
 
 const SCENARIO: Scenario = {
