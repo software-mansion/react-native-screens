@@ -124,7 +124,7 @@ internal class StackHeaderCoordinator(
             attachAppBarListeners(appBar)
 
             populateAppBar(appBar, config)
-            maybeApplyRtlCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
+            maybeApplyRTLCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
             appBar.toolbar.requestLayout()
         } else {
             removeContentBehavior(coordinatorLayout)
@@ -230,7 +230,7 @@ internal class StackHeaderCoordinator(
             // Toolbar's native title - it would be laid out to the leading side of leading subview.
             val titleView = createManagedTitleView(toolbar)
             managedTitleView = titleView
-            val index = if (config.isRtl) 0 else -1
+            val index = if (config.isRTL) 0 else -1
             toolbar.addView(titleView, index, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
         }
     }
@@ -432,7 +432,7 @@ internal class StackHeaderCoordinator(
 
     // endregion
 
-    private fun maybeApplyRtlCollapsingToolbarLayoutWorkaround(
+    private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigProviding,
         appBar: StackHeaderAppBarLayout,
@@ -442,7 +442,7 @@ internal class StackHeaderCoordinator(
         // our subviews at higher indices than the dummy view so they get
         // positioned first in RTL layout. Forcing a measure triggers the
         // dummy view creation.
-        if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRtl) {
+        if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRTL) {
             appBar.measure(
                 View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),

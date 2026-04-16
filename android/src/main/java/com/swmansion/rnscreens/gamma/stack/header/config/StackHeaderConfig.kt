@@ -34,7 +34,7 @@ class StackHeaderConfig(
     override var trailingSubview: StackHeaderSubview? = null
         private set
 
-    override val isRtl: Boolean
+    override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL
 
     private val shadowStateProxy = ShadowStateProxy()

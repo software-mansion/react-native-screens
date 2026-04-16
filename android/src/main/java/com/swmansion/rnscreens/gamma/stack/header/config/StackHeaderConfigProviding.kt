@@ -13,7 +13,7 @@ interface StackHeaderConfigProviding {
     val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
 
-    val isRtl: Boolean
+    val isRTL: Boolean
 
     fun updateHeaderFrame(
         width: Int,
