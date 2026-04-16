@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs.image
+package com.swmansion.rnscreens.gamma.helpers
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,31 +16,27 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import java.util.Locale
 
-internal fun loadTabImage(
+private const val TAG = "ImageLoader"
+
+internal fun loadImage(
     context: Context,
     uri: String,
-    view: TabsScreen,
-    isSelected: Boolean,
+    onLoaded: (Drawable) -> Unit,
 ) {
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
     // We should schedule rendering the result on the UI thread
     val resolvedUri = ImageSource(context, uri).getUri(context) ?: return
-    loadTabImageInternal(context, resolvedUri) { drawable ->
+    loadImageInternal(context, resolvedUri) { drawable ->
         Handler(Looper.getMainLooper()).post {
-            if (isSelected) {
-                view.selectedIcon = drawable
-            } else {
-                view.icon = drawable
-            }
+            onLoaded(drawable)
         }
     }
 }
 
-private fun loadTabImageInternal(
+private fun loadImageInternal(
     context: Context,
     uri: Uri,
     onLoaded: (Drawable) -> Unit,
@@ -68,7 +64,7 @@ private fun loadTabImageInternal(
             }
 
             override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
-                Log.e("[RNScreens]", "Error loading image: $uri", dataSource.failureCause)
+                Log.e(TAG, "[RNScreens] Error loading image: $uri", dataSource.failureCause)
             }
         },
         CallerThreadExecutor.getInstance(),

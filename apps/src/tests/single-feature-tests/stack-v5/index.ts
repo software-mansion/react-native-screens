@@ -4,6 +4,7 @@ import PreventNativeDismissNestedStack from './prevent-native-dismiss-nested-sta
 import AnimationAndroid from './test-animation-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviews from './test-stack-subviews-android';
+import TestStackBackButton from './test-stack-back-button-android';
 
 const scenarios = {
   PreventNativeDismissSingleStack,
@@ -11,6 +12,7 @@ const scenarios = {
   AnimationAndroid,
   TestStackSimpleNav,
   TestStackSubviews,
+  TestStackBackButton,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

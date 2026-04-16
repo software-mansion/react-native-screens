@@ -10,10 +10,10 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateAppearance
 import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
-import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager.Companion.TAG
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
@@ -140,7 +140,9 @@ class TabsScreenViewManager :
     ) {
         val uri = value?.getString("uri")
         if (uri != null) {
-            loadTabImage(view.context, uri, view, false)
+            loadImage(view.context, uri) { drawable ->
+                view.icon = drawable
+            }
         }
     }
 
@@ -150,7 +152,9 @@ class TabsScreenViewManager :
     ) {
         val uri = value?.getString("uri")
         if (uri != null) {
-            loadTabImage(view.context, uri, view, true)
+            loadImage(view.context, uri) { drawable ->
+                view.selectedIcon = drawable
+            }
         }
     }
 

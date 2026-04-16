@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -16,16 +17,20 @@ import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigProviding
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderCoordinator(
     context: Context,
+    private val canNavigateBack: Boolean,
     private val onHeaderHeightChanged: (headerHeight: Int) -> Unit,
+    private val onNavigationIconClick: () -> Unit,
 ) {
     private val wrappedContext =
         ContextThemeWrapper(
@@ -46,6 +51,10 @@ internal class StackHeaderCoordinator(
     private var attachedTrailingSubview: StackHeaderSubviewProviding? = null
     private var attachedBackgroundSubview: StackHeaderSubviewProviding? = null
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
+
+    private var lastBackButtonVisible: Boolean? = null
+    private var lastBackButtonTintColor: Int? = null
+    private var lastBackButtonIcon: Drawable? = null
 
     // For small header, we need to use custom title view in order to
     // render a subview to the leading side of the title.
@@ -142,6 +151,9 @@ internal class StackHeaderCoordinator(
         }
         appBarLayout = null
         managedTitleView = null
+        lastBackButtonVisible = null
+        lastBackButtonTintColor = null
+        lastBackButtonIcon = null
         clearCachedRebuildTriggers()
     }
 
@@ -310,6 +322,8 @@ internal class StackHeaderCoordinator(
                 applyBackgroundCollapseMode(config)
             }
         }
+
+        applyBackButton(appBar.toolbar, config)
     }
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
@@ -320,6 +334,43 @@ internal class StackHeaderCoordinator(
         if (params.collapseMode != desired) {
             params.collapseMode = desired
         }
+    }
+
+    // endregion
+
+    // region Back button
+
+    private fun applyBackButton(
+        toolbar: MaterialToolbar,
+        config: StackHeaderConfigProviding,
+    ) {
+        val visible = canNavigateBack && !config.backButtonHidden
+        val visibilityChanged = visible != lastBackButtonVisible
+        val iconChanged = config.backButtonIcon !== lastBackButtonIcon
+        val tintChanged = config.backButtonTintColor != lastBackButtonTintColor
+
+        if (!visibilityChanged && !iconChanged && !tintChanged) return
+
+        lastBackButtonVisible = visible
+        lastBackButtonIcon = config.backButtonIcon
+        lastBackButtonTintColor = config.backButtonTintColor
+
+        if (!visible) {
+            toolbar.navigationIcon = null
+            toolbar.setNavigationOnClickListener(null)
+            return
+        }
+
+        // Clear previous tint before setting icon to ensure clean state
+        toolbar.clearNavigationIconTint()
+
+        toolbar.navigationIcon = config.backButtonIcon ?: resolveDefaultBackButtonIcon()
+
+        config.backButtonTintColor?.let {
+            toolbar.setNavigationIconTint(it)
+        }
+
+        toolbar.setNavigationOnClickListener { onNavigationIconClick() }
     }
 
     // endregion
@@ -473,6 +524,8 @@ internal class StackHeaderCoordinator(
             }
         }
     }
+
+    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
 
     companion object {
         private const val TAG = "StackHeaderCoordinator"

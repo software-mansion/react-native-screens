@@ -11,6 +11,7 @@ import com.swmansion.rnscreens.gamma.stack.header.StackHeaderCoordinatorLayout
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
+    private val canNavigateBack: Boolean,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -44,7 +45,7 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = StackHeaderCoordinatorLayout(requireContext(), stackScreen)
+    ): View = StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack)
 
     override fun onViewCreated(
         view: View,

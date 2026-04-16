@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -84,6 +85,7 @@ open class StackHeaderConfigViewManager :
 
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
+        view.resolveBackButtonIconIfNeeded()
         view.notifyConfigChanged()
     }
 
@@ -119,6 +121,34 @@ open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.transparent = value
+    }
+
+    override fun setBackButtonHidden(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.backButtonHidden = value
+    }
+
+    override fun setBackButtonTintColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColor = value
+    }
+
+    override fun setBackButtonDrawableIconResourceName(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.backButtonDrawableIconResourceName = value
+    }
+
+    override fun setBackButtonImageIconResource(
+        view: StackHeaderConfig,
+        value: ReadableMap?,
+    ) {
+        view.backButtonImageIconUri = value?.getString("uri")
     }
 
     companion object {
