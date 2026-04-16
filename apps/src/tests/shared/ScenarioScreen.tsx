@@ -48,7 +48,7 @@ export default function ScenarioSelectionScreen(props: {
             }}>
             {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
           </Stack.Screen>
-          {Object.values(props.scenarioGroup.scenarios).map(
+          {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
             (ScenarioComponent: Scenario) => {
               const { key } = ScenarioComponent.scenarioDescription;
               return (
