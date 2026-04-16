@@ -21,6 +21,8 @@ Occasional flashes of the back button in the header are expected behavior and ar
 
 ## Steps
 
+### Baseline
+
 1. Launch the app and set system appearance to **light**.
 
 - [ ] Expected: App is displayed in light mode.
