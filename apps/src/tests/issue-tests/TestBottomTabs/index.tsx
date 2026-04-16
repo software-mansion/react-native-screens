@@ -184,7 +184,6 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       ios: {
-        scrollEdgeEffects: { bottom: 'hard' },
         standardAppearance: {
           stacked: {
             normal: {
