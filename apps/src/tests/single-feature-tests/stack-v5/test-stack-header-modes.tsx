@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scenario } from '../../shared/helpers';
+import type { ScenarioDescription } from '../../shared/helpers';
 import { StackContainer } from '../../../shared/gamma/containers/stack';
 import { ScrollView, Text, View } from 'react-native';
 import LongText from '../../../../src/shared/LongText';
@@ -7,17 +7,7 @@ import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNa
 import Colors from '../../../../src/shared/styling/Colors';
 import PressableWithFeedback from '../../../../src/shared/PressableWithFeedback';
 
-const SCENARIO: Scenario = {
-  name: 'Stack Header Modes',
-  key: 'test-stack-header-modes',
-  details: '[WIP] Tests different header modes.',
-  platforms: ['android'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
-
-export function App() {
+export default function App() {
   return <StackSetup />;
 }
 
@@ -61,3 +51,10 @@ function Screen(isHome: boolean) {
     </ScrollView>
   );
 }
+
+App.scenarioDescription = {
+  name: 'Stack Header Modes',
+  key: 'test-stack-header-modes',
+  details: '[WIP] Tests different header modes.',
+  platforms: ['android'],
+} as ScenarioDescription;

@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import type { TabsHostProps } from 'react-native-screens';
@@ -18,16 +18,6 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-const SCENARIO: Scenario = {
-  name: 'Layout Direction',
-  key: 'test-tabs-tab-bar-layout-direction',
-  details:
-    'Tests how tabs handle system, React Native and prop layout direction.',
-  platforms: ['android', 'ios'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -136,9 +126,17 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export default function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
+
+App.scenarioDescription = {
+  name: 'Layout Direction',
+  key: 'test-tabs-tab-bar-layout-direction',
+  details:
+    'Tests how tabs handle system, React Native and prop layout direction.',
+  platforms: ['android', 'ios'],
+} as ScenarioDescription;
 
 const styles = StyleSheet.create({
   container: {

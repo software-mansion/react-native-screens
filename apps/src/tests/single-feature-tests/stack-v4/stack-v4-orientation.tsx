@@ -6,16 +6,9 @@ import {
   createAutoConfiguredStack,
   findStackScreenOptions,
 } from '@apps/tests/shared/stack';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const SCENARIO: Scenario = {
-  name: 'Orientation',
-  key: 'stack-v4-orientation',
-  platforms: ['ios', 'android'],
-  AppComponent: App,
-};
 
-export default SCENARIO;
 
 type StackParamList = {
   Screen1: undefined;
@@ -48,10 +41,16 @@ const Stack = createAutoConfiguredStack<StackParamList>({
   Screen1: ConfigScreen,
 });
 
-export function App() {
+export default function App() {
   return (
     <Stack.Provider>
       <Stack.Autoconfig />
     </Stack.Provider>
   );
 }
+
+App.scenarioDescription = {
+  name: 'Orientation',
+  key: 'stack-v4-orientation',
+  platforms: ['ios', 'android'],
+} as ScenarioDescription;

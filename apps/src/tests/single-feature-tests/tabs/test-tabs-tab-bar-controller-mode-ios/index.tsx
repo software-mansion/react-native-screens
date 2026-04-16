@@ -6,19 +6,10 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import {TabBarControllerMode } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
-    name: 'Tab Bar Controller Mode',
-    key: 'test-tabs-tab-bar-controller-mode-ios',
-    details: 'Test different tab bar modes.',
-    platforms: ['ios'],
-    AppComponent: App,
-};
-
-export default SCENARIO;
 
 function ConfigScreen() {
     const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -78,9 +69,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
 ];
 
-export function App() {
+export default function App() {
     return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
-};
+}
+
+App.scenarioDescription = {
+    name: 'Tab Bar Controller Mode',
+    key: 'test-tabs-tab-bar-controller-mode-ios',
+    details: 'Test different tab bar modes.',
+    platforms: ['ios'],
+} as ScenarioDescription;
 
 const styles = {
     sectionHeader: {

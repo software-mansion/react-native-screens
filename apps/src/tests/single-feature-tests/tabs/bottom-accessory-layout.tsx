@@ -2,7 +2,7 @@ import LongText from '@apps/shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
@@ -10,15 +10,6 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-const SCENARIO: Scenario = {
-  name: 'Bottom Accessory',
-  key: 'bottom-accessory-layout',
-  details: 'Test tabs bottom accessory with various contents',
-  platforms: ['ios'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
 
 function ShortViewUL() {
   return (
@@ -128,9 +119,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export default function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
+
+App.scenarioDescription = {
+  name: 'Bottom Accessory',
+  key: 'bottom-accessory-layout',
+  details: 'Test tabs bottom accessory with various contents',
+  platforms: ['ios'],
+} as ScenarioDescription;
 
 const styles = StyleSheet.create({
   shortView: {

@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   type StackRouteConfig,
@@ -14,17 +14,6 @@ import {
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-
-const SCENARIO: Scenario = {
-  name: 'StackInTabs',
-  details:
-    'Configuration in Stack contained within TabScreen always takes precedence',
-  key: 'cit-orientation-stack-in-tabs',
-  AppComponent: App,
-  platforms: ['ios'],
-};
-
-export default SCENARIO;
 
 function ConfigScreen() {
   const {
@@ -95,6 +84,14 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export default function App() {
   return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
+
+App.scenarioDescription = {
+  name: 'StackInTabs',
+  details:
+    'Configuration in Stack contained within TabScreen always takes precedence',
+  key: 'cit-orientation-stack-in-tabs',
+  platforms: ['ios'],
+} as ScenarioDescription;

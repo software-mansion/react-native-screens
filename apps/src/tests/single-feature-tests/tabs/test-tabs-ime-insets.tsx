@@ -1,5 +1,5 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsSwitch } from '@apps/shared';
 import {
@@ -11,16 +11,6 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-const SCENARIO: Scenario = {
-  name: 'IME insets',
-  key: 'test-tabs-ime-insets',
-  details:
-    'Tests prop that determines whether BottomNavigationView respects IME insets.',
-  platforms: ['android'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
 
 function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
@@ -98,9 +88,17 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export default function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
+
+App.scenarioDescription = {
+  name: 'IME insets',
+  key: 'test-tabs-ime-insets',
+  details:
+    'Tests prop that determines whether BottomNavigationView respects IME insets.',
+  platforms: ['android'],
+} as ScenarioDescription;
 
 const styles = StyleSheet.create({
   container: {

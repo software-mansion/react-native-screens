@@ -1,7 +1,7 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
@@ -9,21 +9,14 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-const SCENARIO: Scenario = {
-  name: 'Tab Bar Hidden',
-  key: 'test-tabs-tab-bar-hidden',
-  platforms: ['ios', 'android'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
-
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
     <ScrollView style={{ padding: 40 }}>
-      <Text style={{ textAlign: 'center' }}>Change flag value by clicking on button.</Text>
+      <Text style={{ textAlign: 'center' }}>
+        Change flag value by clicking on button.
+      </Text>
       <SettingsSwitch
         style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
@@ -45,6 +38,12 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export default function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
+
+App.scenarioDescription = {
+  name: 'Tab Bar Hidden',
+  key: 'test-tabs-tab-bar-hidden',
+  platforms: ['ios', 'android'],
+} as ScenarioDescription;

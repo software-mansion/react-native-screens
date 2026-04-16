@@ -1,21 +1,11 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { StackContainer } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import Colors from '@apps/shared/styling/Colors';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-const SCENARIO: Scenario = {
-  name: 'Animation Android',
-  key: 'test-animation-android',
-  details: 'High contrast screens to test animations on Android',
-  platforms: ['android'],
-  AppComponent: App,
-};
-
-export default SCENARIO;
-
-export function App() {
+export default function App() {
   return <StackSetup />;
 }
 
@@ -137,3 +127,10 @@ function NestedRedScreen() {
     </CenteredLayoutView>
   );
 }
+
+App.scenarioDescription = {
+  name: 'Animation Android',
+  key: 'test-animation-android',
+  details: 'High contrast screens to test animations on Android',
+  platforms: ['android'],
+} as ScenarioDescription;
