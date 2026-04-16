@@ -94,6 +94,8 @@ export const Palette = {
   LightOffNavy: '#30354a',
   OffNavy: '#272b3c',
   Navy: '#232736',
+
+  Black: '#000000',
 } as const;
 
 export type ColorPalette = typeof Palette & {
@@ -110,7 +112,7 @@ export const Colors: ColorPalette = {
   background: Palette.White,
   offBackground: Palette.OffWhite,
   primary: Palette.NavyLight100,
-  text: Palette.NavyLight100,
+  text: Palette.Black,
   cardBackground: Palette.White,
   cardBorder: Palette.NavyLight20,
 };
