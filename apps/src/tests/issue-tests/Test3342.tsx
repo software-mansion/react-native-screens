@@ -17,7 +17,7 @@ import {
   TabsContainer,
   TabRouteConfig,
 } from '@apps/shared/gamma/containers/tabs';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 type RouteParamList = {
   Screen1: undefined;

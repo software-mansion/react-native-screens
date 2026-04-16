@@ -94,36 +94,37 @@ export const Palette = {
   LightOffNavy: '#30354a',
   OffNavy: '#272b3c',
   Navy: '#232736',
+
+  Black: '#000000',
 } as const;
 
-export type ColorPallette = typeof Palette & {
-  background: ColorValue,
-  offBackground: ColorValue,
-  primary: ColorValue,
-  cardBackground: ColorValue,
-  cardBorder: ColorValue,
+export type ColorPalette = typeof Palette & {
+  background: ColorValue;
+  offBackground: ColorValue;
+  primary: ColorValue;
+  text: ColorValue;
+  cardBackground: ColorValue;
+  cardBorder: ColorValue;
 };
 
-export const Colors: ColorPallette = {
+export const Colors: ColorPalette = {
   ...Palette,
   background: Palette.White,
   offBackground: Palette.OffWhite,
   primary: Palette.NavyLight100,
+  text: Palette.Black,
   cardBackground: Palette.White,
   cardBorder: Palette.NavyLight20,
 };
 
-export const LightColors: ColorPallette = Colors;
+export const LightColors: ColorPalette = Colors;
 
-export const DarkColors: ColorPallette = {
+export const DarkColors: ColorPalette = {
   ...Palette,
   background: Palette.Navy,
   offBackground: Palette.OffNavy,
   primary: Palette.NavyLight10,
+  text: Palette.NavyLight10,
   cardBackground: Palette.Navy,
   cardBorder: Palette.NavyDark60,
 };
-
-export default Colors;
-
-

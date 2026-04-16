@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Button, Switch } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Colors from '../../shared/styling/Colors';
+import { Colors } from '../../shared/styling';
 
 interface HeaderConfigContextType {
   outerShown: boolean;
@@ -18,7 +18,9 @@ const HeaderConfigContext = createContext<HeaderConfigContextType | null>(null);
 const useHeaderConfig = () => {
   const context = useContext(HeaderConfigContext);
   if (!context) {
-    throw new Error('useHeaderConfig must be used within a HeaderConfigProvider');
+    throw new Error(
+      'useHeaderConfig must be used within a HeaderConfigProvider',
+    );
   }
   return context;
 };

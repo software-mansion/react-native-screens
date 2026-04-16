@@ -13,7 +13,7 @@ import {
   type TabRouteConfig,
 } from '@apps/shared/gamma/containers/tabs';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 enableFreeze(true);
 
