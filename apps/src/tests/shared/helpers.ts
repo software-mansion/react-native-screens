@@ -21,13 +21,15 @@ export interface ScenarioDescription {
    * What platforms does this test cover.
    */
   platforms?: ('android' | 'ios')[];
-  /**
-   * Component that will render the test scenario. It should be standalone!
-   * That means it should be possible to render this w/o any additional harness
-   * as top-level application component & it should remain functional.
-   */
 }
 
+/**
+ * Component that will render the test scenario. It should be standalone!
+ * That means it should be possible to render this w/o any additional harness
+ * as top-level application component & it should remain functional.
+ *
+ * Scenario metadata is attached as a static `scenarioDescription` property.
+ */
 export type Scenario = React.ComponentType & {
   scenarioDescription: ScenarioDescription;
 };
