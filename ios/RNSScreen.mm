@@ -67,12 +67,6 @@ struct ContentWrapperBox {
   NSMutableArray<UIView *> *_reactSubviews;
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -1431,6 +1425,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

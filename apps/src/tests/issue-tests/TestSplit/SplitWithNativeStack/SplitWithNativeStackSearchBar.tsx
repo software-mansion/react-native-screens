@@ -3,7 +3,7 @@ import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 export const SplitWithNativeStackSearchBar = ({
   splitBaseConfig,

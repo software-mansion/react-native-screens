@@ -4,9 +4,7 @@
 
 ## Prerequisites
 
-- iPhone simulator or device
-- iPad simulator or device (required for `tabSidebar` mode)
-- iOS 18+
+- iOS simulator or device: iPhone and iPad (required for `tabSidebar` mode).
 
 ## Steps
 

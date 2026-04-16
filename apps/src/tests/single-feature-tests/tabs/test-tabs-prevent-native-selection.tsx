@@ -9,7 +9,7 @@ import {
 } from '../../../shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
-import Colors from '../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 const SCENARIO: Scenario = {
   name: 'Prevent native selection',
@@ -121,4 +121,3 @@ function AppContents() {
     />
   );
 }
-
