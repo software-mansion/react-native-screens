@@ -7,15 +7,15 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Scenario } from '../../shared/helpers';
+import { Scenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
-import { SettingsPicker, SettingsSwitch } from '../../../shared';
-import PressableWithFeedback from '../../../shared/PressableWithFeedback';
-import Colors from '../../../shared/styling/Colors';
-import LongText from '../../../shared/LongText';
+} from '@apps/shared/gamma/containers/stack';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import { Colors } from '@apps/shared/styling';
+import LongText from '@apps/shared/LongText';
 import type {
   StackHeaderConfigProps,
   StackHeaderTypeAndroid,
@@ -130,7 +130,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
         Component: (
           <View style={styles.backgroundContainer}>
             <Image
-              source={require('../../../../assets/trees.jpg')}
+              source={require('@assets/trees.jpg')}
               style={styles.backgroundImage}
             />
             <View style={styles.backgroundPressable}>
