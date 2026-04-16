@@ -347,13 +347,6 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     return NO;
   }
 
-  // This handles the tabsHostComponentView nullability
-  // TODO: This if is likely to be removed, since we want to roll back the support
-  // for "controlled mode", at least initially.
-  if ([self.tabsHostComponentView experimental_controlNavigationStateInJS]) {
-    return NO;
-  }
-
   BOOL shouldPreventTabSelection = [self shouldPreventNativeTabSelection:viewController];
 
   if (shouldPreventTabSelection) {
