@@ -46,6 +46,13 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
+
+  /**
+   * There have been numerous "breaking changes" in the yet-experimental Tabs API. 
+   * This flag marks the shape of the API that's meant for stabilisation, and 
+   * can enable downstream to detect these changes.
+   */
+  usesStableTabsApi: true,
 } as const;
 
 const _featureFlags = {
