@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { StackContainer, StackRouteConfig, useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
-// import { DarkRootScreen, DarkInterfaceStyleScreen } from './DarkScreen';
-// import { LightRootScreen, LightInterfaceStyleScreen } from './LightScreen';
 import {  LightRootScreen, LightInterfaceStyleScreen, DarkRootScreen, DarkInterfaceStyleScreen } from './ThemeScreen';
 import { Scenario } from '@apps/tests/shared/helpers';
 
