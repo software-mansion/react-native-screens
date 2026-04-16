@@ -1,41 +1,20 @@
 #pragma once
 
-#include "NativeModules.h"
-#include "RNScreensModule.g.h"
 #include "pch.h"
-#include "winrt/Microsoft.ReactNative.h"
+#include "resource.h"
 
-namespace winrt::RNScreens::implementation {
+#if __has_include("codegen/NativeRnScreensDataTypes.g.h")
+#include "codegen/NativeRnScreensDataTypes.g.h"
+#endif
+#include "codegen/NativeScreensModuleSpec.g.h"
 
-class RNScreensModule : public RNScreensModuleT<RNScreensModule> {
- public:
-  RNScreensModule(Microsoft::ReactNative::IReactContext const &reactContext);
+#include "NativeModules.h"
 
-  static winrt::Windows::Foundation::Collections::IMapView<
-      winrt::hstring,
-      winrt::Microsoft::ReactNative::ViewManagerPropertyType>
-  NativeProps() noexcept;
-  void UpdateProperties(winrt::Microsoft::ReactNative::IJSValueReader const
-                            &propertyMapReader) noexcept;
+namespace winrt::ReactNativeScreens {
+// "RNSModule" must match TurboModuleRegistry.get('RNSModule') in src/fabric/NativeScreensModule.ts.
+REACT_MODULE(RnScreens, L"RNSModule")
 
-  static winrt::Microsoft::ReactNative::ConstantProviderDelegate
-  ExportedCustomBubblingEventTypeConstants() noexcept;
-  static winrt::Microsoft::ReactNative::ConstantProviderDelegate
-  ExportedCustomDirectEventTypeConstants() noexcept;
-
-  static winrt::Windows::Foundation::Collections::IVectorView<winrt::hstring>
-  Commands() noexcept;
-  void DispatchCommand(
-      winrt::hstring const &commandId,
-      winrt::Microsoft::ReactNative::IJSValueReader const
-          &commandArgsReader) noexcept;
-
- private:
-  Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
+struct RnScreens {
+  using ModuleSpec = ReactNativeScreensCodegen::ScreensModuleSpec;
 };
-} // namespace winrt::RNScreens::implementation
-
-namespace winrt::RNScreens::factory_implementation {
-struct RNScreensModule
-    : RNScreensModuleT<RNScreensModule, implementation::RNScreensModule> {};
-} // namespace winrt::RNScreens::factory_implementation
+} // namespace winrt::ReactNativeScreens
