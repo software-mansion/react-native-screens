@@ -181,12 +181,6 @@ namespace react = facebook::react;
   UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -709,7 +703,15 @@ RNS_IGNORE_SUPER_CALL_END
           /// quickly. Since view recycling is disabled, once we detect that a screen has been removed from the view
           /// hierarchy, it won't be reused. This allows us to safely filter out dismissed screens from screens coming
           /// from JS state via `controllers`.
-          if (_iosPreventReattachmentOfDismissedScreens && screen.controller.isRemovedFromParent) {
+          ///
+          /// Note: screens with `preventNativeDismiss` are intentionally excluded from this guard.
+          /// When `preventNativeDismiss` is set and the user triggers a native back gesture, UIKit removes
+          /// the screen from its parent. We then need to reattach it so that the `preventNativeDismiss`
+          /// callback fires correctly on the JS side. This breaks the general assumption that a screen
+          /// removed from the hierarchy will never be reattached.
+          /// See: https://github.com/software-mansion/react-native-screens/issues/3885
+          if (_iosPreventReattachmentOfDismissedScreens && screen.controller.isRemovedFromParent &&
+              !screen.preventNativeDismiss) {
             continue;
           }
           [pushControllers addObject:screen.controller];
@@ -1433,6 +1435,16 @@ RNS_IGNORE_SUPER_CALL_END
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackComponentDescriptor>();
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, ScrollView, Text, TextInput, View } from 'react-native';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 const TEST_CASES = [
@@ -82,8 +82,8 @@ function Footer() {
 function FormSheetBase() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={{ bottom: true }}>
-      <View style={{ flex: 1, justifyContent: 'space-between'}}>
-        <View style={{padding: 20}}>
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View style={{ padding: 20 }}>
           <Text style={{ marginBottom: 10 }}>Content Area</Text>
           <TextInput
             style={{ borderWidth: 1, height: 40, paddingHorizontal: 8 }}

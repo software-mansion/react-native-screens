@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 type RootTabParamList = {
   First: undefined;
@@ -13,9 +13,15 @@ type RootTabParamList = {
 };
 
 type InnerScreenName =
-  | 'Inner11' | 'Inner12' | 'Inner13'
-  | 'Inner21' | 'Inner22' | 'Inner23'
-  | 'Inner31' | 'Inner32' | 'Inner33';
+  | 'Inner11'
+  | 'Inner12'
+  | 'Inner13'
+  | 'Inner21'
+  | 'Inner22'
+  | 'Inner23'
+  | 'Inner31'
+  | 'Inner32'
+  | 'Inner33';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<any>();
@@ -25,7 +31,11 @@ type ScreenProps = {
   next?: InnerScreenName;
 };
 
-const Screen = ({ current, next, navigation }: ScreenProps & { navigation: any }) => (
+const Screen = ({
+  current,
+  next,
+  navigation,
+}: ScreenProps & { navigation: any }) => (
   <View style={styles.container}>
     <Text>{`${current} Screen`}</Text>
     {next && (
@@ -39,7 +49,10 @@ const createScreen = (current: InnerScreenName, next?: InnerScreenName) =>
     return <Screen current={current} next={next} navigation={navigation} />;
   };
 
-const screenGroups: Record<string, { screens: InnerScreenName[]; headerColor: string; contentColor: string }> = {
+const screenGroups: Record<
+  string,
+  { screens: InnerScreenName[]; headerColor: string; contentColor: string }
+> = {
   First: {
     screens: ['Inner11', 'Inner12', 'Inner13'],
     headerColor: Colors.BlueLight80,
@@ -66,8 +79,7 @@ const createStack = (groupKey: keyof typeof screenGroups) => {
         title: groupKey,
         headerStyle: { backgroundColor: headerColor },
         contentStyle: { backgroundColor: contentColor },
-      }}
-    >
+      }}>
       {screens.map((screen, index) => {
         const nextScreen = screens[index + 1];
         return (
@@ -88,9 +100,21 @@ const tabOptions = {
 
 const RootTabs = () => (
   <Tab.Navigator screenOptions={{ headerShown: false }}>
-    <Tab.Screen name="First" component={createStack('First')} options={tabOptions} />
-    <Tab.Screen name="Second" component={createStack('Second')} options={tabOptions} />
-    <Tab.Screen name="Third" component={createStack('Third')} options={tabOptions} />
+    <Tab.Screen
+      name="First"
+      component={createStack('First')}
+      options={tabOptions}
+    />
+    <Tab.Screen
+      name="Second"
+      component={createStack('Second')}
+      options={tabOptions}
+    />
+    <Tab.Screen
+      name="Third"
+      component={createStack('Third')}
+      options={tabOptions}
+    />
   </Tab.Navigator>
 );
 

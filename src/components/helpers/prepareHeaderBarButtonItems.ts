@@ -8,10 +8,12 @@ const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
   index: number,
   side: 'left' | 'right',
+  path: string = '',
 ): HeaderBarButtonItemWithMenu['menu'] => {
   return {
     ...menu,
     items: menu.items.map((menuItem, menuIndex) => {
+      const currentPath = path ? `${path}.${menuIndex}` : `${menuIndex}`;
       const iconType = menuItem.icon?.type;
       const sfSymbolName =
         iconType === 'sfSymbol' ? menuItem.icon?.name : undefined;
@@ -32,7 +34,7 @@ const prepareMenu = (
           xcassetName,
           imageSource,
           templateSource,
-          ...prepareMenu(menuItem, menuIndex, side),
+          ...prepareMenu(menuItem, index, side, currentPath),
         };
       }
       return {
@@ -41,7 +43,7 @@ const prepareMenu = (
         xcassetName,
         imageSource,
         templateSource,
-        menuId: `${menuIndex}-${index}-${side}`,
+        menuId: `${currentPath}-${index}-${side}`,
       };
     }),
   };

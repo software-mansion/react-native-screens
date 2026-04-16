@@ -22,13 +22,16 @@ function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
-    <ScrollView style={{ padding: 40 }}>
-      <Text style={{ textAlign: 'center' }}>Change flag value by clicking on button.</Text>
+    <ScrollView style={{ padding: 40 }}
+      testID="tab-bar-hidden-scrollview">
+      <Text style={{ textAlign: 'center' }}>
+        Change flag value by clicking on button.</Text>
       <SettingsSwitch
         style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
         value={hostConfig.tabBarHidden ?? false}
         onValueChange={value => updateHostConfig({ tabBarHidden: value })}
+        testID="tab-bar-hidden-switch"
       />
     </ScrollView>
   );
@@ -40,6 +43,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: ConfigScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
+      tabBarItemTestID: 'tab-bar-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
       title: 'Tab1',
     },
   },

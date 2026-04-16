@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- iOS 18+ device or simulator
+- iOS device or simulator
 with at least one RTL language localization configured in Xcode (e.g. empty ar.lproj/InfoPlist.strings), or system language set to Arabic/Hebrew
 - Android emulator
 Android emulator with supportRtl enabled in app manifest

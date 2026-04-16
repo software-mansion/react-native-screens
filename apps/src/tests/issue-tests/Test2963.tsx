@@ -9,7 +9,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View } from 'react-native';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 type PushedScreenProps = {
   screenNumber: number;

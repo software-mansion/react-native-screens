@@ -7,7 +7,7 @@ import {
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Button, StyleSheet, Text, useColorScheme } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, DarkColors, LightColors } from '@apps/shared/styling/Colors';
+import { Colors, DarkColors, LightColors } from '@apps/shared/styling';
 
 const Stack = createNativeStackNavigator();
 
