@@ -12,8 +12,7 @@ import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/S
 const SCENARIO: Scenario = {
   name: 'Simple navigation scenario',
   key: 'test-stack-simple-nav',
-  details:
-    'Test simple push and pop operations',
+  details: 'Test simple push and pop operations',
   platforms: ['android', 'ios'],
   AppComponent: App,
 };
@@ -21,9 +20,7 @@ const SCENARIO: Scenario = {
 export default SCENARIO;
 
 export function App() {
-  return (
-    <StackSetup />
-  );
+  return <StackSetup />;
 }
 
 function StackSetup() {
