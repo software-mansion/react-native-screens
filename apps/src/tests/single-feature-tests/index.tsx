@@ -26,13 +26,15 @@ type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
 
 function HomeScreen() {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView contentInsetAdjustmentBehavior="automatic"
+      testID="single-feature-tests-scrollview"> 
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
         <ScenarioButton
           key={key}
           title={scenarioGroup.name}
           route={key}
           details={scenarioGroup.details}
+          testID={`single-feature-tests-${scenarioGroup.name}`}
         />
       ))}
     </ScrollView>

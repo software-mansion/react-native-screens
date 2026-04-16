@@ -8,9 +8,10 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 
-function ScenarioSelect(props: { scenarios: Scenario[] }) {
+function ScenarioSelect(props: { scenarios: Scenario[]; groupName: string }) {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView contentInsetAdjustmentBehavior="automatic"
+      testID={`${props.groupName}-scenarios-scrollview`}>
       {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
         <ScenarioButton
           title={name}
@@ -42,7 +43,7 @@ export default function ScenarioSelectionScreen(props: {
               headerLargeTitleEnabled: true,
               headerTitle: props.scenarioGroup.name,
             }}>
-            {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
+            {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} groupName={props.scenarioGroup.name} />}
           </Stack.Screen>
           {Object.values(props.scenarioGroup.scenarios).map(({ key, AppComponent }) => (
             <Stack.Screen name={key} key={key} component={AppComponent} />
