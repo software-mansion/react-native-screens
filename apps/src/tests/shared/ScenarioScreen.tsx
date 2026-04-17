@@ -8,7 +8,7 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 
-function ScenarioSelect(props: { scenarios: Scenario[] }) {
+function ScenarioSelect(props: { scenarios: Record<string, Scenario> }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       {Object.values(props.scenarios).map(
