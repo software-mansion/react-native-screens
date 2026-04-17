@@ -45,6 +45,27 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
+
+  /**
+   * Numerous "breaking changes" in the yet-experimental Tabs API have been
+   * introduced with version 4.25.0 of the library.
+   *
+   * This flag marks the shape of the API that's meant for stabilisation, and
+   * enables downstream to detect these changes.
+   *
+   * See:
+   * * https://github.com/software-mansion/react-native-screens/pull/3888
+   * * https://github.com/software-mansion/react-native-screens/pull/3776
+   * * https://github.com/software-mansion/react-native-screens/pull/3781
+   * * https://github.com/software-mansion/react-native-screens/pull/3756
+   * * https://github.com/software-mansion/react-native-screens/pull/3808
+   * * https://github.com/software-mansion/react-native-screens/pull/3785
+   * * https://github.com/software-mansion/react-native-screens/pull/3789
+   * * https://github.com/software-mansion/react-native-screens/pull/3794
+   * * https://github.com/software-mansion/react-native-screens/pull/3863
+   * * https://github.com/software-mansion/react-native-screens/pull/3875
+   */
+  usesStableTabsApi: true,
 } as const;
 
 const _featureFlags = {
