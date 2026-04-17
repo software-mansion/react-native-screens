@@ -6,7 +6,7 @@ export interface ScrollViewMarkerProps {
   style?: ViewProps['style'];
 
   /**
-   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in the first descendant chain of the ScrollViewMarker).
+   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView resolved in direct subtree of the ScrollViewMarker).
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
    * for the specified edge of the ScrollView.
    *
