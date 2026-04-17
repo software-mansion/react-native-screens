@@ -62,4 +62,4 @@ App.scenarioDescription = {
   name: 'Command: showColumn',
   key: 'test-command-show-column',
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

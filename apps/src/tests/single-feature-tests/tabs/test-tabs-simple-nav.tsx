@@ -9,7 +9,6 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
-
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
@@ -61,4 +60,4 @@ App.scenarioDescription = {
   key: 'test-tabs-simple-nav',
   details: 'Test basic navigation scenarios',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

@@ -11,7 +11,6 @@ import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import Colors from '../../../shared/styling/Colors';
 
-
 function ContentView() {
   const nav = useTabsNavigationContext();
 
@@ -100,7 +99,7 @@ App.scenarioDescription = {
   key: 'test-tabs-prevent-native-selection',
   details: 'Test preventNativeSelection prop on TabsScreen',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
@@ -119,4 +118,3 @@ function AppContents() {
     />
   );
 }
-

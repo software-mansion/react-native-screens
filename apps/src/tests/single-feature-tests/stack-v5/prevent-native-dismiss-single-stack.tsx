@@ -136,4 +136,4 @@ App.scenarioDescription = {
   details:
     'Test prevent native dismiss behavior in simple single-stack scenario',
   platforms: ['android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

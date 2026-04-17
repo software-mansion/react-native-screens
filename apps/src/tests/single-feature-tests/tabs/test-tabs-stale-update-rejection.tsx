@@ -12,7 +12,6 @@ import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import Colors from '../../../shared/styling/Colors';
 
-
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -30,12 +29,23 @@ function ContentView() {
         heavyRender: {JSON.stringify(heavyRenderEnabled)}
       </Text>
       <Text style={{ textAlign: 'center' }}>
-        rejectStaleNavStateUpdates: {JSON.stringify(hostConfig.rejectStaleNavStateUpdates)}
+        rejectStaleNavStateUpdates:{' '}
+        {JSON.stringify(hostConfig.rejectStaleNavStateUpdates)}
       </Text>
       <HeavyRenderHierarchy enabled={heavyRenderEnabled} timeMs={3000} />
       <TabsNavigationButtons />
-      <Button title='Toggle heavyRender' onPress={() => setHeavyRenderEnabled(prev => !prev)} />
-      <Button title='Toggle rejectStaleNavStateUpdates' onPress={() => updateHostConfig({ rejectStaleNavStateUpdates: !hostConfig.rejectStaleNavStateUpdates })} />
+      <Button
+        title="Toggle heavyRender"
+        onPress={() => setHeavyRenderEnabled(prev => !prev)}
+      />
+      <Button
+        title="Toggle rejectStaleNavStateUpdates"
+        onPress={() =>
+          updateHostConfig({
+            rejectStaleNavStateUpdates: !hostConfig.rejectStaleNavStateUpdates,
+          })
+        }
+      />
     </CenteredLayoutView>
   );
 }
@@ -89,37 +99,48 @@ App.scenarioDescription = {
   key: 'test-tabs-stale-update-rejection',
   details: 'Test stale update rejection mechanism',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
 
   return (
-    <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} rejectStaleNavStateUpdates={true} onTabSelectionRejected={(event) => {
-      const message = `onTabSelectionRejected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`
-      console.warn(message);
-      toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
-    }} />
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      rejectStaleNavStateUpdates={true}
+      onTabSelectionRejected={event => {
+        const message = `onTabSelectionRejected: ${JSON.stringify(
+          event.nativeEvent,
+          undefined,
+          2,
+        )}`;
+        console.warn(message);
+        toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
+      }}
+    />
   );
 }
 
-
-function HeavyRenderHierarchy({ enabled, timeMs = 5000 }: { enabled: boolean, timeMs: number }) {
+function HeavyRenderHierarchy({
+  enabled,
+  timeMs = 5000,
+}: {
+  enabled: boolean;
+  timeMs: number;
+}) {
   if (enabled) {
-    console.log('HeavyRenderHierarchy computation BEGIN')
+    console.log('HeavyRenderHierarchy computation BEGIN');
     blockThread(timeMs);
-    console.log('HeavyRenderHierarchy computation END')
+    console.log('HeavyRenderHierarchy computation END');
   }
   return (
     <View>
       <Text>HeavyRenderHierarchy</Text>
     </View>
-
   );
 }
 
 function blockThread(ms: number) {
   const end = Date.now() + ms;
-  while (Date.now() < end) { }
+  while (Date.now() < end) {}
 }
-

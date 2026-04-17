@@ -10,9 +10,7 @@ import Colors from '@apps/shared/styling/Colors';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
 export default function App() {
-  return (
-    <StackSetup />
-  );
+  return <StackSetup />;
 }
 
 function StackSetup() {
@@ -90,4 +88,4 @@ App.scenarioDescription = {
   key: 'test-stack-simple-nav',
   details: 'Test simple push and pop operations',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

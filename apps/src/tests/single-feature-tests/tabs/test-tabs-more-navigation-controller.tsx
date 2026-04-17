@@ -12,7 +12,6 @@ import { ToastProvider, useToast } from '@apps/shared/';
 import Colors from '@apps/shared/styling/Colors';
 import type { MoreTabSelectedEvent } from 'react-native-screens';
 
-
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
@@ -86,7 +85,7 @@ App.scenarioDescription = {
   key: 'test-tabs-more-navigation-controller',
   details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
@@ -95,8 +94,14 @@ function AppContents() {
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
       ios={{
-        onMoreTabSelected: (event: NativeSyntheticEvent<MoreTabSelectedEvent>) => {
-          const message = `onMoreTabSelected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`;
+        onMoreTabSelected: (
+          event: NativeSyntheticEvent<MoreTabSelectedEvent>,
+        ) => {
+          const message = `onMoreTabSelected: ${JSON.stringify(
+            event.nativeEvent,
+            undefined,
+            2,
+          )}`;
           console.warn(message);
           toast.push({ message, backgroundColor: Colors.GreenLight60 });
         },

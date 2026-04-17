@@ -8,7 +8,6 @@ import {
 } from 'react-native-screens';
 import Colors from '@apps/shared/styling/Colors';
 
-
 const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarBackgroundColor: Colors.NavyLight100,
   tabBarItemRippleColor: Colors.WhiteTransparentDark,
@@ -236,4 +235,4 @@ App.scenarioDescription = {
   name: 'Tab Bar Appearance',
   key: 'test-tabs-appearance-defined-by-selected-tab',
   platforms: ['ios', 'android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

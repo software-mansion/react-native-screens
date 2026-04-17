@@ -49,4 +49,4 @@ App.scenarioDescription = {
     Modification of this prop requires app restart.
   `,
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

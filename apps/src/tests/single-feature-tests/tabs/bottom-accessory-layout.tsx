@@ -10,7 +10,6 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-
 function ShortViewUL() {
   return (
     <View
@@ -128,7 +127,7 @@ App.scenarioDescription = {
   key: 'bottom-accessory-layout',
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   shortView: {

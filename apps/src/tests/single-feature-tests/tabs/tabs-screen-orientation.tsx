@@ -10,9 +10,9 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-
 function ConfigScreen() {
-  const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
+  const { routeKey, routeOptions, setRouteOptions } =
+    useTabsNavigationContext();
 
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -57,4 +57,4 @@ App.scenarioDescription = {
   name: 'Tabs Screen Orientation',
   key: 'tabs-screen-orientation',
   platforms: ['ios', 'android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

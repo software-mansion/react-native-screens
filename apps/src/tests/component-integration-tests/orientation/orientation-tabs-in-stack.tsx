@@ -94,4 +94,4 @@ App.scenarioDescription = {
     'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
   key: 'cit-orientation-tabs-in-stack',
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

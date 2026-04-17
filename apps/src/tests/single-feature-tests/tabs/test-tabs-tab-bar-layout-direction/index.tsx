@@ -136,7 +136,7 @@ App.scenarioDescription = {
   details:
     'Tests how tabs handle system, React Native and prop layout direction.',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   container: {

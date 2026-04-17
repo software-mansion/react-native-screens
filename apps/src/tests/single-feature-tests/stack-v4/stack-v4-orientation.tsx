@@ -8,8 +8,6 @@ import {
 } from '@apps/tests/shared/stack';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-
-
 type StackParamList = {
   Screen1: undefined;
 };
@@ -53,4 +51,4 @@ App.scenarioDescription = {
   name: 'Orientation',
   key: 'stack-v4-orientation',
   platforms: ['ios', 'android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

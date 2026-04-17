@@ -46,4 +46,4 @@ App.scenarioDescription = {
   name: 'Tab Bar Hidden',
   key: 'test-tabs-tab-bar-hidden',
   platforms: ['ios', 'android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

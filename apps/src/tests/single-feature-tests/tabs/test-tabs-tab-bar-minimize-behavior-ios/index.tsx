@@ -77,7 +77,7 @@ App.scenarioDescription = {
     key: 'test-tabs-tab-bar-minimize-behavior-ios',
     details: 'Test tab bar minimize behavior for iOS 26+.',
     platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = {
     sectionHeader: {

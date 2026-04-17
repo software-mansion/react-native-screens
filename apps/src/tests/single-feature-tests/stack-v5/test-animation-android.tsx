@@ -133,4 +133,4 @@ App.scenarioDescription = {
   key: 'test-animation-android',
   details: 'High contrast screens to test animations on Android',
   platforms: ['android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

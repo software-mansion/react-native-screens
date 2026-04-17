@@ -239,4 +239,4 @@ App.scenarioDescription = {
   details:
     'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
   platforms: ['android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

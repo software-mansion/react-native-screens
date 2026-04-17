@@ -78,7 +78,7 @@ App.scenarioDescription = {
     key: 'test-tabs-tab-bar-controller-mode-ios',
     details: 'Test different tab bar modes.',
     platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = {
     sectionHeader: {

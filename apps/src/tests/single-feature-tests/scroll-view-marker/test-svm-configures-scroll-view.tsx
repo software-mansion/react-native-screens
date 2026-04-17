@@ -74,4 +74,4 @@ App.scenarioDescription = {
     'applied to the container edges. On Android this test serves only as a setup ' +
     'for native debugging.',
   platforms: ['ios', 'android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

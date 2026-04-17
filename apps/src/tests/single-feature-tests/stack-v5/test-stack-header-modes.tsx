@@ -57,4 +57,4 @@ App.scenarioDescription = {
   key: 'test-stack-header-modes',
   details: '[WIP] Tests different header modes.',
   platforms: ['android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;

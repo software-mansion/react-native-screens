@@ -11,9 +11,9 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-
 function ConfigScreen() {
-  const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
+  const { routeKey, routeOptions, setRouteOptions } =
+    useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
     useState(routeOptions.safeAreaConfiguration?.edges?.bottom ?? true);
@@ -98,7 +98,7 @@ App.scenarioDescription = {
   details:
     'Tests prop that determines whether BottomNavigationView respects IME insets.',
   platforms: ['android'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   container: {

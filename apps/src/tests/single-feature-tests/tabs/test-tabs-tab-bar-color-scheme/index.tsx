@@ -19,7 +19,6 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactColorScheme, setReactColorScheme] =
@@ -112,7 +111,7 @@ App.scenarioDescription = {
   key: 'test-tabs-tab-bar-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
   platforms: ['android', 'ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   container: {
@@ -137,6 +136,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   text: {
-    color: 'gray'
+    color: 'gray',
   },
 });

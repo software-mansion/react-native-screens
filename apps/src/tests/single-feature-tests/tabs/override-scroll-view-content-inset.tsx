@@ -7,7 +7,6 @@ import {
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-
 const ITEM_COUNT = 30;
 
 function ScrollContent({ label }: { label: string }) {
@@ -89,7 +88,7 @@ App.scenarioDescription = {
     'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
     'False: content scrolls behind bars. True/Default: content is inset from bars.',
   platforms: ['ios'],
-} as ScenarioDescription;
+} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   scrollView: {
