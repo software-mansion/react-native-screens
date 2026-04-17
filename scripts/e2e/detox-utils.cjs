@@ -66,12 +66,12 @@ function commonDetoxConfigFactory(applicationName) {
       'ios.debug': {
         type: 'ios.app',
         binaryPath: `ios/build/Build/Products/Debug-iphonesimulator/${applicationName}.app`,
-        build: `export RNS_GAMMA_ENABLED=1 && xcodebuild -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
+        build: `export && xcodebuild -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
       },
       'ios.release': {
         type: 'ios.app',
         binaryPath: `ios/build/Build/Products/Release-iphonesimulator/${applicationName}.app`,
-        build: `export RCT_NO_LAUNCH_PACKAGER=true RNS_GAMMA_ENABLED=1 && xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
+        build: `export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
       },
       'android.debug': {
         type: 'android.apk',
