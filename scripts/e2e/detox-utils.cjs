@@ -66,7 +66,7 @@ function commonDetoxConfigFactory(applicationName) {
       'ios.debug': {
         type: 'ios.app',
         binaryPath: `ios/build/Build/Products/Debug-iphonesimulator/${applicationName}.app`,
-        build: `export && xcodebuild -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
+        build: `xcodebuild -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty`,
       },
       'ios.release': {
         type: 'ios.app',
