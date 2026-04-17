@@ -21,7 +21,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     );
   });
 
-  it('Tab Bar Layout Direction screen should be displayed with default options. Tab bar follow lts order: Tab1 first from left.', async () => {
+  it('displays default options and renders Tab1 at the visually leftmost position (LTR)', async () => {
     await expect(
       element(by.id('tab-bar-layout-direction-picker')),
     ).toBeVisible();
@@ -43,7 +43,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
   });
 
   //inherit
-  it('Tab Bar Layout Direction: inherit. Tab bar follow system settings - ltr order: Tab1 first from left.', async () => {
+  it('follows system LTR settings when direction is set to inherit', async () => {
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -54,7 +54,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
   });
 
   //rtl
-  it('Tab Bar Layout Direction: rtl, overridesystem settings. Tab bar displayed in rtl order: Tab2 first from left.', async () => {
+  it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -68,7 +68,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
   });
 
   //ltr
-  it('Tab Bar Layout Direction: ltr. Tab bar displayed in ltr order: Tab1 first from left.', async () => {
+  it('remains in LTR order when direction is explicitly set to ltr', async () => {
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -129,7 +129,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     }
   });
 
-  it('Tab Bar Layout Direction screen should be displayed with default options. Tab bar follow system settings - rtl order: Tab2 first from left.', async () => {
+  it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
     await expect(
       element(by.id('tab-bar-layout-direction-picker')),
     ).toBeVisible();
@@ -151,7 +151,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   //inherit
-  it('Tab Bar Layout Direction: inherit. Tab bar follow system settings - rtl order: Tab2 first from left.', async () => {
+  it('follows system RTL settings when direction is set to inherit', async () => {
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -162,7 +162,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   //rtl
-  it('Tab Bar Layout Direction: rtl. Tab bar displayed in rtl order: Tab2 first from left.', async () => {
+  it('remains in RTL order when direction is explicitly set to rtl', async () => {
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -176,7 +176,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   //ltr
-  it('Tab Bar Layout Direction: ltr, override system settings. Tab bar displayed in ltr order: Tab1 first from left.', async () => {
+  it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
