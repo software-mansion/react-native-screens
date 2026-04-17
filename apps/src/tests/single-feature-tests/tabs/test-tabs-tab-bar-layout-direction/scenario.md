@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:**
+**Description:** This test scenario validates the layout directionality of the TabBar component across iOS and Android. It specifically verifies that the component correctly handles Right-to-Left (RTL) and Left-to-Right (LTR) rendering by testing the precedence between system-level settings, React Native's I18nManager, and the explicit direction prop from react-native-screens.
 
 **OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0 (Baklava)
 
