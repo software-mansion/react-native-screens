@@ -1,12 +1,7 @@
 import React from 'react';
 import type { Scenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
-import {
-  TabsContainer,
-  type TabRouteConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-  useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs, type TabsHostNavState } from 'react-native-screens';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 const SCENARIO: Scenario = {
@@ -19,12 +14,20 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-function ContentView() {
-  const { routeKey } = useTabsNavigationContext();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
+
+const SelectTabContext = React.createContext<(key: string) => void>(() => {});
+
+function ContentView({ screenKey }: { screenKey: string }) {
   return (
     <CenteredLayoutView>
       <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-        {routeKey}
+        {screenKey}
       </Text>
       <TabsNavigationButtons />
     </CenteredLayoutView>
@@ -32,35 +35,64 @@ function ContentView() {
 }
 
 function TabsNavigationButtons() {
-  const nav = useTabsNavigationContext();
+  const selectTab = React.useContext(SelectTabContext);
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
+      <Button title="Select First" onPress={() => selectTab('First')} />
+      <Button title="Select Second" onPress={() => selectTab('Second')} />
+      <Button title="Select Third" onPress={() => selectTab('Third')} />
     </View>
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'First',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
-  },
-  {
-    name: 'Second',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
-  },
-  {
-    name: 'Third',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
-  },
-];
-
 export function App() {
-  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
+  const [navState, setNavState] = React.useState<TabsHostNavState>({
+    selectedScreenKey: 'First',
+    provenance: 0,
+  });
+
+  const selectTab = React.useCallback((key: string) => {
+    setNavState(prev => ({
+      selectedScreenKey: key,
+      provenance: prev.provenance,
+    }));
+  }, []);
+
+  return (
+    <SelectTabContext value={selectTab}>
+      <Tabs.Host
+        navState={navState}
+        onTabSelected={event => {
+          React.startTransition(() => {
+            setNavState({
+              selectedScreenKey: event.nativeEvent.selectedScreenKey,
+              provenance: event.nativeEvent.provenance,
+            });
+          });
+        }}>
+        <Tabs.Screen
+          screenKey="First"
+          title="First"
+          ios={DEFAULT_ICON}
+          android={DEFAULT_ICON}>
+          <ContentView screenKey="First" />
+        </Tabs.Screen>
+        <Tabs.Screen
+          screenKey="Second"
+          title="Second"
+          ios={DEFAULT_ICON}
+          android={DEFAULT_ICON}>
+          <ContentView screenKey="Second" />
+        </Tabs.Screen>
+        <Tabs.Screen
+          screenKey="Third"
+          title="Third"
+          ios={DEFAULT_ICON}
+          android={DEFAULT_ICON}>
+          <ContentView screenKey="Third" />
+        </Tabs.Screen>
+      </Tabs.Host>
+    </SelectTabContext>
+  );
 }

@@ -11,13 +11,7 @@ import {
 import type { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';
-import type { TabsHostColorScheme } from 'react-native-screens';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs, type TabsHostColorScheme } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Color Scheme',
@@ -29,8 +23,20 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-function ConfigScreen() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
+
+function ConfigScreen({
+  colorScheme,
+  setColorScheme,
+}: {
+  colorScheme: TabsHostColorScheme;
+  setColorScheme: (value: TabsHostColorScheme) => void;
+}) {
   const [reactColorScheme, setReactColorScheme] =
     React.useState<ColorSchemeName>('unspecified');
 
@@ -71,8 +77,8 @@ function ConfigScreen() {
         <Text style={styles.heading}>TabsHost color scheme</Text>
         <SettingsPicker<NonNullable<TabsHostColorScheme>>
           label={'colorScheme'}
-          value={hostConfig.colorScheme ?? 'inherit'}
-          onValueChange={value => updateHostConfig({ colorScheme: value })}
+          value={colorScheme}
+          onValueChange={value => setColorScheme(value)}
           items={['inherit', 'light', 'dark']}
         />
       </View>
@@ -88,32 +94,33 @@ function TestScreen() {
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Config',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Config',
-      safeAreaConfiguration: {
-        edges: {
-          bottom: true,
-        },
-      },
-    },
-  },
-  {
-    name: 'Keyboard',
-    Component: TestScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Keyboard',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [colorScheme, setColorScheme] =
+    React.useState<TabsHostColorScheme>('inherit');
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Config', provenance: 0 }}
+      colorScheme={colorScheme}>
+      <Tabs.Screen
+        screenKey="Config"
+        title="Config"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen
+          colorScheme={colorScheme}
+          setColorScheme={setColorScheme}
+        />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Keyboard"
+        title="Keyboard"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <TestScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -139,6 +146,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   text: {
-    color: 'gray'
+    color: 'gray',
   },
 });

@@ -9,13 +9,7 @@ import {
 import type { Scenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
-import type { TabsHostProps } from 'react-native-screens';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs, type TabsHostProps } from 'react-native-screens';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const SCENARIO: Scenario = {
@@ -29,8 +23,20 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-function ConfigScreen() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
+
+function ConfigScreen({
+  direction,
+  setDirection,
+}: {
+  direction: NonNullable<TabsHostProps['direction']>;
+  setDirection: (value: NonNullable<TabsHostProps['direction']>) => void;
+}) {
   const [reactForceRtl, setReactForceRtl] = useState(false);
   const [reactAllowRtl, setReactAllowRtl] = useState(true);
 
@@ -103,8 +109,8 @@ function ConfigScreen() {
         <Text style={styles.heading}>TabsHost layout direction</Text>
         <SettingsPicker<NonNullable<TabsHostProps['direction']>>
           label={'direction'}
-          value={hostConfig.direction ?? 'inherit'}
-          onValueChange={value => updateHostConfig({ direction: value })}
+          value={direction}
+          onValueChange={value => setDirection(value)}
           items={['inherit', 'ltr', 'rtl']}
         />
       </View>
@@ -112,42 +118,36 @@ function ConfigScreen() {
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Config',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Config',
-      safeAreaConfiguration: {
-        edges: {
-          bottom: true,
-        },
-      },
-    },
-  },
-  {
-    name: 'Tab2',
-    Component: DummyScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab2',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [direction, setDirection] = React.useState<
+    NonNullable<TabsHostProps['direction']>
+  >('inherit');
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Config', provenance: 0 }}
+      direction={direction}>
+      <Tabs.Screen
+        screenKey="Config"
+        title="Config"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen direction={direction} setDirection={setDirection} />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <DummyScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  containerCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   content: {
     padding: 20,

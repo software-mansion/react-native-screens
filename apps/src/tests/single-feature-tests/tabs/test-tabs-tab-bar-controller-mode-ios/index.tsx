@@ -1,14 +1,8 @@
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Scenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
-import { TabBarControllerMode } from 'react-native-screens';
+import { Tabs, TabBarControllerMode } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Controller Mode',
@@ -20,26 +14,36 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-function ConfigScreen() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
+
+function ConfigScreen({
+  tabBarControllerMode,
+  setTabBarControllerMode,
+}: {
+  tabBarControllerMode: TabBarControllerMode;
+  setTabBarControllerMode: (value: TabBarControllerMode) => void;
+}) {
   return (
     <ScrollView style={{ padding: 40 }}>
       <View>
         <Text style={styles.description}>
-          Controls whether the tab bar is displayed as a bar or
-          sidebar.{'\n'}Test tabSidebar on iPad — on iPhone it collapses
-          back to a tab bar automatically.
+          Controls whether the tab bar is displayed as a bar or sidebar.{'\n'}
+          Test tabSidebar on iPad — on iPhone it collapses back to a tab bar
+          automatically.
         </Text>
         <SettingsPicker<TabBarControllerMode>
           label="tabBarControllerMode"
-          value={hostConfig.ios?.tabBarControllerMode ?? 'automatic'}
-          onValueChange={value =>
-            updateHostConfig({ ios: { tabBarControllerMode: value } })
-          }
+          value={tabBarControllerMode}
+          onValueChange={value => setTabBarControllerMode(value)}
           items={['automatic', 'tabBar', 'tabSidebar']}
         />
       </View>
-    </ScrollView >
+    </ScrollView>
   );
 }
 
@@ -56,42 +60,38 @@ function TestScreen() {
       ))}
     </ScrollView>
   );
-};
-
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Tab1',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab1',
-    },
-  },
-  {
-    name: 'Tab2',
-    Component: TestScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab2',
-
-    },
-  },
-];
+}
 
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
-};
+  const [tabBarControllerMode, setTabBarControllerMode] =
+    React.useState<TabBarControllerMode>('automatic');
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Tab1', provenance: 0 }}
+      ios={{ tabBarControllerMode }}>
+      <Tabs.Screen
+        screenKey="Tab1"
+        title="Tab1"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen
+          tabBarControllerMode={tabBarControllerMode}
+          setTabBarControllerMode={setTabBarControllerMode}
+        />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <TestScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
+}
 
 const styles = StyleSheet.create({
-  sectionHeader: {
-    fontSize: 13,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    color: '#888',
-    letterSpacing: 0.5,
-    marginTop: 24,
-    marginBottom: 4,
-  },
   description: {
     fontSize: 13,
     color: '#555',
@@ -103,23 +103,5 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e0e0e0',
-  },
-  centeredScreen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    gap: 12,
-  },
-  screenLabel: {
-    fontSize: 17,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  screenHint: {
-    fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
-    lineHeight: 20,
   },
 });

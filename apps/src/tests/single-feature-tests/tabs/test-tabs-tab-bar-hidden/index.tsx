@@ -2,12 +2,7 @@ import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
 import type { Scenario } from '@apps/tests/shared/helpers';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'Tab Bar Hidden',
@@ -18,38 +13,55 @@ const SCENARIO: Scenario = {
 
 export default SCENARIO;
 
-function ConfigScreen() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
 
+function ConfigScreen({
+  tabBarHidden,
+  setTabBarHidden,
+}: {
+  tabBarHidden: boolean;
+  setTabBarHidden: (value: boolean) => void;
+}) {
   return (
-    <ScrollView style={{ padding: 40 }}
-      testID="tab-bar-hidden-scrollview">
+    <ScrollView style={{ padding: 40 }} testID="tab-bar-hidden-scrollview">
       <Text style={{ textAlign: 'center' }}>
-        Change flag value by clicking on button.</Text>
+        Change flag value by clicking on button.
+      </Text>
       <SettingsSwitch
         style={{ marginTop: 20, marginBottom: 15 }}
         label="tabBarHidden"
-        value={hostConfig.tabBarHidden ?? false}
-        onValueChange={value => updateHostConfig({ tabBarHidden: value })}
+        value={tabBarHidden}
+        onValueChange={value => setTabBarHidden(value)}
         testID="tab-bar-hidden-switch"
       />
     </ScrollView>
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Tab1',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      tabBarItemTestID: 'tab-bar-item-1-id',
-      tabBarItemAccessibilityLabel: 'First Tab Item',
-      title: 'Tab1',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [tabBarHidden, setTabBarHidden] = React.useState(false);
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Tab1', provenance: 0 }}
+      tabBarHidden={tabBarHidden}>
+      <Tabs.Screen
+        screenKey="Tab1"
+        title="Tab1"
+        tabBarItemTestID="tab-bar-item-1-id"
+        tabBarItemAccessibilityLabel="First Tab Item"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen
+          tabBarHidden={tabBarHidden}
+          setTabBarHidden={setTabBarHidden}
+        />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }

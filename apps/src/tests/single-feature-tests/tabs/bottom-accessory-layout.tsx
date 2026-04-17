@@ -1,14 +1,9 @@
 import LongText from '@apps/shared/LongText';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 import type { Scenario } from '@apps/tests/shared/helpers';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
 
 const SCENARIO: Scenario = {
   name: 'Bottom Accessory',
@@ -19,6 +14,13 @@ const SCENARIO: Scenario = {
 };
 
 export default SCENARIO;
+
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
 
 function ShortViewUL() {
   return (
@@ -69,7 +71,7 @@ function RGBView() {
     <View style={styles.fullView}>
       <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
       <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4df0' }]} />
     </View>
   );
 }
@@ -82,16 +84,13 @@ const ACCESSORY_VARIANTS = [
   { id: 4, content: RGBView },
 ];
 
-function ConfigScreen() {
-  const [selected, setSelected] = useState(0);
-  const { updateHostConfig } = useTabsHostConfig();
-
-  useEffect(() => {
-    updateHostConfig({
-      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
-    });
-  }, [selected, updateHostConfig]);
-
+function ConfigScreen({
+  selected,
+  setSelected,
+}: {
+  selected: number;
+  setSelected: (id: number) => void;
+}) {
   return (
     <ScrollView style={styles.container}>
       {ACCESSORY_VARIANTS.map(item => (
@@ -109,27 +108,34 @@ function ConfigScreen() {
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Tab1',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab1',
-    },
-  },
-  {
-    name: 'Tab2',
-    Component: DummyScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab2',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Tab1', provenance: 0 }}
+      ios={{
+        bottomAccessory: () => {
+          const Content = ACCESSORY_VARIANTS[selected].content;
+          return <Content />;
+        },
+      }}>
+      <Tabs.Screen
+        screenKey="Tab1"
+        title="Tab1"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen selected={selected} setSelected={setSelected} />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <DummyScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }
 
 const styles = StyleSheet.create({
