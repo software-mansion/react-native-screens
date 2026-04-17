@@ -22,7 +22,7 @@ Implementation Details:
 
 ## Note
 
-- Assumption: system and RN settings are working correctly. Here only react-native-screens prop is tested.
+Assumption: System and RN settings are working correctly. Here only react-native-screens prop is tested.
 
 ## Steps
 
