@@ -1,4 +1,3 @@
-const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
@@ -46,11 +45,31 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
+
+  /**
+   * Numerous "breaking changes" in the yet-experimental Tabs API have been
+   * introduced with version 4.25.0 of the library.
+   *
+   * This flag marks the shape of the API that's meant for stabilisation, and
+   * enables downstream to detect these changes.
+   *
+   * See:
+   * * https://github.com/software-mansion/react-native-screens/pull/3888
+   * * https://github.com/software-mansion/react-native-screens/pull/3776
+   * * https://github.com/software-mansion/react-native-screens/pull/3781
+   * * https://github.com/software-mansion/react-native-screens/pull/3756
+   * * https://github.com/software-mansion/react-native-screens/pull/3808
+   * * https://github.com/software-mansion/react-native-screens/pull/3785
+   * * https://github.com/software-mansion/react-native-screens/pull/3789
+   * * https://github.com/software-mansion/react-native-screens/pull/3794
+   * * https://github.com/software-mansion/react-native-screens/pull/3863
+   * * https://github.com/software-mansion/react-native-screens/pull/3875
+   */
+  usesStableTabsApi: true,
 } as const;
 
 const _featureFlags = {
   experiment: {
-    controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
     synchronousScreenUpdatesEnabled:
       RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
     synchronousHeaderConfigUpdatesEnabled:
@@ -120,10 +139,6 @@ const createStableFeatureFlagAccessor = <T extends STABLE_FF>(
   };
 };
 
-const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
-  'controlledBottomTabs',
-  RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-);
 const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
   'synchronousScreenUpdatesEnabled',
   RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
@@ -178,12 +193,6 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
-    get controlledBottomTabs() {
-      return controlledBottomTabsAccessor.get();
-    },
-    set controlledBottomTabs(value: boolean) {
-      controlledBottomTabsAccessor.set(value);
-    },
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },

@@ -35,9 +35,6 @@ RCT_REMAP_VIEW_PROPERTY(
 // from JS.
 RCT_REMAP_VIEW_PROPERTY(tabBarControllerMode, tabBarControllerModeFromRNSTabBarControllerMode, RNSTabBarControllerMode);
 
-// TODO: Missing prop
-//@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
-
 #pragma mark - LEGACY Events
 
 RCT_EXPORT_VIEW_PROPERTY(onNativeFocusChange, RCTDirectEventBlock);

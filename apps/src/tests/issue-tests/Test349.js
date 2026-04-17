@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView, TextInput, View, Text } from 'react-native';
 
-import { Colors } from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';

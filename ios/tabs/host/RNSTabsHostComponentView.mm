@@ -283,10 +283,6 @@ namespace react = facebook::react;
     [_controller setRejectStaleNavigationStateUpdates:_rejectStaleNavStateUpdates];
   }
 
-  if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
-    _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
-  }
-
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
@@ -656,6 +652,16 @@ RNS_IGNORE_SUPER_CALL_END
                                                     .currentNavState = currentNavState,
   }];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
