@@ -6,19 +6,17 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { TabBarMinimizeBehavior } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Minimize Behavior',
   key: 'test-tabs-tab-bar-minimize-behavior-ios',
   details: 'Test tab bar minimize behavior for iOS 26+.',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -26,8 +24,8 @@ function ConfigScreen() {
     <ScrollView style={{ padding: 40 }}>
       <View>
         <Text style={styles.description}>
-          Controls when the tab bar minimizes. Switch to Tab2 and
-          scroll up/down to observe the behaviour. Requires iOS 26+.
+          Controls when the tab bar minimizes. Switch to Tab2 and scroll up/down
+          to observe the behaviour. Requires iOS 26+.
         </Text>
         <SettingsPicker<TabBarMinimizeBehavior>
           label="tabBarMinimizeBehavior"
@@ -38,7 +36,7 @@ function ConfigScreen() {
           items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
         />
       </View>
-    </ScrollView >
+    </ScrollView>
   );
 }
 
@@ -55,7 +53,7 @@ function TestScreen() {
       ))}
     </ScrollView>
   );
-};
+}
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
@@ -72,14 +70,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
-
     },
   },
 ];
 
 export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
-};
+}
 
 const styles = StyleSheet.create({
   sectionHeader: {
@@ -121,3 +118,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 });
+
+export default createScenario(App, scenarioDescription);

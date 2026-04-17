@@ -1,16 +1,14 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Split, SplitHostCommands } from 'react-native-screens/experimental';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Command: showColumn',
   key: 'test-command-show-column',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 export function App() {
   const hostRef = React.useRef<SplitHostCommands>(null);
@@ -66,3 +64,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default createScenario(App, scenarioDescription);

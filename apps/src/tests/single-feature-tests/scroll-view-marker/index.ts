@@ -1,10 +1,12 @@
-import { ScenarioGroup } from '@apps/tests/shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestSvmConfiguresScrollView from './test-svm-configures-scroll-view';
 
-const ScrollViewMarkerScenarioGroup: ScenarioGroup = {
+const scenarios = { TestSvmConfiguresScrollView };
+
+const ScrollViewMarkerScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'ScrollViewMarker scenarios',
   details: 'Scenarios related to ScrollViewMarker component',
-  scenarios: [TestSvmConfiguresScrollView],
+  scenarios,
 };
 
 export default ScrollViewMarkerScenarioGroup;
