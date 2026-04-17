@@ -10,7 +10,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import type { MoreTabSelectedEvent } from 'react-native-screens';
 
 const scenarioDescription: ScenarioDescription = {

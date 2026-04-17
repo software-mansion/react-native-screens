@@ -79,11 +79,11 @@ export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
-const styles = {
+const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 13,
-    fontWeight: '600' as const,
-    textTransform: 'uppercase' as const,
+    fontWeight: '600',
+    textTransform: 'uppercase',
     color: '#888',
     letterSpacing: 0.5,
     marginTop: 24,
@@ -94,7 +94,7 @@ const styles = {
     color: '#555',
     marginBottom: 6,
     marginTop: 12,
-    textAlign: 'center' as const,
+    textAlign: 'center',
   },
   scrollItem: {
     padding: 16,
@@ -119,6 +119,6 @@ const styles = {
     textAlign: 'center',
     lineHeight: 20,
   },
-};
+});
 
 export default createScenario(App, scenarioDescription);

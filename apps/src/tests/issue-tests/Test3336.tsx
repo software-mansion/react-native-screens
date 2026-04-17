@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Spacer } from '@apps/shared';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { Edge, SafeAreaView } from 'react-native-screens/experimental';
 
 /**

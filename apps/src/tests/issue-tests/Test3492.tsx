@@ -20,7 +20,7 @@ import {
   type TabRouteConfig,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,

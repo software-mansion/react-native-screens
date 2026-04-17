@@ -1,12 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
-import {
-  SafeAreaView,
-  Split
-} from 'react-native-screens/experimental';
+import { SafeAreaView, Split } from 'react-native-screens/experimental';
 import type { SplitPrimaryBackgroundStyle } from 'react-native-screens/experimental';
 import type { SplitBaseConfig } from './helpers/types';
-import { Colors } from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 const ConfigPanel = ({
   setPrimaryBgStyle,
@@ -14,10 +11,7 @@ const ConfigPanel = ({
   setPrimaryBgStyle: (primaryBgStyle: SplitPrimaryBackgroundStyle) => void;
 }) => (
   <View style={styles.configPanel}>
-    <Button
-      title="default"
-      onPress={() => setPrimaryBgStyle('default')}
-    />
+    <Button title="default" onPress={() => setPrimaryBgStyle('default')} />
     <Button title="none" onPress={() => setPrimaryBgStyle('none')} />
     <Button title="sidebar" onPress={() => setPrimaryBgStyle('sidebar')} />
   </View>
@@ -49,9 +43,7 @@ const SplitPrimaryBackgroundStyleApp = ({
     useState<SplitPrimaryBackgroundStyle>('default');
 
   return (
-    <Split.Host
-      {...splitBaseConfig}
-      primaryBackgroundStyle={primaryBgStyle}>
+    <Split.Host {...splitBaseConfig} primaryBackgroundStyle={primaryBgStyle}>
       <Split.Column>
         <View style={styles.leftColumn} />
       </Split.Column>

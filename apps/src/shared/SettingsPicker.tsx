@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { ThemedText, ThemedView } from '.';
-import Colors from './styling/Colors';
+import { Colors } from './styling';
 
 type Props<T = string> = {
   testID?: string;
@@ -29,17 +29,17 @@ export function SettingsPicker<T extends string>({
           style={styles.label}>{`${label}: ${value}`}</ThemedText>
         {isOpen
           ? items.map(item => (
-            <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
-              <ThemedText
-                testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
-                style={[
-                  styles.item,
-                  item === value && { fontWeight: 'bold' },
-                ]}>
-                {item}
-              </ThemedText>
-            </TouchableOpacity>
-          ))
+              <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
+                <ThemedText
+                  testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
+                  style={[
+                    styles.item,
+                    item === value && { fontWeight: 'bold' },
+                  ]}>
+                  {item}
+                </ThemedText>
+              </TouchableOpacity>
+            ))
           : null}
       </ThemedView>
     </TouchableOpacity>

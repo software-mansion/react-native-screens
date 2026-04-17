@@ -78,7 +78,7 @@ export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
-const styles = {
+const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 13,
     fontWeight: '600' as const,
@@ -117,6 +117,6 @@ const styles = {
     textAlign: 'center',
     lineHeight: 20,
   },
-};
+});
 
 export default createScenario(App, scenarioDescription);

@@ -7,7 +7,7 @@ import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Appearance',
