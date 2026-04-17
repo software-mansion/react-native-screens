@@ -8,12 +8,14 @@
 
 ## E2E test
 
-Yes: Covers all manual scenario steps.
+Yes: Covers all manual scenario steps for LTR/RTL configured via React Native.
 
 Implementation Details:
 
 - iOS: The system RTL direction is set by configuring I18NIsRTL to YES during the app launch sequence.
 - Android: RTL direction must be triggered using the forceRTL toggle located within the Layout Direction screen.
+
+Scenarios where RTL is enabled at the device level by setting a system-wide RTL language are NOT covered by e2e tests.
 
 ## Prerequisites
 
@@ -22,7 +24,8 @@ Implementation Details:
 
 ## Note
 
-Assumption: System and RN settings are working correctly. Here only react-native-screens prop is tested.
+- Assumption: System and RN settings are working correctly. Here only react-native-screens prop is tested.
+- Each of the below steps must be executed twice:once with a system-wide RTL language enabled at the device level and once with the RTL direction set via React Native. The device-level test is particularly critical, as the React Native configuration is already covered by E2E tests.
 
 ## Steps
 
