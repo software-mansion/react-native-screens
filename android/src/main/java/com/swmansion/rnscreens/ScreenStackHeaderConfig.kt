@@ -140,29 +140,29 @@ class ScreenStackHeaderConfig(
         val isBackButtonDisplayed = toolbar.navigationIcon != null
         val isRtl = toolbar.layoutDirection == LAYOUT_DIRECTION_RTL
 
-        val startInsetEstimation =
+        val contentInsetStartEstimation =
             if (isBackButtonDisplayed) {
                 toolbar.currentContentInsetStart + toolbar.paddingStart
             } else {
                 max(toolbar.currentContentInsetStart, toolbar.paddingStart)
             }
 
-        val endInset = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
         val leftSubview =
             configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }
 
         // The shadow tree expects physical left/right padding, but the toolbar APIs
         // return logical start/end values which swap sides in RTL.
-        val paddingLeft: Int
-        val paddingRight: Int
+        val contentInsetLeft: Int
+        val contentInsetRight: Int
 
         if (!isRtl) {
-            paddingLeft = leftSubview?.left ?: startInsetEstimation
-            paddingRight = endInset
+            contentInsetLeft = leftSubview?.left ?: contentInsetStartEstimation
+            contentInsetRight = contentInsetEnd
         } else {
-            paddingLeft = endInset
-            paddingRight =
-                if (leftSubview != null) toolbar.width - leftSubview.left else startInsetEstimation
+            contentInsetLeft = contentInsetEnd
+            contentInsetRight =
+                if (leftSubview != null) toolbar.width - leftSubview.left else contentInsetStartEstimation
         }
 
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
@@ -170,8 +170,8 @@ class ScreenStackHeaderConfig(
         updateHeaderConfigState(
             toolbar.width,
             toolbar.height,
-            paddingLeft,
-            paddingRight,
+            contentInsetLeft,
+            contentInsetRight,
         )
     }
 
