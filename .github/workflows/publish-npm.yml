@@ -1,7 +1,7 @@
 name: Publish release to npm
 on:
   schedule:
-    - cron: '27 23 * * *' # at 23:27 every day
+    - cron: "27 23 * * *" # at 23:27 every day
   workflow_dispatch:
     inputs:
       release-type:
@@ -20,7 +20,7 @@ on:
           from npm latest tag.
         type: string
         required: false
-        default: ''
+        default: ""
       dry-run:
         description: Whether to perform a dry run of the publish.
         type: boolean
@@ -51,16 +51,16 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'yarn'
+          cache: "yarn"
           registry-url: https://registry.npmjs.org/
 
       - name: Publish manual release
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
         with:
-          package-name: 'react-native-screens'
-          package-json-path: 'package.json'
-          install-dependencies-command: 'yarn install --immutable'
+          package-name: "react-native-screens"
+          package-json-path: "package.json"
+          install-dependencies-command: "yarn install --immutable"
           release-type: ${{ inputs.release-type }}
           version: ${{ inputs.version }}
           dry-run: ${{ inputs.dry-run }}
@@ -69,8 +69,8 @@ jobs:
         if: ${{ github.event_name == 'schedule' }}
         uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
         with:
-          package-name: 'react-native-screens'
-          package-json-path: 'package.json'
-          install-dependencies-command: 'yarn install --immutable'
-          release-type: 'nightly'
-          dry-run: true
+          package-name: "react-native-screens"
+          package-json-path: "package.json"
+          install-dependencies-command: "yarn install --immutable"
+          release-type: "nightly"
+          dry-run: false
