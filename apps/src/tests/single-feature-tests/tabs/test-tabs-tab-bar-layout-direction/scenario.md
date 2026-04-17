@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Yes: covers all manual scenario steps.
+Yes: Covers all manual scenario steps.
 
 Implementation Details:
 
