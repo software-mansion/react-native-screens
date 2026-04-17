@@ -6,6 +6,16 @@ import {
 } from '@react-navigation/native';
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Override ScrollView Content Inset',
+  key: 'override-scroll-view-content-inset',
+  details:
+    'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
+    'False: content scrolls behind bars. True/Default: content is inset from bars.',
+  platforms: ['ios'],
+};
 
 const ITEM_COUNT = 30;
 
@@ -38,7 +48,7 @@ function DefaultTab() {
   return <ScrollContent label="(not set, defaults to true)" />;
 }
 
-export default function App() {
+export function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
@@ -81,15 +91,6 @@ export default function App() {
   );
 }
 
-App.scenarioDescription = {
-  name: 'Override ScrollView Content Inset',
-  key: 'override-scroll-view-content-inset',
-  details:
-    'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
-    'False: content scrolls behind bars. True/Default: content is inset from bars.',
-  platforms: ['ios'],
-} satisfies ScenarioDescription;
-
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
@@ -113,3 +114,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default createScenario(App, scenarioDescription);

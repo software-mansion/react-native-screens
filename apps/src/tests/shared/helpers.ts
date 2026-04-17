@@ -47,3 +47,10 @@ export interface ScenarioGroup<K extends string> {
 }
 
 export type KeyList = Record<keyof any, undefined>;
+
+export function createScenario(
+  Component: React.ComponentType,
+  description: ScenarioDescription,
+): Scenario {
+  return Object.assign(Component, { scenarioDescription: description });
+}

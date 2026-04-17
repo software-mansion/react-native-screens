@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScenarioDescription } from '../../shared/helpers';
+import { createScenario } from '../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   type TabRouteConfig,
@@ -10,6 +11,13 @@ import {
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import Colors from '../../../shared/styling/Colors';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Prevent native selection',
+  key: 'test-tabs-prevent-native-selection',
+  details: 'Test preventNativeSelection prop on TabsScreen',
+  platforms: ['android', 'ios'],
+};
 
 function ContentView() {
   const nav = useTabsNavigationContext();
@@ -86,20 +94,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return (
     <ToastProvider>
       <AppContents />
     </ToastProvider>
   );
 }
-
-App.scenarioDescription = {
-  name: 'Prevent native selection',
-  key: 'test-tabs-prevent-native-selection',
-  details: 'Test preventNativeSelection prop on TabsScreen',
-  platforms: ['android', 'ios'],
-} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
@@ -118,3 +119,5 @@ function AppContents() {
     />
   );
 }
+
+export default createScenario(App, scenarioDescription);

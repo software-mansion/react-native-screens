@@ -2,11 +2,18 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
 import Colors from '@apps/shared/styling/Colors';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Tab Bar Appearance',
+  key: 'test-tabs-appearance-defined-by-selected-tab',
+  platforms: ['ios', 'android'],
+};
 
 const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarBackgroundColor: Colors.NavyLight100,
@@ -67,7 +74,7 @@ function TabScreen() {
   );
 }
 
-export default function App() {
+export function App() {
   return (
     <TabsContainer
       routeConfigs={[
@@ -231,8 +238,4 @@ export default function App() {
   );
 }
 
-App.scenarioDescription = {
-  name: 'Tab Bar Appearance',
-  key: 'test-tabs-appearance-defined-by-selected-tab',
-  platforms: ['ios', 'android'],
-} satisfies ScenarioDescription;
+export default createScenario(App, scenarioDescription);

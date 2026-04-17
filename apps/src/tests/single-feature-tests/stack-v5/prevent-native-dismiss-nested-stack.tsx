@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
@@ -10,7 +11,15 @@ import Colors from '@apps/shared/styling/Colors';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export default function App() {
+const scenarioDescription: ScenarioDescription = {
+  name: 'Prevent native dismiss - nested stack',
+  key: 'prevent-native-dismiss-nested-stack',
+  details:
+    'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
+  platforms: ['android'],
+};
+
+export function App() {
   return (
     <ToastProvider>
       <StackSetup />
@@ -233,10 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-App.scenarioDescription = {
-  name: 'Prevent native dismiss - nested stack',
-  key: 'prevent-native-dismiss-nested-stack',
-  details:
-    'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
-  platforms: ['android'],
-} satisfies ScenarioDescription;
+export default createScenario(App, scenarioDescription);

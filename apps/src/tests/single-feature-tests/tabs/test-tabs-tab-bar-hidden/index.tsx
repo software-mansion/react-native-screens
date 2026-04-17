@@ -2,12 +2,19 @@ import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Tab Bar Hidden',
+  key: 'test-tabs-tab-bar-hidden',
+  platforms: ['ios', 'android'],
+};
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -38,12 +45,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
-App.scenarioDescription = {
-  name: 'Tab Bar Hidden',
-  key: 'test-tabs-tab-bar-hidden',
-  platforms: ['ios', 'android'],
-} satisfies ScenarioDescription;
+export default createScenario(App, scenarioDescription);

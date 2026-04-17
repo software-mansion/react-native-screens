@@ -3,12 +3,19 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Tabs Screen Orientation',
+  key: 'tabs-screen-orientation',
+  platforms: ['ios', 'android'],
+};
 
 function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
@@ -49,12 +56,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
-App.scenarioDescription = {
-  name: 'Tabs Screen Orientation',
-  key: 'tabs-screen-orientation',
-  platforms: ['ios', 'android'],
-} satisfies ScenarioDescription;
+export default createScenario(App, scenarioDescription);

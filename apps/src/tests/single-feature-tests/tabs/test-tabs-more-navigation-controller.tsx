@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {
   TabsContainerWithHostConfigContext,
@@ -11,6 +12,13 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import Colors from '@apps/shared/styling/Colors';
 import type { MoreTabSelectedEvent } from 'react-native-screens';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'More navigation controller',
+  key: 'test-tabs-more-navigation-controller',
+  details: 'Test navigation and interactions with "More Navigation Controller"',
+  platforms: ['ios'],
+};
 
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
@@ -72,20 +80,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return (
     <ToastProvider>
       <AppContents />
     </ToastProvider>
   );
 }
-
-App.scenarioDescription = {
-  name: 'More navigation controller',
-  key: 'test-tabs-more-navigation-controller',
-  details: 'Test navigation and interactions with "More Navigation Controller"',
-  platforms: ['ios'],
-} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
@@ -109,3 +110,5 @@ function AppContents() {
     />
   );
 }
+
+export default createScenario(App, scenarioDescription);

@@ -1,5 +1,6 @@
 import React from 'react';
-import type { ScenarioDescription } from '../../shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   type TabRouteConfig,
@@ -11,6 +12,13 @@ import {
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import Colors from '../../../shared/styling/Colors';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Stale update rejection',
+  key: 'test-tabs-stale-update-rejection',
+  details: 'Test stale update rejection mechanism',
+  platforms: ['android', 'ios'],
+};
 
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
@@ -86,20 +94,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return (
     <ToastProvider>
       <AppContents />
     </ToastProvider>
   );
 }
-
-App.scenarioDescription = {
-  name: 'Stale update rejection',
-  key: 'test-tabs-stale-update-rejection',
-  details: 'Test stale update rejection mechanism',
-  platforms: ['android', 'ios'],
-} satisfies ScenarioDescription;
 
 function AppContents() {
   const toast = useToast();
@@ -144,3 +145,5 @@ function blockThread(ms: number) {
   const end = Date.now() + ms;
   while (Date.now() < end) {}
 }
+
+export default createScenario(App, scenarioDescription);

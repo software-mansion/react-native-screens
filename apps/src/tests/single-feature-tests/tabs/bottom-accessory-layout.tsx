@@ -3,12 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Bottom Accessory',
+  key: 'bottom-accessory-layout',
+  details: 'Test tabs bottom accessory with various contents',
+  platforms: ['ios'],
+};
 
 function ShortViewUL() {
   return (
@@ -118,16 +126,9 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function App() {
+export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
-
-App.scenarioDescription = {
-  name: 'Bottom Accessory',
-  key: 'bottom-accessory-layout',
-  details: 'Test tabs bottom accessory with various contents',
-  platforms: ['ios'],
-} satisfies ScenarioDescription;
 
 const styles = StyleSheet.create({
   shortView: {
@@ -164,3 +165,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default createScenario(App, scenarioDescription);
