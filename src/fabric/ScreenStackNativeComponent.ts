@@ -7,9 +7,6 @@ import type { CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
 type FinishTransitioningEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
-  iosPreventReattachmentOfDismissedScreens?: CT.WithDefault<boolean, true>;
-  iosPreventReattachmentOfDismissedModals?: CT.WithDefault<boolean, true>;
-
   nativeContainerBackgroundColor?: ColorValue;
 
   onFinishTransitioning?: CT.DirectEventHandler<FinishTransitioningEvent>;

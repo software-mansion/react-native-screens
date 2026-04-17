@@ -32,9 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
 
-@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
-@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedModals;
-
 @end
 
 #pragma mark-- Integration
