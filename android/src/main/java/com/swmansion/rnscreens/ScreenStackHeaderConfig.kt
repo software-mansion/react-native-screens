@@ -147,31 +147,25 @@ class ScreenStackHeaderConfig(
                 max(toolbar.currentContentInsetStart, toolbar.paddingStart)
             }
 
-        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
-        val leftSubview =
+        // Assuming that there is nothing to the left of back button here, the content
+        // offset we're interested in in ShadowTree is the `left` of the subview left.
+        // In case it is not available we fallback to approximation.
+        // In RTL, the LEFT subview (Gravity.START) sits on the physical right, so we
+        // convert its physical `left` to a logical start-side distance.
+        val contentInsetStart =
             configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }
+                ?.let { if (!isRtl) it.left else toolbar.width - it.left }
+                ?: contentInsetStartEstimation
 
-        // The shadow tree expects physical left/right padding, but the toolbar APIs
-        // return logical start/end values which swap sides in RTL.
-        val contentInsetLeft: Int
-        val contentInsetRight: Int
-
-        if (!isRtl) {
-            contentInsetLeft = leftSubview?.left ?: contentInsetStartEstimation
-            contentInsetRight = contentInsetEnd
-        } else {
-            contentInsetLeft = contentInsetEnd
-            contentInsetRight =
-                if (leftSubview != null) toolbar.width - leftSubview.left else contentInsetStartEstimation
-        }
+        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
 
         updateHeaderConfigState(
             toolbar.width,
             toolbar.height,
-            contentInsetLeft,
-            contentInsetRight,
+            contentInsetStart,
+            contentInsetEnd,
         )
     }
 
