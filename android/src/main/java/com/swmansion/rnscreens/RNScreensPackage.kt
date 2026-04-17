@@ -8,6 +8,8 @@ import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigViewManager
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewViewManager
 import com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
@@ -55,6 +57,8 @@ class RNScreensPackage : BaseReactPackage() {
             StackHostViewManager(),
             StackScreenViewManager(),
             ScrollViewMarkerViewManager(),
+            StackHeaderConfigViewManager(),
+            StackHeaderSubviewViewManager(),
         )
     }
 

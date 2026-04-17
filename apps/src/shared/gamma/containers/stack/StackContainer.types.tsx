@@ -1,12 +1,17 @@
 import React from 'react';
-import { StackScreenProps } from 'react-native-screens/experimental';
+import {
+  StackScreenProps,
+  StackHeaderConfigProps,
+} from 'react-native-screens/experimental';
 
 /// Route definition
 
 export type StackRouteOptions = Omit<
   StackScreenProps,
   'children' | 'activityMode' | 'screenKey'
->;
+> & {
+  headerConfig?: StackHeaderConfigProps;
+};
 
 /**
  * Blueprint for a route.
