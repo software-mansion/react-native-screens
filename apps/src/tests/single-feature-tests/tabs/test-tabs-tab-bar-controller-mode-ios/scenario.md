@@ -1,6 +1,14 @@
 # Test Scenario: tabBarControllerMode
 
-**E2E:** Not automated - test will be added at least for iPad to check sidebar visibility.
+## Details
+
+**Description:** Validates the tabBarControllerMode property across different iOS device types and window sizes. The test ensures that the navigation UI correctly toggles between a bottom tab bar, a top tab bar, and a sidebar (on iPad) based on the selected mode (automatic, tabBar, or tabSidebar) and the current display environment.
+
+**OS test creation version:** iOS 26.2
+
+## E2E test
+
+Other: E2E test only makes sense on iPad to verify sidebar visibility. Currently, e2e tests are run only on iPhone devices - TBD.
 
 ## Prerequisites
 
