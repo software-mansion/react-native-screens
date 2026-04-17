@@ -100,7 +100,7 @@ function AppContents() {
         onMoreTabSelected: (event: NativeSyntheticEvent<MoreTabSelectedEvent>) => {
           const message = `onMoreTabSelected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`;
           console.warn(message);
-          toast.push({ message, backgroundColor: Colors.GreenLight60 });
+          toast.push({ message: 'onMoreTabSelected', backgroundColor: Colors.GreenLight60 });
         },
       }}
     />
