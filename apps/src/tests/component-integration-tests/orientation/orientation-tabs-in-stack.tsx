@@ -84,11 +84,11 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export default function Apps() {
+export default function App() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
-Apps.scenarioDescription = {
+App.scenarioDescription = {
   name: 'TabsInStack',
   details:
     'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
