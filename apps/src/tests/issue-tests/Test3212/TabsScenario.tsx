@@ -43,9 +43,6 @@ export function TabsScenario() {
                 Component: ScrollViewTemplate,
                 options: {
                   title: 'Scroll',
-                  ios: {
-                    scrollEdgeEffects: config,
-                  },
                 },
               },
             ]}
