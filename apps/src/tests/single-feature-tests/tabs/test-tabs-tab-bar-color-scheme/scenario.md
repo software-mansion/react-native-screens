@@ -1,6 +1,14 @@
 # Test Scenario: colorScheme
 
-**E2E test:** NO
+## Details
+
+**Description:** Verifies the colorScheme prop behavior on TabsHost, ensuring the tab bar correctly inherits or overrides the system and React Native appearance settings. The test validates real-time UI updates across light, dark, and inherited modes on both iOS and Android to ensure visual consistency and stability.
+
+**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0
+
+## E2E test
+
+No: Detox does not have access to color attributes, so it is impossible to verify if the color has changed in response to a style update.
 
 ## Prerequisites
 
@@ -9,7 +17,9 @@
   - `adb shell "cmd uimode night yes"`
   - `adb shell "cmd uimode night no"`
 
-Assumption: 
+## Note
+
+Assumption:
 
 - System and RN color scheme settings are working correctly.
 - Here only the `colorScheme` prop on TabsHost is tested, verified against different system/RN combinations.
