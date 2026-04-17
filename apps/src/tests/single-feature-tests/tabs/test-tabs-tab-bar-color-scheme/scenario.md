@@ -19,6 +19,8 @@ No: Detox does not have access to color attributes, so it is impossible to verif
 
 ## Note
 
+- Each of the below steps must be executed twice: once with a system color scheme setting, and once with the color scheme forced via the React Native API.
+
 Assumption:
 
 - System and RN color scheme settings are working correctly.
