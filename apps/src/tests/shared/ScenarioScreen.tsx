@@ -8,10 +8,14 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 
-<<<<<<< HEAD
-function ScenarioSelect(props: { scenarios: Record<string, Scenario> }) {
+function ScenarioSelect(props: {
+  scenarios: Record<string, Scenario>;
+  groupName: string;
+}) {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      testID={`${props.groupName}-scenarios-scrollview`}>
       {Object.values(props.scenarios).map(
         ({ scenarioDescription }: Scenario) => {
           const { name, key, details, platforms } = scenarioDescription;
@@ -27,22 +31,6 @@ function ScenarioSelect(props: { scenarios: Record<string, Scenario> }) {
           );
         },
       )}
-=======
-function ScenarioSelect(props: { scenarios: Scenario[]; groupName: string }) {
-  return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic"
-      testID={`${props.groupName}-scenarios-scrollview`}>
-      {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
-        <ScenarioButton
-          title={name}
-          details={details}
-          route={key}
-          key={key}
-          platformsHint={platforms}
-          testID={key}
-        />
-      ))}
->>>>>>> origin/main
     </ScrollView>
   );
 }
@@ -64,7 +52,12 @@ export default function ScenarioSelectionScreen(props: {
               headerLargeTitleEnabled: true,
               headerTitle: props.scenarioGroup.name,
             }}>
-            {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} groupName={props.scenarioGroup.name} />}
+            {() => (
+              <ScenarioSelect
+                scenarios={props.scenarioGroup.scenarios}
+                groupName={props.scenarioGroup.name}
+              />
+            )}
           </Stack.Screen>
           {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
             (ScenarioComponent: Scenario) => {
