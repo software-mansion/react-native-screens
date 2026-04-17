@@ -11,20 +11,21 @@ import {
 function ScenarioSelect(props: { scenarios: Scenario[] }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.values(props.scenarios).map((ScenarioComponent: Scenario) => {
-        const { name, key, details, platforms } =
-          ScenarioComponent.scenarioDescription;
-        return (
-          <ScenarioButton
-            title={name}
-            details={details}
-            route={key}
-            key={key}
-            platformsHint={platforms}
-            testID={key}
-          />
-        );
-      })}
+      {Object.values(props.scenarios).map(
+        ({ scenarioDescription }: Scenario) => {
+          const { name, key, details, platforms } = scenarioDescription;
+          return (
+            <ScenarioButton
+              title={name}
+              details={details}
+              route={key}
+              key={key}
+              platformsHint={platforms}
+              testID={key}
+            />
+          );
+        },
+      )}
     </ScrollView>
   );
 }
