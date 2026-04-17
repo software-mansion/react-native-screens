@@ -283,10 +283,6 @@ namespace react = facebook::react;
     [_controller setRejectStaleNavigationStateUpdates:_rejectStaleNavStateUpdates];
   }
 
-  if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
-    _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
-  }
-
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);

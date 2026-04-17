@@ -26,7 +26,6 @@ function TabsHost(props: TabsHostProps) {
   const {
     children,
     direction,
-    experimentalControlNavigationStateInJS,
     nativeContainerStyle,
     onTabSelected,
     navState,
@@ -36,10 +35,9 @@ function TabsHost(props: TabsHostProps) {
   const componentNodeRef =
     React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);
 
-  const { controlNavigationStateInJS, onTabSelected: onTabSelectedCallback } =
+  const { onTabSelected: onTabSelectedCallback } =
     useTabsHost<TabsHostIOSNativeComponentProps>({
       componentNodeRef,
-      controlNavigationStateInJS: experimentalControlNavigationStateInJS,
       onTabSelected,
     });
 
@@ -56,7 +54,6 @@ function TabsHost(props: TabsHostProps) {
       ref={componentNodeRef}
       {...filteredBaseProps}
       // iOS-specific
-      controlNavigationStateInJS={controlNavigationStateInJS}
       layoutDirection={direction}
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}

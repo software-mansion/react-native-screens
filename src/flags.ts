@@ -1,4 +1,3 @@
-const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
@@ -50,7 +49,6 @@ export const compatibilityFlags = {
 
 const _featureFlags = {
   experiment: {
-    controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
     synchronousScreenUpdatesEnabled:
       RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
     synchronousHeaderConfigUpdatesEnabled:
@@ -120,10 +118,6 @@ const createStableFeatureFlagAccessor = <T extends STABLE_FF>(
   };
 };
 
-const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
-  'controlledBottomTabs',
-  RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-);
 const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
   'synchronousScreenUpdatesEnabled',
   RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
@@ -178,12 +172,6 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
-    get controlledBottomTabs() {
-      return controlledBottomTabsAccessor.get();
-    },
-    set controlledBottomTabs(value: boolean) {
-      controlledBottomTabsAccessor.set(value);
-    },
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },
