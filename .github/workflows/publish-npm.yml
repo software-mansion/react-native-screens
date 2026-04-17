@@ -1,5 +1,7 @@
 name: Publish release to npm
 on:
+  schedule:
+    - cron: '27 23 * * *' # at 23:27 every day
   workflow_dispatch:
     inputs:
       release-type:
@@ -52,7 +54,8 @@ jobs:
           cache: 'yarn'
           registry-url: https://registry.npmjs.org/
 
-      - name: Publish release
+      - name: Publish manual release
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
         with:
           package-name: 'react-native-screens'
@@ -61,3 +64,13 @@ jobs:
           release-type: ${{ inputs.release-type }}
           version: ${{ inputs.version }}
           dry-run: ${{ inputs.dry-run }}
+
+      - name: Publish automatic nightly release
+        if: ${{ github.event_name == 'schedule' }}
+        uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
+        with:
+          package-name: 'react-native-screens'
+          package-json-path: 'package.json'
+          install-dependencies-command: 'yarn install --immutable'
+          release-type: 'nightly'
+          dry-run: true
