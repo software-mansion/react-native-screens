@@ -4,9 +4,6 @@ const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
-const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
-const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS = true;
-const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
 const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
@@ -81,12 +78,6 @@ const _featureFlags = {
       RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
-    iosPreventReattachmentOfDismissedScreens:
-      RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
-    iosPreventReattachmentOfDismissedModals:
-      RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS,
-    ios26AllowInteractionsDuringTransition:
-      RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   },
   stable: {
     debugLogging: RNS_DEBUG_LOGGING,
@@ -164,21 +155,6 @@ const androidResetScreenShadowStateOnOrientationChangeAccessor =
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
     RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   );
-const iosPreventReattachmentOfDismissedScreensAccessor =
-  createExperimentalFeatureFlagAccessor(
-    'iosPreventReattachmentOfDismissedScreens',
-    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
-  );
-const iosPreventReattachmentOfDismissedModalsAccessor =
-  createExperimentalFeatureFlagAccessor(
-    'iosPreventReattachmentOfDismissedModals',
-    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_MODALS,
-  );
-const ios26AllowInteractionsDuringTransitionAccessor =
-  createExperimentalFeatureFlagAccessor(
-    'ios26AllowInteractionsDuringTransition',
-    RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
-  );
 const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
   'debugLogging',
   RNS_DEBUG_LOGGING,
@@ -227,38 +203,26 @@ export const featureFlags = {
       androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
     },
     /**
-     * Enables the fix for native / JS state desynchronization in Stack. On by default.
-     * PR: https://github.com/software-mansion/react-native-screens/pull/3584
+     * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get iosPreventReattachmentOfDismissedScreens() {
-      return iosPreventReattachmentOfDismissedScreensAccessor.get();
+      return true;
     },
-    set iosPreventReattachmentOfDismissedScreens(value: boolean) {
-      iosPreventReattachmentOfDismissedScreensAccessor.set(value);
-    },
+    set iosPreventReattachmentOfDismissedScreens(_value: boolean) {},
     /**
-     * Enables the fix for native / JS state desynchronization for Modals. On by default.
-     * PR: https://github.com/software-mansion/react-native-screens/pull/3760
+     * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get iosPreventReattachmentOfDismissedModals() {
-      return iosPreventReattachmentOfDismissedModalsAccessor.get();
+      return true;
     },
-    set iosPreventReattachmentOfDismissedModals(value: boolean) {
-      iosPreventReattachmentOfDismissedModalsAccessor.set(value);
-    },
+    set iosPreventReattachmentOfDismissedModals(_value: boolean) {},
     /**
-     * Disables the behavior that blocks interactions during Stack Screen transition.
-     * The application should immediately react to user gestures, dismissing more screens at once, etc.
-     * Use only with `iosPreventReattachmentOfDismissedScreens = true` to enable the fix
-     * for native / JS state desynchronization. On by default.
-     * PR: https://github.com/software-mansion/react-native-screens/pull/3631
+     * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get ios26AllowInteractionsDuringTransition() {
-      return ios26AllowInteractionsDuringTransitionAccessor.get();
+      return true;
     },
-    set ios26AllowInteractionsDuringTransition(value: boolean) {
-      ios26AllowInteractionsDuringTransitionAccessor.set(value);
-    },
+    set ios26AllowInteractionsDuringTransition(_value: boolean) {},
   },
   /**
    * Section for stable flags, which can be used to configure library behaviour.
