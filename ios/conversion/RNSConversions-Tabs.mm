@@ -375,48 +375,6 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
   return UITabBarSystemItemSearch;
 }
 
-#define SWITCH_EDGE_EFFECT(X)                              \
-  switch (edgeEffect) {                                    \
-    using enum react::X;                                   \
-    case Automatic:                                        \
-      return RNSScrollEdgeEffectAutomatic;                 \
-    case Hard:                                             \
-      return RNSScrollEdgeEffectHard;                      \
-    case Soft:                                             \
-      return RNSScrollEdgeEffectSoft;                      \
-    case Hidden:                                           \
-      return RNSScrollEdgeEffectHidden;                    \
-    default:                                               \
-      RCTLogError(@"[RNScreens] unsupported edge effect"); \
-      return RNSScrollEdgeEffectAutomatic;                 \
-  }
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenIOSBottomScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSBottomScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenIOSLeftScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSLeftScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenIOSRightScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSRightScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenIOSTopScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSTopScrollEdgeEffect);
-}
-
-#undef SWITCH_EDGE_EFFECT
-
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED

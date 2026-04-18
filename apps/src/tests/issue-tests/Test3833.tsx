@@ -5,7 +5,7 @@ import {
   ScreenStack,
   ScreenStackHeaderConfig,
 } from 'react-native-screens';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import LongText from '@apps/shared/LongText';
 
 type ScreenKey = 'ScreenView' | 'ScreenScroll';

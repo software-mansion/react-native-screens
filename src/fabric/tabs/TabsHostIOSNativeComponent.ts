@@ -79,9 +79,6 @@ export interface NativeProps extends ViewProps {
   // direction style View prop.
   layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
-  // Experimental support
-  controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
-
   // iOS-specific props
   tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;

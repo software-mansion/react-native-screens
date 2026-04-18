@@ -226,25 +226,6 @@ export interface TabsHostPropsBase {
    */
   colorScheme?: TabsHostColorScheme | undefined;
 
-  // Experimental support
-  /**
-   * @summary Experimental prop for changing container control.
-   *
-   * If set to true, tab screen changes need to be handled by JS using
-   * onNativeFocusChange callback (controlled/programatically-driven).
-   *
-   * If set to false, tab screen change will not be prevented by the
-   * native side (managed/natively-driven).
-   *
-   * On Android, only controlled tabs are currently supported and the
-   * value of this prop is ignored.
-   *
-   * @default Defaults to `false`.
-   *
-   * @platform android, ios
-   */
-  experimentalControlNavigationStateInJS?: boolean | undefined;
-
   // Events
   /**
    * @summary A callback that gets invoked when the selected tab changes.

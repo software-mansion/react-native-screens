@@ -1,29 +1,24 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Simple navigation scenario',
   key: 'test-stack-simple-nav',
-  details:
-    'Test simple push and pop operations',
+  details: 'Test simple push and pop operations',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
 
-export default SCENARIO;
-
 export function App() {
-  return (
-    <StackSetup />
-  );
+  return <StackSetup />;
 }
 
 function StackSetup() {
@@ -95,3 +90,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default createScenario(App, scenarioDescription);

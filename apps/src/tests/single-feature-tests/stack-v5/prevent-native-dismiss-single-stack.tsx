@@ -1,25 +1,23 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Prevent native dismiss - single stack',
   key: 'prevent-native-dismiss-single-stack',
   details:
     'Test prevent native dismiss behavior in simple single-stack scenario',
   platforms: ['android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 export function App() {
   return (
@@ -140,3 +138,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default createScenario(App, scenarioDescription);

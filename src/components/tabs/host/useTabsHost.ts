@@ -2,7 +2,6 @@ import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
-import featureFlags from '../../../flags';
 import { RNSLog } from '../../../private';
 import type { TabSelectedEvent } from './TabsHost.types';
 
@@ -12,7 +11,6 @@ type TabsHostPlatformNativeComponentProps =
 
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  controlNavigationStateInJS?: boolean | undefined;
   onTabSelected?:
     | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
     | undefined;
@@ -20,7 +18,6 @@ interface TabsHostConfig<T> {
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   componentNodeRef,
-  controlNavigationStateInJS,
   onTabSelected,
 }: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
@@ -47,9 +44,6 @@ export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({
   );
 
   return {
-    controlNavigationStateInJS:
-      controlNavigationStateInJS ??
-      featureFlags.experiment.controlledBottomTabs,
     onTabSelected: onTabSelectedCallback,
   };
 }

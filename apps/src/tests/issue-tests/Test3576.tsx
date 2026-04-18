@@ -8,7 +8,7 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 type ScenarioConfig = {
   id: string;
