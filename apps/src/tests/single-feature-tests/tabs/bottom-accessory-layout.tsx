@@ -69,7 +69,7 @@ function RGBView() {
     <View style={styles.fullView}>
       <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
       <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4d4df0' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
     </View>
   );
 }
