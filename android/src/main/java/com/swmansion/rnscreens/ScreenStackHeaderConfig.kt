@@ -138,6 +138,7 @@ class ScreenStackHeaderConfig(
         }
 
         val isBackButtonDisplayed = toolbar.navigationIcon != null
+        val isRtl = toolbar.layoutDirection == LAYOUT_DIRECTION_RTL
 
         val contentInsetStartEstimation =
             if (isBackButtonDisplayed) {
@@ -149,8 +150,11 @@ class ScreenStackHeaderConfig(
         // Assuming that there is nothing to the left of back button here, the content
         // offset we're interested in in ShadowTree is the `left` of the subview left.
         // In case it is not available we fallback to approximation.
+        // In RTL, the LEFT subview (Gravity.START) sits on the physical right, so we
+        // convert its physical `left` to a logical start-side distance.
         val contentInsetStart =
-            configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }?.left
+            configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }
+                ?.let { if (!isRtl) it.left else toolbar.width - it.left }
                 ?: contentInsetStartEstimation
 
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
