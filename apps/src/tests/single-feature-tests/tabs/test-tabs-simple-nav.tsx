@@ -1,18 +1,16 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
 import { Tabs, type TabsHostNavState } from 'react-native-screens';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Test simple navigation',
   key: 'test-tabs-simple-nav',
   details: 'Test basic navigation scenarios',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -96,3 +94,5 @@ export function App() {
     </SelectTabContext>
   );
 }
+
+export default createScenario(App, scenarioDescription);

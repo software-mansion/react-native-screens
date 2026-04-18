@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {
   Tabs,
@@ -10,16 +11,12 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'More navigation controller',
   key: 'test-tabs-more-navigation-controller',
-  details:
-    'Test navigation and interactions with "More Navigation Controller"',
+  details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -98,7 +95,11 @@ function AppContents() {
           onMoreTabSelected: (
             event: NativeSyntheticEvent<MoreTabSelectedEvent>,
           ) => {
-            const message = `onMoreTabSelected: ${JSON.stringify(event.nativeEvent, undefined, 2)}`;
+            const message = `onMoreTabSelected: ${JSON.stringify(
+              event.nativeEvent,
+              undefined,
+              2,
+            )}`;
             console.warn(message);
             toast.push({ message, backgroundColor: Colors.GreenLight60 });
           },
@@ -117,3 +118,5 @@ function AppContents() {
     </SelectTabContext>
   );
 }
+
+export default createScenario(App, scenarioDescription);

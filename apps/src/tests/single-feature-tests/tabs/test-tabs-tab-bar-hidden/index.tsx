@@ -1,17 +1,15 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Tabs } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Hidden',
   key: 'test-tabs-tab-bar-hidden',
   platforms: ['ios', 'android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -65,3 +63,5 @@ export function App() {
     </Tabs.Host>
   );
 }
+
+export default createScenario(App, scenarioDescription);

@@ -6,22 +6,20 @@ import {
   Text,
   View,
 } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Tabs, type TabsHostProps } from 'react-native-screens';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Layout Direction',
   key: 'test-tabs-tab-bar-layout-direction',
   details:
     'Tests how tabs handle system, React Native and prop layout direction.',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -119,9 +117,8 @@ function ConfigScreen({
 }
 
 export function App() {
-  const [direction, setDirection] = React.useState<
-    NonNullable<TabsHostProps['direction']>
-  >('inherit');
+  const [direction, setDirection] =
+    React.useState<NonNullable<TabsHostProps['direction']>>('inherit');
 
   return (
     <Tabs.Host
@@ -170,3 +167,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+export default createScenario(App, scenarioDescription);

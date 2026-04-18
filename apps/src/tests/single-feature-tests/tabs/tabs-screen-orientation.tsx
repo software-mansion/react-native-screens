@@ -2,17 +2,15 @@ import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Tabs, type TabsScreenOrientation } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tabs Screen Orientation',
   key: 'tabs-screen-orientation',
-  AppComponent: App,
   platforms: ['ios', 'android'],
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -70,3 +68,5 @@ export function App() {
     </Tabs.Host>
   );
 }
+
+export default createScenario(App, scenarioDescription);

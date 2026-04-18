@@ -8,20 +8,18 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';
 import { Tabs, type TabsHostColorScheme } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Color Scheme',
   key: 'test-tabs-tab-bar-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -149,3 +147,5 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
+
+export default createScenario(App, scenarioDescription);

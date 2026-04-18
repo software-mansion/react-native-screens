@@ -2,18 +2,16 @@ import LongText from '@apps/shared/LongText';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Tabs } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Bottom Accessory',
   key: 'bottom-accessory-layout',
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -173,3 +171,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default createScenario(App, scenarioDescription);

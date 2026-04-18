@@ -1,18 +1,16 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { Tabs, TabBarMinimizeBehavior } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Minimize Behavior',
   key: 'test-tabs-tab-bar-minimize-behavior-ios',
   details: 'Test tab bar minimize behavior for iOS 26+.',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -103,3 +101,5 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
   },
 });
+
+export default createScenario(App, scenarioDescription);

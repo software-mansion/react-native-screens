@@ -1,21 +1,19 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Tabs } from 'react-native-screens';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Appearance',
   key: 'test-tabs-appearance-defined-by-selected-tab',
   platforms: ['ios', 'android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarBackgroundColor: Colors.NavyLight100,
@@ -231,3 +229,5 @@ export function App() {
     </Tabs.Host>
   );
 }
+
+export default createScenario(App, scenarioDescription);

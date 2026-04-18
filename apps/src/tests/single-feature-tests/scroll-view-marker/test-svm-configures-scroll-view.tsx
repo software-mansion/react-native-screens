@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
 import { StackContainer } from '@apps/shared/gamma/containers/stack';
@@ -7,7 +8,7 @@ import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Basic functionality',
   key: 'test-svm-configures-scroll-view',
   details:
@@ -16,10 +17,7 @@ const SCENARIO: Scenario = {
     'applied to the container edges. On Android this test serves only as a setup ' +
     'for native debugging.',
   platforms: ['ios', 'android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 export function App() {
   return (
@@ -78,3 +76,5 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+export default createScenario(App, scenarioDescription);

@@ -1,21 +1,19 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useState } from 'react';
 import { SettingsSwitch } from '@apps/shared';
 import { Tabs } from 'react-native-screens';
 import { SafeAreaView } from 'react-native-screens/experimental';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'IME insets',
   key: 'test-tabs-ime-insets',
   details:
     'Tests prop that determines whether BottomNavigationView respects IME insets.',
   platforms: ['android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 const DEFAULT_ICON = {
   icon: {
@@ -129,3 +127,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 });
+
+export default createScenario(App, scenarioDescription);
