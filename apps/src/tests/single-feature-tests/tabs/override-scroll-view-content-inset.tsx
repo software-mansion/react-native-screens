@@ -4,7 +4,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 
@@ -52,40 +52,32 @@ export function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
-        <TabsContainer
-          routeConfigs={[
-            {
-              name: 'False',
-              Component: FalseTab,
-              options: {
-                title: 'False',
-                ios: {
-                  overrideScrollViewContentInsetAdjustmentBehavior: false,
-                  icon: { type: 'sfSymbol', name: 'xmark.circle' },
-                },
-              },
-            },
-            {
-              name: 'True',
-              Component: TrueTab,
-              options: {
-                title: 'True',
-                ios: {
-                  overrideScrollViewContentInsetAdjustmentBehavior: true,
-                  icon: { type: 'sfSymbol', name: 'checkmark.circle' },
-                },
-              },
-            },
-            {
-              name: 'Default',
-              Component: DefaultTab,
-              options: {
-                title: 'Default',
-                ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
-              },
-            },
-          ]}
-        />
+        <Tabs.Host navState={{ selectedScreenKey: 'False', provenance: 0 }}>
+          <Tabs.Screen
+            screenKey="False"
+            title="False"
+            ios={{
+              overrideScrollViewContentInsetAdjustmentBehavior: false,
+              icon: { type: 'sfSymbol', name: 'xmark.circle' },
+            }}>
+            <FalseTab />
+          </Tabs.Screen>
+          <Tabs.Screen
+            screenKey="True"
+            title="True"
+            ios={{
+              overrideScrollViewContentInsetAdjustmentBehavior: true,
+              icon: { type: 'sfSymbol', name: 'checkmark.circle' },
+            }}>
+            <TrueTab />
+          </Tabs.Screen>
+          <Tabs.Screen
+            screenKey="Default"
+            title="Default"
+            ios={{ icon: { type: 'sfSymbol', name: 'circle.dashed' } }}>
+            <DefaultTab />
+          </Tabs.Screen>
+        </Tabs.Host>
       </NavigationContainer>
     </NavigationIndependentTree>
   );

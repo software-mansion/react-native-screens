@@ -1,21 +1,23 @@
 import LongText from '@apps/shared/LongText';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Bottom Accessory',
   key: 'bottom-accessory-layout',
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
+};
+
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
 };
 
 function ShortViewUL() {
@@ -80,16 +82,13 @@ const ACCESSORY_VARIANTS = [
   { id: 4, content: RGBView },
 ];
 
-function ConfigScreen() {
-  const [selected, setSelected] = useState(0);
-  const { updateHostConfig } = useTabsHostConfig();
-
-  useEffect(() => {
-    updateHostConfig({
-      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
-    });
-  }, [selected, updateHostConfig]);
-
+function ConfigScreen({
+  selected,
+  setSelected,
+}: {
+  selected: number;
+  setSelected: (id: number) => void;
+}) {
   return (
     <ScrollView style={styles.container}>
       {ACCESSORY_VARIANTS.map(item => (
@@ -107,27 +106,34 @@ function ConfigScreen() {
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Tab1',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab1',
-    },
-  },
-  {
-    name: 'Tab2',
-    Component: DummyScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab2',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Tab1', provenance: 0 }}
+      ios={{
+        bottomAccessory: () => {
+          const Content = ACCESSORY_VARIANTS[selected].content;
+          return <Content />;
+        },
+      }}>
+      <Tabs.Screen
+        screenKey="Tab1"
+        title="Tab1"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen selected={selected} setSelected={setSelected} />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <DummyScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }
 
 const styles = StyleSheet.create({

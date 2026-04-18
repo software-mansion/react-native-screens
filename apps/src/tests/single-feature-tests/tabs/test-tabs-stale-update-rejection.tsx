@@ -2,13 +2,7 @@ import React from 'react';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
-import {
-  type TabRouteConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-  useTabsNavigationContext,
-  TabsContainerWithHostConfigContext,
-  useTabsHostConfig,
-} from '../../../shared/gamma/containers/tabs';
+import { Tabs, type TabsHostNavState } from 'react-native-screens';
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import { Colors } from '@apps/shared/styling';
@@ -20,25 +14,45 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ContentView() {
-  const { routeKey } = useTabsNavigationContext();
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
 
-  console.log(`ContentView - render for key ${routeKey}`);
+const TAB_KEYS = ['First', 'Second', 'Third', 'Fourth'];
+
+type TabsContext = {
+  selectTab: (key: string) => void;
+  rejectStaleNavStateUpdates: boolean;
+  toggleRejectStale: () => void;
+};
+
+const TabsCtx = React.createContext<TabsContext>({
+  selectTab: () => {},
+  rejectStaleNavStateUpdates: true,
+  toggleRejectStale: () => {},
+});
+
+function ContentView({ screenKey }: { screenKey: string }) {
+  const { rejectStaleNavStateUpdates, toggleRejectStale } =
+    React.useContext(TabsCtx);
+
+  console.log(`ContentView - render for key ${screenKey}`);
 
   const [heavyRenderEnabled, setHeavyRenderEnabled] = React.useState(false);
 
   return (
     <CenteredLayoutView>
       <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-        {routeKey}
+        {screenKey}
       </Text>
       <Text style={{ textAlign: 'center' }}>
         heavyRender: {JSON.stringify(heavyRenderEnabled)}
       </Text>
       <Text style={{ textAlign: 'center' }}>
-        rejectStaleNavStateUpdates:{' '}
-        {JSON.stringify(hostConfig.rejectStaleNavStateUpdates)}
+        rejectStaleNavStateUpdates: {JSON.stringify(rejectStaleNavStateUpdates)}
       </Text>
       <HeavyRenderHierarchy enabled={heavyRenderEnabled} timeMs={3000} />
       <TabsNavigationButtons />
@@ -48,51 +62,27 @@ function ContentView() {
       />
       <Button
         title="Toggle rejectStaleNavStateUpdates"
-        onPress={() =>
-          updateHostConfig({
-            rejectStaleNavStateUpdates: !hostConfig.rejectStaleNavStateUpdates,
-          })
-        }
+        onPress={toggleRejectStale}
       />
     </CenteredLayoutView>
   );
 }
 
 function TabsNavigationButtons() {
-  const nav = useTabsNavigationContext();
+  const { selectTab } = React.useContext(TabsCtx);
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
-      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
+      {TAB_KEYS.map(key => (
+        <Button
+          key={key}
+          title={`Select ${key}`}
+          onPress={() => selectTab(key)}
+        />
+      ))}
     </View>
   );
 }
-
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'First',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
-  },
-  {
-    name: 'Second',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
-  },
-  {
-    name: 'Third',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
-  },
-  {
-    name: 'Fourth',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
-  },
-];
 
 export function App() {
   return (
@@ -105,20 +95,66 @@ export function App() {
 function AppContents() {
   const toast = useToast();
 
+  const [navState, setNavState] = React.useState<TabsHostNavState>({
+    selectedScreenKey: 'First',
+    provenance: 0,
+  });
+
+  const [rejectStaleNavStateUpdates, setRejectStale] = React.useState(true);
+
+  const selectTab = React.useCallback((key: string) => {
+    setNavState(prev => ({
+      selectedScreenKey: key,
+      provenance: prev.provenance,
+    }));
+  }, []);
+
+  const toggleRejectStale = React.useCallback(() => {
+    setRejectStale(prev => !prev);
+  }, []);
+
+  const ctx = React.useMemo<TabsContext>(
+    () => ({ selectTab, rejectStaleNavStateUpdates, toggleRejectStale }),
+    [selectTab, rejectStaleNavStateUpdates, toggleRejectStale],
+  );
+
   return (
-    <TabsContainerWithHostConfigContext
-      routeConfigs={ROUTE_CONFIGS}
-      rejectStaleNavStateUpdates={true}
-      onTabSelectionRejected={event => {
-        const message = `onTabSelectionRejected: ${JSON.stringify(
-          event.nativeEvent,
-          undefined,
-          2,
-        )}`;
-        console.warn(message);
-        toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
-      }}
-    />
+    <TabsCtx value={ctx}>
+      <Tabs.Host
+        navState={navState}
+        rejectStaleNavStateUpdates={rejectStaleNavStateUpdates}
+        onTabSelected={event => {
+          React.startTransition(() => {
+            setNavState({
+              selectedScreenKey: event.nativeEvent.selectedScreenKey,
+              provenance: event.nativeEvent.provenance,
+            });
+          });
+        }}
+        onTabSelectionRejected={event => {
+          const message = `onTabSelectionRejected: ${JSON.stringify(
+            event.nativeEvent,
+            undefined,
+            2,
+          )}`;
+          console.warn(message);
+          toast.push({
+            message: message,
+            backgroundColor: Colors.GreenLight60,
+          });
+        }}>
+        {TAB_KEYS.map(key => (
+          <Tabs.Screen
+            key={key}
+            screenKey={key}
+            title={key}
+            ios={DEFAULT_ICON}
+            android={DEFAULT_ICON}>
+            <ContentView screenKey={key} />
+          </Tabs.Screen>
+        ))}
+      </Tabs.Host>
+    </TabsCtx>
   );
 }
 

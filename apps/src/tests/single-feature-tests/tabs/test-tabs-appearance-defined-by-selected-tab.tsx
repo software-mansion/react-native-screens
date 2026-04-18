@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -76,165 +76,157 @@ function TabScreen() {
 
 export function App() {
   return (
-    <TabsContainer
-      routeConfigs={[
-        {
-          name: 'Tab1',
-          Component: TabScreen,
-          options: {
-            title: 'Tab1',
-            ios: {
-              icon: {
-                type: 'sfSymbol',
-                name: 'house.fill',
-              },
-              selectedIcon: {
-                type: 'sfSymbol',
-                name: 'house.fill',
-              },
-              standardAppearance: DEFAULT_APPEARANCE_IOS,
-              scrollEdgeAppearance: DEFAULT_APPEARANCE_IOS,
-            },
-            android: {
-              icon: {
-                type: 'imageSource',
-                imageSource: require('@assets/variableIcons/icon.png'),
-              },
-              selectedIcon: {
-                type: 'imageSource',
-                imageSource: require('@assets/variableIcons/icon_fill.png'),
-              },
-              standardAppearance: DEFAULT_APPEARANCE_ANDROID,
-            },
+    <Tabs.Host navState={{ selectedScreenKey: 'Tab1', provenance: 0 }}>
+      <Tabs.Screen
+        screenKey="Tab1"
+        title="Tab1"
+        ios={{
+          icon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
           },
-        },
-        {
-          name: 'Tab2',
-          Component: TabScreen,
-          options: {
-            title: 'Tab2',
-            ios: {
-              icon: {
-                type: 'templateSource',
-                templateSource: require('@assets/variableIcons/icon.png'),
+          selectedIcon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
+          },
+          standardAppearance: DEFAULT_APPEARANCE_IOS,
+          scrollEdgeAppearance: DEFAULT_APPEARANCE_IOS,
+        }}
+        android={{
+          icon: {
+            type: 'imageSource',
+            imageSource: require('@assets/variableIcons/icon.png'),
+          },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
+          },
+          standardAppearance: DEFAULT_APPEARANCE_ANDROID,
+        }}>
+        <TabScreen />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={{
+          icon: {
+            type: 'templateSource',
+            templateSource: require('@assets/variableIcons/icon.png'),
+          },
+          standardAppearance: {
+            ...DEFAULT_APPEARANCE_IOS,
+            tabBarBackgroundColor: Colors.PurpleDark100,
+            stacked: {
+              ...DEFAULT_APPEARANCE_IOS.stacked,
+              normal: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                tabBarItemIconColor: Colors.YellowDark100,
+                tabBarItemTitleFontColor: Colors.YellowDark40,
               },
-              standardAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                tabBarBackgroundColor: Colors.PurpleDark100,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemIconColor: Colors.YellowDark100,
-                    tabBarItemTitleFontColor: Colors.YellowDark40,
-                  },
-                  selected: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
-                    tabBarItemIconColor: Colors.RedDark100,
-                    tabBarItemTitleFontColor: Colors.RedDark40,
-                  },
-                  focused: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
-                    tabBarItemIconColor: Colors.RedLight100,
-                    tabBarItemTitleFontColor: Colors.RedLight40,
-                  },
-                },
+              selected: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
+                tabBarItemIconColor: Colors.RedDark100,
+                tabBarItemTitleFontColor: Colors.RedDark40,
               },
-              scrollEdgeAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                tabBarBackgroundColor: Colors.PurpleDark100,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemIconColor: Colors.YellowDark100,
-                    tabBarItemTitleFontColor: Colors.YellowDark40,
-                  },
-                  selected: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
-                    tabBarItemIconColor: Colors.RedDark100,
-                    tabBarItemTitleFontColor: Colors.RedDark40,
-                  },
-                  focused: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
-                    tabBarItemIconColor: Colors.RedLight100,
-                    tabBarItemTitleFontColor: Colors.RedLight40,
-                  },
-                },
-              },
-            },
-            android: {
-              icon: {
-                type: 'drawableResource',
-                name: 'sym_call_missed',
-              },
-              standardAppearance: {
-                ...DEFAULT_APPEARANCE_ANDROID,
-                tabBarBackgroundColor: Colors.PurpleDark100,
-                tabBarItemRippleColor: Colors.PurpleDark40,
-                normal: {
-                  tabBarItemIconColor: Colors.YellowDark100,
-                  tabBarItemTitleFontColor: Colors.YellowDark40,
-                },
-                selected: {
-                  tabBarItemIconColor: Colors.RedDark100,
-                  tabBarItemTitleFontColor: Colors.RedDark40,
-                },
-                focused: {
-                  tabBarItemIconColor: Colors.RedLight100,
-                  tabBarItemTitleFontColor: Colors.RedLight40,
-                },
-                tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
+              focused: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
+                tabBarItemIconColor: Colors.RedLight100,
+                tabBarItemTitleFontColor: Colors.RedLight40,
               },
             },
           },
-        },
-        {
-          name: 'Tab3',
-          Component: TabScreen,
-          options: {
-            title: 'Tab3',
-            ios: {
-              icon: {
-                type: 'templateSource',
-                templateSource: require('@assets/variableIcons/icon_fill.png'),
+          scrollEdgeAppearance: {
+            ...DEFAULT_APPEARANCE_IOS,
+            tabBarBackgroundColor: Colors.PurpleDark100,
+            stacked: {
+              ...DEFAULT_APPEARANCE_IOS.stacked,
+              normal: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                tabBarItemIconColor: Colors.YellowDark100,
+                tabBarItemTitleFontColor: Colors.YellowDark40,
               },
-              standardAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
-                  },
-                },
+              selected: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
+                tabBarItemIconColor: Colors.RedDark100,
+                tabBarItemTitleFontColor: Colors.RedDark40,
               },
-              scrollEdgeAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
-                  },
-                },
+              focused: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.focused,
+                tabBarItemIconColor: Colors.RedLight100,
+                tabBarItemTitleFontColor: Colors.RedLight40,
               },
             },
-            android: {
-              icon: {
-                type: 'imageSource',
-                imageSource: require('@assets/variableIcons/icon_fill.png'),
-              },
-              standardAppearance: {
-                ...DEFAULT_APPEARANCE_ANDROID,
-                tabBarItemBadgeTextColor: Colors.GreenDark120,
+          },
+        }}
+        android={{
+          icon: {
+            type: 'drawableResource',
+            name: 'sym_call_missed',
+          },
+          standardAppearance: {
+            ...DEFAULT_APPEARANCE_ANDROID,
+            tabBarBackgroundColor: Colors.PurpleDark100,
+            tabBarItemRippleColor: Colors.PurpleDark40,
+            normal: {
+              tabBarItemIconColor: Colors.YellowDark100,
+              tabBarItemTitleFontColor: Colors.YellowDark40,
+            },
+            selected: {
+              tabBarItemIconColor: Colors.RedDark100,
+              tabBarItemTitleFontColor: Colors.RedDark40,
+            },
+            focused: {
+              tabBarItemIconColor: Colors.RedLight100,
+              tabBarItemTitleFontColor: Colors.RedLight40,
+            },
+            tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
+          },
+        }}>
+        <TabScreen />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab3"
+        title="Tab3"
+        ios={{
+          icon: {
+            type: 'templateSource',
+            templateSource: require('@assets/variableIcons/icon_fill.png'),
+          },
+          standardAppearance: {
+            ...DEFAULT_APPEARANCE_IOS,
+            stacked: {
+              ...DEFAULT_APPEARANCE_IOS.stacked,
+              normal: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
                 tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
               },
             },
           },
-        },
-      ]}
-    />
+          scrollEdgeAppearance: {
+            ...DEFAULT_APPEARANCE_IOS,
+            stacked: {
+              ...DEFAULT_APPEARANCE_IOS.stacked,
+              normal: {
+                ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+                tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+              },
+            },
+          },
+        }}
+        android={{
+          icon: {
+            type: 'imageSource',
+            imageSource: require('@assets/variableIcons/icon_fill.png'),
+          },
+          standardAppearance: {
+            ...DEFAULT_APPEARANCE_ANDROID,
+            tabBarItemBadgeTextColor: Colors.GreenDark120,
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+          },
+        }}>
+        <TabScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
   );
 }
 

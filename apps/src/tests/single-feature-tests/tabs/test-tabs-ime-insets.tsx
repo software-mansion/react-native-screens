@@ -1,15 +1,10 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SettingsSwitch } from '@apps/shared';
-import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  useTabsNavigationContext,
-  useTabsHostConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+import { Tabs } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 const scenarioDescription: ScenarioDescription = {
@@ -20,85 +15,87 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android'],
 };
 
-function ConfigScreen() {
-  const { routeKey, routeOptions, setRouteOptions } =
-    useTabsNavigationContext();
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
-  const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
-    useState(routeOptions.safeAreaConfiguration?.edges?.bottom ?? true);
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
 
-  useEffect(() => {
-    setRouteOptions(routeKey, {
-      safeAreaConfiguration: {
-        edges: {
-          bottom: safeAreaViewBottomEdgeEnabled,
-        },
-      },
-    });
-  }, [routeKey, setRouteOptions, safeAreaViewBottomEdgeEnabled]);
+function ConfigScreen({
+  tabBarRespectsIMEInsets,
+  setTabBarRespectsIMEInsets,
+}: {
+  tabBarRespectsIMEInsets: boolean;
+  setTabBarRespectsIMEInsets: (value: boolean) => void;
+}) {
+  const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
+    useState(true);
 
   return (
-    <View style={[styles.container, styles.content]}>
-      <View style={styles.section}>
-        <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
-        <SettingsSwitch
-          label={'safeAreaViewBottomEdgeEnabled'}
-          value={safeAreaViewBottomEdgeEnabled}
-          onValueChange={function (value: boolean): void {
-            setSafeAreaViewBottomEdgeEnabled(value);
-          }}
-        />
+    <SafeAreaView edges={{ bottom: safeAreaViewBottomEdgeEnabled }}>
+      <View style={[styles.container, styles.content]}>
+        <View style={styles.section}>
+          <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
+          <SettingsSwitch
+            label={'safeAreaViewBottomEdgeEnabled'}
+            value={safeAreaViewBottomEdgeEnabled}
+            onValueChange={function (value: boolean): void {
+              setSafeAreaViewBottomEdgeEnabled(value);
+            }}
+          />
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
+          <SettingsSwitch
+            label={'tabBarRespectsIMEInsets'}
+            value={tabBarRespectsIMEInsets}
+            onValueChange={function (value: boolean): void {
+              setTabBarRespectsIMEInsets(value);
+            }}
+          />
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.heading}>TextInput</Text>
+          <TextInput
+            placeholder="Focus TextInput to show IME..."
+            style={styles.textInput}
+          />
+        </View>
+        <View style={styles.end}>
+          <Text>TabsScreen bottom</Text>
+        </View>
       </View>
-      <View style={styles.section}>
-        <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
-        <SettingsSwitch
-          label={'tabBarRespectsIMEInsets'}
-          value={hostConfig.android?.tabBarRespectsIMEInsets ?? false}
-          onValueChange={function (value: boolean): void {
-            updateHostConfig({ android: { tabBarRespectsIMEInsets: value } });
-          }}
-        />
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.heading}>TextInput</Text>
-        <TextInput
-          placeholder="Focus TextInput to show IME..."
-          style={styles.textInput}
-        />
-      </View>
-      <View style={styles.end}>
-        <Text>TabsScreen bottom</Text>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'Config',
-    Component: ConfigScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Config',
-      safeAreaConfiguration: {
-        edges: {
-          bottom: true,
-        },
-      },
-    },
-  },
-  {
-    name: 'Tab2',
-    Component: DummyScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab2',
-    },
-  },
-];
-
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  const [tabBarRespectsIMEInsets, setTabBarRespectsIMEInsets] = useState(false);
+
+  return (
+    <Tabs.Host
+      navState={{ selectedScreenKey: 'Config', provenance: 0 }}
+      android={{ tabBarRespectsIMEInsets }}>
+      <Tabs.Screen
+        screenKey="Config"
+        title="Config"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <ConfigScreen
+          tabBarRespectsIMEInsets={tabBarRespectsIMEInsets}
+          setTabBarRespectsIMEInsets={setTabBarRespectsIMEInsets}
+        />
+      </Tabs.Screen>
+      <Tabs.Screen
+        screenKey="Tab2"
+        title="Tab2"
+        ios={DEFAULT_ICON}
+        android={DEFAULT_ICON}>
+        <DummyScreen />
+      </Tabs.Screen>
+    </Tabs.Host>
+  );
 }
 
 const styles = StyleSheet.create({

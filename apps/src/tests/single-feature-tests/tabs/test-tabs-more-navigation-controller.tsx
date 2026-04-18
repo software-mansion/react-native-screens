@@ -3,15 +3,13 @@ import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {
-  TabsContainerWithHostConfigContext,
-  type TabRouteConfig,
-  DEFAULT_TAB_ROUTE_OPTIONS,
-  useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+  Tabs,
+  type TabsHostNavState,
+  type MoreTabSelectedEvent,
+} from 'react-native-screens';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
-import type { MoreTabSelectedEvent } from 'react-native-screens';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'More navigation controller',
@@ -20,12 +18,22 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-function ContentView() {
-  const { routeKey } = useTabsNavigationContext();
+const DEFAULT_ICON = {
+  icon: {
+    type: 'imageSource' as const,
+    imageSource: require('@assets/variableIcons/icon.png'),
+  },
+};
+
+const TAB_KEYS = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth'];
+
+const SelectTabContext = React.createContext<(key: string) => void>(() => {});
+
+function ContentView({ screenKey }: { screenKey: string }) {
   return (
     <CenteredLayoutView>
       <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-        {routeKey}
+        {screenKey}
       </Text>
       <TabsNavigationButtons />
     </CenteredLayoutView>
@@ -33,52 +41,20 @@ function ContentView() {
 }
 
 function TabsNavigationButtons() {
-  const nav = useTabsNavigationContext();
+  const selectTab = React.useContext(SelectTabContext);
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
-      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
-      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')} />
-      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')} />
+      {TAB_KEYS.map(key => (
+        <Button
+          key={key}
+          title={`Select ${key}`}
+          onPress={() => selectTab(key)}
+        />
+      ))}
     </View>
   );
 }
-
-const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'First',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
-  },
-  {
-    name: 'Second',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
-  },
-  {
-    name: 'Third',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
-  },
-  {
-    name: 'Fourth',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
-  },
-  {
-    name: 'Fifth',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
-  },
-  {
-    name: 'Sixth',
-    Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
-  },
-];
 
 export function App() {
   return (
@@ -91,23 +67,55 @@ export function App() {
 function AppContents() {
   const toast = useToast();
 
+  const [navState, setNavState] = React.useState<TabsHostNavState>({
+    selectedScreenKey: 'First',
+    provenance: 0,
+  });
+
+  const selectTab = React.useCallback((key: string) => {
+    setNavState(prev => ({
+      selectedScreenKey: key,
+      provenance: prev.provenance,
+    }));
+  }, []);
+
   return (
-    <TabsContainerWithHostConfigContext
-      routeConfigs={ROUTE_CONFIGS}
-      ios={{
-        onMoreTabSelected: (
-          event: NativeSyntheticEvent<MoreTabSelectedEvent>,
-        ) => {
-          const message = `onMoreTabSelected: ${JSON.stringify(
-            event.nativeEvent,
-            undefined,
-            2,
-          )}`;
-          console.warn(message);
-          toast.push({ message, backgroundColor: Colors.GreenLight60 });
-        },
-      }}
-    />
+    <SelectTabContext value={selectTab}>
+      <Tabs.Host
+        navState={navState}
+        onTabSelected={event => {
+          React.startTransition(() => {
+            setNavState({
+              selectedScreenKey: event.nativeEvent.selectedScreenKey,
+              provenance: event.nativeEvent.provenance,
+            });
+          });
+        }}
+        ios={{
+          onMoreTabSelected: (
+            event: NativeSyntheticEvent<MoreTabSelectedEvent>,
+          ) => {
+            const message = `onMoreTabSelected: ${JSON.stringify(
+              event.nativeEvent,
+              undefined,
+              2,
+            )}`;
+            console.warn(message);
+            toast.push({ message, backgroundColor: Colors.GreenLight60 });
+          },
+        }}>
+        {TAB_KEYS.map(key => (
+          <Tabs.Screen
+            key={key}
+            screenKey={key}
+            title={key}
+            ios={DEFAULT_ICON}
+            android={DEFAULT_ICON}>
+            <ContentView screenKey={key} />
+          </Tabs.Screen>
+        ))}
+      </Tabs.Host>
+    </SelectTabContext>
   );
 }
 
