@@ -15,22 +15,22 @@ export type StackScreenEventHandler = (
 ) => void;
 
 export type StackScreenProps = {
-  children?: ViewProps['children'];
+  children?: ViewProps['children'] | undefined;
 
   // Control
   activityMode: StackScreenActivityMode;
   screenKey: string;
 
   // Events
-  onWillAppear?: StackScreenEventHandler;
-  onDidAppear?: StackScreenEventHandler;
-  onWillDisappear?: StackScreenEventHandler;
-  onDidDisappear?: StackScreenEventHandler;
+  onWillAppear?: StackScreenEventHandler | undefined;
+  onDidAppear?: StackScreenEventHandler | undefined;
+  onWillDisappear?: StackScreenEventHandler | undefined;
+  onDidDisappear?: StackScreenEventHandler | undefined;
 
-  onDismiss?: (screenKey: string) => void;
-  onNativeDismiss?: (screenKey: string) => void;
-  onNativeDismissPrevented?: StackScreenEventHandler;
+  onDismiss?: ((screenKey: string) => void) | undefined;
+  onNativeDismiss?: ((screenKey: string) => void) | undefined;
+  onNativeDismissPrevented?: StackScreenEventHandler | undefined;
 
   // Configuration
-  preventNativeDismiss?: boolean;
+  preventNativeDismiss?: boolean | undefined;
 };

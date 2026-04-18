@@ -45,7 +45,7 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   /**
    * @summary Specifies the minimize behavior for the tab bar.
    *
@@ -68,7 +68,7 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 26 or higher
    */
-  tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior?: TabBarMinimizeBehavior | undefined;
   /**
    * @summary Specifies component used as bottom accessory.
    *
@@ -98,7 +98,7 @@ export interface TabsHostPropsIOS {
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: TabsBottomAccessoryComponentFactory;
+  bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
@@ -119,7 +119,7 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 18 or higher
    */
-  tabBarControllerMode?: TabBarControllerMode;
+  tabBarControllerMode?: TabBarControllerMode | undefined;
   /**
    * @summary
    * A callback that gets invoked when the user taps the "More" tab bar item.
@@ -133,7 +133,7 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  onMoreTabSelected?: (
-    event: NativeSyntheticEvent<MoreTabSelectedEvent>,
-  ) => void;
+  onMoreTabSelected?:
+    | ((event: NativeSyntheticEvent<MoreTabSelectedEvent>) => void)
+    | undefined;
 }

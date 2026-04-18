@@ -122,7 +122,7 @@ export type TabsHostNativeContainerStyleProps = {
    *
    * @platform android, ios
    */
-  backgroundColor?: ColorValue;
+  backgroundColor?: ColorValue | undefined;
 };
 
 // #endregion General helpers
@@ -164,10 +164,10 @@ export interface TabsHostPropsBase {
    *
    * @default false
    */
-  rejectStaleNavStateUpdates?: boolean;
+  rejectStaleNavStateUpdates?: boolean | undefined;
 
   // General
-  children?: ViewProps['children'];
+  children?: ViewProps['children'] | undefined;
   /**
    * @summary Hides the tab bar.
    *
@@ -175,7 +175,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  tabBarHidden?: boolean;
+  tabBarHidden?: boolean | undefined;
   /**
    * @summary Allows for native container view customization.
    *
@@ -185,7 +185,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
+  nativeContainerStyle?: TabsHostNativeContainerStyleProps | undefined;
   /**
    * @summary Specifies the layout direction of the native container, its views and child containers.
    *
@@ -211,7 +211,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  direction?: TabsHostDirection;
+  direction?: TabsHostDirection | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child containers.
    *
@@ -224,7 +224,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  colorScheme?: TabsHostColorScheme;
+  colorScheme?: TabsHostColorScheme | undefined;
 
   // Events
   /**
@@ -232,7 +232,9 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+  onTabSelected?:
+    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -240,9 +242,9 @@ export interface TabsHostPropsBase {
    *
    * @see {@link TabSelectionRejectedEvent}
    */
-  onTabSelectionRejected?: (
-    event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
-  ) => void;
+  onTabSelectionRejected?:
+    | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -251,12 +253,12 @@ export interface TabsHostPropsBase {
    *
    * @see {@link TabSelectionPreventedEvent}
    */
-  onTabSelectionPrevented?: (
-    event: NativeSyntheticEvent<TabSelectionPreventedEvent>,
-  ) => void;
+  onTabSelectionPrevented?:
+    | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
+    | undefined;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
-  ios?: TabsHostPropsIOS;
-  android?: TabsHostPropsAndroid;
+  ios?: TabsHostPropsIOS | undefined;
+  android?: TabsHostPropsAndroid | undefined;
 }
