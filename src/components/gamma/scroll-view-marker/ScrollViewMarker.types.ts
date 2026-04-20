@@ -2,7 +2,7 @@ import type { ViewProps } from 'react-native';
 import type { ScrollEdgeEffect } from '../../shared/types';
 
 export interface ScrollViewMarkerProps {
-  children: ViewProps['children'];
+  children: NonNullable<ViewProps['children']>;
   style?: ViewProps['style'] | undefined;
 
   /**
