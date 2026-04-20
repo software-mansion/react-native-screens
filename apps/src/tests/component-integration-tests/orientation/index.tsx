@@ -1,4 +1,4 @@
-import { ScenarioGroup } from '@apps/tests/shared/helpers';
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import StackInTabs from './orientation-stack-in-tabs';
 import TabsInStack from './orientation-tabs-in-stack';
 

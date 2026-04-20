@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Scenario } from '../../shared/helpers';
+import type { ScenarioDescription } from '../../shared/helpers';
+import { createScenario } from '../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   type TabRouteConfig,
@@ -11,15 +12,12 @@ import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../shared/';
 import { Colors } from '@apps/shared/styling';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Prevent native selection',
   key: 'test-tabs-prevent-native-selection',
   details: 'Test preventNativeSelection prop on TabsScreen',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 function ContentView() {
   const nav = useTabsNavigationContext();
@@ -121,3 +119,5 @@ function AppContents() {
     />
   );
 }
+
+export default createScenario(App, scenarioDescription);
