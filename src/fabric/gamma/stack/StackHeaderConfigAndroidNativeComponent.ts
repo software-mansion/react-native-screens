@@ -19,9 +19,9 @@ export interface NativeProps extends ViewProps {
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;
 
-  backButtonTintColor?: ColorValue;
-  backButtonDrawableIconResourceName?: string;
-  backButtonImageIconResource?: ImageSource;
+  backButtonTintColor?: ColorValue | undefined;
+  backButtonDrawableIconResourceName?: string | undefined;
+  backButtonImageIconResource?: ImageSource | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>(
