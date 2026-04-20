@@ -68,7 +68,7 @@ Other: Ongoing research.
 
 - [ ] Expected: **Fifth** tab content is shown, and the route key label reads `Fifth`. The More tab is selected in the tab bar. No crash or blank screen.
 
-10.  Tap **"Select First"** and then tap **"Select Sixth"**.
+10. Tap **"Select First"** and then tap **"Select Sixth"**.
 
 - [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The More tab is selected in the tab bar.
 
@@ -76,7 +76,7 @@ Other: Ongoing research.
 
 ### Round-trip navigation
 
-11.  Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
+11. Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. Tabs behind More (Fifth, Sixth) show the More tab as selected. No visual glitches or stale route key labels.
 
@@ -92,7 +92,7 @@ Other: Ongoing research.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
 
-3.  Navigate between tabs using buttons from screen.
+3. Navigate between tabs using buttons from screen.
 
 - [ ] Expected: Each transition updates the route key label and tab bar selection correctly. No visual glitches or stale route key labels.
 
@@ -140,7 +140,7 @@ Other: Ongoing research.
 
 - [ ] Expected: The More tab disappears, and the tab bar shows all six tabs at the top of the screen. The **Second** tab becomes active, and the route key label reads `Second`.
 
-14.  Select **Third** tab and switch to **Fifth**
+14. Select **Third** tab and switch to **Fifth**
 
 - [ ] Expected: **Fifth** tab is selected, and the route key label reads `Fifth`.
 
