@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Yes: Partially automated. The E2E test covers most steps for iPhone. Verification of the "More" tab selection in the tab bar was omitted due to Detox limitations.
+Yes: Partially automated. The E2E test covers most steps for iPhone. Verification of the "More" tab selection in the tab bar was omitted due to Detox limitations. iPad steps are not automated, as the resize interactions required to trigger the More tab (Split View / window resizing between compact and regular size classes) are not feasible with Detox.
 
 ## Prerequisites
 
