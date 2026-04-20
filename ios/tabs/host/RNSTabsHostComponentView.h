@@ -62,8 +62,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
 
-@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
-
 @property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)

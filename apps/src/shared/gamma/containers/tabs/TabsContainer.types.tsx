@@ -80,7 +80,6 @@ export type TabsHostConfig = Omit<
   TabsHostProps,
   | 'children'
   | 'navState'
-  | 'experimentalControlNavigationStateInJS'
 >;
 
 export type TabsContainerProps = Omit<
@@ -94,11 +93,6 @@ export type TabsContainerProps = Omit<
    * Defaults to the first tab if not provided.
    */
   defaultRouteName?: string;
-  /**
-   * Whether to control navigation state in JS.
-   * Passed to Tabs.Host as experimentalControlNavigationStateInJS.
-   */
-  experimentalControlNavigationStateInJS?: boolean;
 };
 
 export type SetTabOptionsMethod = (

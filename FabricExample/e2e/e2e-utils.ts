@@ -11,7 +11,10 @@ async function scrollUntilVisible(id: string, scrollViewId: string) {
 }
 
 export async function selectIssueTestScreen(screenName: string) {
-  await scrollUntilVisible('root-screen-issue-tests', 'root-screen-examples-scrollview');
+  await scrollUntilVisible(
+    'root-screen-issue-tests',
+    'root-screen-examples-scrollview',
+  );
   await element(by.id('root-screen-issue-tests')).tap();
 
   await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
@@ -31,15 +34,31 @@ export async function selectIssueTestScreen(screenName: string) {
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
 
-export async function selectSingleFeatureTestsScreen(scenarioGroup: string, screenKey: string) {
-  await scrollUntilVisible('root-screen-single-feature-tests', 'root-screen-examples-scrollview');
+export async function selectSingleFeatureTestsScreen(
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  await scrollUntilVisible(
+    'root-screen-single-feature-tests',
+    'root-screen-examples-scrollview',
+  );
   await element(by.id('root-screen-single-feature-tests')).tap();
-  await waitFor(element(by.id('single-feature-tests-scrollview'))).toBeVisible().withTimeout(3000);
+  await waitFor(element(by.id('single-feature-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(3000);
 
-  await scrollUntilVisible(`single-feature-tests-${scenarioGroup}`, 'single-feature-tests-scrollview');
+  await scrollUntilVisible(
+    `single-feature-tests-${scenarioGroup}`,
+    'single-feature-tests-scrollview',
+  );
   await element(by.id(`single-feature-tests-${scenarioGroup}`)).tap();
-  await waitFor(element(by.id(`${scenarioGroup}-scenarios-scrollview`))).toBeVisible().withTimeout(3000);
+  await waitFor(element(by.id(`${scenarioGroup}-scenarios-scrollview`)))
+    .toBeVisible()
+    .withTimeout(3000);
 
-  await scrollUntilVisible(`${screenKey}`, `${scenarioGroup}-scenarios-scrollview`,);
+  await scrollUntilVisible(
+    `${screenKey}`,
+    `${scenarioGroup}-scenarios-scrollview`,
+  );
   await element(by.id(`${screenKey}`)).tap();
 }

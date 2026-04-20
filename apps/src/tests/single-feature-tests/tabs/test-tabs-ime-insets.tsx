@@ -1,5 +1,6 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsSwitch } from '@apps/shared';
 import {
@@ -11,19 +12,17 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'IME insets',
   key: 'test-tabs-ime-insets',
   details:
     'Tests prop that determines whether BottomNavigationView respects IME insets.',
   platforms: ['android'],
-  AppComponent: App,
 };
 
-export default SCENARIO;
-
 function ConfigScreen() {
-  const { routeKey, routeOptions, setRouteOptions } = useTabsNavigationContext();
+  const { routeKey, routeOptions, setRouteOptions } =
+    useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [safeAreaViewBottomEdgeEnabled, setSafeAreaViewBottomEdgeEnabled] =
     useState(routeOptions.safeAreaConfiguration?.edges?.bottom ?? true);
@@ -131,3 +130,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 });
+
+export default createScenario(App, scenarioDescription);

@@ -1,6 +1,14 @@
 # Test Scenario: tabBarMinimizeBehavior
 
-**E2E test:** ongoing research
+## Details
+
+**Description:** Validates the adaptive visibility of the tab bar on iOS 26+ based on the tabBarMinimizeBehavior property. This test ensures that the tab bar correctly minimizes or remains static during scroll interactions according to the selected mode (automatic, onScrollDown, onScrollUp, or never), and verifies that the UI remains stable during tab switching.
+
+**OS test creation version:** iOS 26.2
+
+## E2E test
+
+Other: Pending. Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed. A potential workaround for future implementation is to verify the state via getAttributes() by comparing the element's frame/height.
 
 ## Prerequisites
 

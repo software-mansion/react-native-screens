@@ -28,7 +28,6 @@ export function TabsContainer(props: TabsContainerProps) {
   const {
     routeConfigs,
     defaultRouteName,
-    experimentalControlNavigationStateInJS,
     onTabSelected,
     ...restProps
   } = props;
@@ -75,12 +74,8 @@ export function TabsContainer(props: TabsContainerProps) {
 
   return (
     <Tabs.Host
-      // Use controlled tabs by default, but allow to overwrite if user wants to
       navState={hostNavState}
       onTabSelected={onTabSelectedCallback}
-      experimentalControlNavigationStateInJS={
-        experimentalControlNavigationStateInJS
-      }
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabsNavState.routes.map((route: TabRoute) => {

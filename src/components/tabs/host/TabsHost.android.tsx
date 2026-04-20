@@ -23,7 +23,6 @@ function TabsHost(props: TabsHostProps) {
   const {
     children,
     direction,
-    experimentalControlNavigationStateInJS,
     nativeContainerStyle,
     onTabSelected,
     navState,
@@ -36,7 +35,6 @@ function TabsHost(props: TabsHostProps) {
   const { onTabSelected: onTabSelectedCallback } =
     useTabsHost<TabsHostAndroidNativeComponentProps>({
       componentNodeRef,
-      controlNavigationStateInJS: experimentalControlNavigationStateInJS,
       onTabSelected,
     });
 

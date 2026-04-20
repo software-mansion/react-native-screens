@@ -6,19 +6,17 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { TabBarControllerMode } from 'react-native-screens';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Controller Mode',
   key: 'test-tabs-tab-bar-controller-mode-ios',
   details: 'Test different tab bar modes.',
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -26,9 +24,9 @@ function ConfigScreen() {
     <ScrollView style={{ padding: 40 }}>
       <View>
         <Text style={styles.description}>
-          Controls whether the tab bar is displayed as a bar or
-          sidebar.{'\n'}Test tabSidebar on iPad — on iPhone it collapses
-          back to a tab bar automatically.
+          Controls whether the tab bar is displayed as a bar or sidebar.{'\n'}
+          Test tabSidebar on iPad — on iPhone it collapses back to a tab bar
+          automatically.
         </Text>
         <SettingsPicker<TabBarControllerMode>
           label="tabBarControllerMode"
@@ -39,7 +37,7 @@ function ConfigScreen() {
           items={['automatic', 'tabBar', 'tabSidebar']}
         />
       </View>
-    </ScrollView >
+    </ScrollView>
   );
 }
 
@@ -56,7 +54,7 @@ function TestScreen() {
       ))}
     </ScrollView>
   );
-};
+}
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
@@ -73,14 +71,13 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
-
     },
   },
 ];
 
 export function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
-};
+}
 
 const styles = StyleSheet.create({
   sectionHeader: {
@@ -123,3 +120,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 });
+
+export default createScenario(App, scenarioDescription);

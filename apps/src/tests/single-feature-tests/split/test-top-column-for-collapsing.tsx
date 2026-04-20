@@ -1,9 +1,10 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Split } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Prop: topColumnForCollapsing',
   key: 'test-split-top-column-for-collapsing',
   details: `
@@ -11,10 +12,7 @@ const SCENARIO: Scenario = {
     Modification of this prop requires app restart.
   `,
   platforms: ['ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 export function App() {
   return (
@@ -53,3 +51,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default createScenario(App, scenarioDescription);
