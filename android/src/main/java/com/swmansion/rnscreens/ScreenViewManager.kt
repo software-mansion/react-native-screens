@@ -323,11 +323,6 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
-    override fun setIos26AllowInteractionsDuringTransition(
-        view: Screen?,
-        value: Boolean,
-    ) = Unit
-
     // END mark: iOS-only
 
     override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
