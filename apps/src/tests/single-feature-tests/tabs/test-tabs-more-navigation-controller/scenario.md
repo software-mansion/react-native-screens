@@ -70,7 +70,7 @@ Other: Ongoing research.
 
 - [ ] Expected: **Fifth** tab content is shown, and the route key label reads `Fifth`. The More tab is selected in the tab bar. No crash or blank screen.
 
-10. From any visible tab (e.g. **First**), tap **"Select Sixth"**.
+1.  Tap **"Select First"** and then tap **"Select Sixth"**.
 
 - [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The More tab is selected in the tab bar.
 
@@ -86,7 +86,7 @@ Other: Ongoing research.
 
 ### Baseline - without More navigation controler displayed
 
-1. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
+1. Open app on iPad in full size and navigate to the **More navigation controller** scenario. Open DevTools.
 
 - [ ] Expected: Tab bar shows all six tabs. The **First** tab is selected. The content area displays `First` as the route key.
 
@@ -100,7 +100,7 @@ Other: Ongoing research.
 
 ---
 
-### More tab — tap interaction on iPad
+### More tab — tap interaction with app resizing
 
 4. Select `First` tab and resize app to iPhone size view.
 
@@ -126,11 +126,7 @@ Other: Ongoing research.
 
 - [ ] Expected: The native More screen opens, listing **Fifth** and **Sixth** as available tabs. New green toast appear with `onMoreTabSelected` message.
 
----
-
-### Navigation with app resizing
-
-10. Tap **Second** tab in the tab bar.
+10.  Tap **Second** tab in the tab bar.
 
 - [ ] Expected: **Second** tab becomes active. Tab bar selection updates, and the route key label reads `Second`. In the console, the onTabSelected event should be logged with selectedScreenKey set to 'Second'.
 
