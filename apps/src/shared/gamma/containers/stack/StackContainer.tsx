@@ -62,7 +62,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ Component, options, activityMode, routeKey }) => {
+        ({ Component, options: { headerConfig, ...options }, activityMode, routeKey }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -83,6 +83,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                {headerConfig !== undefined && (
+                  <Stack.HeaderConfig {...headerConfig} />
+                )}
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

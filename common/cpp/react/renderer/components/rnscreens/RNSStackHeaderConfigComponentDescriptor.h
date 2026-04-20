@@ -6,28 +6,29 @@
 
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include "RNSStackScreenShadowNode.h"
+#include "RNSStackHeaderConfigShadowNode.h"
 
 namespace facebook::react {
 
-class RNSStackScreenComponentDescriptor final
-    : public ConcreteComponentDescriptor<RNSStackScreenShadowNode> {
+class RNSStackHeaderConfigComponentDescriptor final
+    : public ConcreteComponentDescriptor<RNSStackHeaderConfigShadowNode> {
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
 #ifdef ANDROID
-    react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
-    auto &screenShadowNode =
-        static_cast<RNSStackScreenShadowNode &>(shadowNode);
     react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
+        dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
+    auto &configShadowNode =
+        static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
+    react_native_assert(
+        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
     auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
+        static_cast<YogaLayoutableShadowNode &>(configShadowNode);
 
-    auto state =
-        std::static_pointer_cast<const RNSStackScreenShadowNode::ConcreteState>(
-            shadowNode.getState());
+    auto state = std::static_pointer_cast<
+        const RNSStackHeaderConfigShadowNode::ConcreteState>(
+        shadowNode.getState());
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
