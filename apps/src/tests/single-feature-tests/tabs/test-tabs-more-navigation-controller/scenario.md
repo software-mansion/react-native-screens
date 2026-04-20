@@ -16,9 +16,9 @@ Other: Ongoing research.
 
 ## Note
 
-- On iPad: The More tab only appears when the window is resized to a compact width size class. For iOS 18 and older, a Split View must be triggered to achieve this.
+- On iPad: The **More** tab only appears when the window is resized to a compact width size class. For iOS 18 and older, a Split View must be triggered to achieve this.
 
-- Toasts: A blue toast with the message `onTabSelected:"<selected tab name>"` should appear after each tab selection - except when the More tab list is displayed (which triggers a green `onMoreTabSelected` toast instead). In this scenario, this action is only mentioned in steps involving non-intuitive situations.
+- Toasts: A blue toast with the message `onTabSelected:"<selected tab name>"` should appear after each tab selection - except when the **More** tab list is displayed (which triggers a green `onMoreTabSelected` toast instead). In this scenario, this action is only mentioned in steps involving non-intuitive situations.
 
 ## Steps - iPhone
 
@@ -38,7 +38,7 @@ Other: Ongoing research.
 
 3. Tap **Fifth** in the More screen list.
 
-- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. The More tab remains selected in the tab bar.
+- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. The **More** tab remains selected in the tab bar.
 
 4. Tap **Third** tab in the tab bar.
 
@@ -46,7 +46,7 @@ Other: Ongoing research.
 
 5. Tap the **More** tab in the tab bar.
 
-- [ ] Expected: The Fifth tab content is displayed, and the route key label reads `Fifth`. The Tab Bar updates to show that the More tab is selected.
+- [ ] Expected: The Fifth tab content is displayed, and the route key label reads `Fifth`. The Tab Bar updates to show that the **More** tab is selected.
 
 6. Tap the **More** tab again.
 
@@ -70,19 +70,15 @@ Other: Ongoing research.
 
 10. Tap **"Select Fifth"**.
 
-- [ ] Expected: **Fifth** tab content is shown, and the route key label reads `Fifth`. The More tab is selected in the tab bar. No crash or blank screen.
+- [ ] Expected: **Fifth** tab content is shown, and the route key label reads `Fifth`. The **More** tab is selected in the tab bar. No crash or blank screen.
 
-11. Tap **"Select First"** and then tap **"Select Sixth"**.
+11. Tap **"Select First"**.
 
-- [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The More tab is selected in the tab bar.
+- [ ] Expected: **First** tab becomes active. Tab bar selection updates, and the route key label reads `First`.
 
----
+12. Tap **"Select Sixth"**.
 
-### Round-trip navigation
-
-12. Tap through tabs in this order using the select buttons: **First** → **Sixth** → **Second** → **Fifth** → **Third**.
-
-- [ ] Expected: Each transition updates the route key label and tab bar selection correctly. Tabs behind More (Fifth, Sixth) show the More tab as selected. No visual glitches or stale route key labels.
+- [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The **More** tab is selected in the tab bar.
 
 ## Steps - iPad
 
@@ -114,7 +110,7 @@ Other: Ongoing research.
 
 6. Tap **Fifth** in the More screen list.
 
-- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. The More tab remains selected in the tab bar.
+- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. The **More** tab remains selected in the tab bar.
 
 7. Tap **Third** tab in the tab bar.
 
@@ -122,7 +118,7 @@ Other: Ongoing research.
 
 8. Tap the **More** tab in the tab bar.
 
-- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. Tab bar selection updates - More tab is selected.
+- [ ] Expected: The **Fifth** tab content is shown. The route key label reads `Fifth`. Tab bar selection updates - **More** tab is selected.
 
 9. Tap the **More** tab again.
 
@@ -138,7 +134,7 @@ Other: Ongoing research.
 
 12.  Tap **"More"** tab bar item and select **"Sixth"** from the More list.
 
-- [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The More tab is selected in the tab bar. No crash or blank screen.
+- [ ] Expected: **Sixth** tab content is shown, and the route key label reads `Sixth`. The **More** tab is selected in the tab bar. No crash or blank screen.
 
 13. Tap the **More** tab again.
 
@@ -146,7 +142,7 @@ Other: Ongoing research.
 
 14. Resize app to full size.
 
-- [ ] Expected: The More tab disappears, and the tab bar shows all six tabs at the top of the screen. The **Second** tab becomes active, and the route key label reads `Second`.
+- [ ] Expected: The **More** tab disappears, and the tab bar shows all six tabs at the top of the screen. The **Second** tab becomes active, and the route key label reads `Second`.
 
 15. Select **Third** tab and switch to **Fifth**
 
@@ -162,4 +158,4 @@ Other: Ongoing research.
 
 18. Resize app to full size.
 
-- [ ] Expected: More tab disappear, tab bar shows all six tabs on top of the screen. **Fifth** tab becomes active, and the route key label reads `Fifth`.
+- [ ] Expected: **More** tab disappear, tab bar shows all six tabs on top of the screen. **Fifth** tab becomes active, and the route key label reads `Fifth`.
