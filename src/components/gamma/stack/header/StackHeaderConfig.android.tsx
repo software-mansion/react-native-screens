@@ -4,7 +4,10 @@ import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
-import type { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
+import type {
+  StackHeaderConfigPropsAndroid,
+  StackHeaderTypeAndroid,
+} from './StackHeaderConfig.android.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -20,10 +23,22 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     centerSubview,
     trailingSubview,
     backButtonIcon,
+    scrollFlagScroll,
+    scrollFlagEnterAlways,
+    scrollFlagEnterAlwaysCollapsed,
+    scrollFlagExitUntilCollapsed,
+    scrollFlagSnap,
     ...filteredAndroidProps
   } = android ?? {};
 
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
+  const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
+    scrollFlagScroll,
+    scrollFlagEnterAlways,
+    scrollFlagEnterAlwaysCollapsed,
+    scrollFlagExitUntilCollapsed,
+    scrollFlagSnap,
+  });
 
   return (
     <StackHeaderConfigAndroidNativeComponent
@@ -31,7 +46,8 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       style={StyleSheet.absoluteFill}
       {...baseProps}
       {...filteredAndroidProps}
-      {...backButtonIconProps}>
+      {...backButtonIconProps}
+      {...scrollFlagProps}>
       {/*
         Please note that the order of the subviews MUST match
         the order in native StackHeaderConfig.getConfigSubviewAt.
@@ -91,6 +107,63 @@ function parseBackButtonIconToNativeProps(
       '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
     );
   }
+}
+
+type ScrollFlagFields = Required<
+  Pick<
+    StackHeaderConfigPropsAndroid,
+    | 'scrollFlagScroll'
+    | 'scrollFlagEnterAlways'
+    | 'scrollFlagEnterAlwaysCollapsed'
+    | 'scrollFlagExitUntilCollapsed'
+    | 'scrollFlagSnap'
+  >
+>;
+
+const SCROLL_FLAG_DEFAULTS_BY_TYPE: Record<
+  StackHeaderTypeAndroid,
+  ScrollFlagFields
+> = {
+  small: {
+    scrollFlagScroll: false,
+    scrollFlagEnterAlways: false,
+    scrollFlagEnterAlwaysCollapsed: false,
+    scrollFlagExitUntilCollapsed: false,
+    scrollFlagSnap: false,
+  },
+  medium: {
+    scrollFlagScroll: true,
+    scrollFlagEnterAlways: false,
+    scrollFlagEnterAlwaysCollapsed: false,
+    scrollFlagExitUntilCollapsed: true,
+    scrollFlagSnap: true,
+  },
+  large: {
+    scrollFlagScroll: true,
+    scrollFlagEnterAlways: false,
+    scrollFlagEnterAlwaysCollapsed: false,
+    scrollFlagExitUntilCollapsed: true,
+    scrollFlagSnap: true,
+  },
+};
+
+function resolveScrollFlags(
+  type: StackHeaderTypeAndroid | undefined,
+  overrides: Partial<ScrollFlagFields>,
+): ScrollFlagFields {
+  const defaults = SCROLL_FLAG_DEFAULTS_BY_TYPE[type ?? 'small'];
+  return {
+    scrollFlagScroll: overrides.scrollFlagScroll ?? defaults.scrollFlagScroll,
+    scrollFlagEnterAlways:
+      overrides.scrollFlagEnterAlways ?? defaults.scrollFlagEnterAlways,
+    scrollFlagEnterAlwaysCollapsed:
+      overrides.scrollFlagEnterAlwaysCollapsed ??
+      defaults.scrollFlagEnterAlwaysCollapsed,
+    scrollFlagExitUntilCollapsed:
+      overrides.scrollFlagExitUntilCollapsed ??
+      defaults.scrollFlagExitUntilCollapsed,
+    scrollFlagSnap: overrides.scrollFlagSnap ?? defaults.scrollFlagSnap,
+  };
 }
 
 export default StackHeaderConfig;

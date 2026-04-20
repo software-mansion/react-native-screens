@@ -16,6 +16,11 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
@@ -55,6 +60,8 @@ internal class StackHeaderCoordinator(
     private var lastBackButtonVisible: Boolean? = null
     private var lastBackButtonTintColor: Int? = null
     private var lastBackButtonIcon: Drawable? = null
+
+    private var lastScrollFlags: Int? = null
 
     // For small header, we need to use custom title view in order to
     // render a subview to the leading side of the title.
@@ -154,6 +161,7 @@ internal class StackHeaderCoordinator(
         lastBackButtonVisible = null
         lastBackButtonTintColor = null
         lastBackButtonIcon = null
+        lastScrollFlags = null
         clearCachedRebuildTriggers()
     }
 
@@ -323,6 +331,7 @@ internal class StackHeaderCoordinator(
             }
         }
 
+        applyScrollFlags(appBar, config)
         applyBackButton(appBar.toolbar, config)
     }
 
@@ -333,6 +342,51 @@ internal class StackHeaderCoordinator(
         val desired = backgroundSubview.collapseMode.toNativeCollapseMode()
         if (params.collapseMode != desired) {
             params.collapseMode = desired
+        }
+    }
+
+    private fun applyScrollFlags(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigProviding,
+    ) {
+        warnInvalidScrollFlagCombinations(config)
+        val desired = computeScrollFlags(config)
+        if (desired == lastScrollFlags) return
+        lastScrollFlags = desired
+
+        val target: View =
+            when (appBar) {
+                is StackHeaderAppBarLayout.Small -> appBar.toolbar
+                is StackHeaderAppBarLayout.Collapsing -> appBar.collapsingToolbarLayout
+            }
+        val params = target.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = desired
+        target.layoutParams = params
+        // Snap back to expanded so the visible state matches the new flags.
+        appBar.setExpanded(true, false)
+    }
+
+    private fun computeScrollFlags(config: StackHeaderConfigProviding): Int {
+        var flags = 0
+        if (config.scrollFlagScroll) flags = flags or SCROLL_FLAG_SCROLL
+        if (config.scrollFlagEnterAlways) flags = flags or SCROLL_FLAG_ENTER_ALWAYS
+        if (config.scrollFlagEnterAlwaysCollapsed) flags = flags or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+        if (config.scrollFlagExitUntilCollapsed) flags = flags or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        if (config.scrollFlagSnap) flags = flags or SCROLL_FLAG_SNAP
+        return flags
+    }
+
+    private fun warnInvalidScrollFlagCombinations(config: StackHeaderConfigProviding) {
+        val anyDependentFlag =
+            config.scrollFlagEnterAlways ||
+                config.scrollFlagEnterAlwaysCollapsed ||
+                config.scrollFlagExitUntilCollapsed ||
+                config.scrollFlagSnap
+        if (anyDependentFlag && !config.scrollFlagScroll) {
+            Log.e(TAG, "[RNScreens] scrollFlag* requires scrollFlagScroll to take effect.")
+        }
+        if (config.scrollFlagEnterAlwaysCollapsed && !config.scrollFlagEnterAlways) {
+            Log.e(TAG, "[RNScreens] scrollFlagEnterAlwaysCollapsed requires scrollFlagEnterAlways to take effect.")
         }
     }
 

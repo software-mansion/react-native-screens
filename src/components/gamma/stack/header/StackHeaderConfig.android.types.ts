@@ -135,4 +135,65 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   backButtonIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Whether the header reacts to nested scroll. Required for any
+   * other `scrollFlag*` prop to take effect.
+   *
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * Remarks: changing any `scrollFlag*` at runtime forces the header back to
+   * its fully expanded state, which produces a visible snap. Treat these
+   * props as a static configuration.
+   *
+   * @platform android
+   */
+  scrollFlagScroll?: boolean | undefined;
+  /**
+   * @summary When enabled, any upward scroll (even mid-content) brings the
+   * header back into view. Requires `scrollFlagScroll`.
+   *
+   * When `undefined`, falls back to the type-specific default (`false` for
+   * all types).
+   *
+   * @platform android
+   */
+  scrollFlagEnterAlways?: boolean | undefined;
+  /**
+   * @summary When combined with `scrollFlagEnterAlways`, an upward scroll
+   * first reveals only the collapsed portion of the header before fully
+   * expanding it once the content reaches its top. Requires
+   * `scrollFlagEnterAlways`.
+   *
+   * When `undefined`, falls back to the type-specific default (`false` for
+   * all types).
+   *
+   * @platform android
+   */
+  scrollFlagEnterAlwaysCollapsed?: boolean | undefined;
+  /**
+   * @summary When enabled, the header scrolls off completely — unless top
+   * inset padding (status bar / display cutout) is applied, in which case
+   * that inset region remains visible. Requires `scrollFlagScroll`.
+   *
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * @platform android
+   */
+  scrollFlagExitUntilCollapsed?: boolean | undefined;
+  /**
+   * @summary When enabled, after a scroll gesture ends the header snaps to
+   * either fully expanded or fully collapsed instead of resting partway.
+   * Requires `scrollFlagScroll`.
+   *
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * @platform android
+   */
+  scrollFlagSnap?: boolean | undefined;
 }
