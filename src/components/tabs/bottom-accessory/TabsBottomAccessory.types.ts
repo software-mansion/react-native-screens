@@ -7,7 +7,9 @@ export type TabsBottomAccessoryEnvironmentChangeEvent = {
 };
 
 export type TabsBottomAccessoryProps = ViewProps & {
-  onEnvironmentChange?: (
-    event: NativeSyntheticEvent<TabsBottomAccessoryEnvironmentChangeEvent>,
-  ) => void;
+  onEnvironmentChange?:
+    | ((
+        event: NativeSyntheticEvent<TabsBottomAccessoryEnvironmentChangeEvent>,
+      ) => void)
+    | undefined;
 };

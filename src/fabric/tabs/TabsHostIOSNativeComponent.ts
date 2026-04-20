@@ -61,14 +61,18 @@ export interface NativeProps extends ViewProps {
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
-  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
-  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
-  onTabSelectionPrevented?: CT.DirectEventHandler<TabSelectionPreventedEvent>;
-  onMoreTabSelected?: CT.DirectEventHandler<MoreTabSelectedEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent> | undefined;
+  onTabSelectionRejected?:
+    | CT.DirectEventHandler<TabSelectionRejectedEvent>
+    | undefined;
+  onTabSelectionPrevented?:
+    | CT.DirectEventHandler<TabSelectionPreventedEvent>
+    | undefined;
+  onMoreTabSelected?: CT.DirectEventHandler<MoreTabSelectedEvent> | undefined;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
-  nativeContainerBackgroundColor?: ColorValue;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // We can't use `direction` name for this prop as it's also used by
@@ -76,7 +80,7 @@ export interface NativeProps extends ViewProps {
   layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
   // iOS-specific props
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
 }

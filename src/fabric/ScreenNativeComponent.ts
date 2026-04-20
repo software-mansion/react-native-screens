@@ -64,19 +64,27 @@ type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
-  onAppear?: CT.DirectEventHandler<ScreenEvent>;
-  onDisappear?: CT.DirectEventHandler<ScreenEvent>;
-  onDismissed?: CT.DirectEventHandler<ScreenDismissedEvent>;
-  onNativeDismissCancelled?: CT.DirectEventHandler<ScreenDismissedEvent>;
-  onWillAppear?: CT.DirectEventHandler<ScreenEvent>;
-  onWillDisappear?: CT.DirectEventHandler<ScreenEvent>;
-  onHeaderHeightChange?: CT.DirectEventHandler<HeaderHeightChangeEvent>;
-  onTransitionProgress?: CT.DirectEventHandler<TransitionProgressEvent>;
-  onGestureCancel?: CT.DirectEventHandler<ScreenEvent>;
-  onHeaderBackButtonClicked?: CT.DirectEventHandler<ScreenEvent>;
-  onSheetDetentChanged?: CT.DirectEventHandler<SheetDetentChangedEvent>;
+  onAppear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onDisappear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onDismissed?: CT.DirectEventHandler<ScreenDismissedEvent> | undefined;
+  onNativeDismissCancelled?:
+    | CT.DirectEventHandler<ScreenDismissedEvent>
+    | undefined;
+  onWillAppear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onHeaderHeightChange?:
+    | CT.DirectEventHandler<HeaderHeightChangeEvent>
+    | undefined;
+  onTransitionProgress?:
+    | CT.DirectEventHandler<TransitionProgressEvent>
+    | undefined;
+  onGestureCancel?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onHeaderBackButtonClicked?: CT.DirectEventHandler<ScreenEvent> | undefined;
+  onSheetDetentChanged?:
+    | CT.DirectEventHandler<SheetDetentChangedEvent>
+    | undefined;
   screenId?: CT.WithDefault<string, ''>;
-  sheetAllowedDetents?: number[];
+  sheetAllowedDetents?: number[] | undefined;
   sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
   sheetGrabberVisible?: CT.WithDefault<boolean, false>;
   sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
@@ -85,30 +93,30 @@ export interface NativeProps extends ViewProps {
   sheetElevation?: CT.WithDefault<CT.Int32, 24>;
   sheetShouldOverflowTopInset?: CT.WithDefault<boolean, false>;
   sheetDefaultResizeAnimationEnabled?: CT.WithDefault<boolean, true>;
-  customAnimationOnSwipe?: boolean;
+  customAnimationOnSwipe?: boolean | undefined;
   fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;
-  homeIndicatorHidden?: boolean;
-  preventNativeDismiss?: boolean;
+  homeIndicatorHidden?: boolean | undefined;
+  preventNativeDismiss?: boolean | undefined;
   gestureEnabled?: CT.WithDefault<boolean, true>;
-  statusBarColor?: ColorValue;
-  statusBarHidden?: boolean;
-  screenOrientation?: string;
-  statusBarAnimation?: string;
-  statusBarStyle?: string;
-  statusBarTranslucent?: boolean;
-  gestureResponseDistance?: GestureResponseDistanceType;
+  statusBarColor?: ColorValue | undefined;
+  statusBarHidden?: boolean | undefined;
+  screenOrientation?: string | undefined;
+  statusBarAnimation?: string | undefined;
+  statusBarStyle?: string | undefined;
+  statusBarTranslucent?: boolean | undefined;
+  gestureResponseDistance?: GestureResponseDistanceType | undefined;
   stackPresentation?: CT.WithDefault<StackPresentation, 'push'>;
   stackAnimation?: CT.WithDefault<StackAnimation, 'default'>;
   transitionDuration?: CT.WithDefault<CT.Int32, 500>;
   replaceAnimation?: CT.WithDefault<ReplaceAnimation, 'pop'>;
   swipeDirection?: CT.WithDefault<SwipeDirection, 'horizontal'>;
-  hideKeyboardOnSwipe?: boolean;
+  hideKeyboardOnSwipe?: boolean | undefined;
   activityState?: CT.WithDefault<CT.Float, -1.0>;
-  navigationBarColor?: ColorValue;
-  navigationBarTranslucent?: boolean;
-  navigationBarHidden?: boolean;
-  nativeBackButtonDismissalEnabled?: boolean;
+  navigationBarColor?: ColorValue | undefined;
+  navigationBarTranslucent?: boolean | undefined;
+  navigationBarHidden?: boolean | undefined;
+  nativeBackButtonDismissalEnabled?: boolean | undefined;
   bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;

@@ -152,13 +152,13 @@ function parseIconsToNativeProps(
   icon: PlatformIconIOS | undefined,
   selectedIcon: PlatformIconIOS | undefined,
 ): {
-  imageIconResource?: ImageResolvedAssetSource;
-  drawableIconResourceName?: string;
-  iconType?: IconType;
-  iconImageSource?: ImageSourcePropType;
-  iconResourceName?: string;
-  selectedIconImageSource?: ImageSourcePropType;
-  selectedIconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource | undefined;
+  drawableIconResourceName?: string | undefined;
+  iconType?: IconType | undefined;
+  iconImageSource?: ImageSourcePropType | undefined;
+  iconResourceName?: string | undefined;
+  selectedIconImageSource?: ImageSourcePropType | undefined;
+  selectedIconResourceName?: string | undefined;
 } {
   const parsedIcon = parseIconToNativeProps(icon);
   const parsedSelectedIcon = parseIconToNativeProps(selectedIcon);
@@ -188,9 +188,9 @@ function parseIconsToNativeProps(
 }
 
 function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
-  iconType?: IconType;
-  iconImageSource?: ImageSourcePropType;
-  iconResourceName?: string;
+  iconType?: IconType | undefined;
+  iconImageSource?: ImageSourcePropType | undefined;
+  iconResourceName?: string | undefined;
 } {
   if (!icon) {
     return {};
