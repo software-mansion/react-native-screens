@@ -11,7 +11,7 @@ import {
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
-import type { MoreTabSelectedEvent } from 'react-native-screens';
+import type { MoreTabSelectedEvent, TabSelectedEvent } from 'react-native-screens';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'More navigation controller',
@@ -106,6 +106,12 @@ function AppContents() {
           console.warn(message);
           toast.push({ message: 'onMoreTabSelected', backgroundColor: Colors.GreenLight60 });
         },
+      }}
+      onTabSelected={(event: NativeSyntheticEvent<TabSelectedEvent>) => {
+        toast.push({
+          backgroundColor: Colors.BlueLight100,
+          message: `onTabSelected: ${JSON.stringify(event.nativeEvent.selectedScreenKey)}`,
+        });
       }}
     />
   );
