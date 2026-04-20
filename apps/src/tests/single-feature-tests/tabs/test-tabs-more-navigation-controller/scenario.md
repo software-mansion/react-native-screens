@@ -16,7 +16,7 @@ Other: Ongoing research.
 
 ## Note
 
-- On iPad: The More tab only appears when the window is resized to an iPhone-like view. For iOS 18 and older, a Split View must be triggered to achieve this.
+- On iPad: The More tab only appears when the window is resized to a compact width size class. For iOS 18 and older, a Split View must be triggered to achieve this.
 
 - Toasts: A new toast should appear only after the steps where the "Expected" section explicitly mentions it.
 
