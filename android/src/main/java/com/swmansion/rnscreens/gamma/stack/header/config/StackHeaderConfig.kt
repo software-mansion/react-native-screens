@@ -1,10 +1,13 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
@@ -24,6 +27,48 @@ class StackHeaderConfig(
         internal set
     override var transparent: Boolean = false
         internal set
+    override var backButtonHidden: Boolean = false
+        internal set
+    override var backButtonTintColor: Int? = null
+        internal set
+    override var backButtonIcon: Drawable? = null
+        internal set
+
+    // Staging fields for back button icon resolution.
+    // Both props may arrive in any order within a single update batch.
+    // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
+    internal var backButtonDrawableIconResourceName: String? = null
+    internal var backButtonImageIconUri: String? = null
+
+    private var lastResolvedDrawableIconResourceName: String? = null
+    private var lastResolvedImageIconUri: String? = null
+
+    internal fun resolveBackButtonIconIfNeeded() {
+        val name = backButtonDrawableIconResourceName
+        val uri = backButtonImageIconUri
+
+        if (name == lastResolvedDrawableIconResourceName && uri == lastResolvedImageIconUri) {
+            return
+        }
+
+        lastResolvedDrawableIconResourceName = name
+        lastResolvedImageIconUri = uri
+
+        if (name != null) {
+            backButtonIcon = getSystemDrawableResource(context, name)
+        } else if (uri != null) {
+            loadImage(context, uri) { drawable ->
+                if (uri == lastResolvedImageIconUri) {
+                    backButtonIcon = drawable
+                    // We need to call notifyConfigChanged because icons are loaded asynchronously
+                    // and regular update path might execute too early.
+                    notifyConfigChanged()
+                }
+            }
+        } else {
+            backButtonIcon = null
+        }
+    }
 
     override var backgroundSubview: StackHeaderSubview? = null
         private set

@@ -5,6 +5,7 @@ export interface StackHeaderConfigPropsBase {
   title?: string | undefined;
   hidden?: boolean | undefined;
   transparent?: boolean | undefined;
+  backButtonHidden?: boolean | undefined;
 }
 
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {

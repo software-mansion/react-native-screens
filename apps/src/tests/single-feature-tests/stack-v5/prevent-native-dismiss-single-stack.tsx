@@ -41,7 +41,11 @@ function StackSetup() {
         {
           name: 'A',
           Component: AScreen,
-          options: {},
+          options: {
+            headerConfig: {
+              title: 'A',
+            },
+          },
         },
         {
           name: 'B',
@@ -54,6 +58,9 @@ function StackSetup() {
                 message: 'Native dismiss prevented',
                 backgroundColor: Colors.GreenLight60,
               });
+            },
+            headerConfig: {
+              title: 'B',
             },
           },
         },

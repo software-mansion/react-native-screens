@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Button,
   I18nManager,
   Image,
   ScrollView,
@@ -188,7 +189,7 @@ function ConfigScreen() {
     [],
   );
 
-  const { setRouteOptions, routeKey } = navigation;
+  const { setRouteOptions, routeKey, push } = navigation;
   const headerConfig = useMemo(() => buildHeaderConfig(config), [config]);
 
   useEffect(() => {
@@ -230,7 +231,6 @@ function ConfigScreen() {
         onValueChange={v => updateConfig('title', v)}
         items={TITLE_OPTIONS}
       />
-
       <Text style={styles.heading}>Toolbar Subviews</Text>
       <SettingsPicker<SubviewSize>
         label="leading"
@@ -250,7 +250,6 @@ function ConfigScreen() {
         onValueChange={v => updateConfig('trailingSize', v)}
         items={SUBVIEW_SIZES}
       />
-
       <Text style={styles.heading}>Background Subview</Text>
       <SettingsSwitch
         label="background enabled"
@@ -263,7 +262,6 @@ function ConfigScreen() {
         onValueChange={v => updateConfig('backgroundCollapseMode', v)}
         items={COLLAPSE_MODES}
       />
-
       <Text style={styles.heading}>Pressable Settings</Text>
       <SettingsPicker<HitSlopValue>
         label="hitSlop"
@@ -277,6 +275,8 @@ function ConfigScreen() {
         onValueChange={v => updateConfig('pressRetentionOffset', v)}
         items={PRESS_RETENTION_VALUES}
       />
+      <Text style={styles.heading}>Push screen</Text>
+      <Button title="Push screen" onPress={() => push('Home')} />
 
       <Text style={styles.heading}>ScrollView content</Text>
       <LongText size="xl" />
