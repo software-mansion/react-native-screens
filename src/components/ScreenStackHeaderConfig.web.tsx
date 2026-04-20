@@ -31,5 +31,5 @@ export const ScreenStackHeaderConfig = (
 ): React.JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderSubview: React.ComponentType<
-  ViewProps & { type?: HeaderSubviewTypes }
+  ViewProps & { type?: HeaderSubviewTypes | undefined }
 > = View;

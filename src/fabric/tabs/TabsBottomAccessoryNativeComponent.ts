@@ -8,7 +8,9 @@ type EnvironmentChangeEvent = {
 };
 
 export interface NativeProps extends ViewProps {
-  onEnvironmentChange?: CT.DirectEventHandler<EnvironmentChangeEvent>;
+  onEnvironmentChange?:
+    | CT.DirectEventHandler<EnvironmentChangeEvent>
+    | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsBottomAccessory', {
