@@ -75,12 +75,10 @@ internal class StackHeaderCoordinatorLayout(
 
     private fun handleHeaderConfigAttach(config: StackHeaderConfigProviding?) {
         // Disconnect old config to prevent spurious updates from a detached config
-        currentConfig?.onConfigChangeListener = null
+        currentConfig?.setOnConfigChangeListener(null)
         currentConfig = config
 
-        if (config != null) {
-            config.onConfigChangeListener = WeakReference(onHeaderConfigChange)
-        }
+        config?.setOnConfigChangeListener(onHeaderConfigChange)
 
         // We run this even if config is null to properly remove the header if config
         // is removed in runtime.

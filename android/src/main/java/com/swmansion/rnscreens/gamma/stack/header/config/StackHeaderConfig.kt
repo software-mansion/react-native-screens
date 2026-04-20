@@ -52,8 +52,11 @@ class StackHeaderConfig(
             contentOffsetY = contentOffsetY,
         )
     }
+    private var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
 
-    override var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
+    override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener?) {
+        onConfigChangeListener = listener?.let { WeakReference(it) }
+    }
 
     internal fun notifyConfigChanged() {
         onConfigChangeListener?.get()?.onHeaderConfigChange(this)
