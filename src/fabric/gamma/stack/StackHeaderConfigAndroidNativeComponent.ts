@@ -6,7 +6,7 @@ import { codegenNativeComponent } from 'react-native';
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
 export interface NativeProps extends ViewProps {
-  title?: string;
+  title?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
 

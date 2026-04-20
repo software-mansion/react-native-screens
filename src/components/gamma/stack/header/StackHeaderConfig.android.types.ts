@@ -11,14 +11,14 @@ export interface StackHeaderToolbarSubviewAndroid {
 }
 
 export interface StackHeaderBackgroundSubviewAndroid {
-  collapseMode?: StackHeaderSubviewCollapseModeAndroid;
+  collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
   Component: ReactNode;
 }
 
 export interface StackHeaderConfigPropsAndroid {
-  type?: StackHeaderTypeAndroid;
-  backgroundSubview?: StackHeaderBackgroundSubviewAndroid;
-  leadingSubview?: StackHeaderToolbarSubviewAndroid;
-  centerSubview?: StackHeaderToolbarSubviewAndroid;
-  trailingSubview?: StackHeaderToolbarSubviewAndroid;
+  type?: StackHeaderTypeAndroid | undefined;
+  backgroundSubview?: StackHeaderBackgroundSubviewAndroid | undefined;
+  leadingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  centerSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
 }

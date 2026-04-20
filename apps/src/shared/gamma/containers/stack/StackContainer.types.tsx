@@ -10,7 +10,7 @@ export type StackRouteOptions = Omit<
   StackScreenProps,
   'children' | 'activityMode' | 'screenKey'
 > & {
-  headerConfig?: StackHeaderConfigProps;
+  headerConfig?: StackHeaderConfigProps | undefined;
 };
 
 /**
@@ -25,7 +25,7 @@ export type StackRouteConfig = {
 export type StackRoute = StackRouteConfig & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
-  isMarkedForDismissal: Boolean, // whether this route is during or after dismissal process
+  isMarkedForDismissal: Boolean; // whether this route is during or after dismissal process
 };
 
 /// StackContainer props

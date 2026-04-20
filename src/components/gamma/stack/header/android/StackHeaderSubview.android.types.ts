@@ -9,8 +9,8 @@ export type StackHeaderSubviewTypeAndroid =
 export type StackHeaderSubviewCollapseModeAndroid = 'off' | 'parallax';
 
 export type StackHeaderSubviewProps = {
-  children?: ViewProps['children'];
+  children?: ViewProps['children'] | undefined;
 
-  type?: StackHeaderSubviewTypeAndroid;
-  collapseMode?: StackHeaderSubviewCollapseModeAndroid;
+  type?: StackHeaderSubviewTypeAndroid | undefined;
+  collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
 };

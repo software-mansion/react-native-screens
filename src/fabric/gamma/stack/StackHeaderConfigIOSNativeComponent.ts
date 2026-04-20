@@ -4,7 +4,7 @@ import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 export interface NativeProps extends ViewProps {
-  title?: string;
+  title?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
 
