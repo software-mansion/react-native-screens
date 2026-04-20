@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Other: Ongoing research.
+Yes: Partially automated. The E2E test covers most steps for iPhone. Verification of the "More" tab selection in the tab bar was omitted due to Detox limitations.
 
 ## Prerequisites
 

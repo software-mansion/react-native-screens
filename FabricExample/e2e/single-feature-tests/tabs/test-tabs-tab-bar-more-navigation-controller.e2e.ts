@@ -84,4 +84,15 @@ describe('Tab Bar Hidden', () => {
     await element(by.label('2. onTabSelected: "Sixth"')).tap(); //After fix of issue #1140 this step should be deleted
     await element(by.label('1. onTabSelected: "Sixth"')).tap();
   });
+
+  it('repeated More tab selection', async () => {
+    await element(by.label('More')).atIndex(0).tap();
+    await element(by.label('More')).atIndex(0).tap();
+    await expect(element(by.label('1. onMoreTabSelected'))).toBeVisible();
+    await element(by.label('1. onMoreTabSelected')).tap();
+    await expect(element(by.label('Fifth'))).toBeVisible();
+    await expect(element(by.label('Sixth'))).toBeVisible();
+    await element(by.label('More')).atIndex(0).tap();
+    await expect(element(by.label('1. onMoreTabSelected'))).not.toBeVisible();
+  });
 });
