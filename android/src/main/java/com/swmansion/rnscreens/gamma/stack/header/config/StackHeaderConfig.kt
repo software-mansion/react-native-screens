@@ -52,6 +52,7 @@ class StackHeaderConfig(
             contentOffsetY = contentOffsetY,
         )
     }
+
     private var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
 
     override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener?) {
