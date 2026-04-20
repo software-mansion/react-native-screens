@@ -24,7 +24,12 @@ function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
-        <ScenarioButton key={key} title={scenarioGroup.name} route={key} />
+        <ScenarioButton
+          key={key}
+          title={scenarioGroup.name}
+          route={key}
+          details={scenarioGroup.details}
+        />
       ))}
     </ScrollView>
   );
