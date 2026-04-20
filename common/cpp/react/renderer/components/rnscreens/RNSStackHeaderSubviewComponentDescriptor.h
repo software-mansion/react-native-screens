@@ -7,6 +7,8 @@
 namespace facebook::react {
 
 class RNSStackHeaderSubviewComponentDescriptor final
-    : public ConcreteComponentDescriptor<RNSStackHeaderSubviewShadowNode> {};
+    : public ConcreteComponentDescriptor<RNSStackHeaderSubviewShadowNode> {
+  using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
+};
 
 } // namespace facebook::react
