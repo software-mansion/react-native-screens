@@ -89,22 +89,32 @@ Other: ongoing research.
 
 - [ ] Expected: Label updates to `preventNativeSelection: true`.
 
-13. Tap **Select First**, then tap **More** in the tab bar
+13. Tap **Select Sixth**, then tap **Toggle preventNativeSelection**.
 
-- [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list is displayed.
+- [ ] Expected: Label updates to `preventNativeSelection: true`.
 
-14. Tap **Fifth** in the More list.
+14. Tap **Select First**, then tap **More** in the tab bar
+
+- [ ] Expected: Navigation to **Sixth** is blocked. Toast appears with `onTabSelectionPrevented: Sixth`. The More list is displayed.
+
+15. Tap **Fifth** in the More list.
 
 - [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list remains displayed.
 
-15.  Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap **Toggle preventNativeSelection** to disable it.
+16. Tap **Fifth** in the More list.
+
+- [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list remains displayed.
+
+17.  Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap **Toggle preventNativeSelection** to disable it.
 
 - [ ] Expected: Fifth tab label shows `preventNativeSelection: false`.
 
-16.  Navigate away, then tap **More**.
+18.  Navigate away, then tap **More**.
 
 - [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
 
-17. Tap **More** again and tap **Fifth** from list.
+19. Tap **More** again and tap **Fifth** from list.
 
 - [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
+
+### iPad only — More navigation controller
