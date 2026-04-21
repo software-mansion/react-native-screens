@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Scenario } from '../../../shared/helpers';
+import type { ScenarioDescription } from '../../../shared/helpers';
+import { createScenario } from '../../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   type TabRouteConfig,
@@ -8,18 +9,15 @@ import {
   TabsContainerWithHostConfigContext,
 } from '../../../../shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
-import { ToastProvider, useToast } from '../../../../shared';
+import { ToastProvider, useToast } from '../../../../shared/';
 import { Colors } from '@apps/shared/styling';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Prevent native selection',
   key: 'test-tabs-prevent-native-selection',
   details: 'Test preventNativeSelection prop on TabsScreen',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 function ContentView() {
   const nav = useTabsNavigationContext();
@@ -62,37 +60,46 @@ function TabsNavigationButtons() {
     </View>
   );
 }
+const ROUTE_OPTIONS = {
+  ...DEFAULT_TAB_ROUTE_OPTIONS,
+  android: {
+    ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+    standardAppearance: {
+      tabBarItemLabelVisibilityMode: 'labeled' as const,
+    },
+  },
+};
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
+    options: { ...ROUTE_OPTIONS, title: 'First' },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
+    options: { ...ROUTE_OPTIONS, title: 'Second' },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
+    options: { ...ROUTE_OPTIONS, title: 'Third' },
   },
   {
     name: 'Fourth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fourth' },
   },
   {
     name: 'Fifth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fifth' },
   },
   {
     name: 'Sixth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
+    options: { ...ROUTE_OPTIONS, title: 'Sixth' },
   },
 ];
 
@@ -121,3 +128,5 @@ function AppContents() {
     />
   );
 }
+
+export default createScenario(App, scenarioDescription);
