@@ -167,7 +167,7 @@ export interface TabsHostPropsBase {
   rejectStaleNavStateUpdates?: boolean | undefined;
 
   // General
-  children?: ViewProps['children'] | undefined;
+  children: NonNullable<ViewProps['children']>;
   /**
    * @summary Hides the tab bar.
    *
