@@ -95,6 +95,10 @@ internal class SheetAnimationCoordinator(
         if (isSheetAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
             screen.layout(screen.left, screen.bottom - clampedNewHeight, screen.right, screen.bottom)
+            // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+            // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+            // to its old position when the user starts a gesture.
+            screen.parent.requestLayout()
             return
         }
 
