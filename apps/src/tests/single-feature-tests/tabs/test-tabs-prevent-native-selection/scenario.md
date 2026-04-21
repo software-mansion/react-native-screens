@@ -2,18 +2,24 @@
 
 ## Details
 
-**Description:** Verifies the `preventNativeSelection` prop on `TabsScreen`, which blocks the native tab selection gesture for a given tab. When enabled, tapping the tab in the tab bar should not switch to it, and the `onTabSelectionPrevented` callback should fire instead, delivering the key of the blocked tab. The test validates that the prop can be toggled at runtime, that the callback is called correctly, and that programmatic navigation via `selectTab` is not affected by the prop.
+**Description:** Verifies the `preventNativeSelection` prop on `TabsScreen`, which blocks the native tab selection gesture for a given tab. When enabled, tapping the tab in the tab bar — or selecting it from the "More" list on iOS — will be blocked. The `TabsHost` fires an `onTabSelectionPrevented` event with the key of the prevented screen, allowing JS to handle the attempt (e.g. show a toast or dialog). The test validates that the prop can be toggled at runtime, that the callback is called correctly, that programmatic navigation via `selectTab` is not affected, and that the "More" navigation controller on iOS is also subject to prevention.
 
-**OS test creation version:** iOS: 18.6, Android: 16.0 (Baklava).
+**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0 (Baklava).
 
 ## E2E test
 
-No: The test requires verifying that a native tap gesture on a tab bar item is intercepted and blocked. Detox cannot reliably distinguish between a blocked tap and a successful tab switch at the native level, nor can it inspect toast messages tied to native callbacks.
+Other: ongoing research.
 
 ## Prerequisites
 
 - iOS device or simulator
 - Android emulator
+
+## Note
+
+- On iOS with 6 tabs, the tab bar shows only the first 4 tabs plus a **More** item. The **Fifth** and **Sixth** tabs are accessible via the More list.
+- On Android all 6 tabs are visible in the tab bar directly.
+- A toast message `onTabSelectionPrevented: <key>` appears whenever a native selection is blocked.
 
 ## Steps
 
@@ -21,7 +27,7 @@ No: The test requires verifying that a native tap gesture on a tab bar item is i
 
 1. Launch the app and navigate to **Prevent native selection**.
 
-- [ ] Expected: Six tabs are shown. The first tab is selected. Each tab displays its name and `preventNativeSelection: false`.
+- [ ] Expected: On Android — six tabs visible in the tab bar. On iOS — four tabs and a **More** item visible. The first tab is selected. Each tab displays its name and `preventNativeSelection: false`.
 
 ---
 
@@ -31,17 +37,17 @@ No: The test requires verifying that a native tap gesture on a tab bar item is i
 
 - [ ] Expected: The label updates to `preventNativeSelection: true`.
 
-3. Tap the **First** tab item in the tab bar.
+3. Tap the **Second** tab item in the tab bar.
 
-- [ ] Expected: The tab does not change. A toast appears with the message `onTabSelectionPrevented: First`.
+- [ ] Expected: **Second** tab is selected normally. `preventNativeSelection` is `false` on Second.
 
-4. Tap **Select Second** button (programmatic navigation).
+4. Tap the **First** tab item in the tab bar.
 
-- [ ] Expected: Navigation switches to the **Second** tab normally — programmatic navigation is not blocked by `preventNativeSelection`.
+- [ ] Expected: The tab does not change. A toast appears with `onTabSelectionPrevented: First`.
 
-5. Tap the **First** tab item in the tab bar to navigate back.
+5. Tap **Select First** button (programmatic navigation).
 
-- [ ] Expected: Navigation switches to the **First** tab normally — `preventNativeSelection` is only set on the current route's options, and does not block navigation to it from another tab.
+- [ ] Expected: Navigation switches to the **First** tab normally — programmatic navigation is not blocked by `preventNativeSelection`.
 
 ---
 
@@ -51,7 +57,7 @@ No: The test requires verifying that a native tap gesture on a tab bar item is i
 
 - [ ] Expected: The label updates back to `preventNativeSelection: false`.
 
-7. Tap the **First** tab item in the tab bar (or navigate away and tap back).
+7. Navigate to a different tab and then tap the **First** tab item in the tab bar.
 
 - [ ] Expected: Tab switches normally. No toast appears.
 
@@ -70,3 +76,35 @@ No: The test requires verifying that a native tap gesture on a tab bar item is i
 10. Navigate to the **First** tab and confirm its `preventNativeSelection` is still `false`.
 
 - [ ] Expected: First tab label shows `preventNativeSelection: false`. Tapping it from another tab works normally.
+
+---
+
+### iOS only — More navigation controller
+
+11. Navigate to the **Fifth** tab via the **Select Fifth** button (programmatic).
+
+- [ ] Expected: **Fifth** tab is displayed normally.
+
+12. Tap **Toggle preventNativeSelection** on the **Fifth** tab.
+
+- [ ] Expected: Label updates to `preventNativeSelection: true`.
+
+13. Tap **Select First**, then tap **More** in the tab bar
+
+- [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list is displayed.
+
+14. Tap **Fifth** in the More list.
+
+- [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list remains displayed.
+
+15.  Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap **Toggle preventNativeSelection** to disable it.
+
+- [ ] Expected: Fifth tab label shows `preventNativeSelection: false`.
+
+16.  Navigate away, then tap **More**.
+
+- [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
+
+17. Tap **More** again and tap **Fifth** from list.
+
+- [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
