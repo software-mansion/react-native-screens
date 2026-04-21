@@ -65,7 +65,7 @@ internal class SheetAnimationCoordinator(private val screen: Screen) {
      * animation - this is the fix for the race condition between the slide-in
      * ValueAnimator and externally triggered layout pass (e.g. applying padding from SAV insets).
      */
-    internal fun onContentHeightChanged(
+    internal fun updateSheetContentHeightWithAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,

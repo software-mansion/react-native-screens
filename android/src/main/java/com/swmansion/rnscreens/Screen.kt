@@ -159,7 +159,7 @@ class Screen(
                 if (isInitial) {
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetDefaultResizeAnimationEnabled) {
-                    sheetAnimationCoordinator.onContentHeightChanged(sheetBehavior, oldHeight, height)
+                    sheetAnimationCoordinator.updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
