@@ -119,6 +119,8 @@ function AppContents() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
+      // 'tabSidebar' enables the sidebar layout on iPad, allowing the iPad-specific
+      // section of the scenario to be executed.
       ios={{ tabBarControllerMode: 'tabSidebar' }}
       onTabSelectionPrevented={event => {
         const message = `onTabSelectionPrevented: ${event.nativeEvent.preventedScreenKey}`;
