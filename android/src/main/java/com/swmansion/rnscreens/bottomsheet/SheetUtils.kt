@@ -158,3 +158,19 @@ fun Screen.sheetShouldUseDimmingView(): Boolean {
  * is reattached to container.
  */
 fun View.isLaidOutOrHasCachedLayout() = this.isLaidOut || height > 0 || width > 0
+
+internal fun Screen.resolveClampedHeight(
+    targetHeight: Int,
+    currentTranslationY: Float,
+): Int {
+    val maxAvailableVerticalSpace =
+        fragment
+            ?.asScreenStackFragment()
+            ?.sheetDelegate
+            ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
+
+    // Please note that currentTranslationY is rather < 0 here.
+    // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
+    // avoid the keyboard.
+    return targetHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
+}

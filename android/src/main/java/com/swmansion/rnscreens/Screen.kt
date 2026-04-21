@@ -30,6 +30,7 @@ import com.swmansion.rnscreens.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.fitToContentsSheetHeight
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.resolveClampedHeight
 import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -183,7 +184,7 @@ class Screen(
          * This allows custom animators in RN to work, as we do not interfere with these animations
          * and we're just reacting to the sheet's content size changes.
          */
-        val clampedHeight = sheetAnimationCoordinator.resolveClampedHeight(height, this.translationY)
+        val clampedHeight = resolveClampedHeight(height, this.translationY)
         behavior.updateMetrics(clampedHeight)
         layout(this.left, this.bottom - clampedHeight, this.right, this.bottom)
 

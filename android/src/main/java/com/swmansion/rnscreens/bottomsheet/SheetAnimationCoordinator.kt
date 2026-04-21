@@ -84,8 +84,8 @@ internal class SheetAnimationCoordinator(private val screen: Screen) {
          * expanding exactly at the maxHeight, preventing from being pushed
          * off-screen or causing layout synchronization issues with the CoordinatorLayout.
          */
-        val clampedOldHeight = resolveClampedHeight(oldHeight, currentTranslationY)
-        val clampedNewHeight = resolveClampedHeight(newHeight, currentTranslationY)
+        val clampedOldHeight = screen.resolveClampedHeight(oldHeight, currentTranslationY)
+        val clampedNewHeight = screen.resolveClampedHeight(newHeight, currentTranslationY)
 
         // If isSheetAnimationInProgress is set, the entry/exit animator already owns translationY writes.
         // Silently update behavior metrics and re-layout so the ongoing slide animation
@@ -181,22 +181,6 @@ internal class SheetAnimationCoordinator(private val screen: Screen) {
         if (!isSheetAnimationInProgress) {
             updateSheetTranslationY(0f)
         }
-    }
-
-    internal fun resolveClampedHeight(
-        targetHeight: Int,
-        currentTranslationY: Float,
-    ): Int {
-        val maxAvailableVerticalSpace =
-            screen.fragment
-                ?.asScreenStackFragment()
-                ?.sheetDelegate
-                ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
-
-        // Please note that currentTranslationY is rather < 0 here.
-        // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
-        // avoid the keyboard.
-        return targetHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
     }
 
     // This function calculates the Y offset to which the FormSheet should animate
