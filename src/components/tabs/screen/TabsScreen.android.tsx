@@ -134,10 +134,10 @@ function parseIconsToNativeProps(
   icon: PlatformIconAndroid | undefined,
   selectedIcon: PlatformIconAndroid | undefined,
 ): {
-  imageIconResource?: ImageResolvedAssetSource;
-  drawableIconResourceName?: string;
-  selectedImageIconResource?: ImageResolvedAssetSource;
-  selectedDrawableIconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource | undefined;
+  drawableIconResourceName?: string | undefined;
+  selectedImageIconResource?: ImageResolvedAssetSource | undefined;
+  selectedDrawableIconResourceName?: string | undefined;
 } {
   const parsedIcon = parseIconToNativeProps(icon);
   const parsedSelectedIcon = parseIconToNativeProps(selectedIcon);
@@ -152,8 +152,8 @@ function parseIconsToNativeProps(
 }
 
 function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
-  imageIconResource?: ImageResolvedAssetSource;
-  drawableIconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource | undefined;
+  drawableIconResourceName?: string | undefined;
 } {
   if (!icon) {
     return {};

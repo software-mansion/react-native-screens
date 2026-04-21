@@ -52,3 +52,7 @@ internal fun View.findFragmentOrNull(): Fragment? =
  * before being attached to window.
  */
 internal fun View.isMeasured(): Boolean = this.measuredWidth != 0 || this.measuredHeight != 0 || this.isLaidOut
+
+internal fun View.detachFromCurrentParent() {
+    (parent as? ViewGroup)?.removeView(this)
+}

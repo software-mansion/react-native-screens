@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import StackHostNativeComponent from '../../../fabric/gamma/stack/StackHostNativeComponent';
+import StackHostNativeComponent from '../../../../fabric/gamma/stack/StackHostNativeComponent';
 import type { StackHostProps } from './StackHost.types';
 
 /**

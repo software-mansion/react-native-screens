@@ -21,6 +21,8 @@
 - (BOOL)moreNavigationController:(UINavigationController *)navigationController
         shouldPushViewController:(UIViewController *)viewController;
 
+@property (nonatomic, readwrite) BOOL shouldProgressStateOnMoreNavigationControllerPush;
+
 @end
 
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
@@ -51,6 +53,8 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     };
     const auto msgSendSuperPushViewController =
         reinterpret_cast<void (*)(struct objc_super *, SEL, UIViewController *, BOOL)>(objc_msgSendSuper);
+
+    [tabBarController setShouldProgressStateOnMoreNavigationControllerPush:YES];
     msgSendSuperPushViewController(&superInfo, _cmd, viewController, animated);
   }
 }
@@ -88,6 +92,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     _tabsHostComponentView = nil;
     _navigationState = nil;
     _pendingOperation = nil;
+    _shouldProgressStateOnMoreNavigationControllerPush = NO;
 
     // Delegate field retains weakly, no risk of cycle.
     self.delegate = self;
@@ -392,7 +397,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 #pragma mark - UINavigationControllerDelegate
 
 - (void)navigationController:(UINavigationController *)navigationController
-       didShowViewController:(UIViewController *)viewController
+      willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
@@ -402,8 +407,10 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       navigationController);
 
   // The root view controller is of different type.
-  if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+  if ([viewController isKindOfClass:RNSTabsScreenViewController.class] &&
+      [self shouldProgressStateOnMoreNavigationControllerPush]) {
     [self userDidSelectViewController:viewController];
+    [self setShouldProgressStateOnMoreNavigationControllerPush:NO];
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
