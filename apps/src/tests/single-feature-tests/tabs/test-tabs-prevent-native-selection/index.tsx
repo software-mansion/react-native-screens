@@ -65,6 +65,8 @@ const ROUTE_OPTIONS = {
   android: {
     ...DEFAULT_TAB_ROUTE_OPTIONS.android,
     standardAppearance: {
+      // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 6 tabs),
+      // making it hard to identify tabs when executing the scenario.
       tabBarItemLabelVisibilityMode: 'labeled' as const,
     },
   },
@@ -117,6 +119,7 @@ function AppContents() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
+      ios={{ tabBarControllerMode: 'tabSidebar' }}
       onTabSelectionPrevented={event => {
         const message = `onTabSelectionPrevented: ${event.nativeEvent.preventedScreenKey}`;
         console.warn(message);
