@@ -4,6 +4,10 @@ on:
     - cron: "27 23 * * *" # at 23:27 every day
   workflow_dispatch:
     inputs:
+      dry-run:
+        description: Whether to perform a dry run of the publish. Uncheck it only if you want to publish artifacts to the NPM registry.
+        type: boolean
+        default: true
       release-type:
         description: Type of release to publish.
         type: choice
@@ -21,10 +25,6 @@ on:
         type: string
         required: false
         default: ""
-      dry-run:
-        description: Whether to perform a dry run of the publish.
-        type: boolean
-        default: true
 
 jobs:
   npm-publish:
