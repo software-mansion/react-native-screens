@@ -1,23 +1,21 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
-describe('Tab Bar Hidden', () => {
-  beforeAll(async () => {
+describe('Tab Bar More Navigation Controller', () => {
+  beforeEach(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-more-navigation-controller',
     );
+    await expect(element(by.label('1. onTabSelected: "First"'))).toBeVisible();
+    await element(by.label('1. onTabSelected: "First"')).tap();
   });
 
   it('screen should be displayed with 4 tabs and More tab visible', async () => {
     await expect(
       element(by.id('test-tabs-more-navigation-controller-view')),
     ).toBeVisible();
-    const toast = element(by.label('1. onTabSelected: "First"'));
-    await expect(toast).toBeVisible();
-    await toast.tap();
-
     await expect(element(by.type('UITabBar'))).toBeVisible();
     await expect(element(by.id('First'))).toBeVisible();
     await expect(element(by.id('Second'))).toBeVisible();
@@ -39,6 +37,7 @@ describe('Tab Bar Hidden', () => {
     await expect(element(by.id('Fifth-content-view'))).toBeVisible();
     await element(by.label('1. onTabSelected: "Fifth"')).tap();
     await expect(element(by.id('Fifth'))).not.toBeVisible();
+    await expect(element(by.label('Sixth'))).not.toBeVisible();
 
     await element(by.id('Third')).tap();
     await expect(element(by.id('Third-content-view'))).toBeVisible();
@@ -46,7 +45,6 @@ describe('Tab Bar Hidden', () => {
 
     await element(by.label('More')).atIndex(0).tap();
     await expect(element(by.id('Fifth-content-view'))).toBeVisible();
-    await element(by.label('2. onTabSelected: "Fifth"')).tap(); //After fix of issue #1140 this step should be deleted
     await element(by.label('1. onTabSelected: "Fifth"')).tap();
     await expect(element(by.id('Fifth'))).not.toBeVisible();
     await expect(element(by.id('Sixth'))).not.toBeVisible();
@@ -60,6 +58,7 @@ describe('Tab Bar Hidden', () => {
     await element(by.label('Sixth')).tap();
     await expect(element(by.id('Sixth-content-view'))).toBeVisible();
     await element(by.label('1. onTabSelected: "Sixth"')).tap();
+    await expect(element(by.id('Fifth'))).not.toBeVisible();
     await expect(element(by.id('Sixth'))).not.toBeVisible();
   });
 
@@ -67,12 +66,14 @@ describe('Tab Bar Hidden', () => {
     await element(by.label('Select Fourth')).tap();
     await expect(element(by.id('Fourth-content-view'))).toBeVisible();
     await element(by.label('1. onTabSelected: "Fourth"')).tap();
+    await expect(element(by.id('Fifth'))).not.toBeVisible();
+    await expect(element(by.id('Sixth'))).not.toBeVisible();
 
     await element(by.label('Select Fifth')).tap();
     await expect(element(by.id('Fifth-content-view'))).toBeVisible();
-    await element(by.label('3. onTabSelected: "Fifth"')).tap(); //After fix of issue #1140 this step should be deleted
-    await element(by.label('2. onTabSelected: "Fifth"')).tap(); //After fix of issue #1140 this step should be deleted
     await element(by.label('1. onTabSelected: "Fifth"')).tap();
+    await expect(element(by.id('Fifth'))).not.toBeVisible();
+    await expect(element(by.id('Sixth'))).not.toBeVisible();
 
     await element(by.label('Select First')).tap();
     await expect(element(by.id('First-content-view'))).toBeVisible();
@@ -80,18 +81,19 @@ describe('Tab Bar Hidden', () => {
 
     await element(by.label('Select Sixth')).tap();
     await expect(element(by.id('Sixth-content-view'))).toBeVisible();
-    await element(by.label('3. onTabSelected: "Sixth"')).tap(); //After fix of issue #1140 this step should be deleted
-    await element(by.label('2. onTabSelected: "Sixth"')).tap(); //After fix of issue #1140 this step should be deleted
     await element(by.label('1. onTabSelected: "Sixth"')).tap();
+    await expect(element(by.id('Fifth'))).not.toBeVisible();
+    await expect(element(by.id('Sixth'))).not.toBeVisible();
   });
 
   it('repeated More tab selection', async () => {
-    await element(by.label('More')).atIndex(0).tap();
     await element(by.label('More')).atIndex(0).tap();
     await expect(element(by.label('1. onMoreTabSelected'))).toBeVisible();
     await element(by.label('1. onMoreTabSelected')).tap();
     await expect(element(by.label('Fifth'))).toBeVisible();
     await expect(element(by.label('Sixth'))).toBeVisible();
+    await element(by.label('More')).atIndex(0).tap();
+    await expect(element(by.label('1. onMoreTabSelected'))).not.toBeVisible();
     await element(by.label('More')).atIndex(0).tap();
     await expect(element(by.label('1. onMoreTabSelected'))).not.toBeVisible();
   });
