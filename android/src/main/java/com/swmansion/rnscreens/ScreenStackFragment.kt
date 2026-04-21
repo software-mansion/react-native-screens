@@ -128,9 +128,12 @@ class ScreenStackFragment :
 
     override fun setToolbarTranslucent(translucent: Boolean) {
         if (isToolbarTranslucent != translucent) {
-            val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior =
-                if (translucent) null else ScrollingViewBehavior()
+            // FormSheet is using BottomSheetBehavior which shouldn't be overwritten.
+            if (!screen.usesFormSheetPresentation()) {
+                val params = screen.layoutParams
+                (params as CoordinatorLayout.LayoutParams).behavior =
+                    if (translucent) null else ScrollingViewBehavior()
+            }
             isToolbarTranslucent = translucent
         }
     }
