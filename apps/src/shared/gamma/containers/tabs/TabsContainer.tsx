@@ -84,7 +84,27 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        return <TabsContainerItem key={route.routeKey} route={route} navMethods={navMethods} isSelected={isSelected} pendingForUpdate={pendingForUpdate} />
+        const matchingConfig = routeConfigs.find(
+          config => config.name === route.routeKey,
+        );
+        if (!matchingConfig) {
+          throw new Error(
+            `[Tabs] None config matches the "${route.routeKey}" routeKey`,
+          );
+        }
+
+        const Component = matchingConfig.Component;
+
+        return (
+          <TabsContainerItem
+            key={route.routeKey}
+            route={route}
+            navMethods={navMethods}
+            isSelected={isSelected}
+            pendingForUpdate={pendingForUpdate}
+            Component={Component}
+          />
+        );
       })}
     </Tabs.Host>
   );
