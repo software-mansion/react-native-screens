@@ -14,7 +14,9 @@ import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 
-internal class SheetAnimationCoordinator(private val screen: Screen) {
+internal class SheetAnimationCoordinator(
+    private val screen: Screen,
+) {
     private var isSheetAnimationInProgress: Boolean = false
 
     private var lastKeyboardBottomOffset: Int = 0
