@@ -127,8 +127,9 @@ function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>
   );
 
   const selectTab: SelectTabMethod = React.useCallback(
-    (routeKey: string) => {
-      dispatch({ type: 'tab-select', routeKey });
+    (routeKey: string, forceAction?: boolean) => {
+      const shouldForceAction = forceAction ?? false;
+      dispatch({ type: 'tab-select', routeKey, forceAction: shouldForceAction });
     },
     [dispatch],
   );

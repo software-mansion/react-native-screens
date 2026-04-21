@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenNativeComponent';
+import StackScreenNativeComponent from '../../../../fabric/gamma/stack/StackScreenNativeComponent';
 import { OnDismissEvent, StackScreenProps } from './StackScreen.types';
-import { useRenderDebugInfo } from '../../../private/';
+import { useRenderDebugInfo } from '../../../../private';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

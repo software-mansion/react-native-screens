@@ -55,6 +55,7 @@ export type TabsContainerState = {
 export type TabsNavigationActionSelectTab = {
   type: 'tab-select';
   routeKey: string;
+  forceAction: boolean;
 };
 
 export type TabsNavigationActionNativeSelectTab = {
@@ -100,7 +101,7 @@ export type SetTabOptionsMethod = (
   options: Partial<TabRouteOptions>,
 ) => void;
 
-export type SelectTabMethod = (routeKey: string) => void;
+export type SelectTabMethod = (routeKey: string, forceAction?: boolean) => void;
 
 /// Navigation methods (user facing)
 

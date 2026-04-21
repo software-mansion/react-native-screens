@@ -11,7 +11,9 @@ type TabsHostPlatformNativeComponentProps =
 
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+  onTabSelected?:
+    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
+    | undefined;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({

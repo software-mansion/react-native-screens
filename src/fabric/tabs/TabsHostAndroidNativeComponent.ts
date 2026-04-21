@@ -46,13 +46,17 @@ export interface NativeProps extends ViewProps {
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
-  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
-  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
-  onTabSelectionPrevented?: CT.DirectEventHandler<TabSelectionPreventedEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent> | undefined;
+  onTabSelectionRejected?:
+    | CT.DirectEventHandler<TabSelectionRejectedEvent>
+    | undefined;
+  onTabSelectionPrevented?:
+    | CT.DirectEventHandler<TabSelectionPreventedEvent>
+    | undefined;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
-  nativeContainerBackgroundColor?: ColorValue;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // Android-specific props

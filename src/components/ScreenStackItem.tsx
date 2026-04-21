@@ -33,8 +33,8 @@ type Props = Omit<
   'enabled' | 'isNativeStack' | 'hasLargeHeader'
 > & {
   screenId: string;
-  headerConfig?: ScreenStackHeaderConfigProps;
-  contentStyle?: StyleProp<ViewStyle>;
+  headerConfig?: ScreenStackHeaderConfigProps | undefined;
+  contentStyle?: StyleProp<ViewStyle> | undefined;
 };
 
 function ScreenStackItem(
@@ -261,7 +261,7 @@ function getPositioningStyle(
 
 type SplitStyleResult = {
   screenStyles: {
-    backgroundColor?: ViewStyle['backgroundColor'];
+    backgroundColor?: ViewStyle['backgroundColor'] | undefined;
   };
   contentWrapperStyles: StyleProp<ViewStyle>;
 };
