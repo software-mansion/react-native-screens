@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
-describe('Tab Bar More Navigation Controller', () => {
+describeIfiOS('Tab Bar More Navigation Controller', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
