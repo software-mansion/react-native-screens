@@ -9,7 +9,7 @@ export type StackHeaderSubviewTypeAndroid =
 export type StackHeaderSubviewCollapseModeAndroid = 'off' | 'parallax';
 
 export type StackHeaderSubviewProps = {
-  children?: ViewProps['children'] | undefined;
+  children: NonNullable<ViewProps['children']>;
 
   type?: StackHeaderSubviewTypeAndroid | undefined;
   collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;

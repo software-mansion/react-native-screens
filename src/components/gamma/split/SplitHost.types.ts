@@ -113,7 +113,7 @@ export type SplitHostCommands = {
 };
 
 export interface SplitHostProps extends ViewProps {
-  children?: React.ReactNode | undefined;
+  children: NonNullable<React.ReactNode>;
   ref?: React.Ref<SplitHostCommands> | undefined;
 
   /**
