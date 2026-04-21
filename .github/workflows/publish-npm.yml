@@ -5,7 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: Whether to perform a dry run of the publish. Uncheck it only if you want to publish artifacts to the NPM registry.
+        description: >-
+          Whether to perform a dry run of the publish.
+          Uncheck only to publish artifacts to the npm registry.
         type: boolean
         default: true
       release-type:
@@ -64,6 +66,7 @@ jobs:
           release-type: ${{ inputs.release-type }}
           version: ${{ inputs.version }}
           dry-run: ${{ inputs.dry-run }}
+          perform-git-operations: false # We do it manually in more predictive manner
 
       - name: Publish automatic nightly release
         if: ${{ github.event_name == 'schedule' }}
