@@ -12,10 +12,13 @@ export interface StackHeaderToolbarSubviewAndroid {
   /**
    * @summary The React component rendered in this toolbar slot.
    *
-   * The subview is sized by Yoga but positioned by the native layout. Each
-   * subview is placed independently — subviews do not participate in a shared
-   * flex layout and cannot influence each other's sizing.
+   * The subview is sized by React Native's layout engine but positioned by the
+   * platform native layout. Each subview is placed independently — subviews do
+   * not participate in a shared flex layout and cannot influence each other's
+   * sizing.
    *
+   *
+   * @remarks
    * Intrinsic sizing and explicit dimensions work as expected. Avoid
    * parent-relative sizing (e.g. `flex: 1`) on the root element — it will
    * produce incorrect dimensions. Flex layout within a root that has a known
@@ -36,6 +39,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * - `parallax` - the subview scrolls at a slower rate, creating a parallax
    *   effect.
    *
+   * @remarks
    * `pin` is not currently supported because the background subview is
    * stretched to match the entire `AppBarLayout`, which causes pinned content
    * to move immediately rather than staying fixed. Support for `pin` collapse
@@ -66,6 +70,7 @@ export interface StackHeaderConfigPropsAndroid {
    * - `medium` - medium app bar with collapsing title,
    * - `large` - large app bar with collapsing title.
    *
+   * @remarks
    * M3 Expressive headers aren't currently supported (there is no stable
    * `MDC-Android` version yet).
    *
