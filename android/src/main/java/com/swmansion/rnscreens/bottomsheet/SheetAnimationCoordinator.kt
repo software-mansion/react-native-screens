@@ -81,7 +81,7 @@ internal class SheetAnimationCoordinator(
          * animating translationY back to 'currentTranslationY' would attempt to render the sheet
          * larger than the screen.
          *
-         * We need to have constraint height inside the container's bounds.
+         * We need to constrain the height within the container's bounds.
          * By including this overflow to our animation, we ensure the sheet stops
          * expanding exactly at the maxHeight, preventing from being pushed
          * off-screen or causing layout synchronization issues with the CoordinatorLayout.
