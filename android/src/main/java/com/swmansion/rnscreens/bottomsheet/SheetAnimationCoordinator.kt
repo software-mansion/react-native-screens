@@ -13,10 +13,16 @@ import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
+import java.lang.ref.WeakReference
 
 internal class SheetAnimationCoordinator(
-    private val screen: Screen,
+    screen: Screen,
 ) {
+    private val screenRef = WeakReference(screen)
+    private val screen: Screen get() =
+        checkNotNull(screenRef.get()) {
+            "[RNScreens] Screen has been destroyed and shouldn't be the subject of any animations"
+        }
     private var isSheetAnimationInProgress: Boolean = false
 
     private var lastKeyboardBottomOffset: Int = 0
