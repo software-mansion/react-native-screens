@@ -152,8 +152,10 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagScroll?: boolean | undefined;
   /**
-   * @summary When enabled, any upward scroll (even mid-content) brings the
-   * header back into view. Requires `scrollFlagScroll`.
+   * @summary When enabled, the header re-expands as soon as the user scrolls
+   * back toward the top of the content, regardless of the ScrollView's current
+   * scroll position. Without this flag, the header only begins expanding once
+   * the list has reached the top of its content. Requires `scrollFlagScroll`.
    *
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
@@ -162,33 +164,44 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagEnterAlways?: boolean | undefined;
   /**
-   * @summary When combined with `scrollFlagEnterAlways`, an upward scroll
-   * first reveals only the collapsed portion of the header before fully
-   * expanding it once the content reaches its top. Requires
+   * @summary Modifies `scrollFlagEnterAlways` so that the initial re-entry
+   * stops at the header's collapsed height (the toolbar); the remainder
+   * expands only after the ScrollView reaches the top of its content. Requires
    * `scrollFlagEnterAlways`.
    *
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
    *
+   * @remarks
+   * This flag does not have any effect for `small` header.
+   *
    * @platform android
    */
   scrollFlagEnterAlwaysCollapsed?: boolean | undefined;
   /**
-   * @summary When enabled, the header scrolls off completely — unless top
-   * inset padding (status bar / display cutout) is applied, in which case
-   * that inset region remains visible. Requires `scrollFlagScroll`.
+   * @summary When enabled, the header collapses only until its minimum height
+   * (the toolbar) remains pinned at the top. Without this flag, the entire
+   * header scrolls off the screen. Requires `scrollFlagScroll`.
    *
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
    *
+   * @remarks
+   * Setting this flag for `small` header is equivalent to disabling
+   * `scrollFlagScroll`.
+   *
+   * Even when this flag is disabled, a strip the height of the system top
+   * inset (status bar and display cutout) remains visible at the top.
+   *
    * @platform android
    */
   scrollFlagExitUntilCollapsed?: boolean | undefined;
   /**
-   * @summary When enabled, after a scroll gesture ends the header snaps to
-   * either fully expanded or fully collapsed instead of resting partway.
-   * Requires `scrollFlagScroll`.
+   * @summary When enabled, the header snaps to its nearest edge (fully
+   * expanded, or fully collapsed as defined by `scrollFlagExitUntilCollapsed`)
+   * after a scroll gesture ends, instead of resting partway. Requires
+   * `scrollFlagScroll`.
    *
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
