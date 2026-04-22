@@ -100,7 +100,7 @@ internal class SheetAnimationCoordinator(
         // lands at the correct final geometry, without firing a competing animation.
         if (isSheetAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
-            screen.layout(screen.left, screen.bottom - clampedNewHeight, screen.right, screen.bottom)
+            screen.layoutBottomSheetAtHeight(clampedNewHeight)
             // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
             // internal offsets with the new maxHeight. This prevents the sheet from snapping back
             // to its old position when the user starts a gesture.
@@ -134,7 +134,7 @@ internal class SheetAnimationCoordinator(
                 .translationY(currentTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(clampedNewHeight)
-                    screen.layout(screen.left, screen.bottom - clampedNewHeight, screen.right, screen.bottom)
+                    screen.layoutBottomSheetAtHeight(clampedNewHeight)
                 }.withEndAction {
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
@@ -170,7 +170,7 @@ internal class SheetAnimationCoordinator(
                 .withStartAction {
                     behavior.updateMetrics(clampedNewHeight)
                 }.withEndAction {
-                    screen.layout(screen.left, screen.bottom - clampedNewHeight, screen.right, screen.bottom)
+                    screen.layoutBottomSheetAtHeight(clampedNewHeight)
                     screen.translationY = currentTranslationY
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
@@ -267,6 +267,8 @@ internal class SheetAnimationCoordinator(
                 }
             }
         }
+
+    private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
 
     private fun attachCommonListeners(
         animatorSet: AnimatorSet,
