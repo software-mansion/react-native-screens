@@ -12,8 +12,13 @@ async function getElementAttributes(
   return attrs as ElementAttributes;
 }
 
-async function scrollTo(id: string) {
-  await waitFor(element(by.id(id)))
+async function scrollTo(selector: { id: string } | { text: string }) {
+  const el =
+    'text' in selector
+      ? element(by.text(selector.text))
+      : element(by.id(selector.id));
+
+  await waitFor(el)
     .toBeVisible()
     .whileElement(by.id('tab-bar-layout-direction-scrollview'))
     .scroll(100, 'down');
@@ -38,7 +43,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
       'allowRTL: true',
     );
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -60,12 +65,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
 
   //rtl
   it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await waitFor(element(by.text('rtl')))
-      .toBeVisible()
-      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
-      .scroll(100, 'down');
+    await scrollTo({ text: 'rtl' });
+
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -79,9 +82,9 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
 
   //ltr
   it('remains in LTR order when direction is explicitly set to ltr', async () => {
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo('ltr');
+    await scrollTo({ text: 'ltr' });
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -151,7 +154,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
       'allowRTL: true',
     );
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -173,9 +176,9 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   //rtl
   it('remains in RTL order when direction is explicitly set to rtl', async () => {
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo('rtl');
+    await scrollTo({ text: 'rtl' });
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -189,12 +192,9 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   //ltr
   it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
-    await scrollTo('tab-bar-layout-direction-picker');
+    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await waitFor(element(by.text('ltr')))
-      .toBeVisible()
-      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
-      .scroll(100, 'down');
+    await scrollTo({ text: 'ltr' });
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
