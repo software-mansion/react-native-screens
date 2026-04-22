@@ -443,11 +443,9 @@ class SheetDelegate(
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) =
         screen.sheetAnimationCoordinator.handleKeyboardInsetsProgress(insets)
 
-    internal fun notifyKeyboardAnimationStart() =
-        screen.sheetAnimationCoordinator.notifyKeyboardAnimationStart()
+    internal fun notifyKeyboardAnimationStart() = screen.sheetAnimationCoordinator.notifyKeyboardAnimationStart()
 
-    internal fun notifyKeyboardAnimationEnd() =
-        screen.sheetAnimationCoordinator.notifyKeyboardAnimationEnd()
+    internal fun notifyKeyboardAnimationEnd() = screen.sheetAnimationCoordinator.notifyKeyboardAnimationEnd()
 
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(
