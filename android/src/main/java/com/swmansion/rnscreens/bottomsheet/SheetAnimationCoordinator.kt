@@ -23,6 +23,7 @@ internal class SheetAnimationCoordinator(
         checkNotNull(screenRef.get()) {
             "[RNScreens] Screen has been destroyed and shouldn't be the subject of any animations"
         }
+    private var isKeyboardAnimationInProgress: Boolean = false
     private var isSheetAnimationInProgress: Boolean = false
     private var currentContentAnimator: ValueAnimator? = null
 
@@ -99,7 +100,7 @@ internal class SheetAnimationCoordinator(
         // If isSheetAnimationInProgress is set, the entry/exit animator already owns translationY writes.
         // Silently update behavior metrics and re-layout so the ongoing slide animation
         // lands at the correct final geometry, without firing a competing animation.
-        if (isSheetAnimationInProgress) {
+        if (isSheetAnimationInProgress || isKeyboardAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
             screen.layoutBottomSheetAtHeight(clampedNewHeight)
             screen.finalizeBottomSheetLayoutUpdates()
@@ -205,6 +206,14 @@ internal class SheetAnimationCoordinator(
                 addUpdateListener { screen.translationY = it.animatedValue as Float }
                 start()
             }
+    }
+
+    internal fun notifyKeyboardAnimationStart() {
+        isKeyboardAnimationInProgress = true
+    }
+
+    internal fun notifyKeyboardAnimationEnd() {
+        isKeyboardAnimationInProgress = false
     }
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {

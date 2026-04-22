@@ -276,6 +276,12 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        super.onPrepare(animation)
+
+                        sheetDelegate.notifyKeyboardAnimationStart()
+                    }
+
                     // Replace InsetsAnimationCallback created by BottomSheetBehavior
                     // to avoid interfering with custom animations.
                     // See: https://github.com/software-mansion/react-native-screens/pull/2909
@@ -293,6 +299,8 @@ class ScreenStackFragment :
 
                     override fun onEnd(animation: WindowInsetsAnimationCompat) {
                         super.onEnd(animation)
+
+                        sheetDelegate.notifyKeyboardAnimationEnd()
 
                         screen.onSheetYTranslationChanged()
                     }
