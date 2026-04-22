@@ -56,6 +56,14 @@ jobs:
           cache: "yarn"
           registry-url: https://registry.npmjs.org/
 
+      # Guards against publishing a stable / beta / rc release from an
+      # inappropriate target. Intentionally skipped for nightly releases,
+      # which are published from main by design.
+      - name: Validate publish target
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' }}
+        shell: bash
+        run: ./scripts/validate-publish-target.sh "${{ github.ref_name }}" "${{ inputs.release-type }}"
+
       - name: Publish manual release
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
