@@ -122,7 +122,7 @@ internal class SheetAnimationCoordinator(
      * content height, then we're forcing a layout pass. This ensures the view calculates
      * with its new bounds when the animation starts.
      *
-     * In the animation, we're translating the Screen back to it's (newly calculated) origin
+     * In the animation, we're translating the Screen back to its (newly calculated) origin
      * position, providing an impression that FormSheet expands. It already has the final size,
      * but some content is not yet visible on the screen.
      *
