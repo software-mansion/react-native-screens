@@ -349,10 +349,12 @@ internal class StackHeaderCoordinator(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigProviding,
     ) {
-        warnInvalidScrollFlagCombinations(config)
         val desired = computeScrollFlags(config)
+
         if (desired == lastScrollFlags) return
         lastScrollFlags = desired
+
+        warnInvalidScrollFlagCombinations(config)
 
         val target: View =
             when (appBar) {

@@ -191,7 +191,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Setting this flag for `small` header is equivalent to disabling
    * `scrollFlagScroll`.
    *
-   * Even when this flag is disabled, a strip the height of the system top
+   * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
    *
    * @platform android
