@@ -1,12 +1,17 @@
 import React from 'react';
-import { StackScreenProps } from 'react-native-screens/experimental';
+import {
+  StackScreenProps,
+  StackHeaderConfigProps,
+} from 'react-native-screens/experimental';
 
 /// Route definition
 
 export type StackRouteOptions = Omit<
   StackScreenProps,
   'children' | 'activityMode' | 'screenKey'
->;
+> & {
+  headerConfig?: StackHeaderConfigProps | undefined;
+};
 
 /**
  * Blueprint for a route.
@@ -20,7 +25,7 @@ export type StackRouteConfig = {
 export type StackRoute = StackRouteConfig & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
-  isMarkedForDismissal: Boolean, // whether this route is during or after dismissal process
+  isMarkedForDismissal: Boolean; // whether this route is during or after dismissal process
 };
 
 /// StackContainer props

@@ -64,6 +64,8 @@ export const compatibilityFlags = {
    * * https://github.com/software-mansion/react-native-screens/pull/3794
    * * https://github.com/software-mansion/react-native-screens/pull/3863
    * * https://github.com/software-mansion/react-native-screens/pull/3875
+   * * https://github.com/software-mansion/react-native-screens/pull/3895
+   * * https://github.com/software-mansion/react-native-screens/pull/3918
    */
   usesStableTabsApi: true,
 } as const;

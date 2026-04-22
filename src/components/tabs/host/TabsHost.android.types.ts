@@ -14,5 +14,5 @@ export interface TabsHostPropsAndroid {
    * @platform android
    * @supported API 30 or higher
    */
-  tabBarRespectsIMEInsets?: boolean;
+  tabBarRespectsIMEInsets?: boolean | undefined;
 }

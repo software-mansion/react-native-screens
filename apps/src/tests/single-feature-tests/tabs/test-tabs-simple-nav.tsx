@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   TabsContainer,
@@ -9,15 +10,12 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Test simple navigation',
   key: 'test-tabs-simple-nav',
   details: 'Test basic navigation scenarios',
   platforms: ['android', 'ios'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 function ContentView() {
   const { routeKey } = useTabsNavigationContext();
@@ -64,3 +62,5 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 export function App() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
+
+export default createScenario(App, scenarioDescription);

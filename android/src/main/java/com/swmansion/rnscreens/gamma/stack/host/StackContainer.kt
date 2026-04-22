@@ -156,7 +156,7 @@ internal class StackContainer(
         }
 
         pendingPushOperations.forEach { operation ->
-            val newFragment = createFragmentForScreen(operation.screen)
+            val newFragment = createFragmentForScreen(operation.screen, canNavigateBack = stackModel.isNotEmpty())
 
             fragmentOps.add(
                 AddAndSetAsPrimaryOp(
@@ -193,8 +193,11 @@ internal class StackContainer(
         }
     }
 
-    private fun createFragmentForScreen(screen: StackScreen): StackScreenFragment =
-        StackScreenFragment(screen).also {
+    private fun createFragmentForScreen(
+        screen: StackScreen,
+        canNavigateBack: Boolean,
+    ): StackScreenFragment =
+        StackScreenFragment(screen, canNavigateBack).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 

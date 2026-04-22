@@ -23,33 +23,35 @@ type GenericEmptyEvent = Readonly<{}>;
 export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
 
 export type ItemStateAppearance = {
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ProcessedColorValue | null;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: CT.Float;
-    vertical?: CT.Float;
-  };
-  tabBarItemIconColor?: ProcessedColorValue | null;
-  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
+  tabBarItemTitleFontFamily?: string | undefined;
+  tabBarItemTitleFontSize?: CT.Float | undefined;
+  tabBarItemTitleFontWeight?: string | undefined;
+  tabBarItemTitleFontStyle?: string | undefined;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
+  tabBarItemTitlePositionAdjustment?:
+    | {
+        horizontal?: CT.Float | undefined;
+        vertical?: CT.Float | undefined;
+      }
+    | undefined;
+  tabBarItemIconColor?: ProcessedColorValue | null | undefined;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null | undefined;
 };
 
 export type ItemAppearance = {
-  normal?: ItemStateAppearance;
-  selected?: ItemStateAppearance;
-  focused?: ItemStateAppearance;
-  disabled?: ItemStateAppearance;
+  normal?: ItemStateAppearance | undefined;
+  selected?: ItemStateAppearance | undefined;
+  focused?: ItemStateAppearance | undefined;
+  disabled?: ItemStateAppearance | undefined;
 };
 
 export type Appearance = {
-  stacked?: ItemAppearance;
-  inline?: ItemAppearance;
-  compactInline?: ItemAppearance;
+  stacked?: ItemAppearance | undefined;
+  inline?: ItemAppearance | undefined;
+  compactInline?: ItemAppearance | undefined;
 
-  tabBarBackgroundColor?: ProcessedColorValue | null;
-  tabBarShadowColor?: ProcessedColorValue | null;
+  tabBarBackgroundColor?: ProcessedColorValue | null | undefined;
+  tabBarShadowColor?: ProcessedColorValue | null | undefined;
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
 };
 
@@ -103,18 +105,16 @@ type SystemItem =
   | 'search'
   | 'topRated';
 
-type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
-
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
   // Events
-  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 
   // Control
   screenKey: string;
@@ -122,20 +122,24 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
-  badgeValue?: string;
+  badgeValue?: string | undefined;
   orientation?: CT.WithDefault<Orientation, 'inherit'>;
 
   // Accessibility
-  tabBarItemTestID?: string;
-  tabBarItemAccessibilityLabel?: string;
+  tabBarItemTestID?: string | undefined;
+  tabBarItemAccessibilityLabel?: string | undefined;
 
   // Effects
-  specialEffects?: {
-    repeatedTabSelection?: {
-      popToRoot?: CT.WithDefault<boolean, true>;
-      scrollToTop?: CT.WithDefault<boolean, true>;
-    };
-  };
+  specialEffects?:
+    | {
+        repeatedTabSelection?:
+          | {
+              popToRoot?: CT.WithDefault<boolean, true>;
+              scrollToTop?: CT.WithDefault<boolean, true>;
+            }
+          | undefined;
+      }
+    | undefined;
 
   // iOS-specific props
   // Tab config
@@ -143,26 +147,21 @@ export interface NativeProps extends ViewProps {
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
 
   // Appearance
-  standardAppearance?: UnsafeMixed<Appearance>;
-  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
+  standardAppearance?: UnsafeMixed<Appearance> | undefined;
+  scrollEdgeAppearance?: UnsafeMixed<Appearance> | undefined;
 
   // Icons
   iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
-  iconImageSource?: ImageSource;
-  iconResourceName?: string;
-  selectedIconImageSource?: ImageSource;
-  selectedIconResourceName?: string;
+  iconImageSource?: ImageSource | undefined;
+  iconResourceName?: string | undefined;
+  selectedIconImageSource?: ImageSource | undefined;
+  selectedIconResourceName?: string | undefined;
 
   // ScrollView interactions
   overrideScrollViewContentInsetAdjustmentBehavior?: CT.WithDefault<
     boolean,
     true
   >;
-  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-
   // Experimental
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }

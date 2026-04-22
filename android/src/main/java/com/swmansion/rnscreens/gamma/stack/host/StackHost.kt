@@ -24,6 +24,7 @@ class StackHost(
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
+    private var isLayoutEnqueued = false
 
     init {
         addView(container)
@@ -111,6 +112,32 @@ class StackHost(
         b: Int,
     ) {
         container.layout(l, t, r, b)
+    }
+
+    // ReactViewGroup overrides requestLayout to a no-op therefore the request might not be
+    // propagated to the root view. That's why we need to manually force measure and layout pass.
+    override fun requestLayout() {
+        super.requestLayout()
+        refreshLayout()
+    }
+
+    private fun refreshLayout() {
+        if (!isLayoutEnqueued) {
+            isLayoutEnqueued = true
+            post {
+                isLayoutEnqueued = false
+                forceSubtreeMeasureAndLayoutPass()
+            }
+        }
+    }
+
+    private fun forceSubtreeMeasureAndLayoutPass() {
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+        )
+
+        layout(left, top, right, bottom)
     }
 
     override fun layoutContainerNow() {

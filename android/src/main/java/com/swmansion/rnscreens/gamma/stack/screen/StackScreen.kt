@@ -7,6 +7,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -50,16 +53,38 @@ class StackScreen(
             field = value
         }
 
-    private val shadowStateProxy = StackScreenShadowStateProxy()
+    private val shadowStateProxy = ShadowStateProxy()
 
-    var stateWrapper by shadowStateProxy::stateWrapper
+    internal var stateWrapper by shadowStateProxy::stateWrapper
 
     fun updateStateIfNeeded(
         x: Int? = null,
         y: Int? = null,
         width: Int? = null,
         height: Int? = null,
-    ) = shadowStateProxy.updateStateIfNeeded(x, y, width, height)
+    ) = shadowStateProxy.updateStateIfNeeded(
+        contentOffsetX = x,
+        contentOffsetY = y,
+        frameWidth = width,
+        frameHeight = height,
+    )
+
+    internal var headerConfig: StackHeaderConfig? = null
+        private set
+
+    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
+
+    internal fun attachHeaderConfig(header: StackHeaderConfig) {
+        headerConfig = header
+        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
+    }
+
+    internal fun detachHeaderConfig(header: StackHeaderConfig) {
+        if (headerConfig === header) {
+            headerConfig = null
+            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
+        }
+    }
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -95,7 +120,7 @@ class StackScreen(
         r: Int,
         b: Int,
     ) {
-        shadowStateProxy.updateStateIfNeeded(width = r - l, height = b - t)
+        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
     }
 
     override fun getAssociatedFragment(): Fragment? =

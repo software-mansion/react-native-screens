@@ -37,6 +37,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.swmansion.rnscreens.utils.RNSLog
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
 
@@ -128,9 +129,14 @@ class ScreenStackFragment :
 
     override fun setToolbarTranslucent(translucent: Boolean) {
         if (isToolbarTranslucent != translucent) {
-            val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior =
-                if (translucent) null else ScrollingViewBehavior()
+            // FormSheet is using BottomSheetBehavior which shouldn't be overwritten.
+            if (!screen.usesFormSheetPresentation()) {
+                val params = screen.layoutParams
+                (params as CoordinatorLayout.LayoutParams).behavior =
+                    if (translucent) null else ScrollingViewBehavior()
+            } else {
+                RNSLog.w(TAG, "Skipping behavior update: Cannot override BottomSheetBehavior on a FormSheet.")
+            }
             isToolbarTranslucent = translucent
         }
     }
@@ -582,5 +588,9 @@ class ScreenStackFragment :
             bottomSheetWindowInsetListenerChain = BottomSheetWindowInsetListenerChain()
         }
         return bottomSheetWindowInsetListenerChain!!
+    }
+
+    companion object {
+        private const val TAG = "ScreenStackFragment"
     }
 }

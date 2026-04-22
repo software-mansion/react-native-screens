@@ -76,7 +76,7 @@ interface NativeProps extends ViewProps {
     SplitViewDisplayModeButtonVisibility,
     'automatic'
   >;
-  columnMetrics?: ColumnMetrics;
+  columnMetrics?: ColumnMetrics | undefined;
   orientation?: CT.WithDefault<SplitViewOrientation, 'inherit'>;
   primaryBackgroundStyle?: CT.WithDefault<
     SplitViewPrimaryBackgroundStyle,
@@ -97,10 +97,12 @@ interface NativeProps extends ViewProps {
 
   // Custom events
 
-  onCollapse?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDisplayModeWillChange?: CT.DirectEventHandler<DisplayModeWillChangeEvent>;
-  onExpand?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onCollapse?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDisplayModeWillChange?:
+    | CT.DirectEventHandler<DisplayModeWillChangeEvent>
+    | undefined;
+  onExpand?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 type ComponentType = HostComponent<NativeProps>;
