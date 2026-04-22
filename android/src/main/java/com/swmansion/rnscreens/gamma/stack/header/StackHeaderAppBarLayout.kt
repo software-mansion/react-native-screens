@@ -76,7 +76,6 @@ internal sealed class StackHeaderAppBarLayout(
                         else -> error("[RNScreens] Invalid header mode.")
                     }
                 CollapsingToolbarLayout(context, null, styleAttr).apply {
-                    fitsSystemWindows = false
                     layoutParams =
                         LayoutParams(
                             MATCH_PARENT,
