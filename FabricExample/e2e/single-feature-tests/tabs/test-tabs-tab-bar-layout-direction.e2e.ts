@@ -61,6 +61,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
       .whileElement(by.id('tab-bar-layout-direction-scrollview'))
       .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
+    await waitFor(element(by.text('rtl')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -79,6 +83,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
       .whileElement(by.id('tab-bar-layout-direction-scrollview'))
       .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
+    await waitFor(element(by.text('ltr')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -178,6 +186,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
       .whileElement(by.id('tab-bar-layout-direction-scrollview'))
       .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
+    await waitFor(element(by.text('rtl')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -196,6 +208,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
       .whileElement(by.id('tab-bar-layout-direction-scrollview'))
       .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
+    await waitFor(element(by.text('ltr')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
