@@ -109,16 +109,13 @@ function parseBackButtonIconToNativeProps(
   }
 }
 
-type ScrollFlagFields = Required<
-  Pick<
-    StackHeaderConfigPropsAndroid,
-    | 'scrollFlagScroll'
-    | 'scrollFlagEnterAlways'
-    | 'scrollFlagEnterAlwaysCollapsed'
-    | 'scrollFlagExitUntilCollapsed'
-    | 'scrollFlagSnap'
-  >
->;
+type ScrollFlagFields = {
+  scrollFlagScroll: boolean;
+  scrollFlagEnterAlways: boolean;
+  scrollFlagEnterAlwaysCollapsed: boolean;
+  scrollFlagExitUntilCollapsed: boolean;
+  scrollFlagSnap: boolean;
+};
 
 const SCROLL_FLAG_DEFAULTS_BY_TYPE: Record<
   StackHeaderTypeAndroid,
@@ -149,7 +146,7 @@ const SCROLL_FLAG_DEFAULTS_BY_TYPE: Record<
 
 function resolveScrollFlags(
   type: StackHeaderTypeAndroid | undefined,
-  overrides: Partial<ScrollFlagFields>,
+  overrides: Pick<StackHeaderConfigPropsAndroid, keyof ScrollFlagFields>,
 ): ScrollFlagFields {
   const defaults = SCROLL_FLAG_DEFAULTS_BY_TYPE[type ?? 'small'];
   return {
