@@ -23,6 +23,9 @@ internal class SheetAnimationCoordinator(
         checkNotNull(screenRef.get()) {
             "[RNScreens] Screen has been destroyed and shouldn't be the subject of any animations"
         }
+    private var activeKeyboardAnimationsCount: Int = 0
+    private val isKeyboardAnimationInProgress: Boolean
+        get() = activeKeyboardAnimationsCount > 0
     private var isSheetAnimationInProgress: Boolean = false
     private var currentContentAnimator: ValueAnimator? = null
 
@@ -96,10 +99,11 @@ internal class SheetAnimationCoordinator(
         val clampedOldHeight = screen.resolveClampedHeight(oldHeight, currentTranslationY)
         val clampedNewHeight = screen.resolveClampedHeight(newHeight, currentTranslationY)
 
-        // If isSheetAnimationInProgress is set, the entry/exit animator already owns translationY writes.
-        // Silently update behavior metrics and re-layout so the ongoing slide animation
+        // If an entry/exit animation or a keyboard animation is in progress - it owns
+        // translationY writes. Then when the content size is changing, we silently
+        // update behavior metrics and re-layout so the ongoing slide animation
         // lands at the correct final geometry, without firing a competing animation.
-        if (isSheetAnimationInProgress) {
+        if (isSheetAnimationInProgress || isKeyboardAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
             screen.layoutBottomSheetAtHeight(clampedNewHeight)
             screen.finalizeBottomSheetLayoutUpdates()
@@ -205,6 +209,14 @@ internal class SheetAnimationCoordinator(
                 addUpdateListener { screen.translationY = it.animatedValue as Float }
                 start()
             }
+    }
+
+    internal fun notifyKeyboardAnimationStart() {
+        activeKeyboardAnimationsCount++
+    }
+
+    internal fun notifyKeyboardAnimationEnd() {
+        activeKeyboardAnimationsCount = maxOf(0, activeKeyboardAnimationsCount - 1)
     }
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
