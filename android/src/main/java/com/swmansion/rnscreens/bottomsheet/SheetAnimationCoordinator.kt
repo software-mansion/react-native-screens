@@ -296,6 +296,7 @@ internal class SheetAnimationCoordinator(
 
     private fun cancelCurrentContentAnimation() {
         currentContentAnimator?.removeAllListeners()
+        currentContentAnimator?.removeAllUpdateListeners()
         currentContentAnimator?.cancel()
         currentContentAnimator = null
     }
