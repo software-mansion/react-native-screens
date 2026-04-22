@@ -13,9 +13,7 @@ import com.google.android.material.appbar.AppBarLayout
  * inset clamp in AppBarLayout only fires when topInset > minimumHeight, which is rarely true
  * (typical actionBarSize ~56dp vs status bar ~24dp).
  */
-internal class StackHeaderAppBarLayoutBehavior : AppBarLayout.Behavior {
-    constructor() : super()
-
+internal class StackHeaderAppBarLayoutBehavior : AppBarLayout.Behavior() {
     override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
         child: AppBarLayout,
