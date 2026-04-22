@@ -24,6 +24,7 @@ internal class SheetAnimationCoordinator(
             "[RNScreens] Screen has been destroyed and shouldn't be the subject of any animations"
         }
     private var isSheetAnimationInProgress: Boolean = false
+    private var currentContentAnimator: ValueAnimator? = null
 
     private var lastKeyboardBottomOffset: Int = 0
 
@@ -136,15 +137,25 @@ internal class SheetAnimationCoordinator(
         visibleDelta: Float,
     ) {
         screen.translationY += visibleDelta
-        screen
-            .animate()
-            .translationY(currentTranslationY)
-            .withStartAction {
-                behavior.updateMetrics(clampedNewHeight)
-                screen.layoutBottomSheetAtHeight(clampedNewHeight)
-            }.withEndAction {
-                screen.finalizeBottomSheetLayoutUpdates()
-            }.start()
+        cancelCurrentContentAnimation()
+        currentContentAnimator =
+            ValueAnimator.ofFloat(screen.translationY, currentTranslationY).apply {
+                addListener(
+                    object : AnimatorListenerAdapter() {
+                        override fun onAnimationStart(animation: Animator) {
+                            behavior.updateMetrics(clampedNewHeight)
+                            screen.layoutBottomSheetAtHeight(clampedNewHeight)
+                        }
+
+                        override fun onAnimationEnd(animation: Animator) {
+                            currentContentAnimator = null
+                            screen.finalizeBottomSheetLayoutUpdates()
+                        }
+                    },
+                )
+                addUpdateListener { screen.translationY = it.animatedValue as Float }
+                start()
+            }
     }
 
     /*
@@ -174,16 +185,26 @@ internal class SheetAnimationCoordinator(
         visibleDelta: Float,
     ) {
         val targetTranslationY = currentTranslationY - visibleDelta
-        screen
-            .animate()
-            .translationY(targetTranslationY)
-            .withStartAction {
-                behavior.updateMetrics(clampedNewHeight)
-            }.withEndAction {
-                screen.layoutBottomSheetAtHeight(clampedNewHeight)
-                screen.translationY = currentTranslationY
-                screen.finalizeBottomSheetLayoutUpdates()
-            }.start()
+        cancelCurrentContentAnimation()
+        currentContentAnimator =
+            ValueAnimator.ofFloat(currentTranslationY, targetTranslationY).apply {
+                addListener(
+                    object : AnimatorListenerAdapter() {
+                        override fun onAnimationStart(animation: Animator) {
+                            behavior.updateMetrics(clampedNewHeight)
+                        }
+
+                        override fun onAnimationEnd(animation: Animator) {
+                            currentContentAnimator = null
+                            screen.layoutBottomSheetAtHeight(clampedNewHeight)
+                            screen.translationY = currentTranslationY
+                            screen.finalizeBottomSheetLayoutUpdates()
+                        }
+                    },
+                )
+                addUpdateListener { screen.translationY = it.animatedValue as Float }
+                start()
+            }
     }
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
@@ -272,6 +293,13 @@ internal class SheetAnimationCoordinator(
                 }
             }
         }
+
+    private fun cancelCurrentContentAnimation() {
+        currentContentAnimator?.removeAllListeners()
+        currentContentAnimator?.removeAllUpdateListeners()
+        currentContentAnimator?.cancel()
+        currentContentAnimator = null
+    }
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
 
