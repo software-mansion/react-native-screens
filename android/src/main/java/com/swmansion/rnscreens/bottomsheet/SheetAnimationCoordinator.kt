@@ -23,7 +23,9 @@ internal class SheetAnimationCoordinator(
         checkNotNull(screenRef.get()) {
             "[RNScreens] Screen has been destroyed and shouldn't be the subject of any animations"
         }
-    private var isKeyboardAnimationInProgress: Boolean = false
+    private var activeKeyboardAnimationsCount: Int = 0
+    private val isKeyboardAnimationInProgress: Boolean
+        get() = activeKeyboardAnimationsCount > 0
     private var isSheetAnimationInProgress: Boolean = false
     private var currentContentAnimator: ValueAnimator? = null
 
@@ -209,11 +211,11 @@ internal class SheetAnimationCoordinator(
     }
 
     internal fun notifyKeyboardAnimationStart() {
-        isKeyboardAnimationInProgress = true
+        activeKeyboardAnimationsCount++
     }
 
     internal fun notifyKeyboardAnimationEnd() {
-        isKeyboardAnimationInProgress = false
+        activeKeyboardAnimationsCount = maxOf(0, activeKeyboardAnimationsCount - 1)
     }
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
