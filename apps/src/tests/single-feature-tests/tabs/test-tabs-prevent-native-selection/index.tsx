@@ -7,6 +7,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
+  TabRouteOptions,
 } from '../../../../shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../../shared/';
@@ -60,14 +61,14 @@ function TabsNavigationButtons() {
     </View>
   );
 }
-const ROUTE_OPTIONS = {
+const ROUTE_OPTIONS: TabRouteOptions = {
   ...DEFAULT_TAB_ROUTE_OPTIONS,
   android: {
     ...DEFAULT_TAB_ROUTE_OPTIONS.android,
     standardAppearance: {
       // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 6 tabs),
       // making it hard to identify tabs when executing the scenario.
-      tabBarItemLabelVisibilityMode: 'labeled' as const,
+      tabBarItemLabelVisibilityMode: 'labeled'
     },
   },
 };
