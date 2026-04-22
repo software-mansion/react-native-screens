@@ -18,7 +18,10 @@ internal sealed class StackHeaderAppBarLayout(
     abstract val toolbar: MaterialToolbar
 
     init {
-        layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        layoutParams =
+            CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                behavior = StackHeaderAppBarLayoutBehavior()
+            }
 
         // TODO: this should be exposed in the future via prop. Also, it might not work correctly
         //       until we set liftOnScrollView manually. Also, we should disable it in transparent
