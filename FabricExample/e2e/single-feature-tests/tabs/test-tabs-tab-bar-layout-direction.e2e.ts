@@ -23,9 +23,6 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
 
   it('displays default options and renders Tab1 at the visually leftmost position (LTR)', async () => {
     await expect(
-      element(by.id('tab-bar-layout-direction-picker')),
-    ).toBeVisible();
-    await expect(
       element(by.id('tab-bar-layout-direction-scrollview')),
     ).toBeVisible();
     await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
@@ -34,6 +31,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
       'allowRTL: true',
     );
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -55,6 +56,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
 
   //rtl
   it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -69,6 +74,10 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
 
   //ltr
   it('remains in LTR order when direction is explicitly set to ltr', async () => {
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -131,9 +140,6 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
     await expect(
-      element(by.id('tab-bar-layout-direction-picker')),
-    ).toBeVisible();
-    await expect(
       element(by.id('tab-bar-layout-direction-scrollview')),
     ).toBeVisible();
     await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
@@ -142,6 +148,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
       'allowRTL: true',
     );
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: inherit',
     );
@@ -163,6 +173,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   //rtl
   it('remains in RTL order when direction is explicitly set to rtl', async () => {
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('rtl')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
@@ -177,6 +191,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   //ltr
   it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
+    await waitFor(element(by.id('tab-bar-layout-direction-picker')))
+      .toBeVisible()
+      .whileElement(by.id('tab-bar-layout-direction-scrollview'))
+      .scroll(100, 'down');
     await element(by.id('tab-bar-layout-direction-picker')).tap();
     await element(by.text('ltr')).tap();
     await element(by.id('tab-bar-layout-direction-picker')).tap();
