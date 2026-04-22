@@ -275,12 +275,20 @@ internal class SheetAnimationCoordinator(
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
 
-    private fun Screen.synchronizeBottomSheetBehaviorWithLayout() {
+    private fun Screen.synchronizeBottomSheetBehaviorOffsetsWithLayout() {
         // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
+    }
+
+    private fun Screen.notifyBottomSheetShadowStateChanged() {
         onSheetYTranslationChanged()
+    }
+
+    private fun Screen.synchronizeBottomSheetBehaviorWithLayout() {
+        synchronizeBottomSheetBehaviorOffsetsWithLayout()
+        notifyBottomSheetShadowStateChanged()
     }
 
     private fun attachCommonListeners(
