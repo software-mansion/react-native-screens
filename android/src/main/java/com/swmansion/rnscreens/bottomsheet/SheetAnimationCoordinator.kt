@@ -137,7 +137,7 @@ internal class SheetAnimationCoordinator(
         visibleDelta: Float,
     ) {
         screen.translationY += visibleDelta
-        currentContentAnimator?.cancel()
+        cancelCurrentContentAnimation()
         currentContentAnimator =
             ValueAnimator.ofFloat(screen.translationY, currentTranslationY).apply {
                 addListener(
@@ -148,6 +148,7 @@ internal class SheetAnimationCoordinator(
                         }
 
                         override fun onAnimationEnd(animation: Animator) {
+                            currentContentAnimator = null
                             screen.finalizeBottomSheetLayoutUpdates()
                         }
                     },
@@ -184,7 +185,7 @@ internal class SheetAnimationCoordinator(
         visibleDelta: Float,
     ) {
         val targetTranslationY = currentTranslationY - visibleDelta
-        currentContentAnimator?.cancel()
+        cancelCurrentContentAnimation()
         currentContentAnimator =
             ValueAnimator.ofFloat(currentTranslationY, targetTranslationY).apply {
                 addListener(
@@ -194,6 +195,7 @@ internal class SheetAnimationCoordinator(
                         }
 
                         override fun onAnimationEnd(animation: Animator) {
+                            currentContentAnimator = null
                             screen.layoutBottomSheetAtHeight(clampedNewHeight)
                             screen.translationY = currentTranslationY
                             screen.finalizeBottomSheetLayoutUpdates()
@@ -291,6 +293,12 @@ internal class SheetAnimationCoordinator(
                 }
             }
         }
+
+    private fun cancelCurrentContentAnimation() {
+        currentContentAnimator?.removeAllListeners()
+        currentContentAnimator?.cancel()
+        currentContentAnimator = null
+    }
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
 
