@@ -1,15 +1,16 @@
 import React from 'react';
-import type { ScenarioDescription } from '../../shared/helpers';
-import { createScenario } from '../../shared/helpers';
+import type { ScenarioDescription } from '../../../shared/helpers';
+import { createScenario } from '../../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
-} from '../../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import { ToastProvider, useToast } from '../../../shared/';
+  TabRouteOptions,
+} from '../../../../shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
+import { ToastProvider, useToast } from '../../../../shared/';
 import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
@@ -60,37 +61,48 @@ function TabsNavigationButtons() {
     </View>
   );
 }
+const ROUTE_OPTIONS: TabRouteOptions = {
+  ...DEFAULT_TAB_ROUTE_OPTIONS,
+  android: {
+    ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+    standardAppearance: {
+      // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 6 tabs),
+      // making it hard to identify tabs when executing the scenario.
+      tabBarItemLabelVisibilityMode: 'labeled'
+    },
+  },
+};
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
+    options: { ...ROUTE_OPTIONS, title: 'First' },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
+    options: { ...ROUTE_OPTIONS, title: 'Second' },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
+    options: { ...ROUTE_OPTIONS, title: 'Third' },
   },
   {
     name: 'Fourth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fourth' },
   },
   {
     name: 'Fifth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fifth' },
   },
   {
     name: 'Sixth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
+    options: { ...ROUTE_OPTIONS, title: 'Sixth' },
   },
 ];
 
@@ -108,6 +120,9 @@ function AppContents() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
+      // 'tabSidebar' enables the sidebar layout on iPad, allowing the iPad-specific
+      // section of the scenario to be executed.
+      ios={{ tabBarControllerMode: 'tabSidebar' }}
       onTabSelectionPrevented={event => {
         const message = `onTabSelectionPrevented: ${event.nativeEvent.preventedScreenKey}`;
         console.warn(message);
