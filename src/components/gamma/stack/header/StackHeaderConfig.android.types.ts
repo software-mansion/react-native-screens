@@ -143,7 +143,8 @@ export interface StackHeaderConfigPropsAndroid {
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
    *
-   * Remarks: changing any `scrollFlag*` at runtime forces the header back to
+   * @remarks
+   * Changing any `scrollFlag*` at runtime forces the header back to
    * its fully expanded state, which produces a visible snap. Treat these
    * props as a static configuration.
    *
