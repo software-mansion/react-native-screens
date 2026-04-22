@@ -101,7 +101,7 @@ internal class SheetAnimationCoordinator(
         if (isSheetAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
             screen.layoutBottomSheetAtHeight(clampedNewHeight)
-            screen.synchronizeBottomSheetBehaviorWithLayout()
+            screen.finalizeBottomSheetLayoutUpdates()
             return
         }
 
@@ -143,7 +143,7 @@ internal class SheetAnimationCoordinator(
                 behavior.updateMetrics(clampedNewHeight)
                 screen.layoutBottomSheetAtHeight(clampedNewHeight)
             }.withEndAction {
-                screen.synchronizeBottomSheetBehaviorWithLayout()
+                screen.finalizeBottomSheetLayoutUpdates()
             }.start()
     }
 
@@ -182,7 +182,7 @@ internal class SheetAnimationCoordinator(
             }.withEndAction {
                 screen.layoutBottomSheetAtHeight(clampedNewHeight)
                 screen.translationY = currentTranslationY
-                screen.synchronizeBottomSheetBehaviorWithLayout()
+                screen.finalizeBottomSheetLayoutUpdates()
             }.start()
     }
 
@@ -275,20 +275,15 @@ internal class SheetAnimationCoordinator(
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
 
-    private fun Screen.synchronizeBottomSheetBehaviorOffsetsWithLayout() {
+    private fun Screen.finalizeBottomSheetLayoutUpdates() {
         // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-    }
 
-    private fun Screen.notifyBottomSheetShadowStateChanged() {
+        // Notify that ShadowTree state should be updated, as the positioning of pressables
+        // has changed due to the Y translation manipulation.
         onSheetYTranslationChanged()
-    }
-
-    private fun Screen.synchronizeBottomSheetBehaviorWithLayout() {
-        synchronizeBottomSheetBehaviorOffsetsWithLayout()
-        notifyBottomSheetShadowStateChanged()
     }
 
     private fun attachCommonListeners(
