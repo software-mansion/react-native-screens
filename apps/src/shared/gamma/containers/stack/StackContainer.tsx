@@ -62,7 +62,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ Component, options: { headerConfig, ...options }, activityMode, routeKey }) => {
+        ({ options: { headerConfig, ...options }, activityMode, routeKey, name }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -72,6 +72,17 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
             batch: navMethods.batchAction,
             setRouteOptions: navMethods.setRouteOptions,
           };
+
+          const matchingConfig = routeConfigs.find(
+            config => config.name === name,
+          );
+          if (!matchingConfig) {
+            throw new Error(
+              `[Stack] No config matches the "${name}" route name`,
+            );
+          }
+
+          const Component = matchingConfig.Component;
 
           return (
             <Stack.Screen

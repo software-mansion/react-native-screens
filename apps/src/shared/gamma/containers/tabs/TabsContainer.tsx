@@ -85,11 +85,11 @@ export function TabsContainer(props: TabsContainerProps) {
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
         const matchingConfig = routeConfigs.find(
-          config => config.name === route.routeKey,
+          config => config.name === route.name,
         );
         if (!matchingConfig) {
           throw new Error(
-            `[Tabs] None config matches the "${route.routeKey}" routeKey`,
+            `[Tabs] None config matches the "${route.name}" route name`,
           );
         }
 
