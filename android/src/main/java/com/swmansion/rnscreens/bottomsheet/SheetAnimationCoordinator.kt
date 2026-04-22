@@ -99,8 +99,9 @@ internal class SheetAnimationCoordinator(
         val clampedOldHeight = screen.resolveClampedHeight(oldHeight, currentTranslationY)
         val clampedNewHeight = screen.resolveClampedHeight(newHeight, currentTranslationY)
 
-        // If isSheetAnimationInProgress is set, the entry/exit animator already owns translationY writes.
-        // Silently update behavior metrics and re-layout so the ongoing slide animation
+        // If an entry/exit animation or a keyboard animation is in progress - it owns
+        // translationY writes. Then when the content size is changing, we silently
+        // update behavior metrics and re-layout so the ongoing slide animation
         // lands at the correct final geometry, without firing a competing animation.
         if (isSheetAnimationInProgress || isKeyboardAnimationInProgress) {
             behavior.updateMetrics(clampedNewHeight)
