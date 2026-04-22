@@ -293,6 +293,10 @@ internal class SheetAnimationCoordinator(
                     isSheetAnimationInProgress = true
                 }
 
+                override fun onAnimationCancel(animation: Animator) {
+                    isSheetAnimationInProgress = false
+                }
+
                 override fun onAnimationEnd(animation: Animator) {
                     isSheetAnimationInProgress = false
 
