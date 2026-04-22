@@ -279,7 +279,9 @@ class ScreenStackFragment :
                     override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                         super.onPrepare(animation)
 
-                        sheetDelegate.notifyKeyboardAnimationStart()
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationStart()
+                        }
                     }
 
                     // Replace InsetsAnimationCallback created by BottomSheetBehavior
@@ -300,7 +302,9 @@ class ScreenStackFragment :
                     override fun onEnd(animation: WindowInsetsAnimationCompat) {
                         super.onEnd(animation)
 
-                        sheetDelegate.notifyKeyboardAnimationEnd()
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationEnd()
+                        }
 
                         screen.onSheetYTranslationChanged()
                     }
