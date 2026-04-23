@@ -17,9 +17,15 @@ subject to prevention.
 ## E2E test
 
 Yes: Partially automated. The E2E test covers most steps for iPhone and Android
-phone. iPad specific steps are not automated, as the resize interactions
-required to trigger the More tab (Split View / window resizing between compact and
-regular size classes) are not feasible with Detox.
+phone.
+
+- iPad specific steps are not automated, as the resize interactions required to
+trigger the More tab (Split View / window resizing between compact and regular
+size classes) are not feasible with Detox.
+- Testing repeated selection of an already active
+More tab is not currently automated (Step 19 from the scenario). When the More tab content is already active
+and displayed, Detox is unable to re-select the "More" tab bar item because it
+becomes invisible for Detox.
 
 ## Prerequisites
 
