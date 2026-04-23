@@ -43,8 +43,8 @@ is blocked.
 1. Launch the app and navigate to **Prevent native selection**.
 
 - [ ] Expected: On Android — six tabs visible in the tab bar. On iOS — four tabs
-and a **More** item visible.The **First** tab is selected.
-Each tab displays its name and `preventNativeSelection: false`.
+and a **More** item visible.The **First** tab is selected
+and displayed `preventNativeSelection: false` under its name on screen.
 
 ---
 
@@ -61,7 +61,7 @@ Each tab displays its name and `preventNativeSelection: false`.
 
 4. Tap the **First** tab item in the tab bar.
 
-- [ ] Expected: The tab does not change. A toast appears with 
+- [ ] Expected: The tab does not change. A toast appears with
 `onTabSelectionPrevented: First`.
 
 5. Tap **Select First** button (programmatic navigation).
@@ -90,11 +90,16 @@ navigation is not blocked by `preventNativeSelection`.
 
 - [ ] Expected: Third tab label shows `preventNativeSelection: true`.
 
-9. Navigate to a different tab, then tap the **Third** tab item in the tab bar.
+9. Navigate to  the **Fourth** tab and tap **Toggle preventNativeSelection**.
 
-- [ ] Expected: Tab does not switch. Toast appears with `onTabSelectionPrevented: Third`.
+- [ ] Expected: Fourth tab label shows `preventNativeSelection: true`.
 
-10. Navigate to the **First** tab and confirm its `preventNativeSelection` is
+10. Tap the **Third** tab item in the tab bar.
+
+- [ ] Expected: Tab does not switch. Toast appears with
+`onTabSelectionPrevented: Third`.
+
+11. Navigate to the **First** tab and confirm its `preventNativeSelection` is
 still `false`.
 
 - [ ] Expected: First tab label shows `preventNativeSelection: false`. Tapping it
@@ -104,69 +109,69 @@ from another tab works normally.
 
 ### iOS only — More navigation controller
 
-11. Navigate to the **Fifth** tab via the **Select Fifth** button (programmatic).
+12. Navigate to the **Fifth** tab via the **Select Fifth** button (programmatic).
 
 - [ ] Expected: **Fifth** tab is displayed normally.
 
-12. Tap **Toggle preventNativeSelection** on the **Fifth** tab.
+13. Tap **Toggle preventNativeSelection** on the **Fifth** tab.
 
 - [ ] Expected: Label updates to `preventNativeSelection: true`.
 
-13. Tap **Select Sixth**, then tap **Toggle preventNativeSelection**.
+14. Tap **Select Sixth**, then tap **Toggle preventNativeSelection**.
 
 - [ ] Expected: Label updates to `preventNativeSelection: true`.
 
-14. Tap **Select First**, then tap **More** in the tab bar.
+15. Tap **Select First**, then tap **More** in the tab bar.
 
 - [ ] Expected: Navigation to **Sixth** is blocked. Toast appears with
 `onTabSelectionPrevented: Sixth`. The More list is displayed.
 
-15. Tap **Fifth** in the More list.
+16. Tap **Fifth** in the More list.
 
 - [ ] Expected: Navigation to **Fifth** is blocked. Toast appears with `onTabSelectionPrevented: Fifth`. The More list remains displayed.
 
-16. Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap
+17. Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap
 **Toggle preventNativeSelection** to disable it.
 
 - [ ] Expected: Fifth tab label shows `preventNativeSelection: false`.
 
-17. Navigate away, then tap **More**.
+18. Navigate away, then tap **More**.
 
 - [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
 
-18. Tap **More** again and tap **Fifth** from list.
+19. Tap **More** again and tap **Fifth** from list.
 
 - [ ] Expected: Navigation to **Fifth** proceeds normally. No toast appears.
 
 ### iPad only - Sidebar behavior
 
-19. Resize app to full screen width.
+20. Resize app to full screen width.
 
 - [ ] Expected: More tab disappear. **Fifth** tab is selected.
 
-20. Open Sidebar and select **Sixth** from the list.
+21. Open Sidebar and select **Sixth** from the list.
 
 - [ ] Expected: Navigation to **Sixth** is blocked. Toast appears with
 `onTabSelectionPrevented: Sixth`.
 The **Fifth** tab is selected and its content remains displayed.
 
-21. Open Sidebar.
+22. Open Sidebar.
 
 - [ ] Expected: **Fifth** tab is selected.
 
-22. Tap **Second** from Sidebar list and tap **Toggle preventNativeSelection**.
+23. Tap **Second** from Sidebar list and tap **Toggle preventNativeSelection**.
 
 - [ ] Expected: Label updates to `preventNativeSelection: true`.
 
-23. Tap **Select Sixth** and tap **Toggle preventNativeSelection**.
+24. Tap **Select Sixth** and tap **Toggle preventNativeSelection**.
 
 - [ ] Expected: Label updates to `preventNativeSelection: false`.
 
-24. Tap **Fourth** and then from the Sidebar tap **Sixth**.
+25. Tap **Fourth** and then from the Sidebar tap **Sixth**.
 
 - [ ] Expected: Tab switches normally. No toast appears.
 
-25. Tap **Second** from tab bar.
+26. Tap **Second** from tab bar.
 
 - [ ] Expected: Navigation to **Second** is blocked. Toast appears with
 `onTabSelectionPrevented: Second`.
