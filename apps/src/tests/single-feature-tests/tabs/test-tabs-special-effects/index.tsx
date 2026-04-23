@@ -6,7 +6,6 @@ import {
   TabsContainer,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-  TabRouteOptions,
 } from '@apps/shared/gamma/containers/tabs';
 
 const scenarioDescription: ScenarioDescription = {
@@ -16,16 +15,6 @@ const scenarioDescription: ScenarioDescription = {
     'Test settings of scrollToTop specialEffect.',
   platforms: ['ios', 'android'],
 };
-
-function MainScreen() {
-  return (
-    <ScrollView style={styles.config}>
-      <Text style={styles.subtitle}>
-        This is welcome screen for specialEffects prop testing!
-      </Text>
-    </ScrollView>
-  );
-}
 
 function ScrollScreen() {
   return (
@@ -39,32 +28,14 @@ function ScrollScreen() {
     </ScrollView>
   );
 }
-const ROUTE_OPTIONS: TabRouteOptions = {
-  ...DEFAULT_TAB_ROUTE_OPTIONS,
-  android: {
-    ...DEFAULT_TAB_ROUTE_OPTIONS.android,
-    standardAppearance: {
-      // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 4 tabs),
-      // making it hard to identify tabs when executing the scenario.
-      tabBarItemLabelVisibilityMode: 'labeled'
-    },
-  },
-};
+
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: MainScreen,
-    options: {
-      ...ROUTE_OPTIONS,
-      title: 'Tab1',
-    },
-  },
-  {
-    name: 'Tab2',
     Component: ScrollScreen,
     options: {
-      ...ROUTE_OPTIONS,
-      title: 'Tab2',
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab1',
       specialEffects: {
         repeatedTabSelection: {
           popToRoot: false,
@@ -74,11 +45,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'Tab3',
+    name: 'Tab2',
     Component: ScrollScreen,
     options: {
-      ...ROUTE_OPTIONS,
-      title: 'Tab3',
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab2',
       specialEffects: {
         repeatedTabSelection: {
           popToRoot: false,
@@ -88,11 +59,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'Tab4',
+    name: 'Tab3',
     Component: ScrollScreen,
     options: {
-      ...ROUTE_OPTIONS,
-      title: 'Tab4',
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab3',
     },
   },
 ];
