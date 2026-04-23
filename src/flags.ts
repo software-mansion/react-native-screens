@@ -195,11 +195,6 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
-    /**
-     * Enables synchronous shadow state updates for Screen components on iOS
-     * (Fabric, RN 0.82+). On by default.
-     * PR: https://github.com/software-mansion/react-native-screens/pull/3282
-     */
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },
