@@ -105,8 +105,7 @@ describe('Tab Bar preventNativeSelection', () => {
       'preventNativeSelection: false',
     );
   });
-  //iOS only
-  it('preventNativeSelection for tabs hidden under More tab blocks native selection', async () => {
+  it('iOS only: preventNativeSelection for tabs hidden under More tab blocks native selection', async () => {
     if (device.getPlatform() !== 'ios') {
       return;
     }
