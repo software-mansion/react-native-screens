@@ -19,7 +19,7 @@ subject to prevention.
 Yes: Partially automated. The E2E test covers most steps for iPhone and Android
 phone. iPad specific steps are not automated, as the resize interactions
 required to trigger the More tab (Split View / window resizing between compact and
-regular size classes) are not feasible with Detox
+regular size classes) are not feasible with Detox.
 
 ## Prerequisites
 
@@ -47,7 +47,7 @@ is blocked.
 
 - [ ] Expected: On Android — six tabs visible in the tab bar. On iOS — four tabs
 and a **More** item visible.The **First** tab is selected
-and displayed `preventNativeSelection: false` under its name on screen.
+and displays `preventNativeSelection: false` under its name on the screen.
 
 ---
 
