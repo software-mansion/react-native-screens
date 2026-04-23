@@ -1,0 +1,133 @@
+import React from 'react';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
+import {
+  TabsContainer,
+  type TabRouteConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+  TabRouteOptions,
+} from '@apps/shared/gamma/containers/tabs';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Tabs specialEffects',
+  key: 'test-tabs-special-effects',
+  details:
+    'Test settings of scrollToTop specialEffect.',
+  platforms: ['ios', 'android'],
+};
+
+function MainScreen() {
+  return (
+    <ScrollView style={styles.config}>
+      <Text style={styles.subtitle}>
+        This is welcome screen for specialEffects prop testing!
+      </Text>
+    </ScrollView>
+  );
+}
+
+function ScrollScreen() {
+  return (
+    <ScrollView>
+      <Text style={styles.hint}>Second Screen — scroll down or re-tap the tab.</Text>
+      {Array.from({ length: 50 }, (_, i) => (
+        <Text key={i} style={styles.item}>
+          Item {i + 1}
+        </Text>
+      ))}
+    </ScrollView>
+  );
+}
+const ROUTE_OPTIONS: TabRouteOptions = {
+  ...DEFAULT_TAB_ROUTE_OPTIONS,
+  android: {
+    ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+    standardAppearance: {
+      // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 4 tabs),
+      // making it hard to identify tabs when executing the scenario.
+      tabBarItemLabelVisibilityMode: 'labeled'
+    },
+  },
+};
+const TAB_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    Component: MainScreen,
+    options: {
+      ...ROUTE_OPTIONS,
+      title: 'Tab1',
+    },
+  },
+  {
+    name: 'Tab2',
+    Component: ScrollScreen,
+    options: {
+      ...ROUTE_OPTIONS,
+      title: 'Tab2',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+          scrollToTop: true
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab3',
+    Component: ScrollScreen,
+    options: {
+      ...ROUTE_OPTIONS,
+      title: 'Tab3',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+          scrollToTop: false
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab4',
+    Component: ScrollScreen,
+    options: {
+      ...ROUTE_OPTIONS,
+      title: 'Tab4',
+    },
+  },
+];
+
+function App() {
+  return <TabsContainer routeConfigs={TAB_CONFIGS} />;
+}
+
+export default createScenario(App, scenarioDescription);
+
+const styles = StyleSheet.create({
+  config: {
+    padding: 40,
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#666',
+  },
+  switch: {
+    marginTop: 20,
+    marginBottom: 15,
+  },
+  hint: {
+    padding: 16,
+    color: '#666',
+  },
+  item: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+});
