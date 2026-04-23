@@ -62,7 +62,10 @@ jobs:
       - name: Validate publish target
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' }}
         shell: bash
-        run: ./scripts/validate-publish-target.sh "${{ github.ref_name }}" "${{ inputs.release-type }}"
+        env:
+          BRANCH: ${{ github.ref_name }}
+          RELEASE_TYPE: ${{ inputs.release-type }}
+        run: ./scripts/validate-publish-target.sh "$BRANCH" "$RELEASE_TYPE"
 
       - name: Publish manual release
         if: ${{ github.event_name == 'workflow_dispatch' }}
