@@ -207,11 +207,6 @@ export const featureFlags = {
     set synchronousHeaderConfigUpdatesEnabled(value: boolean) {
       synchronousHeaderConfigUpdatesAccessor.set(value);
     },
-    /**
-     * Enables synchronous shadow state updates for ScreenStackHeaderSubview
-     * on iOS (Fabric, RN 0.82+). On by default.
-     * PR: https://github.com/software-mansion/react-native-screens/pull/3282
-     */
     get synchronousHeaderSubviewUpdatesEnabled() {
       return synchronousHeaderSubviewUpdatesAccessor.get();
     },

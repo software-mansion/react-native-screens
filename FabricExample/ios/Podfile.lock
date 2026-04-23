@@ -2156,7 +2156,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FBLazyVector: dfb9ab6ee2eac316f7869edf6ec27b9e872329f0
-  hermes-engine: 2f2ffe03fec9edfd45418f6e7701497449e8e918
+  hermes-engine: 525c2ec8932d29cc643fb67688830626b30a38df
   RCTDeprecation: df7412cdad525035c3adeb14c1dc35b344e98187
   RCTRequired: 28a4bf1ef190650fcd6973d8a6a8f8beb30ef807
   RCTSwiftUI: 3003f1af83c332be5946ec0433fedcf0ada06551
@@ -2227,7 +2227,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 706b65371b90b5cc797b6639e8979f2e5cecd6da
   ReactCodegen: 3b63446e22acfdafa14e48a23c4a34b3ec99215e
   ReactCommon: d588ff8119315f4d3341e06f954e60789b050710
-  ReactNativeDependencies: c52d241ee664599a6b536f2bd4576a2c2a26a9b5
+  ReactNativeDependencies: dca9d27cd6cae2415902174a647ab59dc8575e32
   RNGestureHandler: 6c55d44ca01fff875b82ee7a9dee86a7aa9fa563
   RNReanimated: 371d8a67ea2cf7a2608d97fd990c3ac1b6994cfb
   RNScreens: 60f2260949e6f9cc35cd76c506a3475bec919ca6
