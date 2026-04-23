@@ -1,15 +1,27 @@
 #!/bin/bash
 
 # Validates that the current branch and package.json version are appropriate
-# for publishing a non-nightly (stable / beta / rc) release.
+# for publishing the requested release.
 #
-# Exits 0 if the target is valid; non-zero (with one or more error messages)
-# otherwise. All failures are reported before exit so the operator sees every
-# problem in a single run.
+# Handles all four release types:
+#   - nightly: always valid — nightly publishes are allowed from any branch
+#     per the release guide; the script returns success without running the
+#     branch/version checks.
+#   - stable / beta / rc: rejects the main-branch sentinel version, refuses
+#     publishes from `main`, and requires the branch to match a documented
+#     release-branch pattern.
+#
+# Exits 0 if the target is valid; 1 if a validation check fails (with one or
+# more error messages); 2 on usage error (missing arguments or unknown
+# release-type). For validation failures all checks are reported before exit
+# so the operator sees every problem in a single run.
 #
 # This script assumes it is run from the top level repo directory.
 #
+# Requires `jq` on PATH (pre-installed on GitHub-hosted ubuntu runners).
+#
 # Usage: scripts/validate-publish-target.sh <branch> <release-type>
+#   <release-type>: one of stable | beta | rc | nightly
 
 set -euo pipefail
 
@@ -20,9 +32,25 @@ fi
 
 BRANCH="$1"
 RELEASE_TYPE="$2"
+
+case "$RELEASE_TYPE" in
+  stable|beta|rc|nightly) ;;
+  *)
+    echo "error: unknown release-type '$RELEASE_TYPE' (expected: stable | beta | rc | nightly)" >&2
+    exit 2
+    ;;
+esac
+
 VERSION=$(jq -r .version package.json)
 
 echo "ref=$BRANCH version=$VERSION release-type=$RELEASE_TYPE"
+
+# Nightly publishes are the designed exception per the release guide: they are
+# allowed from any branch (scheduled cron runs from main; manual dispatch can
+# target a release branch). No further checks apply.
+if [[ "$RELEASE_TYPE" == "nightly" ]]; then
+  exit 0
+fi
 
 emit_error() {
   if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
