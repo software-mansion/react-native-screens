@@ -1,4 +1,4 @@
-const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = true;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = true;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = true;
 const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
@@ -195,6 +195,11 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
+    /**
+     * Enables synchronous shadow state updates for Screen components on iOS
+     * (Fabric, RN 0.82+). On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3282
+     */
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },

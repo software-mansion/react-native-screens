@@ -1,7 +1,7 @@
 import App from '../apps';
 import { featureFlags } from 'react-native-screens';
 
-featureFlags.experiment.synchronousScreenUpdatesEnabled = false;
+featureFlags.experiment.synchronousScreenUpdatesEnabled = true;
 featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = true;
 featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled = true;
 featureFlags.experiment.androidResetScreenShadowStateOnOrientationChangeEnabled =
