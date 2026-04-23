@@ -2,7 +2,7 @@ import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 import { Platform } from 'react-native';
 
-describe('Tab Bar prevent native selection', () => {
+describe('Tab Bar preventNativeSelection', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -11,7 +11,7 @@ describe('Tab Bar prevent native selection', () => {
     );
   });
 
-  it('screen should be displayed with preventNativeSelection set to false for First tab', async () => {
+  it('preventNativeSelection should be set to false for First tab', async () => {
     await expect(
       element(by.id('tab-bar-prevent-native-selection-view')),
     ).toBeVisible();
@@ -46,7 +46,7 @@ describe('Tab Bar prevent native selection', () => {
     await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
   });
 
-  it('programmatic navigation should not be blocked', async () => {
+  it('programmatic navigation to first tab should not be blocked', async () => {
     await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
     await element(by.id('first-button')).tap();
     await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
@@ -72,7 +72,7 @@ describe('Tab Bar prevent native selection', () => {
       'preventNativeSelection: false',
     );
   });
-  //35s
+
   it('native selection should be possible after disabling preventNativeSelection', async () => {
     await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
     await element(by.id('Third')).tap();
@@ -105,8 +105,8 @@ describe('Tab Bar prevent native selection', () => {
       'preventNativeSelection: false',
     );
   });
-
-  it('iOS only: More navigation controller blocks preventNativeSelection for hidden tabs', async () => {
+  //iOS only
+  it('preventNativeSelection for tabs hidden under More tab blocks native selection', async () => {
     if (device.getPlatform() !== 'ios') {
       return;
     }
