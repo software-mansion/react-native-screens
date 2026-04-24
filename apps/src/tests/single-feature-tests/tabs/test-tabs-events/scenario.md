@@ -21,11 +21,17 @@ Other: On going research
 ## Note
 
 - All four events should fire on every tab switch. The expected order for
-  a switch from Tab X to Tab Y is:
-  1. `TabY: onWillDisappear`
-  2. `TabX: onWillAppear`
-  3. `TabY: onDidDisappear`
-  4. `TabX: onDidAppear`
+  a switch between TabX and TabY depends on platform
+  For iOS:
+  1. `TabY: onWillAppear`
+  2. `TabX: onWillDisappear`
+  3. `TabY: onDidAppear`
+  4. `TabX: onDidDisappear`
+  For Android:
+  1. `TabX: onWillDisappear`
+  2. `TabX: onDidDisappear`
+  3. `TabY: onWillAppear`
+  4. `TabY: onDidAppear`
 - Toasts stack and dismiss automatically; observe each toast color and
   label as it appears. To dismiss a toast manually, tap it.
 - Re-tapping the currently active tab must not fire any lifecycle events.
@@ -49,7 +55,7 @@ Other: On going research
 2. Tap **Tab B** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabB". Four toast
-  notifications appear in sequence:
+  notifications appear in order specific platform:
   - `TabB: onWillAppear` (green background)
   - `TabA: onWillDisappear` (light navy background)
   - `TabB: onDidAppear` (light blue background)
@@ -62,7 +68,7 @@ Other: On going research
 3. Tap **Tab C** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabC". Four toast
-  notifications appear in sequence:
+  notifications appear in order specific platform:
   - `TabC: onWillAppear` (green background)
   - `TabB: onWillDisappear` (light navy background)
   - `TabC: onDidAppear` (light blue background)  
@@ -75,7 +81,7 @@ Other: On going research
 4. Tap **Tab A** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabA". Four toast
-  notifications appear in sequence:
+  notifications appear in order specific platform:
   - `TabA: onWillAppear` (green background)  
   - `TabC: onWillDisappear` (light navy background)
   - `TabA: onDidAppear` (light blue background)
