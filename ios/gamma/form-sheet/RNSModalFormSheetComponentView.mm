@@ -64,7 +64,9 @@ namespace react = facebook::react;
   if (_isOpen && _controller.presentingViewController == nil) {
     [presentingViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && _controller.presentingViewController != nil) {
+    // Dismiss programmatically and reset shadow node size immediately
     [_controller dismissViewControllerAnimated:YES completion:nil];
+    [self resetShadowNodeSize];
   }
 }
 
@@ -73,6 +75,8 @@ namespace react = facebook::react;
 - (void)sheetControllerDidDismiss:(RNSModalFormSheetController *)controller
 {
   _isOpen = NO;
+  [self resetShadowNodeSize];
+
   if (_eventEmitter != nullptr) {
     std::static_pointer_cast<const react::RNSModalFormSheetEventEmitter>(_eventEmitter)->onDismiss({});
   }
@@ -151,6 +155,21 @@ namespace react = facebook::react;
   }
 }
 
+- (void)invalidate
+{
+  if (_controller != nil) {
+    if (_controller.presentingViewController != nil) {
+      [_controller dismissViewControllerAnimated:NO completion:nil];
+    }
+    _controller = nil;
+  }
+
+  if (_touchHandler != nil) {
+    [_touchHandler detachFromView:self];
+    _touchHandler = nil;
+  }
+}
+
 #pragma mark - Dynamic frameworks support
 
 #ifdef RCT_DYNAMIC_FRAMEWORKS
@@ -159,6 +178,17 @@ namespace react = facebook::react;
   [super load];
 }
 #endif // RCT_DYNAMIC_FRAMEWORKS
+
+#pragma mark - Layout helpers
+
+- (void)resetShadowNodeSize
+{
+  if (_state != nullptr) {
+    auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
+
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+  }
+}
 
 @end
 
