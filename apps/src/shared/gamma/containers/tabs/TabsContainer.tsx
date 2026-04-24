@@ -34,6 +34,14 @@ export function TabsContainer(props: TabsContainerProps) {
 
   useSanitizeRouteConfigs(routeConfigs);
 
+  const componentsByName = React.useMemo(() => {
+    const map = new Map<string, TabRouteConfig['Component']>();
+    for (const config of routeConfigs) {
+      map.set(config.name, config.Component);
+    }
+    return map;
+  }, [routeConfigs]);
+
   const [tabsNavState, dispatch]: [
     TabsContainerState,
     React.Dispatch<TabsNavigationAction>,
@@ -84,16 +92,12 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        const matchingConfig = routeConfigs.find(
-          config => config.name === route.name,
-        );
-        if (!matchingConfig) {
+        const Component = componentsByName.get(route.name);
+        if (!Component) {
           throw new Error(
             `[Tabs] None config matches the "${route.name}" route name`,
           );
         }
-
-        const Component = matchingConfig.Component;
 
         return (
           <TabsContainerItem

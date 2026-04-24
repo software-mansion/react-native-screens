@@ -25,6 +25,14 @@ import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
 
+  const componentsByName = React.useMemo(() => {
+    const map = new Map<string, StackRouteConfig['Component']>();
+    for (const config of routeConfigs) {
+      map.set(config.name, config.Component);
+    }
+    return map;
+  }, [routeConfigs]);
+
   const [stackNavState, navActionDispatch]: [
     StackNavigationState,
     React.Dispatch<NavigationAction>,
@@ -73,16 +81,12 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
             setRouteOptions: navMethods.setRouteOptions,
           };
 
-          const matchingConfig = routeConfigs.find(
-            config => config.name === name,
-          );
-          if (!matchingConfig) {
+          const Component = componentsByName.get(name);
+          if (!Component) {
             throw new Error(
               `[Stack] No config matches the "${name}" route name`,
             );
           }
-
-          const Component = matchingConfig.Component;
 
           return (
             <Stack.Screen
