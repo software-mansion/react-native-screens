@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSModalFormSheetControllerDelegate <NSObject>
 - (void)sheetControllerDidDismiss:(RNSModalFormSheetController *)controller;
+- (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds;
 @end
 
 @interface RNSModalFormSheetController : UIViewController

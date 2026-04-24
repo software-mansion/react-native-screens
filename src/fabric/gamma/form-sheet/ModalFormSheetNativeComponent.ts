@@ -13,5 +13,6 @@ interface NativeProps extends ViewProps {
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModalFormSheet', {
+  interfaceOnly: true,
   excludedPlatforms: ['android'],
 });
