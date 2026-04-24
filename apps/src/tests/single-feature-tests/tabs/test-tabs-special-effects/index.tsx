@@ -39,7 +39,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       specialEffects: {
         repeatedTabSelection: {
           popToRoot: false,
-          scrollToTop: true
+          scrollToTop: true,
         },
       },
     },
@@ -68,7 +68,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function App() {
+export function App() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
