@@ -3,6 +3,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
+#import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSModalFormSheetComponentDescriptor.h"
@@ -14,6 +15,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSModalFormSheetComponentView {
+  RCTSurfaceTouchHandler *_touchHandler;
   RNSModalFormSheetController *_controller;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
   react::RNSModalFormSheetShadowNode::ConcreteState::Shared _state;
@@ -78,10 +80,17 @@ namespace react = facebook::react;
 
 - (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds
 {
-  if (_state != nullptr) {
-    // Offset is required for touches to work correctly when resolving paths from the window
-    CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
+  if (_touchHandler == nil) {
+    _touchHandler = [RCTSurfaceTouchHandler new];
+    [_touchHandler attachToView:_controller.view];
+  }
 
+  CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
+
+  // Aligns touch coordinate space with window coordinate space
+  _touchHandler.viewOriginOffset = origin;
+
+  if (_state != nullptr) {
     auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
