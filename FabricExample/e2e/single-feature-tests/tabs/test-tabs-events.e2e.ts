@@ -1,0 +1,105 @@
+import { device, expect, element, by } from 'detox';
+import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+
+// Helper: assert a toast is visible, then dismiss it by tapping so the next
+// toast becomes interactable. Toasts stack at the bottom of the screen and
+// must be removed one at a time.
+async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(3000);
+  await element(by.label(message)).tap();
+}
+
+describe('Tabs lifecycle events', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-events');
+  });
+
+  // Step 1: Baseline — launch screen, Tab A selected, initial appearance
+  // events fire.
+  it('should show Tab A content and fire onWillAppear + onDidAppear on launch', async () => {
+    await expect(element(by.id('tabContent-TabA'))).toBeVisible();
+    await dismissToast('2. TabA: onDidAppear');
+    await dismissToast('1. TabA: onWillAppear');
+  });
+
+  // Step 2: Tab A → Tab B transition — four lifecycle events in order.
+  // iOS fires incoming events first (interleaved); Android fires all outgoing
+  // events first, then all incoming events.
+  it('should fire four lifecycle events in order when switching from Tab A to Tab B', async () => {
+    await element(by.id('tab-b-item')).tap();
+
+    await expect(element(by.id('tabContent-TabB'))).toBeVisible();
+    if (device.getPlatform() === 'android') {
+      await dismissToast('4. TabB: onDidAppear');
+      await dismissToast('3. TabB: onWillAppear');
+      await dismissToast('2. TabA: onDidDisappear');
+      await dismissToast('1. TabA: onWillDisappear');
+    } else {
+      await dismissToast('4. TabA: onDidDisappear');
+      await dismissToast('3. TabB: onDidAppear');
+      await dismissToast('2. TabA: onWillDisappear');
+      await dismissToast('1. TabB: onWillAppear');
+    }
+  });
+
+  // Step 3: Tab B → Tab C transition — four lifecycle events in order.
+  // iOS fires incoming events first (interleaved); Android fires all outgoing
+  // events first, then all incoming events.
+  it('should fire four lifecycle events in order when switching from Tab B to Tab C', async () => {
+    await element(by.id('tab-c-item')).tap();
+
+    await expect(element(by.id('tabContent-TabC'))).toBeVisible();
+    if (device.getPlatform() === 'android') {
+      await dismissToast('4. TabC: onDidAppear');
+      await dismissToast('3. TabC: onWillAppear');
+      await dismissToast('2. TabB: onDidDisappear');
+      await dismissToast('1. TabB: onWillDisappear');
+    } else {
+      await dismissToast('4. TabB: onDidDisappear');
+      await dismissToast('3. TabC: onDidAppear');
+      await dismissToast('2. TabB: onWillDisappear');
+      await dismissToast('1. TabC: onWillAppear');
+    }
+  });
+
+  // Step 4: Tab C → Tab A transition — four lifecycle events in order.
+  // iOS fires incoming events first (interleaved); Android fires all outgoing
+  // events first, then all incoming events.
+  it('should fire four lifecycle events in order when switching from Tab C to Tab A', async () => {
+    await element(by.id('tab-a-item')).tap();
+
+    await expect(element(by.id('tabContent-TabA'))).toBeVisible();
+    if (device.getPlatform() === 'android') {
+      await dismissToast('4. TabA: onDidAppear');
+      await dismissToast('3. TabA: onWillAppear');
+      await dismissToast('2. TabC: onDidDisappear');
+      await dismissToast('1. TabC: onWillDisappear');
+    } else {
+      await dismissToast('4. TabC: onDidDisappear');
+      await dismissToast('3. TabA: onDidAppear');
+      await dismissToast('2. TabC: onWillDisappear');
+      await dismissToast('1. TabA: onWillAppear');
+    }
+  });
+
+  // Step 5: Re-tapping the active tab — no lifecycle events should fire.
+  it('Android only: should not fire any lifecycle events when re-tapping the active tab', async () => {
+    if (device.getPlatform() === 'ios') {
+      return;
+    }
+    // Tab A is already active from the previous test. Tap it again.
+    await element(by.id('tab-a-item')).tap();
+
+    // Content area must remain unchanged.
+    await expect(element(by.id('tabContent-TabA'))).toBeVisible();
+
+    // No toasts should appear — if any fired the first would be labelled "1.".
+    await expect(element(by.label('1. TabA: onWillAppear'))).not.toExist();
+    await expect(element(by.label('1. TabA: onDidAppear'))).not.toExist();
+    await expect(element(by.label('1. TabA: onWillDisappear'))).not.toExist();
+    await expect(element(by.label('1. TabA: onDidDisappear'))).not.toExist();
+  });
+});

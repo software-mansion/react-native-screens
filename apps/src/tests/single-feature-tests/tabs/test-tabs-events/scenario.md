@@ -11,7 +11,17 @@ rapid switching.
 
 ## E2E test
 
-Other: On going research
+Yes: Partially automated. The E2E test covers steps 1–4 on both iPhone and
+Android, verifying baseline appearance events, all three tab-switch transitions
+(with platform-specific event ordering). The re-tap (step 5) is covered only
+for Android as for iOS 26+ Detox is not able to re-tap a tab bar item.
+
+Not automated:
+
+- Rapid switching (step 6) — cannot be reliably triggered through Detox's
+  synchronous interaction model.
+- Full 12-toast sequence (step 7) — too fragile due to shifting toast indices
+  on each dismiss.
 
 ## Prerequisites
 

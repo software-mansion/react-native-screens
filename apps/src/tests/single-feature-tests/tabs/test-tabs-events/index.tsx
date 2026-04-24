@@ -16,7 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   name: 'Tabs lifecycle events',
   key: 'test-tabs-events',
   details:
-    'Verifies onWillAppear, onDidAppear, onWillDisappear, onDidDisappear fire in the correct order when switching tabs.',
+    'Verifies lifecycle events fire in the correct order when switching tabs.',
   platforms: ['ios', 'android'],
 };
 
@@ -69,6 +69,7 @@ function AppContents() {
       options: {
         ...DEFAULT_TAB_ROUTE_OPTIONS,
         title: 'Tab A',
+        tabBarItemTestID: 'tab-a-item',
         ...makeCallbacks('TabA'),
       },
     },
@@ -78,6 +79,7 @@ function AppContents() {
       options: {
         ...DEFAULT_TAB_ROUTE_OPTIONS,
         title: 'Tab B',
+        tabBarItemTestID: 'tab-b-item',
         ...makeCallbacks('TabB'),
       },
     },
@@ -87,6 +89,7 @@ function AppContents() {
       options: {
         ...DEFAULT_TAB_ROUTE_OPTIONS,
         title: 'Tab C',
+        tabBarItemTestID: 'tab-c-item',
         ...makeCallbacks('TabC'),
       },
     },
