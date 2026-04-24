@@ -69,9 +69,13 @@ namespace react = facebook::react;
   if (_isOpen && _controller.presentingViewController == nil) {
     [presentingViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && _controller.presentingViewController != nil) {
-    // Dismiss programmatically and reset shadow node size immediately
-    [_controller dismissViewControllerAnimated:YES completion:nil];
-    [self resetShadowNodeSize];
+    // Dismiss programmatically and delay the reset until the animation completes.
+    // This prevents conflicting layout updates while the sheet is sliding down.
+    __weak __typeof(self) weakSelf = self;
+    [_controller dismissViewControllerAnimated:YES
+                                    completion:^{
+                                      [weakSelf resetShadowNodeSize];
+                                    }];
   }
 }
 
