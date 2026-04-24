@@ -19,7 +19,7 @@ const scenarioDescription: ScenarioDescription = {
 function ScrollScreen() {
   return (
     <ScrollView>
-      <Text style={styles.hint}>Second Screen — scroll down or re-tap the tab.</Text>
+      <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
       {Array.from({ length: 50 }, (_, i) => (
         <Text key={i} style={styles.item}>
           Item {i + 1}
