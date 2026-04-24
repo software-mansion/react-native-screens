@@ -9,3 +9,4 @@ export * from '../components/gamma/stack';
 export * from '../components/gamma/split';
 export * from '../components/safe-area';
 export * from '../components/gamma/scroll-view-marker';
+export * from '../components/gamma/form-sheet';
