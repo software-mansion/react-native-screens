@@ -29,7 +29,7 @@ class RNSModalFormSheetComponentDescriptor final
     if (state != nullptr) {
       auto stateData = state->getData();
 
-      if (stateData.frameSize.width > 0 && stateData.frameSize.height > 0) {
+      if (stateData.frameSize.width >= 0 && stateData.frameSize.height >= 0) {
         layoutableShadowNode.setSize(
             Size{stateData.frameSize.width, stateData.frameSize.height});
       }
