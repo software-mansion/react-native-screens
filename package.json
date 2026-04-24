@@ -220,6 +220,9 @@
         },
         "RNSScrollViewMarker": {
           "className": "RNSScrollViewMarkerComponentView"
+        },
+        "RNSModalFormSheet": {
+          "className": "RNSModalFormSheetComponentView"
         }
       }
     }
