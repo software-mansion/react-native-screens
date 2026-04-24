@@ -12,7 +12,10 @@ export default function TestModalFormSheet() {
     <SafeAreaView style={styles.container} edges={{ top: true, bottom: true }}>
       <Text style={styles.title}>ModalFormSheet Test</Text>
       <Button title="Open ModalFormSheet" onPress={() => setIsOpen(true)} />
-      <ModalFormSheet isOpen={isOpen} onDismiss={() => setIsOpen(false)}>
+      <ModalFormSheet
+        isOpen={isOpen}
+        onDismiss={() => setIsOpen(false)}
+        detents={[0.6, 1.0]}>
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>ModalFormSheet content</Text>
           <View style={styles.spacing} />
