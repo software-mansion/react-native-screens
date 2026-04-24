@@ -1,14 +1,53 @@
-import App from '../apps';
-import { featureFlags } from 'react-native-screens';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
+import {
+  ModalFormSheet,
+  SafeAreaView,
+} from 'react-native-screens/experimental';
 
-featureFlags.experiment.synchronousScreenUpdatesEnabled = false;
-featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = false;
-featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled = false;
-featureFlags.experiment.androidResetScreenShadowStateOnOrientationChangeEnabled =
-  true;
-featureFlags.experiment.iosPreventReattachmentOfDismissedScreens = true;
-featureFlags.experiment.iosPreventReattachmentOfDismissedModals = true;
-featureFlags.experiment.ios26AllowInteractionsDuringTransition = true;
-featureFlags.stable.debugLogging = true;
+export default function TestModalFormSheet() {
+  const [isOpen, setIsOpen] = useState(false);
 
-export default App;
+  return (
+    <SafeAreaView style={styles.container} edges={{ top: true, bottom: true }}>
+      <Text style={styles.title}>ModalFormSheet Test</Text>
+      <Button title="Open ModalFormSheet" onPress={() => setIsOpen(true)} />
+      <ModalFormSheet isOpen={isOpen} onDismiss={() => setIsOpen(false)}>
+        <View style={styles.sheetContent}>
+          <Text style={styles.sheetTitle}>ModalFormSheet content</Text>
+          <View style={styles.spacing} />
+          <Button title="Dismiss from JS" onPress={() => setIsOpen(false)} />
+        </View>
+      </ModalFormSheet>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  sheetContent: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  spacing: {
+    height: 32,
+  },
+});
