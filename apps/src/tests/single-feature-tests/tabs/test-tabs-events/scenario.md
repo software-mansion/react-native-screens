@@ -55,7 +55,7 @@ Other: On going research
 2. Tap **Tab B** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabB". Four toast
-  notifications appear in order specific platform:
+  notifications appear in a platform-specific order:
   - `TabB: onWillAppear` (green background)
   - `TabA: onWillDisappear` (light navy background)
   - `TabB: onDidAppear` (light blue background)
@@ -68,7 +68,7 @@ Other: On going research
 3. Tap **Tab C** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabC". Four toast
-  notifications appear in order specific platform:
+  notifications appear in a platform-specific order:
   - `TabC: onWillAppear` (green background)
   - `TabB: onWillDisappear` (light navy background)
   - `TabC: onDidAppear` (light blue background)  
@@ -81,7 +81,7 @@ Other: On going research
 4. Tap **Tab A** in the tab bar.
 
 - [ ] Expected: The content area switches to show "TabA". Four toast
-  notifications appear in order specific platform:
+  notifications appear in a platform-specific order:
   - `TabA: onWillAppear` (green background)  
   - `TabC: onWillDisappear` (light navy background)
   - `TabA: onDidAppear` (light blue background)
