@@ -1,10 +1,12 @@
 #import "RNSModalFormSheetComponentView.h"
 #import "RNSModalFormSheetController.h"
 
+#import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
-#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import "RNSModalFormSheetComponentDescriptor.h"
+#import "RNSModalFormSheetState.h"
 
 namespace react = facebook::react;
 
@@ -14,6 +16,7 @@ namespace react = facebook::react;
 @implementation RNSModalFormSheetComponentView {
   RNSModalFormSheetController *_controller;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
+  react::RNSModalFormSheetShadowNode::ConcreteState::Shared _state;
   BOOL _isOpen;
   BOOL _needsPresentationUpdate;
 }
@@ -73,7 +76,25 @@ namespace react = facebook::react;
   }
 }
 
+- (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds
+{
+  if (_state != nullptr) {
+    // Offset is required for touches to work correctly when resolving paths from the window
+    CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
+
+    auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
+
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+  }
+}
+
 #pragma mark - RCTComponentViewProtocol
+
+- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
+{
+  [super updateState:state oldState:oldState];
+  _state = std::static_pointer_cast<const react::RNSModalFormSheetShadowNode::ConcreteState>(state);
+}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
