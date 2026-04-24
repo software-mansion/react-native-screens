@@ -182,16 +182,16 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
+  if (_touchHandler != nil) {
+    [_touchHandler detachFromView:_controller.view];
+    _touchHandler = nil;
+  }
+
   if (_controller != nil) {
     if (_controller.presentingViewController != nil) {
       [_controller dismissViewControllerAnimated:NO completion:nil];
     }
     _controller = nil;
-  }
-
-  if (_touchHandler != nil) {
-    [_touchHandler detachFromView:self];
-    _touchHandler = nil;
   }
 }
 
