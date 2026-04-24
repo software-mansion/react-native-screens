@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -63,7 +63,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
     Component: ScrollScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab3',
+      title: 'Tab3s',
     },
   },
 ];
