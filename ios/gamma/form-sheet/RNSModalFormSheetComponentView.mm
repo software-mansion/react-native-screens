@@ -21,6 +21,8 @@ namespace react = facebook::react;
   react::RNSModalFormSheetShadowNode::ConcreteState::Shared _state;
   BOOL _isOpen;
   BOOL _needsPresentationUpdate;
+  NSArray<NSNumber *> *_detents;
+  BOOL _needsSheetUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -34,7 +36,10 @@ namespace react = facebook::react;
     _controller.delegate = self;
 
     _isOpen = NO;
+    _detents = @[];
+
     _needsPresentationUpdate = NO;
+    _needsSheetUpdate = NO;
   }
   return self;
 }
@@ -140,6 +145,21 @@ namespace react = facebook::react;
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = newComponentProps.isOpen;
     _needsPresentationUpdate = YES;
+
+    // ALWAYS refresh the sheet configuration when reopening,
+    // because UIKit destroys the presentationController after the modal is dismissed.
+    if (_isOpen) {
+      _needsSheetUpdate = YES;
+    }
+  }
+
+  if (oldComponentProps.detents != newComponentProps.detents) {
+    NSMutableArray<NSNumber *> *detentsArray = [NSMutableArray new];
+    for (double detent : newComponentProps.detents) {
+      [detentsArray addObject:@(detent)];
+    }
+    _detents = detentsArray;
+    _needsSheetUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -148,6 +168,11 @@ namespace react = facebook::react;
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+
+  if (_needsSheetUpdate) {
+    _needsSheetUpdate = NO;
+    [self applySheetConfiguration];
+  }
 
   if (_needsPresentationUpdate) {
     _needsPresentationUpdate = NO;
@@ -179,7 +204,7 @@ namespace react = facebook::react;
 }
 #endif // RCT_DYNAMIC_FRAMEWORKS
 
-#pragma mark - Layout helpers
+#pragma mark - Layout
 
 - (void)resetShadowNodeSize
 {
@@ -187,6 +212,55 @@ namespace react = facebook::react;
     auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+  }
+}
+
+- (void)applySheetConfiguration
+{
+  if (@available(iOS 15.0, *)) {
+    UISheetPresentationController *sheet = _controller.sheetPresentationController;
+    if (sheet == nil) {
+      return;
+    }
+
+    if (_detents.count == 0) {
+      sheet.detents = @[ [UISheetPresentationControllerDetent largeDetent] ];
+      return;
+    }
+
+    NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
+
+    if (@available(iOS 16.0, *)) {
+      for (NSUInteger i = 0; i < _detents.count; i++) {
+        double fraction = [_detents[i] doubleValue];
+        NSString *ident = [NSString stringWithFormat:@"%lu", (unsigned long)i];
+
+        [nativeDetents
+            addObject:[UISheetPresentationControllerDetent
+                          customDetentWithIdentifier:ident
+                                            resolver:^CGFloat(
+                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                              return context.maximumDetentValue * fraction;
+                                            }]];
+      }
+    } else {
+      for (NSNumber *fractionNumber in _detents) {
+        double fraction = [fractionNumber doubleValue];
+        if (fraction <= 0.6) {
+          if (![nativeDetents containsObject:[UISheetPresentationControllerDetent mediumDetent]]) {
+            [nativeDetents addObject:[UISheetPresentationControllerDetent mediumDetent]];
+          }
+        } else {
+          if (![nativeDetents containsObject:[UISheetPresentationControllerDetent largeDetent]]) {
+            [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
+          }
+        }
+      }
+    }
+
+    [sheet animateChanges:^{
+      sheet.detents = nativeDetents;
+    }];
   }
 }
 
