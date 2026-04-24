@@ -11,7 +11,7 @@ rapid switching.
 
 ## E2E test
 
-Other: On going research
+Other: ongoing research
 
 ## Prerequisites
 
