@@ -28,6 +28,11 @@
   self.presentationController.delegate = self;
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+  _lastNotifiedSize = CGSizeZero;
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
