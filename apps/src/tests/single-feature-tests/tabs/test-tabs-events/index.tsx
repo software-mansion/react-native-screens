@@ -70,6 +70,7 @@ function AppContents() {
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-a-item',
+          tabBarItemAccessibilityLabel: 'Tab A',
           title: 'Tab A',
           ...makeCallbacks('TabA'),
         },
@@ -80,6 +81,7 @@ function AppContents() {
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-b-item',
+          tabBarItemAccessibilityLabel: 'Tab B',
           title: 'Tab B',
           ...makeCallbacks('TabB'),
         },
@@ -90,6 +92,7 @@ function AppContents() {
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-c-item',
+          tabBarItemAccessibilityLabel: 'Tab C',
           title: 'Tab C',
           ...makeCallbacks('TabC'),
         },

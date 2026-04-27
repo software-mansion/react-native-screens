@@ -1,6 +1,14 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
+async function tapTab(label: string) {
+  if (device.getPlatform() === 'android') {
+    await element(by.text(`Tab ${label}`)).tap();
+  } else {
+    await element(by.id(`tab-${label.toLowerCase()}-item`)).tap();
+  }
+}
+
 async function dismissToast(message: string) {
   await waitFor(element(by.label(message)))
     .toBeVisible()
@@ -21,7 +29,7 @@ describe('Tabs lifecycle events', () => {
   });
 
   it('should fire four lifecycle events in order when switching from Tab A to Tab B', async () => {
-    await element(by.id('tab-b-item')).tap();
+    await tapTab('B');
 
     await expect(element(by.id('tabContent-TabB'))).toBeVisible();
     if (device.getPlatform() === 'android') {
@@ -38,7 +46,7 @@ describe('Tabs lifecycle events', () => {
   });
 
   it('should fire four lifecycle events in order when switching from Tab B to Tab C', async () => {
-    await element(by.id('tab-c-item')).tap();
+    await tapTab('C');
 
     await expect(element(by.id('tabContent-TabC'))).toBeVisible();
     if (device.getPlatform() === 'android') {
@@ -55,7 +63,7 @@ describe('Tabs lifecycle events', () => {
   });
 
   it('should fire four lifecycle events in order when switching from Tab C to Tab A', async () => {
-    await element(by.id('tab-a-item')).tap();
+    await tapTab('A');
 
     await expect(element(by.id('tabContent-TabA'))).toBeVisible();
     if (device.getPlatform() === 'android') {
@@ -75,7 +83,7 @@ describe('Tabs lifecycle events', () => {
     if (device.getPlatform() === 'ios') {
       return;
     }
-    await element(by.id('tab-a-item')).tap();
+    await tapTab('A');
 
     await expect(element(by.id('tabContent-TabA'))).toBeVisible();
 
