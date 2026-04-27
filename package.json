@@ -226,6 +226,9 @@
         },
         "RNSInlineModalProvider": {
           "className": "RNSInlineModalProviderComponentView"
+        },
+        "RNSInlineModal": {
+          "className": "RNSInlineModalComponentView"
         }
       }
     }
