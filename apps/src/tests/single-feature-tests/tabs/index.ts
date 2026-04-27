@@ -14,7 +14,7 @@ import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
-import testTabsEvents from './test-tabs-events';
+import TestTabsEvents from './test-tabs-events';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -31,7 +31,7 @@ const scenarios = {
   TestTabsStaleStateUpdateRejection,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
-  testTabsEvents,
+  TestTabsEvents,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

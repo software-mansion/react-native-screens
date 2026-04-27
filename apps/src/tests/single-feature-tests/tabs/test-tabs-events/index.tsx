@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -16,7 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   name: 'Tabs lifecycle events',
   key: 'test-tabs-events',
   details:
-    'Verifies lifecycle events fire in the correct order when switching tabs.',
+    'Verify lifecycle events (onWillAppear, etc.) fire on tab switch',
   platforms: ['ios', 'android'],
 };
 
@@ -62,38 +62,38 @@ function AppContents() {
     [toast],
   );
 
-  const TAB_CONFIGS: TabRouteConfig[] = [
-    {
-      name: 'TabA',
-      Component: TabScreen,
-      options: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS,
-        title: 'Tab A',
-        tabBarItemTestID: 'tab-a-item',
-        ...makeCallbacks('TabA'),
+  const TAB_CONFIGS = useMemo<TabRouteConfig[]>(
+    () => [
+      {
+        name: 'TabA',
+        Component: TabScreen,
+        options: {
+          ...DEFAULT_TAB_ROUTE_OPTIONS,
+          title: 'Tab A',
+          ...makeCallbacks('TabA'),
+        },
       },
-    },
-    {
-      name: 'TabB',
-      Component: TabScreen,
-      options: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS,
-        title: 'Tab B',
-        tabBarItemTestID: 'tab-b-item',
-        ...makeCallbacks('TabB'),
+      {
+        name: 'TabB',
+        Component: TabScreen,
+        options: {
+          ...DEFAULT_TAB_ROUTE_OPTIONS,
+          title: 'Tab B',
+          ...makeCallbacks('TabB'),
+        },
       },
-    },
-    {
-      name: 'TabC',
-      Component: TabScreen,
-      options: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS,
-        title: 'Tab C',
-        tabBarItemTestID: 'tab-c-item',
-        ...makeCallbacks('TabC'),
+      {
+        name: 'TabC',
+        Component: TabScreen,
+        options: {
+          ...DEFAULT_TAB_ROUTE_OPTIONS,
+          title: 'Tab C',
+          ...makeCallbacks('TabC'),
+        },
       },
-    },
-  ];
+    ],
+    [makeCallbacks],
+  );
 
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
