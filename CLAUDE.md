@@ -20,7 +20,7 @@ such as stack, tabs, split.
 - `./ios` - iOS part of the library implementation,
 - `./cpp` and `./common` - C++ layer, shared between Android and iOS parts,
 - `./FabricExample/` - contains an example application, we use it to showcase the library
-  capabilities and test the library. It is not published as a part of the package.
+  capabilities and test the library. It is not published as part of the package.
 
 - `./apps/` - extracted JS (react-native) code of the `FabricExample` application;
   this is done to share the code with other example applications in the repository.
