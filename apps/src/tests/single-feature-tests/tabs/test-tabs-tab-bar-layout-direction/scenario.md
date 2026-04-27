@@ -36,7 +36,7 @@ RTL language are NOT covered by e2e tests.
 
 - Assumption: System and RN settings are working correctly. Here only
   react-native-screens prop is tested.
-- Each of the below steps must be executed twice:once with a system-wide RTL
+- Each of the below steps must be executed twice: once with a system-wide RTL
   language enabled at the device level and once with the RTL direction set
   via React Native. The device-level test is particularly critical, as the
   React Native configuration is already covered by E2E tests.
