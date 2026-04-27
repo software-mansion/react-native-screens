@@ -25,8 +25,8 @@ such as stack, tabs, split.
 - `./apps/` - extracted JS (react-native) code of the `FabricExample` application;
   this is done to share the code with other example applications in the repository.
 
-- `./react-navigation/` - this is a Git sub-module of one of downstream libraries providing
-  complete navigation solution. It is not a part of the library.
+- `./react-navigation/` - this is a git submodule for a downstream library providing
+  a complete navigation solution. It is not part of the library.
 
 ## Code conventions
 
