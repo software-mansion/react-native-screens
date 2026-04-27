@@ -1,7 +1,7 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import type { AndroidElementAttributes, IosElementAttributes } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
-import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
