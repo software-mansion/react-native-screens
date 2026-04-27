@@ -74,9 +74,9 @@ RTL language are NOT covered by e2e tests.
 4. Set system/RN to RTL, set TabsHost direction = ltr.
 
 - [ ] Expected: Tab bar displays in LTR order — TabsHost overrides RTL from
-  RN/system. Tab1 is displayed as the the leftmost item.
+  RN/system. Tab1 is displayed as the leftmost item.
 
-5. Set system/RN to LTR, keep TabsHost direction = ltr.
+1. Set system/RN to LTR, keep TabsHost direction = ltr.
 
 - [ ] Expected: Tab bar remains in LTR order. Tab1 is displayed as the the
   leftmost item.
