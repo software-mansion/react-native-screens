@@ -70,35 +70,28 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == false',
     );
+    await expectTab1ToBeLeftOfTab2(true);
   });
 
   it('follows system LTR settings when direction is set to inherit', async () => {
     await selectDirection('inherit');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(true);
   });
 
   it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
     await selectDirection('rtl');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(false);
   });
 
   it('remains in LTR order when direction is explicitly set to ltr', async () => {
     await selectDirection('ltr');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(true);
   });
 
   it('cycle through inherit → rtl → ltr → rtl → inherit renders the tab bar in correct order', async () => {
     await selectDirection('inherit');
     await expectTab1ToBeLeftOfTab2(true);
+
     await selectDirection('rtl');
     await expectTab1ToBeLeftOfTab2(false);
 
@@ -164,8 +157,6 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
-    await selectDirection('inherit');
-
     await expect(
       element(by.id('tab-bar-layout-direction-scrollview')),
     ).toBeVisible();
@@ -182,30 +173,22 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == true',
     );
+    await expectTab1ToBeLeftOfTab2(false);
   });
 
   it('follows system RTL settings when direction is set to inherit', async () => {
     await selectDirection('inherit');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(false);
   });
 
   it('remains in RTL order when direction is explicitly set to rtl', async () => {
     await selectDirection('rtl');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(false);
   });
 
   it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
     await selectDirection('ltr');
-
-    const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
-    const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
-    jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
+    await expectTab1ToBeLeftOfTab2(true);
   });
 
   it('cycle through inherit → ltr → rtl → ltr → inherit renders the tab bar in correct order', async () => {
