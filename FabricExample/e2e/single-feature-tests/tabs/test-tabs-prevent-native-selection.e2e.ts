@@ -18,14 +18,14 @@ describe('Tab Bar preventNativeSelection', () => {
     if (device.getPlatform() === 'ios') {
       await expect(element(by.label('More'))).toExist();
     }
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
   });
 
   it('native selection of first tab should be blocked', async () => {
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -34,7 +34,7 @@ describe('Tab Bar preventNativeSelection', () => {
       'preventNativeSelection: true',
     );
     await element(by.id('Second')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Second');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -43,20 +43,20 @@ describe('Tab Bar preventNativeSelection', () => {
       element(by.label('1. onTabSelectionPrevented: First')),
     ).toBeVisible();
     await element(by.label('1. onTabSelectionPrevented: First')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Second');
   });
 
   it('programmatic navigation to first tab should not be blocked', async () => {
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Second');
     await element(by.id('first-button')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: true',
     );
   });
 
   it('native selection should be possible after disabling preventNativeSelection', async () => {
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: true',
     );
@@ -65,18 +65,18 @@ describe('Tab Bar preventNativeSelection', () => {
       'preventNativeSelection: false',
     );
     await element(by.id('Fourth')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fourth');
     await element(by.id('First')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
   });
 
   it('native selection should be possible after disabling preventNativeSelection', async () => {
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await element(by.id('Third')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Third');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Third');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -85,7 +85,7 @@ describe('Tab Bar preventNativeSelection', () => {
       'preventNativeSelection: true',
     );
     await element(by.id('Fourth')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fourth');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -98,9 +98,9 @@ describe('Tab Bar preventNativeSelection', () => {
       element(by.label('1. onTabSelectionPrevented: Third')),
     ).toBeVisible();
     await element(by.label('1. onTabSelectionPrevented: Third')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fourth');
     await element(by.id('First')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -110,7 +110,7 @@ describe('Tab Bar preventNativeSelection', () => {
       return;
     }
     await element(by.id('fifth-button')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fifth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fifth');
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
@@ -120,14 +120,14 @@ describe('Tab Bar preventNativeSelection', () => {
     );
 
     await element(by.id('sixth-button')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Sixth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Sixth');
     await element(by.id('prevent-native-selection-button')).tap();
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: true',
     );
 
     await element(by.id('first-button')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await element(by.label('More')).atIndex(0).tap();
     await expect(
       element(by.label('1. onTabSelectionPrevented: Sixth')),
@@ -143,18 +143,18 @@ describe('Tab Bar preventNativeSelection', () => {
     await element(by.label('1. onTabSelectionPrevented: Fifth')).tap();
 
     await element(by.id('First')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await element(by.id('fifth-button')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fifth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fifth');
     await element(by.id('prevent-native-selection-button')).tap();
     await expect(element(by.id('prevent-native-selection-state'))).toHaveLabel(
       'preventNativeSelection: false',
     );
 
     await element(by.id('First')).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
+    await expect(element(by.id('screen-name-label'))).toHaveText('First');
     await element(by.label('More')).atIndex(0).tap();
-    await expect(element(by.id('screen-name-label'))).toHaveLabel('Fifth');
+    await expect(element(by.id('screen-name-label'))).toHaveText('Fifth');
     await expect(element(by.id('Fifth'))).not.toBeVisible();
     await expect(element(by.id('Sixth'))).not.toBeVisible();
   });
