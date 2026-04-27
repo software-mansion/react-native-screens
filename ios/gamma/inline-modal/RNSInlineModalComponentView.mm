@@ -33,6 +33,8 @@ using namespace facebook::react;
 {
   UIView *view = [[UIView alloc] init];
   view.backgroundColor = [UIColor clearColor];
+  // Ensure the view stretches to fill the presentation context
+  view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   self.view = view;
 }
 
