@@ -37,7 +37,7 @@ const Toast = ({
       remove(id);
     }, DISAPPEAR_AFTER);
     return () => clearTimeout(timer);
-  }, [id, remove]); // Added dependencies
+  }, []);
 
   return (
     <TouchableOpacity
