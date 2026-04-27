@@ -9,11 +9,9 @@ class JSI_EXPORT RNSInlineModalState final {
   using Shared = std::shared_ptr<const RNSInlineModalState>;
 
   RNSInlineModalState() = default;
-  RNSInlineModalState(Size frameSize, Point contentOriginOffset)
-      : frameSize(frameSize), contentOriginOffset(contentOriginOffset) {}
+  RNSInlineModalState(Size frameSize) : frameSize(frameSize) {}
 
   Size frameSize{};
-  Point contentOriginOffset{};
 };
 
 } // namespace facebook::react
