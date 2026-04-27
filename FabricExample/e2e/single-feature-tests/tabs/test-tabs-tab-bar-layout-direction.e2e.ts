@@ -1,6 +1,6 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import type { AndroidElementAttributes, IosElementAttributes } from 'detox';
+import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
@@ -34,6 +34,15 @@ async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
     `direction: ${direction}`,
   );
 }
+const expectTab1ToBeLeftOfTab2 = async (shouldBeLeft: boolean) => {
+  const t1 = await getElementAttributes('tab-bar-item-1-label');
+  const t2 = await getElementAttributes('tab-bar-item-2-label');
+  if (shouldBeLeft) {
+    jestExpect(t2.frame.x).toBeGreaterThan(t1.frame.x);
+  } else {
+    jestExpect(t1.frame.x).toBeGreaterThan(t2.frame.x);
+  }
+};
 
 describe('Tab Bar Layout Direction - system settings: LTR', () => {
   beforeEach(async () => {
@@ -86,6 +95,22 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
   });
+
+  it('cycle through inherit → rtl → ltr → rtl → inherit renders the tab bar in correct order', async () => {
+    await selectDirection('inherit');
+    await expectTab1ToBeLeftOfTab2(true);
+    await selectDirection('rtl');
+    await expectTab1ToBeLeftOfTab2(false);
+
+    await selectDirection('ltr');
+    await expectTab1ToBeLeftOfTab2(true);
+
+    await selectDirection('rtl');
+    await expectTab1ToBeLeftOfTab2(false);
+
+    await selectDirection('inherit');
+    await expectTab1ToBeLeftOfTab2(true);
+  });
 });
 
 describe('Tab Bar Layout Direction - system settings: RTL', () => {
@@ -130,7 +155,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
         'Tabs',
         'test-tabs-tab-bar-layout-direction',
       );
-      await element(by.id('react-allow-rtl-picker')).tap();
+      await element(by.id('react-force-rtl-picker')).multiTap(2);
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: false',
+      );
       await device.reloadReactNative();
     }
   });
@@ -165,7 +193,6 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   it('remains in RTL order when direction is explicitly set to rtl', async () => {
-    await selectDirection('inherit');
     await selectDirection('rtl');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
@@ -174,11 +201,27 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
-    await selectDirection('inherit');
     await selectDirection('ltr');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
+  });
+
+  it('cycle through inherit → ltr → rtl → ltr → inherit renders the tab bar in correct order', async () => {
+    await selectDirection('inherit');
+    await expectTab1ToBeLeftOfTab2(false);
+
+    await selectDirection('ltr');
+    await expectTab1ToBeLeftOfTab2(true);
+
+    await selectDirection('rtl');
+    await expectTab1ToBeLeftOfTab2(false);
+
+    await selectDirection('ltr');
+    await expectTab1ToBeLeftOfTab2(true);
+
+    await selectDirection('inherit');
+    await expectTab1ToBeLeftOfTab2(false);
   });
 });
