@@ -8,6 +8,10 @@ import {
   ViewStyle,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 interface ToastProps {
   index: number;
@@ -33,7 +37,7 @@ const Toast = ({
       remove(id);
     }, DISAPPEAR_AFTER);
     return () => clearTimeout(timer);
-  }, []);
+  }, [id, remove]); // Added dependencies
 
   return (
     <TouchableOpacity
@@ -63,6 +67,30 @@ const ToastContext = createContext({
   },
 });
 
+const ToastContainer = ({
+  toasts,
+  remove,
+}: {
+  toasts: IToast[];
+  remove: (id: string) => void;
+}) => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <>
+      {toasts.map((toast, i) => (
+        <Toast
+          index={i}
+          key={toast.id}
+          style={{ bottom: insets.bottom + 5 + i * 25 }}
+          {...toast}
+          remove={remove}
+        />
+      ))}
+    </>
+  );
+};
+
 interface ToastProviderProps {
   children: React.ReactNode;
 }
@@ -80,20 +108,15 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <ToastContext.Provider value={{ push }}>
-      <>
-        {children}
-        {toasts.map((toast, i) => (
-          <Toast
-            index={i}
-            key={toast.id}
-            style={{ marginBottom: i * 25 }}
-            {...toast}
-            remove={remove}
-          />
-        ))}
-      </>
-    </ToastContext.Provider>
+    <SafeAreaProvider>
+      <ToastContext.Provider value={{ push }}>
+        <>
+          {children}
+          {/* Render the internal container */}
+          <ToastContainer toasts={toasts} remove={remove} />
+        </>
+      </ToastContext.Provider>
+    </SafeAreaProvider>
   );
 };
 
@@ -104,7 +127,6 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 5,
   },
   alert: {
     alignItems: 'center',
