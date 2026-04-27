@@ -13,8 +13,8 @@ such as stack, tabs, split.
   - `./src/components/safe-area/` - code related to `SafeAreaView` component,
   - `./src/components/tabs/` - code related to `TabsHost` & `TabsScreen` components,
 
-  - `./src/fabric/` - _codegen_ specs of the components, that are used by
-    _codegen_ tool for native code generation
+  - `./src/fabric/` - _codegen_ specs for the components used by the
+    native code generation tool
 
 - `./android/` - Android part of the library implementation,
 - `./ios` - iOS part of the library implementation,
