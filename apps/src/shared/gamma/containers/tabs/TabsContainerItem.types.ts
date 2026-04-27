@@ -1,4 +1,5 @@
 import type { TabRoute, TabsNavigationMethods } from './TabsContainer.types';
+import React from 'react';
 
 export type TabsContainerItemProps = {
   route: TabRoute;
@@ -6,5 +7,4 @@ export type TabsContainerItemProps = {
   isSelected: boolean;
   pendingForUpdate: boolean;
   Component: React.ComponentType;
-}
-
+};
