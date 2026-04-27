@@ -21,6 +21,7 @@ import {
 } from './reducer';
 import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
@@ -34,13 +35,7 @@ export function TabsContainer(props: TabsContainerProps) {
 
   useSanitizeRouteConfigs(routeConfigs);
 
-  const componentsByName = React.useMemo(() => {
-    const map = new Map<string, TabRouteConfig['Component']>();
-    for (const config of routeConfigs) {
-      map.set(config.name, config.Component);
-    }
-    return map;
-  }, [routeConfigs]);
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [tabsNavState, dispatch]: [
     TabsContainerState,

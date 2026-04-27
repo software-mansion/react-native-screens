@@ -21,17 +21,12 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
 
-  const componentsByName = React.useMemo(() => {
-    const map = new Map<string, StackRouteConfig['Component']>();
-    for (const config of routeConfigs) {
-      map.set(config.name, config.Component);
-    }
-    return map;
-  }, [routeConfigs]);
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [stackNavState, navActionDispatch]: [
     StackNavigationState,
