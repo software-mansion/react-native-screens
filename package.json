@@ -235,6 +235,9 @@
         },
         "RNSFormSheetContentWrapper": {
           "className": "RNSFormSheetContentWrapperComponentView"
+        },
+        "RNSInlineModalProvider": {
+          "className": "RNSInlineModalProviderComponentView"
         }
       }
     }
