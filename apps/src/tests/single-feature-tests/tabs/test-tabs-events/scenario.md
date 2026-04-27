@@ -22,11 +22,13 @@ Other: ongoing research
 
 - All four events should fire on every tab switch. The expected order for
   a switch between TabX and TabY depends on platform
+
   For iOS:
   1. `TabY: onWillAppear`
   2. `TabX: onWillDisappear`
   3. `TabY: onDidAppear`
   4. `TabX: onDidDisappear`
+
   For Android:
   1. `TabX: onWillDisappear`
   2. `TabX: onDidDisappear`
