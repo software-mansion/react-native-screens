@@ -102,4 +102,4 @@ RTL language are NOT covered by e2e tests.
 9. Cycle through inherit → ltr → rtl → ltr → inherit.
 
 - [ ] Expected: Tab bar direction updates immediately with each change, no
-  crash or layout freeze occur.
+  crashes or layout freezes occur.
