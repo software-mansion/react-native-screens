@@ -142,10 +142,8 @@ using namespace facebook::react;
 
 - (void)inlineModalControllerDidLayoutWithBounds:(CGRect)bounds
 {
-  CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
-
   if (_state != nullptr) {
-    auto newState = RNSInlineModalState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
+    auto newState = RNSInlineModalState{RCTSizeFromCGSize(bounds.size)};
     _state->updateState(std::move(newState), EventQueue::UpdateMode::unstable_Immediate);
   }
 }
@@ -153,7 +151,7 @@ using namespace facebook::react;
 - (void)resetShadowNodeSize
 {
   if (_state != nullptr) {
-    auto newState = RNSInlineModalState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
+    auto newState = RNSInlineModalState{RCTSizeFromCGSize(CGSizeZero)};
     _state->updateState(std::move(newState), EventQueue::UpdateMode::unstable_Immediate);
   }
 }

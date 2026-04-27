@@ -18,8 +18,6 @@ class JSI_EXPORT RNSInlineModalShadowNode final
           RNSInlineModalState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
-
-  Point getContentOriginOffset(bool includeTransform) const override;
 };
 
 } // namespace facebook::react
