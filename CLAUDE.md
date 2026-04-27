@@ -1,1 +1,2 @@
-Read @AGENTS.md before taking any action in this repository.
+<!-- Single source of truth lives in AGENTS.md (shared across AI tools) -->
+@AGENTS.md
