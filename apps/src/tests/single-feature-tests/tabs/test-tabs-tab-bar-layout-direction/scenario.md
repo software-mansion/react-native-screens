@@ -58,7 +58,7 @@ RTL language are NOT covered by e2e tests.
 2. Ensure system/RN is LTR (I18nManager.isRTL == false), set TabsHost
    direction = inherit.
 
-- [ ] Expected: Tab bar displays in LTR order. Tab1 is displayed as the the
+- [ ] Expected: Tab bar displays in LTR order. Tab1 is displayed as the
   leftmost item and Tab2 as second.
 
 3. Set system/RN to RTL (I18nManager.isRTL == true), keep TabsHost
