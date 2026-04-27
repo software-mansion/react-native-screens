@@ -24,8 +24,19 @@ async function scrollTo(selector: { id: string } | { text: string }) {
     .scroll(100, 'down');
 }
 
+async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
+  await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+  await element(by.id('tab-bar-layout-direction-picker')).tap();
+  await scrollTo({ text: direction });
+  await element(by.text(direction)).tap();
+  await element(by.id('tab-bar-layout-direction-picker')).tap();
+  await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
+    `direction: ${direction}`,
+  );
+}
+
 describe('Tab Bar Layout Direction - system settings: LTR', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
@@ -52,44 +63,24 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     );
   });
 
-  //inherit
   it('follows system LTR settings when direction is set to inherit', async () => {
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: inherit',
-    );
+    await selectDirection('inherit');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab2attrs.frame.x).toBeGreaterThan(tab1attrs.frame.x);
   });
 
-  //rtl
   it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo({ text: 'rtl' });
-
-    await element(by.text('rtl')).tap();
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: rtl',
-    );
+    await selectDirection('rtl');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
   });
 
-  //ltr
   it('remains in LTR order when direction is explicitly set to ltr', async () => {
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo({ text: 'ltr' });
-    await element(by.text('ltr')).tap();
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: ltr',
-    );
+    await selectDirection('ltr');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
@@ -145,6 +136,8 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
+    await selectDirection('inherit');
+
     await expect(
       element(by.id('tab-bar-layout-direction-scrollview')),
     ).toBeVisible();
@@ -163,43 +156,26 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     );
   });
 
-  //inherit
   it('follows system RTL settings when direction is set to inherit', async () => {
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: inherit',
-    );
+    await selectDirection('inherit');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
   });
 
-  //rtl
   it('remains in RTL order when direction is explicitly set to rtl', async () => {
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo({ text: 'rtl' });
-    await element(by.text('rtl')).tap();
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: rtl',
-    );
+    await selectDirection('inherit');
+    await selectDirection('rtl');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
     jestExpect(tab1attrs.frame.x).toBeGreaterThan(tab2attrs.frame.x);
   });
 
-  //ltr
   it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await scrollTo({ text: 'ltr' });
-    await element(by.text('ltr')).tap();
-    await element(by.id('tab-bar-layout-direction-picker')).tap();
-    await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: ltr',
-    );
+    await selectDirection('inherit');
+    await selectDirection('ltr');
 
     const tab1attrs = await getElementAttributes('tab-bar-item-1-label');
     const tab2attrs = await getElementAttributes('tab-bar-item-2-label');
