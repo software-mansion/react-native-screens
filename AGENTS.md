@@ -6,9 +6,9 @@ such as stack, tabs, split.
 
 ## Repository layout tips
 
-- `./src` - JS side of the library
+- `./src/` - JS side of the library
 
-  - `./src/components/gamma` - each directory inside contains JS code for new
+  - `./src/components/gamma/` - each directory inside contains JS code for new
     components, planned for next major release,
   - `./src/components/safe-area/` - code related to `SafeAreaView` component,
   - `./src/components/tabs/` - code related to `TabsHost` & `TabsScreen` components,
@@ -17,8 +17,8 @@ such as stack, tabs, split.
     native code generation tool
 
 - `./android/` - Android part of the library implementation,
-- `./ios` - iOS part of the library implementation,
-- `./cpp` and `./common` - C++ layer, shared between Android and iOS parts,
+- `./ios/` - iOS part of the library implementation,
+- `./cpp/` and `./common/` - C++ layer, shared between Android and iOS parts,
 - `./FabricExample/` - contains an example application, we use it to showcase the library
   capabilities and test the library. It is not published as part of the package.
 
@@ -36,7 +36,7 @@ such as stack, tabs, split.
 
 ## Imports
 
-- Use relative imports within library packages (`./src`).
+- Use relative imports within library packages (`./src/`).
 - Use path aliases (`@apps/*`, `@assets/*`) only in example apps (`./apps/`, `./FabricExample/`).
 - Never use absolute paths from project root as import paths.
 
