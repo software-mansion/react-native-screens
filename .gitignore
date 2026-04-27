@@ -69,6 +69,8 @@ android/.settings
 
 # AI assistant configuration (local only)
 /CLAUDE.local.md
+/CLAUDE.md
+**/CLAUDE.md
 /.claude/
 
 # General rule for files explicitly marked as local
