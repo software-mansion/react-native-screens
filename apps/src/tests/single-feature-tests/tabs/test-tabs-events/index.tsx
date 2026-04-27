@@ -69,6 +69,7 @@ function AppContents() {
         Component: TabScreen,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
+          tabBarItemTestID: 'tab-a-item',
           title: 'Tab A',
           ...makeCallbacks('TabA'),
         },
@@ -78,6 +79,7 @@ function AppContents() {
         Component: TabScreen,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
+          tabBarItemTestID: 'tab-b-item',
           title: 'Tab B',
           ...makeCallbacks('TabB'),
         },
@@ -87,6 +89,7 @@ function AppContents() {
         Component: TabScreen,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
+          tabBarItemTestID: 'tab-c-item',
           title: 'Tab C',
           ...makeCallbacks('TabC'),
         },
