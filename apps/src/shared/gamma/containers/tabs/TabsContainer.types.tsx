@@ -80,12 +80,12 @@ export type TabsNavigationAction =
 export type TabsHostConfig = Omit<
   TabsHostProps,
   | 'children'
-  | 'navState'
+  | 'navStateRequest'
 >;
 
 export type TabsContainerProps = Omit<
   TabsHostProps,
-  'children' | 'navState'
+  'children' | 'navStateRequest'
 > & {
   routeConfigs: TabRouteConfig[];
   /**

@@ -53,7 +53,7 @@ namespace react = facebook::react;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 
-  RNSTabsNavigationState *_Nullable _jsNavState;
+  RNSTabsNavigationState *_Nullable _jsNavStateRequest;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -268,14 +268,15 @@ namespace react = facebook::react;
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(props);
 
-  if (newComponentProps.navState.selectedScreenKey != oldComponentProps.navState.selectedScreenKey ||
-      newComponentProps.navState.provenance != oldComponentProps.navState.provenance) {
-    NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navState.selectedScreenKey);
+  if (newComponentProps.navStateRequest.selectedScreenKey != oldComponentProps.navStateRequest.selectedScreenKey ||
+      newComponentProps.navStateRequest.baseProvenance != oldComponentProps.navStateRequest.baseProvenance) {
+    NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navStateRequest.selectedScreenKey);
     RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
-    RCTAssert(newComponentProps.navState.provenance >= 0, @"[RNScreens] provenance MUST BE >= 0]");
-    _jsNavState = [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
-                                                          provenance:newComponentProps.navState.provenance];
-    [_controller setPendingNavigationStateUpdate:[_jsNavState cloneState]];
+    RCTAssert(newComponentProps.navStateRequest.baseProvenance >= 0, @"[RNScreens] baseProvenance MUST BE >= 0]");
+    _jsNavStateRequest =
+        [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
+                                                provenance:newComponentProps.navStateRequest.baseProvenance];
+    [_controller setPendingNavigationStateUpdate:[_jsNavStateRequest cloneState]];
   }
 
   if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
