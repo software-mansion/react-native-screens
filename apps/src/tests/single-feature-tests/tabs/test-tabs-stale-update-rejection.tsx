@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ContentView() {
+export function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
@@ -58,7 +58,7 @@ function ContentView() {
   );
 }
 
-function TabsNavigationButtons() {
+export function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (
@@ -102,7 +102,7 @@ export function App() {
   );
 }
 
-function AppContents() {
+export function AppContents() {
   const toast = useToast();
 
   return (
@@ -122,7 +122,7 @@ function AppContents() {
   );
 }
 
-function HeavyRenderHierarchy({
+export function HeavyRenderHierarchy({
   enabled,
   timeMs = 5000,
 }: {

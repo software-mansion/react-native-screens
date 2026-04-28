@@ -24,7 +24,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const {
     routeKey: stackRouteKey,
     routeOptions: stackRouteOptions,
@@ -81,7 +81,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TabsScreen() {
+export function TabsScreen() {
   return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
 

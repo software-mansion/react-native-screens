@@ -19,7 +19,7 @@ const scenarioDescription: ScenarioDescription = {
 
 const ITEM_COUNT = 30;
 
-function ScrollContent({ label }: { label: string }) {
+export function ScrollContent({ label }: { label: string }) {
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.header}>
@@ -36,15 +36,15 @@ function ScrollContent({ label }: { label: string }) {
   );
 }
 
-function FalseTab() {
+export function FalseTab() {
   return <ScrollContent label="false" />;
 }
 
-function TrueTab() {
+export function TrueTab() {
   return <ScrollContent label="true" />;
 }
 
-function DefaultTab() {
+export function DefaultTab() {
   return <ScrollContent label="(not set, defaults to true)" />;
 }
 

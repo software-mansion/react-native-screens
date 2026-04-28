@@ -17,7 +17,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ContentView() {
+export function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
@@ -29,7 +29,7 @@ function ContentView() {
   );
 }
 
-function TabsNavigationButtons() {
+export function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (

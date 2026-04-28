@@ -27,7 +27,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactColorScheme, setReactColorScheme] =
     React.useState<ColorSchemeName>('unspecified');
@@ -78,7 +78,7 @@ function ConfigScreen() {
   );
 }
 
-function TestScreen() {
+export function TestScreen() {
   return (
     <View style={styles.containerCenter}>
       <TextInput placeholder="Type something..." />

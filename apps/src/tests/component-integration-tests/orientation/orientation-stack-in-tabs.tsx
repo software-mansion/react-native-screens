@@ -24,7 +24,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const {
     routeKey: tabRouteKey,
     routeOptions: tabRouteOptions,
@@ -70,7 +70,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-function StackScreen() {
+export function StackScreen() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
