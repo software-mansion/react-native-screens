@@ -102,23 +102,6 @@ export function App() {
 export default createScenario(App, scenarioDescription);
 
 const styles = StyleSheet.create({
-  config: {
-    padding: 40,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  subtitle: {
-    textAlign: 'center',
-    color: '#666',
-  },
-  switch: {
-    marginTop: 20,
-    marginBottom: 15,
-  },
   hint: {
     padding: 16,
     color: '#666',
