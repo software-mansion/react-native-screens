@@ -282,10 +282,11 @@ RNS_IGNORE_SUPER_CALL_END
         // in the image attribute not being updated. We manually set frame to the size of an image
         // in order to trigger proper reload that'd update the image attribute.
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        [imageView reactSetFrame:CGRectMake(imageView.frame.origin.x,
-                                            imageView.frame.origin.y,
-                                            imageSource.size.width,
-                                            imageSource.size.height)];
+        [imageView reactSetFrame:CGRectMake(
+                                     imageView.frame.origin.x,
+                                     imageView.frame.origin.y,
+                                     imageSource.size.width,
+                                     imageSource.size.height)];
       }
 
       UIImage *image = imageView.image;
@@ -847,12 +848,13 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(childComponentView.superview == nil,
-            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-            self,
-            childComponentView,
-            @(index),
-            @([childComponentView.superview tag]));
+  RCTAssert(
+      childComponentView.superview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
 
   //  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self insertReactSubview:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
@@ -1129,21 +1131,23 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
-RCT_ENUM_CONVERTER(UISemanticContentAttribute,
-                   (@{
-                     @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
-                     @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
-                   }),
-                   UISemanticContentAttributeUnspecified,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    UISemanticContentAttribute,
+    (@{
+      @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
+      @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
+    }),
+    UISemanticContentAttributeUnspecified,
+    integerValue)
 
-RCT_ENUM_CONVERTER(UINavigationItemBackButtonDisplayMode,
-                   (@{
-                     @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
-                     @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
-                     @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
-                   }),
-                   UINavigationItemBackButtonDisplayModeDefault,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    UINavigationItemBackButtonDisplayMode,
+    (@{
+      @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
+      @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
+      @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
+    }),
+    UINavigationItemBackButtonDisplayModeDefault,
+    integerValue)
 
 @end
