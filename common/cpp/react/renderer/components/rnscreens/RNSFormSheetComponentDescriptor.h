@@ -25,13 +25,11 @@ class RNSFormSheetComponentDescriptor final
         std::static_pointer_cast<const RNSFormSheetShadowNode::ConcreteState>(
             shadowNode.getState());
 
-    if (state != nullptr) {
-      auto stateData = state->getData();
+    auto stateData = state->getData();
 
-      if (stateData.frameSize.width >= 0 && stateData.frameSize.height >= 0) {
-        layoutableShadowNode.setSize(
-            Size{stateData.frameSize.width, stateData.frameSize.height});
-      }
+    if (stateData.frameSize.width >= 0 && stateData.frameSize.height >= 0) {
+      layoutableShadowNode.setSize(
+          Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);

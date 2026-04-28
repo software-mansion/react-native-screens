@@ -9,11 +9,11 @@ class JSI_EXPORT RNSFormSheetState final {
   using Shared = std::shared_ptr<const RNSFormSheetState>;
 
   RNSFormSheetState() = default;
-  RNSFormSheetState(Size frameSize, Point contentOriginOffset)
-      : frameSize(frameSize), contentOriginOffset(contentOriginOffset) {}
+  RNSFormSheetState(Size frameSize, Point contentOffset)
+      : frameSize(frameSize), contentOffset(contentOffset) {}
 
   Size frameSize{};
-  Point contentOriginOffset{};
+  Point contentOffset{};
 };
 
 } // namespace facebook::react
