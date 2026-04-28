@@ -28,6 +28,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ * Origin (actor) that requested a tab transition. Mirrors the public `actionOrigin` event field.
+ *
+ * - [User] direct native UI interaction (tab bar tap, drag-and-drop).
+ * - [ProgrammaticJs] JS-initiated request delivered via the `navStateRequest` prop.
+ * - [Implicit] platform side effect not attributable to an explicit actor — UIKit changed the selection
+ *   as a side effect of another operation (e.g. More navigation controller disappearing during a
+ *   horizontal size class transition on iPad).
+ */
+typedef NS_ENUM(NSInteger, RNSTabsActionOrigin) {
+  RNSTabsActionOriginUser = 0,
+  RNSTabsActionOriginProgrammaticJs,
+  RNSTabsActionOriginImplicit,
+};
+
 /** Bundles a navigation state change together with metadata about the selection context. */
 @interface RNSTabsNavigationStateUpdateContext : NSObject
 
@@ -37,26 +52,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isRepeated;
 /** Whether a special effect (e.g. scroll-to-top) was triggered by the selection. */
 @property (nonatomic, readonly) BOOL hasTriggeredSpecialEffect;
-/** Whether the selection was initiated by a native user action (tap) as opposed to a JS-driven update. */
-@property (nonatomic, readonly) BOOL isNativeAction;
+/** Origin (actor) that requested this transition. */
+@property (nonatomic, readonly) RNSTabsActionOrigin actionOrigin;
 
 - (instancetype)initWithNavState:(nonnull RNSTabsNavigationState *)navState
                       isRepeated:(BOOL)isRepeated
        hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
-                  isNativeAction:(BOOL)isNativeAction;
+                    actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 @end
-
-/** Source of a navigation state update. */
-typedef NS_ENUM(NSInteger, RNSTabsNavigationStateUpdateSource) {
-  /** Update initiated by a native user interaction (e.g. tab tap). */
-  RNSTabsNavigationStateUpdateSourceUser = 0,
-  /** Update initiated externally (e.g. from JS via props). */
-  RNSTabsNavigationStateUpdateSourceExternal,
-  /** Update detected implicitly — UIKit changed the selection as a side effect of another operation
-   *  (e.g. More navigation controller disappearing during a horizontal size class transition on iPad). */
-  RNSTabsNavigationStateUpdateSourceImplicit
-};
 
 /** Reason why a navigation state update was rejected by the container. */
 typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {

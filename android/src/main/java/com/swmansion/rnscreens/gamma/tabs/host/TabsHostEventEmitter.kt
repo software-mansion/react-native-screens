@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
@@ -20,7 +21,7 @@ internal class TabsHostEventEmitter(
         provenance: Int,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     ) {
         reactEventDispatcher.dispatchEvent(
             TabsHostTabSelectedEvent(
@@ -30,7 +31,7 @@ internal class TabsHostEventEmitter(
                 provenance,
                 isRepeated,
                 hasTriggeredSpecialEffect,
-                isNativeAction,
+                actionOrigin,
             ),
         )
     }

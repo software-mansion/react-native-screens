@@ -31,13 +31,13 @@
 - (instancetype)initWithNavState:(nonnull RNSTabsNavigationState *)navState
                       isRepeated:(BOOL)isRepeated
        hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
-                  isNativeAction:(BOOL)isNativeAction
+                    actionOrigin:(RNSTabsActionOrigin)actionOrigin
 {
   if (self = [super init]) {
     _navState = navState;
     _isRepeated = isRepeated;
     _hasTriggeredSpecialEffect = hasTriggeredSpecialEffect;
-    _isNativeAction = isNativeAction;
+    _actionOrigin = actionOrigin;
   }
   return self;
 }
