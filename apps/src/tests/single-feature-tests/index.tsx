@@ -10,6 +10,7 @@ import TabsScenarioGroup from './tabs';
 import SplitScenarioGroup from './split';
 import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
+import FormSheetScenarioGroup from './form-sheet';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
@@ -18,6 +19,7 @@ export const COMPONENT_SCENARIOS = {
   Split: SplitScenarioGroup,
   StackV5: StackV5ScenarioGroup,
   StackV4: StackV4ScenarioGroup,
+  FormSheet: FormSheetScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
