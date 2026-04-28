@@ -1799,7 +1799,7 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
-  - RNScreens (4.24.0):
+  - RNScreens (1000.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1820,9 +1820,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNScreens/common (= 4.24.0)
+    - RNScreens/common (= 1000.0.0)
     - Yoga
-  - RNScreens/common (4.24.0):
+  - RNScreens/common (1000.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2156,7 +2156,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FBLazyVector: dfb9ab6ee2eac316f7869edf6ec27b9e872329f0
-  hermes-engine: 9a2687edf91e524e67dfad2489d68de10993a01e
+  hermes-engine: 2f2ffe03fec9edfd45418f6e7701497449e8e918
   RCTDeprecation: df7412cdad525035c3adeb14c1dc35b344e98187
   RCTRequired: 28a4bf1ef190650fcd6973d8a6a8f8beb30ef807
   RCTSwiftUI: 3003f1af83c332be5946ec0433fedcf0ada06551
@@ -2227,10 +2227,10 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 706b65371b90b5cc797b6639e8979f2e5cecd6da
   ReactCodegen: 3b63446e22acfdafa14e48a23c4a34b3ec99215e
   ReactCommon: d588ff8119315f4d3341e06f954e60789b050710
-  ReactNativeDependencies: d5ed8734d3e9509841509a68455cf175c1ceaf0f
+  ReactNativeDependencies: c52d241ee664599a6b536f2bd4576a2c2a26a9b5
   RNGestureHandler: 6c55d44ca01fff875b82ee7a9dee86a7aa9fa563
   RNReanimated: 371d8a67ea2cf7a2608d97fd990c3ac1b6994cfb
-  RNScreens: b0376b8982eb0f6e9f1a022dbc034b824db6b091
+  RNScreens: 60f2260949e6f9cc35cd76c506a3475bec919ca6
   RNWorklets: babdff0047f276ae0e194e0750cf956db2fd3c86
   Yoga: 7549f28c2f55a71280f339554f8980f4a1414b0f
 
