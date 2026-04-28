@@ -1,9 +1,9 @@
-#import "RNSModalFormSheetController.h"
+#import "RNSFormSheetController.h"
 
-@interface RNSModalFormSheetController () <UIAdaptivePresentationControllerDelegate>
+@interface RNSFormSheetController () <UIAdaptivePresentationControllerDelegate>
 @end
 
-@implementation RNSModalFormSheetController {
+@implementation RNSFormSheetController {
   CGSize _lastNotifiedSize;
 }
 

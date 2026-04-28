@@ -1,24 +1,24 @@
-#import "RNSModalFormSheetComponentView.h"
-#import "RNSModalFormSheetController.h"
+#import "RNSFormSheetComponentView.h"
+#import "RNSFormSheetController.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import "RNSModalFormSheetComponentDescriptor.h"
-#import "RNSModalFormSheetState.h"
+#import "RNSFormSheetComponentDescriptor.h"
+#import "RNSFormSheetState.h"
 
 namespace react = facebook::react;
 
-@interface RNSModalFormSheetComponentView () <RNSModalFormSheetControllerDelegate>
+@interface RNSFormSheetComponentView () <RNSFormSheetControllerDelegate>
 @end
 
-@implementation RNSModalFormSheetComponentView {
+@implementation RNSFormSheetComponentView {
   RCTSurfaceTouchHandler *_touchHandler;
-  RNSModalFormSheetController *_controller;
+  RNSFormSheetController *_controller;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
-  react::RNSModalFormSheetShadowNode::ConcreteState::Shared _state;
+  react::RNSFormSheetShadowNode::ConcreteState::Shared _state;
   BOOL _isOpen;
   BOOL _needsPresentationUpdate;
   NSArray<NSNumber *> *_detents;
@@ -28,11 +28,11 @@ namespace react = facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const react::RNSModalFormSheetProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSFormSheetProps>();
     _props = defaultProps;
 
     _reactSubviews = [NSMutableArray new];
-    _controller = [[RNSModalFormSheetController alloc] init];
+    _controller = [[RNSFormSheetController alloc] init];
     _controller.delegate = self;
 
     _isOpen = NO;
@@ -79,15 +79,15 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - RNSModalFormSheetControllerDelegate
+#pragma mark - RNSFormSheetControllerDelegate
 
-- (void)sheetControllerDidDismiss:(RNSModalFormSheetController *)controller
+- (void)sheetControllerDidDismiss:(RNSFormSheetController *)controller
 {
   _isOpen = NO;
   [self resetShadowNodeSize];
 
   if (_eventEmitter != nullptr) {
-    std::static_pointer_cast<const react::RNSModalFormSheetEventEmitter>(_eventEmitter)->onDismiss({});
+    std::static_pointer_cast<const react::RNSFormSheetEventEmitter>(_eventEmitter)->onDismiss({});
   }
 }
 
@@ -104,7 +104,7 @@ namespace react = facebook::react;
   _touchHandler.viewOriginOffset = origin;
 
   if (_state != nullptr) {
-    auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
+    auto newState = react::RNSFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
   }
@@ -115,12 +115,12 @@ namespace react = facebook::react;
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
   [super updateState:state oldState:oldState];
-  _state = std::static_pointer_cast<const react::RNSModalFormSheetShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const react::RNSFormSheetShadowNode::ConcreteState>(state);
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSModalFormSheetComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSFormSheetComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -143,8 +143,8 @@ namespace react = facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSModalFormSheetProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSModalFormSheetProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFormSheetProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetProps>(props);
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = newComponentProps.isOpen;
@@ -213,7 +213,7 @@ namespace react = facebook::react;
 - (void)resetShadowNodeSize
 {
   if (_state != nullptr) {
-    auto newState = react::RNSModalFormSheetState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
+    auto newState = react::RNSFormSheetState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
   }
@@ -270,7 +270,7 @@ namespace react = facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RNSModalFormSheetCls(void)
+Class<RCTComponentViewProtocol> RNSFormSheetCls(void)
 {
-  return RNSModalFormSheetComponentView.class;
+  return RNSFormSheetComponentView.class;
 }

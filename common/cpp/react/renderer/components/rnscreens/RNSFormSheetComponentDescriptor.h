@@ -2,29 +2,28 @@
 
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include "RNSModalFormSheetShadowNode.h"
+#include "RNSFormSheetShadowNode.h"
 
 namespace facebook::react {
 
-class RNSModalFormSheetComponentDescriptor final
-    : public ConcreteComponentDescriptor<RNSModalFormSheetShadowNode> {
+class RNSFormSheetComponentDescriptor final
+    : public ConcreteComponentDescriptor<RNSFormSheetShadowNode> {
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(
-        dynamic_cast<RNSModalFormSheetShadowNode *>(&shadowNode));
+    react_native_assert(dynamic_cast<RNSFormSheetShadowNode *>(&shadowNode));
     auto &concreteShadowNode =
-        static_cast<RNSModalFormSheetShadowNode &>(shadowNode);
+        static_cast<RNSFormSheetShadowNode &>(shadowNode);
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&concreteShadowNode));
     auto &layoutableShadowNode =
         static_cast<YogaLayoutableShadowNode &>(concreteShadowNode);
 
-    auto state = std::static_pointer_cast<
-        const RNSModalFormSheetShadowNode::ConcreteState>(
-        shadowNode.getState());
+    auto state =
+        std::static_pointer_cast<const RNSFormSheetShadowNode::ConcreteState>(
+            shadowNode.getState());
 
     if (state != nullptr) {
       auto stateData = state->getData();

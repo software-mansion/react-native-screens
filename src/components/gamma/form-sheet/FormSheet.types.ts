@@ -1,6 +1,6 @@
 import type { ViewProps } from 'react-native';
 
-export interface ModalFormSheetProps extends ViewProps {
+export interface FormSheetProps extends ViewProps {
   /**
    * Controls whether the sheet is currently presented or dismissed.
    */
