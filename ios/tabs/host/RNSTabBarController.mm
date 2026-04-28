@@ -463,7 +463,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 {
   UIViewController *_Nonnull currSelectedViewController = self.selectedViewController;
 
-  NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.screenKey;
+  NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.selectedScreenKey;
   UIViewController *nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
 
   RCTAssert(

@@ -28,12 +28,12 @@
 
 @implementation RNSTabsNavigationStateUpdateRequest
 
-- (instancetype)initWithScreenKey:(nonnull NSString *)screenKey
-                   baseProvenance:(int)baseProvenance
-                     actionOrigin:(RNSTabsActionOrigin)actionOrigin
+- (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                           baseProvenance:(int)baseProvenance
+                             actionOrigin:(RNSTabsActionOrigin)actionOrigin
 {
   if (self = [super init]) {
-    _screenKey = screenKey;
+    _selectedScreenKey = selectedScreenKey;
     _baseProvenance = baseProvenance;
     _actionOrigin = actionOrigin;
   }
@@ -42,18 +42,19 @@
 
 - (instancetype)cloneRequest
 {
-  return [[RNSTabsNavigationStateUpdateRequest alloc] initWithScreenKey:[NSString stringWithString:self.screenKey]
-                                                         baseProvenance:self.baseProvenance
-                                                           actionOrigin:self.actionOrigin];
+  return [[RNSTabsNavigationStateUpdateRequest alloc]
+      initWithSelectedScreenKey:[NSString stringWithString:self.selectedScreenKey]
+                 baseProvenance:self.baseProvenance
+                   actionOrigin:self.actionOrigin];
 }
 
-+ (instancetype)requestWithScreenKey:(nonnull NSString *)screenKey
-                      baseProvenance:(int)baseProvenance
-                        actionOrigin:(RNSTabsActionOrigin)actionOrigin
++ (instancetype)requestWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                              baseProvenance:(int)baseProvenance
+                                actionOrigin:(RNSTabsActionOrigin)actionOrigin
 {
-  return [[RNSTabsNavigationStateUpdateRequest alloc] initWithScreenKey:screenKey
-                                                         baseProvenance:baseProvenance
-                                                           actionOrigin:actionOrigin];
+  return [[RNSTabsNavigationStateUpdateRequest alloc] initWithSelectedScreenKey:selectedScreenKey
+                                                                 baseProvenance:baseProvenance
+                                                                   actionOrigin:actionOrigin];
 }
 
 @end

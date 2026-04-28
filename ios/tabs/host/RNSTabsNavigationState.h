@@ -54,25 +54,25 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
 /**
  * A request to change navigation state.
  *
- * Carries the target `screenKey`, the `baseProvenance` of the state the request was derived from,
+ * Carries the target `selectedScreenKey`, the `baseProvenance` of the state the request was derived from,
  * and the `actionOrigin` (actor) that initiated it. Mirrors the public
  * `TabsHostNavStateRequest` TS type plus an `actionOrigin` carried internally.
  */
 @interface RNSTabsNavigationStateUpdateRequest : NSObject
 
-@property (nonatomic, strong, readonly, nonnull) NSString *screenKey;
+@property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
 @property (nonatomic, readonly) int baseProvenance;
 @property (nonatomic, readonly) RNSTabsActionOrigin actionOrigin;
 
-- (instancetype)initWithScreenKey:(nonnull NSString *)screenKey
-                   baseProvenance:(int)baseProvenance
-                     actionOrigin:(RNSTabsActionOrigin)actionOrigin;
+- (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                           baseProvenance:(int)baseProvenance
+                             actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 - (instancetype)cloneRequest;
 
-+ (instancetype)requestWithScreenKey:(nonnull NSString *)screenKey
-                      baseProvenance:(int)baseProvenance
-                        actionOrigin:(RNSTabsActionOrigin)actionOrigin;
++ (instancetype)requestWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                              baseProvenance:(int)baseProvenance
+                                actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 @end
 
