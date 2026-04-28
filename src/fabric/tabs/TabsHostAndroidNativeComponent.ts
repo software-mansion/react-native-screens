@@ -13,9 +13,9 @@ type TabSelectedEvent = {
   isNativeAction: boolean;
 };
 
-type NavigationState = {
+type NavigationStateRequest = {
   selectedScreenKey: string;
-  provenance: CT.Int32;
+  baseProvenance: CT.Int32;
 };
 
 type TabSelectionRejectedEvent = Readonly<{
@@ -42,7 +42,7 @@ type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
   // Control
-  navState: NavigationState;
+  navStateRequest: NavigationStateRequest;
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events

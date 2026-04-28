@@ -29,7 +29,7 @@ class TabsHost(
     TabsContainerDelegate,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
-    private var jsNavState: TabsNavState = TabsNavState.EMPTY
+    private var jsNavStateRequest: TabsNavState = TabsNavState.EMPTY
 
     private val container: TabsContainer =
         TabsContainer(reactContext, this).apply {
@@ -109,9 +109,9 @@ class TabsHost(
         container.removeAllTabsScreens()
     }
 
-    internal fun updateJSNavState(navState: TabsNavState) {
-        jsNavState = navState
-        container.setContainerOperation(TabSelectOp(jsNavState.copy()))
+    internal fun updateJSNavStateRequest(navStateRequest: TabsNavState) {
+        jsNavStateRequest = navStateRequest
+        container.setContainerOperation(TabSelectOp(jsNavStateRequest.copy()))
     }
 
     private val layoutCallback =
