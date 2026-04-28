@@ -2,19 +2,23 @@ import type { ViewProps } from 'react-native';
 
 export interface FormSheetProps extends ViewProps {
   /**
-   * Controls whether the sheet is currently presented or dismissed.
+   * Determines whether the form sheet is currently visible.
+   * When `true`, the sheet is presented. When `false`, it is dismissed.
    */
   isOpen: boolean;
 
   /**
-   * Array of fractional heights [0..1] that map to `UISheetPresentationController` detents.
-   * For example, `[0.5, 1.0]` creates a medium and a large detent.
+   * An array of fractional screen heights (ranging from `0` to `1`) that define
+   * the resting positions of the sheet.
+   *
+   * On iOS, these map directly to `UISheetPresentationController` detents.
    */
   detents?: number[] | undefined;
 
   /**
    * Called when the user interactively dismisses the sheet (e.g., by swiping it down).
-   * Use this to sync your local state (`isOpen = false`).
+   * It is highly recommended to use this callback to synchronize
+   * your local state to prevent UI mismatch (e.g., updating `isOpen` to `false`).
    */
   onDismiss?: (() => void) | undefined;
 }

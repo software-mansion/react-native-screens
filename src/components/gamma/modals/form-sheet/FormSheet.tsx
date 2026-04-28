@@ -4,15 +4,10 @@ import FormSheetNativeComponent from '../../../../fabric/gamma/modals/form-sheet
 import type { FormSheetProps } from './FormSheet.types';
 
 export function FormSheet(props: FormSheetProps) {
-  const { isOpen, detents, onDismiss, children, style, ...rest } = props;
+  const { children, style, ...rest } = props;
 
   return (
-    <FormSheetNativeComponent
-      isOpen={isOpen}
-      detents={detents}
-      onDismiss={onDismiss}
-      style={[style, styles.host]}
-      {...rest}>
+    <FormSheetNativeComponent style={[style, styles.host]} {...rest}>
       {children}
     </FormSheetNativeComponent>
   );
