@@ -53,7 +53,7 @@ namespace react = facebook::react;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 
-  RNSTabsNavigationState *_Nullable _navStateRequest;
+  RNSTabsNavigationStateUpdateRequest *_Nullable _navStateRequest;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
