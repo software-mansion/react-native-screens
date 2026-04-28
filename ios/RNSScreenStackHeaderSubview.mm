@@ -116,6 +116,7 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
     _lastScheduledFrame = CGRectZero;
+    _synchronousShadowStateUpdatesEnabled = YES;
   }
 
   return self;
