@@ -63,7 +63,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
     Component: ScrollScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab3s',
+      title: 'Tab3',
     },
   },
 ];
