@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView } from 'react-native';
 import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -42,7 +42,7 @@ export default function ScenarioSelectionScreen(props: {
   const Stack = useMemo(() => createNativeStackNavigator(), []);
 
   return (
-    <SafeAreaView edges={{ bottom: true }}>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
       <NavigationIndependentTree>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>

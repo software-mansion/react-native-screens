@@ -6,6 +6,7 @@ import {
   Dimensions,
   View,
   ViewStyle,
+  Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -81,7 +82,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <SafeAreaView edges={{ bottom: true }}>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
       <ToastContext.Provider value={{ push }}>
         <>
           {children}
