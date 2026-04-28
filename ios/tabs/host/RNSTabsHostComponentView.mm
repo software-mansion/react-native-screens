@@ -274,9 +274,10 @@ namespace react = facebook::react;
     RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
     RCTAssert(newComponentProps.navStateRequest.baseProvenance >= 0, @"[RNScreens] baseProvenance MUST BE >= 0");
     _navStateRequest =
-        [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
-                                                provenance:newComponentProps.navStateRequest.baseProvenance];
-    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneState]];
+        [RNSTabsNavigationStateUpdateRequest requestWithScreenKey:selectedScreenKey
+                                                   baseProvenance:newComponentProps.navStateRequest.baseProvenance
+                                                     actionOrigin:RNSTabsActionOriginProgrammaticJs];
+    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneRequest]];
   }
 
   if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
@@ -613,15 +614,15 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
+    rejectedStateUpdateTo:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
              currentState:(nonnull RNSTabsNavigationState *)currentNavState
                withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
 {
   RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
-  RCTAssert(rejectedNavState.selectedScreenKey != nil, @"[RNScreens] Rejected state screenKey MUST NOT be nil");
+  RCTAssert(rejectedRequest.screenKey != nil, @"[RNScreens] Rejected request screenKey MUST NOT be nil");
 
   [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
-                                                      .rejectedNavState = rejectedNavState,
+                                                      .rejectedRequest = rejectedRequest,
                                                       .rejectionReason = reasonCode}];
 }
 

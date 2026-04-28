@@ -61,8 +61,8 @@ namespace react = facebook::react;
     _reactEventEmitter->onTabSelectionRejected(
         {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
          .provenance = payload.currentNavState.provenance,
-         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedNavState.selectedScreenKey),
-         .rejectedProvenance = payload.rejectedNavState.provenance,
+         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedRequest.screenKey),
+         .rejectedProvenance = payload.rejectedRequest.baseProvenance,
          .rejectionReason = convertedReason});
     return YES;
   } else {

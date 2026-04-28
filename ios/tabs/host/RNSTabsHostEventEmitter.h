@@ -34,8 +34,8 @@ typedef struct {
 typedef struct {
   /** The currently active navigation state that was kept. */
   RNSTabsNavigationState *_Nonnull currentNavState;
-  /** The navigation state update that was rejected. */
-  RNSTabsNavigationState *_Nonnull rejectedNavState;
+  /** The navigation state update request that was rejected. */
+  RNSTabsNavigationStateUpdateRequest *_Nonnull rejectedRequest;
   /** Reason the update was rejected. */
   RNSTabsNavigationStateRejectionReason rejectionReason;
 } OnTabSelectionRejectedPayload;

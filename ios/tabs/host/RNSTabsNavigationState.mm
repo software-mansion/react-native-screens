@@ -26,6 +26,38 @@
 
 @end
 
+@implementation RNSTabsNavigationStateUpdateRequest
+
+- (instancetype)initWithScreenKey:(nonnull NSString *)screenKey
+                   baseProvenance:(int)baseProvenance
+                     actionOrigin:(RNSTabsActionOrigin)actionOrigin
+{
+  if (self = [super init]) {
+    _screenKey = screenKey;
+    _baseProvenance = baseProvenance;
+    _actionOrigin = actionOrigin;
+  }
+  return self;
+}
+
+- (instancetype)cloneRequest
+{
+  return [[RNSTabsNavigationStateUpdateRequest alloc] initWithScreenKey:[NSString stringWithString:self.screenKey]
+                                                         baseProvenance:self.baseProvenance
+                                                           actionOrigin:self.actionOrigin];
+}
+
++ (instancetype)requestWithScreenKey:(nonnull NSString *)screenKey
+                      baseProvenance:(int)baseProvenance
+                        actionOrigin:(RNSTabsActionOrigin)actionOrigin
+{
+  return [[RNSTabsNavigationStateUpdateRequest alloc] initWithScreenKey:screenKey
+                                                         baseProvenance:baseProvenance
+                                                           actionOrigin:actionOrigin];
+}
+
+@end
+
 @implementation RNSTabsNavigationStateUpdateContext
 
 - (instancetype)initWithNavState:(nonnull RNSTabsNavigationState *)navState

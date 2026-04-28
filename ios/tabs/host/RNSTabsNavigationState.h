@@ -5,30 +5,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Describes navigation state of a tabs container.
- *
- * It holds information about key of a selected screen AND state provenance.
- * The provenance describes *a history of the state*. Conceptually, the state with provenance `N + 1`
- * MUST BE derived from state with provenance `N`.
- */
-@interface RNSTabsNavigationState : NSObject
-
-/** Screen key of the currently selected tab. */
-@property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
-
-/** Monotonically increasing number describing the generation of this state instance.
- *  Used for stale update detection: state A is stale iff A.provenance <= B.provenance. */
-@property (nonatomic, readonly) int provenance;
-
-- (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
-
-- (instancetype)cloneState;
-
-+ (instancetype)stateWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
-
-@end
-
-/**
  * Origin (actor) that requested a tab transition. Mirrors the public `actionOrigin` event field.
  *
  * - [User] direct native UI interaction (tab bar tap, drag-and-drop).
@@ -42,6 +18,63 @@ typedef NS_ENUM(NSInteger, RNSTabsActionOrigin) {
   RNSTabsActionOriginProgrammaticJs,
   RNSTabsActionOriginImplicit,
 };
+
+/** Reason why a navigation state update was rejected by the container. */
+typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
+  /** The update's provenance is based on a stale state. */
+  RNSTabsNavigationStateRejectionReasonStale = 0,
+  /** The requested tab is already selected. */
+  RNSTabsNavigationStateRejectionReasonRepeated,
+};
+
+/**
+ * Describes navigation state of a tabs container.
+ *
+ * It holds information about key of a selected screen AND state provenance.
+ * The provenance describes *a history of the state*. Conceptually, the state with provenance `N + 1`
+ * MUST BE derived from state with provenance `N`.
+ */
+@interface RNSTabsNavigationState : NSObject
+
+/** Screen key of the currently selected tab. */
+@property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
+
+/** Monotonically increasing number describing the generation of this state instance.
+ *  Used for stale update detection. */
+@property (nonatomic, readonly) int provenance;
+
+- (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
+
+- (instancetype)cloneState;
+
++ (instancetype)stateWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
+
+@end
+
+/**
+ * A request to change navigation state.
+ *
+ * Carries the target `screenKey`, the `baseProvenance` of the state the request was derived from,
+ * and the `actionOrigin` (actor) that initiated it. Mirrors the public
+ * `TabsHostNavStateRequest` TS type plus an `actionOrigin` carried internally.
+ */
+@interface RNSTabsNavigationStateUpdateRequest : NSObject
+
+@property (nonatomic, strong, readonly, nonnull) NSString *screenKey;
+@property (nonatomic, readonly) int baseProvenance;
+@property (nonatomic, readonly) RNSTabsActionOrigin actionOrigin;
+
+- (instancetype)initWithScreenKey:(nonnull NSString *)screenKey
+                   baseProvenance:(int)baseProvenance
+                     actionOrigin:(RNSTabsActionOrigin)actionOrigin;
+
+- (instancetype)cloneRequest;
+
++ (instancetype)requestWithScreenKey:(nonnull NSString *)screenKey
+                      baseProvenance:(int)baseProvenance
+                        actionOrigin:(RNSTabsActionOrigin)actionOrigin;
+
+@end
 
 /** Bundles a navigation state change together with metadata about the selection context. */
 @interface RNSTabsNavigationStateUpdateContext : NSObject
@@ -61,13 +94,5 @@ typedef NS_ENUM(NSInteger, RNSTabsActionOrigin) {
                     actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 @end
-
-/** Reason why a navigation state update was rejected by the container. */
-typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
-  /** The update's provenance is based on a stale state. */
-  RNSTabsNavigationStateRejectionReasonStale = 0,
-  /** The requested tab is already selected. */
-  RNSTabsNavigationStateRejectionReasonRepeated,
-};
 
 NS_ASSUME_NONNULL_END
