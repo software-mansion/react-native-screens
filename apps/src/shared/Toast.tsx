@@ -6,8 +6,10 @@ import {
   Dimensions,
   View,
   ViewStyle,
+  Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 interface ToastProps {
   index: number;
@@ -80,20 +82,22 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <ToastContext.Provider value={{ push }}>
-      <>
-        {children}
-        {toasts.map((toast, i) => (
-          <Toast
-            index={i}
-            key={toast.id}
-            style={{ marginBottom: i * 25 }}
-            {...toast}
-            remove={remove}
-          />
-        ))}
-      </>
-    </ToastContext.Provider>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ToastContext.Provider value={{ push }}>
+        <>
+          {children}
+          {toasts.map((toast, i) => (
+            <Toast
+              index={i}
+              key={toast.id}
+              style={{ marginBottom: i * 25 }}
+              {...toast}
+              remove={remove}
+            />
+          ))}
+        </>
+      </ToastContext.Provider>
+    </SafeAreaView>
   );
 };
 

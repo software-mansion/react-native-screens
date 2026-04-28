@@ -103,6 +103,7 @@ struct ContentWrapperBox {
   _sheetsScrollView = nil;
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
+  _synchronousShadowStateUpdatesEnabled = YES;
 }
 
 + (RNSViewInteractionManager *)viewInteractionManagerInstance

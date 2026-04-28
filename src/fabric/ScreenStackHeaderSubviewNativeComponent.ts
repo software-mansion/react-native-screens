@@ -14,7 +14,7 @@ export type HeaderSubviewTypes =
 export interface NativeProps extends ViewProps {
   type?: CT.WithDefault<HeaderSubviewTypes, 'left'>;
   hidesSharedBackground?: boolean | undefined;
-  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>(
