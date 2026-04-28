@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
-      API_LEVEL: 36
+      API_LEVEL: 34
       RNS_GAMMA_ENABLED: 1
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
