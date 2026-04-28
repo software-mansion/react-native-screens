@@ -38,7 +38,6 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       title: 'Tab1',
       specialEffects: {
         repeatedTabSelection: {
-          popToRoot: false,
           scrollToTop: true,
         },
       },
@@ -52,7 +51,6 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       title: 'Tab2',
       specialEffects: {
         repeatedTabSelection: {
-          popToRoot: false,
           scrollToTop: false
         },
       },
