@@ -4,12 +4,12 @@
 
 namespace facebook::react {
 
-class JSI_EXPORT RNSModalFormSheetState final {
+class JSI_EXPORT RNSFormSheetState final {
  public:
-  using Shared = std::shared_ptr<const RNSModalFormSheetState>;
+  using Shared = std::shared_ptr<const RNSFormSheetState>;
 
-  RNSModalFormSheetState() = default;
-  RNSModalFormSheetState(Size frameSize, Point contentOriginOffset)
+  RNSFormSheetState() = default;
+  RNSFormSheetState(Size frameSize, Point contentOriginOffset)
       : frameSize(frameSize), contentOriginOffset(contentOriginOffset) {}
 
   Size frameSize{};

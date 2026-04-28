@@ -1,3 +1,3 @@
-export type { ModalFormSheetProps } from './ModalFormSheet.types';
+export type { FormSheetProps } from './FormSheet.types';
 
-export { ModalFormSheet } from './ModalFormSheet';
+export { FormSheet } from './FormSheet';

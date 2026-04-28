@@ -1,20 +1,20 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import ModalFormSheetNativeComponent from '../../../fabric/gamma/form-sheet/ModalFormSheetNativeComponent';
-import type { ModalFormSheetProps } from './ModalFormSheet.types';
+import FormSheetNativeComponent from '../../../fabric/gamma/form-sheet/FormSheetNativeComponent';
+import type { FormSheetProps } from './FormSheet.types';
 
-export function ModalFormSheet(props: ModalFormSheetProps) {
+export function FormSheet(props: FormSheetProps) {
   const { isOpen, detents, onDismiss, children, style, ...rest } = props;
 
   return (
-    <ModalFormSheetNativeComponent
+    <FormSheetNativeComponent
       isOpen={isOpen}
       detents={detents}
       onDismiss={onDismiss}
       style={[style, styles.host]}
       {...rest}>
       {children}
-    </ModalFormSheetNativeComponent>
+    </FormSheetNativeComponent>
   );
 }
 
