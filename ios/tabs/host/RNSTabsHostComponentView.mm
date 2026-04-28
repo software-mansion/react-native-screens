@@ -53,7 +53,7 @@ namespace react = facebook::react;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 
-  RNSTabsNavigationState *_Nullable _jsNavStateRequest;
+  RNSTabsNavigationState *_Nullable _navStateRequest;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -273,10 +273,10 @@ namespace react = facebook::react;
     NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navStateRequest.selectedScreenKey);
     RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
     RCTAssert(newComponentProps.navStateRequest.baseProvenance >= 0, @"[RNScreens] baseProvenance MUST BE >= 0]");
-    _jsNavStateRequest =
+    _navStateRequest =
         [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
                                                 provenance:newComponentProps.navStateRequest.baseProvenance];
-    [_controller setPendingNavigationStateUpdate:[_jsNavStateRequest cloneState]];
+    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneState]];
   }
 
   if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
