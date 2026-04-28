@@ -479,7 +479,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
   if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingStateUpdate]) {
     [self.tabsHostComponentView tabBarController:self
-                           rejectedStateUpdateTo:_pendingStateUpdate
+                             rejectedStateUpdate:_pendingStateUpdate
                                     currentState:_navigationState
                                       withReason:RNSTabsNavigationStateRejectionReasonStale];
     return;
@@ -489,7 +489,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     // Nothing to do, we don't allow for programmatic repeat selection, unless
     // we're during first render.
     [self.tabsHostComponentView tabBarController:self
-                           rejectedStateUpdateTo:_pendingStateUpdate
+                             rejectedStateUpdate:_pendingStateUpdate
                                     currentState:_navigationState
                                       withReason:RNSTabsNavigationStateRejectionReasonRepeated];
     return;

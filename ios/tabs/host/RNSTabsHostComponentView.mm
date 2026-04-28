@@ -614,9 +614,9 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState
-               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
+     rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+              withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
 {
   RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
   RCTAssert(

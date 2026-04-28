@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
              withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState
-               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
+     rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+              withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
     preventedSelectionOf:(nonnull NSString *)screenKey
