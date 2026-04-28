@@ -3,12 +3,25 @@
 import type {
   ColorValue,
   CodegenTypes as CT,
+  HostComponent,
   ImageSource,
   ViewProps,
 } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
+
+type ToolbarMenuItemClickedEvent = Readonly<{
+  id: string;
+}>;
+
+export interface ToolbarMenuItemAndroid {
+  id: string;
+  title: string;
+  hidden?: CT.WithDefault<boolean, false>;
+
+  // TODO: add Menu
+}
 
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
@@ -28,7 +41,32 @@ export interface NativeProps extends ViewProps {
   scrollFlagEnterAlwaysCollapsed?: CT.WithDefault<boolean, false>;
   scrollFlagExitUntilCollapsed?: CT.WithDefault<boolean, false>;
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
+
+  toolbarMenuItems?: ToolbarMenuItemAndroid[] | undefined;
+  onToolbarMenuItemClicked?:
+    | CT.DirectEventHandler<ToolbarMenuItemClickedEvent>
+    | undefined;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+export type ToolbarMenuItemOptionsAndroid = Partial<
+  Omit<ToolbarMenuItemAndroid, 'id'>
+>;
+
+export interface NativeCommands {
+  setToolbarMenuItemOptions: (
+    viewRef: React.ComponentRef<ComponentType>,
+    id: string,
+    // We use the array here only due to codegen limitation. We're using only
+    // the first index of the array.
+    options: ToolbarMenuItemOptionsAndroid[],
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setToolbarMenuItemOptions'],
+});
 
 export default codegenNativeComponent<NativeProps>(
   'RNSStackHeaderConfigAndroid',

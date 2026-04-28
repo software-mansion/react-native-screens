@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { ComponentRef, useEffect, useRef } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
-import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
+import StackHeaderConfigAndroidNativeComponent, {
+  Commands as StackHeaderConfigAndroidNativeCommands,
+} from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
@@ -16,6 +18,30 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
+
+  const ref = useRef<ComponentRef<
+    typeof StackHeaderConfigAndroidNativeComponent
+  > | null>(null);
+
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      if (!ref.current) {
+        return;
+      }
+
+      StackHeaderConfigAndroidNativeCommands.setToolbarMenuItemOptions(
+        ref.current,
+        'someItemId',
+        [
+          {
+            title: 'Hello!',
+          },
+        ],
+      );
+    }, 5000);
+
+    return () => clearTimeout(handle);
+  }, []);
 
   const {
     backgroundSubview,
@@ -42,6 +68,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
 
   return (
     <StackHeaderConfigAndroidNativeComponent
+      ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
       {...baseProps}

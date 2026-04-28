@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -184,6 +185,19 @@ open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.scrollFlagSnap = value
+    }
+
+    override fun setToolbarMenuItems(
+        view: StackHeaderConfig,
+        value: ReadableArray?,
+    ) = Unit
+
+    override fun setToolbarMenuItemOptions(
+        view: StackHeaderConfig,
+        id: String,
+        options: ReadableArray,
+    ) {
+        println("[StackHeaderConfigViewManager] " + options.getMap(0))
     }
 
     companion object {
