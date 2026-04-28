@@ -69,8 +69,8 @@ preserved.
 
 9. Re-tap Tab3 (the already-active tab).
 
-- [ ] Expected: Observe and note the default platform behavior (scroll-to-top or
-not). No crash or visual glitch should occur.
+- [ ] Expected: Observe and note the default behavior - back to the top of the
+scroll position (item 1 is visible).
 
 ### scrollToTop: true — switching away and back (not a repeated tap)
 
