@@ -6,7 +6,7 @@ extern const char RNSFormSheetComponentName[] = "RNSFormSheet";
 
 Point RNSFormSheetShadowNode::getContentOriginOffset(
     bool /*includeTransform*/) const {
-  return getStateData().contentOriginOffset;
+  return getStateData().contentOffset;
 }
 
 } // namespace facebook::react
