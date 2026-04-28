@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import FormSheetNativeComponent from '../../../fabric/gamma/form-sheet/FormSheetNativeComponent';
+import FormSheetNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 
 export function FormSheet(props: FormSheetProps) {
