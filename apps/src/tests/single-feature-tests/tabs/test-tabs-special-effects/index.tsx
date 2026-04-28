@@ -16,12 +16,38 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
 };
 
-function ScrollScreen() {
+function Tab1Screen() {
   return (
-    <ScrollView>
+    <ScrollView testID="tab1-scrollview">
       <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
       {Array.from({ length: 50 }, (_, i) => (
-        <Text key={i} style={styles.item}>
+        <Text key={i} testID={`tab1-item-${i + 1}`} style={styles.item}>
+          Item {i + 1}
+        </Text>
+      ))}
+    </ScrollView>
+  );
+}
+
+function Tab2Screen() {
+  return (
+    <ScrollView testID="tab2-scrollview">
+      <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
+      {Array.from({ length: 50 }, (_, i) => (
+        <Text key={i} testID={`tab2-item-${i + 1}`} style={styles.item}>
+          Item {i + 1}
+        </Text>
+      ))}
+    </ScrollView>
+  );
+}
+
+function Tab3Screen() {
+  return (
+    <ScrollView testID="tab3-scrollview">
+      <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
+      {Array.from({ length: 50 }, (_, i) => (
+        <Text key={i} testID={`tab3-item-${i + 1}`} style={styles.item}>
           Item {i + 1}
         </Text>
       ))}
@@ -32,10 +58,11 @@ function ScrollScreen() {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: ScrollScreen,
+    Component: Tab1Screen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
+      tabBarItemTestID: 'tab1-tab-item',
       specialEffects: {
         repeatedTabSelection: {
           scrollToTop: true,
@@ -45,23 +72,25 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: ScrollScreen,
+    Component: Tab2Screen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemTestID: 'tab2-tab-item',
       specialEffects: {
         repeatedTabSelection: {
-          scrollToTop: false
+          scrollToTop: false,
         },
       },
     },
   },
   {
     name: 'Tab3',
-    Component: ScrollScreen,
+    Component: Tab3Screen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
+      tabBarItemTestID: 'tab3-tab-item',
     },
   },
 ];
