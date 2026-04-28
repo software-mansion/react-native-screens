@@ -12,8 +12,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
-import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabSelectOp
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
