@@ -1,5 +1,9 @@
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -12,9 +16,14 @@ function ScenarioSelect(props: {
   scenarios: Record<string, Scenario>;
   groupName: string;
 }) {
+  const insets = useSafeAreaInsets();
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{
+        paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
+      }}
       testID={`${props.groupName}-scenarios-scrollview`}>
       {Object.values(props.scenarios).map(
         ({ scenarioDescription }: Scenario) => {
@@ -53,10 +62,12 @@ export default function ScenarioSelectionScreen(props: {
               headerTitle: props.scenarioGroup.name,
             }}>
             {() => (
-              <ScenarioSelect
-                scenarios={props.scenarioGroup.scenarios}
-                groupName={props.scenarioGroup.name}
-              />
+              <SafeAreaProvider>
+                <ScenarioSelect
+                  scenarios={props.scenarioGroup.scenarios}
+                  groupName={props.scenarioGroup.name}
+                />
+              </SafeAreaProvider>
             )}
           </Stack.Screen>
           {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
