@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Last navigation state requested by JS. Will be nonnull after first prop update.
  */
-@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navStateRequest;
 
 @property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
 
