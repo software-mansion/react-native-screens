@@ -11,7 +11,9 @@ that there is no scroll-to-top behavior when it is disabled or absent.
 
 ## E2E test
 
-Other: ongoing research.
+Yes: Covers all manual scenario steps on **Android only**. Re-tapping an
+already-selected tab does not trigger the reselect event on iOS 26.2+, making
+`scrollToTop` untestable via Detox on iOS.
 
 ## Prerequisites
 
