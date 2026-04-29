@@ -1,5 +1,7 @@
 #include "RNSFormSheetShadowNode.h"
 
+#ifndef ANDROID
+
 namespace facebook::react {
 
 extern const char RNSFormSheetComponentName[] = "RNSFormSheet";
@@ -10,3 +12,5 @@ Point RNSFormSheetShadowNode::getContentOriginOffset(
 }
 
 } // namespace facebook::react
+
+#endif // ANDROID
