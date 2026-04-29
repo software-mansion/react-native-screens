@@ -5,6 +5,15 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# Use RNRepo in CI builds
+if ENV['CI'] == 'true'
+  require Pod::Executable.execute_command('node', ['-p',
+    'require.resolve(
+      "@rnrepo/build-tools/cocoapods-plugin/lib/plugin.rb",
+      {paths: [process.argv[1]]},
+    )', __dir__]).strip
+end
+
 require_relative '../../scripts/ios/rns_update_info_plist'
 require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
 
@@ -30,6 +39,9 @@ target 'FabricExample' do
   )
 
   post_install do |installer|
+    if ENV['CI'] == 'true'
+      rnrepo_post_install(installer)
+    end
     react_native_post_install(
       installer,
       config[:reactNativePath],
