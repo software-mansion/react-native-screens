@@ -67,11 +67,13 @@ export type TabSelectedEvent = {
    * @description
    * - `user` — direct native UI interaction (e.g. tab bar tap, iOS tab drag-and-drop).
    * - `programmatic-js` — JS-initiated request delivered via the `navStateRequest` prop.
+   * - `programmatic-native` — request initiated from the native side by an actor
+   *   integrating directly against the native container.
    * - `implicit` — platform side effect not attributable to an explicit actor
    *   (e.g. UIKit reshuffling the selection during a horizontal size-class transition on iPad).
    *   Currently only emitted on iOS.
    */
-  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 };
 
 /**
@@ -241,8 +243,8 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   onTabSelected?:
-    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
-    | undefined;
+  | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
+  | undefined;
 
   /**
    * @summary
@@ -251,8 +253,8 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionRejectedEvent}
    */
   onTabSelectionRejected?:
-    | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
-    | undefined;
+  | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
+  | undefined;
 
   /**
    * @summary
@@ -262,8 +264,8 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionPreventedEvent}
    */
   onTabSelectionPrevented?:
-    | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
-    | undefined;
+  | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
+  | undefined;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {

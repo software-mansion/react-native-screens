@@ -37,7 +37,7 @@ import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // Created only by us. Should never be restored.
-internal class TabsContainer(
+class TabsContainer internal constructor(
     private val context: Context,
     private val delegate: TabsContainerDelegate,
 ) : FrameLayout(context),
@@ -196,8 +196,8 @@ internal class TabsContainer(
         return insets
     }
 
-    internal fun setContainerOperation(op: TabsContainerOp) {
-        pendingOperation = op
+    fun setPendingNavigationStateUpdate(request: TabsNavStateUpdateRequest) {
+        pendingOperation = TabSelectOp(request)
         invalidationFlags.isSelectedTabInvalidated = true
     }
 
@@ -224,7 +224,7 @@ internal class TabsContainer(
         invalidationFlags.invalidateAll()
     }
 
-    internal fun performContainerUpdateIfNeeded() {
+    fun performContainerUpdateIfNeeded() {
         if (invalidationFlags.any() && isAttachedToWindow) {
             performContainerUpdate()
         }
