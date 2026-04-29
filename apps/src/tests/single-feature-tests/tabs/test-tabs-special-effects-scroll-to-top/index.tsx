@@ -16,7 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
 };
 
-function ScrollScreen() {
+export function ScrollScreen() {
   return (
     <ScrollView>
       <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
