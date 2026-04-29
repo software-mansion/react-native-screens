@@ -9,7 +9,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs scrollToTop special effect',
+  name: 'Tabs special effect scroll to top',
   key: 'test-tabs-special-effects-scroll-to-top',
   details:
     'Test settings of scrollToTop specialEffect.',
