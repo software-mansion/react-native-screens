@@ -12,6 +12,7 @@ import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
 import ScrollViewMarkerScenarioGroup from './scroll-view-marker';
 import FormSheetScenarioGroup from './form-sheet';
+import InlineModalScenarioGroup from './inline-modal';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
@@ -22,6 +23,7 @@ export const COMPONENT_SCENARIOS = {
   StackV4: StackV4ScenarioGroup,
   ScrollViewMarker: ScrollViewMarkerScenarioGroup,
   FormSheet: FormSheetScenarioGroup,
+  InlineModal: InlineModalScenarioGroup
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
