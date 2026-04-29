@@ -24,7 +24,7 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
-  NSArray<NSNumber *> *_detents;
+  std::vector<double> _detents;
 
   // Invalidation flags
   BOOL _needsSheetPresentationUpdate;
@@ -57,7 +57,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
-  _detents = @[];
+  _detents = {};
 }
 
 - (void)setupController
@@ -193,11 +193,7 @@ namespace react = facebook::react;
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
-    NSMutableArray<NSNumber *> *detentsArray = [NSMutableArray new];
-    for (double detent : newComponentProps.detents) {
-      [detentsArray addObject:@(detent)];
-    }
-    _detents = detentsArray;
+    _detents = newComponentProps.detents;
     _needsSheetConfigurationUpdate = YES;
   }
 
@@ -256,51 +252,36 @@ namespace react = facebook::react;
 
 - (void)applySheetConfiguration
 {
-  if (@available(iOS 15.0, *)) {
-    UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (sheet == nil) {
-      return;
-    }
-
-    if (_detents.count == 0) {
-      sheet.detents = @[ [UISheetPresentationControllerDetent largeDetent] ];
-      return;
-    }
-
-    NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
-
-    if (@available(iOS 16.0, *)) {
-      for (NSUInteger i = 0; i < _detents.count; i++) {
-        double fraction = [_detents[i] doubleValue];
-        NSString *ident = [NSString stringWithFormat:@"%lu", (unsigned long)i];
-
-        [nativeDetents
-            addObject:[UISheetPresentationControllerDetent
-                          customDetentWithIdentifier:ident
-                                            resolver:^CGFloat(
-                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                              return context.maximumDetentValue * fraction;
-                                            }]];
-      }
-    } else {
-      for (NSNumber *fractionNumber in _detents) {
-        double fraction = [fractionNumber doubleValue];
-        if (fraction <= 0.6) {
-          if (![nativeDetents containsObject:[UISheetPresentationControllerDetent mediumDetent]]) {
-            [nativeDetents addObject:[UISheetPresentationControllerDetent mediumDetent]];
-          }
-        } else {
-          if (![nativeDetents containsObject:[UISheetPresentationControllerDetent largeDetent]]) {
-            [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
-          }
-        }
-      }
-    }
-
-    [sheet animateChanges:^{
-      sheet.detents = nativeDetents;
-    }];
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil) {
+    return;
   }
+
+  if (_detents.size() == 0) {
+    sheet.detents = @[ [UISheetPresentationControllerDetent largeDetent] ];
+    return;
+  }
+
+  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
+
+  if (@available(iOS 16.0, *)) {
+    for (size_t i = 0; i < _detents.size(); i++) {
+      double fraction = _detents[i];
+      NSString *ident = [NSString stringWithFormat:@"%zu", i];
+
+      [nativeDetents
+          addObject:[UISheetPresentationControllerDetent
+                        customDetentWithIdentifier:ident
+                                          resolver:^CGFloat(
+                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                            return context.maximumDetentValue * fraction;
+                                          }]];
+    }
+  }
+
+  [sheet animateChanges:^{
+    sheet.detents = nativeDetents;
+  }];
 }
 
 #pragma mark - Touch Handling helpers
