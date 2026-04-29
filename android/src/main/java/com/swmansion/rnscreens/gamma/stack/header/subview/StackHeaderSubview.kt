@@ -68,9 +68,13 @@ class StackHeaderSubview(
             }
         }
 
-        setMeasuredDimension(yogaWidth, yogaHeight)
-        if (invalidated && !isInLayout) {
-            requestLayout()
+        if (yogaWidth > 0 && yogaHeight > 0) {
+            setMeasuredDimension(yogaWidth, yogaHeight)
+            if (invalidated && !isInLayout) {
+                requestLayout()
+            }
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
     }
 

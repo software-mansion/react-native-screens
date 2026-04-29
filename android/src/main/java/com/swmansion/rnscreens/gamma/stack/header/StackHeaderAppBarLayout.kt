@@ -7,6 +7,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
@@ -18,10 +21,7 @@ internal sealed class StackHeaderAppBarLayout(
     abstract val toolbar: MaterialToolbar
 
     init {
-        layoutParams =
-            CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                behavior = StackHeaderAppBarLayoutBehavior()
-            }
+        layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
         // TODO: this should be exposed in the future via prop. Also, it might not work correctly
         //       until we set liftOnScrollView manually. Also, we should disable it in transparent
@@ -39,7 +39,11 @@ internal sealed class StackHeaderAppBarLayout(
         override val toolbar =
             MaterialToolbar(context).apply {
                 elevation = 0f
-                layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+                layoutParams =
+                    LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                        // TODO: debug only for small header, must be moved to config
+                        scrollFlags = SCROLL_FLAG_NO_SCROLL
+                    }
             }
 
         init {
@@ -76,11 +80,15 @@ internal sealed class StackHeaderAppBarLayout(
                         else -> error("[RNScreens] Invalid header mode.")
                     }
                 CollapsingToolbarLayout(context, null, styleAttr).apply {
+                    fitsSystemWindows = false
                     layoutParams =
                         LayoutParams(
                             MATCH_PARENT,
                             resolveDimensionAttr(context, sizeAttr),
-                        )
+                        ).apply {
+                            // TODO: debug only for medium/large header, must be moved to config
+                            scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                        }
                     addView(toolbar)
                 }
             }

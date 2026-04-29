@@ -3,7 +3,7 @@ import { I18nManager, type NativeSyntheticEvent } from 'react-native';
 import {
   type TabSelectedEvent,
   Tabs,
-  type TabsHostNavStateRequest,
+  type TabsHostNavState,
 } from 'react-native-screens';
 import type {
   SelectTabMethod,
@@ -43,7 +43,7 @@ export function TabsContainer(props: TabsContainerProps) {
     determineInitialTabsContainerState,
   );
 
-  const hostNavStateRequest = useTabsHostNavStateRequest(tabsNavState);
+  const hostNavState = useTabsHostNavState(tabsNavState);
 
   const onTabSelectedCallback = React.useCallback(
     (event: NativeSyntheticEvent<TabSelectedEvent>) => {
@@ -74,7 +74,7 @@ export function TabsContainer(props: TabsContainerProps) {
 
   return (
     <Tabs.Host
-      navStateRequest={hostNavStateRequest}
+      navState={hostNavState}
       onTabSelected={onTabSelectedCallback}
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
@@ -90,17 +90,17 @@ export function TabsContainer(props: TabsContainerProps) {
   );
 }
 
-function useTabsHostNavStateRequest(
+function useTabsHostNavState(
   tabsNavState: TabsContainerState,
-): TabsHostNavStateRequest {
-  const hostNavStateRequest: TabsHostNavStateRequest = React.useMemo(() => {
+): TabsHostNavState {
+  const hostNavState: TabsHostNavState = React.useMemo(() => {
     return {
       selectedScreenKey: tabsNavState.suggestedState.selectedRouteKey,
-      baseProvenance: tabsNavState.suggestedState.provenance,
+      provenance: tabsNavState.suggestedState.provenance,
     };
   }, [tabsNavState.suggestedState]);
 
-  return hostNavStateRequest;
+  return hostNavState;
 }
 
 function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {

@@ -72,14 +72,14 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
-    override fun setNavStateRequest(
+    override fun setNavState(
         view: TabsHost,
         value: ReadableMap?,
     ) {
-        val navStateRequestMap = requireNotNull(value) { "[RNScreens] navStateRequest must not be nullish" }
-        val selectedScreenKey = requireNotNull(navStateRequestMap.getString("selectedScreenKey"))
-        val baseProvenance = requireNotNull(navStateRequestMap.getInt("baseProvenance"))
-        view.updateJSNavStateRequest(TabsNavState(selectedScreenKey, baseProvenance))
+        val navStateMap = requireNotNull(value) { "[RNScreens] NavState must not be nullish" }
+        val selectedScreenKey = requireNotNull(navStateMap.getString("selectedScreenKey"))
+        val provenance = requireNotNull(navStateMap.getInt("provenance"))
+        view.updateJSNavState(TabsNavState(selectedScreenKey, provenance))
     }
 
     override fun setRejectStaleNavStateUpdates(

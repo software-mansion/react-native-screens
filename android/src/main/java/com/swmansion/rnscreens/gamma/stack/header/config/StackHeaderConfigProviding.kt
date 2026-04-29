@@ -11,11 +11,6 @@ interface StackHeaderConfigProviding {
     val backButtonHidden: Boolean
     val backButtonTintColor: Int?
     val backButtonIcon: Drawable?
-    val scrollFlagScroll: Boolean
-    val scrollFlagEnterAlways: Boolean
-    val scrollFlagEnterAlwaysCollapsed: Boolean
-    val scrollFlagExitUntilCollapsed: Boolean
-    val scrollFlagSnap: Boolean
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?

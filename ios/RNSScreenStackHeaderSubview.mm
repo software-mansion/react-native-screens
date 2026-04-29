@@ -116,7 +116,6 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
     _lastScheduledFrame = CGRectZero;
-    _synchronousShadowStateUpdatesEnabled = YES;
   }
 
   return self;
@@ -209,8 +208,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (UIBarButtonItem *)getUIBarButtonItem
 {
-  RCTAssert(_type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
-            @"[RNScreens] Unexpected subview type.");
+  RCTAssert(
+      _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
+      @"[RNScreens] Unexpected subview type.");
 
   if (_barButtonItem == nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -316,16 +316,17 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 
 @implementation RCTConvert (RNSScreenStackHeaderSubview)
 
-RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType,
-                   (@{
-                     @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-                     @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-                     @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-                     @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-                     @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-                     @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-                   }),
-                   RNSScreenStackHeaderSubviewTypeTitle,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenStackHeaderSubviewType,
+    (@{
+      @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
+      @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
+      @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
+      @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
+      @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
+      @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
+    }),
+    RNSScreenStackHeaderSubviewTypeTitle,
+    integerValue)
 
 @end

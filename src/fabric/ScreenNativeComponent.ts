@@ -121,7 +121,7 @@ export interface NativeProps extends ViewProps {
   leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
   androidResetScreenShadowStateOnOrientationChangeEnabled?: CT.WithDefault<
     boolean,
     true

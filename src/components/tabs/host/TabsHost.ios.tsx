@@ -28,7 +28,7 @@ function TabsHost(props: TabsHostProps) {
     direction,
     nativeContainerStyle,
     onTabSelected,
-    navStateRequest,
+    navState,
     ...filteredBaseProps
   } = baseProps;
 
@@ -47,7 +47,7 @@ function TabsHost(props: TabsHostProps) {
   return (
     <TabsHostIOSNativeComponent
       style={styles.fillParent}
-      navStateRequest={navStateRequest}
+      navState={navState}
       onTabSelected={onTabSelectedCallback}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only

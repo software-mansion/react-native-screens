@@ -42,7 +42,6 @@ type SubviewSize = 'none' | 'sm' | 'md' | 'lg';
 type HitSlopValue = '0' | '10' | '30';
 type PressRetentionValue = '0' | '20' | '50';
 type TitleOption = 'short' | 'long';
-type ScrollFlagValue = 'undefined' | 'true' | 'false';
 
 interface Config {
   enabled: boolean;
@@ -57,11 +56,6 @@ interface Config {
   backgroundCollapseMode: StackHeaderBackgroundSubviewCollapseModeAndroid;
   hitSlop: HitSlopValue;
   pressRetentionOffset: PressRetentionValue;
-  scrollFlagScroll: ScrollFlagValue;
-  scrollFlagEnterAlways: ScrollFlagValue;
-  scrollFlagEnterAlwaysCollapsed: ScrollFlagValue;
-  scrollFlagExitUntilCollapsed: ScrollFlagValue;
-  scrollFlagSnap: ScrollFlagValue;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -77,11 +71,6 @@ const DEFAULT_CONFIG: Config = {
   backgroundCollapseMode: 'parallax',
   hitSlop: '0',
   pressRetentionOffset: '0',
-  scrollFlagScroll: 'undefined',
-  scrollFlagEnterAlways: 'undefined',
-  scrollFlagEnterAlwaysCollapsed: 'undefined',
-  scrollFlagExitUntilCollapsed: 'undefined',
-  scrollFlagSnap: 'undefined',
 };
 
 const SUBVIEW_SIZES: SubviewSize[] = ['none', 'sm', 'md', 'lg'];
@@ -93,18 +82,6 @@ const COLLAPSE_MODES: StackHeaderBackgroundSubviewCollapseModeAndroid[] = [
 const HIT_SLOP_VALUES: HitSlopValue[] = ['0', '10', '30'];
 const PRESS_RETENTION_VALUES: PressRetentionValue[] = ['0', '20', '50'];
 const TITLE_OPTIONS: TitleOption[] = ['short', 'long'];
-const SCROLL_FLAG_VALUES: ScrollFlagValue[] = ['undefined', 'true', 'false'];
-
-function resolveScrollFlag(value: ScrollFlagValue): boolean | undefined {
-  switch (value) {
-    case 'true':
-      return true;
-    case 'false':
-      return false;
-    default:
-      return undefined;
-  }
-}
 
 function getSubviewDimensions(size: SubviewSize): {
   width: number;
@@ -179,15 +156,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       leadingSubview: makeToolbarSubview(config.leadingSize, 'L'),
       centerSubview: makeToolbarSubview(config.centerSize, 'C'),
       trailingSubview: makeToolbarSubview(config.trailingSize, 'T'),
-      scrollFlagScroll: resolveScrollFlag(config.scrollFlagScroll),
-      scrollFlagEnterAlways: resolveScrollFlag(config.scrollFlagEnterAlways),
-      scrollFlagEnterAlwaysCollapsed: resolveScrollFlag(
-        config.scrollFlagEnterAlwaysCollapsed,
-      ),
-      scrollFlagExitUntilCollapsed: resolveScrollFlag(
-        config.scrollFlagExitUntilCollapsed,
-      ),
-      scrollFlagSnap: resolveScrollFlag(config.scrollFlagSnap),
     },
   };
 }
@@ -293,37 +261,6 @@ function ConfigScreen() {
         value={config.backgroundCollapseMode}
         onValueChange={v => updateConfig('backgroundCollapseMode', v)}
         items={COLLAPSE_MODES}
-      />
-      <Text style={styles.heading}>Scroll Flags</Text>
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagScroll"
-        value={config.scrollFlagScroll}
-        onValueChange={v => updateConfig('scrollFlagScroll', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagEnterAlways"
-        value={config.scrollFlagEnterAlways}
-        onValueChange={v => updateConfig('scrollFlagEnterAlways', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagEnterAlwaysCollapsed"
-        value={config.scrollFlagEnterAlwaysCollapsed}
-        onValueChange={v => updateConfig('scrollFlagEnterAlwaysCollapsed', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagExitUntilCollapsed"
-        value={config.scrollFlagExitUntilCollapsed}
-        onValueChange={v => updateConfig('scrollFlagExitUntilCollapsed', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagSnap"
-        value={config.scrollFlagSnap}
-        onValueChange={v => updateConfig('scrollFlagSnap', v)}
-        items={SCROLL_FLAG_VALUES}
       />
       <Text style={styles.heading}>Pressable Settings</Text>
       <SettingsPicker<HitSlopValue>

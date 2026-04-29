@@ -43,13 +43,14 @@ struct ContentWrapperBox {
   float contentHeightErrata{0.f};
 };
 
-@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate,
-                             UIGestureRecognizerDelegate,
+@interface RNSScreenView () <
+    UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate,
 #if !TARGET_OS_TV
-                             UISheetPresentationControllerDelegate,
+    UISheetPresentationControllerDelegate,
 #endif
-                             RCTRNSScreenViewProtocol,
-                             CAAnimationDelegate>
+    RCTRNSScreenViewProtocol,
+    CAAnimationDelegate>
 @end
 
 @implementation RNSScreenView {
@@ -102,7 +103,6 @@ struct ContentWrapperBox {
   _sheetsScrollView = nil;
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
-  _synchronousShadowStateUpdatesEnabled = YES;
 }
 
 + (RNSViewInteractionManager *)viewInteractionManagerInstance
@@ -563,8 +563,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (_eventEmitter != nullptr) {
     int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetDetentChanged(react::RNSScreenEventEmitter::OnSheetDetentChanged{
-            .index = index, .isStable = static_cast<bool>(isStable)});
+        ->onSheetDetentChanged(
+            react::RNSScreenEventEmitter::OnSheetDetentChanged{
+                .index = index, .isStable = static_cast<bool>(isStable)});
   }
 }
 
@@ -635,8 +636,9 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
-            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(
+            react::RNSScreenEventEmitter::OnTransitionProgress{
+                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInteger:self.tag]
@@ -2094,81 +2096,88 @@ RCT_EXPORT_MODULE()
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(RNSScreenStackPresentation,
-                   (@{
-                     @"push" : @(RNSScreenStackPresentationPush),
-                     @"modal" : @(RNSScreenStackPresentationModal),
-                     @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
-                     @"formSheet" : @(RNSScreenStackPresentationFormSheet),
-                     @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
-                     @"containedModal" : @(RNSScreenStackPresentationContainedModal),
-                     @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
-                     @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
-                   }),
-                   RNSScreenStackPresentationPush,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenStackPresentation,
+    (@{
+      @"push" : @(RNSScreenStackPresentationPush),
+      @"modal" : @(RNSScreenStackPresentationModal),
+      @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
+      @"formSheet" : @(RNSScreenStackPresentationFormSheet),
+      @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
+      @"containedModal" : @(RNSScreenStackPresentationContainedModal),
+      @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
+      @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
+    }),
+    RNSScreenStackPresentationPush,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenStackAnimation,
-                   (@{
-                     @"default" : @(RNSScreenStackAnimationDefault),
-                     @"none" : @(RNSScreenStackAnimationNone),
-                     @"fade" : @(RNSScreenStackAnimationFade),
-                     @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
-                     @"flip" : @(RNSScreenStackAnimationFlip),
-                     @"simple_push" : @(RNSScreenStackAnimationSimplePush),
-                     @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
-                     @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                     @"ios_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                   }),
-                   RNSScreenStackAnimationDefault,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenStackAnimation,
+    (@{
+      @"default" : @(RNSScreenStackAnimationDefault),
+      @"none" : @(RNSScreenStackAnimationNone),
+      @"fade" : @(RNSScreenStackAnimationFade),
+      @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
+      @"flip" : @(RNSScreenStackAnimationFlip),
+      @"simple_push" : @(RNSScreenStackAnimationSimplePush),
+      @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
+      @"slide_from_right" : @(RNSScreenStackAnimationDefault),
+      @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
+      @"ios_from_right" : @(RNSScreenStackAnimationDefault),
+      @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
+    }),
+    RNSScreenStackAnimationDefault,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation,
-                   (@{
-                     @"push" : @(RNSScreenReplaceAnimationPush),
-                     @"pop" : @(RNSScreenReplaceAnimationPop),
-                   }),
-                   RNSScreenReplaceAnimationPop,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenReplaceAnimation,
+    (@{
+      @"push" : @(RNSScreenReplaceAnimationPush),
+      @"pop" : @(RNSScreenReplaceAnimationPop),
+    }),
+    RNSScreenReplaceAnimationPop,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenSwipeDirection,
-                   (@{
-                     @"vertical" : @(RNSScreenSwipeDirectionVertical),
-                     @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
-                   }),
-                   RNSScreenSwipeDirectionHorizontal,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenSwipeDirection,
+    (@{
+      @"vertical" : @(RNSScreenSwipeDirectionVertical),
+      @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
+    }),
+    RNSScreenSwipeDirectionHorizontal,
+    integerValue)
 
 #if !TARGET_OS_TV
-RCT_ENUM_CONVERTER(UIStatusBarAnimation,
-                   (@{
-                     @"none" : @(UIStatusBarAnimationNone),
-                     @"fade" : @(UIStatusBarAnimationFade),
-                     @"slide" : @(UIStatusBarAnimationSlide)
-                   }),
-                   UIStatusBarAnimationNone,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSStatusBarStyle,
-                   (@{
-                     @"auto" : @(RNSStatusBarStyleAuto),
-                     @"inverted" : @(RNSStatusBarStyleInverted),
-                     @"light" : @(RNSStatusBarStyleLight),
-                     @"dark" : @(RNSStatusBarStyleDark),
-                   }),
-                   RNSStatusBarStyleAuto,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSStatusBarStyle,
+    (@{
+      @"auto" : @(RNSStatusBarStyleAuto),
+      @"inverted" : @(RNSStatusBarStyleInverted),
+      @"light" : @(RNSStatusBarStyleLight),
+      @"dark" : @(RNSStatusBarStyleDark),
+    }),
+    RNSStatusBarStyleAuto,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenDetentType,
-                   (@{
-                     @"large" : @(RNSScreenDetentTypeLarge),
-                     @"medium" : @(RNSScreenDetentTypeMedium),
-                     @"all" : @(RNSScreenDetentTypeAll),
-                   }),
-                   RNSScreenDetentTypeAll,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenDetentType,
+    (@{
+      @"large" : @(RNSScreenDetentTypeLarge),
+      @"medium" : @(RNSScreenDetentTypeMedium),
+      @"all" : @(RNSScreenDetentTypeAll),
+    }),
+    RNSScreenDetentTypeAll,
+    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {

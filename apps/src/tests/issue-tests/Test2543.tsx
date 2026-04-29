@@ -89,6 +89,7 @@ function FormSheet({ route }: StackNavigationProp) {
       </Text>
       <View
         style={{
+          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 180,
@@ -99,6 +100,7 @@ function FormSheet({ route }: StackNavigationProp) {
       </View>
       <View
         style={{
+          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 180,
@@ -110,6 +112,7 @@ function FormSheet({ route }: StackNavigationProp) {
       </View>
       <View
         style={{
+          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 200,

@@ -80,7 +80,7 @@ export interface NativeProps extends ViewProps {
   onPressHeaderBarButtonMenuItem?:
     | CT.DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>
     | undefined;
-  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 
   // Experimental
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
