@@ -1,6 +1,5 @@
 import { device, expect, element, by } from 'detox';
 import {
-  describeAndroid,
   selectSingleFeatureTestsScreen,
   tapSelectedTab,
 } from '../../e2e-utils';
