@@ -10,4 +10,4 @@ export * from '../components/gamma/split';
 export * from '../components/safe-area';
 export * from '../components/gamma/scroll-view-marker';
 export * from '../components/gamma/modals/form-sheet';
-export * from '../components/gamma/inline-modal';
+export * from '../components/gamma/modals/inline-modal';

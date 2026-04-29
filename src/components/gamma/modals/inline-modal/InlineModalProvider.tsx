@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import InlineModalProviderNativeComponent from '../../../fabric/gamma/inline-modal/InlineModalProviderNativeComponent';
+import InlineModalProviderNativeComponent from '../../../../fabric/gamma/modals/inline-modal/InlineModalProviderNativeComponent';
 import type { InlineModalProviderProps } from './InlineModalProvider.types';
 
 export function InlineModalProvider({
