@@ -30,7 +30,7 @@ list of 50 items.
 
 ### scrollToTop: true
 
-1. Launch the app and navigate to the screen **Tabs specialEffects**.
+1. Launch the app and navigate to the screen **Tabs scrollToTop special effect**.
 
 - [ ] Expected: Three tabs (Tab1, Tab2, Tab3) are visible in the tab bar.
 Tab1 is active and displays a scrollable list of items.
