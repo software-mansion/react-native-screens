@@ -1,7 +1,11 @@
 import { device, expect, element, by } from 'detox';
+import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
+
+export const describeIfAndroid =
+  device.getPlatform() === 'android' ? describe : describe.skip;
 
 async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
@@ -61,4 +65,25 @@ export async function selectSingleFeatureTestsScreen(
     `${scenarioGroup}-scenarios-scrollview`,
   );
   await element(by.id(`${screenKey}`)).tap();
+}
+type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+
+export async function getElementAttributes(
+  testLabel: string,
+): Promise<ElementAttributes> {
+  const attrs = await element(by.label(testLabel)).getAttributes();
+  return attrs as ElementAttributes;
+}
+
+export async function tapSelectedTab(testLabel: string) {
+  if (device.getPlatform() === 'ios') {
+    const elementAttributes = await getElementAttributes(testLabel);
+    const { x, y, width, height } = elementAttributes.frame;
+    await device.tap({
+      x: x + width / 2,
+      y: y + height / 2,
+    });
+  } else {
+    await element(by.label(testLabel)).tap();
+  }
 }
