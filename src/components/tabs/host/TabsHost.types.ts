@@ -5,7 +5,7 @@ import type { ColorScheme, Direction } from '../../shared/types';
 
 // #region Control
 
-export type TabsHostNavState = {
+export type TabsHostNavStateRequest = {
   /**
    * @summary Valid screen key.
    *
@@ -14,13 +14,12 @@ export type TabsHostNavState = {
    */
   selectedScreenKey: string;
   /**
-   * @summary A number describing the provenance of the state instance.
+   * @summary Provenance of the navigation state this request is derived from.
    *
    * @description
    * The provenance value establishes a relationship between different navigation state instances
-   * held by given state holder. The assumption here is that when the navigation
-   * state is progressed (modified), the provenance number is incremented.
-   * This creates a relationship where we can say that:
+   * held by given state holder. The assumption is that when the navigation state is progressed
+   * (modified), the provenance number is incremented. This creates a relationship where we can say:
    *
    * 1. State with provenance = n + 1 has been derived from state with provenance = n.
    * 2. For two given navigation states A and B, we can say that A *is stale* iff
@@ -31,12 +30,15 @@ export type TabsHostNavState = {
    *
    * Currently, the native implementation of TabsHost is the state holder.
    *
-   * When you use object of this shape to trigger a navigation via {@link TabsHostPropsBase#navState},
-   * pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
-   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance number
-   * of last confirmed state you base your update request on.
+   * Pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
+   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance
+   * number of last confirmed state you base your update request on.
+   *
+   * It is named `baseProvenance` (rather than `provenance`) to disambiguate it from the
+   * `provenance` field on the {@link TabSelectedEvent} payload, which carries the provenance
+   * of the state *resulting* from a transition.
    */
-  provenance: number;
+  baseProvenance: number;
 };
 
 // #endregion Control
@@ -140,15 +142,15 @@ export interface TabsHostPropsBase {
    * the update might get accepted or rejected.
    *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
-   * @see {@link TabsHostNavState} for description of the type model & accepted values.
+   * @see {@link TabsHostNavStateRequest} for description of the type model & accepted values.
    */
-  navState: TabsHostNavState;
+  navStateRequest: TabsHostNavStateRequest;
   /**
    * @summary If true, the native side will reject any navigation state updates coming from JS
    * if they are stale.
    *
    * @description A navigation state update is considered stale if it is based of an stale state
-   * (@{link TabsHostNavState#provenance} indicates the base state).
+   * ({@link TabsHostNavStateRequest#baseProvenance} indicates the base state).
    * A state is stale, when at the time of executing update, there already had been accepted a newer state
    * of different origin.
    *

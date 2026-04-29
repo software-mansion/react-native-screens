@@ -13,9 +13,9 @@ type TabSelectedEvent = Readonly<{
   isNativeAction: boolean;
 }>;
 
-type NavigationState = Readonly<{
+type NavigationStateRequest = Readonly<{
   selectedScreenKey: string;
-  provenance: CT.Int32;
+  baseProvenance: CT.Int32;
 }>;
 
 type TabSelectionRejectedEvent = Readonly<{
@@ -57,7 +57,7 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface NativeProps extends ViewProps {
   // Control
-  navState: NavigationState;
+  navStateRequest: NavigationStateRequest;
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
