@@ -79,10 +79,9 @@ namespace react = facebook::react;
     return;
   }
 
-  UIViewController *presentingViewController = self.window.rootViewController;
-  while (presentingViewController.presentedViewController != nil &&
-         presentingViewController.presentedViewController != _controller) {
-    presentingViewController = presentingViewController.presentedViewController;
+  UIViewController *presentingViewController = [self findPresentingViewController];
+  if (presentingViewController == nil) {
+    return;
   }
 
   if (_isOpen && _controller.presentingViewController == nil) {
@@ -90,12 +89,28 @@ namespace react = facebook::react;
   } else if (!_isOpen && _controller.presentingViewController != nil) {
     // Dismiss programmatically and delay the reset until the animation completes.
     // This prevents conflicting layout updates while the sheet is sliding down.
-    __weak __typeof(self) weakSelf = self;
+    __weak auto weakSelf = self;
     [_controller dismissViewControllerAnimated:YES
                                     completion:^{
                                       [weakSelf resetShadowNodeSize];
                                     }];
   }
+}
+
+- (UIViewController *)findPresentingViewController
+{
+  UIViewController *presentingViewController = self.window.rootViewController;
+
+  if (presentingViewController == nil) {
+    return nil;
+  }
+
+  while (presentingViewController.presentedViewController != nil &&
+         presentingViewController.presentedViewController != _controller) {
+    presentingViewController = presentingViewController.presentedViewController;
+  }
+
+  return presentingViewController;
 }
 
 #pragma mark - RNSFormSheetControllerDelegate
