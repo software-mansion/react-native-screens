@@ -4,7 +4,7 @@ import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
 
-export const describeAndroid =
+export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
 async function scrollUntilVisible(id: string, scrollViewId: string) {
