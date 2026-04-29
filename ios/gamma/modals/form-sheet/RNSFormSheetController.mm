@@ -15,6 +15,11 @@
   return self;
 }
 
+- (void)resetState
+{
+  _lastNotifiedSize = CGSizeZero;
+}
+
 - (void)loadView
 {
   UIView *view = [[UIView alloc] init];
@@ -30,7 +35,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-  _lastNotifiedSize = CGSizeZero;
+  [self resetState];
 }
 
 - (void)viewDidLayoutSubviews
