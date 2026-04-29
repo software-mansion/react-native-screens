@@ -1,8 +1,8 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TestFormSheetBasic from './test-form-sheet-base';
+import TestFormSheetBase from './test-form-sheet-base';
 
 const scenarios = {
-  TestFormSheetBasic,
+  TestFormSheetBase,
 };
 
 const FormSheetScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
