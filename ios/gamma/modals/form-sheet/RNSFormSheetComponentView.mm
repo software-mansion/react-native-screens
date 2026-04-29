@@ -27,8 +27,8 @@ namespace react = facebook::react;
   NSArray<NSNumber *> *_detents;
 
   // Invalidation flags
-  BOOL _needsPresentationUpdate;
-  BOOL _needsSheetUpdate;
+  BOOL _needsSheetPresentationUpdate;
+  BOOL _needsSheetConfigurationUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -47,8 +47,8 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSFormSheetComponentEventEmitter new];
   _reactSubviews = [NSMutableArray new];
 
-  _needsPresentationUpdate = NO;
-  _needsSheetUpdate = NO;
+  _needsSheetPresentationUpdate = NO;
+  _needsSheetConfigurationUpdate = NO;
 }
 
 - (void)resetProps
@@ -128,15 +128,9 @@ namespace react = facebook::react;
 
 - (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds
 {
-  if (_touchHandler == nil) {
-    _touchHandler = [RCTSurfaceTouchHandler new];
-    [_touchHandler attachToView:_controller.view];
-  }
-
   CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
 
-  // Aligns touch coordinate space with window coordinate space
-  _touchHandler.viewOriginOffset = origin;
+  [self updateTouchHandlerWithOrigin:origin];
 
   if (_state != nullptr) {
     auto newState = react::RNSFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
@@ -189,12 +183,12 @@ namespace react = facebook::react;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = newComponentProps.isOpen;
-    _needsPresentationUpdate = YES;
+    _needsSheetPresentationUpdate = YES;
 
     // ALWAYS refresh the sheet configuration when reopening,
     // because UIKit destroys the presentationController after the modal is dismissed.
     if (_isOpen) {
-      _needsSheetUpdate = YES;
+      _needsSheetConfigurationUpdate = YES;
     }
   }
 
@@ -204,7 +198,7 @@ namespace react = facebook::react;
       [detentsArray addObject:@(detent)];
     }
     _detents = detentsArray;
-    _needsSheetUpdate = YES;
+    _needsSheetConfigurationUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -214,13 +208,13 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 
-  if (_needsSheetUpdate) {
-    _needsSheetUpdate = NO;
+  if (_needsSheetConfigurationUpdate) {
+    _needsSheetConfigurationUpdate = NO;
     [self applySheetConfiguration];
   }
 
-  if (_needsPresentationUpdate) {
-    _needsPresentationUpdate = NO;
+  if (_needsSheetPresentationUpdate) {
+    _needsSheetPresentationUpdate = NO;
     [self updatePresentationState];
   }
 }
@@ -249,7 +243,7 @@ namespace react = facebook::react;
 }
 #endif // RCT_DYNAMIC_FRAMEWORKS
 
-#pragma mark - Layout
+#pragma mark - Layout helpers
 
 - (void)resetShadowNodeSize
 {
@@ -307,6 +301,19 @@ namespace react = facebook::react;
       sheet.detents = nativeDetents;
     }];
   }
+}
+
+#pragma mark - Touch Handling helpers
+
+- (void)updateTouchHandlerWithOrigin:(CGPoint)origin
+{
+  if (_touchHandler == nil) {
+    _touchHandler = [RCTSurfaceTouchHandler new];
+    [_touchHandler attachToView:_controller.view];
+  }
+
+  // Aligns touch coordinate space with window coordinate space
+  _touchHandler.viewOriginOffset = origin;
 }
 
 @end
