@@ -16,7 +16,7 @@ export interface FormSheetProps extends ViewProps {
   detents?: number[] | undefined;
 
   /**
-   * Called when the user interactively dismisses the sheet (e.g., by swiping it down).
+   * Called when the sheet is dismissed.
    * It is highly recommended to use this callback to synchronize
    * your local state to prevent UI mismatch (e.g., updating `isOpen` to `false`).
    */
