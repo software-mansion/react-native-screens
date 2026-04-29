@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef ANDROID
+
 #include <react/renderer/graphics/Geometry.h>
 
 namespace facebook::react {
@@ -17,3 +19,5 @@ class JSI_EXPORT RNSFormSheetState final {
 };
 
 } // namespace facebook::react
+
+#endif // ANDROID
