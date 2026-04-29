@@ -43,7 +43,7 @@ const isValidDisplayModeForSplitBehavior = (
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function SplitHost({ ref, ...props }: SplitHostProps) {
-  const { preferredDisplayMode, preferredSplitBehavior } = props;
+  const { direction, preferredDisplayMode, preferredSplitBehavior } = props;
   const nativeRef = React.useRef<NativeRef>(null);
 
   React.useImperativeHandle(
@@ -101,6 +101,7 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
       // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
+      layoutDirection={direction}
       style={styles.container}>
       {props.children}
     </SplitHostNativeComponent>

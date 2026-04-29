@@ -30,6 +30,7 @@ static const CGFloat epsilon = 1e-6;
   bool _needsSplitSecondaryScreenNavBarUpdate;
   bool _needsSplitDisplayModeUpdate;
   bool _needsSplitOrientationUpdate;
+  bool _needsSplitLayoutDirectionUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -53,6 +54,7 @@ static const CGFloat epsilon = 1e-6;
   _needsSplitSecondaryScreenNavBarUpdate = false;
   _needsSplitDisplayModeUpdate = false;
   _needsSplitOrientationUpdate = false;
+  _needsSplitLayoutDirectionUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -92,6 +94,7 @@ static const CGFloat epsilon = 1e-6;
   _topColumnForCollapsingColumn = UISplitViewControllerColumnPrimary;
 
   _orientation = RNSOrientationInherit;
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
 
   _isShowSecondaryToggleButtonSet = false;
 }
@@ -330,6 +333,12 @@ RNS_IGNORE_SUPER_CALL_END
     _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitHostOrientation(newComponentProps.orientation);
   }
 
+  if (oldComponentProps.layoutDirection != newComponentProps.layoutDirection) {
+    _needsSplitLayoutDirectionUpdate = true;
+    _layoutDirection = rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromSplitHostCppEquivalent(
+        newComponentProps.layoutDirection);
+  }
+
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
   // This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
@@ -364,6 +373,16 @@ RNS_IGNORE_SUPER_CALL_END
   if (_needsSplitOrientationUpdate && _controller != nil) {
     _needsSplitOrientationUpdate = false;
     [_controller setNeedsOrientationUpdate];
+  }
+
+  if (_needsSplitLayoutDirectionUpdate && _controller != nil) {
+    _needsSplitLayoutDirectionUpdate = false;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+    if (@available(iOS 17.0, *)) {
+      _controller.traitOverrides.layoutDirection = _layoutDirection;
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+      [_controller setNeedsLayoutDirectionUpdateBelowIOS17];
   }
 }
 

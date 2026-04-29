@@ -48,6 +48,10 @@ class RNSSplitAppearanceApplicator {
     appearanceCoordinator.updateIfNeeded(.orientationUpdate) { [] in
       RNSScreenWindowTraits.enforceDesiredDeviceOrientation()
     }
+    
+    appearanceCoordinator.updateIfNeeded(.layoutDirectionUpdateBelowIOS17) {
+      updateLayoutDirectionBelowIOS17(splitHost, splitHostController)
+    }
   }
 
   ///
@@ -189,6 +193,20 @@ class RNSSplitAppearanceApplicator {
     assert(
       minWidth <= maxWidth,
       "[RNScreens] Split column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
+    )
+  }
+  
+  public func updateLayoutDirectionBelowIOS17(
+    _ splitHost: RNSSplitHostComponentView,
+    _ splitHostController: RNSSplitHostController,
+  ) {
+    assert(
+      splitHostController.parent != nil,
+      "[RNScreens] Expected non-null parent view controller for layout direction update."
+    )
+    splitHostController.parent?.setOverrideTraitCollection(
+      UITraitCollection(layoutDirection: splitHost.layoutDirection),
+      forChild: splitHostController
     )
   }
 }
