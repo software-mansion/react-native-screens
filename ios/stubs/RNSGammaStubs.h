@@ -24,4 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSScrollViewMarkerComponentView : NSObject
 @end
 
+@interface RNSFormSheetComponentView : NSObject
+@end
+
 NS_ASSUME_NONNULL_END
