@@ -9,7 +9,10 @@
 
 using namespace facebook::react;
 
+@class RNSInlineModalController;
+
 @protocol RNSInlineModalControllerDelegate <NSObject>
+- (UIView *)providerViewForInlineModalController:(RNSInlineModalController *)controller;
 - (void)inlineModalControllerDidLayoutWithBounds:(CGRect)bounds;
 @end
 
@@ -18,13 +21,14 @@ using namespace facebook::react;
 @end
 
 @implementation RNSInlineModalController {
-  CGSize _lastNotifiedSize;
+  CGRect _lastNotifiedFrame;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
   }
   return self;
 }
@@ -40,17 +44,22 @@ using namespace facebook::react;
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-  [super viewWillDisappear:animated];
-  _lastNotifiedSize = CGSizeZero;
+  [super viewDidDisappear:animated];
+  _lastNotifiedFrame = CGRectZero;
 }
 
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
 
-  CGSize newSize = self.view.bounds.size;
-  if (newSize.width > 0 && newSize.height > 0 && !CGSizeEqualToSize(newSize, _lastNotifiedSize)) {
-    _lastNotifiedSize = newSize;
+  UIView *providerView = nil;
+  if ([self.delegate respondsToSelector:@selector(providerViewForInlineModalController:)]) {
+    providerView = [self.delegate providerViewForInlineModalController:self];
+  }
+
+  CGRect newFrame = [self.view convertRect:self.view.bounds toView:providerView];
+  if (newFrame.size.width > 0 && newFrame.size.height > 0 && !CGRectEqualToRect(newFrame, _lastNotifiedFrame)) {
+    _lastNotifiedFrame = newFrame;
     if ([self.delegate respondsToSelector:@selector(inlineModalControllerDidLayoutWithBounds:)]) {
       [self.delegate inlineModalControllerDidLayoutWithBounds:self.view.bounds];
     }
@@ -95,17 +104,22 @@ using namespace facebook::react;
   }
 }
 
-- (UIViewController *)findProviderViewController
+- (RNSInlineModalProviderComponentView *)findProviderView
 {
   UIView *currentView = self;
   while (currentView != nil) {
     if ([currentView isKindOfClass:[RNSInlineModalProviderComponentView class]]) {
-      RNSInlineModalProviderComponentView *providerView = (RNSInlineModalProviderComponentView *)currentView;
-      return providerView.contextViewController;
+      return (RNSInlineModalProviderComponentView *)currentView;
     }
     currentView = currentView.superview;
   }
   return nil;
+}
+
+- (UIViewController *)findProviderViewController
+{
+  RNSInlineModalProviderComponentView *providerView = [self findProviderView];
+  return providerView ? providerView.contextViewController : nil;
 }
 
 - (void)updatePresentationState
@@ -142,10 +156,22 @@ using namespace facebook::react;
 
 #pragma mark - RNSInlineModalControllerDelegate
 
+- (UIView *)providerViewForInlineModalController:(RNSInlineModalController *)controller
+{
+  return [self findProviderView];
+}
+
 - (void)inlineModalControllerDidLayoutWithBounds:(CGRect)bounds
 {
   if (_state != nullptr) {
-    auto newState = RNSInlineModalState{RCTSizeFromCGSize(bounds.size)};
+    // To neutralize any layout offsets that Yoga has already applied to this Host View
+    // in the Element tree, relatively to the Provider component, we need to feed it an inverse offset.
+    // First, we find the Host View's position relative to the native modal container.
+    // Then, we negate this vector to cancel out the JS-side displacement.
+    CGPoint hostOriginInControllerSpace = [self convertPoint:CGPointZero toView:_controller.view];
+    CGPoint contentOriginOffset = CGPointMake(-hostOriginInControllerSpace.x, -hostOriginInControllerSpace.y);
+
+    auto newState = RNSInlineModalState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(contentOriginOffset)};
     _state->updateState(std::move(newState), EventQueue::UpdateMode::unstable_Immediate);
   }
 }
@@ -153,7 +179,7 @@ using namespace facebook::react;
 - (void)resetShadowNodeSize
 {
   if (_state != nullptr) {
-    auto newState = RNSInlineModalState{RCTSizeFromCGSize(CGSizeZero)};
+    auto newState = RNSInlineModalState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
     _state->updateState(std::move(newState), EventQueue::UpdateMode::unstable_Immediate);
   }
 }

@@ -1,23 +1,7 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import InlineModalProviderNativeComponent from '../../../../fabric/gamma/modals/inline-modal/InlineModalProviderNativeComponent';
 import type { InlineModalProviderProps } from './InlineModalProvider.types';
 
-export function InlineModalProvider({
-  style,
-  ...rest
-}: InlineModalProviderProps) {
-  return (
-    <InlineModalProviderNativeComponent
-      style={[style, styles.container]}
-      {...rest}
-    />
-  );
+export function InlineModalProvider(props: InlineModalProviderProps) {
+  return <InlineModalProviderNativeComponent {...props} />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-  },
-});

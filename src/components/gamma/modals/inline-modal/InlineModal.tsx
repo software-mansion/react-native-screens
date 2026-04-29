@@ -4,7 +4,17 @@ import InlineModalNativeComponent from '../../../../fabric/gamma/modals/inline-m
 import { StyleSheet } from 'react-native';
 
 export function InlineModal(props: InlineModalProps) {
-  return (
-    <InlineModalNativeComponent {...props} style={StyleSheet.absoluteFill} />
-  );
+  const { style, ...rest } = props;
+
+  return <InlineModalNativeComponent {...rest} style={[style, styles.host]} />;
 }
+
+const styles = StyleSheet.create({
+  host: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+  },
+});

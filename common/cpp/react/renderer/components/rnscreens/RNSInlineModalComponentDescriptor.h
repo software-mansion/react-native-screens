@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef ANDROID
+
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSInlineModalShadowNode.h"
@@ -39,3 +41,5 @@ class RNSInlineModalComponentDescriptor final
 };
 
 } // namespace facebook::react
+
+#endif // ANDROID
