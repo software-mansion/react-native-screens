@@ -3,6 +3,7 @@
 #import "RNSFormSheetController.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -268,6 +269,13 @@ namespace react = facebook::react;
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
 
+  if (![self areDetentsSorted]) {
+    RCTLogError(
+        @"[RNScreens] The values in the detents array must be sorted in ascending order. Falling back to large detent.");
+
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
   if (@available(iOS 16.0, *)) {
     if (_detents.size() == 0) {
       [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
@@ -301,6 +309,16 @@ namespace react = facebook::react;
   }
 
   return nativeDetents;
+}
+
+- (BOOL)areDetentsSorted
+{
+  for (size_t i = 1; i < _detents.size(); i++) {
+    if (_detents[i - 1] >= _detents[i]) {
+      return NO;
+    }
+  }
+  return YES;
 }
 
 #pragma mark - Touch Handling helpers
