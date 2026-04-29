@@ -8,7 +8,7 @@ type GenericEmptyEvent = Readonly<{}>;
 
 interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
-  detents?: readonly CT.Double[] | undefined;
+  detents?: CT.Double[] | undefined;
   onDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
