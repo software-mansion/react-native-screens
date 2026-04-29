@@ -10,13 +10,13 @@ import {
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tabs scrollToTop special effect',
-  key: 'test-tabs-special-effects',
+  key: 'test-tabs-special-effects-scroll-to-top',
   details:
     'Test settings of scrollToTop specialEffect.',
   platforms: ['ios', 'android'],
 };
 
-function Tab1Screen() {
+export function ScrollScreen() {
   return (
     <ScrollView testID="tab1-scrollview">
       <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>

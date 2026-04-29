@@ -14,7 +14,7 @@ import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
-import TestTabsSpecialEffects from './test-tabs-special-effects';
+import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
 
 const scenarios = {
   BottomAccessoryScenario,
@@ -31,7 +31,7 @@ const scenarios = {
   TestTabsStaleStateUpdateRejection,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
-  TestTabsSpecialEffects,
+  TestTabsSpecialEffectsScrollToTop,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
