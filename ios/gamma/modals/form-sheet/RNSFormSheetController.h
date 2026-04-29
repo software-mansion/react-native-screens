@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetController : UIViewController
 
-@property (nonatomic, weak) id<RNSFormSheetControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<RNSFormSheetControllerDelegate> delegate;
 
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
 - (void)removeReactSubview:(UIView *)subview;
