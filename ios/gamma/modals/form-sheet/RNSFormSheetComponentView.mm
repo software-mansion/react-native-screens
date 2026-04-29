@@ -8,8 +8,8 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import "RNSFormSheetComponentDescriptor.h"
-#import "RNSFormSheetState.h"
+#import <rnscreens/RNSFormSheetComponentDescriptor.h>
+#import <rnscreens/RNSFormSheetState.h>
 
 namespace react = facebook::react;
 
