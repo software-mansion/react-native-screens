@@ -1,4 +1,5 @@
 #import "RNSFormSheetComponentView.h"
+#import "RNSFormSheetComponentEventEmitter.h"
 #import "RNSFormSheetController.h"
 
 #import <React/RCTConversions.h>
@@ -15,6 +16,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSFormSheetComponentView {
+  RNSFormSheetComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetController *_controller;
   RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
@@ -42,6 +44,7 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
+  _reactEventEmitter = [RNSFormSheetComponentEventEmitter new];
   _reactSubviews = [NSMutableArray new];
 
   _needsPresentationUpdate = NO;
@@ -120,9 +123,7 @@ namespace react = facebook::react;
   _isOpen = NO;
   [self resetShadowNodeSize];
 
-  if (_eventEmitter != nullptr) {
-    std::static_pointer_cast<const react::RNSFormSheetEventEmitter>(_eventEmitter)->onDismiss({});
-  }
+  [_reactEventEmitter emitOnDismiss];
 }
 
 - (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds
@@ -150,6 +151,12 @@ namespace react = facebook::react;
 {
   [super updateState:state oldState:oldState];
   _state = std::static_pointer_cast<const react::RNSFormSheetShadowNode::ConcreteState>(state);
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter updateEventEmitter:std::static_pointer_cast<const react::RNSFormSheetEventEmitter>(eventEmitter)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
