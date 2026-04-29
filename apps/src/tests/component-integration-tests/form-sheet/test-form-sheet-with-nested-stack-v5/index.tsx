@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
-import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
-import {
-  StackContainer,
-  useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
+import { StackContainer } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
-import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'FormSheet with Nested Stack v5',
@@ -25,7 +21,11 @@ export function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>FormSheet with nested StackV5</Text>
-      <Button title="Open FormSheet" onPress={() => setIsOpen(true)} />
+      <Button
+        title="Open FormSheet"
+        color={Colors.primary}
+        onPress={() => setIsOpen(true)}
+      />
       <FormSheet
         isOpen={isOpen}
         onDismiss={() => setIsOpen(false)}
@@ -51,9 +51,7 @@ function StackSetup() {
           name: 'A',
           Component: AScreen,
           options: {
-            headerConfig: {
-              title: 'A',
-            },
+            headerConfig: { title: 'A' },
           },
         },
       ]}
@@ -64,9 +62,8 @@ function StackSetup() {
 function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
-      <RouteInformation routeName="Home" />
+      <Text style={styles.screenText}>Home Screen</Text>
       <StackNavigationButtons isPopEnabled={false} routeNames={['A']} />
-      <PressableTester />
     </CenteredLayoutView>
   );
 }
@@ -74,29 +71,9 @@ function HomeScreen() {
 function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
-      <RouteInformation routeName="A" />
+      <Text style={styles.screenText}>Screen A</Text>
       <StackNavigationButtons isPopEnabled={true} routeNames={['A']} />
-      <PressableTester />
     </CenteredLayoutView>
-  );
-}
-
-function RouteInformation(props: { routeName: string }) {
-  const routeKey = useStackNavigationContext().routeKey;
-
-  return (
-    <View>
-      <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
-    </View>
-  );
-}
-
-function PressableTester() {
-  return (
-    <PressableWithFeedback style={styles.pressable}>
-      <Text style={styles.text}>Press</Text>
-    </PressableWithFeedback>
   );
 }
 
@@ -105,32 +82,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f000',
+    backgroundColor: Colors.offBackground,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: Colors.text,
   },
   sheetContent: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
   },
-  routeInformation: {
-    color: 'black',
+  screenText: {
+    color: Colors.text,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
-  },
-  pressable: {
-    height: 50,
-    width: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 16,
   },
 });
 
