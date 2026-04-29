@@ -206,7 +206,7 @@ namespace react = facebook::react;
 
   if (_needsSheetConfigurationUpdate) {
     _needsSheetConfigurationUpdate = NO;
-    [self applySheetConfiguration];
+    [self updateConfiguration];
   }
 
   if (_needsSheetPresentationUpdate) {
@@ -250,38 +250,57 @@ namespace react = facebook::react;
   }
 }
 
-- (void)applySheetConfiguration
+- (void)updateConfiguration
 {
   UISheetPresentationController *sheet = _controller.sheetPresentationController;
   if (sheet == nil) {
     return;
   }
 
-  if (_detents.size() == 0) {
-    sheet.detents = @[ [UISheetPresentationControllerDetent largeDetent] ];
-    return;
-  }
-
-  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
-
-  if (@available(iOS 16.0, *)) {
-    for (size_t i = 0; i < _detents.size(); i++) {
-      double fraction = _detents[i];
-      NSString *ident = [NSString stringWithFormat:@"%zu", i];
-
-      [nativeDetents
-          addObject:[UISheetPresentationControllerDetent
-                        customDetentWithIdentifier:ident
-                                          resolver:^CGFloat(
-                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                            return context.maximumDetentValue * fraction;
-                                          }]];
-    }
-  }
+  NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
 
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;
   }];
+}
+
+- (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetents
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
+
+  if (@available(iOS 16.0, *)) {
+    if (_detents.size() == 0) {
+      [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
+    } else {
+      for (size_t i = 0; i < _detents.size(); i++) {
+        double fraction = _detents[i];
+        NSString *ident = [NSString stringWithFormat:@"%zu", i];
+
+        [nativeDetents
+            addObject:[UISheetPresentationControllerDetent
+                          customDetentWithIdentifier:ident
+                                            resolver:^CGFloat(
+                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                              return context.maximumDetentValue * fraction;
+                                            }]];
+      }
+    }
+  } else {
+    // iOS 15 Legacy Fallback
+    if (_detents.size() == 1) {
+      double firstDetentFraction = _detents[0];
+      if (firstDetentFraction < 1.0) {
+        [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+      } else {
+        [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
+      }
+    } else {
+      [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+      [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
+    }
+  }
+
+  return nativeDetents;
 }
 
 #pragma mark - Touch Handling helpers
