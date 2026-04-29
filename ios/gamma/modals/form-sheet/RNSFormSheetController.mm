@@ -4,7 +4,7 @@
 @end
 
 @implementation RNSFormSheetController {
-  CGSize _lastNotifiedSize;
+  CGRect _lastNotifiedFrame;
 }
 
 - (instancetype)init
@@ -17,7 +17,7 @@
 
 - (void)resetState
 {
-  _lastNotifiedSize = CGSizeZero;
+  _lastNotifiedFrame = CGRectZero;
 }
 
 - (void)loadView
@@ -43,9 +43,11 @@
 {
   [super viewDidLayoutSubviews];
 
-  CGSize newSize = self.view.bounds.size;
-  if (newSize.width > 0 && newSize.height > 0 && !CGSizeEqualToSize(newSize, _lastNotifiedSize)) {
-    _lastNotifiedSize = newSize;
+  CGRect newFrame = [self.view convertRect:self.view.bounds toView:nil];
+
+  if (newFrame.size.width > 0 && newFrame.size.height > 0 && !CGRectEqualToRect(newFrame, _lastNotifiedFrame)) {
+    _lastNotifiedFrame = newFrame;
+
     if ([self.delegate respondsToSelector:@selector(sheetControllerDidLayoutWithBounds:)]) {
       [self.delegate sheetControllerDidLayoutWithBounds:self.view.bounds];
     }
