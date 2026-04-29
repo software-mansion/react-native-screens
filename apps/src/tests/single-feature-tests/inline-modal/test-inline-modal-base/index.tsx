@@ -21,7 +21,7 @@ export function App() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <InlineModalProvider>
+    <InlineModalProvider style={styles.flex}>
       <SafeAreaView style={styles.container} edges={{top: true}}>
         <Text style={styles.title}>InlineModal Test</Text>
         <Text style={styles.providerText}>Full Screen Provider</Text>
@@ -48,6 +48,9 @@ export function App() {
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
