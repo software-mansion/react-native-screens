@@ -1,30 +1,36 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeAndroid,
+  selectSingleFeatureTestsScreen,
+  tapSelectedTab,
+} from '../../e2e-utils';
 
-// Re-tapping an already-selected tab does not trigger the reselect event on iOS 26.2+,
-// making scrollToTop untestable via Detox on that platform.
-const describeAndroid =
-  device.getPlatform() === 'android' ? describe : describe.skip;
-
-describeAndroid('Tabs specialEffects — scrollToTop', () => {
+describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
-    await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-special-effects');
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-special-effects-scroll-to-top',
+    );
   });
 
-  it('should display three tabs and Tab1 scrollable list on load', async () => {
+  it('should display tab bar and Tab1 scrollable list on load', async () => {
     await expect(element(by.id('tab1-scrollview'))).toBeVisible();
-    await expect(element(by.id('tab1-tab-item'))).toBeVisible();
-    await expect(element(by.id('tab2-tab-item'))).toBeVisible();
-    await expect(element(by.id('tab3-tab-item'))).toBeVisible();
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.type('UITabBar'))).toBeVisible();
+    } else {
+      await expect(element(by.id('tab1-tab-item'))).toBeVisible();
+      await expect(element(by.id('tab2-tab-item'))).toBeVisible();
+      await expect(element(by.id('tab3-tab-item'))).toBeVisible();
+    }
   });
 
   it('Tab1 (scrollToTop: true) — re-tapping active tab scrolls list back to top', async () => {
     await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
-    await element(by.id('tab1-tab-item')).tap();
+    await tapSelectedTab('tab1-tab-item-label');
 
     await waitFor(element(by.id('tab1-item-1')))
       .toBeVisible()
@@ -38,7 +44,7 @@ describeAndroid('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab2-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
 
-    await element(by.id('tab2-tab-item')).tap();
+    await tapSelectedTab('tab2-tab-item-label');
 
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
   });
@@ -50,7 +56,7 @@ describeAndroid('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab3-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab3-item-1'))).not.toBeVisible();
 
-    await element(by.id('tab3-tab-item')).tap();
+    await tapSelectedTab('tab3-tab-item-label');
 
     await waitFor(element(by.id('tab3-item-1')))
       .toBeVisible()
@@ -58,16 +64,16 @@ describeAndroid('Tabs specialEffects — scrollToTop', () => {
   });
 
   it('Tab1 (scrollToTop: true) — switching away and back preserves scroll position', async () => {
-    await element(by.id('tab1-tab-item')).tap();
+    await tapSelectedTab('tab1-tab-item-label');
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
 
     await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
-    await element(by.id('tab3-tab-item')).tap();
+    await tapSelectedTab('tab3-tab-item-label');
     await expect(element(by.id('tab3-item-1'))).toBeVisible();
 
-    await element(by.id('tab1-tab-item')).tap();
+    await tapSelectedTab('tab1-tab-item-label');
 
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
   });

@@ -58,11 +58,12 @@ function Tab3Screen() {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: Tab1Screen,
+    Component: ScrollScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
       tabBarItemTestID: 'tab1-tab-item',
+      tabBarItemAccessibilityLabel: 'tab1-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
           scrollToTop: true,
@@ -77,6 +78,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
       tabBarItemTestID: 'tab2-tab-item',
+      tabBarItemAccessibilityLabel: 'tab2-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
           scrollToTop: false,
@@ -91,6 +93,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
       tabBarItemTestID: 'tab3-tab-item',
+      tabBarItemAccessibilityLabel: 'tab3-tab-item-label',
     },
   },
 ];
