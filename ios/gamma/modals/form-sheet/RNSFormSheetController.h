@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<RNSFormSheetControllerDelegate> delegate;
 
-- (void)updateContentSubviews:(NSArray<UIView *> *)subviews;
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
+- (void)removeReactSubview:(UIView *)subview;
 
 @end
 

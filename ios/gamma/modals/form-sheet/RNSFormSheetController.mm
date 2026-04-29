@@ -51,15 +51,16 @@
   }
 }
 
-- (void)updateContentSubviews:(NSArray<UIView *> *)subviews
-{
-  for (UIView *view in self.view.subviews) {
-    [view removeFromSuperview];
-  }
+#pragma mark - RN Subviews Management
 
-  for (UIView *view in subviews) {
-    [self.view addSubview:view];
-  }
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
+{
+  [self.view insertSubview:subview atIndex:index];
+}
+
+- (void)removeReactSubview:(UIView *)subview
+{
+  [subview removeFromSuperview];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
