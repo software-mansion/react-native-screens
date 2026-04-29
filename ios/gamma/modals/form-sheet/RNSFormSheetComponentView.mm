@@ -269,6 +269,13 @@ namespace react = facebook::react;
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
 
+  if (![self areDetentsValid]) {
+    RCTLogError(
+        @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
+
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
   if (![self areDetentsSorted]) {
     RCTLogError(
         @"[RNScreens] The values in the detents array must be sorted in ascending order. Falling back to large detent.");
@@ -309,6 +316,16 @@ namespace react = facebook::react;
   }
 
   return nativeDetents;
+}
+
+- (BOOL)areDetentsValid
+{
+  for (size_t i = 0; i < _detents.size(); i++) {
+    if (_detents[i] < 0.0 || _detents[i] > 1.0) {
+      return NO;
+    }
+  }
+  return YES;
 }
 
 - (BOOL)areDetentsSorted
