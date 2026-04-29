@@ -15,33 +15,52 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSFormSheetComponentView {
-  RCTSurfaceTouchHandler *_touchHandler;
   RNSFormSheetController *_controller;
+  RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
   react::RNSFormSheetShadowNode::ConcreteState::Shared _state;
+
+  // Props
   BOOL _isOpen;
-  BOOL _needsPresentationUpdate;
   NSArray<NSNumber *> *_detents;
+
+  // Invalidation flags
+  BOOL _needsPresentationUpdate;
   BOOL _needsSheetUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const react::RNSFormSheetProps>();
-    _props = defaultProps;
-
-    _reactSubviews = [NSMutableArray new];
-    _controller = [[RNSFormSheetController alloc] init];
-    _controller.delegate = self;
-
-    _isOpen = NO;
-    _detents = @[];
-
-    _needsPresentationUpdate = NO;
-    _needsSheetUpdate = NO;
+    [self initState];
   }
   return self;
+}
+
+- (void)initState
+{
+  [self resetProps];
+  [self setupController];
+
+  _reactSubviews = [NSMutableArray new];
+
+  _needsPresentationUpdate = NO;
+  _needsSheetUpdate = NO;
+}
+
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSFormSheetProps>();
+  _props = defaultProps;
+
+  _isOpen = NO;
+  _detents = @[];
+}
+
+- (void)setupController
+{
+  _controller = [[RNSFormSheetController alloc] init];
+  _controller.delegate = self;
 }
 
 - (void)didMoveToWindow
