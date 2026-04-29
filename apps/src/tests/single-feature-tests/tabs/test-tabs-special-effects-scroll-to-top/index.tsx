@@ -9,19 +9,23 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs scrollToTop special effect',
+  name: 'Tabs special effect scroll to top',
   key: 'test-tabs-special-effects-scroll-to-top',
   details:
-    'Test settings of scrollToTop specialEffect.',
+    'Test settings of specialEffect scrollToTop.',
   platforms: ['ios', 'android'],
 };
 
-export function ScrollScreen() {
+interface ScrollScreenProps {
+  tabName: string;
+}
+
+export function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
-    <ScrollView>
+    <ScrollView testID={`${tabName}-scrollview`}>
       <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
       {Array.from({ length: 50 }, (_, i) => (
-        <Text key={i} style={styles.item}>
+        <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
           Item {i + 1}
         </Text>
       ))}
@@ -32,10 +36,12 @@ export function ScrollScreen() {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: ScrollScreen,
+    Component: () => <ScrollScreen tabName="tab1" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
+      tabBarItemTestID: 'tab1-tab-item',
+      tabBarItemAccessibilityLabel: 'tab1-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
           scrollToTop: true,
@@ -45,10 +51,12 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: ScrollScreen,
+    Component: () => <ScrollScreen tabName="tab2" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemTestID: 'tab2-tab-item',
+      tabBarItemAccessibilityLabel: 'tab2-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
           scrollToTop: false
@@ -58,10 +66,12 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: ScrollScreen,
+    Component: () => <ScrollScreen tabName="tab3" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
+      tabBarItemTestID: 'tab3-tab-item',
+      tabBarItemAccessibilityLabel: 'tab3-tab-item-label',
     },
   },
 ];
