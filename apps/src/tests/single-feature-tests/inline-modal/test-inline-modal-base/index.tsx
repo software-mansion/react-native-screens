@@ -22,7 +22,7 @@ export function App() {
 
   return (
     <InlineModalProvider style={styles.flex}>
-      <SafeAreaView style={styles.container} edges={{top: true}}>
+      <SafeAreaView style={styles.container} edges={{ top: true }}>
         <Text style={styles.title}>InlineModal Test</Text>
         <Text style={styles.providerText}>Full Screen Provider</Text>
         <View style={styles.spacing} />
