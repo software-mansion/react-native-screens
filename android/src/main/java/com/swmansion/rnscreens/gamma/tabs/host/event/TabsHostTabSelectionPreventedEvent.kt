@@ -27,7 +27,7 @@ class TabsHostTabSelectionPreventedEvent(
 
     override fun getEventData(): WritableMap? =
         Arguments.createMap().apply {
-            putString(EK_SELECTED_KEY, currentNavState.selectedKey)
+            putString(EK_SELECTED_KEY, currentNavState.selectedScreenKey)
             putInt(EK_PROVENANCE, currentNavState.provenance)
             putString(EK_PREVENTED_KEY, preventedScreenKey)
         }
