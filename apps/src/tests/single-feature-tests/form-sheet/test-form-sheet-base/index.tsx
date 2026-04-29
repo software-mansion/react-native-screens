@@ -18,10 +18,10 @@ export function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>FormSheet Test</Text>
-      <Button 
-        title="Open FormSheet" 
-        color={Colors.primary} 
-        onPress={() => setIsOpen(true)} 
+      <Button
+        title="Open FormSheet"
+        color={Colors.primary}
+        onPress={() => setIsOpen(true)}
       />
       <FormSheet
         isOpen={isOpen}
@@ -30,10 +30,10 @@ export function App() {
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>FormSheet content</Text>
           <View style={styles.spacing} />
-          <Button 
-            title="Dismiss from JS" 
-            color={Colors.primary} 
-            onPress={() => setIsOpen(false)} 
+          <Button
+            title="Dismiss from JS"
+            color={Colors.primary}
+            onPress={() => setIsOpen(false)}
           />
         </View>
       </FormSheet>
