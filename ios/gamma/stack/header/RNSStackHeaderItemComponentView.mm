@@ -1,6 +1,7 @@
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSShadowStateFrameTracker.h"
 
 #import <React/RCTConversions.h>
@@ -11,7 +12,8 @@
 namespace react = facebook::react;
 
 @implementation RNSStackHeaderItemComponentView {
-  react::RNSStackHeaderItemIOSPlacement _placement;
+  RNSHeaderItemPlacement _placement;
+  BOOL _didSetHeaderItemPlacement;
   NSString *_Nullable _label;
 
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
@@ -41,12 +43,13 @@ namespace react = facebook::react;
 - (void)resetProps
 {
   _label = nil;
-  _placement = react::RNSStackHeaderItemIOSPlacement::Right;
+  _placement = RNSHeaderItemPlacementRight;
+  _didSetHeaderItemPlacement = NO;
 }
 
 - (RNSHeaderItemPlacement)placement
 {
-  return rnscreens::conversion::convert<RNSHeaderItemPlacement>(_placement);
+  return _placement;
 }
 
 - (BOOL)hasCustomView
@@ -189,8 +192,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    if (_placement == react::RNSStackHeaderItemIOSPlacement::Left ||
-        _placement == react::RNSStackHeaderItemIOSPlacement::Right) {
+    if (_placement == RNSHeaderItemPlacementLeft || _placement == RNSHeaderItemPlacementRight) {
       // On iOS 26, left/right bar button items use a centering wrapper with
       // Auto Layout. Bridge Yoga's size via intrinsicContentSize.
       BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
@@ -222,9 +224,13 @@ RNS_IGNORE_SUPER_CALL_END
   bool needsUpdate = NO;
 
   if (oldItemProps.placement != newItemProps.placement) {
-    // TODO: We shouldn't allow for changing placement after it is set
-    _placement = newItemProps.placement;
+    if (_didSetHeaderItemPlacement) {
+      RNSLog(@"Changing item placement at runtime is not supported");
+    } else {
+      _placement = rnscreens::conversion::convert<RNSHeaderItemPlacement>(newItemProps.placement);
+    }
   }
+  _didSetHeaderItemPlacement = YES;
 
   if (oldItemProps.label != newItemProps.label) {
     _label = RCTNSStringFromStringNilIfEmpty(newItemProps.label);

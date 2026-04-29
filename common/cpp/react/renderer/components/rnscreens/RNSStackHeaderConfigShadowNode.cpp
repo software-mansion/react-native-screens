@@ -16,9 +16,7 @@ Point RNSStackHeaderConfigShadowNode::getContentOriginOffset(
   auto stateData = getStateData();
   return stateData.contentOffset;
 }
-#endif // ANDROID
-
-#if !defined(ANDROID)
+#else // ANDROID
 void RNSStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
   applyFrameCorrections();

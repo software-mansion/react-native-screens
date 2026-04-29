@@ -97,10 +97,9 @@
     return;
   }
 
-  // The screen controller's header delegate orchestrate
-  // updates for the header config and its items (props & shadow state).
   if ([topVC isKindOfClass:RNSStackScreenController.class]) {
     auto *screenController = static_cast<RNSStackScreenController *>(topVC);
+    // headerCoordinator handles ShadowNode state for both header config and its navigation items
     [screenController.headerCoordinator updateShadowStatesToMatchNavigationBar:self.navigationBar];
   }
 }

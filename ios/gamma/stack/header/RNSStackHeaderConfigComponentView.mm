@@ -99,7 +99,7 @@ namespace react = facebook::react;
   return _headerItems;
 }
 
-#pragma mark RNSStackHeaderInvalidateInvalidationDelegate
+#pragma mark RNSStackHeaderItemInvalidationDelegate
 
 - (void)headerItemDidInvalidate
 {

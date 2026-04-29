@@ -7,7 +7,7 @@ type Placement = 'left' | 'right' | 'title' | 'subtitle' | 'largeSubtitle';
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'right'>;
-  label?: string;
+  label?: CT.WithDefault<string, ''>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {

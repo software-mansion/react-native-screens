@@ -39,8 +39,6 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
     return MapBufferBuilder::EMPTY();
   }
 #else // ANDROID
-  RNSStackHeaderConfigState() = default;
-
   RNSStackHeaderConfigState(Size frameSize_, Point contentOffset_)
       : frameSize(frameSize_), contentOffset(contentOffset_) {};
 

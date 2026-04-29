@@ -9,7 +9,7 @@ type Placement = 'left' | 'right' | 'title' | 'subtitle' | 'largeSubtitle';
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'right'>;
   size?: CT.WithDefault<SpacerSize, 'flexible'>;
-  width?: CT.Float;
+  width?: CT.Float | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>(

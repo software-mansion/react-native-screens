@@ -8,7 +8,8 @@
 namespace react = facebook::react;
 
 @implementation RNSStackHeaderItemSpacerComponentView {
-  react::RNSStackHeaderItemSpacerIOSPlacement _placement;
+  RNSHeaderItemSpacerPlacement _placement;
+  BOOL _didSetHeaderItemSpacerPlacement;
   BOOL _isFlexible;
   CGFloat _width;
 }
@@ -31,7 +32,8 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _placement = react::RNSStackHeaderItemSpacerIOSPlacement::Right;
+  _placement = RNSHeaderItemSpacerPlacementRight;
+  _didSetHeaderItemSpacerPlacement = NO;
   _isFlexible = NO;
   _width = 0;
 }
@@ -40,7 +42,7 @@ namespace react = facebook::react;
 
 - (RNSHeaderItemSpacerPlacement)placement
 {
-  return rnscreens::conversion::convert<RNSHeaderItemSpacerPlacement>(_placement);
+  return _placement;
 }
 
 #pragma mark - Bar Button Item
@@ -64,12 +66,15 @@ namespace react = facebook::react;
   BOOL needsUpdate = NO;
 
   if (oldSpacerProps.placement != newSpacerProps.placement) {
-    _placement = newSpacerProps.placement;
+    _placement = rnscreens::conversion::convert<RNSHeaderItemSpacerPlacement>(newSpacerProps.placement);
   }
+  _didSetHeaderItemSpacerPlacement = YES;
+
   if (oldSpacerProps.size != newSpacerProps.size) {
     _isFlexible = newSpacerProps.size == react::RNSStackHeaderItemSpacerIOSSize::Flexible;
     needsUpdate = YES;
   }
+
   if (oldSpacerProps.width != newSpacerProps.width) {
     _width = newSpacerProps.width;
     RCTLogInfo(@"%f %f", _width, newSpacerProps.width);

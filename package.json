@@ -197,7 +197,7 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
-        "RNSStackHeaderConfig": {
+        "RNSStackHeaderConfigIOS": {
           "className": "RNSStackHeaderConfigComponentView"
         },
         "RNSStackHeaderItemIOS": {
