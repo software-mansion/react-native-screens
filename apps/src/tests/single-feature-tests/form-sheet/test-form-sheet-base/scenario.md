@@ -44,4 +44,4 @@ Other: Planned, but will be implemented separately.
 
 4. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
+- [ ] Expected: The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
