@@ -8,6 +8,7 @@ export type {
   SplitPrimaryEdge,
   SplitPrimaryBackgroundStyle,
   SplitDisplayMode,
+  SplitHostDirection,
   SplitHostOrientation,
   SplitColumnMetrics,
   SplitNavigableColumn,

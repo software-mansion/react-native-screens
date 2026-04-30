@@ -115,6 +115,23 @@ std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDispla
   }
 }
 
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromSplitHostCppEquivalent(
+    react::RNSSplitHostLayoutDirection layoutDirection)
+{
+  using enum facebook::react::RNSSplitHostLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+    case Ltr:
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
+    case Rtl:
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
+    default:
+      RCTLogError(@"[RNScreens] unsupported layout direction");
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+  }
+}
+
 RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation)
 {
   using enum facebook::react::RNSSplitHostOrientation;
