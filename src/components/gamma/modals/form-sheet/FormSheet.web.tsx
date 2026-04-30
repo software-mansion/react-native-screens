@@ -1,5 +1,8 @@
+import warnOnce from 'warn-once';
+
 export const FormSheet = () => {
-  console.warn(
+  warnOnce(
+    true,
     '[RNScreens] As of now, FormSheet component is supported only for iOS.',
   );
   return null;
