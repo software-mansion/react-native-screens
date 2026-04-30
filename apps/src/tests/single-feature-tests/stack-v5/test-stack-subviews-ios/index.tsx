@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   createScenario,
   ScenarioDescription,
@@ -17,50 +24,65 @@ import { Colors } from '@apps/shared/styling';
 const SHORT_TITLE = 'Title';
 const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
 
-const HIT_SLOP_VALUES: HitSlopValue[] = ['0', '10', '30'];
-const PRESS_RETENTION_VALUES: PressRetentionValue[] = ['0', '20', '50'];
-const TITLE_OPTIONS: TitleOption[] = ['short', 'long'];
+const HIT_SLOP_VALUES = ['0', '10', '30'];
+const PRESS_RETENTION_VALUES = ['0', '20', '50'];
+const TITLE_OPTIONS = ['short', 'long', 'view'];
+
+type HitSlopValue = (typeof HIT_SLOP_VALUES)[number];
+type PressRetentionValue = (typeof PRESS_RETENTION_VALUES)[number];
+type TitleOption = (typeof TITLE_OPTIONS)[number];
 
 interface PressableProps {
   hitSlop: number;
   pressRetentionOffset: number;
 }
 
-function ItemBlueComponent(props: PressableProps) {
+interface PressablePropsContext {
+  setPressableProps: (value: PressableProps) => void;
+  pressableProps: PressableProps;
+}
+
+const PressableContext = createContext<PressablePropsContext | null>(null);
+
+function ItemBlueComponent() {
+  const { pressableProps } = useContext(PressableContext)!;
+
   return (
     <PressableWithFeedback
-      hitSlop={props.hitSlop}
-      pressRetentionOffset={props.pressRetentionOffset}
+      {...pressableProps}
       style={{ width: 30, height: 30, backgroundColor: 'blue' }}
     />
   );
 }
 
-function HorizontalGreenItem(props: PressableProps) {
+function HorizontalGreenItem() {
+  const { pressableProps } = useContext(PressableContext)!;
+
   return (
     <PressableWithFeedback
-      hitSlop={props.hitSlop}
-      pressRetentionOffset={props.pressRetentionOffset}
+      {...pressableProps}
       style={{ width: 100, height: 20, backgroundColor: 'green' }}
     />
   );
 }
 
-function HorizontalPinkItem(props: PressableProps) {
+function HorizontalPinkItem() {
+  const { pressableProps } = useContext(PressableContext)!;
+
   return (
     <PressableWithFeedback
-      hitSlop={props.hitSlop}
-      pressRetentionOffset={props.pressRetentionOffset}
+      {...pressableProps}
       style={{ width: 80, height: 10, backgroundColor: 'pink' }}
     />
   );
 }
 
-function ItemRedComponent(props: PressableProps) {
+function ItemRedComponent() {
+  const { pressableProps } = useContext(PressableContext)!;
+
   return (
     <PressableWithFeedback
-      hitSlop={props.hitSlop}
-      pressRetentionOffset={props.pressRetentionOffset}
+      {...pressableProps}
       style={{
         width: 20,
         height: 20,
@@ -77,14 +99,13 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-type HitSlopValue = '0' | '10' | '30';
-type PressRetentionValue = '0' | '20' | '50';
-type TitleOption = 'short' | 'long';
-
 interface Config {
   enabled: boolean;
   hidden: boolean;
+  largeTitleEnabled: boolean;
   title: TitleOption;
+  subtitle: TitleOption;
+  largeSubtitle: TitleOption;
   hitSlop: HitSlopValue;
   pressRetentionOffset: PressRetentionValue;
 }
@@ -92,7 +113,10 @@ interface Config {
 const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
+  largeTitleEnabled: false,
   title: 'short',
+  subtitle: 'short',
+  largeSubtitle: 'short',
   hitSlop: '0',
   pressRetentionOffset: '0',
 };
@@ -102,16 +126,23 @@ export function App() {
 }
 
 function StackSetup() {
+  const [pressableProps, setPressableProps] = useState<PressableProps>({
+    hitSlop: 0,
+    pressRetentionOffset: 0,
+  });
+
   return (
-    <StackContainer
-      routeConfigs={[
-        {
-          name: 'Home',
-          Component: ConfigScreen,
-          options: {},
-        },
-      ]}
-    />
+    <PressableContext.Provider value={{ pressableProps, setPressableProps }}>
+      <StackContainer
+        routeConfigs={[
+          {
+            name: 'Home',
+            Component: ConfigScreen,
+            options: {},
+          },
+        ]}
+      />
+    </PressableContext.Provider>
   );
 }
 
@@ -120,51 +151,52 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     return undefined;
   }
 
-  const hitSlop = Number(config.hitSlop);
-  const pressRetentionOffset = Number(config.pressRetentionOffset);
-
-  const pressableProps: PressableProps = {
-    hitSlop,
-    pressRetentionOffset,
-  };
-
   return {
     title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
     hidden: config.hidden,
     ios: {
       largeTitleEnabled: true,
-      titleItem: {
-        key: 'title',
-        component: () => <HorizontalGreenItem {...pressableProps} />,
-      },
-      subtitleItem: {
-        key: 'subtitle',
-        component: () => <HorizontalPinkItem {...pressableProps} />,
-      },
-      largeSubtitleItem: {
-        key: 'largeSubtitle',
-        component: () => <HorizontalGreenItem {...pressableProps} />,
-      },
+      titleItem:
+        config.title === 'view'
+          ? {
+              key: 'title',
+              component: HorizontalGreenItem,
+            }
+          : undefined,
+      subtitleItem:
+        config.subtitle === 'view'
+          ? {
+              key: 'subtitle',
+              component: HorizontalPinkItem,
+            }
+          : undefined,
+      largeSubtitleItem:
+        config.subtitle === 'view'
+          ? {
+              key: 'largeSubtitle',
+              component: HorizontalGreenItem,
+            }
+          : undefined,
       leftItems: [
         {
           key: 'left-0',
-          component: () => <ItemRedComponent {...pressableProps} />,
+          component: ItemRedComponent,
         },
         { key: 'left-1', spacer: 'fixed', width: 100 },
         {
           key: 'left-2',
-          component: () => <ItemRedComponent {...pressableProps} />,
+          component: ItemRedComponent,
         },
         {
           key: 'left-3',
-          component: () => <ItemBlueComponent {...pressableProps} />,
+          component: ItemBlueComponent,
         },
         { key: 'left-4', label: 'An item' },
       ],
       rightItems: [
         {
           key: 'right-0',
-          component: () => <ItemRedComponent {...pressableProps} />,
+          component: ItemRedComponent,
         },
       ],
     },
@@ -174,6 +206,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
 function ConfigScreen() {
   const navigation = useStackNavigationContext();
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
+  const { setPressableProps } = useContext(PressableContext)!;
 
   const updateConfig = useCallback(
     <K extends keyof Config>(key: K, value: Config[K]) => {
@@ -181,6 +214,14 @@ function ConfigScreen() {
     },
     [],
   );
+
+  useEffect(() => {
+    setPressableProps({
+      hitSlop: Number(config.hitSlop),
+      pressRetentionOffset: Number(config.pressRetentionOffset),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.hitSlop, config.pressRetentionOffset]);
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(() => buildHeaderConfig(config), [config]);
@@ -192,7 +233,10 @@ function ConfigScreen() {
   }, [headerConfig, setRouteOptions, routeKey]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      contentInsetAdjustmentBehavior="automatic">
       <SettingsSwitch
         label="headerConfig enabled"
         value={config.enabled}
@@ -203,20 +247,37 @@ function ConfigScreen() {
         value={config.hidden}
         onValueChange={v => updateConfig('hidden', v)}
       />
+      <SettingsSwitch
+        label="large header enabled"
+        value={config.largeTitleEnabled}
+        onValueChange={v => updateConfig('largeTitleEnabled', v)}
+      />
       <SettingsPicker<TitleOption>
         label="title"
         value={config.title}
         onValueChange={v => updateConfig('title', v)}
         items={TITLE_OPTIONS}
       />
+      <SettingsPicker<TitleOption>
+        label="subtitle"
+        value={config.subtitle}
+        onValueChange={v => updateConfig('subtitle', v)}
+        items={TITLE_OPTIONS}
+      />
+      <SettingsPicker<TitleOption>
+        label="large subtitle"
+        value={config.subtitle}
+        onValueChange={v => updateConfig('largeSubtitle', v)}
+        items={TITLE_OPTIONS}
+      />
       <SettingsPicker<HitSlopValue>
-        label="hitSlop"
+        label="hit slop"
         value={config.hitSlop}
         onValueChange={v => updateConfig('hitSlop', v)}
         items={HIT_SLOP_VALUES}
       />
       <SettingsPicker<PressRetentionValue>
-        label="pressRetentionOffset"
+        label="press retention offset"
         value={config.pressRetentionOffset}
         onValueChange={v => updateConfig('pressRetentionOffset', v)}
         items={PRESS_RETENTION_VALUES}

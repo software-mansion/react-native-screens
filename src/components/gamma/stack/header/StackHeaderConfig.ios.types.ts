@@ -18,15 +18,14 @@ export interface HeaderSpacerItem {
 export type HeaderItem = HeaderBaseItem | HeaderCustomItem;
 
 export interface StackHeaderConfigPropsIOS {
-  leftItemsSupplementBackButton?: boolean;
-  subtitleItem?: HeaderItem;
-  children?: HeaderItem[];
-  hidden?: boolean;
-  leftItems?: (HeaderItem | HeaderSpacerItem)[];
-  title?: string;
-  titleItem?: HeaderItem;
-  rightItems?: (HeaderItem | HeaderSpacerItem)[];
-  largeTitleEnabled?: boolean;
-  largeSubtitle?: string;
-  largeSubtitleItem?: HeaderItem;
+  leftItemsSupplementBackButton?: boolean | undefined;
+  subtitleItem?: HeaderItem | undefined;
+  hidden?: boolean | undefined;
+  leftItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
+  title?: string | undefined;
+  titleItem?: HeaderItem | undefined;
+  rightItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
+  largeTitleEnabled?: boolean | undefined;
+  largeSubtitle?: string | undefined;
+  largeSubtitleItem?: HeaderItem | undefined;
 }
