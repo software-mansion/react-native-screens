@@ -37,12 +37,14 @@ namespace react = facebook::react;
 - (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload
 {
   if (_reactEventEmitter != nullptr) {
+    auto convertedActionOrigin =
+        rnscreens::conversion::RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(payload.actionOrigin);
     _reactEventEmitter->onTabSelected(
         {.selectedScreenKey = RCTStringFromNSString(payload.selectedScreenKey),
          .provenance = payload.provenance,
          .isRepeated = static_cast<bool>(payload.isRepeated),
          .hasTriggeredSpecialEffect = static_cast<bool>(payload.hasTriggeredSpecialEffect),
-         .isNativeAction = static_cast<bool>(payload.isNativeAction)});
+         .actionOrigin = convertedActionOrigin});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnTabSelected event emission due to nullish emitter");

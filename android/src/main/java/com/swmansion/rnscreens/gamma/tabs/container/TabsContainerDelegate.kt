@@ -11,13 +11,13 @@ internal interface TabsContainerDelegate {
      * @param navState The new navigation state after the change.
      * @param isRepeated Whether the same tab that was already selected has been selected again.
      * @param hasTriggeredSpecialEffect Whether a special effect (e.g. scroll-to-top) was triggered.
-     * @param isNativeAction Whether the change was initiated by a native user action (tap).
+     * @param actionOrigin Origin (actor) that requested this transition.
      */
     fun onNavStateUpdate(
         navState: TabsNavState,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     )
 
     /**

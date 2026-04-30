@@ -377,7 +377,7 @@ internal class TabsContainer(
                 navState,
                 isRepeated = isRepeated,
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
-                isNativeAction = !isInExternalOperationContext,
+                actionOrigin = if (isInExternalOperationContext) TabsActionOrigin.PROGRAMMATIC_JS else TabsActionOrigin.USER,
             )
         }
 

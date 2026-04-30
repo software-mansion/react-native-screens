@@ -62,10 +62,16 @@ export type TabSelectedEvent = {
   /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
   hasTriggeredSpecialEffect: boolean;
   /**
-   * False in case the event is a result of JS-driven update. True otherwise, e.g. in case of user action (tap)
-   * or implicit UIKit action (app resize, orientation change, etc.).
+   * @summary Origin (actor) that requested this tab transition.
+   *
+   * @description
+   * - `user` — direct native UI interaction (e.g. tab bar tap, iOS tab drag-and-drop).
+   * - `programmatic-js` — JS-initiated request delivered via the `navStateRequest` prop.
+   * - `implicit` — platform side effect not attributable to an explicit actor
+   *   (e.g. UIKit reshuffling the selection during a horizontal size-class transition on iPad).
+   *   Currently only emitted on iOS.
    */
-  isNativeAction: boolean;
+  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
 };
 
 /**

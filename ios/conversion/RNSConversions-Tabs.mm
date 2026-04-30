@@ -233,6 +233,23 @@ RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReaso
   }
 }
 
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin;
+  switch (actionOrigin) {
+    case RNSTabsActionOriginUser:
+      return User;
+    case RNSTabsActionOriginProgrammaticJs:
+      return ProgrammaticJs;
+    case RNSTabsActionOriginImplicit:
+      return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", actionOrigin);
+  }
+  return User;
+}
+
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
 {
   using enum facebook::react::RNSTabsScreenIOSIconType;
