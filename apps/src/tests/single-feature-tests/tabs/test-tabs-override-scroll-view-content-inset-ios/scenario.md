@@ -18,7 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-No: Ongoing research.
+Yes: Covers all manual scenario steps.
 
 ## Prerequisites
 
