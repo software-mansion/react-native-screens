@@ -478,17 +478,29 @@ class SheetDelegate(
     }
 
     private inner class SheetStateObserver : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(
-            bottomSheet: View,
-            newState: Int,
-        ) {
-            this@SheetDelegate.onSheetStateChanged(newState)
-        }
-
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
         ) = Unit
+
+        override fun onStateChanged(
+            bottomSheet: View,
+            newState: Int,
+        ) {
+            // When preventNativeDismiss is enabled, intercept STATE_HIDDEN before it is
+            // processed further.  BottomSheetBehavior still reaches STATE_HIDDEN via the
+            // drag gesture (isHideable stays true so STATE_COLLAPSED is never reached),
+            // but we snap it back to the last stable state and notify JS instead of
+            // actually dismissing.  This mirrors the iOS
+            // UIAdaptivePresentationControllerDelegate.presentationControllerShouldDismiss
+            // synchronous hook.
+            if (screen.isPreventNativeDismiss && newState == BottomSheetBehavior.STATE_HIDDEN) {
+                sheetBehavior?.state = lastStableState
+                ScreenEventEmitter(screen).dispatchOnNativeDismissCancelled()
+                return
+            }
+            this@SheetDelegate.onSheetStateChanged(newState)
+        }
     }
 
     internal data class SheetAnimationContext(
