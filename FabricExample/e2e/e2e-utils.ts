@@ -72,6 +72,13 @@ export async function getElementAttributes(
   testLabel: string,
 ): Promise<ElementAttributes> {
   const attrs = await element(by.label(testLabel)).getAttributes();
+  
+  if ('elements' in attrs) {
+    throw new Error(
+      `Multiple elements (${attrs.elements.length}) found for label: "${testLabel}". `
+    );
+  }
+  
   return attrs as ElementAttributes;
 }
 
