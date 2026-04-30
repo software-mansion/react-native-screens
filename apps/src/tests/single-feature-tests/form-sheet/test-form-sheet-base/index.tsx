@@ -7,7 +7,7 @@ import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Basic functionality',
-  key: 'test-formsheet-base',
+  key: 'test-form-sheet-base-ios',
   details: 'Allows to test the basic functionality of FormSheet component.',
   platforms: ['ios'],
 };
