@@ -1,8 +1,16 @@
 import { device, expect, element, by } from 'detox';
 import {
   selectSingleFeatureTestsScreen,
-  tapSelectedTab,
+  forceTapByLabeliOS,
 } from '../../e2e-utils';
+
+async function forceSelectTabByLabel(label: string) {
+  if (device.getPlatform() === 'ios') {
+    await forceTapByLabeliOS(label);
+  } else {
+    await element(by.label(label)).tap();
+  }
+}
 
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
@@ -29,7 +37,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
-    await tapSelectedTab('tab1-tab-item-label');
+    await forceSelectTabByLabel('tab1-tab-item-label');
 
     await waitFor(element(by.id('tab1-item-1')))
       .toBeVisible()
@@ -43,7 +51,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab2-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
 
-    await tapSelectedTab('tab2-tab-item-label');
+    await forceSelectTabByLabel('tab2-tab-item-label');
 
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
   });
@@ -55,7 +63,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab3-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab3-item-1'))).not.toBeVisible();
 
-    await tapSelectedTab('tab3-tab-item-label');
+    await forceSelectTabByLabel('tab3-tab-item-label');
 
     await waitFor(element(by.id('tab3-item-1')))
       .toBeVisible()
@@ -63,16 +71,16 @@ describe('Tabs specialEffects — scrollToTop', () => {
   });
 
   it('Tab1 (scrollToTop: true) — switching away and back preserves scroll position', async () => {
-    await tapSelectedTab('tab1-tab-item-label');
+    await forceSelectTabByLabel('tab1-tab-item-label');
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
 
     await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
-    await tapSelectedTab('tab3-tab-item-label');
+    await forceSelectTabByLabel('tab3-tab-item-label');
     await expect(element(by.id('tab3-item-1'))).toBeVisible();
 
-    await tapSelectedTab('tab1-tab-item-label');
+    await forceSelectTabByLabel('tab1-tab-item-label');
 
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
   });

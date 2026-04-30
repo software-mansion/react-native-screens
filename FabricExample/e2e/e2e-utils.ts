@@ -75,15 +75,11 @@ export async function getElementAttributes(
   return attrs as ElementAttributes;
 }
 
-export async function tapSelectedTab(testLabel: string) {
-  if (device.getPlatform() === 'ios') {
-    const elementAttributes = await getElementAttributes(testLabel);
-    const { x, y, width, height } = elementAttributes.frame;
-    await device.tap({
-      x: x + width / 2,
-      y: y + height / 2,
-    });
-  } else {
-    await element(by.label(testLabel)).tap();
-  }
+export async function forceTapByLabeliOS(testLabel: string) {
+  const elementAttributes = await getElementAttributes(testLabel);
+  const { x, y, width, height } = elementAttributes.frame;
+  await device.tap({
+    x: x + width / 2,
+    y: y + height / 2,
+  });
 }
