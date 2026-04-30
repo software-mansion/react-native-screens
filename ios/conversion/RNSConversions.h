@@ -63,6 +63,9 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
 RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
     RNSTabsNavigationStateRejectionReason reason);
 
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin);
+
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(

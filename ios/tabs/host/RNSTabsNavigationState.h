@@ -5,6 +5,29 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Origin (actor) that requested a tab transition. Mirrors the public `actionOrigin` event field.
+ *
+ * - [User] direct native UI interaction (tab bar tap, drag-and-drop).
+ * - [ProgrammaticJs] JS-initiated request delivered via the `navStateRequest` prop.
+ * - [Implicit] platform side effect not attributable to an explicit actor — UIKit changed the selection
+ *   as a side effect of another operation (e.g. More navigation controller disappearing during a
+ *   horizontal size class transition on iPad).
+ */
+typedef NS_ENUM(NSInteger, RNSTabsActionOrigin) {
+  RNSTabsActionOriginUser = 0,
+  RNSTabsActionOriginProgrammaticJs,
+  RNSTabsActionOriginImplicit,
+};
+
+/** Reason why a navigation state update was rejected by the container. */
+typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
+  /** The update's provenance is based on a stale state. */
+  RNSTabsNavigationStateRejectionReasonStale = 0,
+  /** The requested tab is already selected. */
+  RNSTabsNavigationStateRejectionReasonRepeated,
+};
+
+/**
  * Describes navigation state of a tabs container.
  *
  * It holds information about key of a selected screen AND state provenance.
@@ -17,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
 
 /** Monotonically increasing number describing the generation of this state instance.
- *  Used for stale update detection: state A is stale iff A.provenance <= B.provenance. */
+ *  Used for stale update detection. */
 @property (nonatomic, readonly) int provenance;
 
 - (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
@@ -25,6 +48,31 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)cloneState;
 
 + (instancetype)stateWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey provenance:(int)provenance;
+
+@end
+
+/**
+ * A request to change navigation state.
+ *
+ * Carries the target `selectedScreenKey`, the `baseProvenance` of the state the request was derived from,
+ * and the `actionOrigin` (actor) that initiated it. Mirrors the public
+ * `TabsHostNavStateRequest` TS type plus an `actionOrigin` carried internally.
+ */
+@interface RNSTabsNavigationStateUpdateRequest : NSObject
+
+@property (nonatomic, strong, readonly, nonnull) NSString *selectedScreenKey;
+@property (nonatomic, readonly) int baseProvenance;
+@property (nonatomic, readonly) RNSTabsActionOrigin actionOrigin;
+
+- (instancetype)initWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                           baseProvenance:(int)baseProvenance
+                             actionOrigin:(RNSTabsActionOrigin)actionOrigin;
+
+- (instancetype)cloneRequest;
+
++ (instancetype)requestWithSelectedScreenKey:(nonnull NSString *)selectedScreenKey
+                              baseProvenance:(int)baseProvenance
+                                actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 @end
 
@@ -37,33 +85,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isRepeated;
 /** Whether a special effect (e.g. scroll-to-top) was triggered by the selection. */
 @property (nonatomic, readonly) BOOL hasTriggeredSpecialEffect;
-/** Whether the selection was initiated by a native user action (tap) as opposed to a JS-driven update. */
-@property (nonatomic, readonly) BOOL isNativeAction;
+/** Origin (actor) that requested this transition. */
+@property (nonatomic, readonly) RNSTabsActionOrigin actionOrigin;
 
 - (instancetype)initWithNavState:(nonnull RNSTabsNavigationState *)navState
                       isRepeated:(BOOL)isRepeated
        hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
-                  isNativeAction:(BOOL)isNativeAction;
+                    actionOrigin:(RNSTabsActionOrigin)actionOrigin;
 
 @end
-
-/** Source of a navigation state update. */
-typedef NS_ENUM(NSInteger, RNSTabsNavigationStateUpdateSource) {
-  /** Update initiated by a native user interaction (e.g. tab tap). */
-  RNSTabsNavigationStateUpdateSourceUser = 0,
-  /** Update initiated externally (e.g. from JS via props). */
-  RNSTabsNavigationStateUpdateSourceExternal,
-  /** Update detected implicitly — UIKit changed the selection as a side effect of another operation
-   *  (e.g. More navigation controller disappearing during a horizontal size class transition on iPad). */
-  RNSTabsNavigationStateUpdateSourceImplicit
-};
-
-/** Reason why a navigation state update was rejected by the container. */
-typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
-  /** The update's provenance is based on a stale state. */
-  RNSTabsNavigationStateRejectionReasonStale = 0,
-  /** The requested tab is already selected. */
-  RNSTabsNavigationStateRejectionReasonRepeated,
-};
 
 NS_ASSUME_NONNULL_END

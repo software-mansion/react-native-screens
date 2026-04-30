@@ -53,7 +53,7 @@ namespace react = facebook::react;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 
-  RNSTabsNavigationState *_Nullable _navStateRequest;
+  RNSTabsNavigationStateUpdateRequest *_Nullable _navStateRequest;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -273,10 +273,11 @@ namespace react = facebook::react;
     NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navStateRequest.selectedScreenKey);
     RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
     RCTAssert(newComponentProps.navStateRequest.baseProvenance >= 0, @"[RNScreens] baseProvenance MUST BE >= 0");
-    _navStateRequest =
-        [RNSTabsNavigationState stateWithSelectedScreenKey:selectedScreenKey
-                                                provenance:newComponentProps.navStateRequest.baseProvenance];
-    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneState]];
+    _navStateRequest = [RNSTabsNavigationStateUpdateRequest
+        requestWithSelectedScreenKey:selectedScreenKey
+                      baseProvenance:newComponentProps.navStateRequest.baseProvenance
+                        actionOrigin:RNSTabsActionOriginProgrammaticJs];
+    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneRequest]];
   }
 
   if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
@@ -609,19 +610,20 @@ RNS_IGNORE_SUPER_CALL_END
                                              .provenance = navState.provenance,
                                              .isRepeated = context.isRepeated,
                                              .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
-                                             .isNativeAction = context.isNativeAction}];
+                                             .actionOrigin = context.actionOrigin}];
 }
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState
-               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
+     rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+              withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
 {
   RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
-  RCTAssert(rejectedNavState.selectedScreenKey != nil, @"[RNScreens] Rejected state screenKey MUST NOT be nil");
+  RCTAssert(
+      rejectedRequest.selectedScreenKey != nil, @"[RNScreens] Rejected request selectedScreenKey MUST NOT be nil");
 
   [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
-                                                      .rejectedNavState = rejectedNavState,
+                                                      .rejectedRequest = rejectedRequest,
                                                       .rejectionReason = reasonCode}];
 }
 

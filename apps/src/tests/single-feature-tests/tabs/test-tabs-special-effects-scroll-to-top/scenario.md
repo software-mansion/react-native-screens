@@ -11,7 +11,7 @@ that there is no scroll-to-top behavior when it is disabled or absent.
 
 ## E2E test
 
-Other: ongoing research.
+Yes: Covers all manual scenario steps.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ list of 50 items.
 
 ### scrollToTop: true
 
-1. Launch the app and navigate to the screen **Tabs specialEffects**.
+1. Launch the app and navigate to the screen **Tabs special effect scroll to top**.
 
 - [ ] Expected: Three tabs (Tab1, Tab2, Tab3) are visible in the tab bar.
 Tab1 is active and displays a scrollable list of items.

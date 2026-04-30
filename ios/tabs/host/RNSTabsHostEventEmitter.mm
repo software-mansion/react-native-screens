@@ -37,12 +37,14 @@ namespace react = facebook::react;
 - (BOOL)emitOnTabSelected:(OnTabSelectedPayload)payload
 {
   if (_reactEventEmitter != nullptr) {
+    auto convertedActionOrigin =
+        rnscreens::conversion::RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(payload.actionOrigin);
     _reactEventEmitter->onTabSelected(
         {.selectedScreenKey = RCTStringFromNSString(payload.selectedScreenKey),
          .provenance = payload.provenance,
          .isRepeated = static_cast<bool>(payload.isRepeated),
          .hasTriggeredSpecialEffect = static_cast<bool>(payload.hasTriggeredSpecialEffect),
-         .isNativeAction = static_cast<bool>(payload.isNativeAction)});
+         .actionOrigin = convertedActionOrigin});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnTabSelected event emission due to nullish emitter");
@@ -59,8 +61,8 @@ namespace react = facebook::react;
     _reactEventEmitter->onTabSelectionRejected(
         {.selectedScreenKey = RCTStringFromNSString(payload.currentNavState.selectedScreenKey),
          .provenance = payload.currentNavState.provenance,
-         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedNavState.selectedScreenKey),
-         .rejectedProvenance = payload.rejectedNavState.provenance,
+         .rejectedScreenKey = RCTStringFromNSString(payload.rejectedRequest.selectedScreenKey),
+         .rejectedProvenance = payload.rejectedRequest.baseProvenance,
          .rejectionReason = convertedReason});
     return YES;
   } else {

@@ -10,7 +10,7 @@ type TabSelectedEvent = Readonly<{
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
-  isNativeAction: boolean;
+  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
 }>;
 
 type NavigationStateRequest = Readonly<{

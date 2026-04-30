@@ -13,10 +13,12 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.tabs.container.TabSelectOp
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
@@ -29,7 +31,7 @@ class TabsHost(
     TabsContainerDelegate,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
-    private var jsNavStateRequest: TabsNavState = TabsNavState.EMPTY
+    private var jsNavStateRequest: TabsNavStateUpdateRequest? = null
 
     private val container: TabsContainer =
         TabsContainer(reactContext, this).apply {
@@ -109,9 +111,9 @@ class TabsHost(
         container.removeAllTabsScreens()
     }
 
-    internal fun updateJSNavStateRequest(navStateRequest: TabsNavState) {
+    internal fun updateJSNavStateRequest(navStateRequest: TabsNavStateUpdateRequest) {
         jsNavStateRequest = navStateRequest
-        container.setContainerOperation(TabSelectOp(jsNavStateRequest.copy()))
+        container.setContainerOperation(TabSelectOp(navStateRequest.copy()))
     }
 
     private val layoutCallback =
@@ -159,25 +161,25 @@ class TabsHost(
         navState: TabsNavState,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     ) {
         eventEmitter.emitOnTabSelectedEvent(
-            navState.selectedKey,
+            navState.selectedScreenKey,
             navState.provenance,
             isRepeated,
             hasTriggeredSpecialEffect,
-            isNativeAction,
+            actionOrigin,
         )
     }
 
     override fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
+        rejectedRequest: TabsNavStateUpdateRequest,
         reason: TabsNavStateUpdateRejectionReason,
     ) {
         eventEmitter.emitOnTabSelectionRejectedEvent(
             currentNavState,
-            rejectedNavState,
+            rejectedRequest,
             reason,
         )
     }

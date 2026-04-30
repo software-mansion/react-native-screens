@@ -6,13 +6,13 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionR
 /**
  * Describes navigation state of a tabs container.
  *
- * @property selectedKey Screen key of the currently selected tab.
+ * @property selectedScreenKey Screen key of the currently selected tab.
  * @property provenance Monotonically increasing number describing the history (generation) of the state.
  *   State with provenance `N + 1` is derived from state with provenance `N`.
  *   This allows detecting stale updates.
  */
 data class TabsNavState(
-    val selectedKey: String,
+    val selectedScreenKey: String,
     val provenance: Int,
 ) {
     internal fun isEmpty(): Boolean = this === EMPTY
@@ -23,6 +23,23 @@ data class TabsNavState(
         val EMPTY = TabsNavState("", Int.MIN_VALUE)
     }
 }
+
+/**
+ * A request to change navigation state.
+ *
+ * Carries the target [selectedScreenKey], the [baseProvenance] of the state the request was derived from,
+ * and the [actionOrigin] (actor) that initiated it. Mirrors the public `TabsHostNavStateRequest` TS type
+ * plus an [actionOrigin] carried internally.
+ *
+ * @property selectedScreenKey Screen key of the requested tab.
+ * @property baseProvenance Provenance of the state this request was derived from. Used for staleness detection.
+ * @property actionOrigin Origin (actor) that initiated this request.
+ */
+data class TabsNavStateUpdateRequest(
+    val selectedScreenKey: String,
+    val baseProvenance: Int,
+    val actionOrigin: TabsActionOrigin,
+)
 
 /**
  * Reason why a navigation state update was rejected by the container.

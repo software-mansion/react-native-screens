@@ -2,8 +2,10 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
@@ -20,7 +22,7 @@ internal class TabsHostEventEmitter(
         provenance: Int,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     ) {
         reactEventDispatcher.dispatchEvent(
             TabsHostTabSelectedEvent(
@@ -30,7 +32,7 @@ internal class TabsHostEventEmitter(
                 provenance,
                 isRepeated,
                 hasTriggeredSpecialEffect,
-                isNativeAction,
+                actionOrigin,
             ),
         )
     }
@@ -41,7 +43,7 @@ internal class TabsHostEventEmitter(
      */
     fun emitOnTabSelectionRejectedEvent(
         currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
+        rejectedRequest: TabsNavStateUpdateRequest,
         rejectionReason: TabsNavStateUpdateRejectionReason,
     ) {
         reactEventDispatcher.dispatchEvent(
@@ -49,7 +51,7 @@ internal class TabsHostEventEmitter(
                 surfaceId,
                 viewTag,
                 currentNavState,
-                rejectedNavState,
+                rejectedRequest,
                 rejectionReason,
             ),
         )

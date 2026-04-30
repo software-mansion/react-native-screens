@@ -77,7 +77,7 @@ internal class TabsContainer(
 
     internal val selectedTab: TabsScreenFragment
         get() =
-            checkNotNull(getFragmentForScreenKey(navState.selectedKey)) { "[RNScreens] No selected tab present" }
+            checkNotNull(getFragmentForScreenKey(navState.selectedScreenKey)) { "[RNScreens] No selected tab present" }
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
@@ -259,14 +259,14 @@ internal class TabsContainer(
         val tabSelectOp = pendingOperation as TabSelectOp
 
         val nextSelectedMenuItemId =
-            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabSelectOp.navState.selectedKey))) {
-                "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.navState.selectedKey}"
+            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabSelectOp.request.selectedScreenKey))) {
+                "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.request.selectedScreenKey}"
             }
 
-        if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.navState)) {
+        if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.request)) {
             delegate.onNavStateUpdateRejected(
                 navState,
-                tabSelectOp.navState,
+                tabSelectOp.request,
                 TabsNavStateUpdateRejectionReason.STALE,
             )
             pendingOperation = null
@@ -281,7 +281,7 @@ internal class TabsContainer(
         } else {
             delegate.onNavStateUpdateRejected(
                 navState,
-                tabSelectOp.navState,
+                tabSelectOp.request,
                 TabsNavStateUpdateRejectionReason.REPEATED,
             )
         }
@@ -328,7 +328,7 @@ internal class TabsContainer(
         val currentSelectedFragment = selectedTab
 
         if (nextSelectedFragment === currentSelectedFragment) {
-            progressNavigationState(navState.selectedKey)
+            progressNavigationState(navState.selectedScreenKey)
             return true
         }
 
@@ -343,8 +343,8 @@ internal class TabsContainer(
         return true
     }
 
-    private fun progressNavigationState(selectedKey: String) {
-        navState = TabsNavState(selectedKey, navState.provenance + 1)
+    private fun progressNavigationState(selectedScreenKey: String) {
+        navState = TabsNavState(selectedScreenKey, navState.provenance + 1)
         if (!isInExternalOperationContext) {
             lastUINavState = navState
         }
@@ -377,7 +377,15 @@ internal class TabsContainer(
                 navState,
                 isRepeated = isRepeated,
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
-                isNativeAction = !isInExternalOperationContext,
+                actionOrigin =
+                    if (isInExternalOperationContext) {
+                        check(pendingOperation != null && pendingOperation is TabSelectOp) {
+                            "[RNScreens] Unexpected pending operation $pendingOperation while in external operation context"
+                        }
+                        (pendingOperation as TabSelectOp).request.actionOrigin
+                    } else {
+                        TabsActionOrigin.USER
+                    },
             )
         }
 
@@ -413,7 +421,7 @@ internal class TabsContainer(
 
     private fun getSelectedTabsScreenFragmentId(): Int? =
         tabsModel
-            .indexOfFirst { it.requireScreenKey == navState.selectedKey }
+            .indexOfFirst { it.requireScreenKey == navState.selectedScreenKey }
             .takeIf { it != -1 }
 
     private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
@@ -544,9 +552,9 @@ internal class TabsContainer(
         fragmentManager = null
     }
 
-    private fun isNavStateStale(state: TabsNavState): Boolean {
+    private fun isNavStateStale(request: TabsNavStateUpdateRequest): Boolean {
         if (navState.isEmpty() || lastUINavState.isEmpty()) return false
-        return state.provenance < lastUINavState.provenance
+        return request.baseProvenance < lastUINavState.provenance
     }
 
     companion object {
