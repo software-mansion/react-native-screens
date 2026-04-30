@@ -20,6 +20,8 @@
   _lastNotifiedFrame = CGRectZero;
 }
 
+#pragma mark - UIKit callbacks
+
 - (void)loadView
 {
   UIView *view = [UIView new];
