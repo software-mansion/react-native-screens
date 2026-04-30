@@ -94,7 +94,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   public func setNeedsOrientationUpdate() {
     splitAppearanceCoordinator.needs(.orientationUpdate)
   }
-  
+
   @objc
   public func setNeedsLayoutDirectionUpdateBelowIOS17() {
     if self.parent != nil {
@@ -150,7 +150,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
 
     needsChildViewControllersUpdate = false
   }
-  
+
   func updateSplitAppearanceIfNeeded() {
     splitAppearanceApplicator.updateAppearanceIfNeeded(
       self.splitHostComponentView, self, self.splitAppearanceCoordinator)
@@ -562,7 +562,7 @@ extension RNSSplitHostController: UISplitViewControllerDelegate {
     }
     return proposedTopColumn
   }
-  
+
   public override func didMove(toParent parent: UIViewController?) {
     super.didMove(toParent: parent)
 

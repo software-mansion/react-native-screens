@@ -48,7 +48,7 @@ class RNSSplitAppearanceApplicator {
     appearanceCoordinator.updateIfNeeded(.orientationUpdate) { [] in
       RNSScreenWindowTraits.enforceDesiredDeviceOrientation()
     }
-    
+
     appearanceCoordinator.updateIfNeeded(.layoutDirectionUpdateBelowIOS17) {
       updateLayoutDirectionBelowIOS17(splitHost, splitHostController)
     }
@@ -195,7 +195,7 @@ class RNSSplitAppearanceApplicator {
       "[RNScreens] Split column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
     )
   }
-  
+
   public func updateLayoutDirectionBelowIOS17(
     _ splitHost: RNSSplitHostComponentView,
     _ splitHostController: RNSSplitHostController,
