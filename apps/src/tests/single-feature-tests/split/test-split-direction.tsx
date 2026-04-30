@@ -5,8 +5,8 @@ import { Split, SplitHostDirection } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Prop: layoutDirection',
-  key: 'test-split-layout-direction',
+  name: 'Prop: direction',
+  key: 'test-split-direction',
   details: `
     Test the direction prop in Split component.
   `,
