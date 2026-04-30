@@ -307,7 +307,7 @@ namespace react = facebook::react;
 - (BOOL)areDetentsValid
 {
   for (double currentDetent : _detents) {
-    if (isnan(currentDetent) || isinf(currentDetent)) {
+    if (isnan(currentDetent)) {
       return NO;
     }
 
