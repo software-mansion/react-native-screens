@@ -23,7 +23,6 @@ namespace react = facebook::react;
   RNSFormSheetHostController *_controller;
   RNSFormSheetHostShadowStateProxy *_shadowStateProxy;
   RCTSurfaceTouchHandler *_touchHandler;
-  NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
 
   // Props
   BOOL _isOpen;
@@ -48,7 +47,6 @@ namespace react = facebook::react;
   [self setupController];
 
   _reactEventEmitter = [RNSFormSheetHostComponentEventEmitter new];
-  _reactSubviews = [NSMutableArray new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
 
   _needsSheetPresentationUpdate = NO;
@@ -160,13 +158,11 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews insertObject:childComponentView atIndex:index];
   [_controller insertReactSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews removeObject:childComponentView];
   [_controller removeReactSubview:childComponentView];
 }
 
