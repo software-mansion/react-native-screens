@@ -162,6 +162,22 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
   }
 }
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSSplitHostColorScheme colorScheme)
+{
+  using enum facebook::react::RNSSplitHostColorScheme;
+  switch (colorScheme) {
+    case Inherit:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported color scheme");
+      return UIUserInterfaceStyleUnspecified;
+  }
+}
+
 #pragma mark SplitScreen props
 
 RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(facebook::react::RNSSplitScreenColumnType columnType)
