@@ -18,7 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-No: Ongoing research.
+Other: Ongoing research.
 
 ## Prerequisites
 
@@ -26,7 +26,6 @@ No: Ongoing research.
 
 ## Note
 
-- This prop is iOS-only and Fabric-only; skip on Android.
 - "Content scrolls behind bars" means list items are visible underneath
   the navigation bar and/or tab bar when scrolled to the top or bottom
   of the list.
@@ -107,8 +106,8 @@ No: Ongoing research.
 9. Scroll the list to the top.
 
 - [ ] Expected: The text label
-  `overrideScrollViewContentInsetAdjustmentBehavior:
-  (not set, defaults to true)` at the top of the scroll content
+  `overrideScrollViewContentInsetAdjustmentBehavior: (not set, defaults to true)`
+  at the top of the scroll content
   is fully visible below the navigation bar and not obscured
   behind it — identical behavior to the **True** tab.
 
@@ -119,13 +118,16 @@ No: Ongoing research.
 10. Switch between the **True** tab and the **Default** tab several
     times while keeping each list scrolled to the top.
 
-- [ ] Expected: Both tabs show the first item fully visible below
-  the navigation bar with identical inset. No layout jump or
+- [ ] Expected: Both tabs show the text label
+  `overrideScrollViewContentInsetAdjustmentBehavior:` with value `true`
+  or `(not set, defaults to true)` at the top of the scroll content
+  is fully visible below the navigation bar and not obscured
+  behind it. No layout jump or
   visual difference between the two tabs.
 
-11. Switch to the **False** tab and scroll to the top, then
+11.  Switch to the **False** tab and scroll to the top, then
     immediately switch to the **True** tab.
 
-- [ ] Expected: The **True** tab correctly shows the first item
+- [ ] Expected: The **True** tab correctly shows the the text label
   inset from the navigation bar. No crash or blank screen occurs
   during the switch.
