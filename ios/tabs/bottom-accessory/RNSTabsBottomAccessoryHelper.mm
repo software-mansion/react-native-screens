@@ -13,7 +13,6 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 @implementation RNSTabsBottomAccessoryHelper {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
   UIView *__weak _observedNativeWrapperView;
-  BOOL _isObservingNativeWrapperView;
 
 #if REACT_NATIVE_VERSION_MINOR < 82
   BOOL _initialStateUpdateSent;
@@ -40,7 +39,6 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 - (void)initState
 {
   _observedNativeWrapperView = nil;
-  _isObservingNativeWrapperView = NO;
 #if REACT_NATIVE_VERSION_MINOR < 82
   _initialStateUpdateSent = NO;
   _displayLink = nil;
@@ -119,9 +117,7 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 - (void)unregisterForAccessoryFrameChanges
 {
   UIView *observedNativeWrapperView = _observedNativeWrapperView;
-  if (!_isObservingNativeWrapperView || observedNativeWrapperView == nil) {
-    _observedNativeWrapperView = nil;
-    _isObservingNativeWrapperView = NO;
+  if (observedNativeWrapperView == nil) {
     return;
   }
 
@@ -129,13 +125,12 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
                                  forKeyPath:@"center"
                                     context:RNSTabsBottomAccessoryNativeWrapperViewContext];
   _observedNativeWrapperView = nil;
-  _isObservingNativeWrapperView = NO;
 }
 
 - (void)registerForAccessoryFrameChanges
 {
   UIView *nativeWrapperView = self.nativeWrapperView;
-  if (_isObservingNativeWrapperView && _observedNativeWrapperView == nativeWrapperView) {
+  if (_observedNativeWrapperView == nativeWrapperView) {
     return;
   }
 
@@ -145,7 +140,6 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
                          options:NSKeyValueObservingOptionInitial
                          context:RNSTabsBottomAccessoryNativeWrapperViewContext];
   _observedNativeWrapperView = nativeWrapperView;
-  _isObservingNativeWrapperView = YES;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
