@@ -236,7 +236,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       ![NSString rnscreens_isBlankOrNull:screenKey],
       @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
-  [self progressNavigationState:screenKey withSource:RNSTabsNavigationStateUpdateSourceExternal];
+  [self progressNavigationState:screenKey withOrigin:RNSTabsActionOriginProgrammaticJs];
 
   if (currSelectedViewController == nextSelectedViewController) {
     return YES;
@@ -254,8 +254,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
  */
 - (void)updateNavigationStateOnModelUpdate
 {
-  [self progressNavigationState:[self screenKeyForSelectedViewController]
-                     withSource:RNSTabsNavigationStateUpdateSourceUser];
+  [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
 }
 
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
@@ -277,7 +276,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                          isRepeated:YES
                                           hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
-                                                     isNativeAction:YES];
+                                                       actionOrigin:RNSTabsActionOriginUser];
   [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
 }
 
@@ -299,7 +298,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                              isRepeated:NO
                                                               hasTriggeredSpecialEffect:NO
-                                                                         isNativeAction:YES];
+                                                                           actionOrigin:RNSTabsActionOriginUser];
     [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
   }
 }
@@ -517,7 +516,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
         [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                            isRepeated:NO
                                             hasTriggeredSpecialEffect:NO
-                                                       isNativeAction:NO];
+                                                         actionOrigin:RNSTabsActionOriginProgrammaticJs];
     [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
   }
 }
@@ -574,8 +573,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   return nil;
 }
 
-- (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey
-                     withSource:(RNSTabsNavigationStateUpdateSource)updateSource
+- (void)progressNavigationState:(nonnull NSString *)newSelectedScreenKey withOrigin:(RNSTabsActionOrigin)origin
 {
   RCTAssert(newSelectedScreenKey != nil, @"[RNScreens] newSelectedScreenKey MUST NOT be nil");
 
@@ -587,7 +585,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   _navigationState = [RNSTabsNavigationState stateWithSelectedScreenKey:newSelectedScreenKey
                                                              provenance:_navigationState.provenance + 1];
 
-  if (updateSource != RNSTabsNavigationStateUpdateSourceExternal) {
+  if (origin != RNSTabsActionOriginProgrammaticJs) {
     _lastUINavigationState = [_navigationState cloneState];
   }
 }
@@ -666,12 +664,12 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       @"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
       _navigationState.selectedScreenKey,
       selectedScreenKey);
-  [self progressNavigationState:selectedScreenKey withSource:RNSTabsNavigationStateUpdateSourceImplicit];
+  [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
   auto *context = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                      isRepeated:NO
                                                       hasTriggeredSpecialEffect:NO
-                                                                 isNativeAction:YES];
+                                                                   actionOrigin:RNSTabsActionOriginImplicit];
   [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
 }
 

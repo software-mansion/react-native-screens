@@ -609,7 +609,7 @@ RNS_IGNORE_SUPER_CALL_END
                                              .provenance = navState.provenance,
                                              .isRepeated = context.isRepeated,
                                              .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
-                                             .isNativeAction = context.isNativeAction}];
+                                             .actionOrigin = context.actionOrigin}];
 }
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
