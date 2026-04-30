@@ -116,12 +116,12 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetHostControllerDelegate
 
-- (void)sheetControllerDidDismiss:(RNSFormSheetHostController *)controller
+- (void)sheetControllerDidNativeDismiss:(RNSFormSheetHostController *)controller
 {
   _isOpen = NO;
   [self resetShadowNodeSize];
 
-  [_reactEventEmitter emitOnDismiss];
+  [_reactEventEmitter emitOnNativeDismiss];
 }
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller

@@ -6,13 +6,13 @@
   std::shared_ptr<const react::RNSFormSheetHostEventEmitter> _reactEventEmitter;
 }
 
-- (BOOL)emitOnDismiss
+- (BOOL)emitOnNativeDismiss
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onDismiss({});
+    _reactEventEmitter->onNativeDismiss({});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnDismiss event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnNativeDismiss event emission due to nullish emitter");
     return NO;
   }
 }

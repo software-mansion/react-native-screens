@@ -57,7 +57,7 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  [self.delegate sheetControllerDidDismiss:self];
+  [self.delegate sheetControllerDidNativeDismiss:self];
 }
 
 @end
