@@ -92,7 +92,7 @@ export function App() {
               Component: TrueTab,
               options: {
                 title: 'True',
-                tabBarItemTestID: 'override-inset-tab-true',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-true',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: true,
                   icon: { type: 'sfSymbol', name: 'checkmark.circle' },
@@ -104,7 +104,7 @@ export function App() {
               Component: DefaultTab,
               options: {
                 title: 'Default',
-                tabBarItemTestID: 'override-inset-tab-default',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },
             },
