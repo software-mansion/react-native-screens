@@ -1,5 +1,5 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TestFormSheetBase from './test-form-sheet-base';
+import TestFormSheetBase from './test-form-sheet-base-ios';
 
 const scenarios = {
   TestFormSheetBase,
