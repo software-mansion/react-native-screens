@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef ANDROID
+#if !defined(ANDROID)
 
 #include <jsi/jsi.h>
 #include <react/renderer/components/rnscreens/EventEmitters.h>
@@ -25,4 +25,4 @@ class JSI_EXPORT RNSFormSheetShadowNode final : public ConcreteViewShadowNode<
 
 } // namespace facebook::react
 
-#endif // ANDROID
+#endif // !defined(ANDROID)

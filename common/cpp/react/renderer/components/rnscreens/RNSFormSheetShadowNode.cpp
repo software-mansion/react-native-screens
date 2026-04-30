@@ -1,6 +1,6 @@
 #include "RNSFormSheetShadowNode.h"
 
-#ifndef ANDROID
+#if !defined(ANDROID)
 
 namespace facebook::react {
 
@@ -13,4 +13,4 @@ Point RNSFormSheetShadowNode::getContentOriginOffset(
 
 } // namespace facebook::react
 
-#endif // ANDROID
+#endif // !defined(ANDROID)
