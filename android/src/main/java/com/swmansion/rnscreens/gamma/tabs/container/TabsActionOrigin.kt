@@ -1,8 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs.container
 
-import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin.PROGRAMMATIC_JS
-import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin.USER
-
 /**
  * Origin (actor) that requested a tab transition. Mirrors the public `actionOrigin` event field.
  *
