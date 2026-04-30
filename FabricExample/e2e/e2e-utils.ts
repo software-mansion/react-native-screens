@@ -82,6 +82,10 @@ export async function getElementAttributes(
   return attrs as ElementAttributes;
 }
 
+/**
+ * Performs a coordinate-based tap on iOS to interact with an element that may be 
+ * obstructed by other UI layers, bypassing Detox's default visibility checks.
+ */
 export async function forceTapByLabeliOS(testLabel: string) {
   const elementAttributes = await getElementAttributes(testLabel);
   const { x, y, width, height } = elementAttributes.frame;
