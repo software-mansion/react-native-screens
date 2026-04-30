@@ -244,8 +244,6 @@ namespace react = facebook::react;
 
 - (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetents
 {
-  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents = [NSMutableArray new];
-
   if (![self areDetentsValid]) {
     RCTLogError(
         @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
@@ -260,11 +258,18 @@ namespace react = facebook::react;
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
 
+  size_t detentsCount = _detents.size();
+  // Falling back to 2, specifically for iOS 15 fallback
+  NSUInteger capacity = detentsCount > 0 ? detentsCount : 2;
+
+  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents =
+      [[NSMutableArray alloc] initWithCapacity:capacity];
+
   if (@available(iOS 16.0, *)) {
-    if (_detents.size() == 0) {
+    if (detentsCount == 0) {
       [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
     } else {
-      for (size_t i = 0; i < _detents.size(); i++) {
+      for (size_t i = 0; i < detentsCount; i++) {
         double fraction = _detents[i];
         NSString *ident = [NSString stringWithFormat:@"%zu", i];
 
@@ -279,7 +284,7 @@ namespace react = facebook::react;
     }
   } else {
     // iOS 15 Legacy Fallback
-    if (_detents.size() == 1) {
+    if (detentsCount == 1) {
       double firstDetentFraction = _detents[0];
       if (firstDetentFraction < 1.0) {
         [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
