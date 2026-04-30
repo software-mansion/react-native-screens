@@ -1,6 +1,7 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
 #import "RNSFormSheetHostComponentEventEmitter.h"
+#import "RNSFormSheetHostContentView.h"
 #import "RNSFormSheetHostController.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSPresentationSourceProvider.h"
@@ -159,12 +160,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller insertReactSubview:childComponentView atIndex:index];
+  [(RNSFormSheetHostContentView *)_controller.view insertReactSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller removeReactSubview:childComponentView];
+  [(RNSFormSheetHostContentView *)_controller.view removeReactSubview:childComponentView];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props

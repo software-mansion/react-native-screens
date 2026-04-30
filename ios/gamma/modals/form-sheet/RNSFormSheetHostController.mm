@@ -1,4 +1,5 @@
 #import "RNSFormSheetHostController.h"
+#import "RNSFormSheetHostContentView.h"
 
 @interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
 @end
@@ -24,9 +25,7 @@
 
 - (void)loadView
 {
-  UIView *view = [UIView new];
-  view.backgroundColor = [UIColor clearColor];
-  self.view = view;
+  self.view = [RNSFormSheetHostContentView new];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -52,18 +51,6 @@
 
     [self.delegate sheetControllerViewDidLayoutSubviews:self];
   }
-}
-
-#pragma mark - RN Subviews Management
-
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
-{
-  [self.view insertSubview:subview atIndex:index];
-}
-
-- (void)removeReactSubview:(UIView *)subview
-{
-  [subview removeFromSuperview];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
