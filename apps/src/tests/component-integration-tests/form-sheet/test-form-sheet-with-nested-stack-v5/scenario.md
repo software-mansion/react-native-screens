@@ -41,7 +41,7 @@ Other: Planned, but will be implemented separately.
 
 4. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] Expected: The FormSheet expands to take up the full screen height. The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded view area.
+- [ ] Expected: The FormSheet expands to take up the maximum available height. The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded view area.
 
 ---
 
