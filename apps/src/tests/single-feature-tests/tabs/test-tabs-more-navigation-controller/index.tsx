@@ -11,7 +11,7 @@ import {
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
-import type { MoreTabSelectedEvent } from 'react-native-screens';
+import type { MoreTabSelectedEvent, TabSelectedEvent } from 'react-native-screens';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'More navigation controller',
@@ -24,7 +24,7 @@ function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+      <Text style={{ fontWeight: 'bold', textAlign: 'center' }} testID={`${routeKey}-content-view`}>
         {routeKey}
       </Text>
       <TabsNavigationButtons />
@@ -36,7 +36,8 @@ function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (
-    <View>
+    <View
+      testID='test-tabs-more-navigation-controller-view'>
       <Button title="Select First" onPress={() => nav.selectTab('First')} />
       <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
       <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
@@ -51,32 +52,32 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First', tabBarItemTestID: 'First' },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second', tabBarItemTestID: 'Second' },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third', tabBarItemTestID: 'Third' },
   },
   {
     name: 'Fourth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth', tabBarItemTestID: 'Fourth' },
   },
   {
     name: 'Fifth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth', tabBarItemTestID: 'Fifth' },
   },
   {
     name: 'Sixth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth', tabBarItemTestID: 'Sixth' },
   },
 ];
 
@@ -104,8 +105,14 @@ function AppContents() {
             2,
           )}`;
           console.warn(message);
-          toast.push({ message, backgroundColor: Colors.GreenLight60 });
+          toast.push({ message: 'onMoreTabSelected', backgroundColor: Colors.GreenLight60 });
         },
+      }}
+      onTabSelected={(event: NativeSyntheticEvent<TabSelectedEvent>) => {
+        toast.push({
+          backgroundColor: Colors.BlueLight100,
+          message: `onTabSelected: ${JSON.stringify(event.nativeEvent.selectedScreenKey)}`,
+        });
       }}
     />
   );
