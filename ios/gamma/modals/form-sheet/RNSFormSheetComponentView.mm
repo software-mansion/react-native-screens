@@ -63,7 +63,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSFormSheetController alloc] init];
+  _controller = [RNSFormSheetController new];
   _controller.delegate = self;
 }
 

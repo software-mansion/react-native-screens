@@ -22,7 +22,7 @@
 
 - (void)loadView
 {
-  UIView *view = [[UIView alloc] init];
+  UIView *view = [UIView new];
   view.backgroundColor = [UIColor clearColor];
   self.view = view;
 }
