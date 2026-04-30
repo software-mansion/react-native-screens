@@ -231,9 +231,9 @@ namespace react = facebook::react;
 - (void)updateConfiguration
 {
   UISheetPresentationController *sheet = _controller.sheetPresentationController;
-  if (sheet == nil) {
-    return;
-  }
+  RCTAssert(
+      sheet != nil,
+      @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
 
