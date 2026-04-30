@@ -11,7 +11,8 @@ import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
@@ -79,7 +80,13 @@ class TabsHostViewManager :
         val navStateRequestMap = requireNotNull(value) { "[RNScreens] navStateRequest must not be nullish" }
         val selectedScreenKey = requireNotNull(navStateRequestMap.getString("selectedScreenKey"))
         val baseProvenance = requireNotNull(navStateRequestMap.getInt("baseProvenance"))
-        view.updateJSNavStateRequest(TabsNavState(selectedScreenKey, baseProvenance))
+        view.updateJSNavStateRequest(
+            TabsNavStateUpdateRequest(
+                selectedScreenKey = selectedScreenKey,
+                baseProvenance = baseProvenance,
+                actionOrigin = TabsActionOrigin.PROGRAMMATIC_JS,
+            ),
+        )
     }
 
     override fun setRejectStaleNavStateUpdates(
