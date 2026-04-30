@@ -379,6 +379,9 @@ internal class TabsContainer(
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
                 actionOrigin =
                     if (isInExternalOperationContext) {
+                        check(pendingOperation != null && pendingOperation is TabSelectOp) {
+                            "[RNScreens] Unexpected pending operation $pendingOperation while in external operation context"
+                        }
                         (pendingOperation as TabSelectOp).request.actionOrigin
                     } else {
                         TabsActionOrigin.USER
