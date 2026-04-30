@@ -1,5 +1,5 @@
 import type { NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { InterfaceOrientation } from '../../shared/types';
+import type { InterfaceOrientation, ColorScheme } from '../../shared/types';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -27,6 +27,8 @@ export type SplitDisplayMode =
   | 'twoDisplaceSecondary';
 
 export type SplitHostOrientation = InterfaceOrientation | 'inherit';
+
+export type SplitHostColorScheme = ColorScheme | 'inherit';
 
 export interface SplitColumnMetrics {
   /**
@@ -217,6 +219,19 @@ export interface SplitHostProps extends ViewProps {
    * @platform ios
    */
   orientation?: SplitHostOrientation | undefined;
+  /**
+   * @summary Specifies the color scheme used by the container and any child containers.
+   *
+   * The following values are currently supported:
+   * - `inherit` - the interface style from parent,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
+   * @default inherit
+   *
+   * @platform ios
+   */
+  colorScheme?: SplitHostColorScheme;
   /**
    * @summary Determines whether gestures are enabled to change the display mode.
    */

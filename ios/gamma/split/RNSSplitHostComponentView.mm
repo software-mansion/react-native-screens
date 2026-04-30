@@ -227,6 +227,11 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
   }
 
+  if (oldComponentProps.colorScheme != newComponentProps.colorScheme) {
+    _needsSplitAppearanceUpdate = true;
+    _colorScheme = rnscreens::conversion::UIUserInterfaceStyleFromHostProp(newComponentProps.colorScheme);
+  }
+
 #if !TARGET_OS_TV
   if (oldComponentProps.primaryBackgroundStyle != newComponentProps.primaryBackgroundStyle) {
     _needsSplitAppearanceUpdate = true;
