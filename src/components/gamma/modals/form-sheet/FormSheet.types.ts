@@ -1,6 +1,8 @@
-import type { ViewProps } from 'react-native';
+import { ViewProps } from 'react-native';
 
-export interface FormSheetProps extends ViewProps {
+export interface FormSheetProps {
+  children?: ViewProps['children'] | undefined;
+
   /**
    * Determines whether the form sheet is currently visible.
    * When `true`, the sheet is presented. When `false`, it is dismissed.

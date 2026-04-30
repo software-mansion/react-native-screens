@@ -4,13 +4,7 @@ import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-s
 import type { FormSheetProps } from './FormSheet.types';
 
 export function FormSheet(props: FormSheetProps) {
-  const { children, style, ...rest } = props;
-
-  return (
-    <FormSheetHostNativeComponent style={[style, styles.host]} {...rest}>
-      {children}
-    </FormSheetHostNativeComponent>
-  );
+  return <FormSheetHostNativeComponent style={styles.host} {...props} />;
 }
 
 const styles = StyleSheet.create({
