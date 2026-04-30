@@ -10,7 +10,7 @@ import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/S
 
 const scenarioDescription: ScenarioDescription = {
   name: 'FormSheet with Nested Stack v5',
-  key: 'test-formsheet-nested-stack-v5',
+  key: 'test-stack-v5-in-form-sheet-ios',
   details: 'Test nesting Stack v5 inside a FormSheet',
   platforms: ['ios'],
 };
