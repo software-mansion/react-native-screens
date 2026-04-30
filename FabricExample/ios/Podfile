@@ -11,10 +11,8 @@ require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# Using prebuilt React Native iOS binaries for faster builds
-# disable if you need to dive in and tweak into React Native native code
-ENV['RCT_USE_PREBUILT_RNCORE'] = '1'
-ENV['RCT_USE_RN_DEP'] = '1'
+# Use prebuilt binaries in CI, source in local development
+ENV['RCT_USE_PREBUILT_RNCORE'] = ENV['RCT_USE_RN_DEP'] = ENV['CI'] ? '1' : '0'
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
