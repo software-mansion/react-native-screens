@@ -4,6 +4,10 @@ import {
   forceTapByLabeliOS,
 } from '../../e2e-utils';
 
+/**
+ * Selects a tab bar item. On iOS, this uses a forced coordinate tap to 
+ * ensure the tab is selected even if it is obstructed by the iOS 26 Liquid Glass lens.
+ */
 async function forceSelectTabByLabel(label: string) {
   if (device.getPlatform() === 'ios') {
     await forceTapByLabeliOS(label);
