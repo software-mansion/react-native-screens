@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { Split } from 'react-native-screens/experimental';
+import { Split, SplitHostDirection } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
 const scenarioDescription: ScenarioDescription = {
@@ -13,10 +13,8 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-type LayoutDirection = 'ltr' | 'rtl' | 'inherit';
-
 export function App() {
-  const [direction, setDirection] = useState<LayoutDirection>('inherit');
+  const [direction, setDirection] = useState<SplitHostDirection>('inherit');
 
   return (
     <Split.Host direction={direction}>
@@ -28,9 +26,6 @@ export function App() {
         />
       </Split.Column>
       <Split.Column>
-        <ColumnContent columnTitle="Supplementary column" />
-      </Split.Column>
-      <Split.Column>
         <ColumnContent columnTitle="Secondary column" />
       </Split.Column>
     </Split.Host>
@@ -39,8 +34,8 @@ export function App() {
 
 export function ColumnContent(props: {
   columnTitle: string;
-  currentDirection?: LayoutDirection;
-  onChangeDirection?: (dir: LayoutDirection) => void;
+  currentDirection?: SplitHostDirection;
+  onChangeDirection?: (dir: SplitHostDirection) => void;
 }) {
   return (
     <View style={styles.container}>
