@@ -14,7 +14,7 @@ The test verifies that the three tabs — **False**, **True**, and
 **Default** — each exhibit the expected inset behavior and that the
 **Default** tab (prop omitted) matches the **True** tab.
 
-**OS test creation version:** iOS 18.6 and 26.2
+**OS test creation version:** iOS: 18.6 and 26.2
 
 ## E2E test
 
@@ -51,7 +51,13 @@ No: Ongoing research.
 
 ### `false` — content scrolls behind bars
 
-2. Confirm the **False** tab is active and scroll the list to the top.
+2. Confirm the **False** tab is active and scroll the list to the bottom.
+
+- [ ] Expected: The last item in the list is partially or fully
+  obscured behind the tab bar, confirming that no bottom inset is
+  applied.
+
+3. Scroll the list to the top.
 
 - [ ] Expected: The text label
   `overrideScrollViewContentInsetAdjustmentBehavior: false` at
@@ -60,12 +66,6 @@ No: Ongoing research.
   `overrideScrollViewContentInsetAdjustmentBehavior` is `false`
   and the scroll view uses
   `contentInsetAdjustmentBehavior: never`.
-
-3. Scroll the list to the bottom.
-
-- [ ] Expected: The last item in the list is partially or fully
-  obscured behind the tab bar, confirming that no bottom inset is
-  applied.
 
 ---
 
@@ -76,7 +76,12 @@ No: Ongoing research.
 - [ ] Expected: The **True** tab becomes active and shows a
   scrollable list of 30 items.
 
-5. Scroll the list to the top.
+5. Scroll the list to the bottom.
+
+- [ ] Expected: The last item is fully visible and is not obscured by
+  the tab bar. The scroll view respects the bottom inset.
+
+6. Scroll the list to the top.
 
 - [ ] Expected: The text label
   `overrideScrollViewContentInsetAdjustmentBehavior: true`
@@ -84,11 +89,6 @@ No: Ongoing research.
   navigation bar and not obscured behind it. The scroll view
   respects the top inset
   (`contentInsetAdjustmentBehavior: automatic`).
-
-6. Scroll the list to the bottom.
-
-- [ ] Expected: The last item is fully visible and is not obscured by
-  the tab bar. The scroll view respects the bottom inset.
 
 ---
 
@@ -99,18 +99,18 @@ No: Ongoing research.
 - [ ] Expected: The **Default** tab becomes active and shows a
   scrollable list of 30 items.
 
-8. Scroll the list to the top.
+8. Scroll the list to the bottom.
+
+- [ ] Expected: The last item is fully visible and not obscured by
+  the tab bar — identical behavior to the **True** tab.
+
+9. Scroll the list to the top.
 
 - [ ] Expected: The text label
   `overrideScrollViewContentInsetAdjustmentBehavior:
   (not set, defaults to true)` at the top of the scroll content
   is fully visible below the navigation bar and not obscured
   behind it — identical behavior to the **True** tab.
-
-9. Scroll the list to the bottom.
-
-- [ ] Expected: The last item is fully visible and not obscured by
-  the tab bar — identical behavior to the **True** tab.
 
 ---
 
