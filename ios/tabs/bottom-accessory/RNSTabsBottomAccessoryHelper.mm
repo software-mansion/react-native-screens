@@ -8,8 +8,11 @@
 
 namespace react = facebook::react;
 
+static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAccessoryNativeWrapperViewContext;
+
 @implementation RNSTabsBottomAccessoryHelper {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
+  UIView *__weak _observedNativeWrapperView;
 
 #if REACT_NATIVE_VERSION_MINOR < 82
   BOOL _initialStateUpdateSent;
@@ -35,6 +38,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  _observedNativeWrapperView = nil;
 #if REACT_NATIVE_VERSION_MINOR < 82
   _initialStateUpdateSent = NO;
   _displayLink = nil;
@@ -110,9 +114,32 @@ namespace react = facebook::react;
 
 #pragma mark - Observing frame changes
 
+- (void)unregisterForAccessoryFrameChanges
+{
+  UIView *observedNativeWrapperView = _observedNativeWrapperView;
+  if (observedNativeWrapperView == nil) {
+    return;
+  }
+
+  [observedNativeWrapperView removeObserver:self
+                                 forKeyPath:@"center"
+                                    context:RNSTabsBottomAccessoryNativeWrapperViewContext];
+  _observedNativeWrapperView = nil;
+}
+
 - (void)registerForAccessoryFrameChanges
 {
-  [self.nativeWrapperView addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionInitial context:nil];
+  UIView *nativeWrapperView = self.nativeWrapperView;
+  if (_observedNativeWrapperView == nativeWrapperView) {
+    return;
+  }
+
+  [self unregisterForAccessoryFrameChanges];
+  [nativeWrapperView addObserver:self
+                      forKeyPath:@"center"
+                         options:NSKeyValueObservingOptionInitial
+                         context:RNSTabsBottomAccessoryNativeWrapperViewContext];
+  _observedNativeWrapperView = nativeWrapperView;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -120,7 +147,11 @@ namespace react = facebook::react;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-  [self notifyWrapperViewFrameHasChanged];
+  if (context == RNSTabsBottomAccessoryNativeWrapperViewContext) {
+    [self notifyWrapperViewFrameHasChanged];
+  } else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
 }
 
 - (UIView *)nativeWrapperView
@@ -192,9 +223,7 @@ namespace react = facebook::react;
 {
   [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
   _traitChangeRegistration = nil;
-  // Using nativeWrapperView directly here to avoid failing RCTAssert in self.nativeWrapperView.
-  // If we're called from didMoveToWindow, it's not a problem, but I'm not sure if this will always be the case.
-  [_bottomAccessoryView.superview.superview removeObserver:self forKeyPath:@"center"];
+  [self unregisterForAccessoryFrameChanges];
   _bottomAccessoryView = nil;
 #if REACT_NATIVE_VERSION_MINOR < 82
   [self invalidateDisplayLink];
