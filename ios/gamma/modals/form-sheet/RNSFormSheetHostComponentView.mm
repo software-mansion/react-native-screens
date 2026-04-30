@@ -22,9 +22,10 @@ namespace react = facebook::react;
 
 @implementation RNSFormSheetHostComponentView {
   RNSFormSheetHostComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSFormSheetHostController *_controller;
-  RNSFormSheetHostShadowStateProxy *_shadowStateProxy;
-  RCTSurfaceTouchHandler *_touchHandler;
+  RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
+
+  RNSFormSheetHostController *_Nullable _controller;
+  RCTSurfaceTouchHandler *_Nullable _touchHandler;
 
   // Props
   BOOL _isOpen;
