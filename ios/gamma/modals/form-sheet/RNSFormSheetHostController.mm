@@ -48,8 +48,8 @@
   if (newFrame.size.width > 0 && newFrame.size.height > 0 && !CGRectEqualToRect(newFrame, _lastNotifiedFrame)) {
     _lastNotifiedFrame = newFrame;
 
-    if ([self.delegate respondsToSelector:@selector(sheetControllerDidLayoutWithBounds:)]) {
-      [self.delegate sheetControllerDidLayoutWithBounds:self.view.bounds];
+    if ([self.delegate respondsToSelector:@selector(sheetControllerViewDidLayoutSubviews:)]) {
+      [self.delegate sheetControllerViewDidLayoutSubviews:self];
     }
   }
 }
