@@ -14,7 +14,7 @@
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetHostComponentView () <RNSFormSheetControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
 @end
 
 @implementation RNSFormSheetHostComponentView {
@@ -111,7 +111,7 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - RNSFormSheetControllerDelegate
+#pragma mark - RNSFormSheetHostControllerDelegate
 
 - (void)sheetControllerDidDismiss:(RNSFormSheetHostController *)controller
 {
@@ -121,9 +121,10 @@ namespace react = facebook::react;
   [_reactEventEmitter emitOnDismiss];
 }
 
-- (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds
+- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller
 {
-  CGPoint origin = [_controller.view convertPoint:CGPointZero toView:nil];
+  CGRect bounds = controller.view.bounds;
+  CGPoint origin = [controller.view convertPoint:CGPointZero toView:nil];
 
   [self updateTouchHandlerWithOrigin:origin];
 

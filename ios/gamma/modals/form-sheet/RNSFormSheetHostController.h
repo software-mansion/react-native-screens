@@ -6,14 +6,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSFormSheetHostController;
 
-@protocol RNSFormSheetControllerDelegate <NSObject>
+@protocol RNSFormSheetHostControllerDelegate <NSObject>
 - (void)sheetControllerDidDismiss:(RNSFormSheetHostController *)controller;
-- (void)sheetControllerDidLayoutWithBounds:(CGRect)bounds;
+- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller;
 @end
 
 @interface RNSFormSheetHostController : UIViewController
 
-@property (nonatomic, weak, nullable) id<RNSFormSheetControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<RNSFormSheetHostControllerDelegate> delegate;
 
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
 - (void)removeReactSubview:(UIView *)subview;
