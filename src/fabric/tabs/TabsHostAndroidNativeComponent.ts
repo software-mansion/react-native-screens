@@ -10,7 +10,7 @@ type TabSelectedEvent = {
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
-  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 };
 
 type NavigationStateRequest = {
