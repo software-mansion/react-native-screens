@@ -221,15 +221,6 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - Dynamic frameworks support
-
-#ifdef RCT_DYNAMIC_FRAMEWORKS
-+ (void)load
-{
-  [super load];
-}
-#endif // RCT_DYNAMIC_FRAMEWORKS
-
 #pragma mark - Layout helpers
 
 - (void)resetShadowNodeSize
@@ -342,6 +333,15 @@ namespace react = facebook::react;
   // Aligns touch coordinate space with window coordinate space
   _touchHandler.viewOriginOffset = origin;
 }
+
+#pragma mark - Dynamic frameworks support
+
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
