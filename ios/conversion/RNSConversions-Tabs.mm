@@ -244,7 +244,10 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedAct
       return ProgrammaticJs;
     case RNSTabsActionOriginImplicit:
       return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", actionOrigin);
   }
+  return User;
 }
 
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
