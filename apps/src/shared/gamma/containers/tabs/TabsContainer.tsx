@@ -21,6 +21,7 @@ import {
 } from './reducer';
 import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
@@ -33,6 +34,8 @@ export function TabsContainer(props: TabsContainerProps) {
   } = props;
 
   useSanitizeRouteConfigs(routeConfigs);
+
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [tabsNavState, dispatch]: [
     TabsContainerState,
@@ -84,7 +87,23 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        return <TabsContainerItem key={route.routeKey} route={route} navMethods={navMethods} isSelected={isSelected} pendingForUpdate={pendingForUpdate} />
+        const Component = componentsByName.get(route.name);
+        if (!Component) {
+          throw new Error(
+            `[Tabs] No route config matches the "${route.name}" route name`,
+          );
+        }
+
+        return (
+          <TabsContainerItem
+            key={route.routeKey}
+            route={route}
+            navMethods={navMethods}
+            isSelected={isSelected}
+            pendingForUpdate={pendingForUpdate}
+            Component={Component}
+          />
+        );
       })}
     </Tabs.Host>
   );
