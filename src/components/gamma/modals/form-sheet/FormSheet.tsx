@@ -1,15 +1,15 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import FormSheetNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetNativeComponent';
+import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 
 export function FormSheet(props: FormSheetProps) {
   const { children, style, ...rest } = props;
 
   return (
-    <FormSheetNativeComponent style={[style, styles.host]} {...rest}>
+    <FormSheetHostNativeComponent style={[style, styles.host]} {...rest}>
       {children}
-    </FormSheetNativeComponent>
+    </FormSheetHostNativeComponent>
   );
 }
 

@@ -1,9 +1,9 @@
-#import "RNSFormSheetComponentEventEmitter.h"
+#import "RNSFormSheetHostComponentEventEmitter.h"
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 
-@implementation RNSFormSheetComponentEventEmitter {
-  std::shared_ptr<const react::RNSFormSheetEventEmitter> _reactEventEmitter;
+@implementation RNSFormSheetHostComponentEventEmitter {
+  std::shared_ptr<const react::RNSFormSheetHostEventEmitter> _reactEventEmitter;
 }
 
 - (BOOL)emitOnDismiss
@@ -17,7 +17,7 @@
   }
 }
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSFormSheetEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSFormSheetHostEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }
