@@ -91,9 +91,11 @@ namespace react = facebook::react;
     return;
   }
 
-  if (_isOpen && _controller.presentingViewController == nil) {
+  BOOL isPresented = _controller.presentingViewController != nil;
+
+  if (_isOpen && !isPresented) {
     [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
-  } else if (!_isOpen && _controller.presentingViewController != nil) {
+  } else if (!_isOpen && isPresented) {
     // Dismiss programmatically and delay the reset until the animation completes.
     // This prevents conflicting layout updates while the sheet is sliding down.
     __weak auto weakSelf = self;
@@ -101,6 +103,12 @@ namespace react = facebook::react;
                                     completion:^{
                                       [weakSelf resetShadowNodeSize];
                                     }];
+  } else {
+    // The remaining two combinations are valid and require no action:
+    // 1. _isOpen == NO and isPresented == NO: This occurs on the initial mount before the sheet is opened,
+    //    or when the sheet has already been successfully dismissed.
+    // 2. _isOpen == YES and isPresented == YES: This occurs when the sheet is already visible
+    //    and we are just updating other configuration props (e.g., detents) via updateProps.
   }
 }
 
