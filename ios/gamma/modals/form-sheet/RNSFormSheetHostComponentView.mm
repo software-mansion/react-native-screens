@@ -87,15 +87,15 @@ namespace react = facebook::react;
     return;
   }
 
-  UIViewController *presentationSourceViewController =
-      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
-  if (presentationSourceViewController == nil) {
-    return;
-  }
-
   BOOL isPresented = _controller.presentingViewController != nil;
 
   if (_isOpen && !isPresented) {
+    UIViewController *presentationSourceViewController =
+        [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
+    if (presentationSourceViewController == nil) {
+      return;
+    }
+
     [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && isPresented) {
     // Dismiss programmatically and delay the reset until the animation completes.
