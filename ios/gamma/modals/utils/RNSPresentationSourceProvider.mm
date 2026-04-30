@@ -19,6 +19,8 @@
     return nil;
   }
 
+  // We manually traverse the presentedViewController chain to its absolute end.
+  // This guarantees we are always presenting on the top-most visible view controller in the window.
   while (presentationSourceViewController.presentedViewController != nil) {
     presentationSourceViewController = presentationSourceViewController.presentedViewController;
   }
