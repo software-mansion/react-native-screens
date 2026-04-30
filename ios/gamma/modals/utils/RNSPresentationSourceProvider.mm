@@ -4,7 +4,6 @@
 @implementation RNSPresentationSourceProvider
 
 + (nullable UIViewController *)findViewControllerForPresentationInWindow:(nullable UIWindow *)window
-                                                      ignoringController:(nullable UIViewController *)ignoringController
 {
   if (window == nil) {
     return nil;
@@ -20,8 +19,7 @@
     return nil;
   }
 
-  while (presentationSourceViewController.presentedViewController != nil &&
-         presentationSourceViewController.presentedViewController != ignoringController) {
+  while (presentationSourceViewController.presentedViewController != nil) {
     presentationSourceViewController = presentationSourceViewController.presentedViewController;
   }
 
