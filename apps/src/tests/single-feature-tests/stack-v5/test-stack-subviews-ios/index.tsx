@@ -20,6 +20,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
+import { ShiftTransition } from '../../../../../../react-navigation/packages/bottom-tabs/src/TransitionConfigs/TransitionPresets';
 
 const SHORT_TITLE = 'Title';
 const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
@@ -105,7 +106,6 @@ interface Config {
   largeTitleEnabled: boolean;
   title: TitleOption;
   subtitle: TitleOption;
-  largeSubtitle: TitleOption;
   hitSlop: HitSlopValue;
   pressRetentionOffset: PressRetentionValue;
 }
@@ -116,7 +116,6 @@ const DEFAULT_CONFIG: Config = {
   largeTitleEnabled: false,
   title: 'short',
   subtitle: 'short',
-  largeSubtitle: 'short',
   hitSlop: '0',
   pressRetentionOffset: '0',
 };
@@ -153,9 +152,10 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
 
   return {
     title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
+    subtitle: config.subtitle === 'short' ? SHORT_TITLE : LONG_TITLE,
     hidden: config.hidden,
     ios: {
-      largeTitleEnabled: true,
+      largeTitleEnabled: config.largeTitleEnabled,
       titleItem:
         config.title === 'view'
           ? {
@@ -262,12 +262,6 @@ function ConfigScreen() {
         label="subtitle"
         value={config.subtitle}
         onValueChange={v => updateConfig('subtitle', v)}
-        items={TITLE_OPTIONS}
-      />
-      <SettingsPicker<TitleOption>
-        label="large subtitle"
-        value={config.subtitle}
-        onValueChange={v => updateConfig('largeSubtitle', v)}
         items={TITLE_OPTIONS}
       />
       <SettingsPicker<HitSlopValue>

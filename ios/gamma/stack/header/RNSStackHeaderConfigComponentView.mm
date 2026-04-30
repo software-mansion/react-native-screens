@@ -20,6 +20,7 @@ namespace react = facebook::react;
 
 @implementation RNSStackHeaderConfigComponentView {
   NSString *_Nullable _title;
+  NSString *_Nullable _subtitle;
   BOOL _hidden;
   BOOL _largeTitle;
 
@@ -41,7 +42,7 @@ namespace react = facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const react::RNSStackHeaderConfigProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSStackHeaderConfigIOSProps>();
     _props = defaultProps;
     _children = [NSMutableArray new];
     _frameTracker = [RNSShadowStateFrameTracker new];
@@ -134,11 +135,15 @@ namespace react = facebook::react;
 
 - (void)updateProps:(const react::Props::Shared &)props oldProps:(const react::Props::Shared &)oldProps
 {
-  const auto &newHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigProps>(props);
-  const auto &oldHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigProps>(_props);
+  const auto &newHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigIOSProps>(props);
+  const auto &oldHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigIOSProps>(_props);
 
   if (oldHeaderProps.title != newHeaderProps.title) {
     _title = RCTNSStringFromString(newHeaderProps.title);
+  }
+
+  if (oldHeaderProps.subtitle != newHeaderProps.subtitle) {
+    _subtitle = RCTNSStringFromString(newHeaderProps.subtitle);
   }
 
   if (oldHeaderProps.hidden != newHeaderProps.hidden) {
@@ -194,6 +199,7 @@ namespace react = facebook::react;
           largeSubtitleView:&largeSubtitleView];
 
   RNSStackHeaderData *data = [[RNSStackHeaderData alloc] initWithTitle:_title
+                                                              subtitle:_subtitle
                                                              screenKey:screen.screenKey
                                                                 hidden:_hidden
                                                             largeTitle:_largeTitle

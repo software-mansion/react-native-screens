@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Navigation Item props
 
 @property (nonatomic, copy, readonly, nullable) NSString *title;
+@property (nonatomic, copy, readonly, nullable) NSString *subtitle;
 @property (nonatomic, copy, readonly, nullable) NSString *screenKey;
 @property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *leftBarButtonItems;
 @property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *rightBarButtonItems;
@@ -27,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL largeTitle;
 
 - (instancetype)initWithTitle:(nullable NSString *)title
+                     subtitle:(nullable NSString *)subtitle
                     screenKey:(nullable NSString *)screenKey
                        hidden:(BOOL)hidden
                    largeTitle:(BOOL)largeTitle

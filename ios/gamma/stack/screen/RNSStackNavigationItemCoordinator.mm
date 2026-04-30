@@ -35,6 +35,7 @@
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
+    navItem.subtitle = data.subtitle;
     navItem.subtitleView = data.subtitleView;
     navItem.largeSubtitleView = data.largeSubtitleView;
   }
