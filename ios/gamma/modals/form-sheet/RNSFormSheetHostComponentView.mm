@@ -352,7 +352,7 @@ namespace react = facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RNSFormSheetCls(void)
+Class<RCTComponentViewProtocol> RNSFormSheetHostCls(void)
 {
   return RNSFormSheetHostComponentView.class;
 }
