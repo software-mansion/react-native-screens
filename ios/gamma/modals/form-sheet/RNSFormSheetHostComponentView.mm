@@ -1,6 +1,7 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSFormSheetHostComponentEventEmitter.h"
 #import "RNSFormSheetHostController.h"
+#import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -83,13 +84,15 @@ namespace react = facebook::react;
     return;
   }
 
-  UIViewController *presentingViewController = [self findPresentingViewController];
-  if (presentingViewController == nil) {
+  UIViewController *presentationSourceViewController =
+      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window
+                                                            ignoringController:_controller];
+  if (presentationSourceViewController == nil) {
     return;
   }
 
   if (_isOpen && _controller.presentingViewController == nil) {
-    [presentingViewController presentViewController:_controller animated:YES completion:nil];
+    [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && _controller.presentingViewController != nil) {
     // Dismiss programmatically and delay the reset until the animation completes.
     // This prevents conflicting layout updates while the sheet is sliding down.
@@ -99,22 +102,6 @@ namespace react = facebook::react;
                                       [weakSelf resetShadowNodeSize];
                                     }];
   }
-}
-
-- (UIViewController *)findPresentingViewController
-{
-  UIViewController *presentingViewController = self.window.rootViewController;
-
-  if (presentingViewController == nil) {
-    return nil;
-  }
-
-  while (presentingViewController.presentedViewController != nil &&
-         presentingViewController.presentedViewController != _controller) {
-    presentingViewController = presentingViewController.presentedViewController;
-  }
-
-  return presentingViewController;
 }
 
 #pragma mark - RNSFormSheetControllerDelegate
