@@ -235,7 +235,7 @@ namespace react = facebook::react;
   if (_state != nullptr) {
     auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
 
-    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+    _state->updateState(std::move(newState));
   }
 }
 
