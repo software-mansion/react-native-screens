@@ -85,8 +85,7 @@ namespace react = facebook::react;
   }
 
   UIViewController *presentationSourceViewController =
-      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window
-                                                            ignoringController:_controller];
+      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
   if (presentationSourceViewController == nil) {
     return;
   }

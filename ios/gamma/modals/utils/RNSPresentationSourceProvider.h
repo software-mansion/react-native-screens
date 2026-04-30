@@ -6,9 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSPresentationSourceProvider : NSObject
 
-+ (nullable UIViewController *)findViewControllerForPresentationInWindow:(nullable UIWindow *)window
-                                                      ignoringController:
-                                                          (nullable UIViewController *)ignoringController;
++ (nullable UIViewController *)findViewControllerForPresentationInWindow:(nullable UIWindow *)window;
 
 @end
 
