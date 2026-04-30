@@ -90,7 +90,7 @@ export function TabsContainer(props: TabsContainerProps) {
         const Component = componentsByName.get(route.name);
         if (!Component) {
           throw new Error(
-            `[Tabs] None config matches the "${route.name}" route name`,
+            `[Tabs] No route config matches the "${route.name}" route name`,
           );
         }
 
