@@ -1,4 +1,5 @@
 #import "RNSFormSheetHostComponentView.h"
+#import "RNSDefines.h"
 #import "RNSFormSheetHostComponentEventEmitter.h"
 #import "RNSFormSheetHostController.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
@@ -265,6 +266,7 @@ namespace react = facebook::react;
   NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents =
       [[NSMutableArray alloc] initWithCapacity:capacity];
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
     if (detentsCount == 0) {
       [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
@@ -282,7 +284,9 @@ namespace react = facebook::react;
                                             }]];
       }
     }
-  } else {
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
     // iOS 15 Legacy Fallback
     if (detentsCount == 1) {
       double firstDetentFraction = _detents[0];
