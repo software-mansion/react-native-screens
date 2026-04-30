@@ -245,6 +245,13 @@ namespace react = facebook::react;
 
 - (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetents
 {
+  size_t detentsCount = _detents.size();
+
+  // Defaults to large detent across all iOS versions
+  if (detentsCount == 0) {
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
   if (![self areDetentsValid]) {
     RCTLogError(
         @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
@@ -259,30 +266,22 @@ namespace react = facebook::react;
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
 
-  size_t detentsCount = _detents.size();
-  // Falling back to 2, specifically for iOS 15 fallback
-  NSUInteger capacity = detentsCount > 0 ? detentsCount : 2;
-
   NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [[NSMutableArray alloc] initWithCapacity:capacity];
+      [[NSMutableArray alloc] initWithCapacity:detentsCount];
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
-    if (detentsCount == 0) {
-      [nativeDetents addObject:[UISheetPresentationControllerDetent largeDetent]];
-    } else {
-      for (size_t i = 0; i < detentsCount; i++) {
-        double fraction = _detents[i];
-        NSString *ident = [NSString stringWithFormat:@"%zu", i];
+    for (size_t i = 0; i < detentsCount; i++) {
+      double fraction = _detents[i];
+      NSString *ident = [NSString stringWithFormat:@"%zu", i];
 
-        [nativeDetents
-            addObject:[UISheetPresentationControllerDetent
-                          customDetentWithIdentifier:ident
-                                            resolver:^CGFloat(
-                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                              return context.maximumDetentValue * fraction;
-                                            }]];
-      }
+      [nativeDetents
+          addObject:[UISheetPresentationControllerDetent
+                        customDetentWithIdentifier:ident
+                                          resolver:^CGFloat(
+                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                            return context.maximumDetentValue * fraction;
+                                          }]];
     }
   } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -296,6 +295,7 @@ namespace react = facebook::react;
         [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
       }
     } else {
+      // Handles detentsCount > 1
       [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
       [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
     }
