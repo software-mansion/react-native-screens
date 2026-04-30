@@ -18,10 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-No: The distinction between content scrolling behind bars versus being
-inset from them is a visual/pixel-level difference that cannot be
-reliably expressed as a pass/fail assertion in the current E2E
-infrastructure without snapshot or frame-comparison tooling.
+No: Ongoing research.
 
 ## Prerequisites
 
