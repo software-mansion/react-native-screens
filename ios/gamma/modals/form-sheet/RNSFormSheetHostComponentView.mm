@@ -1,6 +1,6 @@
-#import "RNSFormSheetComponentView.h"
-#import "RNSFormSheetComponentEventEmitter.h"
-#import "RNSFormSheetController.h"
+#import "RNSFormSheetHostComponentView.h"
+#import "RNSFormSheetHostComponentEventEmitter.h"
+#import "RNSFormSheetHostController.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -8,20 +8,20 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import <rnscreens/RNSFormSheetComponentDescriptor.h>
-#import <rnscreens/RNSFormSheetState.h>
+#import <rnscreens/RNSFormSheetHostComponentDescriptor.h>
+#import <rnscreens/RNSFormSheetHostState.h>
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetComponentView () <RNSFormSheetControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RNSFormSheetControllerDelegate>
 @end
 
-@implementation RNSFormSheetComponentView {
-  RNSFormSheetComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSFormSheetController *_controller;
+@implementation RNSFormSheetHostComponentView {
+  RNSFormSheetHostComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSFormSheetHostController *_controller;
   RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
-  react::RNSFormSheetShadowNode::ConcreteState::Shared _state;
+  react::RNSFormSheetHostShadowNode::ConcreteState::Shared _state;
 
   // Props
   BOOL _isOpen;
@@ -45,7 +45,7 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
-  _reactEventEmitter = [RNSFormSheetComponentEventEmitter new];
+  _reactEventEmitter = [RNSFormSheetHostComponentEventEmitter new];
   _reactSubviews = [NSMutableArray new];
 
   _needsSheetPresentationUpdate = NO;
@@ -54,7 +54,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSFormSheetProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSFormSheetHostProps>();
   _props = defaultProps;
 
   _isOpen = NO;
@@ -63,7 +63,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [RNSFormSheetController new];
+  _controller = [RNSFormSheetHostController new];
   _controller.delegate = self;
 }
 
@@ -119,7 +119,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetControllerDelegate
 
-- (void)sheetControllerDidDismiss:(RNSFormSheetController *)controller
+- (void)sheetControllerDidDismiss:(RNSFormSheetHostController *)controller
 {
   _isOpen = NO;
   [self resetShadowNodeSize];
@@ -134,7 +134,7 @@ namespace react = facebook::react;
   [self updateTouchHandlerWithOrigin:origin];
 
   if (_state != nullptr) {
-    auto newState = react::RNSFormSheetState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
+    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
   }
@@ -145,18 +145,19 @@ namespace react = facebook::react;
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
   [super updateState:state oldState:oldState];
-  _state = std::static_pointer_cast<const react::RNSFormSheetShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const react::RNSFormSheetHostShadowNode::ConcreteState>(state);
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
 {
   [super updateEventEmitter:eventEmitter];
-  [_reactEventEmitter updateEventEmitter:std::static_pointer_cast<const react::RNSFormSheetEventEmitter>(eventEmitter)];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSFormSheetHostEventEmitter>(eventEmitter)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSFormSheetComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSFormSheetHostComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -179,8 +180,8 @@ namespace react = facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFormSheetProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(props);
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = newComponentProps.isOpen;
@@ -245,7 +246,7 @@ namespace react = facebook::react;
 - (void)resetShadowNodeSize
 {
   if (_state != nullptr) {
-    auto newState = react::RNSFormSheetState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
+    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
   }
@@ -361,5 +362,5 @@ namespace react = facebook::react;
 
 Class<RCTComponentViewProtocol> RNSFormSheetCls(void)
 {
-  return RNSFormSheetComponentView.class;
+  return RNSFormSheetHostComponentView.class;
 }

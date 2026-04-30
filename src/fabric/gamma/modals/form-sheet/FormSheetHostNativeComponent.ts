@@ -12,7 +12,7 @@ interface NativeProps extends ViewProps {
   onDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSFormSheet', {
+export default codegenNativeComponent<NativeProps>('RNSFormSheetHost', {
   interfaceOnly: true,
   excludedPlatforms: ['android'],
 });

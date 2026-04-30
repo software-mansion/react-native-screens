@@ -6,10 +6,10 @@
 
 namespace facebook::react {
 
-class JSI_EXPORT RNSFormSheetState final {
+class JSI_EXPORT RNSFormSheetHostState final {
  public:
-  RNSFormSheetState() = default;
-  RNSFormSheetState(Size frameSize, Point contentOffset)
+  RNSFormSheetHostState() = default;
+  RNSFormSheetHostState(Size frameSize, Point contentOffset)
       : frameSize(frameSize), contentOffset(contentOffset) {}
 
   Size frameSize{};

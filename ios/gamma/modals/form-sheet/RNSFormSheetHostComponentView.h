@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSFormSheetComponentView : RNSReactBaseView
+@interface RNSFormSheetHostComponentView : RNSReactBaseView
 
 @end
 

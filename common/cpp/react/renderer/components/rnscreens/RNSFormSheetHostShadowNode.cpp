@@ -1,12 +1,12 @@
-#include "RNSFormSheetShadowNode.h"
+#include "RNSFormSheetHostShadowNode.h"
 
 #if !defined(ANDROID)
 
 namespace facebook::react {
 
-extern const char RNSFormSheetComponentName[] = "RNSFormSheet";
+extern const char RNSFormSheetHostComponentName[] = "RNSFormSheetHost";
 
-Point RNSFormSheetShadowNode::getContentOriginOffset(
+Point RNSFormSheetHostShadowNode::getContentOriginOffset(
     bool /*includeTransform*/) const {
   return getStateData().contentOffset;
 }

@@ -1,9 +1,9 @@
-#import "RNSFormSheetController.h"
+#import "RNSFormSheetHostController.h"
 
-@interface RNSFormSheetController () <UIAdaptivePresentationControllerDelegate>
+@interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
 @end
 
-@implementation RNSFormSheetController {
+@implementation RNSFormSheetHostController {
   CGRect _lastNotifiedFrame;
 }
 
