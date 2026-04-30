@@ -48,9 +48,7 @@
   if (newFrame.size.width > 0 && newFrame.size.height > 0 && !CGRectEqualToRect(newFrame, _lastNotifiedFrame)) {
     _lastNotifiedFrame = newFrame;
 
-    if ([self.delegate respondsToSelector:@selector(sheetControllerViewDidLayoutSubviews:)]) {
-      [self.delegate sheetControllerViewDidLayoutSubviews:self];
-    }
+    [self.delegate sheetControllerViewDidLayoutSubviews:self];
   }
 }
 
@@ -70,9 +68,7 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  if ([self.delegate respondsToSelector:@selector(sheetControllerDidDismiss:)]) {
-    [self.delegate sheetControllerDidDismiss:self];
-  }
+  [self.delegate sheetControllerDidDismiss:self];
 }
 
 @end
