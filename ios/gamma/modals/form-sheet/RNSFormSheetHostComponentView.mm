@@ -1,6 +1,7 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSFormSheetHostComponentEventEmitter.h"
 #import "RNSFormSheetHostController.h"
+#import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTConversions.h>
@@ -20,9 +21,9 @@ namespace react = facebook::react;
 @implementation RNSFormSheetHostComponentView {
   RNSFormSheetHostComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostController *_controller;
+  RNSFormSheetHostShadowStateProxy *_shadowStateProxy;
   RCTSurfaceTouchHandler *_touchHandler;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_reactSubviews;
-  react::RNSFormSheetHostShadowNode::ConcreteState::Shared _state;
 
   // Props
   BOOL _isOpen;
@@ -48,6 +49,7 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSFormSheetHostComponentEventEmitter new];
   _reactSubviews = [NSMutableArray new];
+  _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
 
   _needsSheetPresentationUpdate = NO;
   _needsSheetConfigurationUpdate = NO;
@@ -128,11 +130,7 @@ namespace react = facebook::react;
 
   [self updateTouchHandlerWithOrigin:origin];
 
-  if (_state != nullptr) {
-    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
-
-    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
-  }
+  [_shadowStateProxy updateShadowStateWithBounds:bounds origin:origin];
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -140,7 +138,7 @@ namespace react = facebook::react;
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
   [super updateState:state oldState:oldState];
-  _state = std::static_pointer_cast<const react::RNSFormSheetHostShadowNode::ConcreteState>(state);
+  [_shadowStateProxy updateState:state oldState:oldState];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -240,11 +238,7 @@ namespace react = facebook::react;
 
 - (void)resetShadowNodeSize
 {
-  if (_state != nullptr) {
-    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
-
-    _state->updateState(std::move(newState));
-  }
+  [_shadowStateProxy resetShadowState];
 }
 
 - (void)updateConfiguration
