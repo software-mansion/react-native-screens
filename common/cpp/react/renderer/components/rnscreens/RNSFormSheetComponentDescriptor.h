@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef ANDROID
+#if !defined(ANDROID)
 
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
@@ -38,4 +38,4 @@ class RNSFormSheetComponentDescriptor final
 
 } // namespace facebook::react
 
-#endif // ANDROID
+#endif // !defined(ANDROID)
