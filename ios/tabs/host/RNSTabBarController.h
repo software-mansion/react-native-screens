@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
              withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
-    rejectedStateUpdateTo:(nonnull RNSTabsNavigationState *)rejectedNavState
-             currentState:(nonnull RNSTabsNavigationState *)currentNavState
-               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
+     rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+              withReason:(RNSTabsNavigationStateRejectionReason)reasonCode;
 
 - (void)tabBarController:(nonnull RNSTabBarController *)tabBarController
     preventedSelectionOf:(nonnull NSString *)screenKey
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  * however.
  *
  * Updates made by this controller are synchronized by `RNSReactTransactionObserving` protocol,
- * i.e. if you made changes through one of signals method, unless you flush them immediately (not needed atm), they will
+ * i.e. if you made changes through one of signals method, unless you flush them immediately, they will
  * be executed only after react finishes the transaction (from within transaction execution block).
  */
 @interface RNSTabBarController : UITabBarController <
@@ -219,7 +219,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * If you want to execute multiple updates in sequence you must flush the container after each one separately.
  */
-- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState;
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate;
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be

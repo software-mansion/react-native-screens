@@ -18,6 +18,7 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
@@ -30,7 +31,7 @@ class TabsHost(
     TabsContainerDelegate,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
-    private var jsNavStateRequest: TabsNavState = TabsNavState.EMPTY
+    private var jsNavStateRequest: TabsNavStateUpdateRequest? = null
 
     private val container: TabsContainer =
         TabsContainer(reactContext, this).apply {
@@ -110,9 +111,9 @@ class TabsHost(
         container.removeAllTabsScreens()
     }
 
-    internal fun updateJSNavStateRequest(navStateRequest: TabsNavState) {
+    internal fun updateJSNavStateRequest(navStateRequest: TabsNavStateUpdateRequest) {
         jsNavStateRequest = navStateRequest
-        container.setContainerOperation(TabSelectOp(jsNavStateRequest.copy()))
+        container.setContainerOperation(TabSelectOp(navStateRequest.copy()))
     }
 
     private val layoutCallback =
@@ -163,7 +164,7 @@ class TabsHost(
         actionOrigin: TabsActionOrigin,
     ) {
         eventEmitter.emitOnTabSelectedEvent(
-            navState.selectedKey,
+            navState.selectedScreenKey,
             navState.provenance,
             isRepeated,
             hasTriggeredSpecialEffect,
@@ -173,12 +174,12 @@ class TabsHost(
 
     override fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
+        rejectedRequest: TabsNavStateUpdateRequest,
         reason: TabsNavStateUpdateRejectionReason,
     ) {
         eventEmitter.emitOnTabSelectionRejectedEvent(
             currentNavState,
-            rejectedNavState,
+            rejectedRequest,
             reason,
         )
     }
