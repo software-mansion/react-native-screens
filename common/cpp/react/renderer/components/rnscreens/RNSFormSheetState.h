@@ -8,8 +8,6 @@ namespace facebook::react {
 
 class JSI_EXPORT RNSFormSheetState final {
  public:
-  using Shared = std::shared_ptr<const RNSFormSheetState>;
-
   RNSFormSheetState() = default;
   RNSFormSheetState(Size frameSize, Point contentOffset)
       : frameSize(frameSize), contentOffset(contentOffset) {}
