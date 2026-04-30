@@ -261,9 +261,9 @@ namespace react = facebook::react;
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
 
-  if (![self areDetentsSorted]) {
+  if (![self areDetentsStrictlyAscending]) {
     RCTLogError(
-        @"[RNScreens] The values in the detents array must be sorted in ascending order. Falling back to large detent.");
+        @"[RNScreens] The values in the detents array must be in strictly ascending order. Falling back to large detent.");
 
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
@@ -320,7 +320,7 @@ namespace react = facebook::react;
   return YES;
 }
 
-- (BOOL)areDetentsSorted
+- (BOOL)areDetentsStrictlyAscending
 {
   for (size_t i = 1; i < _detents.size(); i++) {
     if (_detents[i - 1] >= _detents[i]) {
