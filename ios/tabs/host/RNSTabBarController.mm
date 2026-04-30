@@ -73,7 +73,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
   /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _lastUINavigationState;
 
-  RNSTabsNavigationState *_Nullable _pendingOperation;
+  RNSTabsNavigationStateUpdateRequest *_Nullable _pendingStateUpdate;
 
   /// When YES, the controller is inside an explicit selection-changing code path (container update,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
@@ -91,7 +91,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
     _tabsHostComponentView = nil;
     _navigationState = nil;
-    _pendingOperation = nil;
+    _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
 
     // Delegate field retains weakly, no risk of cycle.
@@ -146,9 +146,9 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
 #pragma mark - Signals
 
-- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationState *)navState
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
 {
-  _pendingOperation = navState;
+  _pendingStateUpdate = stateUpdate;
 }
 
 - (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
@@ -438,32 +438,32 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 
 - (void)updateSelectedViewControllerIfNeeded
 {
-  if (_pendingOperation != nil) {
+  if (_pendingStateUpdate != nil) {
     [self updateSelectedViewController];
   }
 }
 
 - (void)updateSelectedViewController
 {
-  if (_pendingOperation == nil || self.viewControllers.count == 0) {
+  if (_pendingStateUpdate == nil || self.viewControllers.count == 0) {
     return;
   }
 
   RNSLog(@"TabBarCtrl updateSelectedViewController");
   [self updateSelectedViewControllerInner];
-  _pendingOperation = nil;
+  _pendingStateUpdate = nil;
 }
 
 /**
  * NEVER call this method directly. Call the proper function `updateSelectedViewController`
  *
- * The logic is extracted to an inner method to correctly manage _pendingOperation cleanup.
+ * The logic is extracted to an inner method to correctly manage `_pendingStateUpdate` cleanup.
  */
 - (void)updateSelectedViewControllerInner
 {
   UIViewController *_Nonnull currSelectedViewController = self.selectedViewController;
 
-  NSString *_Nonnull nextSelectedViewControllerKey = _pendingOperation.selectedScreenKey;
+  NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.selectedScreenKey;
   UIViewController *nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
 
   RCTAssert(
@@ -477,9 +477,9 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
       RNSTabsScreenViewController.class,
       nextSelectedViewController.class);
 
-  if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingOperation]) {
+  if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingStateUpdate]) {
     [self.tabsHostComponentView tabBarController:self
-                           rejectedStateUpdateTo:_pendingOperation
+                             rejectedStateUpdate:_pendingStateUpdate
                                     currentState:_navigationState
                                       withReason:RNSTabsNavigationStateRejectionReasonStale];
     return;
@@ -489,7 +489,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     // Nothing to do, we don't allow for programmatic repeat selection, unless
     // we're during first render.
     [self.tabsHostComponentView tabBarController:self
-                           rejectedStateUpdateTo:_pendingOperation
+                             rejectedStateUpdate:_pendingStateUpdate
                                     currentState:_navigationState
                                       withReason:RNSTabsNavigationStateRejectionReasonRepeated];
     return;
@@ -516,7 +516,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
         [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                            isRepeated:NO
                                             hasTriggeredSpecialEffect:NO
-                                                         actionOrigin:RNSTabsActionOriginProgrammaticJs];
+                                                         actionOrigin:_pendingStateUpdate.actionOrigin];
     [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
   }
 }
@@ -676,9 +676,9 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
 /**
  * This function assumes that the source of the state is NOT user. In current model, user update is never stale.
  */
-- (BOOL)isNavigationStateUpdateStale:(nullable RNSTabsNavigationState *)newState
+- (BOOL)isNavigationStateUpdateStale:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
 {
-  if (newState == nil) {
+  if (stateUpdate == nil) {
     return YES;
   }
 
@@ -686,7 +686,7 @@ rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *
     return NO;
   }
 
-  return newState.provenance < _lastUINavigationState.provenance;
+  return stateUpdate.baseProvenance < _lastUINavigationState.provenance;
 }
 
 #pragma mark-- More Navigation Controller

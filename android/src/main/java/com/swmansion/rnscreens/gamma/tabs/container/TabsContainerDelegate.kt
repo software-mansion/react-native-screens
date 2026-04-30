@@ -24,12 +24,12 @@ internal interface TabsContainerDelegate {
      * Called when the container rejects a navigation state update.
      *
      * @param currentNavState The currently active navigation state that was kept.
-     * @param rejectedNavState The navigation state update that was rejected.
+     * @param rejectedRequest The navigation state update request that was rejected.
      * @param reason Why the update was rejected.
      */
     fun onNavStateUpdateRejected(
         currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
+        rejectedRequest: TabsNavStateUpdateRequest,
         reason: TabsNavStateUpdateRejectionReason,
     )
 
