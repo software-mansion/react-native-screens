@@ -9,7 +9,7 @@ type GenericEmptyEvent = Readonly<{}>;
 interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
   detents?: CT.Double[] | undefined;
-  onDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSFormSheetHost', {

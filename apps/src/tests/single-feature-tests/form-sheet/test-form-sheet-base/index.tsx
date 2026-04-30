@@ -25,7 +25,7 @@ export function App() {
       />
       <FormSheet
         isOpen={isOpen}
-        onDismiss={() => setIsOpen(false)}
+        onNativeDismiss={() => setIsOpen(false)}
         detents={[0.6, 1.0]}>
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>FormSheet content</Text>

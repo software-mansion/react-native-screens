@@ -25,12 +25,12 @@ export interface FormSheetProps {
 
   // Events
   /**
-   * @summary Called when the native sheet is dismissed.
+   * @summary Called when the sheet is dismissed natively.
    *
    * It is highly recommended to use this callback to synchronize
    * your local React state to prevent UI mismatches (e.g., updating `isOpen` back to `false`).
    *
    * @platform ios
    */
-  onDismiss?: (() => void) | undefined;
+  onNativeDismiss?: (() => void) | undefined;
 }
