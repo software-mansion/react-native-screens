@@ -126,12 +126,7 @@ namespace react = facebook::react;
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller
 {
-  CGRect bounds = controller.view.bounds;
-  CGPoint origin = [controller.view convertPoint:CGPointZero toView:nil];
-
-  [self updateTouchHandlerWithOrigin:origin];
-
-  [_shadowStateProxy updateShadowStateWithBounds:bounds origin:origin];
+  [self syncShadowNodeState];
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -225,6 +220,26 @@ namespace react = facebook::react;
 }
 
 #pragma mark - Layout helpers
+
+- (void)syncShadowNodeState
+{
+  if (_controller == nil || _controller.view == nil) {
+    return;
+  }
+
+  // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
+  CGPoint absoluteOrigin = [_controller.view convertPoint:CGPointZero toView:nil];
+  [self updateTouchHandlerWithOrigin:absoluteOrigin];
+
+  // For Yoga, we need to apply the offset in RNSFormSheetHostContentView coordinates
+  auto formSheetContentView = (RNSFormSheetHostContentView *)_controller.view;
+  CGPoint hostOriginInContentViewSpace = [self convertPoint:CGPointZero toView:formSheetContentView];
+  CGPoint contentOriginOffset = CGPointMake(-hostOriginInContentViewSpace.x, -hostOriginInContentViewSpace.y);
+
+  CGRect bounds = _controller.view.bounds;
+
+  [_shadowStateProxy updateShadowStateWithBounds:bounds origin:contentOriginOffset];
+}
 
 - (void)resetShadowNodeSize
 {
