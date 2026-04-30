@@ -50,3 +50,11 @@ Other: Planned, but will be implemented separately.
 5. Swipe down on the FormSheet to dismiss it, then tap the "Open FormSheet" button again.
 
 - [ ] Expected: The FormSheet re-opens at the initial lower detent (0.6). The stack's navigation state has been kept - the sheet immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
+
+---
+
+### Pop Action
+
+6. Tap the "Pop" button (or native header back button) to pop Screen A.
+
+- [ ] Expected: The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered, and the light blue background completely covers the FormSheet content area.
