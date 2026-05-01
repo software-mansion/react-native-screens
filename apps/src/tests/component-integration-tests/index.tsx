@@ -20,7 +20,7 @@ type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (

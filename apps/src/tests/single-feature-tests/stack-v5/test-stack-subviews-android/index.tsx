@@ -196,7 +196,7 @@ export function App() {
   return <StackSetup />;
 }
 
-function StackSetup() {
+export function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -210,7 +210,7 @@ function StackSetup() {
   );
 }
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const navigation = useStackNavigationContext();
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 

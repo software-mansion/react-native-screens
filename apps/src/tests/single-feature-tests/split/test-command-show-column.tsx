@@ -28,7 +28,7 @@ export function App() {
   );
 }
 
-function ColumnContent(props: {
+export function ColumnContent(props: {
   columnTitle: string;
   hostRef: React.RefObject<SplitHostCommands | null>;
 }) {

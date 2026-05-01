@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();

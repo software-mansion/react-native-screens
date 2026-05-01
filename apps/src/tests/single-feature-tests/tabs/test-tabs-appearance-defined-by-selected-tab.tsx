@@ -66,7 +66,7 @@ const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
   },
 };
 
-function TabScreen() {
+export function TabScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Tab</Text>

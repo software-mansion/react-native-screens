@@ -27,7 +27,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactForceRtl, setReactForceRtl] = useState(false);
   const [reactAllowRtl, setReactAllowRtl] = useState(true);

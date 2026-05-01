@@ -19,7 +19,7 @@ type StackParamList = {
   Screen1: undefined;
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const [config, dispatch] = useStackConfigState<StackParamList>();
 
   return (

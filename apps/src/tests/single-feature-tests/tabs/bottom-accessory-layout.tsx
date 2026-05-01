@@ -18,7 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-function ShortViewUL() {
+export function ShortViewUL() {
   return (
     <View
       style={[
@@ -30,7 +30,7 @@ function ShortViewUL() {
   );
 }
 
-function ShortViewC() {
+export function ShortViewC() {
   return (
     <View
       style={[
@@ -42,7 +42,7 @@ function ShortViewC() {
   );
 }
 
-function ShortViewLR() {
+export function ShortViewLR() {
   return (
     <View
       style={[
@@ -54,7 +54,7 @@ function ShortViewLR() {
   );
 }
 
-function LongView() {
+export function LongView() {
   return (
     <View style={styles.fullView}>
       <LongText />
@@ -62,7 +62,7 @@ function LongView() {
   );
 }
 
-function RGBView() {
+export function RGBView() {
   return (
     <View style={styles.fullView}>
       <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
@@ -80,7 +80,7 @@ const ACCESSORY_VARIANTS = [
   { id: 4, content: RGBView },
 ];
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const [selected, setSelected] = useState(0);
   const { updateHostConfig } = useTabsHostConfig();
 

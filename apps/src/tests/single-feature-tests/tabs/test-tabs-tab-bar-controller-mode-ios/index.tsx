@@ -18,7 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -41,7 +41,7 @@ function ConfigScreen() {
   );
 }
 
-function TestScreen() {
+export function TestScreen() {
   return (
     <ScrollView
       style={{ flex: 1 }}

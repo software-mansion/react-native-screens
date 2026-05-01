@@ -30,7 +30,7 @@ export function App() {
   );
 }
 
-function ColumnContent(props: { columnTitle: string }) {
+export function ColumnContent(props: { columnTitle: string }) {
   return (
     <View style={styles.container}>
       <Text style={styles.columnTitle}>{props.columnTitle}</Text>

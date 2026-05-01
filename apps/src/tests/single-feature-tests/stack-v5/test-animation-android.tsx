@@ -17,7 +17,7 @@ export function App() {
   return <StackSetup />;
 }
 
-function StackSetup() {
+export function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -46,7 +46,7 @@ function StackSetup() {
   );
 }
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
       <StackNavigationButtons
@@ -57,7 +57,7 @@ function HomeScreen() {
   );
 }
 
-function BlueScreen() {
+export function BlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
       <StackNavigationButtons
@@ -68,7 +68,7 @@ function BlueScreen() {
   );
 }
 
-function RedScreen() {
+export function RedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
       <StackNavigationButtons
@@ -79,7 +79,7 @@ function RedScreen() {
   );
 }
 
-function NestedHostScreen() {
+export function NestedHostScreen() {
   return (
     <StackContainer
       routeConfigs={[
@@ -103,7 +103,7 @@ function NestedHostScreen() {
   );
 }
 
-function NestedHomeScreen() {
+export function NestedHomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
       <StackNavigationButtons
@@ -114,7 +114,7 @@ function NestedHomeScreen() {
   );
 }
 
-function NestedBlueScreen() {
+export function NestedBlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
       <StackNavigationButtons
@@ -125,7 +125,7 @@ function NestedBlueScreen() {
   );
 }
 
-function NestedRedScreen() {
+export function NestedRedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
       <StackNavigationButtons

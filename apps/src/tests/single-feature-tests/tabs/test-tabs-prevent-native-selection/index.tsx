@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['android', 'ios'],
 };
 
-function ContentView() {
+export function ContentView() {
   const nav = useTabsNavigationContext();
 
   const preventNativeSelection =
@@ -47,7 +47,7 @@ function ContentView() {
   );
 }
 
-function TabsNavigationButtons() {
+export function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (
@@ -114,7 +114,7 @@ export function App() {
   );
 }
 
-function AppContents() {
+export function AppContents() {
   const toast = useToast();
 
   return (

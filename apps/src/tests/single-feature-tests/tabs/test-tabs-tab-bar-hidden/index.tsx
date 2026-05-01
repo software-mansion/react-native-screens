@@ -16,7 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
 };
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
