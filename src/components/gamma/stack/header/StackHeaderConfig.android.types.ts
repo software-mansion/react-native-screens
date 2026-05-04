@@ -61,6 +61,23 @@ export interface StackHeaderBackgroundSubviewAndroid {
   Component: NonNullable<ReactNode>;
 }
 
+export interface ToolbarMenuItemAndroid {
+  id: string;
+  title: string;
+  hidden?: boolean | undefined; // default: false
+}
+
+export type ToolbarMenuItemOptionsAndroid = Partial<
+  Omit<ToolbarMenuItemAndroid, 'id'>
+>;
+
+export interface StackHeaderConfigCommandsAndroid {
+  setToolbarMenuItemOptions: (
+    id: string,
+    options: ToolbarMenuItemOptionsAndroid,
+  ) => void;
+}
+
 export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Specifies the type of the Material 3 app bar.
@@ -210,4 +227,16 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   scrollFlagSnap?: boolean | undefined;
+  /**
+   * @summary Menu items displayed in the toolbar menu.
+   *
+   * @platform android
+   */
+  toolbarMenuItems?: ToolbarMenuItemAndroid[] | undefined;
+  /**
+   * @summary Callback invoked when a toolbar menu item is clicked.
+   *
+   * @platform android
+   */
+  onToolbarMenuItemClicked?: ((id: string) => void) | undefined;
 }

@@ -197,7 +197,7 @@ open class StackHeaderConfigViewManager :
         id: String,
         options: ReadableArray,
     ) {
-        println("[StackHeaderConfigViewManager] " + options.getMap(0))
+        println("[StackHeaderConfigViewManager] $id: ${options.getMap(0)}")
     }
 
     companion object {

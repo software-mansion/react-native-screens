@@ -65,7 +65,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ options: { headerConfig, ...options }, activityMode, routeKey, name }) => {
+        ({ options: { headerConfig, headerConfigRef, ...options }, activityMode, routeKey, name }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -94,7 +94,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
                 {headerConfig !== undefined && (
-                  <Stack.HeaderConfig {...headerConfig} />
+                  <Stack.HeaderConfig ref={headerConfigRef} {...headerConfig} />
                 )}
               </StackNavigationContext.Provider>
             </Stack.Screen>

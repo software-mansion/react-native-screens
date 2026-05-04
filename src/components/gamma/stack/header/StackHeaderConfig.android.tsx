@@ -1,47 +1,41 @@
-import React, { ComponentRef, useEffect, useRef } from 'react';
+import React, {
+  ComponentRef,
+  forwardRef,
+  Ref,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { Image, StyleSheet } from 'react-native';
-import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
+import type {
+  StackHeaderConfigProps,
+  StackHeaderConfigRef,
+} from './StackHeaderConfig.types';
 import StackHeaderConfigAndroidNativeComponent, {
   Commands as StackHeaderConfigAndroidNativeCommands,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
-import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
+import type {
+  NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  ToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
+} from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
   StackHeaderTypeAndroid,
+  ToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHeaderConfig(props: StackHeaderConfigProps) {
+function StackHeaderConfig(
+  props: StackHeaderConfigProps,
+  forwardedRef: Ref<StackHeaderConfigRef>,
+) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
 
-  const ref = useRef<ComponentRef<
-    typeof StackHeaderConfigAndroidNativeComponent
-  > | null>(null);
-
-  useEffect(() => {
-    const handle = setTimeout(() => {
-      if (!ref.current) {
-        return;
-      }
-
-      StackHeaderConfigAndroidNativeCommands.setToolbarMenuItemOptions(
-        ref.current,
-        'someItemId',
-        [
-          {
-            title: 'Hello!',
-          },
-        ],
-      );
-    }, 5000);
-
-    return () => clearTimeout(handle);
-  }, []);
+  const ref = useHeaderConfigRef(forwardedRef);
 
   const {
     backgroundSubview,
@@ -54,6 +48,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
+    onToolbarMenuItemClicked,
     ...filteredAndroidProps
   } = android ?? {};
 
@@ -66,6 +61,11 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     scrollFlagSnap,
   });
 
+  const nativeOnToolbarMenuItemClicked = onToolbarMenuItemClicked
+    ? (event: { nativeEvent: { id: string } }) =>
+        onToolbarMenuItemClicked(event.nativeEvent.id)
+    : undefined;
+
   return (
     <StackHeaderConfigAndroidNativeComponent
       ref={ref}
@@ -74,7 +74,8 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
-      {...scrollFlagProps}>
+      {...scrollFlagProps}
+      onToolbarMenuItemClicked={nativeOnToolbarMenuItemClicked}>
       {/*
         Please note that the order of the subviews MUST match
         the order in native StackHeaderConfig.getConfigSubviewAt.
@@ -190,4 +191,49 @@ function resolveScrollFlags(
   };
 }
 
-export default StackHeaderConfig;
+function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
+  const ref =
+    useRef<ComponentRef<typeof StackHeaderConfigAndroidNativeComponent>>(null);
+
+  useImperativeHandle(forwardedRef, () => ({
+    android: {
+      setToolbarMenuItemOptions: (id, options) => {
+        if (!ref.current) {
+          console.warn(
+            '[RNScreens] Reference to native header config component has not been updated yet.',
+          );
+          return;
+        }
+
+        StackHeaderConfigAndroidNativeCommands.setToolbarMenuItemOptions(
+          ref.current,
+          id,
+          parseToolbarMenuItemOptionsToNativeProps(options),
+        );
+      },
+    },
+  }));
+
+  return ref;
+}
+
+// Doesn't support nested props.
+function parseToolbarMenuItemOptionsToNativeProps(
+  options: ToolbarMenuItemOptionsAndroid,
+): NativeToolbarMenuItemOptionsAndroid[] {
+  const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
+    Object.entries(options).map(([key, value]) => [
+      key,
+      // We need to replace explicit `undefined` with `null`
+      // so that we're able to read that information on the native side.
+      value === undefined ? null : value,
+    ]),
+  );
+
+  // For some reason Codegen requires passing an array (we can't use plain object).
+  return [nativeOptions];
+}
+
+export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
+  StackHeaderConfig,
+);
