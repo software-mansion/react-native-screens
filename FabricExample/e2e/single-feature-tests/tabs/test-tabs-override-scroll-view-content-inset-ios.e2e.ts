@@ -69,7 +69,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(false);
     });
 
-    it('should hide the information text behind the inset ', async () => {
+    it('should render the information text clipped behind the status bar ', async () => {
       await expect(
         element(by.id('override-inset-false-scrollview')),
       ).toBeVisible();
