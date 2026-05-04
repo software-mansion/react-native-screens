@@ -158,7 +158,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await forceTapByLabeliOS('override-inset-tab-default');
     });
 
-    it('should show the information text visible (not hidden behind inset)', async () => {
+    it('should show the information text visible between True and Default tabs', async () => {
       await element(by.label('override-inset-tab-true')).tap();
       await expect(
         element(by.id('override-inset-true-scrollview')),
@@ -194,7 +194,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       ).toBeVisible();
     });
 
-    it('should show the information text visible (not hidden behind inset)', async () => {
+    it('should render the information text correctly between False and True tabs', async () => {
       await element(by.label('override-inset-tab-false')).tap();
       await expect(
         element(by.id('override-inset-false-scrollview')),
