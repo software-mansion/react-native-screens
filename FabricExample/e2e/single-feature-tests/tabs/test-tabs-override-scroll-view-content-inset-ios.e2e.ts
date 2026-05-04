@@ -83,7 +83,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('True tab (overrideScrollViewContentInsetAdjustmentBehavior: true)', () => {
     beforeAll(async () => {
-      await element(by.label('override-inset-tab-true')).tap();
+      await forceTapByLabeliOS('override-inset-tab-true');
     });
 
     it('should display the true tab scrollview with the tab bar visible', async () => {
