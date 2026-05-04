@@ -25,7 +25,7 @@ function ShortViewUL() {
         styles.shortView,
         { alignItems: 'flex-start', justifyContent: 'flex-start' },
       ]}>
-      <Text style={styles.shortViewText}>Upper Left</Text>
+      <Text testID="accessory-upper-left" style={styles.shortViewText}>Upper Left</Text>
     </View>
   );
 }
@@ -37,7 +37,7 @@ function ShortViewC() {
         styles.shortView,
         { alignItems: 'center', justifyContent: 'center' },
       ]}>
-      <Text style={styles.shortViewText}>Center</Text>
+      <Text testID="accessory-center" style={styles.shortViewText}>Center</Text>
     </View>
   );
 }
@@ -49,7 +49,7 @@ function ShortViewLR() {
         styles.shortView,
         { alignItems: 'flex-end', justifyContent: 'flex-end' },
       ]}>
-      <Text style={styles.shortViewText}>Lower Right</Text>
+      <Text testID="accessory-lower-right" style={styles.shortViewText}>Lower Right</Text>
     </View>
   );
 }
@@ -80,6 +80,14 @@ const ACCESSORY_VARIANTS = [
   { id: 4, content: RGBView },
 ];
 
+const VARIANT_TEST_IDS = [
+  'variant-upper-left',
+  'variant-center',
+  'variant-lower-right',
+  'variant-long',
+  'variant-rgb',
+];
+
 function ConfigScreen() {
   const [selected, setSelected] = useState(0);
   const { updateHostConfig } = useTabsHostConfig();
@@ -91,10 +99,12 @@ function ConfigScreen() {
   }, [selected, updateHostConfig]);
 
   return (
-    <ScrollView style={styles.container}>
-      {ACCESSORY_VARIANTS.map(item => (
+    <ScrollView testID="config-scrollview" style={styles.container}>
+      {ACCESSORY_VARIANTS.map((item, index) => (
         <Pressable
           key={item.id}
+          testID={VARIANT_TEST_IDS[index]}
+          accessibilityState={{ selected: selected === item.id }}
           onPress={() => setSelected(item.id)}
           style={[
             styles.card,
@@ -117,10 +127,17 @@ function ScrollDownTab() {
   }, [isSelected, updateHostConfig]);
 
   return (
-    <ScrollView style={{ flex: 1 }} contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      testID="scroll-down-scrollview"
+      style={{ flex: 1 }}
+      contentInsetAdjustmentBehavior="automatic">
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
-          <Text style={styles.scrollItemText}>Row {i + 1}</Text>
+          <Text
+            testID={i === 0 ? 'scroll-down-item-1' : undefined}
+            style={styles.scrollItemText}>
+            Row {i + 1}
+          </Text>
         </View>
       ))}
     </ScrollView>
@@ -137,10 +154,17 @@ function ScrollUpTab() {
   }, [isSelected, updateHostConfig]);
 
   return (
-    <ScrollView style={{ flex: 1 }} contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      testID="scroll-up-scrollview"
+      style={{ flex: 1 }}
+      contentInsetAdjustmentBehavior="automatic">
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
-          <Text style={styles.scrollItemText}>Row {i + 1}</Text>
+          <Text
+            testID={i === 0 ? 'scroll-up-item-1' : undefined}
+            style={styles.scrollItemText}>
+            Row {i + 1}
+          </Text>
         </View>
       ))}
     </ScrollView>
@@ -151,17 +175,32 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Config',
     Component: ConfigScreen,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Config' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Config',
+      tabBarItemTestID: 'config-tab-item',
+      tabBarItemAccessibilityLabel: 'config-tab-item-label',
+    },
   },
   {
     name: 'ScrollDown',
     Component: ScrollDownTab,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'ScrollDown' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'ScrollDown',
+      tabBarItemTestID: 'scroll-down-tab-item',
+      tabBarItemAccessibilityLabel: 'scroll-down-tab-item-label',
+    },
   },
   {
     name: 'ScrollUp',
     Component: ScrollUpTab,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'ScrollUp' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'ScrollUp',
+      tabBarItemTestID: 'scroll-up-tab-item',
+      tabBarItemAccessibilityLabel: 'scroll-up-tab-item-label',
+    },
   },
 ];
 

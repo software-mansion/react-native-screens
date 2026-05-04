@@ -82,15 +82,15 @@ Other: ongoing research.
 
 ### Accessory persistence across tab switches
 
-8. With the **RGB** variant selected, tap the **ScrollDown** tab.
+8. With the **Center** variant selected, tap the **ScrollDown** tab.
 
 - [ ] Expected: The **ScrollDown** tab content (a 40-row list) is displayed.
-  The RGB accessory remains visible below the content and above tab bar.
+  The Center accessory remains visible below the content and above tab bar.
 
 9.  Tap the **Config** tab.
 
-- [ ] Expected: The **Config** tab is displayed. The RGB accessory is still
-  visible. The **RGB** card still has a blue border.
+- [ ] Expected: The **Config** tab is displayed. The Center accessory is still
+  visible. The **Center** card still has a blue border.
 
 ---
 
@@ -98,7 +98,7 @@ Other: ongoing research.
 
 10. Tap the **ScrollDown** tab.
 
-- [ ] Expected: The tab bar is fully visible. The RGB accessory is visible in
+- [ ] Expected: The tab bar is fully visible. The Center accessory is visible in
 its `regular` position above the tab bar.
 
 11.  Scroll the list **down** on the **ScrollDown** tab.
