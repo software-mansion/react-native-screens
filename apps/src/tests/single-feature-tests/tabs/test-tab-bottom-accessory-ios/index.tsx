@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import LongText from '@apps/shared/LongText';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
+  useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
-import { createScenario } from '@apps/tests/shared/helpers';
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Bottom Accessory (iOS)',
-  key: 'test-tab-bottom-accessory-ios',
-  details:
-    'Test bottomAccessory factory rendering for regular and inline environments on iOS 26+.',
+  name: 'Bottom Accessory',
+  key: 'bottom-accessory-layout-ios',
+  details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
 };
 
 function ShortViewUL() {
   return (
-    <View style={[styles.shortView, { alignItems: 'flex-start', justifyContent: 'flex-start' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'flex-start', justifyContent: 'flex-start' },
+      ]}>
       <Text style={styles.shortViewText}>Upper Left</Text>
     </View>
   );
@@ -28,7 +32,11 @@ function ShortViewUL() {
 
 function ShortViewC() {
   return (
-    <View style={[styles.shortView, { alignItems: 'center', justifyContent: 'center' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'center', justifyContent: 'center' },
+      ]}>
       <Text style={styles.shortViewText}>Center</Text>
     </View>
   );
@@ -36,7 +44,11 @@ function ShortViewC() {
 
 function ShortViewLR() {
   return (
-    <View style={[styles.shortView, { alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'flex-end', justifyContent: 'flex-end' },
+      ]}>
       <Text style={styles.shortViewText}>Lower Right</Text>
     </View>
   );
@@ -60,60 +72,75 @@ function RGBView() {
   );
 }
 
-const ACCESSORY_VARIANTS: { id: number; Content: React.ComponentType }[] = [
-  { id: 0, Content: ShortViewUL },
-  { id: 1, Content: ShortViewC },
-  { id: 2, Content: ShortViewLR },
-  { id: 3, Content: LongView },
-  { id: 4, Content: RGBView },
+const ACCESSORY_VARIANTS = [
+  { id: 0, content: ShortViewUL },
+  { id: 1, content: ShortViewC },
+  { id: 2, content: ShortViewLR },
+  { id: 3, content: LongView },
+  { id: 4, content: RGBView },
 ];
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const [selected, setSelected] = useState(0);
   const { updateHostConfig } = useTabsHostConfig();
 
   useEffect(() => {
-    const { Content } = ACCESSORY_VARIANTS[selected];
     updateHostConfig({
-      ios: { bottomAccessory: () => <Content /> },
+      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
     });
   }, [selected, updateHostConfig]);
 
   return (
-    <ScrollView style={styles.container} contentInsetAdjustmentBehavior="automatic">
-      <Text style={styles.sectionHeader}>Bottom Accessory Content</Text>
-      {ACCESSORY_VARIANTS.map(({ id, Content }) => (
+    <ScrollView style={styles.container}>
+      {ACCESSORY_VARIANTS.map(item => (
         <Pressable
-          key={id}
-          onPress={() => setSelected(id)}
+          key={item.id}
+          onPress={() => setSelected(item.id)}
           style={[
             styles.card,
-            selected === id ? styles.selectedCard : styles.unselectedCard,
+            selected === item.id ? styles.selectedCard : styles.unselectedCard,
           ]}>
-          <Content />
+          {item.content}
         </Pressable>
       ))}
     </ScrollView>
   );
 }
 
-export function ScrollTab() {
+function ScrollDownTab() {
   const { updateHostConfig } = useTabsHostConfig();
+  const { isSelected } = useTabsNavigationContext();
 
   useEffect(() => {
+    if (!isSelected) return;
     updateHostConfig({ ios: { tabBarMinimizeBehavior: 'onScrollDown' } });
-  }, [updateHostConfig]);
+  }, [isSelected, updateHostConfig]);
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentInsetAdjustmentBehavior="automatic"
-      testID="scroll-tab">
+    <ScrollView style={{ flex: 1 }} contentInsetAdjustmentBehavior="automatic">
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
-          <Text style={styles.scrollItemText}>
-            Row {i + 1} — scroll to trigger inline environment
-          </Text>
+          <Text style={styles.scrollItemText}>Row {i + 1}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+function ScrollUpTab() {
+  const { updateHostConfig } = useTabsHostConfig();
+  const { isSelected } = useTabsNavigationContext();
+
+  useEffect(() => {
+    if (!isSelected) return;
+    updateHostConfig({ ios: { tabBarMinimizeBehavior: 'onScrollUp' } });
+  }, [isSelected, updateHostConfig]);
+
+  return (
+    <ScrollView style={{ flex: 1 }} contentInsetAdjustmentBehavior="automatic">
+      {Array.from({ length: 40 }, (_, i) => (
+        <View key={i} style={styles.scrollItem}>
+          <Text style={styles.scrollItemText}>Row {i + 1}</Text>
         </View>
       ))}
     </ScrollView>
@@ -127,9 +154,14 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Config' },
   },
   {
-    name: 'Scroll',
-    Component: ScrollTab,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Scroll' },
+    name: 'ScrollDown',
+    Component: ScrollDownTab,
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'ScrollDown' },
+  },
+  {
+    name: 'ScrollUp',
+    Component: ScrollUpTab,
+    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'ScrollUp' },
   },
 ];
 
@@ -138,40 +170,6 @@ export function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  sectionHeader: {
-    fontSize: 13,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    color: '#888',
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  card: {
-    height: 60,
-    marginTop: 12,
-    borderRadius: 8,
-    borderWidth: 2,
-    overflow: 'hidden',
-  },
-  selectedCard: {
-    borderColor: '#007AFF',
-  },
-  unselectedCard: {
-    borderColor: '#ddd',
-  },
-  scrollItem: {
-    padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
-  },
-  scrollItemText: {
-    fontSize: 14,
-    color: '#333',
-  },
   shortView: {
     flex: 1,
   },
@@ -183,8 +181,36 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  container: {
+    flex: 1,
+    height: '100%',
+    padding: 20,
+  },
+  card: {
+    flex: 1,
+    height: 60,
+    marginTop: 20,
+    borderRadius: 8,
+    borderWidth: 2,
+    overflow: 'hidden',
+  },
+  selectedCard: {
+    borderColor: '#007AFF',
+  },
+  unselectedCard: {
+    borderColor: '#ddd',
+  },
   rgbStrip: {
     flex: 1,
+  },
+  scrollItem: {
+    padding: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#e0e0e0',
+  },
+  scrollItemText: {
+    fontSize: 14,
+    color: '#333',
   },
 });
 
