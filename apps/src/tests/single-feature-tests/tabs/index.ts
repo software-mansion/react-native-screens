@@ -1,6 +1,6 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
-import TestTabBottomAccessory from './test-tab-bottom-accessory-ios';
+import TestTabBottomAccessory from './test-tabs-bottom-accessory-ios';
 import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
