@@ -7,13 +7,6 @@ import {
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
-async function getElementAttributes(
-  testLabel: string,
-): Promise<IosElementAttributes> {
-  const attrs = await element(by.label(testLabel)).getAttributes();
-  return attrs as IosElementAttributes;
-}
-
 async function getTabBarFrame(): Promise<{
   x: number;
   y: number;
