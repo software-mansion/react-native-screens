@@ -89,9 +89,9 @@ class TabsContainer internal constructor(
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
-    private var pendingOperation: TabsContainerOp? = null
-    internal val hasPendingOperation
-        get() = pendingOperation != null
+    private var pendingStateUpdateRequest: TabsNavigationStateUpdateRequest? = null
+    private val requirePendingStateUpdateRequest: TabsNavigationStateUpdateRequest
+        get() = checkNotNull(pendingStateUpdateRequest) { "[RNScreens] Attempt to require nullish pendingStateUpdateRequest" }
 
     /**
      * Denotes whether container is currently performing update triggered by the `pendingOperation`.
@@ -174,9 +174,14 @@ class TabsContainer internal constructor(
      * Queue a navigation state update. Apply via [flushPendingUpdates] or rely on the
      * host's next render cycle to apply automatically.
      */
-    fun setPendingNavigationStateUpdate(request: TabsNavigationStateUpdateRequest) {
-        pendingOperation = TabSelectOp(request)
-        invalidationFlags.isSelectedTabInvalidated = true
+    fun submitSelectionOfTabsScreenWithKey(screenKey: String) {
+        setPendingNavigationStateUpdate(
+            TabsNavigationStateUpdateRequest(
+                screenKey,
+                navigationState.provenance,
+                TabsActionOrigin.PROGRAMMATIC_NATIVE,
+            ),
+        )
     }
 
     /**
@@ -196,6 +201,15 @@ class TabsContainer internal constructor(
     // endregion
 
     // region Host-internal API
+
+    /**
+     * Queue a navigation state update. Apply via [flushPendingUpdates] or rely on the
+     * host's next render cycle to apply automatically.
+     */
+    internal fun setPendingNavigationStateUpdate(request: TabsNavigationStateUpdateRequest?) {
+        pendingStateUpdateRequest = request
+        invalidationFlags.isSelectedTabInvalidated = request != null
+    }
 
     internal fun addTabsScreenAt(
         index: Int,
@@ -238,8 +252,7 @@ class TabsContainer internal constructor(
      */
     internal fun tearDown() {
         observerRegistry.clear()
-        pendingOperation = null
-        invalidationFlags.isSelectedTabInvalidated = false
+        setPendingNavigationStateUpdate(null)
     }
 
     // endregion
@@ -397,27 +410,25 @@ class TabsContainer internal constructor(
     }
 
     private fun performOperation() {
-        if (pendingOperation == null) {
+        if (pendingStateUpdateRequest == null) {
             RNSLog.w(TAG, "TabsContainer::performOperation called w/o pending operation; skipping update")
             return
         }
 
-        check(hasPendingOperation) { "[RNScreens] Attempt to update container with empty state and no pending update" }
-        check(pendingOperation is TabSelectOp)
-        val tabSelectOp = pendingOperation as TabSelectOp
+        val stateUpdateRequest = requirePendingStateUpdateRequest
 
         val nextSelectedMenuItemId =
-            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(tabSelectOp.request.selectedScreenKey))) {
-                "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.request.selectedScreenKey}"
+            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(stateUpdateRequest.selectedScreenKey))) {
+                "[RNScreens] Failed to find Menu Item for screenKey: ${stateUpdateRequest.selectedScreenKey}"
             }
 
-        if (rejectStaleNavigationStateUpdates && isNavigationStateStale(tabSelectOp.request)) {
+        if (rejectStaleNavigationStateUpdates && isNavigationStateStale(stateUpdateRequest)) {
             observerRegistry.emitOnNavigationStateUpdateRejected(
                 navState,
-                tabSelectOp.request,
+                stateUpdateRequest,
                 TabsNavigationStateRejectionReason.STALE,
             )
-            pendingOperation = null
+            pendingStateUpdateRequest = null
             return
         }
 
@@ -429,12 +440,12 @@ class TabsContainer internal constructor(
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
                 navState,
-                tabSelectOp.request,
+                stateUpdateRequest,
                 TabsNavigationStateRejectionReason.REPEATED,
             )
         }
 
-        pendingOperation = null
+        pendingStateUpdateRequest = null
     }
 
     private fun updateNavigationMenuStructure() {
@@ -464,7 +475,7 @@ class TabsContainer internal constructor(
 
     private fun updateSelectedFragment(nextSelectedFragment: TabsScreenFragment): Boolean {
         if (navState.isEmpty()) {
-            check(isInExternalOperationContext && hasPendingOperation)
+            check(isInExternalOperationContext && pendingStateUpdateRequest != null)
             navState = TabsNavigationState(nextSelectedFragment.requireScreenKey, 0)
             requireFragmentManager
                 .createTransactionWithReordering()
@@ -527,10 +538,9 @@ class TabsContainer internal constructor(
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
                 actionOrigin =
                     if (isInExternalOperationContext) {
-                        check(pendingOperation != null && pendingOperation is TabSelectOp) {
-                            "[RNScreens] Unexpected pending operation $pendingOperation while in external operation context"
-                        }
-                        (pendingOperation as TabSelectOp).request.actionOrigin
+                        checkNotNull(pendingStateUpdateRequest) {
+                            "[RNScreens] Unexpected pending operation $pendingStateUpdateRequest while in external operation context"
+                        }.actionOrigin
                     } else {
                         TabsActionOrigin.USER
                     },

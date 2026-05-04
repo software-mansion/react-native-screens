@@ -111,6 +111,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #pragma mark - Public API
 
+- (void)submitSelectionOfTabsScreenWithKey:(nonnull NSString *)screenKey
+{
+  int baseProvenance = _navigationState != nil ? _navigationState.provenance : 0;
+  RNSTabsNavigationStateUpdateRequest *request =
+      [RNSTabsNavigationStateUpdateRequest requestWithSelectedScreenKey:screenKey
+                                                         baseProvenance:baseProvenance
+                                                           actionOrigin:RNSTabsActionOriginProgrammaticNative];
+  [self setPendingNavigationStateUpdate:request];
+}
+
 - (void)flushPendingUpdates
 {
   [self performContainerUpdate];

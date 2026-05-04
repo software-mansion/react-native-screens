@@ -39,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Methods and properties under `#pragma mark - Public API` below are the only contract
  * third-party native consumers should rely on:
  *   - read the current navigation state via `navigationState`,
- *   - request a tab change via `setPendingNavigationStateUpdate:`,
+ *   - request a tab change via `submitSelectionOfTabsScreenWithKey:` (transition is recorded with
+ *     `RNSTabsActionOriginProgrammaticNative`),
  *   - apply pending updates via `flushPendingUpdates`,
  *   - observe results via `addNavigationStateObserver:` / `removeNavigationStateObserver:`
  *     (see `RNSTabsNavigationStateObserver` in `RNSTabsNavigationState.h`).
@@ -69,15 +70,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong, nullable) RNSTabsNavigationState *navigationState;
 
 /**
- * Request navigation state update from the controller to the given one.
- *
- * Pass nil to clear any queued update.
+ * Request a tab change. The transition is recorded with `RNSTabsActionOriginProgrammaticNative`,
+ * and is built against the current `navigationState.provenance` so it is never treated as stale.
  *
  * The update is applied on the next `RNSReactTransactionObserving` callback, or call
  * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
  * sequence you must flush the container after each one separately.
  */
-- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate;
+- (void)submitSelectionOfTabsScreenWithKey:(nonnull NSString *)screenKey;
 
 /**
  * Apply any pending invalidations and state updates in a single coordinated pass.
@@ -146,6 +146,21 @@ NS_ASSUME_NONNULL_BEGIN
  * manually.
  */
 - (void)childViewControllersHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
+
+/**
+ * Request navigation state update from the controller to the given one.
+ *
+ * Pass nil to clear any queued update.
+ *
+ * The update is applied on the next `RNSReactTransactionObserving` callback, or call
+ * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
+ * sequence you must flush the container after each one separately.
+ *
+ * Host-only: third-party native consumers should use `submitSelectionOfTabsScreenWithKey:` instead, which
+ * forces `RNSTabsActionOriginProgrammaticNative`. This method allows the host to dispatch any
+ * origin (e.g. `RNSTabsActionOriginProgrammaticJs` for JS-driven `navStateRequest` updates).
+ */
+- (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate;
 
 /**
  * Idempotent teardown. Releases observer references and any retained host references.
