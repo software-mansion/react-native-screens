@@ -4,6 +4,7 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
+  getElementAttributes,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
@@ -22,7 +23,7 @@ async function getElementFrame(label: string): Promise<{
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.label(label)).getAttributes();
+  const attrs = await getElementAttributes(label);
   return (attrs as IosElementAttributes).frame;
 }
 
@@ -30,7 +31,7 @@ function isAboveTabBar(
   itemFrame: { y: number; height: number },
   tabBarFrame: { y: number },
 ): boolean {
-  return itemFrame.y + itemFrame.height < tabBarFrame.y;
+  return itemFrame.y + itemFrame.height <= tabBarFrame.y;
 }
 
 async function scrollToMaxBottom(scrollViewId: string) {
