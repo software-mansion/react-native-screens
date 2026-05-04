@@ -13,7 +13,7 @@ import {
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Bottom Accessory',
-  key: 'bottom-accessory-layout-ios',
+  key: 'test-tabs-bottom-accessory-layout-ios',
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
 };
