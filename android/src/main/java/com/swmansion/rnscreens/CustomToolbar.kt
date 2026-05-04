@@ -7,6 +7,7 @@ import android.view.Choreographer
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
@@ -125,7 +126,20 @@ open class CustomToolbar(
         val topInset = getDecorViewTopInset(decorView)
 
         if (topInset > 0) {
-            applyExactPadding(paddingLeft, topInset, paddingRight, paddingBottom)
+            // In legacy (non edge-to-edge) mode, the system already positions the toolbar
+            // below the status bar, so applying paddingTop would cause double offset.
+            // We detect this by comparing toolbar's position on screen with the status bar inset:
+            // in edge-to-edge the toolbar starts at y=0, in legacy it starts at y=statusBarInset.
+            val insetsCompat = ViewCompat.getRootWindowInsets(decorView)
+            val statusBarInset = insetsCompat?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            val locationOnScreen = IntArray(2)
+            getLocationOnScreen(locationOnScreen)
+            val toolbarTopOnScreen = locationOnScreen[1]
+            val isEdgeToEdge = toolbarTopOnScreen < statusBarInset
+
+            if (isEdgeToEdge) {
+                applyExactPadding(paddingLeft, topInset, paddingRight, paddingBottom)
+            }
         }
     }
 
