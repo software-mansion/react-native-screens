@@ -441,7 +441,7 @@ export interface ScreenProps extends ViewProps {
   sheetExpandsWhenScrolledToEdge?: boolean | undefined;
   /**
    * The corner radius that the sheet will try to render with.
-   * Works only when `stackPresentation` is set to `formSheet`.
+   * Works when `stackPresentation` is set to `formSheet`, `modal`, or `pageSheet`.
    *
    * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
