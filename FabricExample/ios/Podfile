@@ -12,7 +12,9 @@ platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
 # Use prebuilt binaries in CI, source in local development
-ENV['RCT_USE_PREBUILT_RNCORE'] = ENV['RCT_USE_RN_DEP'] = ENV['CI'] ? '1' : '0'
+ci_enabled = %w[1 true].include?(ENV['CI'].to_s.downcase)
+ENV['RCT_USE_PREBUILT_RNCORE'] ||= ci_enabled ? '1' : '0'
+ENV['RCT_USE_RN_DEP'] ||= ci_enabled ? '1' : '0'
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
