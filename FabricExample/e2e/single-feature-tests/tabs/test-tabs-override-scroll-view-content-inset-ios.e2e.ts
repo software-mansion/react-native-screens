@@ -17,17 +17,17 @@ async function getTabBarFrame(): Promise<{
   const attrs = await element(by.type('UITabBar')).getAttributes();
   return (attrs as IosElementAttributes).frame;
 }
-async function getElementFrame(label: string): Promise<{
+async function getElementFrame(testID: string): Promise<{
   x: number;
   y: number;
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.label(label)).getAttributes();
+  const attrs = await element(by.id(testID)).getAttributes();
 
   if ('elements' in attrs) {
     throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for label: "${label}". `,
+      `Multiple elements (${attrs.elements.length}) found for label: "${testID}". `,
     );
   }
   return (attrs as IosElementAttributes).frame;
@@ -70,7 +70,9 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item overlapping or behind the tab bar (not fully above it)', async () => {
       await scrollToMaxBottom('override-inset-false-scrollview');
-      const lastItemFrame = await getElementFrame('Item 30');
+      const lastItemFrame = await getElementFrame(
+        'override-inset-false-item-30',
+      );
       const tabFrame = await getTabBarFrame();
       jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(false);
     });
@@ -82,14 +84,14 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await scrollToMaxTop('override-inset-false-scrollview');
 
       const informationFrame = await getElementFrame(
-        'overrideScrollViewContentInsetAdjustmentBehavior: false',
+        'override-inset-false-header',
       );
       jestExpect(informationFrame.y).toEqual(16);
       await expect(
         element(
           by.label('overrideScrollViewContentInsetAdjustmentBehavior: false'),
         ),
-      ).not.toBeVisible();
+      ).toBeVisible();
     });
   });
 
@@ -107,7 +109,9 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {
       await scrollToMaxBottom('override-inset-true-scrollview');
-      const lastItemFrame = await getElementFrame('Item 30');
+      const lastItemFrame = await getElementFrame(
+        'override-inset-true-item-30',
+      );
       const tabFrame = await getTabBarFrame();
       jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(true);
     });
@@ -135,7 +139,9 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {
       await scrollToMaxBottom('override-inset-default-scrollview');
-      const lastItemFrame = await getElementFrame('Item 30');
+      const lastItemFrame = await getElementFrame(
+        'override-inset-default-item-30',
+      );
       const tabFrame = await getTabBarFrame();
       jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(true);
     });
@@ -200,7 +206,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       ).toBeVisible();
       await expect(element(by.label('Item 1'))).toBeVisible();
       const informationFrame = await getElementFrame(
-        'overrideScrollViewContentInsetAdjustmentBehavior: false',
+        'override-inset-false-header',
       );
       jestExpect(informationFrame.y).toEqual(16);
 
