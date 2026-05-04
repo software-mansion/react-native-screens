@@ -3,9 +3,9 @@ package com.swmansion.rnscreens.gamma.tabs.host
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
@@ -42,9 +42,9 @@ internal class TabsHostEventEmitter(
      * Carries both the active state and the rejected update so that JS can reconcile.
      */
     fun emitOnTabSelectionRejectedEvent(
-        currentNavState: TabsNavState,
-        rejectedRequest: TabsNavStateUpdateRequest,
-        rejectionReason: TabsNavStateUpdateRejectionReason,
+        currentNavState: TabsNavigationState,
+        rejectedRequest: TabsNavigationStateUpdateRequest,
+        rejectionReason: TabsNavigationStateRejectionReason,
     ) {
         reactEventDispatcher.dispatchEvent(
             TabsHostTabSelectionRejectedEvent(
@@ -62,7 +62,7 @@ internal class TabsHostEventEmitter(
      * because the target screen has `preventNativeSelection` enabled.
      */
     fun emitOnTabSelectionPreventedEvent(
-        currentNavState: TabsNavState,
+        currentNavState: TabsNavigationState,
         preventedScreenKey: String,
     ) {
         reactEventDispatcher.dispatchEvent(

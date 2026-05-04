@@ -7,6 +7,7 @@
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSTabsHostComponentView.h"
+#import "RNSTabsNavigationStateObserverRegistry.h"
 
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -80,6 +81,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
+  RNSTabsNavigationStateObserverRegistry *_observerRegistry;
+
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -94,6 +97,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
+    _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
 
     // Delegate field retains weakly, no risk of cycle.
     self.delegate = self;
@@ -103,6 +107,30 @@ static void rns_pushViewController(__unsafe_unretained id self,
 #endif // !RCT_NEW_ARCH_ENABLED
   }
   return self;
+}
+
+#pragma mark - Public API
+
+- (void)flushPendingUpdates
+{
+  [self performContainerUpdate];
+}
+
+- (BOOL)addNavigationStateObserver:(id<RNSTabsNavigationStateObserver>)observer
+{
+  return [_observerRegistry addObserver:observer];
+}
+
+- (BOOL)removeNavigationStateObserver:(id<RNSTabsNavigationStateObserver>)observer
+{
+  return [_observerRegistry removeObserver:observer];
+}
+
+- (void)tearDown
+{
+  [_observerRegistry clear];
+  _pendingStateUpdate = nil;
+  _tabsHostComponentView = nil;
 }
 
 - (instancetype)initWithTabsHostComponentView:(nullable RNSTabsHostComponentView *)tabsHostComponentView
@@ -277,7 +305,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                          isRepeated:YES
                                           hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
                                                        actionOrigin:RNSTabsActionOriginUser];
-  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
 }
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
@@ -292,20 +320,20 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
     // We don't want to progress state in case a user selected the more navigation controller.
     // Instead, we emit a dedicated event so JS knows the More tab was tapped.
-    [self.tabsHostComponentView tabBarController:self didSelectMoreTabWithCurrentState:_navigationState];
+    [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
   } else {
     [self updateNavigationStateOnModelUpdate];
     auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                              isRepeated:NO
                                                               hasTriggeredSpecialEffect:NO
                                                                            actionOrigin:RNSTabsActionOriginUser];
-    [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:updateContext];
+    [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
   }
 }
 
 - (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
 {
-  [self.tabsHostComponentView tabBarController:self preventedSelectionOf:screenKey currentState:_navigationState];
+  [_observerRegistry emitPreventedSelectionOf:screenKey currentState:_navigationState sender:self];
 }
 
 - (BOOL)shouldPreventNativeTabSelection:(nonnull UIViewController *)nextViewController
@@ -473,20 +501,20 @@ static void rns_pushViewController(__unsafe_unretained id self,
             nextSelectedViewController.class);
 
   if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingStateUpdate]) {
-    [self.tabsHostComponentView tabBarController:self
-                             rejectedStateUpdate:_pendingStateUpdate
-                                    currentState:_navigationState
-                                      withReason:RNSTabsNavigationStateRejectionReasonStale];
+    [_observerRegistry emitRejectedStateUpdate:_pendingStateUpdate
+                                  currentState:_navigationState
+                                    withReason:RNSTabsNavigationStateRejectionReasonStale
+                                        sender:self];
     return;
   }
 
   if (currSelectedViewController == nextSelectedViewController && _navigationState != nil) {
     // Nothing to do, we don't allow for programmatic repeat selection, unless
     // we're during first render.
-    [self.tabsHostComponentView tabBarController:self
-                             rejectedStateUpdate:_pendingStateUpdate
-                                    currentState:_navigationState
-                                      withReason:RNSTabsNavigationStateRejectionReasonRepeated];
+    [_observerRegistry emitRejectedStateUpdate:_pendingStateUpdate
+                                  currentState:_navigationState
+                                    withReason:RNSTabsNavigationStateRejectionReasonRepeated
+                                        sender:self];
     return;
   }
 
@@ -512,7 +540,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                            isRepeated:NO
                                             hasTriggeredSpecialEffect:NO
                                                          actionOrigin:_pendingStateUpdate.actionOrigin];
-    [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
+    [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:context sender:self];
   }
 }
 
@@ -660,7 +688,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                                      isRepeated:NO
                                                       hasTriggeredSpecialEffect:NO
                                                                    actionOrigin:RNSTabsActionOriginImplicit];
-  [self.tabsHostComponentView tabBarController:self didUpdateStateTo:_navigationState withContext:context];
+  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:context sender:self];
 }
 
 /**

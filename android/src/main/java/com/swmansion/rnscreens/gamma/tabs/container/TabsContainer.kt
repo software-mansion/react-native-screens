@@ -36,10 +36,17 @@ import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
+/**
+ * View that hosts the bottom navigation bar and the currently selected tab's content.
+ *
+ * Public API surface (the only contract third-party native consumers should rely on) is
+ * grouped under the `Public API` region below. Members in `Host-internal API` and other
+ * regions are implementation detail — the host (`TabsHost`) is the only intended caller
+ * and these can change without notice.
+ */
 @SuppressLint("ViewConstructor") // Created only by us. Should never be restored.
 class TabsContainer internal constructor(
     private val context: Context,
-    private val delegate: TabsContainerDelegate,
 ) : FrameLayout(context),
     ColorSchemeProviding,
     TabsScreenDelegate,
@@ -70,10 +77,11 @@ class TabsContainer internal constructor(
         }
     }
 
-    private var navState: TabsNavState = TabsNavState.EMPTY
-    private var lastUINavState: TabsNavState = TabsNavState.EMPTY
+    private var navState: TabsNavigationState = TabsNavigationState.EMPTY
+    private var lastUINavState: TabsNavigationState = TabsNavigationState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
-    internal var rejectOpsWithStaleNavState: Boolean = false
+
+    internal var rejectStaleNavigationStateUpdates: Boolean = false
 
     internal val selectedTab: TabsScreenFragment
         get() =
@@ -113,6 +121,8 @@ class TabsContainer internal constructor(
     private val specialEffectsHandler = SpecialEffectsHandler()
     private val colorSchemeCoordinator = ColorSchemeCoordinator()
 
+    private val observerRegistry = TabsNavigationStateObserverRegistry()
+
     internal var colorScheme: ColorScheme by colorSchemeCoordinator::colorScheme
     internal var tabBarRespectsIMEInsets: Boolean = false
 
@@ -138,9 +148,8 @@ class TabsContainer internal constructor(
             updateInterfaceInsets()
             invalidationFlags.isNavigationMenuAppearanceInvalidated = true
             post {
-                performContainerUpdateIfNeeded()
+                flushPendingUpdates()
             }
-//            updateNavigationMenuIfNeeded(oldValue, newValue)
         }
     }
 
@@ -152,12 +161,97 @@ class TabsContainer internal constructor(
         invalidationFlags.invalidateAll()
     }
 
+    // region Public API (third-party stable)
+
+    /**
+     * Current navigation state of the container.
+     * Returns [TabsNavigationState.EMPTY] before the first tab is selected.
+     */
+    val navigationState: TabsNavigationState
+        get() = navState
+
+    /**
+     * Queue a navigation state update. Apply via [flushPendingUpdates] or rely on the
+     * host's next render cycle to apply automatically.
+     */
+    fun setPendingNavigationStateUpdate(request: TabsNavigationStateUpdateRequest) {
+        pendingOperation = TabSelectOp(request)
+        invalidationFlags.isSelectedTabInvalidated = true
+    }
+
+    /**
+     * Apply any pending invalidations and state updates in a single coordinated pass.
+     * No-op when nothing is dirty or the view is detached.
+     */
+    fun flushPendingUpdates() {
+        if (invalidationFlags.any() && isAttachedToWindow) {
+            performContainerUpdate()
+        }
+    }
+
+    fun addNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean = observerRegistry.add(observer)
+
+    fun removeNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean = observerRegistry.remove(observer)
+
+    // endregion
+
+    // region Host-internal API
+
+    internal fun addTabsScreenAt(
+        index: Int,
+        tabsScreen: TabsScreen,
+    ) {
+        tabsModel.add(index, TabsScreenFragment(tabsScreen))
+        invalidationFlags.invalidateAll()
+    }
+
+    internal fun removeTabsScreenAt(index: Int): TabsScreen? =
+        tabsModel.removeAt(index).tabsScreen.also {
+            invalidationFlags.invalidateAll()
+        }
+
+    internal fun removeTabsScreen(tabsScreen: TabsScreen): Boolean =
+        tabsModel.removeIf { it.tabsScreen === tabsScreen }.also { isRemoved ->
+            if (isRemoved) invalidationFlags.invalidateAll()
+        }
+
+    internal fun removeAllTabsScreens() {
+        tabsModel.clear()
+        invalidationFlags.invalidateAll()
+    }
+
+    internal fun setupFragmentManager() {
+        fragmentManager =
+            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
+                "[RNScreens] Nullish fragment manager - can't run container operations"
+            }
+    }
+
+    internal fun teardownFragmentManager() {
+        fragmentManager = null
+    }
+
+    /**
+     * Idempotent teardown. Releases observer references and clears any pending operation.
+     * Called by the host on view recycle. Note: named `tearDown` (not `invalidate`) to avoid
+     * shadowing [android.view.View.invalidate].
+     */
+    internal fun tearDown() {
+        observerRegistry.clear()
+        pendingOperation = null
+        invalidationFlags.isSelectedTabInvalidated = false
+    }
+
+    // endregion
+
+    // region View lifecycle / insets / appearance
+
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "TabsContainer [$id] attached to window")
 
         super.onAttachedToWindow()
         setupFragmentManager()
-        performContainerUpdateIfNeeded()
+        flushPendingUpdates()
 
         colorSchemeCoordinator.setup(this) { uiNightMode ->
             applyDayNightUiMode(uiNightMode)
@@ -196,39 +290,93 @@ class TabsContainer internal constructor(
         return insets
     }
 
-    fun setPendingNavigationStateUpdate(request: TabsNavStateUpdateRequest) {
-        pendingOperation = TabSelectOp(request)
-        invalidationFlags.isSelectedTabInvalidated = true
-    }
-
-    internal fun addTabsScreenAt(
-        index: Int,
-        tabsScreen: TabsScreen,
+    override fun onLayoutChange(
+        view: View?,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+        oldLeft: Int,
+        oldTop: Int,
+        oldRight: Int,
+        oldBottom: Int,
     ) {
-        tabsModel.add(index, TabsScreenFragment(tabsScreen))
-        invalidationFlags.invalidateAll()
-    }
-
-    internal fun removeTabsScreenAt(index: Int): TabsScreen? =
-        tabsModel.removeAt(index).tabsScreen.also {
-            invalidationFlags.invalidateAll()
+        require(view is BottomNavigationView) {
+            "[RNScreens] TabsContainer's onLayoutChange expects BottomNavigationView, received $view instead"
         }
 
-    internal fun removeTabsScreen(tabsScreen: TabsScreen): Boolean =
-        tabsModel.removeIf { it.tabsScreen === tabsScreen }.also { isRemoved ->
-            if (isRemoved) invalidationFlags.invalidateAll()
-        }
+        val oldHeight = oldBottom - oldTop
+        val newHeight = bottom - top
 
-    internal fun removeAllTabsScreens() {
-        tabsModel.clear()
-        invalidationFlags.invalidateAll()
-    }
-
-    fun performContainerUpdateIfNeeded() {
-        if (invalidationFlags.any() && isAttachedToWindow) {
-            performContainerUpdate()
+        if (newHeight != oldHeight) {
+            updateInterfaceInsets(newHeight)
         }
     }
+
+    override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+        if (interfaceInsetsChangeListener == null) {
+            bottomNavigationView.addOnLayoutChangeListener(this)
+        }
+        interfaceInsetsChangeListener = listener
+    }
+
+    override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+        if (interfaceInsetsChangeListener == listener) {
+            interfaceInsetsChangeListener = null
+            bottomNavigationView.removeOnLayoutChangeListener(this)
+        }
+    }
+
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+
+    override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
+
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
+
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
+
+    // endregion
+
+    // region TabsScreenDelegate impl
+
+    override fun onAppearanceChanged(tabsScreen: TabsScreen) {
+        if (selectedTab.tabsScreen === tabsScreen) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                this.flushPendingUpdates()
+            }
+        }
+    }
+
+    override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
+        getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
+            val appearance = selectedTab.tabsScreen.appearance
+            appearanceCoordinator.updateMenuItemAppearance(
+                themedContext,
+                menuItem,
+                tabsScreen,
+                appearance,
+            )
+            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
+        }
+    }
+
+    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
+        tabsModel.find {
+            it.tabsScreen ===
+                tabsScreen
+        }
+
+    override fun onFragmentConfigurationChange(
+        tabsScreen: TabsScreen,
+        config: Configuration,
+    ) {
+        this.onConfigurationChanged(config)
+    }
+
+    // endregion
+
+    // region Private helpers
 
     private fun performContainerUpdate() {
         if (invalidationFlags.isNavigationMenuStructureInvalidated) {
@@ -263,11 +411,11 @@ class TabsContainer internal constructor(
                 "[RNScreens] Failed to find Menu Item for screenKey: ${tabSelectOp.request.selectedScreenKey}"
             }
 
-        if (rejectOpsWithStaleNavState && isNavStateStale(tabSelectOp.request)) {
-            delegate.onNavStateUpdateRejected(
+        if (rejectStaleNavigationStateUpdates && isNavigationStateStale(tabSelectOp.request)) {
+            observerRegistry.emitOnNavigationStateUpdateRejected(
                 navState,
                 tabSelectOp.request,
-                TabsNavStateUpdateRejectionReason.STALE,
+                TabsNavigationStateRejectionReason.STALE,
             )
             pendingOperation = null
             return
@@ -279,10 +427,10 @@ class TabsContainer internal constructor(
             bottomNavigationView.selectedItemId = nextSelectedMenuItemId
             isInExternalOperationContext = false
         } else {
-            delegate.onNavStateUpdateRejected(
+            observerRegistry.emitOnNavigationStateUpdateRejected(
                 navState,
                 tabSelectOp.request,
-                TabsNavStateUpdateRejectionReason.REPEATED,
+                TabsNavigationStateRejectionReason.REPEATED,
             )
         }
 
@@ -317,7 +465,7 @@ class TabsContainer internal constructor(
     private fun updateSelectedFragment(nextSelectedFragment: TabsScreenFragment): Boolean {
         if (navState.isEmpty()) {
             check(isInExternalOperationContext && hasPendingOperation)
-            navState = TabsNavState(nextSelectedFragment.requireScreenKey, 0)
+            navState = TabsNavigationState(nextSelectedFragment.requireScreenKey, 0)
             requireFragmentManager
                 .createTransactionWithReordering()
                 .add(contentView.id, nextSelectedFragment)
@@ -344,7 +492,7 @@ class TabsContainer internal constructor(
     }
 
     private fun progressNavigationState(selectedScreenKey: String) {
-        navState = TabsNavState(selectedScreenKey, navState.provenance + 1)
+        navState = TabsNavigationState(selectedScreenKey, navState.provenance + 1)
         if (!isInExternalOperationContext) {
             lastUINavState = navState
         }
@@ -363,7 +511,7 @@ class TabsContainer internal constructor(
 
         // If this is user action we test whether it should be prevented before we progress the state.
         if (!isRepeated && !isInExternalOperationContext && nextSelectedFragment.isPreventNativeSelectionEnabled) {
-            delegate.onNavStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
+            observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
             return false
         }
 
@@ -373,7 +521,7 @@ class TabsContainer internal constructor(
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
         if (stateChanged) {
-            delegate.onNavStateUpdate(
+            observerRegistry.emitOnNavigationStateUpdate(
                 navState,
                 isRepeated = isRepeated,
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
@@ -432,90 +580,12 @@ class TabsContainer internal constructor(
                 bottomNavigationView.menu.findItem(menuItemIdForFragmentAtIndex(index))
             }
 
-    override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
-
-    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
-
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
-
-    override fun onAppearanceChanged(tabsScreen: TabsScreen) {
-        if (selectedTab.tabsScreen === tabsScreen) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                this.performContainerUpdateIfNeeded()
-            }
-        }
-    }
-
-    override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
-        getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
-            val appearance = selectedTab.tabsScreen.appearance
-            appearanceCoordinator.updateMenuItemAppearance(
-                themedContext,
-                menuItem,
-                tabsScreen,
-                appearance,
-            )
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
-        }
-    }
-
-    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
-        tabsModel.find {
-            it.tabsScreen ===
-                tabsScreen
-        }
-
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
 
     private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
         checkNotNull(getFragmentForScreenKey(screenKey)) {
             "[RNScreens] Requested fragment for key: $screenKey does not exist"
         }
-
-    override fun onFragmentConfigurationChange(
-        tabsScreen: TabsScreen,
-        config: Configuration,
-    ) {
-        this.onConfigurationChanged(config)
-    }
-
-    override fun onLayoutChange(
-        view: View?,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-        oldLeft: Int,
-        oldTop: Int,
-        oldRight: Int,
-        oldBottom: Int,
-    ) {
-        require(view is BottomNavigationView) {
-            "[RNScreens] TabsContainer's onLayoutChange expects BottomNavigationView, received $view instead"
-        }
-
-        val oldHeight = oldBottom - oldTop
-        val newHeight = bottom - top
-
-        if (newHeight != oldHeight) {
-            updateInterfaceInsets(newHeight)
-        }
-    }
-
-    override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
-        if (interfaceInsetsChangeListener == null) {
-            bottomNavigationView.addOnLayoutChangeListener(this)
-        }
-        interfaceInsetsChangeListener = listener
-    }
-
-    override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
-        if (interfaceInsetsChangeListener == listener) {
-            interfaceInsetsChangeListener = null
-            bottomNavigationView.removeOnLayoutChangeListener(this)
-        }
-    }
 
     private fun updateInterfaceInsets(newHeight: Int? = null) {
         val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
@@ -524,8 +594,6 @@ class TabsContainer internal constructor(
             this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
         }
     }
-
-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
     private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
         if (tabBarRespectsIMEInsets) {
@@ -541,21 +609,12 @@ class TabsContainer internal constructor(
             .toWindowInsets()
     }
 
-    internal fun setupFragmentManager() {
-        fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
-    }
-
-    internal fun teardownFragmentManager() {
-        fragmentManager = null
-    }
-
-    private fun isNavStateStale(request: TabsNavStateUpdateRequest): Boolean {
+    private fun isNavigationStateStale(request: TabsNavigationStateUpdateRequest): Boolean {
         if (navState.isEmpty() || lastUINavState.isEmpty()) return false
         return request.baseProvenance < lastUINavState.provenance
     }
+
+    // endregion
 
     companion object {
         const val TAG = "TabsContainer"
