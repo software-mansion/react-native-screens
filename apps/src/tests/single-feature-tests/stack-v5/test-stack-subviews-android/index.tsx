@@ -27,7 +27,7 @@ import type {
 } from 'react-native-screens/experimental';
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Subviews',
+  name: 'Stack Subviews (android)',
   key: 'test-stack-subviews-android',
   details: 'Tests header config and subview customization.',
   platforms: ['android'],

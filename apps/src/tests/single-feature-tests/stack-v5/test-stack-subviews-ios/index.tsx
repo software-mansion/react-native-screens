@@ -20,7 +20,13 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
-import { ShiftTransition } from '../../../../../../react-navigation/packages/bottom-tabs/src/TransitionConfigs/TransitionPresets';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Stack Subviews (iOS)',
+  key: 'test-stack-subviews-ios',
+  details: 'Tests header config and subview customization.',
+  platforms: ['ios'],
+};
 
 const SHORT_TITLE = 'Title';
 const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
@@ -92,13 +98,6 @@ function ItemRedComponent() {
     />
   );
 }
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Subviews',
-  key: 'test-stack-subviews-ios',
-  details: 'Tests header config and subview customization.',
-  platforms: ['ios'],
-};
 
 interface Config {
   enabled: boolean;
