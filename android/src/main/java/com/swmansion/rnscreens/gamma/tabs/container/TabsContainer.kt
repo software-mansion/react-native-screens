@@ -90,8 +90,9 @@ class TabsContainer internal constructor(
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
     private var pendingStateUpdateRequest: TabsNavigationStateUpdateRequest? = null
-    private val requirePendingStateUpdateRequest: TabsNavigationStateUpdateRequest
-        get() = checkNotNull(pendingStateUpdateRequest) { "[RNScreens] Attempt to require nullish pendingStateUpdateRequest" }
+
+    private fun requirePendingStateUpdateRequest(): TabsNavigationStateUpdateRequest =
+        checkNotNull(pendingStateUpdateRequest) { "[RNScreens] Attempt to require nullish pendingStateUpdateRequest" }
 
     /**
      * Denotes whether container is currently performing update triggered by the `pendingOperation`.
@@ -415,7 +416,7 @@ class TabsContainer internal constructor(
             return
         }
 
-        val stateUpdateRequest = requirePendingStateUpdateRequest
+        val stateUpdateRequest = requirePendingStateUpdateRequest()
 
         val nextSelectedMenuItemId =
             checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(stateUpdateRequest.selectedScreenKey))) {

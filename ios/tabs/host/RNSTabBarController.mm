@@ -3,6 +3,7 @@
 #import <React/RCTLog.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <limits>
 #import "NSString+RNSUtility.h"
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
@@ -113,7 +114,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)submitSelectionOfTabsScreenWithKey:(nonnull NSString *)screenKey
 {
-  int baseProvenance = _navigationState != nil ? _navigationState.provenance : 0;
+  RCTAssert(screenKey != nil, @"[RNScreens] Requested screenKey MUST NOT be nil");
+  int baseProvenance = _navigationState != nil ? _navigationState.provenance : std::numeric_limits<int>::min();
   RNSTabsNavigationStateUpdateRequest *request =
       [RNSTabsNavigationStateUpdateRequest requestWithSelectedScreenKey:screenKey
                                                          baseProvenance:baseProvenance
