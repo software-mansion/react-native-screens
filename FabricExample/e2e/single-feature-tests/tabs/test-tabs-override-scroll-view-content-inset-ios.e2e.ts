@@ -108,7 +108,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await assertLastItemAboveTabBar('override-inset-false', false);
     });
 
-    it('should render the information text clipped behind the status bar ', async () => {
+    it('should render the information text clipped behind the status bar', async () => {
       await scrollToMaxTop('override-inset-false-scrollview');
       await assertHeaderBehindStatusBar('override-inset-false', true);
     });
