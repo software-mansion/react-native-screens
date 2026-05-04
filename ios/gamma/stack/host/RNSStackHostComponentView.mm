@@ -136,6 +136,14 @@ namespace react = facebook::react;
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
+        // Enable auto-layout to ensure valid size of stack controller view.
+        controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+        [NSLayoutConstraint activateConstraints:@[
+          [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+          [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+          [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+          [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+        ]];
         [controller didMoveToParentViewController:parentView.reactViewController];
         break;
       }

@@ -190,13 +190,14 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     return;
   }
 
+  _layoutMetrics = layoutMetrics;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (_placement == RNSHeaderItemPlacementLeft || _placement == RNSHeaderItemPlacementRight) {
       // On iOS 26, left/right bar button items use a centering wrapper with
       // Auto Layout. Bridge Yoga's size via intrinsicContentSize.
       BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
-      _layoutMetrics = layoutMetrics;
       if (sizeHasChanged) {
         [self invalidateIntrinsicContentSize];
       }
@@ -208,6 +209,11 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   self.bounds = CGRect{CGPointZero, frame.size};
 }
 RNS_IGNORE_SUPER_CALL_END
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+  return RCTCGSizeFromSize(_layoutMetrics.frame.size);
+}
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (CGSize)intrinsicContentSize
