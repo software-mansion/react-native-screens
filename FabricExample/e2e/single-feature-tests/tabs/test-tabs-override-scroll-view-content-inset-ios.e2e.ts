@@ -4,9 +4,24 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
-  getElementAttributes,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+
+async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
+  top: number;
+}> {
+  const attrs = (await element(
+    by.id(testID),
+  ).getAttributes()) as IosElementAttributes;
+  return { top: attrs.safeAreaInsets.top };
+}
+
+function isBelowStatusBar(
+  itemFrame: { y: number; height: number },
+  scrollViewSAVInsetTop: number,
+): boolean {
+  return itemFrame.y + itemFrame.height <= scrollViewSAVInsetTop;
+}
 
 async function getTabBarFrame(): Promise<{
   x: number;
@@ -17,6 +32,7 @@ async function getTabBarFrame(): Promise<{
   const attrs = await element(by.type('UITabBar')).getAttributes();
   return (attrs as IosElementAttributes).frame;
 }
+
 async function getElementFrame(testID: string): Promise<{
   x: number;
   y: number;
@@ -40,6 +56,25 @@ function isAboveTabBar(
   return itemFrame.y + itemFrame.height <= tabBarFrame.y;
 }
 
+async function assertLastItemAboveTabBar(tabPrefix: string, expected: boolean) {
+  const lastItemFrame = await getElementFrame(`${tabPrefix}-item-30`);
+  const tabFrame = await getTabBarFrame();
+  jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(expected);
+}
+
+async function assertHeaderBehindStatusBar(
+  tabPrefix: string,
+  expected: boolean,
+) {
+  const informationFrame = await getElementFrame(`${tabPrefix}-header`);
+  const scrollViewSAVInsetTop = await getScrollViewSafeAreaInsetsTop(
+    `${tabPrefix}-scrollview`,
+  );
+  jestExpect(
+    isBelowStatusBar(informationFrame, scrollViewSAVInsetTop.top),
+  ).toBe(expected);
+}
+
 async function scrollToMaxBottom(scrollViewId: string) {
   await element(by.id(scrollViewId)).scrollTo('bottom', NaN, 0.5);
 }
@@ -57,7 +92,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
   });
 
   describe('False tab (overrideScrollViewContentInsetAdjustmentBehavior: false)', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
       await forceTapByLabeliOS('override-inset-tab-false');
     });
 
@@ -70,28 +105,12 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item overlapping or behind the tab bar (not fully above it)', async () => {
       await scrollToMaxBottom('override-inset-false-scrollview');
-      const lastItemFrame = await getElementFrame(
-        'override-inset-false-item-30',
-      );
-      const tabFrame = await getTabBarFrame();
-      jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(false);
+      await assertLastItemAboveTabBar('override-inset-false', false);
     });
 
     it('should render the information text clipped behind the status bar ', async () => {
-      await expect(
-        element(by.id('override-inset-false-scrollview')),
-      ).toBeVisible();
       await scrollToMaxTop('override-inset-false-scrollview');
-
-      const informationFrame = await getElementFrame(
-        'override-inset-false-header',
-      );
-      jestExpect(informationFrame.y).toEqual(16);
-      await expect(
-        element(
-          by.label('overrideScrollViewContentInsetAdjustmentBehavior: false'),
-        ),
-      ).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-false', true);
     });
   });
 
@@ -109,25 +128,17 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {
       await scrollToMaxBottom('override-inset-true-scrollview');
-      const lastItemFrame = await getElementFrame(
-        'override-inset-true-item-30',
-      );
-      const tabFrame = await getTabBarFrame();
-      jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(true);
+      await assertLastItemAboveTabBar('override-inset-true', true);
     });
 
-    it('should show the header label visible (not hidden behind inset)', async () => {
+    it('should show the information text visible (not hidden behind inset)', async () => {
       await scrollToMaxTop('override-inset-true-scrollview');
-      await expect(
-        element(
-          by.label('overrideScrollViewContentInsetAdjustmentBehavior: true'),
-        ),
-      ).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-true', false);
     });
   });
   describe('Default tab (prop omitted)', () => {
     beforeAll(async () => {
-      await element(by.label('override-inset-tab-default')).tap();
+      await forceTapByLabeliOS('override-inset-tab-default');
     });
 
     it('should display the default tab scrollview with the tab bar visible', async () => {
@@ -139,22 +150,12 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {
       await scrollToMaxBottom('override-inset-default-scrollview');
-      const lastItemFrame = await getElementFrame(
-        'override-inset-default-item-30',
-      );
-      const tabFrame = await getTabBarFrame();
-      jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(true);
+      await assertLastItemAboveTabBar('override-inset-default', true);
     });
 
     it('should show the header label visible (not hidden behind inset)', async () => {
       await scrollToMaxTop('override-inset-default-scrollview');
-      await expect(
-        element(
-          by.label(
-            'overrideScrollViewContentInsetAdjustmentBehavior: (not set, defaults to true)',
-          ),
-        ),
-      ).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-default', false);
     });
   });
 
@@ -165,61 +166,27 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
     it('should show the information text visible between True and Default tabs', async () => {
       await element(by.label('override-inset-tab-true')).tap();
-      await expect(
-        element(by.id('override-inset-true-scrollview')),
-      ).toBeVisible();
-      await expect(element(by.label('Item 1'))).toBeVisible();
-      await expect(
-        element(
-          by.label('overrideScrollViewContentInsetAdjustmentBehavior: true'),
-        ),
-      ).toBeVisible();
+      await expect(element(by.id('override-inset-true-item-1'))).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-true', false);
 
       await element(by.label('override-inset-tab-default')).tap();
       await expect(
-        element(by.id('override-inset-default-scrollview')),
+        element(by.id('override-inset-default-item-1')),
       ).toBeVisible();
-      await expect(element(by.label('Item 1'))).toBeVisible();
-      await expect(
-        element(
-          by.label(
-            'overrideScrollViewContentInsetAdjustmentBehavior: (not set, defaults to true)',
-          ),
-        ),
-      ).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-default', false);
+
       await element(by.label('override-inset-tab-true')).tap();
-      await expect(
-        element(by.id('override-inset-true-scrollview')),
-      ).toBeVisible();
-      await expect(element(by.label('Item 1'))).toBeVisible();
-      await expect(
-        element(
-          by.label('overrideScrollViewContentInsetAdjustmentBehavior: true'),
-        ),
-      ).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-true', false);
     });
 
     it('should render the information text correctly between False and True tabs', async () => {
       await element(by.label('override-inset-tab-false')).tap();
-      await expect(
-        element(by.id('override-inset-false-scrollview')),
-      ).toBeVisible();
-      await expect(element(by.label('Item 1'))).toBeVisible();
-      const informationFrame = await getElementFrame(
-        'override-inset-false-header',
-      );
-      jestExpect(informationFrame.y).toEqual(16);
+      await expect(element(by.id('override-inset-false-item-1'))).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-false', true);
 
       await element(by.label('override-inset-tab-true')).tap();
-      await expect(
-        element(by.id('override-inset-true-scrollview')),
-      ).toBeVisible();
-      await expect(element(by.label('Item 1'))).toBeVisible();
-      await expect(
-        element(
-          by.label('overrideScrollViewContentInsetAdjustmentBehavior: true'),
-        ),
-      ).toBeVisible();
+      await expect(element(by.id('override-inset-true-item-1'))).toBeVisible();
+      await assertHeaderBehindStatusBar('override-inset-true', false);
     });
   });
 });
