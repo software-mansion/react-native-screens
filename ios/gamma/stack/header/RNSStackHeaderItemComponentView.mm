@@ -36,6 +36,11 @@ namespace react = facebook::react;
     _props = defaultProps;
     [self resetProps];
     _frameTracker = [RNSShadowStateFrameTracker new];
+
+    // For custom items (header subviews), we rely on `intrinsicContentSize`
+    // which passes correct view size from layoutMetrics to iOS
+    // `intrinsicContentSize` is queried only when opted out of default constraints
+    self.translatesAutoresizingMaskIntoConstraints = NO;
   }
   return self;
 }
@@ -64,14 +69,14 @@ namespace react = facebook::react;
   if (self.hasCustomView) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
+      // (taken from #3868)
       // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
       // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
       // of the center. To mitigate this, we add a wrapper view that will center
       // RNSScreenStackHeaderSubview inside of itself.
       UIView *wrapperView = [UIView new];
       wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
-
-      self.translatesAutoresizingMaskIntoConstraints = NO;
+      // self has already opted out of default constraints with `translateAutoresizingMaskIntoConstraints = NO`
       [wrapperView addSubview:self];
 
       [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
@@ -89,7 +94,7 @@ namespace react = facebook::react;
       heightEqual.priority = UILayoutPriorityDefaultHigh;
       heightEqual.active = YES;
 
-      // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
+      // 2. Set content hugging priority for header subview
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
 
@@ -176,11 +181,10 @@ namespace react = facebook::react;
   _state = std::static_pointer_cast<const react::RNSStackHeaderItemShadowNode::ConcreteState>(state);
 }
 
+// (adapted from #3868)
 // UIKit controls our position in the navigation bar for all placements.
 // Do NOT call super — it would set the full frame (including the shadow node's
 // origin correction) and fight with UIKit's positioning.
-// Only left/right bar button items on iOS 26 use the intrinsicContentSize bridge
-// (needed for the centering wrapper). Everything else just sets self.bounds.
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
@@ -190,37 +194,22 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     return;
   }
 
-  _layoutMetrics = layoutMetrics;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (@available(iOS 26.0, *)) {
-    if (_placement == RNSHeaderItemPlacementLeft || _placement == RNSHeaderItemPlacementRight) {
-      // On iOS 26, left/right bar button items use a centering wrapper with
-      // Auto Layout. Bridge Yoga's size via intrinsicContentSize.
-      BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
-      if (sizeHasChanged) {
-        [self invalidateIntrinsicContentSize];
-      }
-      return;
-    }
+  BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
+  if (sizeHasChanged) {
+    // Store layout metrics for `intrinsicContentSize`
+    _layoutMetrics = layoutMetrics;
+    [self invalidateIntrinsicContentSize];
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-
-  self.bounds = CGRect{CGPointZero, frame.size};
 }
 RNS_IGNORE_SUPER_CALL_END
 
-- (CGSize)sizeThatFits:(CGSize)size
-{
-  return RCTCGSizeFromSize(_layoutMetrics.frame.size);
-}
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (CGSize)intrinsicContentSize
 {
+  // UIKit queries this value for views that opted out of `translateAutoresizingMaskIntoContraints` - all custom header
+  // items. Native views use this property to communicate their size when UIKit is not able to guess correctly. We
+  // leverage this to return the size from the most recent `layoutMetrics`.
   return RCTCGSizeFromSize(_layoutMetrics.frame.size);
 }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (void)updateProps:(const react::Props::Shared &)props oldProps:(const react::Props::Shared &)oldProps
 {
