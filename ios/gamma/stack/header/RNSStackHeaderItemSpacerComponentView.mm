@@ -77,7 +77,6 @@ namespace react = facebook::react;
 
   if (oldSpacerProps.width != newSpacerProps.width) {
     _width = newSpacerProps.width;
-    RCTLogInfo(@"%f %f", _width, newSpacerProps.width);
     needsUpdate = YES;
   }
 
