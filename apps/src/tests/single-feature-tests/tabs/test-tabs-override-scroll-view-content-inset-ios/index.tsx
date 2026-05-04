@@ -27,14 +27,14 @@ function ScrollContent({
   testID: string;
 }) {
   return (
-    <ScrollView style={styles.scrollView} testID={testID}>
+    <ScrollView style={styles.scrollView} testID={`${testID}-scrollview`}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
           overrideScrollViewContentInsetAdjustmentBehavior: {label}
         </Text>
       </View>
       {Array.from({ length: ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.item}>
+        <View key={i} style={styles.item} testID={`${testID}-item-${i + 1}`}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
@@ -46,7 +46,7 @@ function FalseTab() {
   return (
     <ScrollContent
       label="false"
-      testID="override-inset-false-scrollview"
+      testID="override-inset-false"
     />
   );
 }
@@ -55,7 +55,7 @@ function TrueTab() {
   return (
     <ScrollContent
       label="true"
-      testID="override-inset-true-scrollview"
+      testID="override-inset-true"
     />
   );
 }
@@ -64,7 +64,7 @@ function DefaultTab() {
   return (
     <ScrollContent
       label="(not set, defaults to true)"
-      testID="override-inset-default-scrollview"
+      testID="override-inset-default"
     />
   );
 }
