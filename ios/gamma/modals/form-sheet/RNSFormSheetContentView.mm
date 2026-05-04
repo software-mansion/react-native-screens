@@ -1,6 +1,6 @@
-#import "RNSFormSheetHostContentView.h"
+#import "RNSFormSheetContentView.h"
 
-@implementation RNSFormSheetHostContentView
+@implementation RNSFormSheetContentView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

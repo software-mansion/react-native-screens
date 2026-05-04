@@ -1,7 +1,7 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetContentView.h"
 #import "RNSFormSheetHostComponentEventEmitter.h"
-#import "RNSFormSheetHostContentView.h"
 #import "RNSFormSheetHostController.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSPresentationSourceProvider.h"
@@ -156,12 +156,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [(RNSFormSheetHostContentView *)_controller.view insertReactSubview:childComponentView atIndex:index];
+  [(RNSFormSheetContentView *)_controller.view insertReactSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [(RNSFormSheetHostContentView *)_controller.view removeReactSubview:childComponentView];
+  [(RNSFormSheetContentView *)_controller.view removeReactSubview:childComponentView];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -232,7 +232,7 @@ namespace react = facebook::react;
   [self updateTouchHandlerWithOrigin:absoluteOrigin];
 
   // For Yoga, we need to apply the offset in RNSFormSheetHostContentView coordinates
-  auto formSheetContentView = (RNSFormSheetHostContentView *)_controller.view;
+  auto formSheetContentView = (RNSFormSheetContentView *)_controller.view;
   CGPoint hostOriginInContentViewSpace = [self convertPoint:CGPointZero toView:formSheetContentView];
   CGPoint contentOriginOffset = CGPointMake(-hostOriginInContentViewSpace.x, -hostOriginInContentViewSpace.y);
 

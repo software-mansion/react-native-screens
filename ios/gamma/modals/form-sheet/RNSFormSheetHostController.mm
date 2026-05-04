@@ -1,5 +1,5 @@
 #import "RNSFormSheetHostController.h"
-#import "RNSFormSheetHostContentView.h"
+#import "RNSFormSheetContentView.h"
 
 @interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
 @end
@@ -25,7 +25,7 @@
 
 - (void)loadView
 {
-  self.view = [RNSFormSheetHostContentView new];
+  self.view = [RNSFormSheetContentView new];
 }
 
 - (void)viewWillAppear:(BOOL)animated

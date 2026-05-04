@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSFormSheetHostContentView : UIView
+@interface RNSFormSheetContentView : UIView
 
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
 - (void)removeReactSubview:(UIView *)subview;
