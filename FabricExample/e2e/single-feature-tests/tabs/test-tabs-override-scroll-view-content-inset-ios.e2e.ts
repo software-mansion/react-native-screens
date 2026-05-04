@@ -16,7 +16,7 @@ async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
   return { top: attrs.safeAreaInsets.top };
 }
 
-function isBelowStatusBar(
+function isAboveSaveAreaInset(
   itemFrame: { y: number; height: number },
   scrollViewSAVInsetTop: number,
 ): boolean {
@@ -71,7 +71,7 @@ async function assertHeaderBehindStatusBar(
     `${tabPrefix}-scrollview`,
   );
   jestExpect(
-    isBelowStatusBar(informationFrame, scrollViewSAVInsetTop.top),
+    isAboveSaveAreaInset(informationFrame, scrollViewSAVInsetTop.top),
   ).toBe(expected);
 }
 
