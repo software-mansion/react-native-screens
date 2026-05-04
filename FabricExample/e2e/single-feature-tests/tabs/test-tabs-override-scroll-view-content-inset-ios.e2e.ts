@@ -43,7 +43,7 @@ async function getElementFrame(testID: string): Promise<{
 
   if ('elements' in attrs) {
     throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for label: "${testID}". `,
+      `Multiple elements (${attrs.elements.length}) found for testID: "${testID}".`,
     );
   }
   return (attrs as IosElementAttributes).frame;
