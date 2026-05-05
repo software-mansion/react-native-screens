@@ -1,6 +1,8 @@
 #import "RNSFormSheetHostController.h"
 #import "RNSFormSheetContentView.h"
 
+#import <React/RCTAssert.h>
+
 @interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
 @end
 
@@ -19,6 +21,13 @@
 - (void)resetState
 {
   _lastNotifiedFrame = CGRectZero;
+}
+
+- (RNSFormSheetContentView *)contentView
+{
+  RCTAssert([self.view isKindOfClass:[RNSFormSheetContentView class]],
+            @"[RNScreens] ContentView must be of type RNSFormSheetContentView");
+  return (RNSFormSheetContentView *)self.view;
 }
 
 #pragma mark - UIKit callbacks

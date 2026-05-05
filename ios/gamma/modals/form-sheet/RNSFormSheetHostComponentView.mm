@@ -156,12 +156,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [(RNSFormSheetContentView *)_controller.view insertReactSubview:childComponentView atIndex:index];
+  [_controller.contentView insertReactSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [(RNSFormSheetContentView *)_controller.view removeReactSubview:childComponentView];
+  [_controller.contentView removeReactSubview:childComponentView];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props

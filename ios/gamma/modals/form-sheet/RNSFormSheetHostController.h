@@ -4,6 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSFormSheetContentView;
 @class RNSFormSheetHostController;
 
 @protocol RNSFormSheetHostControllerDelegate <NSObject>
@@ -14,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSFormSheetHostController : UIViewController
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetHostControllerDelegate> delegate;
+
+@property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
 @end
 
