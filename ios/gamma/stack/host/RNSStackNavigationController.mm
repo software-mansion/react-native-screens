@@ -74,7 +74,7 @@
       // on the dummy stack causes large title to render collapsed.
       [self setViewControllers:@[ controller ] animated:NO];
     } else {
-      [self pushViewController:controller animated:true];
+      [self pushViewController:controller animated:YES];
     }
   }
 

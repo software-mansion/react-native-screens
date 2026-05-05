@@ -3,8 +3,8 @@
 @implementation RNSStackNavigationBarCoordinator
 
 - (void)applyConfiguration:(RNSStackHeaderData *)data
-   forNavigationController:(nonnull UINavigationController *)navigationController
-                  animated:(BOOL)animated
+    forNavigationController:(nonnull UINavigationController *)navigationController
+                   animated:(BOOL)animated
 {
   [self setupVisibilityIfNeeded:data forNavigationController:navigationController animated:animated];
   [self setupLargeTitleIfNeeded:data forNavigationController:navigationController];

@@ -181,7 +181,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
           key: 'left-0',
           component: ItemRedComponent,
         },
-        { key: 'left-1', spacer: 'fixed', width: 100 },
+        { key: 'left-1', size: 'fixed', width: 100 },
         {
           key: 'left-2',
           component: ItemRedComponent,

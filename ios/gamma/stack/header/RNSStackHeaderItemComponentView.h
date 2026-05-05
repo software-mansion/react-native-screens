@@ -1,7 +1,7 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
 #import "RNSHeaderItemPlacement.h"
+#import "RNSReactBaseView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN

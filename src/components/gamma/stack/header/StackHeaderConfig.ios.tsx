@@ -8,10 +8,10 @@ import StackHeaderItem from './ios/StackHeaderItem.ios';
 import { StyleSheet } from 'react-native';
 
 function makeItemViewFromItem(
-  item: HeaderItem,
+  item: HeaderItem | HeaderSpacerItem,
   placement: HeaderItemPlacement,
 ) {
-  if ('spacer' in item) {
+  if ('size' in item) {
     const { key, ...rest } = item as HeaderSpacerItem;
 
     return (

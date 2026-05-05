@@ -1,5 +1,6 @@
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSConversions-Stack.h"
+#import "RNSLog.h"
 
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -34,7 +35,7 @@ namespace react = facebook::react;
 {
   _placement = RNSHeaderItemSpacerPlacementRight;
   _didSetHeaderItemSpacerPlacement = NO;
-  _isFlexible = NO;
+  _isFlexible = YES;
   _width = 0;
 }
 
@@ -66,7 +67,11 @@ namespace react = facebook::react;
   BOOL needsUpdate = NO;
 
   if (oldSpacerProps.placement != newSpacerProps.placement) {
-    _placement = rnscreens::conversion::convert<RNSHeaderItemSpacerPlacement>(newSpacerProps.placement);
+    if (_didSetHeaderItemSpacerPlacement) {
+      RNSLog(@"Changing item placement at runtime is not supported");
+    } else {
+      _placement = rnscreens::conversion::convert<RNSHeaderItemSpacerPlacement>(newSpacerProps.placement);
+    }
   }
   _didSetHeaderItemSpacerPlacement = YES;
 

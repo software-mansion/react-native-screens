@@ -11,7 +11,7 @@ export interface HeaderCustomItem extends HeaderBaseItem {
 
 export interface HeaderSpacerItem {
   key: string;
-  spacer?: 'fixed' | 'flexible';
+  size?: 'fixed' | 'flexible';
   width?: number;
 }
 
@@ -20,9 +20,7 @@ export type HeaderItem = HeaderBaseItem | HeaderCustomItem;
 export interface StackHeaderConfigPropsIOS {
   leftItemsSupplementBackButton?: boolean | undefined;
   subtitleItem?: HeaderItem | undefined;
-  hidden?: boolean | undefined;
   leftItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
-  title?: string | undefined;
   titleItem?: HeaderItem | undefined;
   rightItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
   largeTitleEnabled?: boolean | undefined;
