@@ -11,9 +11,8 @@
 
   UIViewController *presentationSourceViewController = window.rootViewController;
 
-  RCTAssert(
-      presentationSourceViewController != nil,
-      @"[RNScreens] Root View Controller should not be nil when trying to present a modal.");
+  RCTAssert(presentationSourceViewController != nil,
+            @"[RNScreens] Root View Controller should not be nil when trying to present a modal.");
 
   if (presentationSourceViewController == nil) {
     return nil;
