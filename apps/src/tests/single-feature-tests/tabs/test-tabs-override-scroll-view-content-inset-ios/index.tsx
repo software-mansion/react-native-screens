@@ -19,7 +19,7 @@ const scenarioDescription: ScenarioDescription = {
 
 const ITEM_COUNT = 30;
 
-function ScrollContent({
+export function ScrollContent({
   label,
   testID,
 }: {
@@ -42,7 +42,7 @@ function ScrollContent({
   );
 }
 
-function FalseTab() {
+export function FalseTab() {
   return (
     <ScrollContent
       label="false"
@@ -51,7 +51,7 @@ function FalseTab() {
   );
 }
 
-function TrueTab() {
+export function TrueTab() {
   return (
     <ScrollContent
       label="true"
@@ -60,7 +60,7 @@ function TrueTab() {
   );
 }
 
-function DefaultTab() {
+export function DefaultTab() {
   return (
     <ScrollContent
       label="(not set, defaults to true)"
