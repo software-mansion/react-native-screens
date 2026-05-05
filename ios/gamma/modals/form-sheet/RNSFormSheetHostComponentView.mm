@@ -228,17 +228,17 @@ namespace react = facebook::react;
   }
 
   // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
-  CGPoint absoluteOrigin = [_controller.view convertPoint:CGPointZero toView:nil];
-  [self updateTouchHandlerWithOrigin:absoluteOrigin];
+  CGPoint contentViewOriginInWindow = [_controller.view convertPoint:CGPointZero toView:nil];
+  [self updateTouchHandlerWithOrigin:contentViewOriginInWindow];
 
-  // For Yoga, we need to apply the offset in RNSFormSheetHostContentView coordinates
-  auto formSheetContentView = (RNSFormSheetContentView *)_controller.view;
-  CGPoint hostOriginInContentViewSpace = [self convertPoint:CGPointZero toView:formSheetContentView];
-  CGPoint contentOriginOffset = CGPointMake(-hostOriginInContentViewSpace.x, -hostOriginInContentViewSpace.y);
+  // contentOriginOffset is the vector from the host view's origin to the content view's origin,
+  // both expressed in window space. It offsets child layout positions to account for the fact that
+  // React children are mounted in a separate UIViewController hierarchy.
+  CGPoint hostOriginInWindow = [self convertPoint:CGPointZero toView:nil];
+  CGPoint contentOriginOffset = CGPointMake(contentViewOriginInWindow.x - hostOriginInWindow.x,
+                                            contentViewOriginInWindow.y - hostOriginInWindow.y);
 
-  CGRect bounds = _controller.view.bounds;
-
-  [_shadowStateProxy updateShadowStateWithBounds:bounds origin:contentOriginOffset];
+  [_shadowStateProxy updateShadowStateWithBounds:_controller.view.bounds origin:contentOriginOffset];
 }
 
 - (void)resetShadowNodeSize
