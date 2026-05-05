@@ -13,6 +13,7 @@ with tabBarMinimizeBehavior.
 ## E2E test
 
 Other: ongoing research.
+Not possible to check on selected variant. Not possible to check text location in bottom accessory.
 
 ## Prerequisites
 
