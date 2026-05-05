@@ -199,6 +199,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     // Store layout metrics for `intrinsicContentSize`
     _layoutMetrics = layoutMetrics;
     [self invalidateIntrinsicContentSize];
+    // Update view bounds. Irrespective of intrinsic conten size, this seems to be required
+    // for largeTitle to be laid out correctly within its host _UINavigationBarLargeTitleView
+    // and for UINavigationBar height to acknowledge the subview
+    self.bounds = CGRect(CGPointZero, frame.size);
   }
 }
 RNS_IGNORE_SUPER_CALL_END
