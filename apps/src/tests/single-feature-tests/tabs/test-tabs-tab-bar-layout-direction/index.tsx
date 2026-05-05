@@ -41,7 +41,8 @@ function ConfigScreen() {
   }, [reactAllowRtl]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}
+      testID='tab-bar-layout-direction-scrollview'>
       <View style={styles.section}>
         <Text>
           There are 3 sources of layout direction: system, React Native and our
@@ -62,7 +63,7 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>React Native's isRTL</Text>
-        <Text style={styles.rtlInfo}>
+        <Text style={styles.rtlInfo} testID='is-rtl-information'>
           {'I18nManager.isRTL == ' + (I18nManager.isRTL ? 'true' : 'false')}
         </Text>
       </View>
@@ -79,6 +80,7 @@ function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             setReactForceRtl(value);
           }}
+          testID='react-force-rtl-picker'
         />
       </View>
 
@@ -94,6 +96,7 @@ function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             setReactAllowRtl(value);
           }}
+          testID='react-allow-rtl-picker'
         />
       </View>
 
@@ -104,6 +107,7 @@ function ConfigScreen() {
           value={hostConfig.direction ?? 'inherit'}
           onValueChange={value => updateHostConfig({ direction: value })}
           items={['inherit', 'ltr', 'rtl']}
+          testID='tab-bar-layout-direction-picker'
         />
       </View>
     </ScrollView>
@@ -112,11 +116,12 @@ function ConfigScreen() {
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
-    name: 'Config',
+    name: 'Tab1',
     Component: ConfigScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Config',
+      title: 'Tab1',
+      tabBarItemAccessibilityLabel: 'tab-bar-item-1-label',
       safeAreaConfiguration: {
         edges: {
           bottom: true,
@@ -130,6 +135,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemAccessibilityLabel: 'tab-bar-item-2-label',
     },
   },
 ];
