@@ -69,7 +69,7 @@ function DefaultTab() {
   );
 }
 
-export export function App() {
+export function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
