@@ -56,12 +56,7 @@ internal class TabsNavigationStateObserverRegistry {
         hasTriggeredSpecialEffect: Boolean,
         actionOrigin: TabsActionOrigin,
     ) {
-        check(!isEmitting) { "[RNScreens] Recursive emission on TabsNavigationStateObserverRegistry" }
-        isEmitting = true
-        observers.forEach {
-            it.onNavigationStateUpdate(navState, isRepeated, hasTriggeredSpecialEffect, actionOrigin)
-        }
-        isEmitting = false
+        emitSignal { observer -> observer.onNavigationStateUpdate(navState, isRepeated, hasTriggeredSpecialEffect, actionOrigin) }
     }
 
     fun emitOnNavigationStateUpdateRejected(
@@ -69,23 +64,25 @@ internal class TabsNavigationStateObserverRegistry {
         rejectedRequest: TabsNavigationStateUpdateRequest,
         reason: TabsNavigationStateRejectionReason,
     ) {
-        check(!isEmitting) { "[RNScreens] Recursive emission on TabsNavigationStateObserverRegistry" }
-        isEmitting = true
-        observers.forEach {
-            it.onNavigationStateUpdateRejected(currentNavState, rejectedRequest, reason)
-        }
-        isEmitting = false
+        emitSignal { observer -> observer.onNavigationStateUpdateRejected(currentNavState, rejectedRequest, reason) }
     }
 
     fun emitOnNavigationStateUpdatePrevented(
         currentNavState: TabsNavigationState,
         preventedScreenKey: String,
     ) {
+        emitSignal { observer -> observer.onNavigationStateUpdatePrevented(currentNavState, preventedScreenKey) }
+    }
+
+    private fun emitSignal(emitBlock: (TabsNavigationStateObserver) -> Unit) {
         check(!isEmitting) { "[RNScreens] Recursive emission on TabsNavigationStateObserverRegistry" }
         isEmitting = true
-        observers.forEach {
-            it.onNavigationStateUpdatePrevented(currentNavState, preventedScreenKey)
+        try {
+            observers.forEach {
+                emitBlock(it)
+            }
+        } finally {
+            isEmitting = false
         }
-        isEmitting = false
     }
 }
