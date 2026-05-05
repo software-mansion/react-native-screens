@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
@@ -11,6 +12,9 @@ import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.event.StackHeaderToolbarMenuItemClickedEvent
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
@@ -43,6 +47,9 @@ class StackHeaderConfig(
     override var scrollFlagExitUntilCollapsed: Boolean = false
         internal set
     override var scrollFlagSnap: Boolean = false
+        internal set
+
+    override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig> = emptyList()
         internal set
 
     // Staging fields for back button icon resolution.
@@ -109,14 +116,20 @@ class StackHeaderConfig(
         )
     }
 
-    private var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
+    override fun onMenuItemClick(id: String) = Unit
 
-    override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener?) {
-        onConfigChangeListener = listener?.let { WeakReference(it) }
+    private var delegate: WeakReference<StackHeaderConfigDelegate>? = null
+
+    override fun setDelegate(delegate: StackHeaderConfigDelegate?) {
+        this.delegate = delegate?.let { WeakReference(it) }
     }
 
     internal fun notifyConfigChanged() {
-        onConfigChangeListener?.get()?.onHeaderConfigChange(this)
+        delegate?.get()?.onConfigChange(this)
+    }
+
+    internal fun dispatchMenuItemUpdate(id: String, options: StackHeaderToolbarMenuItemOptions) {
+        delegate?.get()?.onMenuItemUpdate(id, options)
     }
 
     override fun onStackHeaderSubviewChange() = notifyConfigChanged()

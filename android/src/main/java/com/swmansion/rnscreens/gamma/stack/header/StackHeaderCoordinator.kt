@@ -29,6 +29,7 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderCoordinator(
@@ -580,6 +581,11 @@ internal class StackHeaderCoordinator(
             }
         }
     }
+
+    internal fun handleMenuItemUpdate(
+        id: String,
+        options: StackHeaderToolbarMenuItemOptions,
+    ) = Unit
 
     private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
 
