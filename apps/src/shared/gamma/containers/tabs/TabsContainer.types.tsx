@@ -27,7 +27,7 @@ export type TabRouteConfig = {
 /**
  * Runtime instance of a tab route. Created from a TabRouteConfig blueprint.
  */
-export type TabRoute = TabRouteConfig & {
+export type TabRoute = Omit<TabRouteConfig, 'Component'> & {
   routeKey: string;
 };
 
