@@ -265,9 +265,8 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType
   }
 }
 
-RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSTabsIconType iconType)
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::ImageSource *imageSource,
+                                                         RNSTabsIconType iconType)
 {
   RCTImageSource *iconImageSource;
 
@@ -360,8 +359,8 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
 
 UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
 {
-  RCTAssert(
-      systemItem != RNSTabsScreenSystemItemNone, @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
+  RCTAssert(systemItem != RNSTabsScreenSystemItemNone,
+            @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
   switch (systemItem) {
     case RNSTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;
