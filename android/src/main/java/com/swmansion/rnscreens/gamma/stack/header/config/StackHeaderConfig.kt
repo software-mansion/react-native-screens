@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
@@ -13,7 +12,6 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewCh
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.event.StackHeaderToolbarMenuItemClickedEvent
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import java.lang.ref.WeakReference
 
@@ -116,7 +114,16 @@ class StackHeaderConfig(
         )
     }
 
-    override fun onMenuItemClick(id: String) = Unit
+    internal lateinit var eventEmitter: StackHeaderConfigEventEmitter
+
+    internal fun onViewManagerAddEventEmitters() {
+        check(id != NO_ID) { "[RNScreens] StackHeaderConfig must have its tag set when registering event emitters" }
+        eventEmitter = StackHeaderConfigEventEmitter(reactContext, id)
+    }
+
+    override fun onMenuItemClick(id: String) {
+        eventEmitter.emitOnToolbarMenuItemClicked(id)
+    }
 
     private var delegate: WeakReference<StackHeaderConfigDelegate>? = null
 

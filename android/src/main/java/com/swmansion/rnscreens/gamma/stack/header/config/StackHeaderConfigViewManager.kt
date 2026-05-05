@@ -13,6 +13,9 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemFieldUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -27,6 +30,14 @@ open class StackHeaderConfigViewManager :
     override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackHeaderConfig(reactContext)
+
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: StackHeaderConfig,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
 
     override fun getDelegate(): ViewManagerDelegate<StackHeaderConfig> = delegate
 
@@ -190,17 +201,60 @@ open class StackHeaderConfigViewManager :
     override fun setToolbarMenuItems(
         view: StackHeaderConfig,
         value: ReadableArray?,
-    ) = Unit
+    ) {
+        view.toolbarMenuItems =
+            value?.let { array ->
+                (0 until array.size()).map { i ->
+                    val item = requireNotNull(array.getMap(i))
+                    StackHeaderToolbarMenuItemConfig(
+                        id = item.requireNotNullString("id"),
+                        title = item.requireNotNullString("title"),
+                        hidden = item.getBoolean("hidden"),
+                    )
+                }
+            } ?: emptyList()
+    }
 
     override fun setToolbarMenuItemOptions(
         view: StackHeaderConfig,
         id: String,
         options: ReadableArray,
     ) {
-        println("[StackHeaderConfigViewManager] $id: ${options.getMap(0)}")
+        val map = options.getMap(0) ?: return
+        view.dispatchMenuItemUpdate(
+            id,
+            StackHeaderToolbarMenuItemOptions(
+                title = map.readStringFieldUpdate("title"),
+                hidden = map.readBooleanFieldUpdate("hidden"),
+            ),
+        )
     }
 
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }
 }
+
+private fun ReadableMap.requireNotNullString(key: String): String {
+    return requireNotNull(this.getString(key)) {
+        "[RNScreens] toolbarMenuItem $key property must not be null."
+    }
+}
+
+private fun ReadableMap.readStringFieldUpdate(
+    key: String,
+): StackHeaderToolbarMenuItemFieldUpdate<String> =
+    when {
+        !this.hasKey(key) -> StackHeaderToolbarMenuItemFieldUpdate.Absent
+        this.isNull(key) -> StackHeaderToolbarMenuItemFieldUpdate.Reset
+        else -> StackHeaderToolbarMenuItemFieldUpdate.Set(this.getString(key)!!)
+    }
+
+private fun ReadableMap.readBooleanFieldUpdate(
+    key: String,
+): StackHeaderToolbarMenuItemFieldUpdate<Boolean> =
+    when {
+        !this.hasKey(key) -> StackHeaderToolbarMenuItemFieldUpdate.Absent
+        this.isNull(key) -> StackHeaderToolbarMenuItemFieldUpdate.Reset
+        else -> StackHeaderToolbarMenuItemFieldUpdate.Set(this.getBoolean(key))
+    }
