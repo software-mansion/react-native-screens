@@ -2,18 +2,16 @@ import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { StackContainer, StackRouteConfig, useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
 import {  LightRootScreen, LightInterfaceStyleScreen, DarkRootScreen, DarkInterfaceStyleScreen } from './ThemeScreen';
-import { Scenario } from '@apps/tests/shared/helpers';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Experimental UIStyle',
   key: 'test-tabs-tab-bar-experimental-user-interface-style-ios',
   platforms: ['ios'],
-  AppComponent: App,
 };
 
-export default SCENARIO;
-
-function HomeScreen() {
+export function HomeScreen() {
   const navigation = useStackNavigationContext();
   return (
     <View style={styles.container}>
@@ -28,12 +26,12 @@ function HomeScreen() {
   );
 }
 
-function DarkRootScreenContent() {
+export function DarkRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <DarkRootScreen onPush={() => navigation.push('darkPushed')} />;
 }
 
-function LightRootScreenContent() {
+export function LightRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <LightRootScreen onPush={() => navigation.push('lightPushed')} />;
 }
@@ -53,6 +51,8 @@ export function App() {
     </View>
   );
 }
+
+export default createScenario(App, scenarioDescription);
 
 const styles = StyleSheet.create({
   container: {

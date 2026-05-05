@@ -38,13 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <
-                           RNSViewControllerDelegate
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate
 #if !TARGET_OS_TV
-                           ,
-                           RNSOrientationProviding
+                                         ,
+                                         RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                           >
+                                         >
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;
@@ -60,11 +59,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenStackHeaderConfig;
 
-@interface RNSScreenView : RNSReactBaseView <
-                               RNSScreenContentWrapperDelegate,
-                               RNSScrollViewBehaviorOverriding,
-                               RNSSafeAreaProviding,
-                               RNSScrollEdgeEffectProviding>
+@interface RNSScreenView : RNSReactBaseView <RNSScreenContentWrapperDelegate,
+                                             RNSScrollViewBehaviorOverriding,
+                                             RNSSafeAreaProviding,
+                                             RNSScrollEdgeEffectProviding>
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property

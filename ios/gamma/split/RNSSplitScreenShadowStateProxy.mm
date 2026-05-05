@@ -45,12 +45,11 @@ namespace react = facebook::react;
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState = react::RNSSplitScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-    _state->updateState(
-        std::move(newState)
+    _state->updateState(std::move(newState)
     // TODO: @t0maboro - remove this compilation check once TVOSExample is upgraded to RN 82+
 #if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            ,
+                        facebook::react::EventQueue::UpdateMode::unstable_Immediate
 #endif
     );
 

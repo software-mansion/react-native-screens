@@ -16,7 +16,7 @@ export function LightRootScreen({ onPush }: { onPush: () => void }) {
   return <RootScreen style="light" onPush={onPush} />;
 }
 
-function RootScreen({ style, onPush }: { style: InterfaceStyle; onPush: () => void }) {
+export function RootScreen({ style, onPush }: { style: InterfaceStyle; onPush: () => void }) {
   const isDark = style === 'dark';
   return (
     <View style={{ flex: 1 }}>
@@ -39,7 +39,7 @@ function RootScreen({ style, onPush }: { style: InterfaceStyle; onPush: () => vo
   );
 }
 
-function ThemedTabContent({ style }: { style: InterfaceStyle }) {
+export function ThemedTabContent({ style }: { style: InterfaceStyle }) {
   const isDark = style === 'dark';
   const label = `experimental_userInterfaceStyle: ${style}`;
   const description = `This screen forces ${style} interface style regardless of system setting. Observe the tab bar and navigation bar appearance.`;
@@ -69,7 +69,7 @@ export function LightInterfaceStyleScreen() {
   return <InterfaceStyleScreen style="light" />;
 }
 
-function InterfaceStyleScreen({ style }: { style: InterfaceStyle }) {
+export function InterfaceStyleScreen({ style }: { style: InterfaceStyle }) {
   const isDark = style === 'dark';
   const backgroundColor = isDark ? 'black' : 'white';
   const icons = ['house', 'star'] as const;

@@ -619,8 +619,8 @@ RNS_IGNORE_SUPER_CALL_END
               withReason:(RNSTabsNavigationStateRejectionReason)reasonCode
 {
   RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
-  RCTAssert(
-      rejectedRequest.selectedScreenKey != nil, @"[RNScreens] Rejected request selectedScreenKey MUST NOT be nil");
+  RCTAssert(rejectedRequest.selectedScreenKey != nil,
+            @"[RNScreens] Rejected request selectedScreenKey MUST NOT be nil");
 
   [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
                                                       .rejectedRequest = rejectedRequest,
@@ -633,9 +633,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
   RCTAssert(screenKey != nil, @"[RNScreens] Expected NON NIL screenKey");
-  RCTAssert(
-      currentNavState != nil && currentNavState.selectedScreenKey != nil,
-      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+  RCTAssert(currentNavState != nil && currentNavState.selectedScreenKey != nil,
+            @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
 
   [self.reactEventEmitter emitOnTabSelectionPrevented:{
                                                           .currentNavState = currentNavState,
@@ -647,9 +646,8 @@ RNS_IGNORE_SUPER_CALL_END
     didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState
 {
   RCTAssert(tabBarController != nil, @"[RNScreens] Expected NON NIL tabBarController");
-  RCTAssert(
-      currentNavState != nil && currentNavState.selectedScreenKey != nil,
-      @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+  RCTAssert(currentNavState != nil && currentNavState.selectedScreenKey != nil,
+            @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
 
   [self.reactEventEmitter emitOnMoreTabSelected:{
                                                     .currentNavState = currentNavState,
