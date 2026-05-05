@@ -20,13 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding
+@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding
 #if !RCT_NEW_ARCH_ENABLED
-                                            ,
-                                            RCTInvalidating
+                                                          ,
+                                                          RCTInvalidating
 #endif
-                                            >
+                                                          >
 
 /**
  * View controller responsible for managing tab represented by this component view.

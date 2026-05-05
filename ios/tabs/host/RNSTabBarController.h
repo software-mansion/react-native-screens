@@ -51,13 +51,12 @@ NS_ASSUME_NONNULL_BEGIN
  * i.e. if you made changes through one of signals method, unless you flush them immediately, they will
  * be executed only after react finishes the transaction (from within transaction execution block).
  */
-@interface RNSTabBarController : UITabBarController <
-                                     RNSReactTransactionObserving
+@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving
 #if !TARGET_OS_TV
-                                     ,
-                                     RNSOrientationProviding
+                                                     ,
+                                                     RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                                     >
+                                                     >
 
 - (instancetype)initWithTabsHostComponentView:(nullable RNSTabsHostComponentView *)tabsHostComponentView;
 
