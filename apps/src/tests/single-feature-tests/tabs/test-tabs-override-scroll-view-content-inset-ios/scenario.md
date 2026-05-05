@@ -128,6 +128,6 @@ Other: Ongoing research.
 11.  Switch to the **False** tab and scroll to the top, then
     immediately switch to the **True** tab.
 
-- [ ] Expected: The **True** tab correctly shows the the text label
+- [ ] Expected: The **True** tab correctly shows the text label
   inset from the navigation bar. No crash or blank screen occurs
   during the switch.
