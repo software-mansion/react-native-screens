@@ -147,7 +147,7 @@ accessory transitions back to the `regular` layout above the tab bar.
 
 18. Tap the **Config** tab from the now-expanded tab bar.
 
-- [ ] Expected:The **Config** tab is shown. The currently selected variant card
+- [ ] Expected: The **Config** tab is shown. The currently selected variant card
 still has a blue border.
 
 19. Tap a different variant card (e.g., **Center**).
@@ -160,5 +160,5 @@ still has a blue border.
 
 20. Perform steps 1-7 on an iPad device or simulator.
 
-- [ ] Expected: Tab bar is displayed at the top of screen.Different bottom
+- [ ] Expected: Tab bar is displayed at the top of screen. Different bottom
 accessory content variants should be displayed correctly at the bottom of the screen.
