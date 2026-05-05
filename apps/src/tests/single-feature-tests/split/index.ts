@@ -1,7 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestTopColumnForCollapsing from './test-top-column-for-collapsing';
 import TestCommandShowColumn from './test-command-show-column';
-import TestColorScheme from './test-split-color-scheme';
+import TestColorScheme from './test-split-color-scheme-ios';
 
 const scenarios = {
   TestTopColumnForCollapsing,
