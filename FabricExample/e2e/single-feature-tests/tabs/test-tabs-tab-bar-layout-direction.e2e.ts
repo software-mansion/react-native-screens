@@ -34,6 +34,7 @@ async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
     `direction: ${direction}`,
   );
 }
+
 async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
   const t1 = await getElementAttributes('tab-bar-item-1-label');
   const t2 = await getElementAttributes('tab-bar-item-2-label');
