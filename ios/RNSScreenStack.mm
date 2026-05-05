@@ -27,13 +27,12 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackView () <
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate,
-    RNSViewInteractionAware,
-    RCTMountingTransactionObserving>
+@interface RNSScreenStackView () <UINavigationControllerDelegate,
+                                  UIAdaptivePresentationControllerDelegate,
+                                  UIGestureRecognizerDelegate,
+                                  UIViewControllerTransitioningDelegate,
+                                  RNSViewInteractionAware,
+                                  RCTMountingTransactionObserving>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -1058,8 +1057,8 @@ RNS_IGNORE_SUPER_CALL_END
   float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
 
   // we check if any of the constraints are violated and return NO if so
-  return !(
-      (start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) || (bottom != -1 && y > bottom));
+  return !((start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) ||
+           (bottom != -1 && y > bottom));
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -1334,13 +1333,12 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(
-      childComponentView.reactSuperview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.reactSuperview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
@@ -1363,12 +1361,11 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [screenChildComponent.controller setViewToSnapshot];
 
-  RCTAssert(
-      screenChildComponent.reactSuperview == self,
-      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-      self,
-      screenChildComponent,
-      @(index));
+  RCTAssert(screenChildComponent.reactSuperview == self,
+            @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+            self,
+            screenChildComponent,
+            @(index));
   RCTAssert(
       (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
       @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",

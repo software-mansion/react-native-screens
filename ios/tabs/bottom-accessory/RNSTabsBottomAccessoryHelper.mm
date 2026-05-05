@@ -156,9 +156,8 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
 - (UIView *)nativeWrapperView
 {
-  RCTAssert(
-      _bottomAccessoryView.superview.superview != nil,
-      @"[RNScreens] RNSTabsBottomAccessoryComponentView must be the set as bottom accessory.");
+  RCTAssert(_bottomAccessoryView.superview.superview != nil,
+            @"[RNScreens] RNSTabsBottomAccessoryComponentView must be the set as bottom accessory.");
   return _bottomAccessoryView.superview.superview;
 }
 
