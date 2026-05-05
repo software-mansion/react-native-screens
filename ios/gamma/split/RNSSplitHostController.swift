@@ -62,6 +62,17 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   required init?(coder aDecoder: NSCoder) {
     return nil
   }
+  
+  // MARK: UIKit callbacks
+  public override func didMove(toParent parent: UIViewController?) {
+    super.didMove(toParent: parent)
+    
+    if parent != nil && isLayoutDirectionUpdatePending {
+      isLayoutDirectionUpdatePending = false
+      splitAppearanceApplicator.updateLayoutDirectionBelowIOS17(
+        self.splitHostComponentView, self)
+    }
+  }
 
   // MARK: Signals
 
@@ -561,15 +572,5 @@ extension RNSSplitHostController: UISplitViewControllerDelegate {
       return splitHostComponentView.topColumnForCollapsingColumn
     }
     return proposedTopColumn
-  }
-
-  public override func didMove(toParent parent: UIViewController?) {
-    super.didMove(toParent: parent)
-
-    if parent != nil && isLayoutDirectionUpdatePending {
-      isLayoutDirectionUpdatePending = false
-      splitAppearanceApplicator.updateLayoutDirectionBelowIOS17(
-        self.splitHostComponentView, self)
-    }
   }
 }
