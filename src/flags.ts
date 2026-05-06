@@ -204,6 +204,8 @@ export const featureFlags = {
       androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
     },
     /**
+     * Enables the fix for native / JS state desynchronization in Stack. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3584
      * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get iosPreventReattachmentOfDismissedScreens() {
@@ -211,6 +213,8 @@ export const featureFlags = {
     },
     set iosPreventReattachmentOfDismissedScreens(_value: boolean) {},
     /**
+     * Enables the fix for native / JS state desynchronization for Modals. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3760
      * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get iosPreventReattachmentOfDismissedModals() {
@@ -218,6 +222,11 @@ export const featureFlags = {
     },
     set iosPreventReattachmentOfDismissedModals(_value: boolean) {},
     /**
+     * Disables the behavior that blocks interactions during Stack Screen transition.
+     * The application should immediately react to user gestures, dismissing more screens at once, etc.
+     * Use only with `iosPreventReattachmentOfDismissedScreens = true` to enable the fix
+     * for native / JS state desynchronization. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3631
      * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get ios26AllowInteractionsDuringTransition() {
