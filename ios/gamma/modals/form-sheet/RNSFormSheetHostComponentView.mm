@@ -93,6 +93,8 @@ namespace react = facebook::react;
     UIViewController *presentationSourceViewController =
         [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
     if (presentationSourceViewController == nil) {
+      RCTLogError(
+          @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
       return;
     }
 
