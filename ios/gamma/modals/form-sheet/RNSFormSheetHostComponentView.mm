@@ -89,6 +89,12 @@ namespace react = facebook::react;
 
   BOOL isPresented = _controller.presentingViewController != nil;
 
+  // TODO: @t0maboro - This presentation logic is currently quite primitive.
+  // We are not entirely safe from rapid conflicting updates, and there are edge cases
+  // where the presentation state might become desynchronized. Addressing this robustly
+  // might require an approach similar to the tabs implementation using state provenance,
+  // which will be handled separately.
+  // Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
   if (_isOpen && !isPresented) {
     UIViewController *presentationSourceViewController =
         [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
