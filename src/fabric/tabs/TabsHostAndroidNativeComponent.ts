@@ -22,7 +22,7 @@ type TabSelectionRejectedEvent = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
   rejectedScreenKey: string;
-  rejectedProvenance: CT.Int32;
+  rejectedBaseProvenance: CT.Int32;
   rejectionReason: 'stale' | 'repeated';
 }>;
 
