@@ -95,7 +95,7 @@ class TabsContainer internal constructor(
         checkNotNull(pendingStateUpdateRequest) { "[RNScreens] Attempt to require nullish pendingStateUpdateRequest" }
 
     /**
-     * Denotes whether container is currently performing update triggered by the `pendingOperation`.
+     * Denotes whether container is currently performing update triggered by the `pendingStateUpdateRequest`.
      */
     private var isInExternalOperationContext: Boolean = false
 
@@ -248,7 +248,7 @@ class TabsContainer internal constructor(
 
     /**
      * Idempotent teardown. Releases observer references and clears any pending operation.
-     * Called by the host on view recycle. Note: named `tearDown` (not `invalidate`) to avoid
+     * Called by the host on view lifecycle end. Note: named `tearDown` (not `invalidate`) to avoid
      * shadowing [android.view.View.invalidate].
      */
     internal fun tearDown() {
@@ -539,9 +539,7 @@ class TabsContainer internal constructor(
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
                 actionOrigin =
                     if (isInExternalOperationContext) {
-                        checkNotNull(pendingStateUpdateRequest) {
-                            "[RNScreens] Unexpected pending operation $pendingStateUpdateRequest while in external operation context"
-                        }.actionOrigin
+                        requirePendingStateUpdateRequest().actionOrigin
                     } else {
                         TabsActionOrigin.USER
                     },

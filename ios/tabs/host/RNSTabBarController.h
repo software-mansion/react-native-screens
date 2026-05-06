@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Idempotent teardown. Releases observer references and any retained host references.
- * Called by the host on view recycle.
+ * Called by the host on view lifecycle end.
  */
 - (void)tearDown;
 
