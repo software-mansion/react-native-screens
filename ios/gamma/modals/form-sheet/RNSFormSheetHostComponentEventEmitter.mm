@@ -1,5 +1,4 @@
 #import "RNSFormSheetHostComponentEventEmitter.h"
-#import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 
 @implementation RNSFormSheetHostComponentEventEmitter {
