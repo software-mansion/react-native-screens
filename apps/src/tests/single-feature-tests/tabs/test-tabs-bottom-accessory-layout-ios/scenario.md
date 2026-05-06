@@ -16,13 +16,14 @@ Other: ongoing research.
 
 ## Prerequisites
 
-- iOS 26+ device or simulator
+- iOS 26+ device or simulator iPhone and iPad
 
 ## Note
 
 - `bottomAccessory` is only available on iOS 26 or higher.
-- On iPad, the `inline effect` is not applied because the tab bar is positioned at
-  the top of the screen.
+- Each of the below steps must be executed twice: once on iPhone and once on iPad.
+- On iPad: Resize the window to the compact width size class as the `inline effect`
+effect is not applied to the full-size app.
 - The **Config** tab is used to select the active accessory variant.
 - "Scrolling down" means dragging the list upward (revealing rows below);
   "scrolling up" means dragging the list downward (revealing rows above).
@@ -153,12 +154,3 @@ still has a blue border.
 19. Tap a different variant card (e.g., **RGB**).
 
 - [ ] Expected: The accessory updates immediately to the new variant.
-
----
-
-### iPad: Smoke content variants check
-
-20. Perform steps 1-7 on an iPad device or simulator.
-
-- [ ] Expected: Tab bar is displayed at the top of screen. Different bottom
-accessory content variants should be displayed correctly at the bottom of the screen.
