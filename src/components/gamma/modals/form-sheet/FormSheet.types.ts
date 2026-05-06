@@ -6,7 +6,9 @@ export interface FormSheetProps {
   /**
    * @summary Determines whether the form sheet is currently visible.
    *
-   * When `true`, the sheet is presented. When `false`, it is dismissed.
+   * Presentation is driven by state transitions: updating this property
+   * from `false` to `true` triggers the sheet to present, while changing
+   * it from `true` to `false` triggers a programmatic dismissal.
    *
    * @platform ios
    */
