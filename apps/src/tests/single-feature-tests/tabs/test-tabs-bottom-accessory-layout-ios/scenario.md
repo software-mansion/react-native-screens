@@ -154,3 +154,12 @@ still has a blue border.
 19. Tap a different variant card (e.g., **RGB**).
 
 - [ ] Expected: The accessory updates immediately to the new variant.
+
+---
+
+### iPad only - full-size app
+
+20.  Resize app to full-size and perform steps 1-7.
+
+- [ ] Expected: Tab bar is displayed at the top of screen. Different bottom
+accessory content variants should be displayed correctly at the bottom of the screen.
