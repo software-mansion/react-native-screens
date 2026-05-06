@@ -35,7 +35,7 @@ class TabsHostTabSelectionRejectedEvent(
             putString(EK_SELECTED_KEY, currentNavState.selectedScreenKey)
             putInt(EK_PROVENANCE, currentNavState.provenance)
             putString(EK_REJECTED_KEY, rejectedRequest.selectedScreenKey)
-            putInt(EK_REJECTED_PROVENANCE, rejectedRequest.baseProvenance)
+            putInt(EK_REJECTED_BASE_PROVENANCE, rejectedRequest.baseProvenance)
             putString(EK_REJECTION_REASON, rejectionReason.toString())
         }
 
@@ -46,7 +46,7 @@ class TabsHostTabSelectionRejectedEvent(
         private const val EK_SELECTED_KEY = "selectedScreenKey"
         private const val EK_PROVENANCE = "provenance"
         private const val EK_REJECTED_KEY = "rejectedScreenKey"
-        private const val EK_REJECTED_PROVENANCE = "rejectedProvenance"
+        private const val EK_REJECTED_BASE_PROVENANCE = "rejectedBaseProvenance"
         private const val EK_REJECTION_REASON = "rejectionReason"
 
         override fun getEventName() = EVENT_NAME
