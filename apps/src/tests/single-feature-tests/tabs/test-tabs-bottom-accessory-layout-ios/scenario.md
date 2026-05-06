@@ -29,7 +29,7 @@ Not covered:
 - `bottomAccessory` is only available on iOS 26 or higher.
 - Each of the below steps must be executed twice: once on iPhone and once on iPad.
 - On iPad: Resize the window to the compact width size class as the `inline effect`
-effect is not applied to the full-size app.
+is not applied to the full-size app.
 - The **Config** tab is used to select the active accessory variant.
 - "Scrolling down" means dragging the list upward (revealing rows below);
   "scrolling up" means dragging the list downward (revealing rows above).
