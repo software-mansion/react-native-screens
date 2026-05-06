@@ -56,7 +56,7 @@ function ShortViewLR() {
 
 function LongView() {
   return (
-    <View style={styles.fullView} testID="accessory-long" >
+    <View style={styles.fullView}>
       <LongText />
     </View>
   );
@@ -65,9 +65,9 @@ function LongView() {
 function RGBView() {
   return (
     <View style={styles.fullView}>
-      <View testID="rgb-strip-0" style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
-      <View testID="rgb-strip-1" style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-      <View testID="rgb-strip-2" style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
     </View>
   );
 }
@@ -126,7 +126,7 @@ function ScrollDownTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-down-item-${i + 1}`}
+            testID={i === 0 ? 'scroll-down-item-1' : undefined}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
@@ -159,7 +159,7 @@ function ScrollUpTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-up-item-${i + 1}`}
+            testID={i === 0 ? 'scroll-up-item-1' : undefined}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
