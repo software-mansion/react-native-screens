@@ -8,7 +8,7 @@ variants and scrollable tabs, the test confirms correct rendering, immediate
 updates on change, layout stability during tab switches, and proper interaction
 with tabBarMinimizeBehavior.
 
-**OS test creation version:** iOS 26.2
+**OS test creation version:** iOS 26.4
 
 ## E2E test
 
@@ -150,7 +150,7 @@ accessory transitions back to the `regular` layout above the tab bar.
 - [ ] Expected: The **Config** tab is shown. The currently selected variant card
 still has a blue border.
 
-19. Tap a different variant card (e.g., **Center**).
+19. Tap a different variant card (e.g., **RGB**).
 
 - [ ] Expected: The accessory updates immediately to the new variant.
 
