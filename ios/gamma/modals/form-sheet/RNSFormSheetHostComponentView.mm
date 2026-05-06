@@ -248,6 +248,7 @@ namespace react = facebook::react;
 
 - (void)updateConfiguration
 {
+#if !TARGET_OS_TV
   UISheetPresentationController *sheet = _controller.sheetPresentationController;
   RCTAssert(
       sheet != nil,
@@ -258,8 +259,10 @@ namespace react = facebook::react;
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;
   }];
+#endif // !TARGET_OS_TV
 }
 
+#if !TARGET_OS_TV
 - (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetents
 {
   size_t detentsCount = _detents.size();
@@ -320,6 +323,7 @@ namespace react = facebook::react;
 
   return nativeDetents;
 }
+#endif // !TARGET_OS_TV
 
 - (BOOL)areDetentsValid
 {
