@@ -1,6 +1,6 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
-import BottomAccessoryScenario from './bottom-accessory-layout';
+import TestTabBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
@@ -18,7 +18,7 @@ import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scrol
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
 const scenarios = {
-  BottomAccessoryScenario,
+  TestTabBottomAccessory,
   TestTabsOverrideScrollViewContentInset,
   TabBarAppearanceDefinedBySelectedTabScenario,
   TestTabsTabBarHidden,
