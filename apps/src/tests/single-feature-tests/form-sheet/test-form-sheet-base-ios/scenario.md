@@ -4,7 +4,7 @@
 
 **Description:** Verify the core functionality and layout stability of the `FormSheet` component. This test ensures that the FormSheet opens correctly, that its internal content is properly centered, and that the content dynamically maintains its centered alignment when the user manually adjusts the sheet's height between different detents.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
 
 ## E2E test
 

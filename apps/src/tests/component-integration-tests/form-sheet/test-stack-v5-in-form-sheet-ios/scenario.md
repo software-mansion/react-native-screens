@@ -4,7 +4,7 @@
 
 **Description:** Verify the layout and state persistence of a `StackContainer` nested within a `FormSheet`. This test ensures that the Stack layout correctly fills the `FormSheet` container, that content remains properly centered, that the layout smoothly adapts when the FormSheet height changes, and that the Stack's navigation state is preserved when the sheet is dismissed and reopened.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
 
 ## E2E test
 
