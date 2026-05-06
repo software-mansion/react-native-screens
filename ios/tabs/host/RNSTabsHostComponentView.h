@@ -26,9 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate,
-                                          RNSTabsNavigationStateObserver
+@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate,
+                                                        RNSTabsNavigationStateObserver
 #if !RCT_NEW_ARCH_ENABLED
                                                         ,
                                                         RCTInvalidating
