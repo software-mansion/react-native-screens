@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   View,
+  PlatformColor,
 } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -35,46 +36,50 @@ export function ConfigColumn({
   setHostColorScheme: (value: SplitHostColorScheme) => void;
 }) {
   return (
-    <SafeAreaView style={styles.container} edges={{ left: true, right: true }}>
-      <ScrollView
+    <View style={styles.wrappingView}>
+      <SafeAreaView
         style={styles.container}
-        contentContainerStyle={styles.content}
-        contentInsetAdjustmentBehavior="automatic">
-        <View style={styles.section}>
-          <Text style={styles.text}>
-            There are 3 sources of color scheme, in ascending order of
-            precedence: system, React Native and our property on SplitHost.
-          </Text>
-        </View>
+        edges={{ left: true, right: true }}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          contentInsetAdjustmentBehavior="automatic">
+          <View style={styles.section}>
+            <Text style={styles.text}>
+              There are 3 sources of color scheme, in ascending order of
+              precedence: system, React Native and our property on SplitHost.
+            </Text>
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>System color scheme</Text>
-          <Text style={styles.text}>
-            Switch system color scheme via Cmd+Shift+A (iOS simulator).
-          </Text>
-        </View>
+          <View style={styles.section}>
+            <Text style={styles.heading}>System color scheme</Text>
+            <Text style={styles.text}>
+              Switch system color scheme via Cmd+Shift+A (iOS simulator).
+            </Text>
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>React Native's color scheme</Text>
-          <SettingsPicker<ColorSchemeName>
-            label={'colorScheme'}
-            value={reactColorScheme}
-            onValueChange={setReactColorScheme}
-            items={['unspecified', 'light', 'dark']}
-          />
-        </View>
+          <View style={styles.section}>
+            <Text style={styles.heading}>React Native's color scheme</Text>
+            <SettingsPicker<ColorSchemeName>
+              label={'colorScheme'}
+              value={reactColorScheme}
+              onValueChange={setReactColorScheme}
+              items={['unspecified', 'light', 'dark']}
+            />
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.heading}>SplitHost color scheme</Text>
-          <SettingsPicker<NonNullable<SplitHostColorScheme>>
-            label={'colorScheme'}
-            value={hostColorScheme}
-            onValueChange={setHostColorScheme}
-            items={['inherit', 'light', 'dark']}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.section}>
+            <Text style={styles.heading}>SplitHost color scheme</Text>
+            <SettingsPicker<NonNullable<SplitHostColorScheme>>
+              label={'colorScheme'}
+              value={hostColorScheme}
+              onValueChange={setHostColorScheme}
+              items={['inherit', 'light', 'dark']}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -114,6 +119,10 @@ export function App() {
 }
 
 const styles = StyleSheet.create({
+  wrappingView: {
+    flex: 1,
+    backgroundColor: PlatformColor('systemBackgroundColor'),
+  },
   container: {
     flex: 1,
   },

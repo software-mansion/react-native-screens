@@ -79,6 +79,8 @@ Assumption:
 
 9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
+- [ ] Expected: Split view color scheme updates immediately with each change, no crash or layout freeze
+
 ---
 
 ### Keyboard — native subview check
