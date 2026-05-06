@@ -257,6 +257,36 @@ RNS_IGNORE_SUPER_CALL_END
   // font customized on the navigation item level, so nothing to do here
 }
 
++ (void)scheduleDeferredNavigationBarRelayoutIfNeeded:(UINavigationController *)navctr
+                                            withConfig:(RNSScreenStackHeaderConfig *)config
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (config.largeTitle && config.hasSubviewLeft) {
+      // iOS 26: after drawer-driven navigation, large title can lay out with collapsed
+      // leading inset while custom left items use the standard 16pt inset. Sync nav bar
+      // directional margins and force a second layout pass on the next runloop tick.
+      dispatch_async(dispatch_get_main_queue(), ^{
+        NSDirectionalEdgeInsets m = navctr.navigationBar.directionalLayoutMargins;
+        navctr.navigationBar.directionalLayoutMargins =
+            NSDirectionalEdgeInsetsMake(m.top, 16.0, m.bottom, 16.0);
+        [navctr.view setNeedsLayout];
+        [navctr.navigationBar setNeedsLayout];
+        [navctr.view layoutIfNeeded];
+        [navctr.navigationBar layoutIfNeeded];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [navctr.view setNeedsLayout];
+          [navctr.navigationBar setNeedsLayout];
+          [navctr.view layoutIfNeeded];
+          [navctr.navigationBar layoutIfNeeded];
+        });
+      });
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
+
 + (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
@@ -672,9 +702,11 @@ RNS_IGNORE_SUPER_CALL_END
             }
             [self setAnimatedConfig:fromVC withConfig:config];
           }
+          [self scheduleDeferredNavigationBarRelayoutIfNeeded:navctr withConfig:config];
         }];
   } else {
     [self setAnimatedConfig:vc withConfig:config];
+    [self scheduleDeferredNavigationBarRelayoutIfNeeded:navctr withConfig:config];
   }
 }
 
