@@ -145,11 +145,17 @@ function ScrollUpTab() {
     updateHostConfig({ ios: { tabBarMinimizeBehavior: 'onScrollUp' } });
   }, [isSelected, updateHostConfig]);
 
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
   return (
     <ScrollView
+      ref={scrollViewRef}
       testID="scroll-up-scrollview"
       style={{ flex: 1 }}
-      contentInsetAdjustmentBehavior="automatic">
+      contentInsetAdjustmentBehavior="automatic"
+      onContentSizeChange={() =>
+        scrollViewRef.current?.scrollToEnd({ animated: false })
+      }>
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
