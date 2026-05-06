@@ -7,7 +7,6 @@
 @end
 
 @implementation RNSFormSheetHostController {
-  CGRect _lastNotifiedFrame;
 }
 
 - (instancetype)init
@@ -16,11 +15,6 @@
     self.modalPresentationStyle = UIModalPresentationFormSheet;
   }
   return self;
-}
-
-- (void)resetState
-{
-  _lastNotifiedFrame = CGRectZero;
 }
 
 - (RNSFormSheetContentView *)contentView
@@ -43,23 +37,11 @@
   self.presentationController.delegate = self;
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-  [super viewDidDisappear:animated];
-  [self resetState];
-}
-
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
 
-  CGRect newFrame = [self.view convertRect:self.view.bounds toView:nil];
-
-  if (newFrame.size.width > 0 && newFrame.size.height > 0 && !CGRectEqualToRect(newFrame, _lastNotifiedFrame)) {
-    _lastNotifiedFrame = newFrame;
-
-    [self.delegate sheetControllerViewDidLayoutSubviews:self];
-  }
+  [self.delegate sheetControllerViewDidLayoutSubviews:self];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
