@@ -43,6 +43,8 @@ type SplitViewOrientation =
 
 type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
+type LayoutDirection = 'inherit' | 'ltr' | 'rtl';
+
 type SplitViewTopColumnForCollapsing =
   | 'default'
   | 'primary'
@@ -68,6 +70,7 @@ interface ColumnMetrics {
 interface NativeProps extends ViewProps {
   // Appearance
 
+  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
   preferredDisplayMode?: CT.WithDefault<SplitViewDisplayMode, 'automatic'>;
   preferredSplitBehavior?: CT.WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: CT.WithDefault<SplitViewPrimaryEdge, 'leading'>;

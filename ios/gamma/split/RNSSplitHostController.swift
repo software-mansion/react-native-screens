@@ -11,6 +11,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   RNSOrientationProvidingSwift
 {
   private var needsChildViewControllersUpdate = false
+  private var isLayoutDirectionUpdatePending = false
 
   private var splitAppearanceCoordinator: RNSSplitAppearanceCoordinator
   private var splitAppearanceApplicator: RNSSplitAppearanceApplicator
@@ -62,6 +63,17 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     return nil
   }
 
+  // MARK: UIKit callbacks
+  public override func didMove(toParent parent: UIViewController?) {
+    super.didMove(toParent: parent)
+
+    if parent != nil && isLayoutDirectionUpdatePending {
+      isLayoutDirectionUpdatePending = false
+      splitAppearanceApplicator.updateLayoutDirectionBelowIOS17(
+        self.splitHostComponentView, self)
+    }
+  }
+
   // MARK: Signals
 
   @objc
@@ -92,6 +104,19 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   @objc
   public func setNeedsOrientationUpdate() {
     splitAppearanceCoordinator.needs(.orientationUpdate)
+  }
+
+  @objc
+  public func setNeedsLayoutDirectionUpdate() {
+    if #available(iOS 17.0, *) {
+      splitAppearanceCoordinator.needs(.layoutDirectionUpdateAboveIOS17)
+    } else {
+      if self.parent != nil {
+        splitAppearanceCoordinator.needs(.layoutDirectionUpdateBelowIOS17)
+      } else {
+        isLayoutDirectionUpdatePending = true
+      }
+    }
   }
 
   // MARK: Updating
