@@ -12,12 +12,17 @@ with tabBarMinimizeBehavior.
 
 ## E2E test
 
-Other: ongoing research.
-Not possible to check on selected variant. Not possible to check text location in bottom accessory.
+Yes: covers most of manual scenario steps only for iPhone; iPad testing would
+require app window resizing not supported by Detox.
+Not covered:
+- Text alignment verification in the bottom accessory.
+- Content verification for the last two variants.
+- Variant selection visual check (the blue border is not automated).
+- Extending the tab bar using the collapsed tab bar state.
 
 ## Prerequisites
 
-- iOS 26+ device or simulator iPhone and iPad
+- iOS 26+ device or simulator: iPhone and iPad
 
 ## Note
 
