@@ -2,7 +2,7 @@ const path = require('path');
 const Module = require('module');
 
 const pluginPath = require.resolve(
-  path.join(__dirname, 'eslint-plugin-local-rules'),
+  path.join(__dirname, '..', 'eslint-plugin-local-rules'),
 );
 const originalResolve = Module._resolveFilename;
 Module._resolveFilename = function (request, ...args) {
