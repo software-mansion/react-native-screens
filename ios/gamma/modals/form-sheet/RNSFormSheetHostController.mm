@@ -6,8 +6,7 @@
 @interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
 @end
 
-@implementation RNSFormSheetHostController {
-}
+@implementation RNSFormSheetHostController
 
 - (instancetype)init
 {
