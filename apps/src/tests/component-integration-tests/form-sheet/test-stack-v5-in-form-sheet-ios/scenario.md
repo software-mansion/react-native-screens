@@ -13,6 +13,7 @@ Other: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone and iPad
+- On iPad: Ensure the device is in full-screen mode, regular width, regular height size class
 
 ## Note
 
