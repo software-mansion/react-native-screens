@@ -73,19 +73,11 @@ function RGBView() {
 }
 
 const ACCESSORY_VARIANTS = [
-  { id: 0, content: ShortViewUL },
-  { id: 1, content: ShortViewC },
-  { id: 2, content: ShortViewLR },
-  { id: 3, content: LongView },
-  { id: 4, content: RGBView },
-];
-
-const VARIANT_TEST_IDS = [
-  'variant-upper-left',
-  'variant-center',
-  'variant-lower-right',
-  'variant-long',
-  'variant-rgb',
+  { id: 0, content: ShortViewUL, testID: 'variant-upper-left' },
+  { id: 1, content: ShortViewC, testID: 'variant-center' },
+  { id: 2, content: ShortViewLR, testID: 'variant-lower-right' },
+  { id: 3, content: LongView, testID: 'variant-long' },
+  { id: 4, content: RGBView, testID: 'variant-rgb' },
 ];
 
 function ConfigScreen() {
@@ -100,10 +92,10 @@ function ConfigScreen() {
 
   return (
     <ScrollView testID="config-scrollview" style={styles.container}>
-      {ACCESSORY_VARIANTS.map((item, index) => (
+      {ACCESSORY_VARIANTS.map(item => (
         <Pressable
           key={item.id}
-          testID={VARIANT_TEST_IDS[index]}
+          testID={item.testID}
           accessibilityState={{ selected: selected === item.id }}
           onPress={() => setSelected(item.id)}
           style={[
@@ -153,11 +145,17 @@ function ScrollUpTab() {
     updateHostConfig({ ios: { tabBarMinimizeBehavior: 'onScrollUp' } });
   }, [isSelected, updateHostConfig]);
 
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
   return (
     <ScrollView
+      ref={scrollViewRef}
       testID="scroll-up-scrollview"
       style={{ flex: 1 }}
-      contentInsetAdjustmentBehavior="automatic">
+      contentInsetAdjustmentBehavior="automatic"
+      onContentSizeChange={() =>
+        scrollViewRef.current?.scrollToEnd({ animated: false })
+      }>
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
