@@ -45,7 +45,7 @@ size class. For iOS 18 and older, a Split View must be triggered to achieve this
 - A toast message `onTabSelectionPrevented: <key>` appears whenever a native selection
 is blocked.
 
-## Steps - iPhone and Android phone
+## Steps
 
 ### Baseline
 
@@ -116,7 +116,7 @@ from another tab works normally.
 
 ---
 
-### iOS only — More navigation controller
+### iOS only — More navigation controller (for iPad resize app)
 
 12. Navigate to the **Fifth** tab via the **Select Fifth** button (programmatic).
 
