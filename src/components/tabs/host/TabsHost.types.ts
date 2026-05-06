@@ -103,8 +103,8 @@ export type TabSelectionRejectedEvent = {
   provenance: number;
   /** Screen key of the tab whose selection was rejected. */
   rejectedScreenKey: string;
-  /** Provenance of the rejected navigation state update. */
-  rejectedProvenance: number;
+  /** Base provenance of the rejected navigation state update. */
+  rejectedBaseProvenance: number;
   /** Reason the selection was rejected. */
   rejectionReason: TabSelectionRejectionReason;
 };
