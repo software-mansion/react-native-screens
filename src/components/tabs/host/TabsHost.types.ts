@@ -243,8 +243,8 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   onTabSelected?:
-  | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
-  | undefined;
+    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -253,8 +253,8 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionRejectedEvent}
    */
   onTabSelectionRejected?:
-  | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
-  | undefined;
+    | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -264,8 +264,8 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionPreventedEvent}
    */
   onTabSelectionPrevented?:
-  | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
-  | undefined;
+    | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
+    | undefined;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {

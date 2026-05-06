@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs.container
 
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.REPEATED
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason.STALE
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason.REPEATED
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason.STALE
 
 /**
  * Describes navigation state of a tabs container.
@@ -11,7 +11,7 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionR
  *   State with provenance `N + 1` is derived from state with provenance `N`.
  *   This allows detecting stale updates.
  */
-data class TabsNavState(
+data class TabsNavigationState(
     val selectedScreenKey: String,
     val provenance: Int,
 ) {
@@ -20,7 +20,7 @@ data class TabsNavState(
     internal fun isNotEmpty(): Boolean = !this.isEmpty()
 
     companion object {
-        val EMPTY = TabsNavState("", Int.MIN_VALUE)
+        val EMPTY = TabsNavigationState("", Int.MIN_VALUE)
     }
 }
 
@@ -35,7 +35,7 @@ data class TabsNavState(
  * @property baseProvenance Provenance of the state this request was derived from. Used for staleness detection.
  * @property actionOrigin Origin (actor) that initiated this request.
  */
-data class TabsNavStateUpdateRequest(
+data class TabsNavigationStateUpdateRequest(
     val selectedScreenKey: String,
     val baseProvenance: Int,
     val actionOrigin: TabsActionOrigin,
@@ -47,7 +47,7 @@ data class TabsNavStateUpdateRequest(
  * - [STALE] — the update's provenance indicates that it is based on a stale state.
  * - [REPEATED] — the requested tab is already selected.
  */
-enum class TabsNavStateUpdateRejectionReason {
+enum class TabsNavigationStateRejectionReason {
     STALE,
     REPEATED,
     ;

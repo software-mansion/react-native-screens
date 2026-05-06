@@ -4,9 +4,9 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 
 /**
  * React Native event dispatched to JS when a tab selection request is rejected by the container.
@@ -18,9 +18,9 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
 class TabsHostTabSelectionRejectedEvent(
     surfaceId: Int,
     viewId: Int,
-    val currentNavState: TabsNavState,
-    val rejectedRequest: TabsNavStateUpdateRequest,
-    val rejectionReason: TabsNavStateUpdateRejectionReason,
+    val currentNavState: TabsNavigationState,
+    val rejectedRequest: TabsNavigationStateUpdateRequest,
+    val rejectionReason: TabsNavigationStateRejectionReason,
 ) : Event<TabsHostTabSelectionRejectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME

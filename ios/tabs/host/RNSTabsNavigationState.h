@@ -4,6 +4,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSTabBarController;
+
 /**
  * Origin (actor) that requested a tab transition. Mirrors the public `actionOrigin` event field.
  */
@@ -122,6 +124,60 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
                       isRepeated:(BOOL)isRepeated
        hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
                     actionOrigin:(RNSTabsActionOrigin)actionOrigin;
+
+@end
+
+/**
+ * Observer of navigation state changes on a tabs container (`RNSTabBarController`).
+ *
+ * Multiple observers may register against a single container via
+ * `RNSTabBarController addNavigationStateObserver:` / `removeNavigationStateObserver:`.
+ * The host (`RNSTabsHostComponentView`) registers itself as an observer to relay events
+ * to JS; downstream native libraries integrating directly against `RNSTabBarController`
+ * may register additional observers.
+ *
+ * Observers are held with strong references; callers must explicitly call
+ * `removeNavigationStateObserver:` before observer dealloc, or rely on the host
+ * invoking `tearDown` (which clears the registry) on container teardown.
+ */
+@protocol RNSTabsNavigationStateObserver <NSObject>
+
+@required
+
+/**
+ * Called when the container accepts a navigation state change.
+ */
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+     didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
+          withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context;
+
+/**
+ * Called when the container rejects a navigation state update.
+ */
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+           currentState:(nonnull RNSTabsNavigationState *)currentNavState
+             withReason:(RNSTabsNavigationStateRejectionReason)reason;
+
+/**
+ * Called when a native user action (tap) attempts to select a tab that has
+ * `preventNativeSelection` enabled. The navigation state remains unchanged.
+ */
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    preventedSelectionOf:(nonnull NSString *)preventedScreenKey
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState;
+
+@optional
+
+/**
+ * iOS-only. Called when the user taps the More tab on iPhone or in iPad split view
+ * configurations where UIKit groups overflow tabs into a More navigation controller.
+ *
+ * This event is informational; the navigation state is not advanced as part of this callback.
+ * Android does not emit an analogue.
+ */
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState;
 
 @end
 
