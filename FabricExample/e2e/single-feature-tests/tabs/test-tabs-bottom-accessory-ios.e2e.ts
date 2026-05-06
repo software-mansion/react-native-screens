@@ -4,7 +4,6 @@ import {
   describeIfiOS,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
-  getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
 
