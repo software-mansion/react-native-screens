@@ -14,8 +14,8 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateObserver
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateObserver
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason
 import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
