@@ -377,12 +377,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (_needsSplitLayoutDirectionUpdate && _controller != nil) {
     _needsSplitLayoutDirectionUpdate = false;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
-    if (@available(iOS 17.0, *)) {
-      _controller.traitOverrides.layoutDirection = _layoutDirection;
-    } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
-      [_controller setNeedsLayoutDirectionUpdateBelowIOS17];
+    [_controller setNeedsLayoutDirectionUpdate];
   }
 }
 

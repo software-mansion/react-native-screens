@@ -62,11 +62,11 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   required init?(coder aDecoder: NSCoder) {
     return nil
   }
-  
+
   // MARK: UIKit callbacks
   public override func didMove(toParent parent: UIViewController?) {
     super.didMove(toParent: parent)
-    
+
     if parent != nil && isLayoutDirectionUpdatePending {
       isLayoutDirectionUpdatePending = false
       splitAppearanceApplicator.updateLayoutDirectionBelowIOS17(
@@ -107,11 +107,15 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   }
 
   @objc
-  public func setNeedsLayoutDirectionUpdateBelowIOS17() {
-    if self.parent != nil {
-      splitAppearanceCoordinator.needs(.layoutDirectionUpdateBelowIOS17)
+  public func setNeedsLayoutDirectionUpdate() {
+    if #available(iOS 17.0, *) {
+      splitAppearanceCoordinator.needs(.layoutDirectionUpdateAboveIOS17)
     } else {
-      isLayoutDirectionUpdatePending = true
+      if self.parent != nil {
+        splitAppearanceCoordinator.needs(.layoutDirectionUpdateBelowIOS17)
+      } else {
+        isLayoutDirectionUpdatePending = true
+      }
     }
   }
 

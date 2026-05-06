@@ -49,6 +49,12 @@ class RNSSplitAppearanceApplicator {
       RNSScreenWindowTraits.enforceDesiredDeviceOrientation()
     }
 
+    appearanceCoordinator.updateIfNeeded(.layoutDirectionUpdateAboveIOS17) {
+      if #available(iOS 17.0, *) {
+        splitHostController.traitOverrides.layoutDirection = splitHost.layoutDirection
+      }
+    }
+
     appearanceCoordinator.updateIfNeeded(.layoutDirectionUpdateBelowIOS17) {
       updateLayoutDirectionBelowIOS17(splitHost, splitHostController)
     }
