@@ -19,21 +19,27 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsNavigationStateObserverRegistry : NSObject
 
 /**
- * Register an observer. Returns NO if the observer is already registered or if called
+ * Register an observer.
+ *
+ * @returns NO if the observer is already registered or if called
  * during an in-flight `emit*` (modifications during emission are rejected).
  */
 - (BOOL)addObserver:(id<RNSTabsNavigationStateObserver>)observer;
 
 /**
- * Unregister an observer. Returns NO if the observer was not registered or if called
+ * Unregister an observer.
+ *
+ * @returns NO if the observer was not registered or if called
  * during an in-flight `emit*` (modifications during emission are rejected).
  */
 - (BOOL)removeObserver:(id<RNSTabsNavigationStateObserver>)observer;
 
 /**
- * Drop all registered observers. Must not be called during an in-flight `emit*`.
+ * Drop all registered observers.
+ *
+ * @returns NO if called during in-flight `emit*` (modifications during emission are rejected).
  */
-- (void)clear;
+- (BOOL)clear;
 
 - (void)emitDidUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
                  withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context

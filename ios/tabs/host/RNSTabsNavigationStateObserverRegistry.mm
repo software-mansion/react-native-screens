@@ -20,10 +20,7 @@
 
 - (BOOL)addObserver:(id<RNSTabsNavigationStateObserver>)observer
 {
-  if (_isEmitting) {
-    return NO;
-  }
-  if ([_observers containsObject:observer]) {
+  if (_isEmitting || [_observers containsObject:observer]) {
     return NO;
   }
   [_observers addObject:observer];
@@ -32,32 +29,29 @@
 
 - (BOOL)removeObserver:(id<RNSTabsNavigationStateObserver>)observer
 {
-  if (_isEmitting) {
-    return NO;
-  }
-  if (![_observers containsObject:observer]) {
+  if (_isEmitting || ![_observers containsObject:observer]) {
     return NO;
   }
   [_observers removeObject:observer];
   return YES;
 }
 
-- (void)clear
+- (BOOL)clear
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] RNSTabsNavigationStateObserverRegistry clear during emission");
+  if (_isEmitting) {
+    return NO;
+  }
   [_observers removeAllObjects];
+  return YES;
 }
 
 - (void)emitDidUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
                  withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context
                       sender:(nonnull RNSTabBarController *)sender
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
-  _isEmitting = YES;
-  for (id<RNSTabsNavigationStateObserver> observer in _observers) {
+  [self emitSignal:^(id<RNSTabsNavigationStateObserver> observer) {
     [observer tabsContainer:sender didUpdateStateTo:navState withContext:context];
-  }
-  _isEmitting = NO;
+  }];
 }
 
 - (void)emitRejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
@@ -65,38 +59,46 @@
                      withReason:(RNSTabsNavigationStateRejectionReason)reason
                          sender:(nonnull RNSTabBarController *)sender
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
-  _isEmitting = YES;
-  for (id<RNSTabsNavigationStateObserver> observer in _observers) {
+  [self emitSignal:^(id<RNSTabsNavigationStateObserver> observer) {
     [observer tabsContainer:sender rejectedStateUpdate:rejectedRequest currentState:currentNavState withReason:reason];
-  }
-  _isEmitting = NO;
+  }];
 }
 
 - (void)emitPreventedSelectionOf:(nonnull NSString *)preventedScreenKey
                     currentState:(nonnull RNSTabsNavigationState *)currentNavState
                           sender:(nonnull RNSTabBarController *)sender
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
-  _isEmitting = YES;
-  for (id<RNSTabsNavigationStateObserver> observer in _observers) {
+  [self emitSignal:^(id<RNSTabsNavigationStateObserver> observer) {
     [observer tabsContainer:sender preventedSelectionOf:preventedScreenKey currentState:currentNavState];
-  }
-  _isEmitting = NO;
+  }];
 }
 
 - (void)emitDidSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState
                                       sender:(nonnull RNSTabBarController *)sender
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
-  _isEmitting = YES;
-  SEL sel = @selector(tabsContainer:didSelectMoreTabWithCurrentState:);
-  for (id<RNSTabsNavigationStateObserver> observer in _observers) {
-    if ([observer respondsToSelector:sel]) {
+  SEL observerSelector = @selector(tabsContainer:didSelectMoreTabWithCurrentState:);
+  [self emitSignal:^(id<RNSTabsNavigationStateObserver> observer) {
+    if ([observer respondsToSelector:observerSelector]) {
       [observer tabsContainer:sender didSelectMoreTabWithCurrentState:currentNavState];
     }
+  }];
+}
+
+- (void)emitSignal:(void (^)(id<RNSTabsNavigationStateObserver> observer))emitBlock
+{
+  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
+
+  // In release best we can do here is let it emit the event. Alternatives are to crash or not emit (certain wrong
+  // state).
+
+  _isEmitting = YES;
+  @try {
+    for (id<RNSTabsNavigationStateObserver> observer in _observers) {
+      emitBlock(observer);
+    }
+  } @finally {
+    _isEmitting = NO;
   }
-  _isEmitting = NO;
 }
 
 @end
