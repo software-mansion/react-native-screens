@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate,
-                                                        RNSTabBarControllerDelegate
+                                                        RNSTabsNavigationStateObserver
 #if !RCT_NEW_ARCH_ENABLED
                                                         ,
                                                         RCTInvalidating

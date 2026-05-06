@@ -12,7 +12,7 @@ import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRequest
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionPreventedEvent
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostTabSelectionRejectedEvent
@@ -73,6 +73,11 @@ class TabsHostViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
+    override fun onDropViewInstance(view: TabsHost) {
+        view.tearDown()
+        super.onDropViewInstance(view)
+    }
+
     override fun setNavStateRequest(
         view: TabsHost,
         value: ReadableMap?,
@@ -80,8 +85,8 @@ class TabsHostViewManager :
         val navStateRequestMap = requireNotNull(value) { "[RNScreens] navStateRequest must not be nullish" }
         val selectedScreenKey = requireNotNull(navStateRequestMap.getString("selectedScreenKey"))
         val baseProvenance = requireNotNull(navStateRequestMap.getInt("baseProvenance"))
-        view.updateJSNavStateRequest(
-            TabsNavStateUpdateRequest(
+        view.updateJSNavigationStateUpdateRequest(
+            TabsNavigationStateUpdateRequest(
                 selectedScreenKey = selectedScreenKey,
                 baseProvenance = baseProvenance,
                 actionOrigin = TabsActionOrigin.PROGRAMMATIC_JS,
@@ -93,7 +98,7 @@ class TabsHostViewManager :
         view: TabsHost,
         value: Boolean,
     ) {
-        view.rejectStaleNavStateUpdates = value
+        view.rejectStaleNavigationStateUpdates = value
     }
 
     override fun setTabBarHidden(

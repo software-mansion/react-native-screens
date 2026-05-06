@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
 
 /**
  * React Native event dispatched to JS when a tab selection is prevented because the target
@@ -15,7 +15,7 @@ import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
 class TabsHostTabSelectionPreventedEvent(
     surfaceId: Int,
     viewId: Int,
-    val currentNavState: TabsNavState,
+    val currentNavState: TabsNavigationState,
     val preventedScreenKey: String,
 ) : Event<TabsHostTabSelectionPreventedEvent>(surfaceId, viewId),
     NamingAwareEventType {
