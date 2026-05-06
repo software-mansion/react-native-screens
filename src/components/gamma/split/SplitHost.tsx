@@ -43,7 +43,8 @@ const isValidDisplayModeForSplitBehavior = (
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function SplitHost({ ref, ...props }: SplitHostProps) {
-  const { direction, preferredDisplayMode, preferredSplitBehavior } = props;
+  const { direction, ...filteredProps } = props;
+  const { preferredDisplayMode, preferredSplitBehavior } = filteredProps;
   const nativeRef = React.useRef<NativeRef>(null);
 
   React.useImperativeHandle(
@@ -100,7 +101,7 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
       // By using a specific key in this form, we can detect changes in the number of React children.
       // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
-      {...props}
+      {...filteredProps}
       layoutDirection={direction}
       style={styles.container}>
       {props.children}
