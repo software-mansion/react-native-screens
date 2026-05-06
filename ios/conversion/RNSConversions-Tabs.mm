@@ -242,6 +242,8 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedAct
       return User;
     case RNSTabsActionOriginProgrammaticJs:
       return ProgrammaticJs;
+    case RNSTabsActionOriginProgrammaticNative:
+      return ProgrammaticNative;
     case RNSTabsActionOriginImplicit:
       return Implicit;
     default:
