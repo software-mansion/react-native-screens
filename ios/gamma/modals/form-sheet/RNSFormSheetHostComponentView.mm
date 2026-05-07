@@ -374,15 +374,13 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   {
     // iOS 15 Fallback - mirroring buildSheetDetents
-    if (_detents.size() == 0) {
-      return UISheetPresentationControllerDetentIdentifierLarge;
-    } else if (_detents.size() == 1) {
-      return _detents[0] < 1.0 ? UISheetPresentationControllerDetentIdentifierMedium
-                               : UISheetPresentationControllerDetentIdentifierLarge;
-    } else {
-      return ludIndex == 0 ? UISheetPresentationControllerDetentIdentifierMedium
-                           : UISheetPresentationControllerDetentIdentifierLarge;
+    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)ludIndex];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
     }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
   }
 }
 
