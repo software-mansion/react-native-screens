@@ -8,13 +8,15 @@ const FORM_SHEET_NEVER_DIMMED = -2;
  * Resolves the JS `largestUndimmedDetentIndex` prop to a native numeric value.
  *
  * @param largestUndimmedDetent The prop value passed from the FormSheet.
+ * @param detentsCount Length of the `detents` array as seen from JS.
  * @returns A value to pass to the native component:
- * `-1` (always dimmed),
- * `-2` (never dimmed),
+ * - `-1` (always dimmed),
+ * - `-2` (never dimmed),
  * - a non-negative index.
  */
 export function resolveLargestUndimmedDetentIndex(
   largestUndimmedDetent: FormSheetProps['largestUndimmedDetentIndex'],
+  detentsCount: number = 0,
 ): number {
   if (largestUndimmedDetent === 'none' || largestUndimmedDetent === undefined) {
     return FORM_SHEET_ALWAYS_DIMMED;
@@ -25,19 +27,12 @@ export function resolveLargestUndimmedDetentIndex(
   }
 
   if (typeof largestUndimmedDetent === 'number') {
-    if (!Number.isInteger(largestUndimmedDetent)) {
-      if (__DEV__) {
-        console.error(
-          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected a non-negative integer. Falling back to the default behavior (always dimmed).`,
-        );
-      }
-      return FORM_SHEET_ALWAYS_DIMMED;
-    }
+    const lastDetentIndex = Math.max(detentsCount - 1, 0);
 
-    if (largestUndimmedDetent < 0) {
+    if (!isIndexInClosedRange(largestUndimmedDetent, 0, lastDetentIndex)) {
       if (__DEV__) {
         console.error(
-          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected a non-negative integer. Falling back to the default behavior (always dimmed).`,
+          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected an integer between 0 and ${lastDetentIndex}. Falling back to the default behavior (always dimmed).`,
         );
       }
       return FORM_SHEET_ALWAYS_DIMMED;
@@ -52,4 +47,12 @@ export function resolveLargestUndimmedDetentIndex(
     );
   }
   return FORM_SHEET_ALWAYS_DIMMED;
+}
+
+function isIndexInClosedRange(
+  value: number,
+  lowerBound: number,
+  upperBound: number,
+): boolean {
+  return Number.isInteger(value) && value >= lowerBound && value <= upperBound;
 }

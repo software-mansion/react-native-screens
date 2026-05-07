@@ -19,17 +19,19 @@ export function resolveNativeCornerRadius(
 }
 
 export function FormSheet(props: FormSheetProps) {
-  const { largestUndimmedDetentIndex, preferredCornerRadius, ...rest } = props;
+  const { detents, largestUndimmedDetentIndex, preferredCornerRadius, ...rest } = props;
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
 
   const resolvedUndimmedIndex = resolveLargestUndimmedDetentIndex(
     largestUndimmedDetentIndex,
+    detents?.length ?? 0,
   );
 
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
+      detents={detents}
       largestUndimmedDetentIndex={resolvedUndimmedIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}
