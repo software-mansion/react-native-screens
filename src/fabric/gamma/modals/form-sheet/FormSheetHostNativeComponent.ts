@@ -9,6 +9,7 @@ type GenericEmptyEvent = Readonly<{}>;
 interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
   detents?: CT.Double[] | undefined;
+  prefersGrabberVisible?: CT.WithDefault<boolean, false>;
   preferredCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }

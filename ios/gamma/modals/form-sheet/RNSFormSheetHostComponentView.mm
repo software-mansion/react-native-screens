@@ -26,6 +26,7 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
+  BOOL _prefersGrabberVisible;
   std::vector<double> _detents;
   CGFloat _preferredCornerRadius;
 
@@ -60,8 +61,9 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
-  _detents = {};
+  _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
+  _detents = {};
 }
 
 - (void)setupController
@@ -189,6 +191,11 @@ namespace react = facebook::react;
     _needsSheetConfigurationUpdate = YES;
   }
 
+  if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
+    _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
+    _needsSheetConfigurationUpdate = YES;
+  }
+
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
     _needsSheetConfigurationUpdate = YES;
@@ -256,8 +263,10 @@ namespace react = facebook::react;
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
 
+  // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;
+    sheet.prefersGrabberVisible = _prefersGrabberVisible;
     sheet.preferredCornerRadius =
         _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
   }];
