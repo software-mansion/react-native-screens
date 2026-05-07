@@ -13,7 +13,7 @@
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
 
 // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
-static constexpr int kMinCountOfVCsForMoreVCPresence = 5;
+static constexpr int kMinCountOfVCsForMoreVCPresence = 6;
 
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
@@ -753,7 +753,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
-  return self.viewControllers.count > kMinCountOfVCsForMoreVCPresence &&
+  return self.viewControllers.count >= kMinCountOfVCsForMoreVCPresence &&
       self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 #else
   return NO;
@@ -764,8 +764,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   return [self canHaveMoreNavigationController] && [self isMoreNavigationControllerPresentInTabBar] &&
       ![self.tabBar.items containsObject:viewController.tabBarItem] &&
-      [self.viewControllers indexOfObject:viewController] >
-      (kMinCountOfVCsForMoreVCPresence - 1); // -1 because one item is replaced by the more nav. ctrl item.
+      [self.viewControllers indexOfObject:viewController] > (kMinCountOfVCsForMoreVCPresence - 1);
 }
 
 - (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
