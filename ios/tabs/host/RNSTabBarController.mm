@@ -757,7 +757,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
-  // The count is documented. Size class check is empirical, to tigthen the condition and have less
+  // The count is documented. Size class check is empirical, to tighten the condition and have less
   // false positives. If we ever find it not correct, we can safely remove it.
   return self.viewControllers.count >= kMinCountOfVCsForMoreVCPresence &&
       self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
