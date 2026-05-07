@@ -13,11 +13,11 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-type largestUndimmedDetentIndexProp = number | 'none' | 'last';
+type LargestUndimmedDetentIndexProp = number | 'none' | 'last';
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [undimmedIndex, setUndimmedIndex] = useState<largestUndimmedDetentIndexProp>('none');
+  const [undimmedIndex, setUndimmedIndex] = useState<LargestUndimmedDetentIndexProp>('none');
   const [bgCounter, setBgCounter] = useState(0);
 
   return (
