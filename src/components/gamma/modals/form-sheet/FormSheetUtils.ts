@@ -28,7 +28,16 @@ export function resolveLargestUndimmedDetentIndex(
     if (!Number.isInteger(largestUndimmedDetent)) {
       if (__DEV__) {
         console.error(
-          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected an integer. Falling back to the default behavior (always dimmed).`,
+          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected a non-negative integer. Falling back to the default behavior (always dimmed).`,
+        );
+      }
+      return FORM_SHEET_ALWAYS_DIMMED;
+    }
+
+    if (largestUndimmedDetent < 0) {
+      if (__DEV__) {
+        console.error(
+          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected a non-negative integer. Falling back to the default behavior (always dimmed).`,
         );
       }
       return FORM_SHEET_ALWAYS_DIMMED;
