@@ -424,7 +424,7 @@ class ScreenStackFragment :
                     setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
                 }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
-        val backgroundColor = resolveBackgroundColor(screen)
+        val backgroundColor = screen.sheetBackgroundColor ?: resolveBackgroundColor(screen)
         shape.setTint(backgroundColor ?: Color.TRANSPARENT)
         screen.background = shape
     }

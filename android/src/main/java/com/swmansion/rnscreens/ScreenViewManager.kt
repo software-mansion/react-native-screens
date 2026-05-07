@@ -95,6 +95,20 @@ open class ScreenViewManager :
         view.onFinalizePropsUpdate()
     }
 
+    override fun setBackgroundColor(
+        view: Screen,
+        backgroundColor: Int,
+    ) {
+        view.sheetBackgroundColor = backgroundColor
+
+        if (view.stackPresentation === Screen.StackPresentation.FORM_SHEET) {
+            view.applySheetBackgroundColor()
+            return
+        }
+
+        super.setBackgroundColor(view, backgroundColor)
+    }
+
     fun setActivityState(
         view: Screen,
         activityState: Int,
