@@ -1,0 +1,92 @@
+import React, { useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { FormSheet } from 'react-native-screens/experimental';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
+import { Colors } from '@apps/shared/styling';
+
+const scenarioDescription: ScenarioDescription = {
+  name: 'Sheet preferred corner radius',
+  key: 'test-form-sheet-preferred-corner-radius-ios',
+  details:
+    'Allows to test the preferredCornerRadius property of the FormSheet component.',
+  platforms: ['ios'],
+};
+
+export function App() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [radius, setRadius] = useState<number>(-1.0);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Corner Radius Test</Text>
+      <Text style={{ marginBottom: 12, color: Colors.text }}>
+        Current Radius: {radius}
+      </Text>
+      <Button
+        title="Open FormSheet"
+        color={Colors.primary}
+        onPress={() => setIsOpen(true)}
+      />
+      <FormSheet
+        isOpen={isOpen}
+        onNativeDismiss={() => setIsOpen(false)}
+        preferredCornerRadius={radius}
+        detents={[0.6, 1.0]}>
+        <View style={styles.sheetContent}>
+          <Text style={styles.sheetTitle}>Current Radius: {radius}</Text>
+          <View style={styles.spacing} />
+          <View style={styles.buttonGroup}>
+            <Button title="Default (-1.0)" onPress={() => setRadius(-1.0)} />
+            <Button title="Sharp (0)" onPress={() => setRadius(0)} />
+            <Button title="Small (10)" onPress={() => setRadius(10)} />
+            <Button title="Large (50)" onPress={() => setRadius(50)} />
+          </View>
+          <View style={styles.spacing} />
+          <Button
+            title="Dismiss from JS"
+            color={Colors.primary}
+            onPress={() => setIsOpen(false)}
+          />
+        </View>
+      </FormSheet>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.offBackground,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: Colors.text,
+  },
+  sheetContent: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginBottom: 12,
+    color: Colors.text,
+  },
+  buttonGroup: {
+    gap: 12,
+    alignItems: 'center',
+  },
+  spacing: {
+    height: 32,
+  },
+});
+
+export default createScenario(App, scenarioDescription);
