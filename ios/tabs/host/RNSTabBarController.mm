@@ -13,7 +13,7 @@
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
 
 // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
-static constexpr int kMinCountOfVCsForMoreVCPresence = 6;
+static constexpr NSUInteger kMinCountOfVCsForMoreVCPresence = 6;
 
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
