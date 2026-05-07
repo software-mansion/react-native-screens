@@ -1,8 +1,8 @@
 import type { FormSheetProps } from './FormSheet.types';
 
 // Keep these predefined values in sync with native equivalents.
-const SHEET_ALWAYS_DIMMED = -1;
-const SHEET_NEVER_DIMMED = -2;
+const FORM_SHEET_ALWAYS_DIMMED = -1;
+const FORM_SHEET_NEVER_DIMMED = -2;
 
 /**
  * Resolves the JS `largestUndimmedDetentIndex` prop to a value the native side
@@ -24,11 +24,11 @@ export function resolveLargestUndimmedDetentIndex(
   detentsCount: number = 0,
 ): number {
   if (largestUndimmedDetent === 'none' || largestUndimmedDetent === undefined) {
-    return SHEET_ALWAYS_DIMMED;
+    return FORM_SHEET_ALWAYS_DIMMED;
   }
 
   if (largestUndimmedDetent === 'last') {
-    return SHEET_NEVER_DIMMED;
+    return FORM_SHEET_NEVER_DIMMED;
   }
 
   if (typeof largestUndimmedDetent === 'number') {
@@ -45,7 +45,7 @@ export function resolveLargestUndimmedDetentIndex(
           `[RNScreens] 'largestUndimmedDetentIndex' (${largestUndimmedDetent}) is out of bounds. The sheet has ${effectiveDetentsCount} detent(s). Falling back to the default behavior (always dimmed).`,
         );
       }
-      return SHEET_ALWAYS_DIMMED;
+      return FORM_SHEET_ALWAYS_DIMMED;
     }
 
     return largestUndimmedDetent;
@@ -56,5 +56,5 @@ export function resolveLargestUndimmedDetentIndex(
       "[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex'. Expected a number, 'none', or 'last'. Falling back to the default behavior (always dimmed).",
     );
   }
-  return SHEET_ALWAYS_DIMMED;
+  return FORM_SHEET_ALWAYS_DIMMED;
 }
