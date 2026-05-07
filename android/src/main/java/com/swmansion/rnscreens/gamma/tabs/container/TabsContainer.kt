@@ -511,7 +511,7 @@ class TabsContainer internal constructor(
         actionOrigin: TabsActionOrigin,
     ) {
         navState = TabsNavigationState(selectedScreenKey, navState.provenance + 1)
-        if (!isInExternalOperationContext) {
+        if (actionOrigin != TabsActionOrigin.PROGRAMMATIC_JS) {
             lastUINavState = navState
         }
     }
