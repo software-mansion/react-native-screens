@@ -192,6 +192,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   [super traitCollectionDidChange:previousTraitCollection];
 
+  if (previousTraitCollection == nil || self.selectedViewController == nil) {
+    return;
+  }
+
   if (self.traitCollection.horizontalSizeClass != previousTraitCollection.horizontalSizeClass &&
       [self isViewControllerPresentedFromTheMoreNavigationController:self.selectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
