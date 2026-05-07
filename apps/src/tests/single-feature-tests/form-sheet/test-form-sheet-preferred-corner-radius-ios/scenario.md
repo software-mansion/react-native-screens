@@ -34,7 +34,7 @@ Other: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens. The top corners of the sheet display the standard, system-default rounded appearance.
+- [ ] Expected: The FormSheet opens. The top corners (iOS 18) or all corners (iOS 26) of the sheet display the standard, system-default rounded appearance.
 
 ---
 
@@ -42,15 +42,15 @@ Other: Planned, but will be implemented separately.
 
 3. Tap the "Sharp (0)" button.
 
-- [ ] Expected: The top corners of the sheet update dynamically, becoming sharp.
+- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, becoming sharp.
 
 4. Tap the "Small (10)" button.
 
-- [ ] Expected: The top corners update to a slightly rounded curve.
+- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) update to a slightly rounded curve.
 
 5. Tap the "Large (50)" button.
 
-- [ ] Expected: The top corners of the sheet update dynamically, displaying deeply rounded curve.
+- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, displaying deeply rounded curve.
 
 ---
 
