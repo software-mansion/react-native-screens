@@ -108,7 +108,7 @@ Defaults to `false`.
 
 Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
 Depending on values set, it will blur the scrolling content below certain UI elements (e.g. header items, search bar) for the specified edge of the ScrollView.
-When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around, the ScrollView will use only the innermost one's config.
+When set in nested containers, i.e. Stack inside Tabs, or the other way around, the ScrollView will use only the innermost one's config.
 
 Edge effects can be configured for each edge separately. The following values are currently supported:
 
@@ -810,6 +810,14 @@ Customize the weight of the font to be used for the title.
 This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
+
+### `disableTopInsetApplication` (Android only)
+
+When set to `true` on the outermost stack with a **visible** header, disables top inset handling for that header and the entire subtree.
+
+This prop only takes effect on the outermost visible header in the hierarchy. Setting it on an inner stack has no additional impact because a parent stack has already made the decision (whether inset should be applied or not).
+
+Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
 
 ### `translucent`
 

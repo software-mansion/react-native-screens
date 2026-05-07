@@ -1,21 +1,19 @@
-import { SettingsPicker } from '../../../shared/SettingsPicker';
+import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import useStackConfigState from '../../shared/hooks/stack-config';
+import useStackConfigState from '@apps/tests/shared/hooks/stack-config';
 import {
   createAutoConfiguredStack,
   findStackScreenOptions,
-} from '../../shared/stack';
-import { Scenario } from '../../shared/helpers';
+} from '@apps/tests/shared/stack';
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 
-const SCENARIO: Scenario = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Orientation',
   key: 'stack-v4-orientation',
   platforms: ['ios', 'android'],
-  AppComponent: App,
 };
-
-export default SCENARIO;
 
 type StackParamList = {
   Screen1: undefined;
@@ -55,3 +53,5 @@ export function App() {
     </Stack.Provider>
   );
 }
+
+export default createScenario(App, scenarioDescription);

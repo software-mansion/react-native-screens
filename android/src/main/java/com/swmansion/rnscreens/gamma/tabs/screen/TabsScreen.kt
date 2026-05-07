@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -30,7 +31,7 @@ class TabsScreen(
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
-    var tabKey: String? = null
+    var screenKey: String? = null
         set(value) {
             field =
                 if (value?.isBlank() == true) {
@@ -40,20 +41,23 @@ class TabsScreen(
                 }
         }
 
+    internal val requireScreenKey: String
+        get() = checkNotNull(screenKey) { "[RNScreens] screenKey MUST NOT be null" }
+
     var tabTitle: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    // Appearance
+
+    internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            tabsScreenDelegate.get()?.onAppearanceChanged(this)
+        }
+    }
+
     // Badge
     var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeTextColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
@@ -90,6 +94,8 @@ class TabsScreen(
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
+    var preventNativeSelection: Boolean = false
+
     private fun <T> updateMenuItemAttributesIfNeeded(
         oldValue: T,
         newValue: T,
@@ -104,23 +110,11 @@ class TabsScreen(
         super.onAttachedToWindow()
     }
 
-    var isFocusedTab: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                onTabFocusChangedFromJS()
-            }
-        }
-
     internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
         tabsScreenDelegate = WeakReference(delegate)
     }
 
     override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
-
-    private fun onTabFocusChangedFromJS() {
-        tabsScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
-    }
 
     private fun onMenuItemAttributesChange() {
         tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)

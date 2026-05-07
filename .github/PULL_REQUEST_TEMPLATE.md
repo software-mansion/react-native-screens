@@ -57,7 +57,6 @@ The reproduction code should be minimal & complete. Don't exclude exports or rem
 ## Checklist
 
 - [ ] Included code example that can be used to test this change.
-- [ ] Updated / created local changelog entries in relevant test files.
 - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change.
 - [ ] For API changes, updated relevant public types.
 - [ ] Ensured that CI passes

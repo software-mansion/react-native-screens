@@ -13,7 +13,7 @@ import {
   Button,
   ToastProvider,
   useToast,
-} from '../shared';
+} from '@apps/shared';
 import { BlurEffectTypes } from 'react-native-screens';
 
 type StackParamList = {

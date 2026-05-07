@@ -341,29 +341,28 @@ open class ScreenContainer(
     }
 
     private fun onScreenChanged() {
-        // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
-        // which is called after updating children of the ScreenContainer.
-        // We do it there because `onUpdate` logic requires all changes of children to be already
-        // made in order to provide proper animation for fragment transition for ScreenStack
-        // and this in turn makes nested ScreenContainers detach too early and disappear
-        // before transition if also not dispatched after children updates.
-        // The exception to this rule is `updateImmediately` which is triggered by actions
-        // not connected to React view hierarchy changes, but rather internal events
+        // We schedule the update to run after the current Fabric commit has finished updating
+        // children of the ScreenContainer. The `onUpdate` logic requires all children changes
+        // to already be applied in order to provide proper animation for fragment transitions
+        // in ScreenStack — without this deferral, nested ScreenContainers may detach too early
+        // and disappear before the transition completes.
+        // The exception to this rule is `performUpdatesNow` which is triggered by actions
+        // not connected to React view hierarchy changes, but rather internal events.
         needsUpdate = true
         (context as ThemedReactContext).reactApplicationContext.runOnUiQueueThread {
             // We schedule the update here because LayoutAnimations of `react-native-reanimated`
-            // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
-            // already run, and we want to update the container then too. In the other cases,
-            // this code will do nothing since it will run after the UIBlock when `mNeedUpdate`
+            // sometimes attach/detach screens after the Fabric mount phase has completed,
+            // and we want to update the container then too. In the other cases,
+            // this code will do nothing since it will run after the mount phase when `needsUpdate`
             // will already be false.
             performUpdates()
         }
     }
 
     protected fun performUpdatesNow() {
-        // we want to update immediately when the fragment manager is set or native back button
-        // dismiss is dispatched or Screen's activityState changes since it is not connected to React
-        // view hierarchy changes and will not trigger `onBeforeLayout` method of `ScreensShadowNode`
+        // We want to update immediately when the fragment manager is set, when a native back button
+        // dismiss is dispatched, or when Screen's activityState changes, since these events are not
+        // connected to React view hierarchy changes and will not trigger a Fabric commit or mount.
         needsUpdate = true
         performUpdates()
     }

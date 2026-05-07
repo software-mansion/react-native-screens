@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { Button, Form, Choose, Alert, Dialog } from '../shared';
+import { Button, Form, Choose, Alert, Dialog } from '@apps/shared';
 
 type StackParamList = {
   Main: undefined;
@@ -162,7 +162,7 @@ const FullScreenModalScreen = ({
   <View style={{ flex: 1 }}>
     <ImageBackground
       style={styles.image}
-      source={require('../../assets/trees.jpg')}>
+      source={require('@assets/trees.jpg')}>
       <Button
         testID="stack-presentation-fullscreen-modal-go-back-button"
         title="Go back"

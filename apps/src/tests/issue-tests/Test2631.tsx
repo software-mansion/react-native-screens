@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {Button, Pressable, StyleSheet, Text, View} from 'react-native';
 import {FullWindowOverlay} from 'react-native-screens';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 function SharedPressable() {
   return (

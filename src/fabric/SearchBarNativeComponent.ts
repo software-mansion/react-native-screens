@@ -12,11 +12,11 @@ import type {
 export type SearchBarEvent = Readonly<{}>;
 
 export type SearchButtonPressedEvent = Readonly<{
-  text?: string;
+  text?: string | undefined;
 }>;
 
 export type ChangeTextEvent = Readonly<{
-  text?: string;
+  text?: string | undefined;
 }>;
 
 type SearchBarPlacement =
@@ -37,33 +37,39 @@ type AutoCapitalizeType =
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
-  onSearchFocus?: CT.DirectEventHandler<SearchBarEvent> | null;
-  onSearchBlur?: CT.DirectEventHandler<SearchBarEvent> | null;
-  onSearchButtonPress?: CT.DirectEventHandler<SearchButtonPressedEvent> | null;
-  onCancelButtonPress?: CT.DirectEventHandler<SearchBarEvent> | null;
-  onChangeText?: CT.DirectEventHandler<ChangeTextEvent> | null;
+  onSearchFocus?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
+  onSearchBlur?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
+  onSearchButtonPress?:
+    | CT.DirectEventHandler<SearchButtonPressedEvent>
+    | null
+    | undefined;
+  onCancelButtonPress?:
+    | CT.DirectEventHandler<SearchBarEvent>
+    | null
+    | undefined;
+  onChangeText?: CT.DirectEventHandler<ChangeTextEvent> | null | undefined;
   hideWhenScrolling?: CT.WithDefault<boolean, true>;
   autoCapitalize?: CT.WithDefault<AutoCapitalizeType, 'systemDefault'>;
-  placeholder?: string;
+  placeholder?: string | undefined;
   placement?: CT.WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: CT.WithDefault<boolean, true>;
   obscureBackground?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   hideNavigationBar?: CT.WithDefault<OptionalBoolean, 'undefined'>;
-  cancelButtonText?: string;
+  cancelButtonText?: string | undefined;
   // TODO: implement these on iOS
-  barTintColor?: ColorValue;
-  tintColor?: ColorValue;
-  textColor?: ColorValue;
+  barTintColor?: ColorValue | undefined;
+  tintColor?: ColorValue | undefined;
+  textColor?: ColorValue | undefined;
 
   // Android only
   autoFocus?: CT.WithDefault<boolean, false>;
-  disableBackButtonOverride?: boolean;
+  disableBackButtonOverride?: boolean | undefined;
   // TODO: consider creating enum here
-  inputType?: string;
-  onClose?: CT.DirectEventHandler<SearchBarEvent> | null;
-  onOpen?: CT.DirectEventHandler<SearchBarEvent> | null;
-  hintTextColor?: ColorValue;
-  headerIconColor?: ColorValue;
+  inputType?: string | undefined;
+  onClose?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
+  onOpen?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
+  hintTextColor?: ColorValue | undefined;
+  headerIconColor?: ColorValue | undefined;
   shouldShowHintSearchIcon?: CT.WithDefault<boolean, true>;
 }
 

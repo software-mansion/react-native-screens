@@ -17,7 +17,7 @@ RCT_EXPORT_MODULE(RNSTabsScreenManager)
   return [[RNSTabsScreenComponentView alloc] initWithFrame:CGRectZero];
 }
 
-RCT_EXPORT_VIEW_PROPERTY(tabKey, NSString);
+RCT_EXPORT_VIEW_PROPERTY(screenKey, NSString);
 
 RCT_REMAP_VIEW_PROPERTY(isFocused, isSelectedScreen, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(title, NSString);

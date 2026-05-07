@@ -1,18 +1,18 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 #import "RNSEnums.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 @interface RNSConvert : NSObject
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction;
@@ -71,7 +71,7 @@ namespace react = facebook::react;
     (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
 + (id)idFromFollyDynamic:(const folly::dynamic &)dyn;
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus
 
 /// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==
 /// RNSBlurEffectStyleSystemDefault` which have no counter parts in the UIKit types.

@@ -144,9 +144,9 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
-    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior)
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior)
 {
-  using enum facebook::react::RNSTabsHostTabBarMinimizeBehavior;
+  using enum facebook::react::RNSTabsHostIOSTabBarMinimizeBehavior;
 
   switch (tabBarMinimizeBehavior) {
     case Never:
@@ -184,9 +184,9 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
-    react::RNSTabsHostTabBarControllerMode tabBarControllerMode)
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode)
 {
-  using enum facebook::react::RNSTabsHostTabBarControllerMode;
+  using enum facebook::react::RNSTabsHostIOSTabBarControllerMode;
 
   switch (tabBarControllerMode) {
     case Automatic:
@@ -218,9 +218,43 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 
 #endif // Check for iOS >= 18
 
-RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIconType iconType)
+react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
+RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+    RNSTabsNavigationStateRejectionReason reason)
 {
-  using enum facebook::react::RNSTabsScreenIconType;
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason;
+  switch (reason) {
+    case RNSTabsNavigationStateRejectionReasonStale:
+      return Stale;
+    case RNSTabsNavigationStateRejectionReasonRepeated:
+      return Repeated;
+    default:
+      return Stale;
+  }
+}
+
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin;
+  switch (actionOrigin) {
+    case RNSTabsActionOriginUser:
+      return User;
+    case RNSTabsActionOriginProgrammaticJs:
+      return ProgrammaticJs;
+    case RNSTabsActionOriginProgrammaticNative:
+      return ProgrammaticNative;
+    case RNSTabsActionOriginImplicit:
+      return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", actionOrigin);
+  }
+  return User;
+}
+
+RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
+{
+  using enum facebook::react::RNSTabsScreenIOSIconType;
   switch (iconType) {
     case Image:
       return RNSTabsIconTypeImage;
@@ -233,9 +267,8 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIconType iconType)
   }
 }
 
-RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSTabsIconType iconType)
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::ImageSource *imageSource,
+                                                         RNSTabsIconType iconType)
 {
   RCTImageSource *iconImageSource;
 
@@ -259,9 +292,9 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
   return iconImageSource;
 }
 
-RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOrientation orientation)
+RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation)
 {
-  using enum facebook::react::RNSTabsScreenOrientation;
+  using enum facebook::react::RNSTabsScreenIOSOrientation;
 
   switch (orientation) {
     case Inherit:
@@ -289,9 +322,9 @@ RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOr
 }
 
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
-    react::RNSTabsScreenSystemItem systemItem)
+    react::RNSTabsScreenIOSSystemItem systemItem)
 {
-  using enum facebook::react::RNSTabsScreenSystemItem;
+  using enum facebook::react::RNSTabsScreenIOSSystemItem;
 
   switch (systemItem) {
     case None:
@@ -328,8 +361,8 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
 
 UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
 {
-  RCTAssert(
-      systemItem != RNSTabsScreenSystemItemNone, @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
+  RCTAssert(systemItem != RNSTabsScreenSystemItemNone,
+            @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
   switch (systemItem) {
     case RNSTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;
@@ -359,48 +392,6 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
   RCTAssert(true, @"Attempt to convert unknown tabs screen systemItem to UITabBarSystemItem [%d]", systemItem);
   return UITabBarSystemItemSearch;
 }
-
-#define SWITCH_EDGE_EFFECT(X)                              \
-  switch (edgeEffect) {                                    \
-    using enum react::X;                                   \
-    case Automatic:                                        \
-      return RNSScrollEdgeEffectAutomatic;                 \
-    case Hard:                                             \
-      return RNSScrollEdgeEffectHard;                      \
-    case Soft:                                             \
-      return RNSScrollEdgeEffectSoft;                      \
-    case Hidden:                                           \
-      return RNSScrollEdgeEffectHidden;                    \
-    default:                                               \
-      RCTLogError(@"[RNScreens] unsupported edge effect"); \
-      return RNSScrollEdgeEffectAutomatic;                 \
-  }
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenBottomScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenBottomScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenLeftScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenLeftScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenRightScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenRightScrollEdgeEffect);
-}
-
-RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenTopScrollEdgeEffect edgeEffect)
-{
-  SWITCH_EDGE_EFFECT(RNSTabsScreenTopScrollEdgeEffect);
-}
-
-#undef SWITCH_EDGE_EFFECT
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
@@ -469,9 +460,9 @@ NSString *RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
-    react::RNSTabsScreenUserInterfaceStyle userInterfaceStyle)
+    react::RNSTabsScreenIOSUserInterfaceStyle userInterfaceStyle)
 {
-  using enum facebook::react::RNSTabsScreenUserInterfaceStyle;
+  using enum facebook::react::RNSTabsScreenIOSUserInterfaceStyle;
   switch (userInterfaceStyle) {
     case Unspecified:
       return UIUserInterfaceStyleUnspecified;
@@ -481,6 +472,39 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
       return UIUserInterfaceStyleDark;
     default:
       RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostIOSLayoutDirection layoutDirection)
+{
+  using enum facebook::react::RNSTabsHostIOSLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+    case Ltr:
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
+    case Rtl:
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
+    default:
+      RCTLogError(@"[RNScreens] unsupported layout direction");
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+  }
+}
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostIOSColorScheme colorScheme)
+{
+  using enum facebook::react::RNSTabsHostIOSColorScheme;
+  switch (colorScheme) {
+    case Inherit:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported color scheme");
+      return UIUserInterfaceStyleUnspecified;
   }
 }
 

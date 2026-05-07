@@ -1,7 +1,7 @@
 import React from 'react';
 
 import StackV4SAVExample from './stack-v4';
-// import BottomTabsSAVExample from './bottom-tabs';
+// import TabsSAVExample from './tabs';
 // import SplitViewSAVExample from './split-view';
 
 export default function App() {

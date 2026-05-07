@@ -5,8 +5,7 @@
 
 #pragma mark - Constants
 
-// Default duration for transitions in seconds. Note, that this enforces the default
-// only on Paper. On Fabric the transition duration coming from JS layer
+// Default duration for transitions in seconds. Note, that the transition duration coming from JS layer
 // is never null, thus it defaults to the value set in component codegen spec.
 static constexpr NSTimeInterval RNSDefaultTransitionDuration = 0.5;
 

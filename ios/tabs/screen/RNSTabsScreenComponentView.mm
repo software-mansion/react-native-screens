@@ -40,7 +40,6 @@ namespace react = facebook::react;
   BOOL _tabScreenOrientationNeedsUpdate;
   BOOL _tabBarItemNeedsRecreation;
   BOOL _tabBarItemNeedsUpdate;
-  BOOL _scrollEdgeEffectsNeedUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -55,7 +54,7 @@ namespace react = facebook::react;
 - (void)initState
 {
 #if RCT_NEW_ARCH_ENABLED
-  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenIOSProps>();
   _props = defaultProps;
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -70,7 +69,6 @@ namespace react = facebook::react;
   _tabScreenOrientationNeedsUpdate = NO;
   _tabBarItemNeedsRecreation = NO;
   _tabBarItemNeedsUpdate = NO;
-  _scrollEdgeEffectsNeedUpdate = NO;
 #endif
 
   [self resetProps];
@@ -78,7 +76,6 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -113,28 +110,26 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
+- (void)invalidateImpl
 {
-  _controller = nil;
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  // For tabs, Host is responsible for invalidating children.
-  return NO;
-}
-
-#else
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
 - (void)invalidate
 {
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -164,12 +159,6 @@ RNS_IGNORE_SUPER_CALL_END
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
     [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
   }
-}
-
-- (void)updateContentScrollViewEdgeEffectsIfExists
-{
-  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      withProvider:self];
 }
 
 #pragma mark - Prop update utils
@@ -245,14 +234,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(props);
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
   bool tabBarItemNeedsRecreation{false};
   bool tabBarItemNeedsUpdate{false};
-  bool scrollEdgeEffectsNeedUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -272,14 +260,9 @@ RNS_IGNORE_SUPER_CALL_END
     tabScreenOrientationNeedsUpdate = YES;
   }
 
-  if (newComponentProps.tabKey != oldComponentProps.tabKey) {
-    RCTAssert(!newComponentProps.tabKey.empty(), @"[RNScreens] tabKey must not be empty!");
-    _tabKey = RCTNSStringFromString(newComponentProps.tabKey);
-  }
-
-  if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isSelectedScreen = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
+  if (newComponentProps.screenKey != oldComponentProps.screenKey) {
+    RCTAssert(!newComponentProps.screenKey.empty(), @"[RNScreens] screenKey must not be empty!");
+    _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
@@ -356,6 +339,10 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
 
+  if (newComponentProps.preventNativeSelection != oldComponentProps.preventNativeSelection) {
+    _preventNativeSelection = newComponentProps.preventNativeSelection;
+  }
+
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=
       oldComponentProps.overrideScrollViewContentInsetAdjustmentBehavior) {
     _overrideScrollViewContentInsetAdjustmentBehavior =
@@ -384,34 +371,6 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItemNeedsRecreation = YES;
   }
 
-  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
-    [self setBottomScrollEdgeEffect:rnscreens::conversion::
-                                        RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
-                                            newComponentProps.bottomScrollEdgeEffect)];
-    scrollEdgeEffectsNeedUpdate = YES;
-  }
-
-  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
-    [self setLeftScrollEdgeEffect:rnscreens::conversion::
-                                      RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
-                                          newComponentProps.leftScrollEdgeEffect)];
-    scrollEdgeEffectsNeedUpdate = YES;
-  }
-
-  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
-    [self setRightScrollEdgeEffect:rnscreens::conversion::
-                                       RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
-                                           newComponentProps.rightScrollEdgeEffect)];
-    scrollEdgeEffectsNeedUpdate = YES;
-  }
-
-  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
-    [self setTopScrollEdgeEffect:rnscreens::conversion::
-                                     RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
-                                         newComponentProps.topScrollEdgeEffect)];
-    scrollEdgeEffectsNeedUpdate = YES;
-  }
-
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
     _userInterfaceStyle =
         rnscreens::conversion::UIUserInterfaceStyleFromTabsScreenCppEquivalent(newComponentProps.userInterfaceStyle);
@@ -438,11 +397,6 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabScreenOrientationHasChanged];
   }
 
-  if (scrollEdgeEffectsNeedUpdate) {
-    [self updateContentScrollViewEdgeEffectsIfExists];
-    scrollEdgeEffectsNeedUpdate = NO;
-  }
-
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -458,7 +412,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenIOSEventEmitter>(eventEmitter)];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -466,8 +420,8 @@ RNS_IGNORE_SUPER_CALL_END
   RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
 
-  // overrideScrollViewBehavior and updateContentScrollViewEdgeEffects use first descendant chain
-  // from screen to find ScrollView, that's why we're only interested in child mounted at index 0.
+  // overrideScrollViewBehavior uses first descendant chain from screen to find ScrollView,
+  // that's why we're only interested in child mounted at index 0.
   if (index == 0) {
     // Before the props are set (first render) defer acting to after
     // we receive props, as user might have decided to disable this feature.
@@ -476,7 +430,6 @@ RNS_IGNORE_SUPER_CALL_END
     } else {
       _needsScrollViewBehaviorOverride = YES;
     }
-    [self updateContentScrollViewEdgeEffectsIfExists];
   }
 }
 
@@ -488,7 +441,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -496,6 +449,11 @@ RNS_IGNORE_SUPER_CALL_END
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)invalidate
+{
+  [self invalidateImpl];
 }
 
 #else
@@ -511,7 +469,7 @@ RNS_IGNORE_SUPER_CALL_END
   // enabling us to warn users that dynamic changes are not supported.
   // On Paper, setter for the prop may not be called (when it is undefined in JS).
   // Therefore we set the flag in didSetProps to make sure to handle this case as well.
-  // didSetProps will always be called because tabKey prop is required.
+  // didSetProps will always be called because screenKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
   if (_tabBarItemNeedsRecreation) {
@@ -539,11 +497,6 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabScreenOrientationHasChanged];
     _tabScreenOrientationNeedsUpdate = NO;
   }
-
-  if (_scrollEdgeEffectsNeedUpdate) {
-    [self updateContentScrollViewEdgeEffectsIfExists];
-    _scrollEdgeEffectsNeedUpdate = NO;
-  }
 }
 
 #pragma mark - LEGACY prop setters
@@ -556,10 +509,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setTabKey:(NSString *)tabKey
+- (void)setScreenKey:(NSString *)screenKey
 {
-  RCTAssert([NSString rnscreens_isBlankOrNull:tabKey] == NO, @"[RNScreens] tabKey must not be empty");
-  _tabKey = tabKey;
+  RCTAssert([NSString rnscreens_isBlankOrNull:screenKey] == NO, @"[RNScreens] screenKey must not be empty");
+  _screenKey = screenKey;
 }
 
 - (void)setTitle:(NSString *)title
@@ -615,30 +568,6 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _selectedIconResourceName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconResourceName];
   _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
-{
-  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
-{
-  _leftScrollEdgeEffect = leftScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
-{
-  _rightScrollEdgeEffect = rightScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
-{
-  _topScrollEdgeEffect = topScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior
@@ -749,6 +678,16 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 #undef RNS_FAILING_EVENT_GETTER
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

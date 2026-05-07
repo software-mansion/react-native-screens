@@ -4,7 +4,6 @@ package com.swmansion.rnscreens.safearea
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.graphics.Insets
@@ -15,17 +14,8 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.UIManagerHelper.getReactContext
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.BuildConfig
-import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
-import com.swmansion.rnscreens.safearea.paper.SafeAreaViewLocalData
 import java.lang.ref.WeakReference
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
-
-private const val MAX_WAIT_TIME_NANO = 500000000L // 500ms
 
 @SuppressLint("ViewConstructor") // Should never be recreated
 class SafeAreaView(
@@ -173,7 +163,7 @@ class SafeAreaView(
             )
 
         val stateWrapper = getStateWrapper()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && stateWrapper != null) {
+        if (stateWrapper != null) {
             val insets = Arguments.createMap()
             insets.putDouble("left", PixelUtil.toDIPFromPixel(safeAreaInsets.left).toDouble())
             insets.putDouble("top", PixelUtil.toDIPFromPixel(safeAreaInsets.top).toDouble())
@@ -184,60 +174,6 @@ class SafeAreaView(
             newState.putMap("insets", insets)
 
             stateWrapper.updateState(newState)
-        } else if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val localData =
-                SafeAreaViewLocalData(
-                    insets = safeAreaInsets,
-                    edges = edges ?: SafeAreaViewEdges.ZERO,
-                )
-            val reactContext = getReactContext(this)
-            val uiManager = reactContext.getNativeModule(UIManagerModule::class.java)
-            if (uiManager != null) {
-                uiManager.setViewLocalData(id, localData)
-                // Sadly there doesn't seem to be a way to properly dirty a yoga node from java, so
-                // if we are in the middle of a layout, we need to recompute it. There is also no
-                // way to know whether we are in the middle of a layout so always do it.
-                reactContext.runOnNativeModulesQueueThread {
-                    uiManager.uiImplementation.dispatchViewUpdates(-1)
-                }
-                waitForReactLayout()
-            }
-        }
-    }
-
-    private fun waitForReactLayout() {
-        // Block the main thread until the native module thread is finished with
-        // its current tasks. To do this we use the done boolean as a lock and enqueue
-        // a task on the native modules thread. When the task runs we can unblock the
-        // main thread. This should be safe as long as the native modules thread
-        // does not block waiting on the main thread.
-        var done = false
-        val lock = ReentrantLock()
-        val condition = lock.newCondition()
-        val startTime = System.nanoTime()
-        var waitTime = 0L
-        getReactContext(this).runOnNativeModulesQueueThread {
-            lock.withLock {
-                if (!done) {
-                    done = true
-                    condition.signal()
-                }
-            }
-        }
-        lock.withLock {
-            while (!done && waitTime < MAX_WAIT_TIME_NANO) {
-                try {
-                    condition.awaitNanos(MAX_WAIT_TIME_NANO)
-                } catch (ex: InterruptedException) {
-                    // In case of an interrupt just give up waiting.
-                    done = true
-                }
-                waitTime += System.nanoTime() - startTime
-            }
-        }
-        // Timed out waiting.
-        if (waitTime >= MAX_WAIT_TIME_NANO) {
-            Log.w(TAG, "Timed out waiting for layout.")
         }
     }
 

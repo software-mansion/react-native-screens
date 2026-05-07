@@ -3,7 +3,7 @@ import {
   ColumnConfig,
   useSplitViewSAVExampleContext,
 } from './SplitViewSAVExampleContext';
-import { SettingsPicker, SettingsSwitch } from '../../../../shared';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import React from 'react';
 import Info from '../shared/Info';
 

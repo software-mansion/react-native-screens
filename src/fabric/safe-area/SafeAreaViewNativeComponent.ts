@@ -7,12 +7,14 @@ import type { CodegenTypes as CT, ViewProps } from 'react-native';
 type InsetType = 'all' | 'system' | 'interface';
 
 export interface NativeProps extends ViewProps {
-  edges?: Readonly<{
-    top: boolean;
-    right: boolean;
-    bottom: boolean;
-    left: boolean;
-  }>;
+  edges?:
+    | Readonly<{
+        top: boolean;
+        right: boolean;
+        bottom: boolean;
+        left: boolean;
+      }>
+    | undefined;
   // Android-only
   insetType?: CT.WithDefault<InsetType, 'all'>;
 }

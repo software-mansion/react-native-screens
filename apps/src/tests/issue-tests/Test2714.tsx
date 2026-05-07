@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 const Stack = createNativeStackNavigator();
 

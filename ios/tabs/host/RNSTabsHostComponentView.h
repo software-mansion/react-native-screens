@@ -6,17 +6,16 @@
 #import "RNSScreenContainer.h"
 #import "RNSTabsHostComponentViewManager.h"
 #import "RNSTabsHostEventEmitter.h"
+#import "RNSTabsNavigationState.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
+#import "RNSTabBarController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsScreenComponentView;
-@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -27,14 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                          RNSViewControllerInvalidating
-#else
-                                          RCTInvalidating
+@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate,
+                                                        RNSTabsNavigationStateObserver
+#if !RCT_NEW_ARCH_ENABLED
+                                                        ,
+                                                        RCTInvalidating
 #endif
-                                          >
+                                                        >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
@@ -48,13 +46,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsHostComponentView ()
 
+/**
+ * Last navigation state update requested by JS. Will be nonnull after first prop update.
+ */
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationStateUpdateRequest *navStateRequest;
+
+@property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
+
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
 
-@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
+@property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
+
+@property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
@@ -73,9 +80,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter;
-
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks

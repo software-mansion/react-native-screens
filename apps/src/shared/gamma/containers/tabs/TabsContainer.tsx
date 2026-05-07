@@ -1,0 +1,161 @@
+import React from 'react';
+import { I18nManager, type NativeSyntheticEvent } from 'react-native';
+import {
+  type TabSelectedEvent,
+  Tabs,
+  type TabsHostNavStateRequest,
+} from 'react-native-screens';
+import type {
+  SelectTabMethod,
+  TabRoute,
+  TabRouteConfig,
+  TabRouteOptions,
+  TabsContainerProps,
+  TabsContainerState,
+  TabsNavigationAction,
+  TabsNavigationMethods,
+} from './TabsContainer.types';
+import {
+  tabsNavigationReducerWithLogging,
+  determineInitialTabsContainerState,
+} from './reducer';
+import { RNSLog } from 'react-native-screens/private';
+import { TabsContainerItem } from './TabsContainerItem';
+import { useComponentsByName } from '../shared/use-components-by-name';
+
+export function TabsContainer(props: TabsContainerProps) {
+  RNSLog.info('TabsContainer render');
+
+  const {
+    routeConfigs,
+    defaultRouteName,
+    onTabSelected,
+    ...restProps
+  } = props;
+
+  useSanitizeRouteConfigs(routeConfigs);
+
+  const componentsByName = useComponentsByName(routeConfigs);
+
+  const [tabsNavState, dispatch]: [
+    TabsContainerState,
+    React.Dispatch<TabsNavigationAction>,
+  ] = React.useReducer(
+    tabsNavigationReducerWithLogging,
+    { routeConfigs, defaultRouteName },
+    determineInitialTabsContainerState,
+  );
+
+  const hostNavStateRequest = useTabsHostNavStateRequest(tabsNavState);
+
+  const onTabSelectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<TabSelectedEvent>) => {
+      // First call user provided callback
+      onTabSelected?.(event);
+
+      // Perform our logic
+      const screenKey = event.nativeEvent.selectedScreenKey;
+      console.log(`[Tabs] onTabSelectedCallback: ${screenKey}`);
+
+      // Please note that the `useTransition` hook can not be used here,
+      // because it intruduces additional renders, which lead
+      // to blank screens / placeholders being visible (on slower render)
+      // for a few frames!
+      React.startTransition(() => {
+        RNSLog.info(`Starting transition to ${screenKey}`);
+        dispatch({
+          type: 'native-tab-select',
+          routeKey: screenKey,
+          nativeEvent: event.nativeEvent,
+        });
+      });
+    },
+    [onTabSelected],
+  );
+
+  const navMethods = useTabsNavigationMethods(dispatch);
+
+  return (
+    <Tabs.Host
+      navStateRequest={hostNavStateRequest}
+      onTabSelected={onTabSelectedCallback}
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      {...restProps}>
+      {tabsNavState.routes.map((route: TabRoute) => {
+        const isSelected =
+          route.routeKey === tabsNavState.confirmedState.selectedRouteKey;
+        const pendingForUpdate =
+          route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
+
+        const Component = componentsByName.get(route.name);
+        if (!Component) {
+          throw new Error(
+            `[Tabs] No route config matches the "${route.name}" route name`,
+          );
+        }
+
+        return (
+          <TabsContainerItem
+            key={route.routeKey}
+            route={route}
+            navMethods={navMethods}
+            isSelected={isSelected}
+            pendingForUpdate={pendingForUpdate}
+            Component={Component}
+          />
+        );
+      })}
+    </Tabs.Host>
+  );
+}
+
+function useTabsHostNavStateRequest(
+  tabsNavState: TabsContainerState,
+): TabsHostNavStateRequest {
+  const hostNavStateRequest: TabsHostNavStateRequest = React.useMemo(() => {
+    return {
+      selectedScreenKey: tabsNavState.suggestedState.selectedRouteKey,
+      baseProvenance: tabsNavState.suggestedState.provenance,
+    };
+  }, [tabsNavState.suggestedState]);
+
+  return hostNavStateRequest;
+}
+
+function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
+  if (routeConfigs.length === 0) {
+    throw new Error('[Tabs] There must be at least one tab defined');
+  }
+
+  const areNamesUnique = React.useMemo(() => {
+    const names = routeConfigs.map(c => c.name);
+    return names.length === new Set(names).size;
+  }, [routeConfigs]);
+
+  if (!areNamesUnique) {
+    throw new Error('[Tabs] All tabs must have unique names');
+  }
+}
+
+function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>): TabsNavigationMethods {
+  const setRouteOptions = React.useCallback(
+    (routeKey: string, options: Partial<TabRouteOptions>) => {
+      dispatch({ type: 'set-options', routeKey, options });
+    },
+    [dispatch],
+  );
+
+  const selectTab: SelectTabMethod = React.useCallback(
+    (routeKey: string, forceAction?: boolean) => {
+      const shouldForceAction = forceAction ?? false;
+      dispatch({ type: 'tab-select', routeKey, forceAction: shouldForceAction });
+    },
+    [dispatch],
+  );
+
+
+  return React.useMemo(() => ({
+    setRouteOptions,
+    selectTab
+  }), [setRouteOptions, selectTab]);
+}

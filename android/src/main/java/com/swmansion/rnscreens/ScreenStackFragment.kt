@@ -16,6 +16,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -38,6 +39,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.swmansion.rnscreens.utils.RNSLog
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
 
@@ -54,10 +56,12 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-    private var appBarLayout: CustomAppBarLayout? = null
+    private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
+
+    private var lastActiveHeaderConfig: ScreenStackHeaderConfig? = null
 
     private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
 
@@ -105,7 +109,8 @@ class ScreenStackFragment :
         toolbar = null
     }
 
-    override fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: CustomToolbar) {
+        lastActiveHeaderConfig = toolbar.config
         appBarLayout?.addView(toolbar)
         toolbar.layoutParams =
             AppBarLayout
@@ -126,9 +131,14 @@ class ScreenStackFragment :
 
     override fun setToolbarTranslucent(translucent: Boolean) {
         if (isToolbarTranslucent != translucent) {
-            val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior =
-                if (translucent) null else ScrollingViewBehavior()
+            // FormSheet is using BottomSheetBehavior which shouldn't be overwritten.
+            if (!screen.usesFormSheetPresentation()) {
+                val params = screen.layoutParams
+                (params as CoordinatorLayout.LayoutParams).behavior =
+                    if (translucent) null else ScrollingViewBehavior()
+            } else {
+                RNSLog.w(TAG, "Skipping behavior update: Cannot override BottomSheetBehavior on a FormSheet.")
+            }
             isToolbarTranslucent = translucent
         }
     }
@@ -206,7 +216,7 @@ class ScreenStackFragment :
 
         if (!screen.usesFormSheetPresentation()) {
             appBarLayout =
-                context?.let { CustomAppBarLayout(it) }?.apply {
+                context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
                     // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
                     // role. On top of that it breaks screens animations when alfa offscreen compositing is off
@@ -268,6 +278,14 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        super.onPrepare(animation)
+
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationStart()
+                        }
+                    }
+
                     // Replace InsetsAnimationCallback created by BottomSheetBehavior
                     // to avoid interfering with custom animations.
                     // See: https://github.com/software-mansion/react-native-screens/pull/2909
@@ -286,6 +304,10 @@ class ScreenStackFragment :
                     override fun onEnd(animation: WindowInsetsAnimationCompat) {
                         super.onEnd(animation)
 
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationEnd()
+                        }
+
                         screen.onSheetYTranslationChanged()
                     }
                 }
@@ -301,6 +323,25 @@ class ScreenStackFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
+        // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
+        // its mActionBar field for the lifetime of the activity. When a screen is popped and the new
+        // top screen does not install a replacement action bar (e.g. headerShown: false),
+        // the stale ToolbarActionBar — and the entire object graph hanging off the toolbar is never released.
+        // When this fragment is being removed, we're clearing the activity's support action bar if it
+        // still belongs to us. This will break the retention chain:
+        // - AppCompatDelegateImpl.mActionBar
+        // - ToolbarActionBar.mDecorToolbar
+        // - ToolbarWidgetWrapper.mToolbar
+        // - DebugMenuToolbar.config
+        // - ScreenStackHeaderConfig.mParent
+        // - Screen.fragment
+        lastActiveHeaderConfig?.clearActionBarIfOwned(activity as? AppCompatActivity)
+        lastActiveHeaderConfig = null
+        super.onDestroyView()
     }
 
     override fun onCreateAnimation(
@@ -584,5 +625,9 @@ class ScreenStackFragment :
             bottomSheetWindowInsetListenerChain = BottomSheetWindowInsetListenerChain()
         }
         return bottomSheetWindowInsetListenerChain!!
+    }
+
+    companion object {
+        private const val TAG = "ScreenStackFragment"
     }
 }

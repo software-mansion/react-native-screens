@@ -7,6 +7,9 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigViewManager
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewViewManager
 import com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
@@ -32,9 +35,7 @@ class RNScreensPackage : BaseReactPackage() {
         // installing its C++ bindings - so we are safe in terms of creating this helper
         // before RN starts creating shadow nodes.
         // See https://github.com/software-mansion/react-native-screens/pull/2169
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
-        }
+        screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
 
         // Proxy needs to register for lifecycle events in order to unregister itself
         // on activity restarts.
@@ -55,6 +56,9 @@ class RNScreensPackage : BaseReactPackage() {
             SafeAreaViewManager(),
             StackHostViewManager(),
             StackScreenViewManager(),
+            ScrollViewMarkerViewManager(),
+            StackHeaderConfigViewManager(),
+            StackHeaderSubviewViewManager(),
         )
     }
 
@@ -71,7 +75,6 @@ class RNScreensPackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider =
         ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-            val isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
             moduleInfos[ScreensModule.NAME] =
                 ReactModuleInfo(
                     ScreensModule.NAME,
@@ -80,7 +83,7 @@ class RNScreensPackage : BaseReactPackage() {
                     false, // needsEagerInit
                     true, // hasConstants
                     false, // isCxxModule
-                    isTurboModule,
+                    true, // isTurboModule
                 )
             moduleInfos
         }

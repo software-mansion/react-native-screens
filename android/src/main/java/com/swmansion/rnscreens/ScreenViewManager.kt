@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -11,7 +10,6 @@ import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
@@ -87,9 +85,7 @@ open class ScreenViewManager :
         props: ReactStylesDiffMap?,
         stateWrapper: StateWrapper?,
     ): Any? {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            view.setStateWrapper(stateWrapper)
-        }
+        view.setStateWrapper(stateWrapper)
         return super.updateState(view, props, stateWrapper)
     }
 
@@ -99,11 +95,6 @@ open class ScreenViewManager :
         view.onFinalizePropsUpdate()
     }
 
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
-    }
-
-    @ReactProp(name = "activityState")
     fun setActivityState(
         view: Screen,
         activityState: Int,
@@ -122,7 +113,6 @@ open class ScreenViewManager :
         }
     }
 
-    @ReactProp(name = "stackPresentation")
     override fun setStackPresentation(
         view: Screen,
         presentation: String?,
@@ -139,7 +129,6 @@ open class ScreenViewManager :
             }
     }
 
-    @ReactProp(name = "stackAnimation")
     override fun setStackAnimation(
         view: Screen,
         animation: String?,
@@ -159,15 +148,13 @@ open class ScreenViewManager :
             }
     }
 
-    @ReactProp(name = "transitionDuration")
     override fun setTransitionDuration(
-        view: Screen?,
+        view: Screen,
         value: Int,
     ) {
-        view?.transitionDuration = value
+        view.transitionDuration = value
     }
 
-    @ReactProp(name = "gestureEnabled", defaultBoolean = true)
     override fun setGestureEnabled(
         view: Screen,
         gestureEnabled: Boolean,
@@ -175,7 +162,6 @@ open class ScreenViewManager :
         view.isGestureEnabled = gestureEnabled
     }
 
-    @ReactProp(name = "replaceAnimation")
     override fun setReplaceAnimation(
         view: Screen,
         animation: String?,
@@ -188,7 +174,6 @@ open class ScreenViewManager :
             }
     }
 
-    @ReactProp(name = "screenOrientation")
     override fun setScreenOrientation(
         view: Screen,
         screenOrientation: String?,
@@ -196,7 +181,6 @@ open class ScreenViewManager :
         view.setScreenOrientation(screenOrientation)
     }
 
-    @ReactProp(name = "statusBarAnimation")
     override fun setStatusBarAnimation(
         view: Screen,
         statusBarAnimation: String?,
@@ -205,15 +189,6 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
-    @ReactProp(name = "statusBarColor", customType = "Color")
-    override fun setStatusBarColor(
-        view: Screen,
-        statusBarColor: Int?,
-    ) {
-        logNotAvailable("statusBarColor")
-    }
-
-    @ReactProp(name = "statusBarStyle")
     override fun setStatusBarStyle(
         view: Screen,
         statusBarStyle: String?,
@@ -221,15 +196,6 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
-    @ReactProp(name = "statusBarTranslucent")
-    override fun setStatusBarTranslucent(
-        view: Screen,
-        statusBarTranslucent: Boolean,
-    ) {
-        logNotAvailable("statusBarTranslucent")
-    }
-
-    @ReactProp(name = "statusBarHidden")
     override fun setStatusBarHidden(
         view: Screen,
         statusBarHidden: Boolean,
@@ -237,23 +203,6 @@ open class ScreenViewManager :
         view.isStatusBarHidden = statusBarHidden
     }
 
-    @ReactProp(name = "navigationBarColor", customType = "Color")
-    override fun setNavigationBarColor(
-        view: Screen,
-        navigationBarColor: Int?,
-    ) {
-        logNotAvailable("navigationBarColor")
-    }
-
-    @ReactProp(name = "navigationBarTranslucent")
-    override fun setNavigationBarTranslucent(
-        view: Screen,
-        navigationBarTranslucent: Boolean,
-    ) {
-        logNotAvailable("navigationBarTranslucent")
-    }
-
-    @ReactProp(name = "navigationBarHidden")
     override fun setNavigationBarHidden(
         view: Screen,
         navigationBarHidden: Boolean,
@@ -261,7 +210,6 @@ open class ScreenViewManager :
         view.isNavigationBarHidden = navigationBarHidden
     }
 
-    @ReactProp(name = "nativeBackButtonDismissalEnabled")
     override fun setNativeBackButtonDismissalEnabled(
         view: Screen,
         nativeBackButtonDismissalEnabled: Boolean,
@@ -269,7 +217,6 @@ open class ScreenViewManager :
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
-    @ReactProp(name = "sheetElevation")
     override fun setSheetElevation(
         view: Screen?,
         value: Int,
@@ -277,7 +224,6 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
-    @ReactProp(name = "sheetShouldOverflowTopInset")
     override fun setSheetShouldOverflowTopInset(
         view: Screen?,
         sheetShouldOverflowTopInset: Boolean,
@@ -285,7 +231,6 @@ open class ScreenViewManager :
         view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
     }
 
-    @ReactProp(name = "sheetDefaultResizeAnimationEnabled")
     override fun setSheetDefaultResizeAnimationEnabled(
         view: Screen?,
         sheetDefaultResizeAnimationEnabled: Boolean,
@@ -295,6 +240,26 @@ open class ScreenViewManager :
 
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
+    override fun setStatusBarColor(
+        view: Screen,
+        value: Int?,
+    ) = Unit
+
+    override fun setStatusBarTranslucent(
+        view: Screen,
+        value: Boolean,
+    ) = Unit
+
+    override fun setNavigationBarColor(
+        view: Screen,
+        value: Int?,
+    ) = Unit
+
+    override fun setNavigationBarTranslucent(
+        view: Screen,
+        value: Boolean,
+    ) = Unit
+
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
         value: String?,
@@ -361,11 +326,6 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
-    override fun setIos26AllowInteractionsDuringTransition(
-        view: Screen?,
-        value: Boolean,
-    ) = Unit
-
     // END mark: iOS-only
 
     override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
@@ -373,7 +333,6 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit // represents a feature flag and is checked via getProps() in RNSScreenComponentDescriptor.h
 
-    @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
         view: Screen,
         value: ReadableArray?,
@@ -388,7 +347,6 @@ open class ScreenViewManager :
         view.sheetDetents = SheetDetents(parsedDetents)
     }
 
-    @ReactProp(name = "sheetLargestUndimmedDetent")
     override fun setSheetLargestUndimmedDetent(
         view: Screen,
         value: Int,
@@ -397,7 +355,6 @@ open class ScreenViewManager :
         view.sheetLargestUndimmedDetentIndex = value
     }
 
-    @ReactProp(name = "sheetGrabberVisible")
     override fun setSheetGrabberVisible(
         view: Screen,
         value: Boolean,
@@ -405,7 +362,6 @@ open class ScreenViewManager :
         view.isSheetGrabberVisible = value
     }
 
-    @ReactProp(name = "sheetCornerRadius")
     override fun setSheetCornerRadius(
         view: Screen,
         value: Float,
@@ -413,7 +369,6 @@ open class ScreenViewManager :
         view.sheetCornerRadius = value
     }
 
-    @ReactProp(name = "sheetExpandsWhenScrolledToEdge")
     override fun setSheetExpandsWhenScrolledToEdge(
         view: Screen,
         value: Boolean,
@@ -421,7 +376,6 @@ open class ScreenViewManager :
         view.sheetExpandsWhenScrolledToEdge = value
     }
 
-    @ReactProp(name = "sheetInitialDetent")
     override fun setSheetInitialDetent(
         view: Screen,
         value: Int,

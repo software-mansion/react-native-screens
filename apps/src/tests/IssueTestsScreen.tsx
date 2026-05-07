@@ -6,11 +6,11 @@ import {
 } from '@react-navigation/native';
 import * as Tests from './issue-tests';
 import { ScrollView, useColorScheme } from 'react-native';
-import { ListItem } from '../shared';
+import { ListItem } from '@apps/shared';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
-} from '../shared/styling/adapter/react-navigation';
+} from '@apps/shared/styling/adapter/react-navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const SCREENS: Record<

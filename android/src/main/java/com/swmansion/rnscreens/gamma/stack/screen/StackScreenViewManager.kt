@@ -1,13 +1,18 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
+import android.view.View
+import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
@@ -27,6 +32,64 @@ class StackScreenViewManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
 
+    override fun addView(
+        parent: StackScreen,
+        child: View,
+        index: Int,
+    ) {
+        // HeaderConfig is not added to native hierarchy & it must be the last child of StackScreen.
+        if (child is StackHeaderConfig) {
+            if (index < parent.childCount) {
+                throw JSApplicationCausedNativeException(
+                    "[RNScreens] StackHeaderConfig must be the last child of StackScreen. ",
+                )
+            }
+            parent.attachHeaderConfig(child)
+        } else {
+            if (index > parent.childCount) {
+                throw JSApplicationCausedNativeException(
+                    "[RNScreens] StackHeaderConfig must be the last child of StackScreen. ",
+                )
+            }
+            super.addView(parent, child, index)
+        }
+    }
+
+    override fun removeView(
+        parent: StackScreen,
+        view: View,
+    ) {
+        if (view is StackHeaderConfig) {
+            parent.detachHeaderConfig(view)
+        } else {
+            super.removeView(parent, view)
+        }
+    }
+
+    override fun removeViewAt(
+        parent: StackScreen,
+        index: Int,
+    ) {
+        // HeaderConfig is not added to native hierarchy & it must be the last child of StackScreen.
+        if (index == getChildCount(parent) - 1 && parent.headerConfig != null) {
+            parent.headerConfig?.let { parent.detachHeaderConfig(it) }
+        } else {
+            super.removeViewAt(parent, index)
+        }
+    }
+
+    override fun getChildCount(parent: StackScreen): Int = parent.childCount + if (parent.headerConfig != null) 1 else 0
+
+    override fun getChildAt(
+        parent: StackScreen,
+        index: Int,
+    ): View? {
+        if (index == parent.childCount && parent.headerConfig != null) {
+            return parent.headerConfig
+        }
+        return parent.getChildAt(index)
+    }
+
     override fun addEventEmitters(
         reactContext: ThemedReactContext,
         view: StackScreen,
@@ -44,6 +107,15 @@ class StackScreenViewManager :
             makeEventRegistrationInfo(StackScreenDismissEvent),
             makeEventRegistrationInfo(StackScreenNativeDismissPreventedEvent),
         )
+
+    override fun updateState(
+        view: StackScreen,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?,
+    ): Any? {
+        view.stateWrapper = stateWrapper
+        return super.updateState(view, props, stateWrapper)
+    }
 
     override fun setActivityMode(
         view: StackScreen,

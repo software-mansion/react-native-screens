@@ -17,6 +17,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
+@property (nonatomic) BOOL isNativelyDismissed;
 
 @end
 

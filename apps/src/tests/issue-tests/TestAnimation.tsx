@@ -2,7 +2,7 @@ import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { View } from 'react-native';
-import { Button, Square } from '../../shared';
+import { Button, Square } from '@apps/shared';
 
 type ParamList = {
   Home: undefined;

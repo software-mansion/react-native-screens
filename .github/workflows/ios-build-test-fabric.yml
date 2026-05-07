@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-26-xlarge
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
@@ -40,7 +40,7 @@ jobs:
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.1'
+          xcode-version: '26.2'
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
@@ -73,4 +73,4 @@ jobs:
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-ios --no-packager --simulator="iPhone 15"
+        run: npx react-native run-ios --no-packager --simulator="iPhone 17"

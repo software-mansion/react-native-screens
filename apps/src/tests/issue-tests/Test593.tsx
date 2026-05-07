@@ -7,7 +7,7 @@ import {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { SettingsPicker, ToastProvider, useToast } from '../../shared';
+import { SettingsPicker, ToastProvider, useToast } from '@apps/shared';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;

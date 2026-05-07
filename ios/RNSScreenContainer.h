@@ -1,11 +1,7 @@
 #pragma once
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTViewComponentView.h>
-#else
-#endif
-
 #import <React/RCTViewManager.h>
+#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,12 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenContainerView :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <RNSScreenContainerDelegate>
-#else
-    UIView <RNSScreenContainerDelegate, RCTInvalidating>
-#endif
+@interface RNSScreenContainerView : RNSReactBaseView <RNSScreenContainerDelegate>
 
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, retain) NSMutableArray *reactSubviews;

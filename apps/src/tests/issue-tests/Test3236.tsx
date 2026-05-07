@@ -4,14 +4,14 @@ import { TabBarControllerMode } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import { Button } from '../../shared';
+import { Button } from '@apps/shared';
 
 function makeTab(
   title: string,
@@ -51,40 +51,44 @@ function App() {
   const [controllerMode, setControllerMode] =
     useState<TabBarControllerMode>('automatic');
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
-      tabScreenProps: {
-        tabKey: 'Tab1',
+      name: 'Tab1',
+      Component: makeTab('Tab 1', controllerMode, setControllerMode),
+      options: {
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'sunny',
           },
         },
       },
-      component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
     {
-      tabScreenProps: {
-        tabKey: 'Tab2',
+      name: 'Tab2',
+      Component: makeTab('Tab 2', controllerMode, setControllerMode),
+      options: {
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'mode_cool',
           },
         },
       },
-      component: makeTab('Tab 2', controllerMode, setControllerMode),
     },
   ];
 
@@ -94,9 +98,11 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
-        tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
+      <TabsContainer
+        routeConfigs={TAB_CONFIGS}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

@@ -7,6 +7,12 @@ import { StackRouteConfigContext } from './contexts/StackRouteConfigContext';
  * StackContainer wrapped in context allowing for modifying options
  * of route configs.
  * See StackRouteConfigContext.
+ *
+ * Note: routeConfigs state is initialized once from props and does not sync
+ * with subsequent prop changes. This is intentional for now — the component
+ * owns the route config state after mount. In the future we may want to
+ * consider syncing with prop updates (e.g. via useEffect) if dynamic
+ * reconfiguration from the outside becomes a requirement.
  */
 export function StackContainerWithDynamicRouteConfigs(
   props: StackContainerProps,
@@ -21,12 +27,15 @@ export function StackContainerWithDynamicRouteConfigs(
         );
 
         if (routeConfigIndex === -1) {
-          throw new Error(`Route with name "${routeName}" not found`);
+          throw new Error(`[Stack] Route with name "${routeName}" not found`);
         }
 
         return prevConfigs.toSpliced(routeConfigIndex, 1, {
           ...prevConfigs[routeConfigIndex],
-          options,
+          options: {
+            ...prevConfigs[routeConfigIndex].options,
+            ...options,
+          },
         });
       });
     },

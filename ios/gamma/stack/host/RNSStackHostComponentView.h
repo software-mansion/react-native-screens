@@ -1,17 +1,11 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
-
-@class RNSStackController;
-@class RNSStackScreenComponentView;
+#import "RNSStackScreenComponentView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHostComponentView : RNSReactBaseView
-
-@property (nonatomic, nonnull, strong, readonly) RNSStackController *stackController;
-
-- (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews;
 
 @end
 

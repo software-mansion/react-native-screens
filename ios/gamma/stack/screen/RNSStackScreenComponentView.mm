@@ -5,9 +5,11 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
 #import "RNSStackHostComponentView.h"
+#import "RNSStackScreenController.h"
 
 #import "Swift-Bridging.h"
 
@@ -43,11 +45,12 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
   _hasUpdatedActivityMode = NO;
+  _isNativelyDismissed = NO;
 }
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
   _props = defaultProps;
 
   // container state
@@ -135,6 +138,16 @@ namespace react = facebook::react;
 {
   [self invalidateImpl];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

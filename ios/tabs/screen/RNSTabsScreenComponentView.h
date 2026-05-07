@@ -4,13 +4,10 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
-#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -23,14 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                            RNSViewControllerInvalidating
-#else
-                                            RCTInvalidating
+@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding
+#if !RCT_NEW_ARCH_ENABLED
+                                                          ,
+                                                          RCTInvalidating
 #endif
-                                            >
+                                                          >
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -42,12 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSTabsHostComponentView *reactSuperview;
 
-/**
- * Updates [scroll edge effects](https://developer.apple.com/documentation/uikit/uiscrolledgeeffect)
- * on a content ScrollView inside the tab screen, if one exists. It uses ScrollViewFinder to find the ScrollView.
- */
-- (void)updateContentScrollViewEdgeEffectsIfExists;
-
 @end
 
 #pragma mark - Props
@@ -55,13 +44,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSTabsScreenComponentView () <RNSScrollViewBehaviorOverriding, RNSScrollEdgeEffectProviding>
+@interface RNSTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
 
-@property (nonatomic) BOOL isSelectedScreen;
-@property (nonatomic, nullable) NSString *tabKey;
+@property (nonatomic, nullable) NSString *screenKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
 @property (nonatomic, nullable) NSString *tabBarItemTestID;
@@ -85,16 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
+@property (nonatomic) BOOL preventNativeSelection;
+
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
 @property (nonatomic, nullable) NSString *tabItemTestID;
 @property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
 @property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
-
-@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
-@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
-@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
-@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic) RNSTabsScreenSystemItem systemItem;
 

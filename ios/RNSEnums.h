@@ -85,9 +85,9 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementIntegratedCentered,
 };
 
-typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
-  RNSSplitViewScreenColumnTypeColumn,
-  RNSSplitViewScreenColumnTypeInspector,
+typedef NS_ENUM(NSInteger, RNSSplitScreenColumnType) {
+  RNSSplitScreenColumnTypeColumn,
+  RNSSplitScreenColumnTypeInspector,
 };
 
 // Redefinition of UIBlurEffectStyle. We need to represent additional cases of `None` and `SystemDefault`.
@@ -108,16 +108,16 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   RNSBlurEffectStyleSystemMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterial,
   RNSBlurEffectStyleSystemThickMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterial,
   RNSBlurEffectStyleSystemChromeMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterial,
-  RNSBlurEffectStyleSystemUltraThinMaterialLight API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemUltraThinMaterialLight,
+  RNSBlurEffectStyleSystemUltraThinMaterialLight API_UNAVAILABLE(watchos,
+                                                                 tvos) = UIBlurEffectStyleSystemUltraThinMaterialLight,
   RNSBlurEffectStyleSystemThinMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialLight,
   RNSBlurEffectStyleSystemMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialLight,
   RNSBlurEffectStyleSystemThickMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialLight,
-  RNSBlurEffectStyleSystemChromeMaterialLight API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemChromeMaterialLight,
+  RNSBlurEffectStyleSystemChromeMaterialLight API_UNAVAILABLE(watchos,
+                                                              tvos) = UIBlurEffectStyleSystemChromeMaterialLight,
 
-  RNSBlurEffectStyleSystemUltraThinMaterialDark API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemUltraThinMaterialDark,
+  RNSBlurEffectStyleSystemUltraThinMaterialDark API_UNAVAILABLE(watchos,
+                                                                tvos) = UIBlurEffectStyleSystemUltraThinMaterialDark,
   RNSBlurEffectStyleSystemThinMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialDark,
   RNSBlurEffectStyleSystemMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialDark,
   RNSBlurEffectStyleSystemThickMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialDark,

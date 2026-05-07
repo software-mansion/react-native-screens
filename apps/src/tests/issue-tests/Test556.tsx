@@ -5,7 +5,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Square } from '../../shared';
+import { Square } from '@apps/shared';
 
 const Stack = createNativeStackNavigator();
 

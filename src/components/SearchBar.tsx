@@ -19,7 +19,9 @@ import SearchBarNativeComponent, {
 import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands | null> }
+  SearchBarNativeProps & {
+    ref?: React.RefObject<SearchBarCommands | null> | undefined;
+  }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &

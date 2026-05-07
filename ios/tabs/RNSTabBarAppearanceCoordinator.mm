@@ -5,6 +5,7 @@
 #import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSTabBarController.h"
+#import "RNSTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator

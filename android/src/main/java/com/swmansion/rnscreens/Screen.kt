@@ -9,7 +9,6 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -18,29 +17,27 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.fitToContentsSheetHeight
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.resolveClampedHeight
 import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
-import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
-import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -55,10 +52,10 @@ class Screen(
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
 
+    internal val sheetAnimationCoordinator: SheetAnimationCoordinator by lazy { SheetAnimationCoordinator(this) }
+
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
-
-    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -100,10 +97,6 @@ class Screen(
     var sheetDefaultResizeAnimationEnabled = true
 
     /**
-     * On Paper, when using form sheet presentation we want to delay enter transition in order
-     * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy.
-     *
      * On Fabric, the view layout is completed before window insets are applied.
      * To ensure the BottomSheet correctly respects insets during its enter transition,
      * we delay the transition until both layout and insets have been applied.
@@ -167,121 +160,20 @@ class Screen(
                 if (isInitial) {
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetDefaultResizeAnimationEnabled) {
-                    updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
+                    sheetAnimationCoordinator.updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
-                }
-            }
-
-            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                // On old architecture we delay enter transition in order to wait for initial frame.
-                shouldTriggerPostponedTransitionAfterLayout = true
-                val parent = parentAsViewGroup()
-                if (parent != null && !parent.isInLayout) {
-                    // There are reported cases (irreproducible) when Screen is not laid out after
-                    // maxHeight is set on behaviour.
-                    parent.requestLayout()
                 }
             }
         }
     }
 
-    /**
-     * This should be used only with sheet in `fitToContents` mode.
-     */
-    private fun updateSheetContentHeightWithAnimation(
-        behavior: BottomSheetBehavior<Screen>,
-        oldHeight: Int,
-        newHeight: Int,
+    private fun updateShadowNodeScreenSize(
+        width: Int,
+        height: Int,
+        headerHeight: Int,
     ) {
-        val currentTranslationY = this.translationY
-
-        /*
-         * WHY OVERFLOW MATTERS:
-         * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
-         * If the new content height exceeds this limit (by its size or keyboard offset), simply
-         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
-         * larger than the screen.
-         *
-         * We need to have constraint height inside the container's bounds.
-         * By including this overflow to our animation, we ensure the sheet stops
-         * expanding exactly at the maxHeight, preventing from being pushed
-         * off-screen or causing layout synchronization issues with the CoordinatorLayout.
-         */
-        val clampedOldHeight = resolveClampedHeight(oldHeight, currentTranslationY)
-        val clampedNewHeight = resolveClampedHeight(newHeight, currentTranslationY)
-        val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
-
-        if (visibleDelta == 0f) return
-
-        val isContentExpanding = visibleDelta > 0
-
-        if (isContentExpanding) {
-            /*
-             * Expanding content animation:
-             *
-             * Before animation, we're updating the SheetBehavior - the maximum height is the new
-             * content height, then we're forcing a layout pass. This ensures the view calculates
-             * with its new bounds when the animation starts.
-             *
-             * In the animation, we're translating the Screen back to it's (newly calculated) origin
-             * position, providing an impression that FormSheet expands. It already has the final size,
-             * but some content is not yet visible on the screen.
-             *
-             * After animation, we just need to send a notification that ShadowTree state should be updated,
-             * as the positioning of pressables has changed due to the Y translation manipulation.
-             */
-            this.translationY += visibleDelta
-            this
-                .animate()
-                .translationY(currentTranslationY)
-                .withStartAction {
-                    behavior.updateMetrics(clampedNewHeight)
-                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
-                }.withEndAction {
-                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
-                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
-                    // to its old position when the user starts a gesture.
-                    parent.requestLayout()
-                    onSheetYTranslationChanged()
-                }.start()
-        } else {
-            /*
-             * Shrinking content animation:
-             *
-             * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
-             *
-             * Before the animation, I'm updating sheet metrics to the target value - it won't update until the next layout pass,
-             * which is controlled by end action. This is done deliberately, to allow catching the case when quick combination
-             * of shrink & expand animation is detected.
-             *
-             * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
-             * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
-             * FormSheet's size remains unchanged during the whole animation, therefore there is no view clipping.
-             *
-             * After animation, we can update the layout: the maximum FormSheet height is updated and we're forcing
-             * another layout pass. Additionally, since the actual layout and the target position are equal,
-             * we can reset translationY to 0.
-             *
-             * After animation, we need to send a notification that ShadowTree state should be updated,
-             * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
-             */
-            val targetTranslationY = currentTranslationY - visibleDelta
-            this
-                .animate()
-                .translationY(targetTranslationY)
-                .withStartAction {
-                    behavior.updateMetrics(clampedNewHeight)
-                }.withEndAction {
-                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
-                    this.translationY = currentTranslationY
-                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
-                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
-                    // to its old position when the user starts a gesture.
-                    parent.requestLayout()
-                    onSheetYTranslationChanged()
-                }.start()
-        }
+        updateState(width, height, headerHeight)
     }
 
     private fun updateSheetContentHeightWithoutAnimation(
@@ -301,9 +193,7 @@ class Screen(
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
-        }
+        updateShadowNodeScreenSize(width, clampedHeight, top + translationY.toInt())
     }
 
     private fun setupInitialSheetContentHeight(
@@ -314,22 +204,6 @@ class Screen(
         // During the initial call in `onCreateView`, insets are not yet available,
         // so we need to request an additional layout pass later to account for them.
         requestLayout()
-    }
-
-    private fun resolveClampedHeight(
-        targetHeight: Int,
-        currentTranslationY: Float,
-    ): Int {
-        val maxAvailableVerticalSpace =
-            this.fragment
-                ?.asScreenStackFragment()
-                ?.sheetDelegate
-                ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
-
-        // Please note that currentTranslationY is rather < 0 here.
-        // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
-        // avoid the keyboard.
-        return targetHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
@@ -359,20 +233,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
-                val topLevelDecorView =
-                    requireNotNull(
-                        reactContext.currentActivity?.window?.decorView,
-                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
-
-                val topInset = getDecorViewTopInset(topLevelDecorView)
-                val correctedHeight = height - topInset
-                val correctedOffsetY = t + topInset
-
-                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
-            } else {
-                dispatchShadowStateUpdate(width, height, t)
-            }
+            updateShadowNodeScreenSize(width, height, t)
         }
     }
 
@@ -388,24 +249,17 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            dispatchShadowStateUpdate(width, height, top)
+            updateShadowNodeScreenSize(width, height, top)
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
-
-        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // When using form sheet presentation we want to delay enter transition **on Paper** in order
-            // to wait for initial layout from React, otherwise the animator-based animation will look
-            // glitchy. *This seems to not be needed on Fabric*.
-            triggerPostponedEnterTransitionIfNeeded()
-        }
     }
 
     // On Fabric, the view layout is completed before window insets are applied.
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
     internal fun requestTriggeringPostponedEnterTransition() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
+        if (!sheetShouldOverflowTopInset) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }
     }
@@ -415,36 +269,6 @@ class Screen(
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
-        }
-    }
-
-    private fun updateScreenSizePaper(
-        width: Int,
-        height: Int,
-    ) {
-        reactContext.runOnNativeModulesQueueThread(
-            object : GuardedRunnable(reactContext.exceptionHandler) {
-                override fun runGuarded() {
-                    reactContext
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.updateNodeSize(id, width, height)
-                }
-            },
-        )
-    }
-
-    /**
-     * @param offsetY ignored on old architecture
-     */
-    private fun dispatchShadowStateUpdate(
-        width: Int,
-        height: Int,
-        offsetY: Int,
-    ) {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, offsetY)
-        } else {
-            updateScreenSizePaper(width, height)
         }
     }
 
@@ -706,7 +530,7 @@ class Screen(
         dispatchSheetDetentChanged(detentIndex, isStable)
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
+        if (isStable) {
             onSheetYTranslationChanged()
         }
 
@@ -719,16 +543,8 @@ class Screen(
     }
 
     internal fun onSheetYTranslationChanged() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            // Translation is relative to the bottom edge, therefore it returns negative values.
-            updateScreenSizeFabric(width, height, top + translationY.toInt())
-        }
-    }
-
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        insetsApplied = true
-
-        return super.onApplyWindowInsets(insets)
+        // Translation is relative to the bottom edge, therefore it returns negative values.
+        updateShadowNodeScreenSize(width, height, top + translationY.toInt())
     }
 
     override fun onAttachedToWindow() {

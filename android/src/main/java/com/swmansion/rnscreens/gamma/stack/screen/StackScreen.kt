@@ -7,6 +7,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -19,12 +22,6 @@ class StackScreen(
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
-    }
-
-    init {
-        // Needed when Transition API is in use to ensure that shadows do not disappear,
-        // views do not jump around the screen and whole sub-tree is animated as a whole.
-        isTransitionGroup = true
     }
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
@@ -55,6 +52,39 @@ class StackScreen(
             ) { "[RNScreens] StackScreen can't change its screenKey." }
             field = value
         }
+
+    private val shadowStateProxy = ShadowStateProxy()
+
+    internal var stateWrapper by shadowStateProxy::stateWrapper
+
+    fun updateStateIfNeeded(
+        x: Int? = null,
+        y: Int? = null,
+        width: Int? = null,
+        height: Int? = null,
+    ) = shadowStateProxy.updateStateIfNeeded(
+        contentOffsetX = x,
+        contentOffsetY = y,
+        frameWidth = width,
+        frameHeight = height,
+    )
+
+    internal var headerConfig: StackHeaderConfig? = null
+        private set
+
+    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
+
+    internal fun attachHeaderConfig(header: StackHeaderConfig) {
+        headerConfig = header
+        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
+    }
+
+    internal fun detachHeaderConfig(header: StackHeaderConfig) {
+        if (headerConfig === header) {
+            headerConfig = null
+            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
+        }
+    }
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -89,7 +119,9 @@ class StackScreen(
         t: Int,
         r: Int,
         b: Int,
-    ) = Unit
+    ) {
+        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
+    }
 
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {

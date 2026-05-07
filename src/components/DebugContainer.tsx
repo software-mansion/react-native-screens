@@ -7,7 +7,7 @@ import ScreenContentWrapper from './ScreenContentWrapper';
 import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
-  contentStyle?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle> | undefined;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
 };

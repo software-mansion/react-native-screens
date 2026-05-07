@@ -41,33 +41,24 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy?.invalidateNative()
-            proxy = null
-
-            reactContext.removeLifecycleEventListener(this)
-        }
+        proxy?.invalidateNative()
+        proxy = null
+        reactContext.removeLifecycleEventListener(this)
         nativeUninstall()
     }
 
     override fun initialize() {
         super.initialize()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy = NativeProxy()
-
-            reactContext.addLifecycleEventListener(this)
-
-            setupFabric()
-        }
+        proxy = NativeProxy()
+        reactContext.addLifecycleEventListener(this)
+        setupFabric()
     }
 
     private fun setupFabric() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val fabricUIManager =
-                UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
-            proxy?.apply {
-                nativeAddMutationsListener(fabricUIManager)
-            }
+        val fabricUIManager =
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+        proxy?.apply {
+            nativeAddMutationsListener(fabricUIManager)
         }
     }
 
@@ -148,18 +139,14 @@ class ScreensModule(
     // LifecycleEventListener
 
     override fun onHostResume() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            setupFabric()
-        }
+        setupFabric()
     }
 
     override fun onHostPause() = Unit
 
     override fun onHostDestroy() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy?.apply {
-                cleanupExpiredMountingCoordinators()
-            }
+        proxy?.apply {
+            cleanupExpiredMountingCoordinators()
         }
     }
 

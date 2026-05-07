@@ -1,6 +1,6 @@
 #import "RNSConversions-Stack.h"
 
-#if RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#if RNS_GAMMA_ENABLED
 
 namespace rnscreens::conversion {
 
@@ -14,4 +14,4 @@ RNSStackScreenActivityMode convert(react::RNSStackScreenActivityMode mode)
 
 }; // namespace rnscreens::conversion
 
-#endif // RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#endif // RNS_GAMMA_ENABLED

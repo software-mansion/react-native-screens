@@ -1,10 +1,10 @@
 import React from 'react';
 
 import {
-  BottomTabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
 function makeTab(title: string, description: string) {
@@ -16,49 +16,47 @@ function makeTab(title: string, description: string) {
   );
 }
 
-const TAB_CONFIGS: TabConfiguration[] = [
+const TAB_CONFIGS: TabRouteConfig[] = [
   {
-    tabScreenProps: {
-      tabKey: 'Tab1',
+    name: 'Tab1',
+    Component: makeTab(
+      'Tab 1',
+      'Tab icon is from Xcassets.\nOnly icon prop is defined.',
+    ),
+    options: {
       title: 'Tab 1',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
       },
     },
-    component: makeTab(
-      'Tab 1',
-      'Tab icon is from Xcassets.\nOnly icon prop is defined.',
-    ),
   },
   {
-    tabScreenProps: {
-      tabKey: 'Tab2',
+    name: 'Tab2',
+    Component: makeTab(
+      'Tab 2',
+      'Tab icon is from Xcassets.\nBoth icon and selectedIcon props are defined.',
+    ),
+    options: {
       title: 'Tab 2',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'xcasset',
           name: 'custom-icon',
         },
-      },
-      selectedIcon: {
-        ios: {
+        selectedIcon: {
           type: 'xcasset',
           name: 'custom-icon-fill',
         },
       },
     },
-    component: makeTab(
-      'Tab 2',
-      'Tab icon is from Xcassets.\nBoth icon and selectedIcon props are defined.',
-    ),
   },
 ];
 
 function App() {
-  return <BottomTabsContainer tabConfigs={TAB_CONFIGS} />;
+  return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
 export default App;

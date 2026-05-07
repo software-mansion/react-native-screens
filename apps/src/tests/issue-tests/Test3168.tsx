@@ -16,16 +16,16 @@ import React, {
 } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
-import { ListItem, SettingsPicker, SettingsSwitch } from '../../shared';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+import { ListItem, SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import {
-  BottomTabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+  TabsContainer,
+  TabRouteConfig,
+} from '@apps/shared/gamma/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -89,7 +89,7 @@ function Home({ navigation }: MainStackNavigationProp) {
       <Text>Test Search Bar placement</Text>
       <Button title="Stack only" onPress={() => navigation.push('Stack')} />
       <Button
-        title="Bottom Tabs and Stack"
+        title="Tabs and Stack"
         onPress={() => navigation.push('StackAndTabs')}
       />
     </View>
@@ -199,46 +199,46 @@ function TabsStackComponent() {
   );
   const { searchBarConfig } = useSearchBarConfig();
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
-      tabScreenProps: {
-        tabKey: 'main',
+      name: 'main',
+      Component: () => Menu({ tabsMode: true }),
+      options: {
         title: 'Main',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house',
           },
         },
       },
-      component: () => Menu({ tabsMode: true }),
     },
     {
-      tabScreenProps: {
-        tabKey: 'another',
+      name: 'another',
+      Component: AnotherTab,
+      options: {
         title: 'Another',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'ellipsis',
           },
         },
       },
-      component: AnotherTab,
     },
     {
-      tabScreenProps: {
-        tabKey: 'examples',
+      name: 'examples',
+      Component: () => ExamplesStackComponent({ showMenu: false }),
+      options: {
         title: 'Search',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'magnifyingglass',
           },
+          systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
         },
-        systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
       },
-      component: () => ExamplesStackComponent({ showMenu: false }),
     },
   ];
 
@@ -248,7 +248,7 @@ function TabsStackComponent() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

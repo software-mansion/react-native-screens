@@ -6,8 +6,8 @@ import type {
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, Text, View } from 'react-native';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
-import Colors from '../../shared/styling/Colors';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
+import { Colors } from '@apps/shared/styling';
 
 type StackParamList = {
   Main: undefined;
@@ -61,8 +61,8 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   animation: 'slide_from_bottom',
   headerShown: false,
   contentStyle: {
-    backgroundColor: Colors.GreenLight100
-  }
+    backgroundColor: Colors.GreenLight100,
+  },
 };
 
 const PressableBase = () => (

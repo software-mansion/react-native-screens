@@ -1,9 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.view.View
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -61,9 +59,6 @@ class ScreenStackViewManager :
         index: Int,
     ): View = parent.getScreenAt(index)
 
-    // Old architecture only.
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
-
     override fun needsCustomLayoutForChildren() = true
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> = delegate
@@ -73,11 +68,12 @@ class ScreenStackViewManager :
             StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning"),
         )
 
-    // iosPreventReattachmentOfDismissedScreens is not available on Android,
-    // however we must override their setters
-    override fun setIosPreventReattachmentOfDismissedScreens(
-        view: ScreenStack?,
-        value: Boolean,
+    // nativeContainerBackgroundColor is iOS-only because the native view hierarchy
+    // differs between platforms. On Android, ScreenStack is used directly as the
+    // container, so `style.backgroundColor` achieves the same effect.
+    override fun setNativeContainerBackgroundColor(
+        view: ScreenStack,
+        value: Int?,
     ) = Unit
 
     companion object {

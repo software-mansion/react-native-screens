@@ -21,6 +21,7 @@ jobs:
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
+      RNS_GAMMA_ENABLED: 1
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -93,7 +94,7 @@ jobs:
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_2
+          profile: pixel_9
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -109,7 +110,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_2
+          profile: pixel_9
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false

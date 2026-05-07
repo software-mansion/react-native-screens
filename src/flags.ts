@@ -1,11 +1,10 @@
-const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
-const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
-const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
-const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = true;
+const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = true;
+const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = true;
+const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
-const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
-const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
+const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
 
@@ -43,28 +42,51 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
+
+  /**
+   * Numerous "breaking changes" in the yet-experimental Tabs API have been
+   * introduced with version 4.25.0 of the library.
+   *
+   * This flag marks the shape of the API that's meant for stabilisation, and
+   * enables downstream to detect these changes.
+   *
+   * See:
+   * * https://github.com/software-mansion/react-native-screens/pull/3888
+   * * https://github.com/software-mansion/react-native-screens/pull/3776
+   * * https://github.com/software-mansion/react-native-screens/pull/3781
+   * * https://github.com/software-mansion/react-native-screens/pull/3756
+   * * https://github.com/software-mansion/react-native-screens/pull/3808
+   * * https://github.com/software-mansion/react-native-screens/pull/3785
+   * * https://github.com/software-mansion/react-native-screens/pull/3789
+   * * https://github.com/software-mansion/react-native-screens/pull/3794
+   * * https://github.com/software-mansion/react-native-screens/pull/3863
+   * * https://github.com/software-mansion/react-native-screens/pull/3875
+   * * https://github.com/software-mansion/react-native-screens/pull/3895
+   * * https://github.com/software-mansion/react-native-screens/pull/3918
+   */
+  usesStableTabsApi: true,
 } as const;
 
 const _featureFlags = {
   experiment: {
-    controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
     synchronousScreenUpdatesEnabled:
       RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
     synchronousHeaderConfigUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
     synchronousHeaderSubviewUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+    androidLegacyTopInsetBehavior:
+      RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
-    iosPreventReattachmentOfDismissedScreens:
-      RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
-    ios26AllowInteractionsDuringTransition:
-      RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   },
-  stable: {},
+  stable: {
+    debugLogging: RNS_DEBUG_LOGGING,
+  },
 };
 
 type EXPERIMENTAL_FF = keyof typeof _featureFlags.experiment;
+type STABLE_FF = keyof typeof _featureFlags.stable;
 
 const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
   key: T,
@@ -88,10 +110,28 @@ const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
   };
 };
 
-const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
-  'controlledBottomTabs',
-  RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-);
+const createStableFeatureFlagAccessor = <T extends STABLE_FF>(
+  key: T,
+  defaultValue: (typeof _featureFlags.stable)[T],
+) => {
+  return {
+    get() {
+      return _featureFlags.stable[key];
+    },
+    set(value: (typeof _featureFlags.stable)[T]) {
+      if (
+        value !== _featureFlags.stable[key] &&
+        _featureFlags.stable[key] !== defaultValue
+      ) {
+        console.error(
+          `[RNScreens] ${key} feature flag modified for a second time; this might lead to unexpected effects`,
+        );
+      }
+      _featureFlags.stable[key] = value;
+    },
+  };
+};
+
 const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
   'synchronousScreenUpdatesEnabled',
   RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
@@ -106,21 +146,20 @@ const synchronousHeaderSubviewUpdatesAccessor =
     'synchronousHeaderSubviewUpdatesEnabled',
     RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   );
+const androidLegacyTopInsetBehaviorAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'androidLegacyTopInsetBehavior',
+    RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
+  );
 const androidResetScreenShadowStateOnOrientationChangeAccessor =
   createExperimentalFeatureFlagAccessor(
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
     RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   );
-const iosPreventReattachmentOfDismissedScreensAccessor =
-  createExperimentalFeatureFlagAccessor(
-    'iosPreventReattachmentOfDismissedScreens',
-    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
-  );
-const ios26AllowInteractionsDuringTransitionAccessor =
-  createExperimentalFeatureFlagAccessor(
-    'ios26AllowInteractionsDuringTransition',
-    RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
-  );
+const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
+  'debugLogging',
+  RNS_DEBUG_LOGGING,
+);
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -132,12 +171,6 @@ export const featureFlags = {
    *  Flags to enable experimental features. These might be removed w/o notice or moved to stable.
    */
   experiment: {
-    get controlledBottomTabs() {
-      return controlledBottomTabsAccessor.get();
-    },
-    set controlledBottomTabs(value: boolean) {
-      controlledBottomTabsAccessor.set(value);
-    },
     get synchronousScreenUpdatesEnabled() {
       return synchronousScreenUpdatesAccessor.get();
     },
@@ -156,6 +189,12 @@ export const featureFlags = {
     set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
       synchronousHeaderSubviewUpdatesAccessor.set(value);
     },
+    get androidLegacyTopInsetBehavior() {
+      return androidLegacyTopInsetBehaviorAccessor.get();
+    },
+    set androidLegacyTopInsetBehavior(value: boolean) {
+      androidLegacyTopInsetBehaviorAccessor.set(value);
+    },
     get androidResetScreenShadowStateOnOrientationChangeEnabled() {
       return androidResetScreenShadowStateOnOrientationChangeAccessor.get();
     },
@@ -167,31 +206,45 @@ export const featureFlags = {
     /**
      * Enables the fix for native / JS state desynchronization in Stack. On by default.
      * PR: https://github.com/software-mansion/react-native-screens/pull/3584
+     * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get iosPreventReattachmentOfDismissedScreens() {
-      return iosPreventReattachmentOfDismissedScreensAccessor.get();
+      return true;
     },
-    set iosPreventReattachmentOfDismissedScreens(value: boolean) {
-      iosPreventReattachmentOfDismissedScreensAccessor.set(value);
+    set iosPreventReattachmentOfDismissedScreens(_value: boolean) {},
+    /**
+     * Enables the fix for native / JS state desynchronization for Modals. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3760
+     * @deprecated This flag is no longer configurable and always returns `true`.
+     */
+    get iosPreventReattachmentOfDismissedModals() {
+      return true;
     },
+    set iosPreventReattachmentOfDismissedModals(_value: boolean) {},
     /**
      * Disables the behavior that blocks interactions during Stack Screen transition.
      * The application should immediately react to user gestures, dismissing more screens at once, etc.
      * Use only with `iosPreventReattachmentOfDismissedScreens = true` to enable the fix
      * for native / JS state desynchronization. On by default.
      * PR: https://github.com/software-mansion/react-native-screens/pull/3631
+     * @deprecated This flag is no longer configurable and always returns `true`.
      */
     get ios26AllowInteractionsDuringTransition() {
-      return ios26AllowInteractionsDuringTransitionAccessor.get();
+      return true;
     },
-    set ios26AllowInteractionsDuringTransition(value: boolean) {
-      ios26AllowInteractionsDuringTransitionAccessor.set(value);
-    },
+    set ios26AllowInteractionsDuringTransition(_value: boolean) {},
   },
   /**
    * Section for stable flags, which can be used to configure library behaviour.
    */
-  stable: {},
+  stable: {
+    get debugLogging() {
+      return rnsDebugLoggingAccessor.get();
+    },
+    set debugLogging(value: boolean) {
+      rnsDebugLoggingAccessor.set(value);
+    },
+  },
 };
 
 export default featureFlags;

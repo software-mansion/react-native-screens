@@ -19,7 +19,7 @@ enableScreens(true);
 function Item({ children, ...props }: ViewProps) {
   return (
     <View style={styles.item} {...props}>
-      <Image source={require('../../../assets/trees.jpg')} style={styles.image} />
+      <Image source={require('@assets/trees.jpg')} style={styles.image} />
       <Text style={styles.text}>{children}</Text>
     </View>
   );

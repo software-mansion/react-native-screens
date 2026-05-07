@@ -9,9 +9,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSTabsHostComponentDescriptor.h>
-#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
-#import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSConversions.h"
@@ -19,7 +17,6 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
-#import "RNSTabBarControllerDelegate.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 #import "RNSTabsScreenComponentView.h"
@@ -44,15 +41,10 @@ namespace react = facebook::react;
 
 @implementation RNSTabsHostComponentView {
   RNSTabBarController *_Nonnull _controller;
-  RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
   RCTImageLoader *_Nullable _imageLoader;
-
-#if RCT_NEW_ARCH_ENABLED
-  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
-#endif // RCT_NEW_ARCH_ENABLED
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -60,6 +52,8 @@ namespace react = facebook::react;
   BOOL _hasModifiedTabsScreensInCurrentTransaction;
   BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
+
+  RNSTabsNavigationStateUpdateRequest *_Nullable _navStateRequest;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -91,15 +85,11 @@ namespace react = facebook::react;
   [self resetProps];
 
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
-  _controllerDelegate = [RNSTabBarControllerDelegate new];
-  _controller.delegate = _controllerDelegate;
+  RCTAssert([_controller addNavigationStateObserver:self],
+            @"[RNScreens] Failed to register RNSTabsHostComponentView as navigation state observer");
 
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSTabsHostEventEmitter new];
-
-#if RCT_NEW_ARCH_ENABLED
-  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
-#endif // RCT_NEW_ARCH_ENABLED
 
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
@@ -109,10 +99,13 @@ namespace react = facebook::react;
 - (void)resetProps
 {
 #if RCT_NEW_ARCH_ENABLED
-  static const auto defaultProps = std::make_shared<const react::RNSTabsHostProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSTabsHostIOSProps>();
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
+  _colorScheme = UIUserInterfaceStyleUnspecified;
+  _rejectStaleNavStateUpdates = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -120,16 +113,21 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
 }
 
-#pragma mark - UIView methods
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
+- (void)invalidateImpl
 {
-#if RCT_NEW_ARCH_ENABLED
-  if (newWindow == nil) {
-    [_invalidatedComponentsRegistry flushInvalidViews];
-  }
-#endif // RCT_NEW_ARCH_ENABLED
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      [strongSelf->_controller tearDown];
+      strongSelf->_controller = nil;
+    }
+  });
 }
+
+#pragma mark - UIView methods
 
 - (void)didMoveToWindow
 {
@@ -227,20 +225,7 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
-#if RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
-{
-  _controller = nil;
-}
-
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
-}
-#else
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
@@ -253,7 +238,7 @@ namespace react = facebook::react;
   for (UIView<RCTInvalidating> *subview in _reactSubviews) {
     [subview invalidate];
   }
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -266,16 +251,8 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSTabsScreenComponentView *)tabScreen
-                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect
-{
-  return [_reactEventEmitter
-      emitOnNativeFocusChange:OnNativeFocusChangePayload{
-                                  .tabKey = tabScreen.tabKey,
-                                  .repeatedSelectionHandledBySpecialEffect = repeatedSelectionHandledBySpecialEffect}];
-}
-
 #pragma mark - RCTComponentViewProtocol
+
 #if RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -291,11 +268,24 @@ namespace react = facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(props);
 
-  if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
-    _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
+  if (newComponentProps.navStateRequest.selectedScreenKey != oldComponentProps.navStateRequest.selectedScreenKey ||
+      newComponentProps.navStateRequest.baseProvenance != oldComponentProps.navStateRequest.baseProvenance) {
+    NSString *selectedScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.navStateRequest.selectedScreenKey);
+    RCTAssert(selectedScreenKey != nil, @"[RNScreens] selectedScreenKey MUST NOT be nil");
+    RCTAssert(newComponentProps.navStateRequest.baseProvenance >= 0, @"[RNScreens] baseProvenance MUST BE >= 0");
+    _navStateRequest = [RNSTabsNavigationStateUpdateRequest
+        requestWithSelectedScreenKey:selectedScreenKey
+                      baseProvenance:newComponentProps.navStateRequest.baseProvenance
+                        actionOrigin:RNSTabsActionOriginProgrammaticJs];
+    [_controller setPendingNavigationStateUpdate:[_navStateRequest cloneRequest]];
+  }
+
+  if (newComponentProps.rejectStaleNavStateUpdates != oldComponentProps.rejectStaleNavStateUpdates) {
+    _rejectStaleNavStateUpdates = static_cast<BOOL>(newComponentProps.rejectStaleNavStateUpdates);
+    [_controller setRejectStaleNavigationStateUpdates:_rejectStaleNavStateUpdates];
   }
 
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
@@ -334,7 +324,7 @@ namespace react = facebook::react;
       _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
     } else
 #endif // Check for iOS >= 26
-      if (newComponentProps.tabBarMinimizeBehavior != react::RNSTabsHostTabBarMinimizeBehavior::Automatic) {
+      if (newComponentProps.tabBarMinimizeBehavior != react::RNSTabsHostIOSTabBarMinimizeBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
       }
   }
@@ -347,9 +337,19 @@ namespace react = facebook::react;
       _controller.mode = _tabBarControllerMode;
     } else
 #endif // Check for iOS >= 18
-      if (newComponentProps.tabBarControllerMode != react::RNSTabsHostTabBarControllerMode::Automatic) {
+      if (newComponentProps.tabBarControllerMode != react::RNSTabsHostIOSTabBarControllerMode::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
       }
+  }
+
+  if (newComponentProps.layoutDirection != oldComponentProps.layoutDirection) {
+    [self setLayoutDirection:rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+                                 newComponentProps.layoutDirection)];
+  }
+
+  if (newComponentProps.colorScheme != oldComponentProps.colorScheme) {
+    _colorScheme = rnscreens::conversion::UIUserInterfaceStyleFromHostProp(newComponentProps.colorScheme);
+    _controller.overrideUserInterfaceStyle = _colorScheme;
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -369,7 +369,7 @@ namespace react = facebook::react;
 {
   [super updateEventEmitter:eventEmitter];
 
-  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSTabsHostEventEmitter>(eventEmitter);
+  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSTabsHostIOSEventEmitter>(eventEmitter);
   [_reactEventEmitter updateEventEmitter:castedEventEmitter];
 }
 
@@ -396,24 +396,17 @@ namespace react = facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   [_controller reactMountingTransactionWillMount];
-
-#if RCT_NEW_ARCH_ENABLED
-  for (const auto &mutation : transaction.getMutations()) {
-    if ([self shouldInvalidateOnMutation:mutation]) {
-      for (UIView<RNSViewControllerInvalidating> *childView in _reactSubviews) {
-        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
-      }
-
-      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
-    }
-  }
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -582,12 +575,97 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
+{
+  _layoutDirection = layoutDirection;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    _controller.traitOverrides.layoutDirection = _layoutDirection;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  {
+    _controller.needsLayoutDirectionUpdateBelowIOS17 = YES;
+
+    // If controller is already attached to parent VC, we should update layout direction
+    // immediately as controller updates layoutDirection only on `didMoveToParentViewController`.
+    if (_controller.parentViewController != nil) {
+      [_controller updateLayoutDirectionBelowIOS17IfNeeded];
+    }
+  }
+}
+
 #pragma mark - React Image Loader
 
 - (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
 }
+
+#pragma mark - RNSTabsNavigationStateObserver
+
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+     didUpdateStateTo:(nonnull RNSTabsNavigationState *)navState
+          withContext:(nonnull RNSTabsNavigationStateUpdateContext *)context
+{
+  RCTAssert(navState.selectedScreenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
+
+  [self.reactEventEmitter emitOnTabSelected:{.selectedScreenKey = navState.selectedScreenKey,
+                                             .provenance = navState.provenance,
+                                             .isRepeated = context.isRepeated,
+                                             .hasTriggeredSpecialEffect = context.hasTriggeredSpecialEffect,
+                                             .actionOrigin = context.actionOrigin}];
+}
+
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    rejectedStateUpdate:(nonnull RNSTabsNavigationStateUpdateRequest *)rejectedRequest
+           currentState:(nonnull RNSTabsNavigationState *)currentNavState
+             withReason:(RNSTabsNavigationStateRejectionReason)reason
+{
+  RCTAssert(currentNavState.selectedScreenKey != nil, @"[RNScreens] Current state screenKey MUST NOT be nil");
+  RCTAssert(rejectedRequest.selectedScreenKey != nil,
+            @"[RNScreens] Rejected request selectedScreenKey MUST NOT be nil");
+
+  [self.reactEventEmitter emitOnTabSelectionRejected:{.currentNavState = currentNavState,
+                                                      .rejectedRequest = rejectedRequest,
+                                                      .rejectionReason = reason}];
+}
+
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    preventedSelectionOf:(nonnull NSString *)preventedScreenKey
+            currentState:(nonnull RNSTabsNavigationState *)currentNavState
+{
+  RCTAssert(tabsContainer != nil, @"[RNScreens] Expected NON NIL tabsContainer");
+  RCTAssert(preventedScreenKey != nil, @"[RNScreens] Expected NON NIL preventedScreenKey");
+  RCTAssert(currentNavState != nil && currentNavState.selectedScreenKey != nil,
+            @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+
+  [self.reactEventEmitter emitOnTabSelectionPrevented:{
+                                                          .currentNavState = currentNavState,
+                                                          .preventedScreenKey = preventedScreenKey,
+  }];
+}
+
+- (void)tabsContainer:(nonnull RNSTabBarController *)tabsContainer
+    didSelectMoreTabWithCurrentState:(nonnull RNSTabsNavigationState *)currentNavState
+{
+  RCTAssert(tabsContainer != nil, @"[RNScreens] Expected NON NIL tabsContainer");
+  RCTAssert(currentNavState != nil && currentNavState.selectedScreenKey != nil,
+            @"[RNScreens] Expected NON NIL nav state & selectedScreenKey");
+
+  [self.reactEventEmitter emitOnMoreTabSelected:{
+                                                    .currentNavState = currentNavState,
+  }];
+}
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

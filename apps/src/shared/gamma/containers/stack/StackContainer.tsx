@@ -17,12 +17,16 @@ import {
 } from './contexts/StackNavigationContext';
 import {
   type NativeComponentGenericRef,
+  RNSLog,
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
+
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [stackNavState, navActionDispatch]: [
     StackNavigationState,
@@ -44,7 +48,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
 
   const onScreenDismissed = React.useCallback(
     (screenKey: string) => {
-      console.log(`onScreenDismissed for ${screenKey}`);
+      RNSLog.log(`onScreenDismissed for ${screenKey}`);
       navMethods.popCompletedAction(screenKey);
     },
     [navMethods],
@@ -52,7 +56,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
 
   const onScreenNativelyDismissed = React.useCallback(
     (screenKey: string) => {
-      console.log(`onScreenNativelyDismissed for ${screenKey}`);
+      RNSLog.log(`onScreenNativelyDismissed for ${screenKey}`);
       navMethods.popNativeAction(screenKey);
     },
     [navMethods],
@@ -61,7 +65,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ Component, options, activityMode, routeKey }) => {
+        ({ options: { headerConfig, ...options }, activityMode, routeKey, name }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -71,6 +75,13 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
             batch: navMethods.batchAction,
             setRouteOptions: navMethods.setRouteOptions,
           };
+
+          const Component = componentsByName.get(name);
+          if (!Component) {
+            throw new Error(
+              `[Stack] No config matches the "${name}" route name`,
+            );
+          }
 
           return (
             <Stack.Screen
@@ -82,6 +93,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                {headerConfig !== undefined && (
+                  <Stack.HeaderConfig {...headerConfig} />
+                )}
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.host
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.ext.isMeasured
@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
-) : CoordinatorLayout(context),
+) : FrameLayout(context),
     FragmentManager.OnBackStackChangedListener {
     private var fragmentManager: FragmentManager? = null
 
@@ -156,7 +156,7 @@ internal class StackContainer(
         }
 
         pendingPushOperations.forEach { operation ->
-            val newFragment = createFragmentForScreen(operation.screen)
+            val newFragment = createFragmentForScreen(operation.screen, canNavigateBack = stackModel.isNotEmpty())
 
             fragmentOps.add(
                 AddAndSetAsPrimaryOp(
@@ -193,8 +193,11 @@ internal class StackContainer(
         }
     }
 
-    private fun createFragmentForScreen(screen: StackScreen): StackScreenFragment =
-        StackScreenFragment(screen).also {
+    private fun createFragmentForScreen(
+        screen: StackScreen,
+        canNavigateBack: Boolean,
+    ): StackScreenFragment =
+        StackScreenFragment(screen, canNavigateBack).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
@@ -249,6 +252,15 @@ internal class StackContainer(
                 onNativeFragmentPop(fragment)
             }
         }
+    }
+
+    internal fun forceSubtreeMeasureAndLayoutPass() {
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+        )
+
+        layout(left, top, right, bottom)
     }
 
     companion object {

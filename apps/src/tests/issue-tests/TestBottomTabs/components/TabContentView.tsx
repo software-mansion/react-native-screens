@@ -1,17 +1,17 @@
 import React from 'react';
 import { type ViewProps, View, Text, Button } from 'react-native';
-import ConfigWrapperContext from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+import ConfigWrapperContext from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
 import { someExtensiveComputation } from '../utils';
 import { TabConfigurationSummary } from './TabConfigurationSummary';
 
 export interface TabContentViewProps extends ViewProps {
   selectNextTab?: (() => void) | undefined;
-  tabKey: string;
+  screenKey: string;
   message?: string;
 }
 
 export function TabContentView(props: TabContentViewProps) {
-  const { selectNextTab, tabKey, message, ...viewProps } = props;
+  const { selectNextTab, screenKey, message, ...viewProps } = props;
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
@@ -28,7 +28,7 @@ export function TabContentView(props: TabContentViewProps) {
   return (
     <View {...viewProps}>
       {message !== undefined && <Text>{message}</Text>}
-      <TabConfigurationSummary tabKey={tabKey} />
+      <TabConfigurationSummary screenKey={screenKey} />
       <Button title="Next tab" onPress={selectNextTab} />
       <Button
         title="Toggle heavy render"

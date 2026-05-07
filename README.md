@@ -121,6 +121,7 @@ Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.25.0+         | 0.82.0+              |
 | 4.19.0+         | 0.81.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.5.0+          | 0.77.0+              |
@@ -130,16 +131,19 @@ Here's a table with summary of supported `react-native` versions:
 
 Paper is the legacy rendering system. 
 
-Here's a table with summary of supported `react-native` versions with old architecture turned on:
+> [!caution]
+> Since version 4.25.0 of this library, it no longer supports the legacy architecture.
+
+Here's a table with summary of supported `react-native` versions with the legacy architecture turned on:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.25.0+         | NOT SUPPORTED        |
 | 4.19.0+         | 0.80.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |
 | 4.0.0+          | 0.72.0+              |
-
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -200,7 +204,7 @@ To take advantage of the native stack navigator primitive for React Navigation t
 
 ## `FullWindowOverlay`
 
-Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/Test1096.tsx
+Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/issue-tests/Test1096.tsx
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 

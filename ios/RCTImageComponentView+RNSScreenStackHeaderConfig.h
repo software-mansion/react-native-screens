@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 
 #include <React/RCTImageComponentView.h>
 
@@ -10,4 +10,4 @@
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // __cplusplus

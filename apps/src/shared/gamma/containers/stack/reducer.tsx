@@ -15,7 +15,8 @@ import type {
   StackRouteConfig,
   StackState,
 } from './StackContainer.types';
-import { generateID } from './utils/id-generator';
+import { generateID } from '../shared/id-generator';
+import { safeStringify } from '../shared/safe-stringify';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -60,15 +61,13 @@ export function navigationStateReducerWithLogging(
   state: StackNavigationState,
   action: NavigationAction,
 ): StackNavigationState {
-  console.debug(`[Stack] Handling action: ${JSON.stringify(action)}`);
-  console.debug(`[Stack] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
+  console.debug(`[Stack] Handling action: ${safeStringify(action)}`);
+  console.debug(`[Stack] BEFORE state: ${safeStringify(state, 2)}`);
   const newState = navigationStateReducer(state, action);
   if (state === newState) {
     console.debug('[Stack] AFTER state: unchanged');
   } else {
-    console.debug(
-      `[Stack] AFTER state: ${JSON.stringify(newState, undefined, 2)}`,
-    );
+    console.debug(`[Stack] AFTER state: ${safeStringify(newState, 2)}`);
   }
   return newState;
 }
@@ -81,7 +80,7 @@ function navigationActionPushHandler(
   const stack = state.stack;
   const renderedRouteIndex = stack.findIndex(
     route =>
-      route.name === action.routeName && route.activityMode === 'detached',
+      route.name === action.routeName && route.activityMode === 'detached' && !route.isMarkedForDismissal,
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
@@ -161,12 +160,21 @@ function navigationActionPopHandler(
     return state;
   }
 
+  // Pop operation on not-top screen is forbidden and might crash.
+  const topAttachedRouteIndex = state.stack.findLastIndex(r => r.activityMode === 'attached');
+
+  if (topAttachedRouteIndex > routeIndex) {
+    console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - not a top screen`);
+    return state;
+  }
+
   const newStack = [...stack];
   // NOTE: This modifies existing state, possibly impacting calculations done before new state is updated.
   // Consider doing deep copy of the state here.
   // EDIT: not sure really whether this is really a problem or not, since the updates are queued
   // and the original state won't be immediatelly affected.
   route.activityMode = 'detached';
+  route.isMarkedForDismissal = true;
 
   return stateWithStack(state, newStack);
 }
@@ -262,10 +270,13 @@ function createRouteFromConfig(
   config: StackRouteConfig,
   activityMode: StackScreenActivityMode = 'detached',
 ): StackRoute {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { Component, ...rest } = config;
   return {
-    ...config,
+    ...rest,
     activityMode,
     routeKey: generateRouteKeyForRouteName(config.name),
+    isMarkedForDismissal: false,
   };
 }
 
@@ -312,7 +323,7 @@ function applyPush(state: StackState, newRoute: StackRoute): StackState {
     route => route.activityMode === 'attached',
   );
 
-  if (lastAttachedIndex === -1) {
+  if (lastAttachedIndex === NOT_FOUND_INDEX) {
     throw new Error(
       `[Stack] Invalid stack state: there should be at least one attached route on the stack.`,
     );
