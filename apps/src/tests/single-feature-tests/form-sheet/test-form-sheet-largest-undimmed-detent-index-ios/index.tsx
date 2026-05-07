@@ -7,7 +7,7 @@ import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Sheet largest undimmed detent index',
-  key: 'test-form-largest-undimmed-detent-index-ios',
+  key: 'test-form-sheet-largest-undimmed-detent-index-ios',
   details:
     'Allows to test largestUndimmedDetentIndex prop of FormSheet component.',
   platforms: ['ios'],
