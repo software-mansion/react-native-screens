@@ -15,8 +15,8 @@
 namespace react = facebook::react;
 
 // Predefined values for `largestUndimmedDetentIndex`.
-static NSInteger const kRNSSheetAlwaysDimmed = -1;
-static NSInteger const kRNSSheetNeverDimmed = -2;
+static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
+static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 @interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
 @end
@@ -69,7 +69,7 @@ static NSInteger const kRNSSheetNeverDimmed = -2;
   _detents = {};
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
-  _largestUndimmedDetentIndex = kRNSSheetAlwaysDimmed;
+  _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
 }
 
 - (void)setupController
@@ -273,7 +273,7 @@ static NSInteger const kRNSSheetNeverDimmed = -2;
       @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
-  UISheetPresentationControllerDetentIdentifier ludIdentifier =
+  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
       [self largestUndimmedDetentIdentifierForDetents:nativeDetents];
 
   // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
@@ -282,7 +282,7 @@ static NSInteger const kRNSSheetNeverDimmed = -2;
     sheet.prefersGrabberVisible = _prefersGrabberVisible;
     sheet.preferredCornerRadius =
         _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
-    sheet.largestUndimmedDetentIdentifier = ludIdentifier;
+    sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
   }];
 #endif // !TARGET_OS_TV
 }
@@ -352,12 +352,12 @@ static NSInteger const kRNSSheetNeverDimmed = -2;
 - (UISheetPresentationControllerDetentIdentifier)largestUndimmedDetentIdentifierForDetents:
     (NSArray<UISheetPresentationControllerDetent *> *)detents
 {
-  if (_largestUndimmedDetentIndex == kRNSSheetAlwaysDimmed) {
+  if (_largestUndimmedDetentIndex == kRNSFormSheetAlwaysDimmed) {
     return nil;
   }
 
-  NSInteger ludIndex =
-      _largestUndimmedDetentIndex == kRNSSheetNeverDimmed ? (NSInteger)detents.count - 1 : _largestUndimmedDetentIndex;
+  NSInteger ludIndex = _largestUndimmedDetentIndex == kRNSFormSheetNeverDimmed ? (NSInteger)detents.count - 1
+                                                                               : _largestUndimmedDetentIndex;
 
   if (ludIndex < 0 || ludIndex >= (NSInteger)detents.count) {
     RCTLogError(
@@ -370,18 +370,19 @@ static NSInteger const kRNSSheetNeverDimmed = -2;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
     return detents[(NSUInteger)ludIndex].identifier;
-  }
+  } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-
-  // iOS 15 Fallback - mirroring buildSheetDetents
-  if (_detents.size() == 0) {
-    return UISheetPresentationControllerDetentIdentifierLarge;
-  } else if (_detents.size() == 1) {
-    return _detents[0] < 1.0 ? UISheetPresentationControllerDetentIdentifierMedium
-                             : UISheetPresentationControllerDetentIdentifierLarge;
-  } else {
-    return ludIndex == 0 ? UISheetPresentationControllerDetentIdentifierMedium
-                         : UISheetPresentationControllerDetentIdentifierLarge;
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetents
+    if (_detents.size() == 0) {
+      return UISheetPresentationControllerDetentIdentifierLarge;
+    } else if (_detents.size() == 1) {
+      return _detents[0] < 1.0 ? UISheetPresentationControllerDetentIdentifierMedium
+                               : UISheetPresentationControllerDetentIdentifierLarge;
+    } else {
+      return ludIndex == 0 ? UISheetPresentationControllerDetentIdentifierMedium
+                           : UISheetPresentationControllerDetentIdentifierLarge;
+    }
   }
 }
 
