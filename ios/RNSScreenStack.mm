@@ -18,6 +18,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
+#import "RNSSwipeableRegistry.h"
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
@@ -781,6 +782,11 @@ RNS_IGNORE_SUPER_CALL_END
   [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
 }
 
+- (BOOL)shouldBlockPopGestureForOpenSwipeableAtPoint:(CGPoint)point
+{
+  return [RNSSwipeableRegistry hasOpenSwipeableContainingPoint:point];
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   if (_disableSwipeBack) {
@@ -841,14 +847,25 @@ RNS_IGNORE_SUPER_CALL_END
     }
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26, *)) {
-      if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
-          ![self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
-        return NO;
+      if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer) {
+        if (![self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+          return NO;
+        }
+
+        CGPoint point = [gestureRecognizer locationInView:_controller.view];
+        if ([self shouldBlockPopGestureForOpenSwipeableAtPoint:point]) {
+          return NO;
+        }
       }
     }
 #endif // check for iOS >= 26
 
     // _UIParallaxTransitionPanGestureRecognizer (other...)
+    CGPoint point = [gestureRecognizer locationInView:_controller.view];
+    if ([self shouldBlockPopGestureForOpenSwipeableAtPoint:point]) {
+      return NO;
+    }
+
     [self cancelTouchesInParent];
     return YES;
   }
