@@ -15,11 +15,6 @@
 // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
 static constexpr NSUInteger kMinCountOfVCsForMoreVCPresence = 6;
 
-/// Index of the first view controller hosted by the More navigation controller.
-/// When More is present, UIKit shows the first 4 view controllers in the tab bar
-/// and moves the rest (index >= 4) into the More list.
-static constexpr NSUInteger kFirstIndexInMoreNavigationController = 4;
-
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
 @end
@@ -772,13 +767,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return NO;
   }
 
-  NSUInteger index = [self.viewControllers indexOfObject:viewController];
-  if (index == NSNotFound) {
+  // Guard: VC must be one we manage (excludes arbitrary external VCs).
+  if ([self.viewControllers indexOfObject:viewController] == NSNotFound) {
     return NO;
   }
 
-  return ![self.tabBar.items containsObject:viewController.tabBarItem] &&
-      index >= kFirstIndexInMoreNavigationController;
+  // Ground truth: if our VC's tabBarItem is NOT in the visible tab bar, it is hosted by the
+  // More navigation controller. Correct even when users reorder tabs via the More list's Edit UI.
+  return ![self.tabBar.items containsObject:viewController.tabBarItem];
 }
 
 - (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
