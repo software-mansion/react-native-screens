@@ -108,10 +108,10 @@ function AppContents() {
         },
       }}
       onTabSelected={(event: NativeSyntheticEvent<TabSelectedEvent>) => {
-        toast.push({
-          backgroundColor: Colors.BlueLight100,
-          message: `onTabSelected: ${JSON.stringify(event.nativeEvent.selectedScreenKey)}`,
-        });
+        // toast.push({
+        //   backgroundColor: Colors.BlueLight100,
+        //   message: `onTabSelected: ${JSON.stringify(event.nativeEvent.selectedScreenKey)}`,
+        // });
       }}
     />
   );

@@ -171,6 +171,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
 {
+  NSLog(@"[DEBUG] setSelectedIndex: %ld", selectedIndex);
   [super setSelectedIndex:selectedIndex];
   if (!_isHandlingExplicitSelectionUpdate) {
     [self reconcileNavigationStateWithUIKitState];
@@ -179,6 +180,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)setSelectedViewController:(__kindof UIViewController *)selectedViewController
 {
+  NSLog(@"[DEBUG] setSelectedVC: %@", [self screenKeyForViewController:selectedViewController]);
   [super setSelectedViewController:selectedViewController];
   if (!_isHandlingExplicitSelectionUpdate) {
     [self reconcileNavigationStateWithUIKitState];
@@ -189,6 +191,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
 {
+  NSLog(@"[DEBUG] setPendingStateUpdate: key=%@ origin=%ld baseProv=%d",
+        stateUpdate.selectedScreenKey,
+        (long)stateUpdate.actionOrigin,
+        stateUpdate.baseProvenance);
   _pendingStateUpdate = stateUpdate;
 }
 
@@ -237,6 +243,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)reactMountingTransactionDidMount
 {
   RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
+  NSLog(@"[DEBUG] mountTxnDidMount -> performContainerUpdate");
   [self performContainerUpdate];
 }
 
@@ -244,10 +251,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
+  NSLog(@"[DEBUG] performContainerUpdate BEGIN needsChildren=%d hasPending=%d selected=%@",
+        _needsUpdateOfChildViewControllers,
+        _pendingStateUpdate != nil,
+        self.selectedViewController ? [self screenKeyForViewController:self.selectedViewController] : @"<nil>");
   _isHandlingExplicitSelectionUpdate = YES;
   [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
+  NSLog(@"[DEBUG] performContainerUpdate END selected=%@",
+        self.selectedViewController ? [self screenKeyForViewController:self.selectedViewController] : @"<nil>");
 
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
@@ -279,9 +292,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self progressNavigationState:screenKey withOrigin:RNSTabsActionOriginProgrammaticJs];
 
   if (currSelectedViewController == nextSelectedViewController) {
+    NSLog(@"[DEBUG] programmatic setSelectedVC SKIP (already selected): %@", screenKey);
     return YES;
   }
 
+  NSLog(@"[DEBUG] programmatic setSelectedVC: %@ -> %@",
+        currSelectedViewController ? [self screenKeyForViewController:currSelectedViewController] : @"<nil>",
+        screenKey);
   [self setSelectedViewController:nextSelectedViewController];
   return YES;
 }
@@ -375,6 +392,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
             @"[RNScreens] Unexpected type of controller: %@",
             viewController.class);
 
+  NSLog(@"[DEBUG] tbc shouldSelect: %@", [self screenKeyForViewController:viewController]);
+
   // TODO: handle enforcing orientation with natively-driven tabs
 
   // Detect repeated selection and inform tabScreenController
@@ -387,32 +406,37 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
     [self userDidRepeatViewControllerSelection:viewController];
 
+    NSLog(@"[DEBUG] return NO (repeated)");
     return NO;
   }
 
-  BOOL shouldPreventTabSelection = [self shouldPreventNativeTabSelection:viewController];
-
-  if (shouldPreventTabSelection) {
-    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
-    // As long as we emit the event asynchronously this is rather fine.
-    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
-    return NO;
-  }
+  //  BOOL shouldPreventTabSelection = [self shouldPreventNativeTabSelection:viewController];
+  //
+  //  if (shouldPreventTabSelection) {
+  //    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
+  //    // As long as we emit the event asynchronously this is rather fine.
+  //    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+  //    NSLog(@"[DEBUG] return NO (prevent)");
+  //    return NO;
+  //  }
 
   // If we're gonna allow navigation to `moreNavigationController`, then we need to ensure
   // that on top of its stack there is no controller with preventNativeSelection enabled.
   // In such case, we want to pop to root.
   // We do it here, because in `tabBarController:didSelectViewController:` we won't receive
   // `moreNavigationController` in case there is already a tab pushed on the stack.
-  if ([self isViewControllerTheMoreNavigationController:viewController]) {
-    auto *poppedViewController = [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES animated:NO];
-    if (poppedViewController != nil) {
-      // We actually popped something -> let's notify JS realm of this fact.
-      [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:poppedViewController]];
-    }
-  }
+  //  if ([self isViewControllerTheMoreNavigationController:viewController]) {
+  //    auto *poppedViewController = [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES
+  //    animated:NO]; if (poppedViewController != nil) {
+  //      // We actually popped something -> let's notify JS realm of this fact.
+  //      NSLog(@"[DEBUG] POP IN MORE");
+  //      [self onDidPreventUserFromSelectingViewControllerWithKey:[self
+  //      screenKeyForViewController:poppedViewController]];
+  //    }
+  //  }
 
   _isHandlingExplicitSelectionUpdate = YES;
+  NSLog(@"[DEBUG] return YES");
   return YES;
 }
 
@@ -426,6 +450,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
                 [viewController isKindOfClass:UINavigationController.class],
             @"[RNScreens] Unexpected type of controller: %@",
             viewController.class);
+  NSLog(@"[DEBUG] tbc didSelect: %@", [self screenKeyForViewController:viewController]);
 
   [self userDidSelectViewController:viewController];
   _isHandlingExplicitSelectionUpdate = NO;
@@ -470,7 +495,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
+  NSLog(@"[DEBUG] setViewControllers count=%lu animated=%d currentSelected=%@",
+        (unsigned long)_tabScreenControllers.count,
+        [[self viewControllers] count] != 0,
+        self.selectedViewController ? [self screenKeyForViewController:self.selectedViewController] : @"<nil>");
   [self setViewControllers:_tabScreenControllers animated:[[self viewControllers] count] != 0];
+  NSLog(@"[DEBUG] setViewControllers done, selected=%@",
+        self.selectedViewController ? [self screenKeyForViewController:self.selectedViewController] : @"<nil>");
 }
 
 - (void)updateSelectedViewControllerIfNeeded
@@ -663,11 +694,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (void)reconcileNavigationStateWithUIKitState
 {
+  NSLog(@"[DEBUG] reconcileNavigationStateWithUIKitState BEGIN");
   if (_navigationState == nil) {
     // Before the first container update, _navigationState is nil — there is no established baseline
     // to drift from. The normal initialization path (performContainerUpdate → progressNavigationState:)
     // handles the nil → first state transition. Reconciling here would prematurely initialize state
     // and emit a delegate notification before the controller is fully set up.
+
+    NSLog(@"[DEBUG] ER 1");
     return;
   }
 
@@ -676,6 +710,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // If we're reconciling here, it means that it won't be handled correctly.
     // I'm not aware of any flow where this could happen, hence assertion.
     RCTAssert(NO, @"[RNScreens] Unexpected state reconciliation with More Navigation Controller");
+    NSLog(@"[DEBUG] ER 2");
     return;
   }
 
@@ -683,17 +718,22 @@ static void rns_pushViewController(__unsafe_unretained id self,
     RCTAssert(NO,
               @"[RNScreens] Unexpected controller type during state reconciliation: %@",
               self.selectedViewController.class);
+    NSLog(@"[DEBUG] ER 3");
     return;
   }
 
   NSString *selectedScreenKey = [self screenKeyForSelectedViewController];
   if ([_navigationState.selectedScreenKey isEqualToString:selectedScreenKey]) {
+    NSLog(@"[DEBUG] ER 4");
     return;
   }
 
   RNSLog(@"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
          _navigationState.selectedScreenKey,
          selectedScreenKey);
+  NSLog(@"[DEBUG] reconcileNavigationStateWithUIKitState %@ -> %@",
+        _navigationState.selectedScreenKey,
+        selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
   auto *context = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
