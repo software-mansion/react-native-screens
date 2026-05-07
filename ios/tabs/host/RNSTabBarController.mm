@@ -15,6 +15,11 @@
 // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
 static constexpr NSUInteger kMinCountOfVCsForMoreVCPresence = 6;
 
+/// Index of the first view controller hosted by the More navigation controller.
+/// When More is present, UIKit shows the first 4 view controllers in the tab bar
+/// and moves the rest (index >= 4) into the More list.
+static constexpr NSUInteger kFirstIndexInMoreNavigationController = 4;
+
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
 @end
@@ -197,7 +202,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   if (self.traitCollection.horizontalSizeClass != previousTraitCollection.horizontalSizeClass &&
-      [self isViewControllerPresentedFromTheMoreNavigationController:self.selectedViewController]) {
+      [self isViewControllerHostedByMoreNavigationController:self.selectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
   }
 }
@@ -565,8 +570,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey];
 
-  if (hasStateProgressed &&
-      [self isViewControllerPresentedFromTheMoreNavigationController:nextSelectedViewController]) {
+  if (hasStateProgressed && [self isViewControllerHostedByMoreNavigationController:nextSelectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
   }
 
@@ -720,7 +724,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
          selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
-  if ([self isViewControllerPresentedFromTheMoreNavigationController:self.selectedViewController]) {
+  if ([self isViewControllerHostedByMoreNavigationController:self.selectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
   }
 
@@ -753,6 +757,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
+  // The count is documented. Size class check is empirical, to tigthen the condition and have less
+  // false positives. If we ever find it not correct, we can safely remove it.
   return self.viewControllers.count >= kMinCountOfVCsForMoreVCPresence &&
       self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 #else
@@ -760,12 +766,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 }
 
-- (BOOL)isViewControllerPresentedFromTheMoreNavigationController:(nonnull UIViewController *)viewController
+- (BOOL)isViewControllerHostedByMoreNavigationController:(nonnull UIViewController *)viewController
 {
-  // -2, because: we need 6 controllers, but when more tab is present, the fifth one is put inside it
-  return [self canHaveMoreNavigationController] && [self isMoreNavigationControllerPresentInTabBar] &&
-      ![self.tabBar.items containsObject:viewController.tabBarItem] &&
-      [self.viewControllers indexOfObject:viewController] >= (kMinCountOfVCsForMoreVCPresence - 2);
+  if (![self canHaveMoreNavigationController] || ![self isMoreNavigationControllerPresentInTabBar]) {
+    return NO;
+  }
+
+  NSUInteger index = [self.viewControllers indexOfObject:viewController];
+  if (index == NSNotFound) {
+    return NO;
+  }
+
+  return ![self.tabBar.items containsObject:viewController.tabBarItem] &&
+      index >= kFirstIndexInMoreNavigationController;
 }
 
 - (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
