@@ -762,9 +762,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (BOOL)isViewControllerPresentedFromTheMoreNavigationController:(nonnull UIViewController *)viewController
 {
+  // -2, because: we need 6 controllers, but when more tab is present, the fifth one is put inside it
   return [self canHaveMoreNavigationController] && [self isMoreNavigationControllerPresentInTabBar] &&
       ![self.tabBar.items containsObject:viewController.tabBarItem] &&
-      [self.viewControllers indexOfObject:viewController] > (kMinCountOfVCsForMoreVCPresence - 1);
+      [self.viewControllers indexOfObject:viewController] >= (kMinCountOfVCsForMoreVCPresence - 2);
 }
 
 - (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
