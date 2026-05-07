@@ -12,6 +12,9 @@
 
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
 
+// https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
+static constexpr int kMinCountOfVCsForMoreVCPresence = 5;
+
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
 @end
@@ -182,6 +185,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [super setSelectedViewController:selectedViewController];
   if (!_isHandlingExplicitSelectionUpdate) {
     [self reconcileNavigationStateWithUIKitState];
+  }
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+  [super traitCollectionDidChange:previousTraitCollection];
+
+  if (self.traitCollection.horizontalSizeClass != previousTraitCollection.horizontalSizeClass) {
+    if ([self isViewControllerPresentedFromTheMoreNavigationController:self.selectedViewController]) {
+      [self disableNavigationBarInMoreNavigationController];
+    }
   }
 }
 
@@ -498,6 +512,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (void)updateSelectedViewControllerInner
 {
+  RCTAssert(_pendingStateUpdate != nil, @"[RNScreens] Pending update MUST NOT be nil");
+
   UIViewController *_Nonnull currSelectedViewController = self.selectedViewController;
 
   NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.selectedScreenKey;
@@ -545,6 +561,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey];
+
+  if (hasStateProgressed &&
+      [self isViewControllerPresentedFromTheMoreNavigationController:nextSelectedViewController]) {
+    [self disableNavigationBarInMoreNavigationController];
+  }
 
   if (hasStateProgressed) {
     RNSTabsNavigationStateUpdateContext *context =
@@ -696,6 +717,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
          selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
+  if ([self isViewControllerPresentedFromTheMoreNavigationController:self.selectedViewController]) {
+    [self disableNavigationBarInMoreNavigationController];
+  }
+
   auto *context = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                      isRepeated:NO
                                                       hasTriggeredSpecialEffect:NO
@@ -725,10 +750,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
-  return self.viewControllers.count > 5;
+  return self.viewControllers.count > kMinCountOfVCsForMoreVCPresence &&
+      self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 #else
   return NO;
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (BOOL)isViewControllerPresentedFromTheMoreNavigationController:(nonnull UIViewController *)viewController
+{
+  return [self canHaveMoreNavigationController] && [self isMoreNavigationControllerPresentInTabBar] &&
+      ![self.tabBar.items containsObject:viewController.tabBarItem] &&
+      [self.viewControllers indexOfObject:viewController] >
+      (kMinCountOfVCsForMoreVCPresence - 1); // -1 because one item is replaced by the more nav. ctrl item.
 }
 
 - (BOOL)isViewControllerTheMoreNavigationController:(nonnull UIViewController *)viewController
