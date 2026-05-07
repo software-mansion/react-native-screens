@@ -48,6 +48,21 @@ export interface FormSheetProps {
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
+  /**
+   * @summary The largest sheet detent for which a view underneath won't be dimmed.
+   *
+   * This prop can be set to a number, which indicates the index of the detent in the
+   * `detents` array for which there won't be a dimming view beneath the sheet.
+   *
+   * Additionally, there are the following options available:
+   * * `none` - there will be a dimming view for all detent levels.
+   * * `last` - there won't be a dimming view for any detent level.
+   *
+   * @default 'none'
+   * @platform ios
+   */
+  largestUndimmedDetentIndex?: number | 'none' | 'last' | undefined;
+
   // Events
   /**
    * @summary Called when the sheet is dismissed natively.

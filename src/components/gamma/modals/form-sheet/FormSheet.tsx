@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
+import { resolveLargestUndimmedDetentIndex } from './FormSheetUtils';
 
 // TODO: @t0maboro - move to SheetUtils after merging PR with largestUndimmedDetentIndex
 export function resolveNativeCornerRadius(
@@ -18,13 +19,20 @@ export function resolveNativeCornerRadius(
 }
 
 export function FormSheet(props: FormSheetProps) {
-  const { preferredCornerRadius, ...rest } = props;
+  const {  detents, largestUndimmedDetentIndex ,preferredCornerRadius, ...rest } = props;
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
+
+  const resolvedUndimmedIndex = resolveLargestUndimmedDetentIndex(
+    largestUndimmedDetentIndex,
+    detents?.length,
+  );
 
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
+      detents={detents}
+      largestUndimmedDetentIndex={resolvedUndimmedIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}
     />
