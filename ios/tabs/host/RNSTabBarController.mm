@@ -283,6 +283,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (BOOL)updateSelectedViewControllerTo:(nullable UIViewController *)nextSelectedViewController
                                withKey:(nullable NSString *)screenKey
+                          actionOrigin:(RNSTabsActionOrigin)actionOrigin
 {
   if (nextSelectedViewController == nil) {
     return NO;
@@ -293,7 +294,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(![NSString rnscreens_isBlankOrNull:screenKey],
             @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
-  [self progressNavigationState:screenKey withOrigin:RNSTabsActionOriginProgrammaticJs];
+  [self progressNavigationState:screenKey withOrigin:actionOrigin];
 
   if (currSelectedViewController == nextSelectedViewController) {
     return YES;
@@ -563,7 +564,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
-                                                         withKey:nextSelectedViewControllerKey];
+                                                         withKey:nextSelectedViewControllerKey
+                                                    actionOrigin:_pendingStateUpdate.actionOrigin];
 
   if (hasStateProgressed && [self isViewControllerHostedByMoreNavigationController:nextSelectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
