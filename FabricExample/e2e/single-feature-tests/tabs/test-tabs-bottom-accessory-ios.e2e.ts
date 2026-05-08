@@ -145,7 +145,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
   });
 
-  it('should display the bottom accessory inline when scrolling down', async () => {
+  it('should display the bottom accessory inline when scrolling down on ScrollDown tab', async () => {
     const extendedBottomAccessory = (await element(
       by.type('RNSTabsBottomAccessoryComponentView'),
     )
@@ -177,7 +177,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     );
   });
 
-  it('should display the bottom accessory above the tab bar when scrolling up', async () => {
+  it('should display the bottom accessory above the tab bar when scrolling up on ScrollDown tab', async () => {
     await element(by.id('scroll-down-scrollview')).scrollTo('top');
 
     const extendedTabBar = (await element(
@@ -216,7 +216,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
   });
 
-  it('should display the bottom accessory inline when scrolling up', async () => {
+  it('should display the bottom accessory inline when scrolling up on ScrollUp tab', async () => {
     const extendedBottomAccessory = (await element(
       by.type('RNSTabsBottomAccessoryComponentView'),
     )
@@ -248,7 +248,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     );
   });
 
-  it('should display the bottom accessory above the tab bar when scrolling up', async () => {
+  it('should display the bottom accessory above the tab bar when scrolling down on ScrollUp tab', async () => {
     await expect(element(by.id('scroll-up-item-14'))).toBeVisible();
     await scrollScrollViewToItem(
       'scroll-up-scrollview',
