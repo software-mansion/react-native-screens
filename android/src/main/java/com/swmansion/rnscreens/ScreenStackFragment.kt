@@ -353,7 +353,10 @@ class ScreenStackFragment :
             return null
         }
 
-        if (nextAnim == 0 || screen.stackAnimation == Screen.StackAnimation.NONE || screen.transitionDuration < 0) {
+        if (nextAnim == 0 ||
+            screen.stackAnimation == Screen.StackAnimation.NONE ||
+            screen.transitionDuration == Screen.TRANSITION_DURATION_UNSET
+        ) {
             return null
         }
         return AnimationUtils.loadAnimation(requireContext(), nextAnim).apply {
@@ -368,7 +371,7 @@ class ScreenStackFragment :
                 val scale = targetDuration.toDouble() / naturalDuration.toDouble()
                 for (child in animation.animations) {
                     child.startOffset = (child.startOffset * scale).toLong()
-                    scaleAnimationDuration(child, (child.duration * scale).toLong())
+                    scaleAnimationDuration(child, (child.computeDurationHint() * scale).toLong())
                 }
             }
         } else {
