@@ -11,7 +11,7 @@ namespace react = facebook::react;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSFormSheetHostComponentEventEmitter : NSObject
+@interface RNSFormSheetHostEventEmitter : NSObject
 
 - (BOOL)emitOnNativeDismiss;
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if defined(__cplusplus)
 
-@interface RNSFormSheetHostComponentEventEmitter ()
+@interface RNSFormSheetHostEventEmitter ()
 
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSFormSheetHostEventEmitter> &)emitter;
 

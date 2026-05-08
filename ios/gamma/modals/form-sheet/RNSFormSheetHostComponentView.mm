@@ -1,8 +1,8 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
 #import "RNSFormSheetContentView.h"
-#import "RNSFormSheetHostComponentEventEmitter.h"
 #import "RNSFormSheetHostController.h"
+#import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSPresentationSourceProvider.h"
 
@@ -18,7 +18,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSFormSheetHostComponentView {
-  RNSFormSheetHostComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
 
   RNSFormSheetHostController *_Nullable _controller;
@@ -46,7 +46,7 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
-  _reactEventEmitter = [RNSFormSheetHostComponentEventEmitter new];
+  _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
 
   _needsSheetPresentationUpdate = NO;

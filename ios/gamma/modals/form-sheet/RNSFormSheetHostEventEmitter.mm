@@ -1,7 +1,7 @@
-#import "RNSFormSheetHostComponentEventEmitter.h"
+#import "RNSFormSheetHostEventEmitter.h"
 #import <React/RCTLog.h>
 
-@implementation RNSFormSheetHostComponentEventEmitter {
+@implementation RNSFormSheetHostEventEmitter {
   std::shared_ptr<const react::RNSFormSheetHostEventEmitter> _reactEventEmitter;
 }
 
