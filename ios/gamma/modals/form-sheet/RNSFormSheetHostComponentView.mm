@@ -103,13 +103,7 @@ namespace react = facebook::react;
 
     [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && isPresented) {
-    // Dismiss programmatically and delay the reset until the animation completes.
-    // This prevents conflicting layout updates while the sheet is sliding down.
-    __weak auto weakSelf = self;
-    [_controller dismissViewControllerAnimated:YES
-                                    completion:^{
-                                      [weakSelf resetShadowNodeSize];
-                                    }];
+    [_controller dismissViewControllerAnimated:YES completion:nil];
   } else {
     // The remaining two combinations are valid and require no action:
     // 1. _isOpen == NO and isPresented == NO: This occurs on the initial mount before the sheet is opened,
@@ -124,8 +118,6 @@ namespace react = facebook::react;
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetHostController *)controller
 {
   _isOpen = NO;
-  [self resetShadowNodeSize];
-
   [_reactEventEmitter emitOnNativeDismiss];
 }
 
@@ -246,11 +238,6 @@ namespace react = facebook::react;
   [_shadowStateProxy updateShadowStateWithBounds:_controller.view.bounds origin:contentOriginOffset];
 }
 
-- (void)resetShadowNodeSize
-{
-  [_shadowStateProxy resetShadowState];
-}
-
 - (void)updateConfiguration
 {
 #if !TARGET_OS_TV
@@ -352,6 +339,15 @@ namespace react = facebook::react;
     }
   }
   return YES;
+}
+
+#pragma mark - Touch Handling overrides
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  // The actual React children are "teleported" and mounted inside a separate view hierarchy (RNSFormSheetContentView).
+  // Returning nil ensures that this host view never intercepts touch events meant for the underlying screen.
+  return nil;
 }
 
 #pragma mark - Touch Handling helpers

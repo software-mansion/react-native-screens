@@ -41,13 +41,4 @@ namespace react = facebook::react;
   }
 }
 
-- (void)resetShadowState
-{
-  if (_state != nullptr) {
-    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(CGSizeZero), RCTPointFromCGPoint(CGPointZero)};
-    _lastScheduledFrame = CGRectNull;
-    _state->updateState(std::move(newState));
-  }
-}
-
 @end

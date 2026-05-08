@@ -29,8 +29,10 @@ class RNSFormSheetHostComponentDescriptor final
 
     auto stateData = state->getData();
 
-    layoutableShadowNode.setSize(
-        Size{stateData.frameSize.width, stateData.frameSize.height});
+    if (stateData.frameSize.width > 0 && stateData.frameSize.height > 0) {
+      layoutableShadowNode.setSize(
+          Size{stateData.frameSize.width, stateData.frameSize.height});
+    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }

@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 - (void)updateShadowStateWithBounds:(CGRect)bounds origin:(CGPoint)origin;
-- (void)resetShadowState;
 
 @end
 
