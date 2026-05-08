@@ -126,7 +126,7 @@ function ScrollDownTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={i === 0 ? 'scroll-down-item-1' : undefined}
+            testID={`scroll-down-item-${i}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
