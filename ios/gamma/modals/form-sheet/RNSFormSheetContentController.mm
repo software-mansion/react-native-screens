@@ -36,6 +36,12 @@
   self.presentationController.delegate = self;
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  self.presentationController.delegate = nil;
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
