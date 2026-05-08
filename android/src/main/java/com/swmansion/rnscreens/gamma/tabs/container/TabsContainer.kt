@@ -527,18 +527,18 @@ class TabsContainer internal constructor(
 
         val isRepeated = nextSelectedFragment === currSelectedFragment
 
-        // If this is user action we test whether it should be prevented before we progress the state.
-        if (!isRepeated && !isInExternalOperationContext && nextSelectedFragment.isPreventNativeSelectionEnabled) {
-            observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
-            return false
-        }
-
         val actionOrigin =
             if (isInExternalOperationContext) {
                 requirePendingStateUpdateRequest().actionOrigin
             } else {
                 TabsActionOrigin.USER
             }
+
+        // If this is user action we test whether it should be prevented before we progress the state.
+        if (!isRepeated && actionOrigin == TabsActionOrigin.USER && nextSelectedFragment.isPreventNativeSelectionEnabled) {
+            observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
+            return false
+        }
 
         val stateChanged = updateSelectedFragment(nextSelectedFragment, actionOrigin)
 
