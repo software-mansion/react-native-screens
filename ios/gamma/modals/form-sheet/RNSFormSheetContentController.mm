@@ -20,7 +20,7 @@
 {
   RCTAssert([self.view isKindOfClass:[RNSFormSheetContentView class]],
             @"[RNScreens] ContentView must be of type RNSFormSheetContentView");
-  return (RNSFormSheetContentView *)self.view;
+  return static_cast<RNSFormSheetContentView *>(self.view);
 }
 
 #pragma mark - UIKit callbacks
