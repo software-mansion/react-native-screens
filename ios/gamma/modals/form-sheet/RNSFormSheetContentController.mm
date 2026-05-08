@@ -33,6 +33,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  // Recreate that delegate on each dismiss/present cycle, because
+  // UIKit isn't triggering presentationControllerDidDismiss many times for
+  // a single initialization.
   self.presentationController.delegate = self;
 }
 
