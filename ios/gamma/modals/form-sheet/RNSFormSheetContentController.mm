@@ -1,12 +1,12 @@
-#import "RNSFormSheetHostController.h"
+#import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
 
 #import <React/RCTAssert.h>
 
-@interface RNSFormSheetHostController () <UIAdaptivePresentationControllerDelegate>
+@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate>
 @end
 
-@implementation RNSFormSheetHostController
+@implementation RNSFormSheetContentController
 
 - (instancetype)init
 {

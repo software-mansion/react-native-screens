@@ -5,14 +5,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSFormSheetContentView;
-@class RNSFormSheetHostController;
+@class RNSFormSheetContentController;
 
 @protocol RNSFormSheetHostControllerDelegate <NSObject>
-- (void)sheetControllerDidNativeDismiss:(RNSFormSheetHostController *)controller;
-- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller;
+- (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
+- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
 @end
 
-@interface RNSFormSheetHostController : UIViewController
+@interface RNSFormSheetContentController : UIViewController
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetHostControllerDelegate> delegate;
 

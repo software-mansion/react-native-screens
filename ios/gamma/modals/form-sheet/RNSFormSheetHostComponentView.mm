@@ -1,7 +1,7 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
-#import "RNSFormSheetHostController.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSPresentationSourceProvider.h"
@@ -21,7 +21,7 @@ namespace react = facebook::react;
   RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
 
-  RNSFormSheetHostController *_Nullable _controller;
+  RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
 
   // Props
@@ -64,7 +64,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [RNSFormSheetHostController new];
+  _controller = [RNSFormSheetContentController new];
   _controller.delegate = self;
 }
 
@@ -115,13 +115,13 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetHostControllerDelegate
 
-- (void)sheetControllerDidNativeDismiss:(RNSFormSheetHostController *)controller
+- (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
 {
   _isOpen = NO;
   [_reactEventEmitter emitOnNativeDismiss];
 }
 
-- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetHostController *)controller
+- (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
 {
   [self syncShadowNodeState];
 }
