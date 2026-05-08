@@ -12,6 +12,7 @@
 {
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
+    self.presentationController.delegate = self;
   }
   return self;
 }
@@ -28,12 +29,6 @@
 - (void)loadView
 {
   self.view = [RNSFormSheetContentView new];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-  self.presentationController.delegate = self;
 }
 
 - (void)viewDidLayoutSubviews
