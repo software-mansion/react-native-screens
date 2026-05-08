@@ -26,16 +26,16 @@ typedef struct {
   BOOL isRepeated;
   /** Whether a special effect (e.g. scroll-to-top) was triggered. */
   BOOL hasTriggeredSpecialEffect;
-  /** Whether the selection was initiated by a native user action (tap). */
-  BOOL isNativeAction;
+  /** Origin (actor) that requested this transition. */
+  RNSTabsActionOrigin actionOrigin;
 } OnTabSelectedPayload;
 
 /** Payload for the `onTabSelectionRejected` event emitted when a tab selection request is rejected. */
 typedef struct {
   /** The currently active navigation state that was kept. */
   RNSTabsNavigationState *_Nonnull currentNavState;
-  /** The navigation state update that was rejected. */
-  RNSTabsNavigationState *_Nonnull rejectedNavState;
+  /** The navigation state update request that was rejected. */
+  RNSTabsNavigationStateUpdateRequest *_Nonnull rejectedRequest;
   /** Reason the update was rejected. */
   RNSTabsNavigationStateRejectionReason rejectionReason;
 } OnTabSelectionRejectedPayload;

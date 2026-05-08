@@ -4,22 +4,23 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 
 /**
  * React Native event dispatched to JS when a tab selection request is rejected by the container.
  *
- * Carries the currently active navigation state ([currentNavState]), the rejected update
- * ([rejectedNavState]), and the [rejectionReason]. This event is never coalesced — every
+ * Carries the currently active navigation state ([currentNavState]), the rejected request
+ * ([rejectedRequest]), and the [rejectionReason]. This event is never coalesced — every
  * rejection is delivered individually so the JS side has a complete picture of state transitions.
  */
 class TabsHostTabSelectionRejectedEvent(
     surfaceId: Int,
     viewId: Int,
-    val currentNavState: TabsNavState,
-    val rejectedNavState: TabsNavState,
-    val rejectionReason: TabsNavStateUpdateRejectionReason,
+    val currentNavState: TabsNavigationState,
+    val rejectedRequest: TabsNavigationStateUpdateRequest,
+    val rejectionReason: TabsNavigationStateRejectionReason,
 ) : Event<TabsHostTabSelectionRejectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
@@ -31,10 +32,10 @@ class TabsHostTabSelectionRejectedEvent(
 
     override fun getEventData(): WritableMap? =
         Arguments.createMap().apply {
-            putString(EK_SELECTED_KEY, currentNavState.selectedKey)
+            putString(EK_SELECTED_KEY, currentNavState.selectedScreenKey)
             putInt(EK_PROVENANCE, currentNavState.provenance)
-            putString(EK_REJECTED_KEY, rejectedNavState.selectedKey)
-            putInt(EK_REJECTED_PROVENANCE, rejectedNavState.provenance)
+            putString(EK_REJECTED_KEY, rejectedRequest.selectedScreenKey)
+            putInt(EK_REJECTED_BASE_PROVENANCE, rejectedRequest.baseProvenance)
             putString(EK_REJECTION_REASON, rejectionReason.toString())
         }
 
@@ -45,7 +46,7 @@ class TabsHostTabSelectionRejectedEvent(
         private const val EK_SELECTED_KEY = "selectedScreenKey"
         private const val EK_PROVENANCE = "provenance"
         private const val EK_REJECTED_KEY = "rejectedScreenKey"
-        private const val EK_REJECTED_PROVENANCE = "rejectedProvenance"
+        private const val EK_REJECTED_BASE_PROVENANCE = "rejectedBaseProvenance"
         private const val EK_REJECTION_REASON = "rejectionReason"
 
         override fun getEventName() = EVENT_NAME

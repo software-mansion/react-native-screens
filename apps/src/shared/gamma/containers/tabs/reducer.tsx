@@ -135,8 +135,10 @@ function tabsActionSetOptionsHandler(
 }
 
 function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { Component, ...rest } = config;
   return {
-    ...config,
+    ...rest,
     // Tab names are required to be unique (enforced by useSanitizeRouteConfigs),
     // so the name itself serves as a stable unique key.
     routeKey: config.name,
@@ -205,4 +207,3 @@ function navStateWithConfirmedState(
     suggestedState: state.suggestedState,
   };
 }
-

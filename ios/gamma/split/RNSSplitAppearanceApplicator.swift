@@ -65,6 +65,7 @@ class RNSSplitAppearanceApplicator {
     // Step 1 - general settings
     splitHostController.displayModeButtonVisibility = splitHost.displayModeButtonVisibility
     splitHostController.preferredSplitBehavior = splitHost.preferredSplitBehavior
+    splitHostController.overrideUserInterfaceStyle = splitHost.colorScheme
     #if !os(tvOS)
       splitHostController.primaryBackgroundStyle = splitHost.primaryBackgroundStyle
     #endif

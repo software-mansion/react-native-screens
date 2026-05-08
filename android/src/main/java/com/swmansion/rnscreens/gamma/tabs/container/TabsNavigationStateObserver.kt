@@ -1,36 +1,41 @@
 package com.swmansion.rnscreens.gamma.tabs.container
 
 /**
- * Callback interface for observing navigation state changes and rejections
- * in [TabsContainer]. Implemented by [com.swmansion.rnscreens.gamma.tabs.host.TabsHost] to relay events to JS.
+ * Observer of navigation state changes on a [TabsContainer].
+ *
+ * Multiple observers may register against a single container via
+ * [TabsContainer.addNavigationStateObserver] / [TabsContainer.removeNavigationStateObserver].
+ * The host (`TabsHost` on Android) registers itself as an observer to relay events to JS;
+ * downstream native libraries integrating directly against [TabsContainer] may register
+ * additional observers.
  */
-internal interface TabsContainerDelegate {
+interface TabsNavigationStateObserver {
     /**
      * Called when the container accepts a navigation state change.
      *
      * @param navState The new navigation state after the change.
      * @param isRepeated Whether the same tab that was already selected has been selected again.
      * @param hasTriggeredSpecialEffect Whether a special effect (e.g. scroll-to-top) was triggered.
-     * @param isNativeAction Whether the change was initiated by a native user action (tap).
+     * @param actionOrigin Origin (actor) that requested this transition.
      */
-    fun onNavStateUpdate(
-        navState: TabsNavState,
+    fun onNavigationStateUpdate(
+        navState: TabsNavigationState,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     )
 
     /**
      * Called when the container rejects a navigation state update.
      *
      * @param currentNavState The currently active navigation state that was kept.
-     * @param rejectedNavState The navigation state update that was rejected.
+     * @param rejectedRequest The navigation state update request that was rejected.
      * @param reason Why the update was rejected.
      */
-    fun onNavStateUpdateRejected(
-        currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
-        reason: TabsNavStateUpdateRejectionReason,
+    fun onNavigationStateUpdateRejected(
+        currentNavState: TabsNavigationState,
+        rejectedRequest: TabsNavigationStateUpdateRequest,
+        reason: TabsNavigationStateRejectionReason,
     )
 
     /**
@@ -41,8 +46,8 @@ internal interface TabsContainerDelegate {
      * @param currentNavState The currently active navigation state that was kept.
      * @param preventedScreenKey The screen key of the tab whose selection was prevented.
      */
-    fun onNavStateUpdatePrevented(
-        currentNavState: TabsNavState,
+    fun onNavigationStateUpdatePrevented(
+        currentNavState: TabsNavigationState,
         preventedScreenKey: String,
     )
 }

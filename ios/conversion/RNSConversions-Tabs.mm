@@ -233,6 +233,25 @@ RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReaso
   }
 }
 
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin;
+  switch (actionOrigin) {
+    case RNSTabsActionOriginUser:
+      return User;
+    case RNSTabsActionOriginProgrammaticJs:
+      return ProgrammaticJs;
+    case RNSTabsActionOriginProgrammaticNative:
+      return ProgrammaticNative;
+    case RNSTabsActionOriginImplicit:
+      return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", actionOrigin);
+  }
+  return User;
+}
+
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
 {
   using enum facebook::react::RNSTabsScreenIOSIconType;
@@ -248,9 +267,8 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType
   }
 }
 
-RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSTabsIconType iconType)
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::ImageSource *imageSource,
+                                                         RNSTabsIconType iconType)
 {
   RCTImageSource *iconImageSource;
 
@@ -343,8 +361,8 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
 
 UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
 {
-  RCTAssert(
-      systemItem != RNSTabsScreenSystemItemNone, @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
+  RCTAssert(systemItem != RNSTabsScreenSystemItemNone,
+            @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
   switch (systemItem) {
     case RNSTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;

@@ -3,7 +3,7 @@ import { I18nManager, type NativeSyntheticEvent } from 'react-native';
 import {
   type TabSelectedEvent,
   Tabs,
-  type TabsHostNavState,
+  type TabsHostNavStateRequest,
 } from 'react-native-screens';
 import type {
   SelectTabMethod,
@@ -21,6 +21,7 @@ import {
 } from './reducer';
 import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
@@ -34,6 +35,8 @@ export function TabsContainer(props: TabsContainerProps) {
 
   useSanitizeRouteConfigs(routeConfigs);
 
+  const componentsByName = useComponentsByName(routeConfigs);
+
   const [tabsNavState, dispatch]: [
     TabsContainerState,
     React.Dispatch<TabsNavigationAction>,
@@ -43,7 +46,7 @@ export function TabsContainer(props: TabsContainerProps) {
     determineInitialTabsContainerState,
   );
 
-  const hostNavState = useTabsHostNavState(tabsNavState);
+  const hostNavStateRequest = useTabsHostNavStateRequest(tabsNavState);
 
   const onTabSelectedCallback = React.useCallback(
     (event: NativeSyntheticEvent<TabSelectedEvent>) => {
@@ -74,7 +77,7 @@ export function TabsContainer(props: TabsContainerProps) {
 
   return (
     <Tabs.Host
-      navState={hostNavState}
+      navStateRequest={hostNavStateRequest}
       onTabSelected={onTabSelectedCallback}
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
@@ -84,23 +87,39 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        return <TabsContainerItem key={route.routeKey} route={route} navMethods={navMethods} isSelected={isSelected} pendingForUpdate={pendingForUpdate} />
+        const Component = componentsByName.get(route.name);
+        if (!Component) {
+          throw new Error(
+            `[Tabs] No route config matches the "${route.name}" route name`,
+          );
+        }
+
+        return (
+          <TabsContainerItem
+            key={route.routeKey}
+            route={route}
+            navMethods={navMethods}
+            isSelected={isSelected}
+            pendingForUpdate={pendingForUpdate}
+            Component={Component}
+          />
+        );
       })}
     </Tabs.Host>
   );
 }
 
-function useTabsHostNavState(
+function useTabsHostNavStateRequest(
   tabsNavState: TabsContainerState,
-): TabsHostNavState {
-  const hostNavState: TabsHostNavState = React.useMemo(() => {
+): TabsHostNavStateRequest {
+  const hostNavStateRequest: TabsHostNavStateRequest = React.useMemo(() => {
     return {
       selectedScreenKey: tabsNavState.suggestedState.selectedRouteKey,
-      provenance: tabsNavState.suggestedState.provenance,
+      baseProvenance: tabsNavState.suggestedState.provenance,
     };
   }, [tabsNavState.suggestedState]);
 
-  return hostNavState;
+  return hostNavStateRequest;
 }
 
 function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {

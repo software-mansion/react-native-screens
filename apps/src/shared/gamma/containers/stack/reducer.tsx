@@ -270,8 +270,10 @@ function createRouteFromConfig(
   config: StackRouteConfig,
   activityMode: StackScreenActivityMode = 'detached',
 ): StackRoute {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { Component, ...rest } = config;
   return {
-    ...config,
+    ...rest,
     activityMode,
     routeKey: generateRouteKeyForRouteName(config.name),
     isMarkedForDismissal: false,

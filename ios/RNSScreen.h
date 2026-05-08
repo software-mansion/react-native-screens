@@ -9,7 +9,6 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "RNSViewInteractionManager.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -38,13 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <
-                           RNSViewControllerDelegate
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate
 #if !TARGET_OS_TV
-                           ,
-                           RNSOrientationProviding
+                                         ,
+                                         RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                           >
+                                         >
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;
@@ -60,11 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenStackHeaderConfig;
 
-@interface RNSScreenView : RNSReactBaseView <
-                               RNSScreenContentWrapperDelegate,
-                               RNSScrollViewBehaviorOverriding,
-                               RNSSafeAreaProviding,
-                               RNSScrollEdgeEffectProviding>
+@interface RNSScreenView : RNSReactBaseView <RNSScreenContentWrapperDelegate,
+                                             RNSScrollViewBehaviorOverriding,
+                                             RNSSafeAreaProviding,
+                                             RNSScrollEdgeEffectProviding>
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property
@@ -154,12 +151,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
-
-/**
- * Holds a shared instance to a service that finds the view that needs to have interactions disabled for stack to not
- * have multiple screen transitions at once.
- */
-+ (RNSViewInteractionManager *)viewInteractionManagerInstance;
 
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
