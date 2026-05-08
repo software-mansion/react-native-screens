@@ -38,7 +38,7 @@ export function App() {
   );
 }
 
-function StackSetup() {
+export function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -59,7 +59,7 @@ function StackSetup() {
   );
 }
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <Text style={styles.screenText}>Home Screen</Text>
@@ -68,7 +68,7 @@ function HomeScreen() {
   );
 }
 
-function AScreen() {
+export function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <Text style={styles.screenText}>Screen A</Text>
