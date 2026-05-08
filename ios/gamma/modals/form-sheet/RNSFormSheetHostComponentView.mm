@@ -168,7 +168,7 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(props);
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
-    _isOpen = newComponentProps.isOpen;
+    _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
     _needsSheetPresentationUpdate = YES;
 
     // ALWAYS refresh the sheet configuration when reopening,
