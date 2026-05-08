@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 import {
+  resolveInitialDetentIndex,
   resolveLargestUndimmedDetentIndex,
   resolveNativeCornerRadius,
 } from './FormSheetUtils';
@@ -10,6 +11,7 @@ import {
 export function FormSheet(props: FormSheetProps) {
   const {
     detents,
+    initialDetentIndex,
     largestUndimmedDetentIndex,
     preferredCornerRadius,
     ...rest
@@ -17,16 +19,24 @@ export function FormSheet(props: FormSheetProps) {
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
 
-  const resolvedUndimmedIndex = resolveLargestUndimmedDetentIndex(
+  const detentsCount = detents?.length ?? 0;
+
+  const resolvedInitialDetentIndex = resolveInitialDetentIndex(
+    initialDetentIndex,
+    detentsCount,
+  );
+
+  const resolvedUndimmedDetentIndex = resolveLargestUndimmedDetentIndex(
     largestUndimmedDetentIndex,
-    detents?.length ?? 0,
+    detentsCount,
   );
 
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
       detents={detents}
-      largestUndimmedDetentIndex={resolvedUndimmedIndex}
+      initialDetentIndex={resolvedInitialDetentIndex}
+      largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}
     />

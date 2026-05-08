@@ -3,6 +3,42 @@ import type { FormSheetProps } from './FormSheet.types';
 // Keep these predefined values in sync with native equivalents.
 const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
+const FORM_SHEET_LAST_DETENT = -3;
+
+export function resolveInitialDetentIndex(
+  initialDetentIndex: FormSheetProps['initialDetentIndex'],
+  detentsCount: number = 0,
+): number {
+  if (initialDetentIndex === undefined) {
+    return 0;
+  }
+
+  if (initialDetentIndex === 'last') {
+    return FORM_SHEET_LAST_DETENT;
+  }
+
+  if (typeof initialDetentIndex === 'number') {
+    const lastDetentIndex = Math.max(detentsCount - 1, 0);
+
+    if (!isIndexInClosedRange(initialDetentIndex, 0, lastDetentIndex)) {
+      if (__DEV__) {
+        console.error(
+          `[RNScreens] Invalid value provided for 'initialDetentIndex' (${initialDetentIndex}). Expected an integer between 0 and ${lastDetentIndex}. Falling back to 0.`,
+        );
+      }
+      return 0;
+    }
+
+    return initialDetentIndex;
+  }
+
+  if (__DEV__) {
+    console.error(
+      "[RNScreens] Invalid value provided for 'initialDetentIndex'. Expected a number or 'last'. Falling back to 0.",
+    );
+  }
+  return 0;
+}
 
 export function resolveNativeCornerRadius(
   radius?: number | 'systemDefault',
