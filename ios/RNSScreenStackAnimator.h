@@ -2,6 +2,8 @@
 
 #import "RNSScreen.h"
 
+extern const NSTimeInterval RNSDefaultTransitionDuration;
+
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
 /// This property is filled whenever there is an ongoing animation and cleared on animation end.
