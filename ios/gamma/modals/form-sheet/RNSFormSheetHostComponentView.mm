@@ -198,7 +198,8 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
       _needsSheetConfigurationUpdate = YES;
-      // Forcefully reset the sheet initialDetentIndex when reopening.
+      // Reset the initial-detent applied flag when reopening so the
+      // configured initialDetentIndex can be applied again.
       _initialDetentApplied = NO;
     }
   }
