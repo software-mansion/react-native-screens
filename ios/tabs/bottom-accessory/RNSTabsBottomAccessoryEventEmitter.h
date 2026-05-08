@@ -14,10 +14,6 @@
 namespace react = facebook::react;
 #endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTComponent.h>
-#endif // !RCT_NEW_ARCH_ENABLED
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsBottomAccessoryEventEmitter : NSObject
@@ -32,16 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsBottomAccessoryEventEmitter ()
 
-#if RCT_NEW_ARCH_ENABLED
-
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsBottomAccessoryEventEmitter> &)emitter;
-
-#else
-#pragma mark - LEGACY Event emitter blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onEnvironmentChange;
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 

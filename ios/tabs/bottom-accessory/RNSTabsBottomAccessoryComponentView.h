@@ -4,11 +4,6 @@
 #import "RNSTabsBottomAccessoryEventEmitter.h"
 #import "RNSTabsHostComponentView.h"
 
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTBridge.h>
-#import <React/RCTInvalidating.h>
-#endif
-
 #if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 #import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
@@ -23,15 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 @interface RNSTabsBottomAccessoryComponentView : RNSReactBaseView
-#if !RCT_NEW_ARCH_ENABLED
-                                                 <RCTInvalidating>
-#endif // RCT_NEW_ARCH_ENABLED
-
-#if !RCT_NEW_ARCH_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge;
-
-@property (nonatomic, weak, readonly, nullable) RCTBridge *bridge;
-#endif // !RCT_NEW_ARCH_ENABLED
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
@@ -65,13 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsBottomAccessoryEventEmitter *)reactEventEmitter;
-
-#if !RCT_NEW_ARCH_ENABLED
-#pragma mark - LEGACY Event blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onEnvironmentChange;
-
-#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 

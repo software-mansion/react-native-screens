@@ -10,10 +10,6 @@
 namespace react = facebook::react;
 #endif // __cplusplus
 
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTComponent.h>
-#endif // !RCT_NEW_ARCH_ENABLED
-
 NS_ASSUME_NONNULL_BEGIN
 
 /** Payload for the `onTabSelected` event emitted when a tab selection is accepted. */
@@ -76,16 +72,7 @@ typedef struct {
 
 @interface RNSTabsHostEventEmitter ()
 
-#if RCT_NEW_ARCH_ENABLED
-
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostIOSEventEmitter> &)emitter;
-
-#else
-#pragma mark - LEGACY Event emitter blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
