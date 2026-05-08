@@ -126,7 +126,7 @@ function ScrollDownTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-down-item-${i}`}
+            testID={`scroll-down-item-${i+1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
@@ -159,7 +159,7 @@ function ScrollUpTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-up-item-${i}`}
+            testID={`scroll-up-item-${i+1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
