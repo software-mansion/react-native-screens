@@ -159,7 +159,7 @@ function ScrollUpTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={i === 0 ? 'scroll-up-item-1' : undefined}
+            testID={`scroll-up-item-${i}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
