@@ -204,7 +204,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   if (_touchHandler != nil) {
-    [_touchHandler detachFromView:_controller.view];
+    [_touchHandler detachFromView:_controller.contentView];
     _touchHandler = nil;
   }
 
@@ -220,12 +220,12 @@ namespace react = facebook::react;
 
 - (void)syncShadowNodeState
 {
-  if (_controller == nil || _controller.view == nil) {
+  if (_controller == nil || _controller.contentView == nil) {
     return;
   }
 
   // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
-  CGPoint contentViewOriginInWindow = [_controller.view convertPoint:CGPointZero toView:nil];
+  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
   [self updateTouchHandlerWithOrigin:contentViewOriginInWindow];
 
   // contentOriginOffset is the vector from the host view's origin to the content view's origin,
@@ -235,7 +235,7 @@ namespace react = facebook::react;
   CGPoint contentOriginOffset = CGPointMake(contentViewOriginInWindow.x - hostOriginInWindow.x,
                                             contentViewOriginInWindow.y - hostOriginInWindow.y);
 
-  [_shadowStateProxy updateShadowStateWithBounds:_controller.view.bounds origin:contentOriginOffset];
+  [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentOriginOffset];
 }
 
 - (void)updateConfiguration
@@ -356,7 +356,7 @@ namespace react = facebook::react;
 {
   if (_touchHandler == nil) {
     _touchHandler = [RCTSurfaceTouchHandler new];
-    [_touchHandler attachToView:_controller.view];
+    [_touchHandler attachToView:_controller.contentView];
   }
 
   // Aligns touch coordinate space with window coordinate space
