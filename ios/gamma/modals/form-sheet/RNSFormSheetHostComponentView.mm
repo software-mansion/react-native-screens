@@ -123,6 +123,7 @@ namespace react = facebook::react;
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
 {
+  [self syncTouchHandlerOrigin];
   [self syncShadowNodeState];
 }
 
@@ -224,13 +225,10 @@ namespace react = facebook::react;
     return;
   }
 
-  // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
-  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
-  [self updateTouchHandlerWithOrigin:contentViewOriginInWindow];
-
   // contentOriginOffset is the vector from the host view's origin to the content view's origin,
   // both expressed in window space. It offsets child layout positions to account for the fact that
   // React children are mounted in a separate UIViewController hierarchy.
+  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
   CGPoint hostOriginInWindow = [self convertPoint:CGPointZero toView:nil];
   CGPoint contentOriginOffset = CGPointMake(contentViewOriginInWindow.x - hostOriginInWindow.x,
                                             contentViewOriginInWindow.y - hostOriginInWindow.y);
@@ -351,6 +349,17 @@ namespace react = facebook::react;
 }
 
 #pragma mark - Touch Handling helpers
+
+- (void)syncTouchHandlerOrigin
+{
+  if (_controller == nil || _controller.contentView == nil) {
+    return;
+  }
+
+  // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
+  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
+  [self updateTouchHandlerWithOrigin:contentViewOriginInWindow];
+}
 
 - (void)updateTouchHandlerWithOrigin:(CGPoint)origin
 {
