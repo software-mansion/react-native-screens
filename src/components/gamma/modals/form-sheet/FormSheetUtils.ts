@@ -1,9 +1,10 @@
 import type { FormSheetProps } from './FormSheet.types';
 
-// Keep these predefined values in sync with native equivalents.
+// Predefined values for `initialDetentIndex`. Keep in sync with native counterpart.
+const FORM_SHEET_LAST_DETENT = -1;
+// Predefined values for `largestUndimmedDetentIndex`. Keep in sync with native counterpart.
 const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
-const FORM_SHEET_LAST_DETENT = -3;
 
 export function resolveInitialDetentIndex(
   initialDetentIndex: FormSheetProps['initialDetentIndex'],

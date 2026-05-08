@@ -14,10 +14,11 @@
 
 namespace react = facebook::react;
 
+// Predefined values for `initialDetentIndex`.
+static NSInteger const kRNSFormSheetLastDetent = -1;
 // Predefined values for `largestUndimmedDetentIndex`.
 static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
 static NSInteger const kRNSFormSheetNeverDimmed = -2;
-static NSInteger const kRNSFormSheetLastDetent = -3;
 
 @interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
 @end
