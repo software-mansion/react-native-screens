@@ -7,7 +7,7 @@ import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Sheet initial detent index',
-  key: 'test-form-initial-detent-index-ios',
+  key: 'test-form-sheet-initial-detent-index-ios',
   details: 'Allows to test initialDetentIndex prop of FormSheet component.',
   platforms: ['ios'],
 };
