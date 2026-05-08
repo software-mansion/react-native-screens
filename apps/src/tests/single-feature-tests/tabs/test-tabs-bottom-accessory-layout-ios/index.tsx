@@ -56,7 +56,7 @@ function ShortViewLR() {
 
 function LongView() {
   return (
-    <View style={styles.fullView}>
+    <View style={styles.fullView} testID="accessory-long">
       <LongText />
     </View>
   );
@@ -64,10 +64,10 @@ function LongView() {
 
 function RGBView() {
   return (
-    <View style={styles.fullView}>
-      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
+    <View style={styles.fullView} testID="accessory-rgb">
+      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} testID='rgb-strip-0' />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} testID='rgb-strip-1' />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} testID='rgb-strip-2' />
     </View>
   );
 }
