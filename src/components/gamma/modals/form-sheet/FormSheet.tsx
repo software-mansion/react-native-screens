@@ -8,6 +8,9 @@ export function FormSheet(props: FormSheetProps) {
 }
 
 const styles = StyleSheet.create({
+  // We use absolute positioning so the Host view doesn't affect the layout of its siblings.
+  // Setting `top: 0` and `left: 0` explicitly anchors the view to a predictable origin,
+  // preventing it from floating at an arbitrary offset based on its position in the Element tree.
   host: {
     position: 'absolute',
     top: 0,
