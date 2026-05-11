@@ -39,7 +39,8 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     props.disableTopInsetApplication ?? false,
   );
 
-  const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
+  const { headerLeftBarButtonItems, headerRightBarButtonItems, toolbarItems } =
+    props;
 
   const preparedHeaderLeftBarButtonItems =
     headerLeftBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
@@ -48,6 +49,10 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   const preparedHeaderRightBarButtonItems =
     headerRightBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
       ? prepareHeaderBarButtonItems(headerRightBarButtonItems, 'right')
+      : undefined;
+  const preparedToolbarItems =
+    toolbarItems && isHeaderBarButtonsAvailableForCurrentPlatform
+      ? prepareHeaderBarButtonItems(toolbarItems, 'toolbar')
       : undefined;
   const hasHeaderBarButtonItems =
     isHeaderBarButtonsAvailableForCurrentPlatform &&
@@ -115,6 +120,62 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       }
     : undefined;
 
+  const hasToolbarItems =
+    isHeaderBarButtonsAvailableForCurrentPlatform &&
+    preparedToolbarItems?.length;
+
+  const onPressToolbarItem = hasToolbarItems
+    ? (event: NativeSyntheticEvent<{ buttonId: string }>) => {
+        const pressedItem = preparedToolbarItems?.find(
+          item =>
+            item &&
+            'buttonId' in item &&
+            item.buttonId === event.nativeEvent.buttonId,
+        );
+        if (
+          pressedItem &&
+          pressedItem.type === 'button' &&
+          pressedItem.onPress
+        ) {
+          pressedItem.onPress();
+        }
+      }
+    : undefined;
+
+  const onPressToolbarMenuItem = hasToolbarItems
+    ? (event: NativeSyntheticEvent<{ menuId: string }>) => {
+        const findInMenu = (
+          menu: HeaderBarButtonItemWithMenu['menu'],
+          menuId: string,
+        ): HeaderBarButtonItemMenuAction | undefined => {
+          for (const item of menu.items) {
+            if ('items' in item) {
+              const found = findInMenu(item, menuId);
+              if (found) {
+                return found;
+              }
+            } else if ('menuId' in item && item.menuId === menuId) {
+              return item;
+            }
+          }
+          return undefined;
+        };
+
+        for (const item of preparedToolbarItems ?? []) {
+          if (item && item.type === 'menu' && item.menu) {
+            const action = findInMenu(
+              item.menu as HeaderBarButtonItemWithMenu['menu'],
+              event.nativeEvent.menuId,
+            );
+            if (action) {
+              action.onPress();
+              return;
+            }
+          }
+        }
+      }
+    : undefined;
+
   return (
     <ScreenStackHeaderConfigNativeComponent
       {...props}
@@ -123,6 +184,9 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       headerRightBarButtonItems={preparedHeaderRightBarButtonItems}
       onPressHeaderBarButtonItem={onPressHeaderBarButtonItem}
       onPressHeaderBarButtonMenuItem={onPressHeaderBarButtonMenuItem}
+      toolbarItems={preparedToolbarItems}
+      onPressToolbarItem={onPressToolbarItem}
+      onPressToolbarMenuItem={onPressToolbarMenuItem}
       ref={ref}
       style={styles.headerConfig}
       pointerEvents="box-none"

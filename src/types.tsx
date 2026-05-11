@@ -748,6 +748,14 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   headerRightBarButtonItems?: HeaderBarButtonItem[] | undefined;
   /**
+   * Array of UIBarButtonItems displayed in the bottom toolbar of the navigation controller.
+   * The toolbar is automatically shown when items are provided and hidden when empty or undefined.
+   * Supports the same item types as header bar button items, plus `'flexibleSpace'` for distributing space.
+   *
+   * @platform ios
+   */
+  toolbarItems?: ToolbarItem[] | undefined;
+  /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean | undefined;
@@ -1285,6 +1293,12 @@ export type HeaderBarButtonItem =
   | HeaderBarButtonItemWithAction
   | HeaderBarButtonItemWithMenu
   | HeaderBarButtonItemSpacing;
+
+export interface ToolbarItemFlexibleSpace {
+  type: 'flexibleSpace';
+}
+
+export type ToolbarItem = HeaderBarButtonItem | ToolbarItemFlexibleSpace;
 
 /**
  * Custom Screen Transition
