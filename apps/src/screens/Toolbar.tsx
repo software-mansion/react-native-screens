@@ -47,7 +47,6 @@ const DynamicItemsScreen = ({ navigation }: any) => {
   useEffect(() => {
     navigation.setOptions({
       title: `Dynamic Items (${count})`,
-      // @ts-ignore
       unstable_toolbarItems: () => [
         {
           type: 'button',
@@ -76,7 +75,6 @@ const DynamicItemsScreen = ({ navigation }: any) => {
 
 export default function ToolbarExample() {
   return (
-    // @ts-ignore
     <Stack.Navigator>
       <Stack.Screen
         name="Main"
@@ -89,7 +87,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Basic Buttons',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
@@ -116,7 +113,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Flexible Space',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
@@ -138,7 +134,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Menu Items',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             { type: 'flexibleSpace' },
             {
@@ -173,7 +168,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Advanced Menus',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'menu',
@@ -382,7 +376,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Text Styles',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
@@ -413,7 +406,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'SF Symbols',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
@@ -441,7 +433,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Disabled Items',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
@@ -470,7 +461,6 @@ export default function ToolbarExample() {
         component={DemoContent}
         options={{
           title: 'Fixed Spacing',
-          // @ts-ignore
           unstable_toolbarItems: () => [
             {
               type: 'button',
