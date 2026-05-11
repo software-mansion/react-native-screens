@@ -362,10 +362,13 @@ Sets the direction in which you should swipe to dismiss the screen. The followin
 
 When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
 
-### `transitionDuration` (iOS only)
+### `transitionDuration`
 
-Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
-For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
+Changes the duration (in milliseconds) of stack transitions. Must be non-negative.
+
+On iOS, applies to the `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` stack animations; defaults to `500`. Ignored for the `default` and `flip` stack animations, and for screens presented as `modal`, `formSheet` or `pageSheet`.
+
+On Android, scales the configured `stackAnimation` (except `none`); when omitted, the animation's natural duration is used.
 
 ### `useTransitionProgress`
 
