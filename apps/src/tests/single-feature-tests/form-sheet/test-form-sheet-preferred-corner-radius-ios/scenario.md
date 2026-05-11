@@ -17,8 +17,8 @@ Other: Planned, but will be implemented separately.
 
 ## Note
 
-- On iPhone 18, the corner radius primarily affects the **top** corners of the bottom sheet.
-- On iPhone 26, the corner radius primarily affects **all** corners of the bottom sheet.
+- On iOS 18, the corner radius primarily affects the **top** corners of the bottom sheet.
+- On iOS 26, the corner radius primarily affects **all** corners of the bottom sheet.
 - On iPad, because the FormSheet is presented as a floating panel, the corner radius will affect **all four** corners.
 
 ## Steps - iPhone
