@@ -28,13 +28,13 @@ export interface FormSheetProps {
   /**
    * @summary The corner radius that the sheet will attempt to present with.
    *
-   * If set to a negative value (e.g., `-1.0`), it defaults to the system's
+   * If set to `'systemDefault'`, it defaults to the system's
    * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
    *
-   * @default -1.0
+   * @default 'systemDefault'
    * @platform ios
    */
-  preferredCornerRadius?: number | undefined;
+  preferredCornerRadius?: number | 'systemDefault' | undefined;
 
   // Events
   /**

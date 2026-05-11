@@ -4,7 +4,19 @@ import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-s
 import type { FormSheetProps } from './FormSheet.types';
 
 export function FormSheet(props: FormSheetProps) {
-  return <FormSheetHostNativeComponent style={styles.host} {...props} />;
+  const { preferredCornerRadius, ...rest } = props;
+
+  // TODO: @t0maboro - move to SheetUtils after merging PR with largestUndimmedDetentIndex
+  const nativeCornerRadius =
+    preferredCornerRadius === 'systemDefault' ? -1.0 : preferredCornerRadius;
+
+  return (
+    <FormSheetHostNativeComponent
+      style={styles.host}
+      preferredCornerRadius={nativeCornerRadius}
+      {...rest}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
