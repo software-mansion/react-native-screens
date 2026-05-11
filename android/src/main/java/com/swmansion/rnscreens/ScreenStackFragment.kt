@@ -364,7 +364,10 @@ class ScreenStackFragment :
         }
     }
 
-    private fun scaleAnimationDuration(animation: Animation, targetDuration: Long) {
+    private fun scaleAnimationDuration(
+        animation: Animation,
+        targetDuration: Long,
+    ) {
         if (animation is AnimationSet) {
             val naturalDuration = animation.computeDurationHint()
             if (naturalDuration > 0) {

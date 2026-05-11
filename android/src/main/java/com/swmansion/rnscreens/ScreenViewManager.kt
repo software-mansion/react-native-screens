@@ -275,7 +275,6 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
-
     override fun setHideKeyboardOnSwipe(
         view: Screen?,
         value: Boolean,
