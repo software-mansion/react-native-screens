@@ -9,6 +9,7 @@ const demoScreens = [
   { name: 'FlexibleSpace', title: 'Flexible Space' },
   { name: 'MenuItems', title: 'Menu Items' },
   { name: 'AdvancedMenus', title: 'Advanced Menus' },
+  { name: 'TextStyles', title: 'Text Styles' },
   { name: 'SfSymbols', title: 'SF Symbols' },
   { name: 'DisabledItems', title: 'Disabled Items' },
   { name: 'FixedSpacing', title: 'Fixed Spacing' },
@@ -371,6 +372,55 @@ export default function ToolbarExample() {
                   },
                 ],
               },
+            },
+          ],
+        }}
+      />
+
+      <Stack.Screen
+        name="TextStyles"
+        component={DemoContent}
+        options={{
+          title: 'Text Styles',
+          // @ts-ignore
+          unstable_toolbarItems: () => [
+            {
+              type: 'button',
+              label: 'Bold',
+              labelStyle: { fontWeight: 'bold' },
+              onPress: () => Alert.alert('Bold pressed'),
+            },
+            {
+              type: 'button',
+              label: 'Italic',
+              labelStyle: { fontStyle: 'italic' },
+              onPress: () => Alert.alert('Italic pressed'),
+            },
+            { type: 'flexibleSpace' },
+            {
+              type: 'button',
+              label: 'Big',
+              labelStyle: { fontSize: 22 },
+              onPress: () => Alert.alert('Big pressed'),
+            },
+            {
+              type: 'button',
+              label: 'Small',
+              labelStyle: { fontSize: 11 },
+              onPress: () => Alert.alert('Small pressed'),
+            },
+            { type: 'flexibleSpace' },
+            {
+              type: 'button',
+              label: 'Red',
+              labelStyle: { color: 'red' },
+              onPress: () => Alert.alert('Red pressed'),
+            },
+            {
+              type: 'button',
+              label: 'Teal',
+              labelStyle: { color: 'teal', fontWeight: '600' },
+              onPress: () => Alert.alert('Teal pressed'),
             },
           ],
         }}
