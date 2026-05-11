@@ -30,22 +30,18 @@ export function resolveLargestUndimmedDetentIndex(
     const lastDetentIndex = Math.max(detentsCount - 1, 0);
 
     if (!isIndexInClosedRange(largestUndimmedDetent, 0, lastDetentIndex)) {
-      if (__DEV__) {
-        console.error(
-          `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected an integer between 0 and ${lastDetentIndex}. Falling back to the default behavior (always dimmed).`,
-        );
-      }
+      console.error(
+        `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected an integer between 0 and ${lastDetentIndex}. Falling back to the default behavior (always dimmed).`,
+      );
       return FORM_SHEET_ALWAYS_DIMMED;
     }
 
     return largestUndimmedDetent;
   }
 
-  if (__DEV__) {
-    console.error(
-      "[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex'. Expected a number, 'none', or 'last'. Falling back to the default behavior (always dimmed).",
-    );
-  }
+  console.error(
+    "[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex'. Expected a number, 'none', or 'last'. Falling back to the default behavior (always dimmed).",
+  );
   return FORM_SHEET_ALWAYS_DIMMED;
 }
 
