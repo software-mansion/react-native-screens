@@ -285,9 +285,9 @@ RNS_IGNORE_SUPER_CALL_END
       CGFloat trailing = m.trailing;
       // Float slack only (not a screen layout constant like "16pt").
       static const CGFloat kRNSDirectionalMarginAsymmetrySlack = 0.75;
-      BOOL repairedAsymmetricMargins =
+      BOOL shouldRepairAsymmetricMargins =
           (leading + kRNSDirectionalMarginAsymmetrySlack < trailing && trailing > 1.0);
-      if (repairedAsymmetricMargins) {
+      if (shouldRepairAsymmetricMargins) {
         // Preserve trailing; only align collapsed leading to the bar's own trailing inset.
         bar.directionalLayoutMargins = NSDirectionalEdgeInsetsMake(m.top, trailing, m.bottom, m.trailing);
         layoutNavigationChrome();
