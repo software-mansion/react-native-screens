@@ -27,7 +27,7 @@ Other: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" and current radius text (-1) is shown.
+- [ ] Expected: Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 
 ---
 
@@ -67,7 +67,7 @@ Other: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" and current radius text (-1) is shown.
+- [ ] Expected: Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 
 ---
 
