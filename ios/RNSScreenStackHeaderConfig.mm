@@ -262,27 +262,37 @@ RNS_IGNORE_SUPER_CALL_END
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    if (config.largeTitle && config.hasSubviewLeft) {
-      // iOS 26: after drawer-driven navigation, large title can lay out with collapsed
-      // leading inset while custom left items use the standard 16pt inset. Sync nav bar
-      // directional margins and force a second layout pass on the next runloop tick.
-      dispatch_async(dispatch_get_main_queue(), ^{
-        NSDirectionalEdgeInsets m = navctr.navigationBar.directionalLayoutMargins;
-        navctr.navigationBar.directionalLayoutMargins =
-            NSDirectionalEdgeInsetsMake(m.top, 16.0, m.bottom, 16.0);
-        [navctr.view setNeedsLayout];
-        [navctr.navigationBar setNeedsLayout];
-        [navctr.view layoutIfNeeded];
-        [navctr.navigationBar layoutIfNeeded];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-          [navctr.view setNeedsLayout];
-          [navctr.navigationBar setNeedsLayout];
-          [navctr.view layoutIfNeeded];
-          [navctr.navigationBar layoutIfNeeded];
-        });
-      });
+    if (config == nil || !config.largeTitle) {
+      return;
     }
+
+    // iOS 26: after drawer-driven navigation, large-title headers can end up with asymmetric
+    // directional margins (collapsed leading vs normal trailing). We avoid hardcoded constants
+    // and preserve trailing: when asymmetry is detected, only leading is aligned to trailing.
+    dispatch_async(dispatch_get_main_queue(), ^{
+      UINavigationBar *bar = navctr.navigationBar;
+      void (^layoutNavigationChrome)(void) = ^{
+        [navctr.view setNeedsLayout];
+        [bar setNeedsLayout];
+        [navctr.view layoutIfNeeded];
+        [bar layoutIfNeeded];
+      };
+
+      layoutNavigationChrome();
+
+      NSDirectionalEdgeInsets m = bar.directionalLayoutMargins;
+      CGFloat leading = m.leading;
+      CGFloat trailing = m.trailing;
+      // Float slack only (not a screen layout constant like "16pt").
+      static const CGFloat kRNSDirectionalMarginAsymmetrySlack = 0.75;
+      BOOL repairedAsymmetricMargins =
+          (leading + kRNSDirectionalMarginAsymmetrySlack < trailing && trailing > 1.0);
+      if (repairedAsymmetricMargins) {
+        // Preserve trailing; only align collapsed leading to the bar's own trailing inset.
+        bar.directionalLayoutMargins = NSDirectionalEdgeInsetsMake(m.top, trailing, m.bottom, m.trailing);
+        layoutNavigationChrome();
+      }
+    });
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
@@ -691,18 +701,22 @@ RNS_IGNORE_SUPER_CALL_END
           [self setAnimatedConfig:vc withConfig:config];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          RNSScreenStackHeaderConfig *relayoutConfig = config;
           if ([context isCancelled]) {
             UIViewController *fromVC = [context viewControllerForKey:UITransitionContextFromViewControllerKey];
-            RNSScreenStackHeaderConfig *config = nil;
+            RNSScreenStackHeaderConfig *fromHeaderConfig = nil;
             for (UIView *subview in fromVC.view.reactSubviews) {
               if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-                config = (RNSScreenStackHeaderConfig *)subview;
+                fromHeaderConfig = (RNSScreenStackHeaderConfig *)subview;
                 break;
               }
             }
-            [self setAnimatedConfig:fromVC withConfig:config];
+            [self setAnimatedConfig:fromVC withConfig:fromHeaderConfig];
+            // Do not fall back to `config` (destination); applying the workaround with the wrong
+            // screen's header options was flagged in PR review for cancelled transitions.
+            relayoutConfig = fromHeaderConfig;
           }
-          [self scheduleDeferredNavigationBarRelayoutIfNeeded:navctr withConfig:config];
+          [self scheduleDeferredNavigationBarRelayoutIfNeeded:navctr withConfig:relayoutConfig];
         }];
   } else {
     [self setAnimatedConfig:vc withConfig:config];
