@@ -497,6 +497,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (shouldHide) {
     navitem.title = config.title;
 
+#if !TARGET_OS_TV
+    [vc setToolbarItems:nil animated:animated];
+    [navctr setToolbarHidden:YES animated:animated];
+#endif
+
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
     [navctr setNavigationBarHidden:YES animated:animated];
     return;

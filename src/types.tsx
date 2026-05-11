@@ -1294,10 +1294,22 @@ export type HeaderBarButtonItem =
   | HeaderBarButtonItemWithMenu
   | HeaderBarButtonItemSpacing;
 
+/**
+ * A flexible space item that expands to fill available space in the toolbar.
+ *
+ * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/systemitem/flexiblespace
+ */
 export interface ToolbarItemFlexibleSpace {
   type: 'flexibleSpace';
 }
 
+/**
+ * An item that can be displayed in the bottom toolbar of the navigation controller.
+ *
+ * Only supported on iOS.
+ *
+ * @platform ios
+ */
 export type ToolbarItem = HeaderBarButtonItem | ToolbarItemFlexibleSpace;
 
 /**

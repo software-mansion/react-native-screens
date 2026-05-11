@@ -30,6 +30,23 @@ import { useTopInsetApplication } from './contexts/TopInsetApplicationContext';
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
 
+function findInMenu(
+  menu: HeaderBarButtonItemWithMenu['menu'],
+  menuId: string,
+): HeaderBarButtonItemMenuAction | undefined {
+  for (const item of menu.items) {
+    if ('items' in item) {
+      const found = findInMenu(item, menuId);
+      if (found) {
+        return found;
+      }
+    } else if ('menuId' in item && item.menuId === menuId) {
+      return item;
+    }
+  }
+  return undefined;
+}
+
 export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
@@ -84,25 +101,6 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   // Handle bar button menu item presses by deep-searching nested menus
   const onPressHeaderBarButtonMenuItem = hasHeaderBarButtonItems
     ? (event: NativeSyntheticEvent<{ menuId: string }>) => {
-        // Recursively search menu tree
-        const findInMenu = (
-          menu: HeaderBarButtonItemWithMenu['menu'],
-          menuId: string,
-        ): HeaderBarButtonItemMenuAction | undefined => {
-          for (const item of menu.items) {
-            if ('items' in item) {
-              // submenu: recurse
-              const found = findInMenu(item, menuId);
-              if (found) {
-                return found;
-              }
-            } else if ('menuId' in item && item.menuId === menuId) {
-              return item;
-            }
-          }
-          return undefined;
-        };
-
         // Check each bar-button item with a menu
         const allItems = [
           ...(preparedHeaderLeftBarButtonItems ?? []),
@@ -144,23 +142,6 @@ export const ScreenStackHeaderConfig = React.forwardRef<
 
   const onPressToolbarMenuItem = hasToolbarItems
     ? (event: NativeSyntheticEvent<{ menuId: string }>) => {
-        const findInMenu = (
-          menu: HeaderBarButtonItemWithMenu['menu'],
-          menuId: string,
-        ): HeaderBarButtonItemMenuAction | undefined => {
-          for (const item of menu.items) {
-            if ('items' in item) {
-              const found = findInMenu(item, menuId);
-              if (found) {
-                return found;
-              }
-            } else if ('menuId' in item && item.menuId === menuId) {
-              return item;
-            }
-          }
-          return undefined;
-        };
-
         for (const item of preparedToolbarItems ?? []) {
           if (item && item.type === 'menu' && item.menu) {
             const action = findInMenu(
