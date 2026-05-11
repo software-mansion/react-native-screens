@@ -3,8 +3,8 @@
 #import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStackAnimator.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScreenStackAnimator.h"
 #import "RNSScreenWindowTraits.h"
 
 #import <React/RCTConversions.h>
@@ -1242,8 +1242,8 @@ RNS_IGNORE_SUPER_CALL_END
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration < 0
-                                          ? (int)(RNSDefaultTransitionDuration * 1000)
-                                          : newScreenProps.transitionDuration]];
+                                            ? (int)(RNSDefaultTransitionDuration * 1000)
+                                            : newScreenProps.transitionDuration]];
 
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
