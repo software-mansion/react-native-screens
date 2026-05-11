@@ -51,7 +51,7 @@ Other: Planned, but will be implemented separately.
 
 6. Inside the sheet, tap the "Set 'last'" button.
 
-- [ ] Expected: The background is undimmed immediately, despite the sheet being at the 0.6 detent.
+- [ ] Expected: The background is undimmed for lower detents (0.3 and 0.6).
 - [ ] Expected: Dragging the sheet to its maximum height (0.8) keeps the background undimmed. 
 - [ ] Expected: Tapping the background counter button at the top of the screen successfully increments the count regardless of which detent the sheet is resting at.
 
