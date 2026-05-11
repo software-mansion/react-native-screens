@@ -85,7 +85,8 @@ namespace react = facebook::react;
   [self resetProps];
 
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
-  RCTAssert([_controller addNavigationStateObserver:self],
+  [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
+  RCTAssert(didRegisterObserver,
             @"[RNScreens] Failed to register RNSTabsHostComponentView as navigation state observer");
 
   _reactSubviews = [NSMutableArray new];
