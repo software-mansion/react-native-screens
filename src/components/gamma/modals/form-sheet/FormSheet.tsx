@@ -3,12 +3,24 @@ import { StyleSheet } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 
+// TODO: @t0maboro - move to SheetUtils after merging PR with largestUndimmedDetentIndex
+export function resolveNativeCornerRadius(
+  radius?: number | 'systemDefault',
+): number | undefined {
+  if (radius === 'systemDefault') {
+    return -1.0;
+  }
+  if (typeof radius === 'number' && radius < 0) {
+    return -1.0;
+  }
+
+  return radius;
+}
+
 export function FormSheet(props: FormSheetProps) {
   const { preferredCornerRadius, ...rest } = props;
 
-  // TODO: @t0maboro - move to SheetUtils after merging PR with largestUndimmedDetentIndex
-  const nativeCornerRadius =
-    preferredCornerRadius === 'systemDefault' ? -1.0 : preferredCornerRadius;
+  const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
 
   return (
     <FormSheetHostNativeComponent
