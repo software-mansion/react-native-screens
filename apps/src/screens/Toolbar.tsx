@@ -8,6 +8,7 @@ const demoScreens = [
   { name: 'BasicButtons', title: 'Basic Buttons' },
   { name: 'FlexibleSpace', title: 'Flexible Space' },
   { name: 'MenuItems', title: 'Menu Items' },
+  { name: 'AdvancedMenus', title: 'Advanced Menus' },
   { name: 'SfSymbols', title: 'SF Symbols' },
   { name: 'DisabledItems', title: 'Disabled Items' },
   { name: 'FixedSpacing', title: 'Fixed Spacing' },
@@ -158,6 +159,215 @@ export default function ToolbarExample() {
                     type: 'action',
                     label: 'By Size',
                     onPress: () => Alert.alert('Sort by Size'),
+                  },
+                ],
+              },
+            },
+          ],
+        }}
+      />
+
+      <Stack.Screen
+        name="AdvancedMenus"
+        component={DemoContent}
+        options={{
+          title: 'Advanced Menus',
+          // @ts-ignore
+          unstable_toolbarItems: () => [
+            {
+              type: 'menu',
+              label: 'Format',
+              icon: { type: 'sfSymbol', name: 'textformat' },
+              menu: {
+                title: 'Format',
+                items: [
+                  {
+                    type: 'submenu',
+                    label: 'Text Style',
+                    icon: { type: 'sfSymbol', name: 'bold.italic.underline' },
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'Bold',
+                        icon: { type: 'sfSymbol', name: 'bold' },
+                        onPress: () => Alert.alert('Bold'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Italic',
+                        icon: { type: 'sfSymbol', name: 'italic' },
+                        onPress: () => Alert.alert('Italic'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Underline',
+                        icon: { type: 'sfSymbol', name: 'underline' },
+                        onPress: () => Alert.alert('Underline'),
+                      },
+                      {
+                        type: 'submenu',
+                        label: 'More Styles',
+                        items: [
+                          {
+                            type: 'action',
+                            label: 'Strikethrough',
+                            icon: { type: 'sfSymbol', name: 'strikethrough' },
+                            onPress: () => Alert.alert('Strikethrough'),
+                          },
+                          {
+                            type: 'action',
+                            label: 'Subscript',
+                            onPress: () => Alert.alert('Subscript'),
+                          },
+                          {
+                            type: 'action',
+                            label: 'Superscript',
+                            onPress: () => Alert.alert('Superscript'),
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: 'submenu',
+                    label: 'Alignment',
+                    inline: true,
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'Left',
+                        icon: { type: 'sfSymbol', name: 'text.alignleft' },
+                        onPress: () => Alert.alert('Align Left'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Center',
+                        icon: { type: 'sfSymbol', name: 'text.aligncenter' },
+                        onPress: () => Alert.alert('Align Center'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Right',
+                        icon: { type: 'sfSymbol', name: 'text.alignright' },
+                        onPress: () => Alert.alert('Align Right'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Justify',
+                        icon: { type: 'sfSymbol', name: 'text.justify' },
+                        onPress: () => Alert.alert('Justify'),
+                      },
+                    ],
+                  },
+                  {
+                    type: 'submenu',
+                    label: 'Danger Zone',
+                    destructive: true,
+                    inline: true,
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'Clear Formatting',
+                        destructive: true,
+                        onPress: () => Alert.alert('Clear Formatting'),
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            { type: 'flexibleSpace' },
+            {
+              type: 'menu',
+              label: 'View',
+              icon: { type: 'sfSymbol', name: 'rectangle.grid.2x2' },
+              menu: {
+                title: 'View Options',
+                items: [
+                  {
+                    type: 'submenu',
+                    label: 'Layout',
+                    inline: true,
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'List',
+                        icon: { type: 'sfSymbol', name: 'list.bullet' },
+                        onPress: () => Alert.alert('List'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Grid',
+                        icon: { type: 'sfSymbol', name: 'square.grid.2x2' },
+                        onPress: () => Alert.alert('Grid'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Columns',
+                        icon: { type: 'sfSymbol', name: 'rectangle.split.3x1' },
+                        onPress: () => Alert.alert('Columns'),
+                      },
+                    ],
+                  },
+                  {
+                    type: 'submenu',
+                    label: 'Sort',
+                    icon: { type: 'sfSymbol', name: 'arrow.up.arrow.down' },
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'By Name',
+                        onPress: () => Alert.alert('Sort by Name'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'By Date',
+                        onPress: () => Alert.alert('Sort by Date'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'By Size',
+                        onPress: () => Alert.alert('Sort by Size'),
+                      },
+                      {
+                        type: 'submenu',
+                        label: 'Direction',
+                        icon: { type: 'sfSymbol', name: 'chevron.up.chevron.down' },
+                        items: [
+                          {
+                            type: 'action',
+                            label: 'Ascending',
+                            icon: { type: 'sfSymbol', name: 'arrow.up' },
+                            onPress: () => Alert.alert('Ascending'),
+                          },
+                          {
+                            type: 'action',
+                            label: 'Descending',
+                            icon: { type: 'sfSymbol', name: 'arrow.down' },
+                            onPress: () => Alert.alert('Descending'),
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: 'submenu',
+                    label: 'Filter',
+                    inline: true,
+                    items: [
+                      {
+                        type: 'action',
+                        label: 'Show Favorites',
+                        icon: { type: 'sfSymbol', name: 'star' },
+                        onPress: () => Alert.alert('Show Favorites'),
+                      },
+                      {
+                        type: 'action',
+                        label: 'Show Hidden',
+                        icon: { type: 'sfSymbol', name: 'eye.slash' },
+                        onPress: () => Alert.alert('Show Hidden'),
+                      },
+                    ],
                   },
                 ],
               },
