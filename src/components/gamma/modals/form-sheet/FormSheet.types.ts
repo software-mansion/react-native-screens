@@ -67,7 +67,7 @@ export interface FormSheetProps {
    * @summary The index of the detent the sheet should snap to when first opened.
    *
    * This prop can be set to a number, indicating the zero-based index of the detent in the
-   * `detents` array. If set to `'last'`, it will snap to the largest defined detent.
+   * `detents` array. If set to `last`, it will snap to the largest defined detent.
    * This prop only applies when the sheet transitions from closed to open.
    *
    * @default 0
