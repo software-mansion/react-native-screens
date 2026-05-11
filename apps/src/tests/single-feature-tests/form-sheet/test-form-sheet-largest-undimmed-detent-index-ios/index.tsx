@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet, type FormSheetProps } from 'react-native-screens/experimental';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
@@ -13,7 +13,9 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-type LargestUndimmedDetentIndexProp = number | 'none' | 'last';
+type LargestUndimmedDetentIndexProp = NonNullable<
+  FormSheetProps['largestUndimmedDetentIndex']
+>;
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);
