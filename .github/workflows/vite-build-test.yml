@@ -1,0 +1,61 @@
+name: Test Vite build
+on:
+  pull_request:
+    branches:
+      - main
+      - main-labs
+    paths:
+      - '.github/workflows/vite-build-test.yml'
+      - 'package.json'
+      - 'yarn.lock'
+      - 'react-navigation/**'
+      - 'src/**'
+      - 'apps/**'
+      - 'FabricExample/**'
+  push:
+    branches:
+      - main
+      - main-labs
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WORKING_DIRECTORY: FabricExample
+    concurrency:
+      group: vite-build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: |
+            yarn.lock
+            react-navigation/yarn.lock
+            ${{ env.WORKING_DIRECTORY }}/yarn.lock
+
+      - name: Install submodule dependencies
+        run: yarn submodules
+
+      - name: Install root node dependencies
+        run: yarn
+
+      - name: Build library
+        run: yarn prepare
+
+      - name: Install node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+
+      - name: Build Vite app
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn build:web

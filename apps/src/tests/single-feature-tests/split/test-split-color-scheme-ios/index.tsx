@@ -6,7 +6,6 @@ import {
   Text,
   TextInput,
   View,
-  PlatformColor,
 } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -15,6 +14,7 @@ import { SettingsPicker } from '@apps/shared';
 import { Split } from 'react-native-screens/experimental';
 import { SplitHostColorScheme } from 'react-native-screens/components/gamma/split/SplitHost.types';
 import { SafeAreaView } from 'react-native-screens/experimental';
+import { PlatformColor } from './PlatformColor';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Split Color Scheme',
@@ -36,7 +36,13 @@ export function ConfigColumn({
   setHostColorScheme: (value: SplitHostColorScheme) => void;
 }) {
   return (
-    <View style={styles.wrappingView}>
+    <View
+      style={[
+        styles.wrappingView,
+        {
+          backgroundColor: PlatformColor('systemBackgroundColor'),
+        },
+      ]}>
       <SafeAreaView
         style={styles.container}
         edges={{ left: true, right: true }}>
@@ -121,7 +127,6 @@ export function App() {
 const styles = StyleSheet.create({
   wrappingView: {
     flex: 1,
-    backgroundColor: PlatformColor('systemBackgroundColor'),
   },
   container: {
     flex: 1,
