@@ -41,6 +41,8 @@ type SplitViewOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+type SplitViewColorScheme = 'inherit' | 'light' | 'dark';
+
 type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
 type SplitViewTopColumnForCollapsing =
@@ -78,6 +80,7 @@ interface NativeProps extends ViewProps {
   >;
   columnMetrics?: ColumnMetrics | undefined;
   orientation?: CT.WithDefault<SplitViewOrientation, 'inherit'>;
+  colorScheme?: CT.WithDefault<SplitViewColorScheme, 'inherit'>;
   primaryBackgroundStyle?: CT.WithDefault<
     SplitViewPrimaryBackgroundStyle,
     'default'

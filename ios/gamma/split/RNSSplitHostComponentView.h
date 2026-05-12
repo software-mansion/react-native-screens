@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @property (nonatomic, readonly) RNSOrientation orientation;
+@property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
 
 @end
 

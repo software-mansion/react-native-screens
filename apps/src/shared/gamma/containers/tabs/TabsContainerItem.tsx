@@ -37,7 +37,7 @@ function TabsContainerItemImpl(props: TabsContainerItemProps) {
       {...nativeOptions}
       screenKey={screenKey}>
       <TabsNavigationContext value={tabsNavigationContext}>
-        {getContent(props.route.Component, safeAreaConfiguration)}
+        {getContent(props.Component, safeAreaConfiguration)}
       </TabsNavigationContext>
     </Tabs.Screen>
   );

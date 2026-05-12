@@ -63,6 +63,9 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
 RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
     RNSTabsNavigationStateRejectionReason reason);
 
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin);
+
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
@@ -92,9 +95,8 @@ NSString *_Nullable RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAcc
 UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
     react::RNSTabsScreenIOSUserInterfaceStyle userInterfaceStyle);
 
-RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSTabsIconType iconType);
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::ImageSource *imageSource,
+                                                         RNSTabsIconType iconType);
 
 RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation);
 
@@ -133,6 +135,8 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
     react::RNSSplitHostTopColumnForCollapsing topColumnForCollapsing);
 
 RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation);
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSSplitHostColorScheme colorScheme);
 
 #pragma mark SplitScreen props
 

@@ -151,6 +151,41 @@ open class StackHeaderConfigViewManager :
         view.backButtonImageIconUri = value?.getString("uri")
     }
 
+    override fun setScrollFlagScroll(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.scrollFlagScroll = value
+    }
+
+    override fun setScrollFlagEnterAlways(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.scrollFlagEnterAlways = value
+    }
+
+    override fun setScrollFlagEnterAlwaysCollapsed(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.scrollFlagEnterAlwaysCollapsed = value
+    }
+
+    override fun setScrollFlagExitUntilCollapsed(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.scrollFlagExitUntilCollapsed = value
+    }
+
+    override fun setScrollFlagSnap(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.scrollFlagSnap = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }

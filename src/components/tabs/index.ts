@@ -2,7 +2,7 @@ import { TabsHost } from './host';
 import { TabsScreen } from './screen';
 
 export type {
-  TabsHostNavState,
+  TabsHostNavStateRequest,
   TabSelectedEvent,
   TabSelectionRejectedEvent,
   TabSelectionRejectionReason,

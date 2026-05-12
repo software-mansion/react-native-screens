@@ -43,14 +43,13 @@ struct ContentWrapperBox {
   float contentHeightErrata{0.f};
 };
 
-@interface RNSScreenView () <
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
+@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate,
+                             UIGestureRecognizerDelegate,
 #if !TARGET_OS_TV
-    UISheetPresentationControllerDelegate,
+                             UISheetPresentationControllerDelegate,
 #endif
-    RCTRNSScreenViewProtocol,
-    CAAnimationDelegate>
+                             RCTRNSScreenViewProtocol,
+                             CAAnimationDelegate>
 @end
 
 @implementation RNSScreenView {
@@ -104,17 +103,6 @@ struct ContentWrapperBox {
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
   _synchronousShadowStateUpdatesEnabled = YES;
-}
-
-+ (RNSViewInteractionManager *)viewInteractionManagerInstance
-{
-  static RNSViewInteractionManager *manager = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    manager = [[RNSViewInteractionManager alloc] init];
-  });
-
-  return manager;
 }
 
 - (BOOL)getFullScreenSwipeShadowEnabled
@@ -564,9 +552,8 @@ RNS_IGNORE_SUPER_CALL_END
   if (_eventEmitter != nullptr) {
     int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetDetentChanged(
-            react::RNSScreenEventEmitter::OnSheetDetentChanged{
-                .index = index, .isStable = static_cast<bool>(isStable)});
+        ->onSheetDetentChanged(react::RNSScreenEventEmitter::OnSheetDetentChanged{
+            .index = index, .isStable = static_cast<bool>(isStable)});
   }
 }
 
@@ -637,9 +624,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(
-            react::RNSScreenEventEmitter::OnTransitionProgress{
-                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInteger:self.tag]
@@ -647,22 +633,6 @@ RNS_IGNORE_SUPER_CALL_END
                                                                     closing:closing
                                                                goingForward:goingForward];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
-}
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  if (@available(iOS 26, *)) {
-    // In iOS 26, as soon as another screen appears in transition, it is interactable
-    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
-    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
-    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
-
-    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
-    // starting from reactSuperview
-    if (![self isPresentedAsNativeModal]) {
-      [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
-    }
-  }
 }
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
@@ -675,11 +645,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
-
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
   // with usePreventRemove API of react-navigation v7.
   [self notifyGestureCancel];
@@ -690,12 +655,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions
-    // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
-
   [_controller notifyPresentedControllerDismissed];
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
@@ -1299,8 +1258,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
-  [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
-
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -1542,10 +1499,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions, see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
@@ -1582,11 +1535,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
-
-  if (@available(iOS 26, *)) {
-    // Reenable interactions, see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
 }
 
 - (void)viewDidLayoutSubviews
@@ -2097,88 +2045,81 @@ RCT_EXPORT_MODULE()
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenStackPresentation,
-    (@{
-      @"push" : @(RNSScreenStackPresentationPush),
-      @"modal" : @(RNSScreenStackPresentationModal),
-      @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
-      @"formSheet" : @(RNSScreenStackPresentationFormSheet),
-      @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
-      @"containedModal" : @(RNSScreenStackPresentationContainedModal),
-      @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
-      @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
-    }),
-    RNSScreenStackPresentationPush,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSScreenStackPresentation,
+                   (@{
+                     @"push" : @(RNSScreenStackPresentationPush),
+                     @"modal" : @(RNSScreenStackPresentationModal),
+                     @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
+                     @"formSheet" : @(RNSScreenStackPresentationFormSheet),
+                     @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
+                     @"containedModal" : @(RNSScreenStackPresentationContainedModal),
+                     @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
+                     @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
+                   }),
+                   RNSScreenStackPresentationPush,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenStackAnimation,
-    (@{
-      @"default" : @(RNSScreenStackAnimationDefault),
-      @"none" : @(RNSScreenStackAnimationNone),
-      @"fade" : @(RNSScreenStackAnimationFade),
-      @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
-      @"flip" : @(RNSScreenStackAnimationFlip),
-      @"simple_push" : @(RNSScreenStackAnimationSimplePush),
-      @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
-      @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-      @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-      @"ios_from_right" : @(RNSScreenStackAnimationDefault),
-      @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-    }),
-    RNSScreenStackAnimationDefault,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSScreenStackAnimation,
+                   (@{
+                     @"default" : @(RNSScreenStackAnimationDefault),
+                     @"none" : @(RNSScreenStackAnimationNone),
+                     @"fade" : @(RNSScreenStackAnimationFade),
+                     @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
+                     @"flip" : @(RNSScreenStackAnimationFlip),
+                     @"simple_push" : @(RNSScreenStackAnimationSimplePush),
+                     @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
+                     @"slide_from_right" : @(RNSScreenStackAnimationDefault),
+                     @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
+                     @"ios_from_right" : @(RNSScreenStackAnimationDefault),
+                     @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
+                   }),
+                   RNSScreenStackAnimationDefault,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenReplaceAnimation,
-    (@{
-      @"push" : @(RNSScreenReplaceAnimationPush),
-      @"pop" : @(RNSScreenReplaceAnimationPop),
-    }),
-    RNSScreenReplaceAnimationPop,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation,
+                   (@{
+                     @"push" : @(RNSScreenReplaceAnimationPush),
+                     @"pop" : @(RNSScreenReplaceAnimationPop),
+                   }),
+                   RNSScreenReplaceAnimationPop,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenSwipeDirection,
-    (@{
-      @"vertical" : @(RNSScreenSwipeDirectionVertical),
-      @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
-    }),
-    RNSScreenSwipeDirectionHorizontal,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSScreenSwipeDirection,
+                   (@{
+                     @"vertical" : @(RNSScreenSwipeDirectionVertical),
+                     @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
+                   }),
+                   RNSScreenSwipeDirectionHorizontal,
+                   integerValue)
 
 #if !TARGET_OS_TV
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
+RCT_ENUM_CONVERTER(UIStatusBarAnimation,
+                   (@{
+                     @"none" : @(UIStatusBarAnimationNone),
+                     @"fade" : @(UIStatusBarAnimationFade),
+                     @"slide" : @(UIStatusBarAnimationSlide)
+                   }),
+                   UIStatusBarAnimationNone,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSStatusBarStyle,
-    (@{
-      @"auto" : @(RNSStatusBarStyleAuto),
-      @"inverted" : @(RNSStatusBarStyleInverted),
-      @"light" : @(RNSStatusBarStyleLight),
-      @"dark" : @(RNSStatusBarStyleDark),
-    }),
-    RNSStatusBarStyleAuto,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSStatusBarStyle,
+                   (@{
+                     @"auto" : @(RNSStatusBarStyleAuto),
+                     @"inverted" : @(RNSStatusBarStyleInverted),
+                     @"light" : @(RNSStatusBarStyleLight),
+                     @"dark" : @(RNSStatusBarStyleDark),
+                   }),
+                   RNSStatusBarStyleAuto,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenDetentType,
-    (@{
-      @"large" : @(RNSScreenDetentTypeLarge),
-      @"medium" : @(RNSScreenDetentTypeMedium),
-      @"all" : @(RNSScreenDetentTypeAll),
-    }),
-    RNSScreenDetentTypeAll,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSScreenDetentType,
+                   (@{
+                     @"large" : @(RNSScreenDetentTypeLarge),
+                     @"medium" : @(RNSScreenDetentTypeMedium),
+                     @"all" : @(RNSScreenDetentTypeAll),
+                   }),
+                   RNSScreenDetentTypeAll,
+                   integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {

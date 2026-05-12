@@ -10,19 +10,19 @@ type TabSelectedEvent = {
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
-  isNativeAction: boolean;
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 };
 
-type NavigationState = {
+type NavigationStateRequest = {
   selectedScreenKey: string;
-  provenance: CT.Int32;
+  baseProvenance: CT.Int32;
 };
 
 type TabSelectionRejectedEvent = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
   rejectedScreenKey: string;
-  rejectedProvenance: CT.Int32;
+  rejectedBaseProvenance: CT.Int32;
   rejectionReason: 'stale' | 'repeated';
 }>;
 
@@ -42,7 +42,7 @@ type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
   // Control
-  navState: NavigationState;
+  navStateRequest: NavigationStateRequest;
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
