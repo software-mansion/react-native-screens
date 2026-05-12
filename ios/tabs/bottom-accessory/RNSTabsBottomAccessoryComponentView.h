@@ -4,9 +4,9 @@
 #import "RNSTabsBottomAccessoryEventEmitter.h"
 #import "RNSTabsHostComponentView.h"
 
-#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+#if defined(__cplusplus)
 #import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
-#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Hidden from Swift
 
-#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+#if defined(__cplusplus)
 
 @interface RNSTabsBottomAccessoryComponentView ()
 
@@ -66,6 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
