@@ -26,7 +26,9 @@ export function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>prefersScrollingExpandsWhenScrolledToEdge Test</Text>
+      <Text style={styles.title}>
+        prefersScrollingExpandsWhenScrolledToEdge Test
+      </Text>
 
       <View style={styles.controls}>
         <Text style={styles.statusText}>
@@ -89,12 +91,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.offBackground,
+    padding: 24,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     color: Colors.text,
+    textAlign: 'center',
   },
   controls: {
     flexDirection: 'row',
