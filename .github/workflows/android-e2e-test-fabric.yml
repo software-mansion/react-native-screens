@@ -53,11 +53,11 @@ jobs:
         if: steps.cmdline-tools-cache.outputs.cache-hit != 'true'
         run: |
           SDKMANAGER=$(find / -name sdkmanager 2>/dev/null | head -1)
-          SDK_ROOT=$(dirname $(dirname $SDKMANAGER))
+          CMDLINE_TOOLS_DIR=$(dirname $(dirname $(dirname $SDKMANAGER)))
           yes | $SDKMANAGER --install "cmdline-tools;latest"
-          rm -rf $SDK_ROOT/latest
-          mv $SDK_ROOT/latest-2 $SDK_ROOT/latest
-          echo "$SDK_ROOT/latest/bin" >> $GITHUB_PATH
+          rm -rf $CMDLINE_TOOLS_DIR/latest
+          mv $CMDLINE_TOOLS_DIR/latest-2 $CMDLINE_TOOLS_DIR/latest
+          echo "$CMDLINE_TOOLS_DIR/latest/bin" >> $GITHUB_PATH
 
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
