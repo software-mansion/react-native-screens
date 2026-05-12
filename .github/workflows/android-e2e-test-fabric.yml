@@ -42,6 +42,21 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
 
+      - name: Cache Android command-line tools
+        id: cmdline-tools-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.tool_cache }}/android-cmdline-tools
+          key: android-cmdline-tools-latest-v1
+
+      - name: Update Android command-line tools
+        if: steps.cmdline-tools-cache.outputs.cache-hit != 'true'
+        run: |
+          SDKMANAGER=$(find / -name sdkmanager 2>/dev/null | head -1)
+          SDK_ROOT=$(dirname $(dirname $SDKMANAGER))
+          yes | $SDKMANAGER --install "cmdline-tools;latest"
+          echo "$(dirname $SDKMANAGER)" >> $GITHUB_PATH
+
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
@@ -94,7 +109,7 @@ jobs:
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_7
+          profile: pixel_9
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -110,7 +125,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_7
+          profile: pixel_9
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
