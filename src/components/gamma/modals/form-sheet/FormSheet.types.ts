@@ -76,7 +76,7 @@ export interface FormSheetProps {
   initialDetentIndex?: number | 'last' | undefined;
 
   /**
-   * @summary Determines whether scrolling expands the sheet to a larger detent when scrolled to the edge.
+   * @summary Determines whether scrolling expands the sheet to a larger detent.
    *
    * On iOS, this maps directly to `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
    *
