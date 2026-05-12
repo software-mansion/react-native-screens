@@ -14,7 +14,7 @@ import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Expand when scrolled to edge',
-  key: 'test-form-sheet-expand-scroll-edge-ios',
+  key: 'test-form-sheet-expand-scroll-view-ios',
   details:
     'Allows testing the prefersScrollingExpandsWhenScrolledToEdge prop with nested ScrollView.',
   platforms: ['ios'],

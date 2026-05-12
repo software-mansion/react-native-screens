@@ -1,6 +1,6 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestFormSheetBase from './test-form-sheet-base-ios';
-import TestFormSheetExpandScrollEdge from './test-form-sheet-expand-scroll-edge-ios';
+import TestFormSheetExpandScrollEdge from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible-ios';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index-ios';
 import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
