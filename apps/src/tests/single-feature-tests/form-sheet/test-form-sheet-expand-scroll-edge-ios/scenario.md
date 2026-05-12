@@ -24,7 +24,7 @@ Other: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Expand when scrolled to edge** screen.
 
-- [ ] Expected: A status text indicating the current prop value ("Expands on edge scroll: ON"), a toggle button, and an "Open FormSheet" button are shown.
+- [ ] Expected: A status text indicating the current prop value ("Expands on edge scroll: ON"), a switch, and an "Open FormSheet" button are shown.
 
 ### Expansion enabled (Default)
 
@@ -40,7 +40,7 @@ Other: Planned, but will be implemented separately.
 
 ### Expansion disabled
 
-5. Tap the toggle button so the status reads "Expands on edge scroll: OFF".
+5. Tap the switch so the status reads "Expands on edge scroll: OFF".
 
 6. Tap the "Open FormSheet" button.
 
