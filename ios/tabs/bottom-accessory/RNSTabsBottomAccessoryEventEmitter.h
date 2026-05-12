@@ -8,11 +8,11 @@
 #import <UIKit/UIKit.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 namespace react = facebook::react;
-#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
