@@ -101,6 +101,9 @@ namespace react = facebook::react;
       return;
     }
 
+    // TODO: @t0maboro - this log definitely requires refactor now and it should be removed outside Host in a followup
+    // PR
+    [_controller prepareForPresentation];
     [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
   } else if (!_isOpen && isPresented) {
     [_controller dismissViewControllerAnimated:YES completion:nil];

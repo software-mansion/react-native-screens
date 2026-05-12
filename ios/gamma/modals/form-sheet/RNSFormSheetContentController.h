@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
+- (void)prepareForPresentation;
+
 @end
 
 NS_ASSUME_NONNULL_END
