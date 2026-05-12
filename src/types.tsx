@@ -1310,7 +1310,11 @@ export interface ToolbarItemFlexibleSpace {
  *
  * @platform ios
  */
-export type ToolbarItem = HeaderBarButtonItem | ToolbarItemFlexibleSpace;
+export type ToolbarItem =
+  | Omit<HeaderBarButtonItemWithAction, 'badge'>
+  | Omit<HeaderBarButtonItemWithMenu, 'badge'>
+  | HeaderBarButtonItemSpacing
+  | ToolbarItemFlexibleSpace;
 
 /**
  * Custom Screen Transition

@@ -1,7 +1,8 @@
 import { Image, processColor } from 'react-native';
 import {
+  HeaderBarButtonItem,
   HeaderBarButtonItemWithMenu,
-  ToolbarItem,
+  ToolbarItemFlexibleSpace,
 } from 'react-native-screens/types';
 
 const prepareMenu = (
@@ -50,7 +51,7 @@ const prepareMenu = (
 };
 
 export const prepareHeaderBarButtonItems = (
-  barButtonItems: ToolbarItem[],
+  barButtonItems: (HeaderBarButtonItem | ToolbarItemFlexibleSpace)[],
   side: 'left' | 'right' | 'toolbar',
 ) => {
   return barButtonItems?.map((item, index) => {
