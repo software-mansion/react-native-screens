@@ -62,6 +62,7 @@
 
   BOOL prefersGrabberVisible = host.prefersGrabberVisible;
   CGFloat preferredCornerRadius = host.preferredCornerRadius;
+  BOOL prefersScrollingExpandsWhenScrolledToEdge = host.prefersScrollingExpandsWhenScrolledToEdge;
 
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;
@@ -73,6 +74,8 @@
     if (initialDetentIdentifier != nil) {
       sheet.selectedDetentIdentifier = initialDetentIdentifier;
     }
+
+    sheet.prefersScrollingExpandsWhenScrolledToEdge = prefersScrollingExpandsWhenScrolledToEdge;
   }];
 #endif // !TARGET_OS_TV
 }
