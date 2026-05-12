@@ -53,9 +53,10 @@ jobs:
         if: steps.cmdline-tools-cache.outputs.cache-hit != 'true'
         run: |
           SDKMANAGER=$(find / -name sdkmanager 2>/dev/null | head -1)
-          SDK_ROOT=$(dirname $(dirname $SDKMANAGER))
           yes | $SDKMANAGER --install "cmdline-tools;latest"
-          echo "$(dirname $SDKMANAGER)" >> $GITHUB_PATH
+          rm -rf /usr/local/lib/android/sdk/cmdline-tools/latest
+          mv /usr/local/lib/android/sdk/cmdline-tools/latest-2 /usr/local/lib/android/sdk/cmdline-tools/latest
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
