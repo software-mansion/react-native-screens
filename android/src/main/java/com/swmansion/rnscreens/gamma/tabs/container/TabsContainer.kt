@@ -474,7 +474,10 @@ class TabsContainer internal constructor(
         }
     }
 
-    private fun updateSelectedFragment(nextSelectedFragment: TabsScreenFragment): Boolean {
+    private fun updateSelectedFragment(
+        nextSelectedFragment: TabsScreenFragment,
+        actionOrigin: TabsActionOrigin,
+    ): Boolean {
         if (navState.isEmpty()) {
             check(isInExternalOperationContext && pendingStateUpdateRequest != null)
             navState = TabsNavigationState(nextSelectedFragment.requireScreenKey, 0)
@@ -488,11 +491,11 @@ class TabsContainer internal constructor(
         val currentSelectedFragment = selectedTab
 
         if (nextSelectedFragment === currentSelectedFragment) {
-            progressNavigationState(navState.selectedScreenKey)
+            progressNavigationState(navState.selectedScreenKey, actionOrigin)
             return true
         }
 
-        progressNavigationState(nextSelectedFragment.requireScreenKey)
+        progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
         requireFragmentManager
             .createTransactionWithReordering()
             .let {
@@ -503,9 +506,12 @@ class TabsContainer internal constructor(
         return true
     }
 
-    private fun progressNavigationState(selectedScreenKey: String) {
+    private fun progressNavigationState(
+        selectedScreenKey: String,
+        actionOrigin: TabsActionOrigin,
+    ) {
         navState = TabsNavigationState(selectedScreenKey, navState.provenance + 1)
-        if (!isInExternalOperationContext) {
+        if (actionOrigin != TabsActionOrigin.PROGRAMMATIC_JS) {
             lastUINavState = navState
         }
     }
@@ -521,13 +527,20 @@ class TabsContainer internal constructor(
 
         val isRepeated = nextSelectedFragment === currSelectedFragment
 
+        val actionOrigin =
+            if (isInExternalOperationContext) {
+                requirePendingStateUpdateRequest().actionOrigin
+            } else {
+                TabsActionOrigin.USER
+            }
+
         // If this is user action we test whether it should be prevented before we progress the state.
-        if (!isRepeated && !isInExternalOperationContext && nextSelectedFragment.isPreventNativeSelectionEnabled) {
+        if (!isRepeated && actionOrigin == TabsActionOrigin.USER && nextSelectedFragment.isPreventNativeSelectionEnabled) {
             observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
             return false
         }
 
-        val stateChanged = updateSelectedFragment(nextSelectedFragment)
+        val stateChanged = updateSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -537,12 +550,7 @@ class TabsContainer internal constructor(
                 navState,
                 isRepeated = isRepeated,
                 hasTriggeredSpecialEffect = hasTriggeredSpecialEffect,
-                actionOrigin =
-                    if (isInExternalOperationContext) {
-                        requirePendingStateUpdateRequest().actionOrigin
-                    } else {
-                        TabsActionOrigin.USER
-                    },
+                actionOrigin = actionOrigin,
             )
         }
 
