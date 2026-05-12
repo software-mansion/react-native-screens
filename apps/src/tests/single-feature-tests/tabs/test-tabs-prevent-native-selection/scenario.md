@@ -12,7 +12,7 @@ the callback is called correctly, that programmatic navigation via `selectTab`
 is not affected, and that the "More" navigation controller on iOS is also
 subject to prevention.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0 (Baklava).
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 

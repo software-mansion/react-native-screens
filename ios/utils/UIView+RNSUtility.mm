@@ -1,5 +1,6 @@
 #import "UIView+RNSUtility.h"
 
+#import <React/RCTSurfaceTouchHandler.h>
 #import <React/RCTSurfaceView.h>
 #import "RNSModalScreen.h"
 
