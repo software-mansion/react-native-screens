@@ -1,48 +1,38 @@
 #include "pch.h"
+
 #include "ReactPackageProvider.h"
 #if __has_include("ReactPackageProvider.g.cpp")
 #include "ReactPackageProvider.g.cpp"
 #endif
 
-#include "ScreenContainerViewManager.h"
-#include "ScreenStackHeaderConfigViewManager.h"
-#include "ScreenStackViewManager.h"
-#include "ScreenViewManager.h"
-#include "ScreenStackHeaderSubviewViewManager.h"
-#include "ModalScreenViewManager.h"
-#include "SearchBarViewManager.h"
+#include "RNScreens.h"
+#include "Screen.h"
+#include "ModalScreen.h"
+#include "ScreenStack.h"
+#include "ScreenContainer.h"
+#include "ScreenStackHeaderConfig.h"
+#include "ScreenStackHeaderSubview.h"
+#include "SearchBar.h"
 
 using namespace winrt::Microsoft::ReactNative;
+using namespace winrt::RNScreens::implementation;
 
-namespace winrt::RNScreens::implementation {
+namespace winrt::ReactNativeScreens::implementation {
 void ReactPackageProvider::CreatePackage(
-    IReactPackageBuilder const &packageBuilder) noexcept {
-  packageBuilder.AddViewManager(L"RNScreensViewManager", []() {
-    return winrt::make<ScreenViewManager>();
-  });
+    const IReactPackageBuilder &packageBuilder) noexcept {
+  AddAttributedModules(packageBuilder, true);
 
-  packageBuilder.AddViewManager(L"RNScreensStackHeaderConfigViewManager", []() {
-    return winrt::make<ScreenStackHeaderConfigViewManager>();
-  });
+  const auto fabricBuilder = packageBuilder.try_as<
+    IReactPackageBuilderFabric>();
+  if (!fabricBuilder)
+    return;
 
-  packageBuilder.AddViewManager(L"RNSScreenStackViewManager", []() {
-    return winrt::make<ScreenStackViewManager>();
-  });
-
-  packageBuilder.AddViewManager(L"RNSScreenContainerViewManager", []() {
-    return winrt::make<ScreenContainerViewManager>();
-  });
-
-  packageBuilder.AddViewManager(L"RNSScreenStackHeaderSubviewViewManager", [] () {
-    return winrt::make<ScreenStackHeaderSubviewViewManager>();
-  });
-
-  packageBuilder.AddViewManager(L"RNSModalScreenViewManager", [] () {
-    return winrt::make<ModalScreenViewManager>();
-  });
-
-  packageBuilder.AddViewManager(L"RNSSearchBar", [] () {
-    return winrt::make<SearchBarViewManager>();
-  });
+  RegisterScreen(fabricBuilder);
+  RegisterModalScreen(fabricBuilder);
+  RegisterScreenStack(fabricBuilder);
+  RegisterScreenContainer(fabricBuilder);
+  RegisterScreenStackHeaderConfig(fabricBuilder);
+  RegisterScreenStackHeaderSubview(fabricBuilder);
+  RegisterSearchBar(fabricBuilder);
 }
-} // namespace winrt::RNScreens::implementation
+} // namespace winrt::ReactNativeScreens::implementation

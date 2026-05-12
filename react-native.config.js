@@ -22,6 +22,15 @@ module.exports = {
         ],
         cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
       },
+      windows: {
+        sourceDir: 'windows',
+        projects: [
+          {
+            projectFile: 'RNScreens\\RNScreens.vcxproj',
+            directDependency: true,
+          },
+        ],
+      },
     },
   },
 };

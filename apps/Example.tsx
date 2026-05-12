@@ -9,7 +9,6 @@ import {
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RNRestart from 'react-native-restart';
 
 import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 
@@ -28,8 +27,6 @@ import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 import BarButtonItems from './src/screens/BarButtonItems';
 
-import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
@@ -39,6 +36,12 @@ import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import {
+  GestureHandlerRootView,
+  GestureDetectorProvider,
+} from './gesture-handler-interop';
+import RNRestart from './react-native-restart-interop';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
