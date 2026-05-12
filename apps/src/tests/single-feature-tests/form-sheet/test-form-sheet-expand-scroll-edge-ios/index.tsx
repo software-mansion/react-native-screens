@@ -61,7 +61,7 @@ export function App() {
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.sheetTitle}>Scrollable Content</Text>
             <Text style={styles.instruction}>
-              Scroll to the top edge and swipe down to see if the sheet expands.
+              Swipe up to see if the sheet expands.
             </Text>
 
             {Array.from({ length: 50 }).map((_, index) => (
