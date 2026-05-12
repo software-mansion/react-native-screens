@@ -9,7 +9,7 @@ rendering by testing the precedence between system-level settings, React
 Native's I18nManager, and the explicit direction prop from
 react-native-screens.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0 (Baklava)
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 
