@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, Text, View, Animated, useAnimatedValue } from 'react-native';
+import { Button, Text, View, Animated } from 'react-native';
 import { Colors } from '@apps/shared/styling';
 import { useTransitionProgress } from 'react-native-screens';
 
@@ -59,7 +59,7 @@ function makeScreen(
       console.log(`goingForward ${route} = ${v.value}`),
     );
 
-    const spinValue = useAnimatedValue(0);
+    const [spinValue] = useState(() => new Animated.Value(0));
     useEffect(() => {
       Animated.loop(
         Animated.timing(spinValue, {
