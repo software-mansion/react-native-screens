@@ -7,7 +7,7 @@ property on tab routes. It verifies that re-tapping an already-active
 tab scrolls a scrollable screen back to the top when the property is enabled, and
 that there is no scroll-to-top behavior when it is disabled or absent.
 
-**OS test creation version:** iOS: 18.4 and 26.2, Android: 16.0 (Baklava).
+**OS test creation version:** iOS: 18.4 and 26.2, Android: API Level 36.
 
 ## E2E test
 

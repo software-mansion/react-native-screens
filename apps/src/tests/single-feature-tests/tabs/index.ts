@@ -9,7 +9,7 @@ import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
-import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
+import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
