@@ -4,6 +4,7 @@ import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible-ios';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index-ios';
 import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius-ios';
+import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
 const scenarios = {
   TestFormSheetBase,
@@ -11,6 +12,7 @@ const scenarios = {
   TestFormSheetInitialDetentIndex,
   TestFormSheetLargestUndimmedDetentIndex,
   TestFormSheetPreferredCornerRadius,
+  TestFormSheetStacking,
 };
 
 const FormSheetScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
