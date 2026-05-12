@@ -19,7 +19,7 @@ async function dismissToast(message: string) {
 describe('Tabs lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
-    await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-events');
+    await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-lifecycle-events');
   });
 
   it('should show Tab A content and fire onWillAppear + onDidAppear on launch', async () => {
