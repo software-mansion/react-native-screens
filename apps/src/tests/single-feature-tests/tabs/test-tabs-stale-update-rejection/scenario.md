@@ -6,7 +6,7 @@
 and the `onTabSelectionRejected` callback that fires when the native container
 rejects a navigation state update. When `rejectStaleNavStateUpdates` is `true`,
 the native side rejects any state update whose provenance baseline has been
-superseded — meaning a newer state of a different origin
+superseded - meaning a newer state of a different origin
 was committed before the JS update reached the UI thread. Each rejection fires
 `onTabSelectionRejected` with a `TabSelectionRejectedEvent` payload.
 
@@ -24,12 +24,10 @@ Other: Planned, but will be implemented separately after research.
 ## Note
 
 - A toast labeled `onTabSelectionRejected` appears at the bottom of the
-  screen whenever the callback fires. The full `nativeEvent` JSON is
-  logged to the console.
+  screen whenever the callback fires.
 - `heavyRender` is per-tab state. Toggling it on a given tab blocks the
   JS thread for 3 000 ms on every render of that tab, simulating a slow
   update that can arrive after the user has already acted.
-- All steps apply to both iOS and Android unless noted otherwise.
 
 ## Steps
 
@@ -60,36 +58,30 @@ Other: Planned, but will be implemented separately after research.
   `onTabSelectionRejected` appears. The final active tab is
   **Second**, not Third.
 
-4. Inspect the console log for the `nativeEvent` JSON of the rejection
-   from step 3.
-
-- [ ] Expected: `rejectionReason` is `"stale"`.
-  `rejectedScreenKey` is `"Third"`. `selectedScreenKey` is
-  `"Second"`. `provenance` and `rejectedBaseProvenance` are
-  numbers, with `provenance` greater than `rejectedBaseProvenance`.
-
 ---
 
 ### Disabling rejectStaleNavStateUpdates at runtime
 
-5. Navigate to the **Third** tab (heavy render still enabled). Tap
+4. Navigate to the **Third** tab (heavy render still enabled). Tap
    **Toggle rejectStaleNavStateUpdates** to disable it.
 
 - [ ] Expected: The label updates to `rejectStaleNavStateUpdates:
   false`. No toast fires from this action.
 
-6. Navigate back to **First**. Tap **Select Third**, then immediately
+5. Navigate back to **First**. Tap **Select Third**, then immediately
    tap **Second** in the tab bar before the heavy render ends.
 
-- [ ] Expected: No `onTabSelectionRejected` toast appears. After the
-  3 000 ms block, the displayed tab reflects the last-applied
-  update.
+- [ ] Expected: No `onTabSelectionRejected` toast appears. Tab Second is selected
+  imediately but after the 3 000 ms block, the final active tab is
+  **Third**.
 
-7. Tap **Toggle rejectStaleNavStateUpdates** to re-enable it.
+6. Tap **Toggle rejectStaleNavStateUpdates** to re-enable it.
 
 - [ ] Expected: Label updates to `rejectStaleNavStateUpdates: true`.
 
-8. Repeat the actions from step 6.
+7. Repeat the actions from step 5.
 
-- [ ] Expected: `onTabSelectionRejected` fires again with
-  `rejectionReason: "stale"`, confirming the guard is active.
+- [ ] Expected: The tab bar changes to **Second** immediately. After
+  the heavy render on Third finishes, a toast labeled
+  `onTabSelectionRejected` appears. The final active tab is
+  **Second**, not Third.
