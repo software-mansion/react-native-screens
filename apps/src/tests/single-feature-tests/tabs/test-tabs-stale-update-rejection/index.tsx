@@ -8,9 +8,9 @@ import {
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
   useTabsHostConfig,
-} from '../../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import { ToastProvider, useToast } from '../../../shared/';
+} from '../../../../shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
+import { ToastProvider, useToast } from '../../../../shared';
 import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
@@ -116,7 +116,7 @@ function AppContents() {
           2,
         )}`;
         console.warn(message);
-        toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
+        toast.push({ message: `onTabSelectionRejected`, backgroundColor: Colors.GreenLight60 });
       }}
     />
   );
