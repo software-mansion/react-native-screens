@@ -83,7 +83,7 @@ export interface FormSheetProps {
    * @default true
    * @platform ios
    */
-  shouldExpandWhenScrolledToEdge?: boolean | undefined;
+  prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
   // Events
   /**

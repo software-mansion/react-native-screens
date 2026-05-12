@@ -1,8 +1,8 @@
-# Test Scenario: shouldExpandWhenScrolledToEdge
+# Test Scenario: prefersScrollingExpandsWhenScrolledToEdge
 
 ## Details
 
-**Description:** Verify the `shouldExpandWhenScrolledToEdge` property of the `FormSheet` component. This test ensures that when the property is set to `true`, scrolling a child `ScrollView` at a lower detent expands the sheet to a larger detent first. When set to `false`, the same scrolling action should not expand the sheet, and the scroll view should scroll normally. It also verifies that manual dragging still works when scroll expansion is disabled.
+**Description:** Verify the `prefersScrollingExpandsWhenScrolledToEdge` property of the `FormSheet` component. This test ensures that when the property is set to `true`, scrolling a child `ScrollView` at a lower detent expands the sheet to a larger detent first. When set to `false`, the same scrolling action should not expand the sheet, and the scroll view should scroll normally. It also verifies that manual dragging still works when scroll expansion is disabled.
 
 **OS test creation version:** iOS: 18.6 and 26.4
 
@@ -16,7 +16,7 @@ Other: Planned, but will be implemented separately.
 
 ## Note
 
-- The default value of `shouldExpandWhenScrolledToEdge` in UIKit is `true`.
+- The default value of `prefersScrollingExpandsWhenScrolledToEdge` in UIKit is `true`.
 
 ## Steps - iPhone
 

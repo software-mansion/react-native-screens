@@ -219,8 +219,10 @@ namespace react = facebook::react;
     _initialDetentIndex = newComponentProps.initialDetentIndex;
   }
 
-  if (oldComponentProps.shouldExpandWhenScrolledToEdge != newComponentProps.shouldExpandWhenScrolledToEdge) {
-    _shouldExpandWhenScrolledToEdge = static_cast<BOOL>(newComponentProps.shouldExpandWhenScrolledToEdge);
+  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
+      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
+    _prefersScrollingExpandsWhenScrolledToEdge =
+        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
     [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 

@@ -16,7 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   name: 'Expand when scrolled to edge',
   key: 'test-form-sheet-expand-scroll-edge-ios',
   details:
-    'Allows testing the shouldExpandWhenScrolledToEdge prop with nested ScrollView.',
+    'Allows testing the prefersScrollingExpandsWhenScrolledToEdge prop with nested ScrollView.',
   platforms: ['ios'],
 };
 
@@ -26,7 +26,7 @@ export function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>shouldExpandWhenScrolledToEdge Test</Text>
+      <Text style={styles.title}>prefersScrollingExpandsWhenScrolledToEdge Test</Text>
 
       <View style={styles.controls}>
         <Text style={styles.statusText}>
@@ -51,7 +51,7 @@ export function App() {
         isOpen={isOpen}
         onNativeDismiss={() => setIsOpen(false)}
         detents={[0.5, 1.0]}
-        shouldExpandWhenScrolledToEdge={shouldExpand}>
+        prefersScrollingExpandsWhenScrolledToEdge={shouldExpand}>
         <View style={styles.sheetContainer}>
           <View style={styles.dragHeader}>
             <View style={styles.dragHandle} />
