@@ -121,12 +121,11 @@ export interface NativeProps extends ViewProps {
   leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
   androidResetScreenShadowStateOnOrientationChangeEnabled?: CT.WithDefault<
     boolean,
     true
   >;
-  ios26AllowInteractionsDuringTransition?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {

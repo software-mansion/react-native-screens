@@ -34,6 +34,17 @@ class StackHeaderConfig(
     override var backButtonIcon: Drawable? = null
         internal set
 
+    override var scrollFlagScroll: Boolean = false
+        internal set
+    override var scrollFlagEnterAlways: Boolean = false
+        internal set
+    override var scrollFlagEnterAlwaysCollapsed: Boolean = false
+        internal set
+    override var scrollFlagExitUntilCollapsed: Boolean = false
+        internal set
+    override var scrollFlagSnap: Boolean = false
+        internal set
+
     // Staging fields for back button icon resolution.
     // Both props may arrive in any order within a single update batch.
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.

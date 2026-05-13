@@ -26,14 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate,
-                                          RNSTabBarControllerDelegate
+@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate,
+                                                        RNSTabsNavigationStateObserver
 #if !RCT_NEW_ARCH_ENABLED
-                                          ,
-                                          RCTInvalidating
+                                                        ,
+                                                        RCTInvalidating
 #endif
-                                          >
+                                                        >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
@@ -48,9 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsHostComponentView ()
 
 /**
- * Last navigation state requested by JS. Will be nonnull after first prop update.
+ * Last navigation state update requested by JS. Will be nonnull after first prop update.
  */
-@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationStateUpdateRequest *navStateRequest;
 
 @property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
 

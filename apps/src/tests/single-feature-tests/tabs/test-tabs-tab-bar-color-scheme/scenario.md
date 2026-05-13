@@ -4,7 +4,7 @@
 
 **Description:** Verifies the colorScheme prop behavior on TabsHost, ensuring the tab bar correctly inherits or overrides the system and React Native appearance settings. The test validates real-time UI updates across light, dark, and inherited modes on both iOS and Android to ensure visual consistency and stability.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 

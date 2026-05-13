@@ -59,10 +59,9 @@
   }
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert(
-      [parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
-      @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
-      parent.class);
+  RCTAssert([parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
+            @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
+            parent.class);
 
   if ([parent isKindOfClass:UINavigationController.class]) {
     // Hide the navigation bar for the more controller
@@ -71,8 +70,8 @@
 
   RNSTabBarController *tabBarCtrl = [self findTabBarController];
 
-  RCTAssert(
-      tabBarCtrl != nil, @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
+  RCTAssert(tabBarCtrl != nil,
+            @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
 
   [tabBarCtrl setNeedsUpdateOfTabBarAppearance:true];
   [tabBarCtrl updateTabBarAppearanceIfNeeded];

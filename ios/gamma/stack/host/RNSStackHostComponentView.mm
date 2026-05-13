@@ -71,11 +71,10 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
@@ -85,11 +84,10 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
@@ -103,8 +101,8 @@ namespace react = facebook::react;
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
     [_stackOperationCoordinator addPopOperation:stackScreen];
   } else {
-    RNSLog(
-        @"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed", stackScreen.screenKey);
+    RNSLog(@"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed",
+           stackScreen.screenKey);
   }
 }
 

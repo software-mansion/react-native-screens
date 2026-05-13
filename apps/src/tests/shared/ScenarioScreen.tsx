@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView } from 'react-native';
 import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,31 +7,34 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 function ScenarioSelect(props: {
   scenarios: Record<string, Scenario>;
   groupName: string;
 }) {
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      testID={`${props.groupName}-scenarios-scrollview`}>
-      {Object.values(props.scenarios).map(
-        ({ scenarioDescription }: Scenario) => {
-          const { name, key, details, platforms } = scenarioDescription;
-          return (
-            <ScenarioButton
-              title={name}
-              details={details}
-              route={key}
-              key={key}
-              platformsHint={platforms}
-              testID={key}
-            />
-          );
-        },
-      )}
-    </ScrollView>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        testID={`${props.groupName}-scenarios-scrollview`}>
+        {Object.values(props.scenarios).map(
+          ({ scenarioDescription }: Scenario) => {
+            const { name, key, details, platforms } = scenarioDescription;
+            return (
+              <ScenarioButton
+                title={name}
+                details={details}
+                route={key}
+                key={key}
+                platformsHint={platforms}
+                testID={key}
+              />
+            );
+          },
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

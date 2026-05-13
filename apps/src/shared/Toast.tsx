@@ -6,12 +6,10 @@ import {
   Dimensions,
   View,
   ViewStyle,
+  Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 interface ToastProps {
   index: number;
@@ -67,30 +65,6 @@ const ToastContext = createContext({
   },
 });
 
-const ToastContainer = ({
-  toasts,
-  remove,
-}: {
-  toasts: IToast[];
-  remove: (id: string) => void;
-}) => {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <>
-      {toasts.map((toast, i) => (
-        <Toast
-          index={i}
-          key={toast.id}
-          style={{ bottom: insets.bottom + 5 + i * 25 }}
-          {...toast}
-          remove={remove}
-        />
-      ))}
-    </>
-  );
-};
-
 interface ToastProviderProps {
   children: React.ReactNode;
 }
@@ -108,15 +82,22 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
       <ToastContext.Provider value={{ push }}>
         <>
           {children}
-          {/* Render the internal container */}
-          <ToastContainer toasts={toasts} remove={remove} />
+          {toasts.map((toast, i) => (
+            <Toast
+              index={i}
+              key={toast.id}
+              style={{ marginBottom: i * 25 }}
+              {...toast}
+              remove={remove}
+            />
+          ))}
         </>
       </ToastContext.Provider>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 };
 
@@ -127,6 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     alignSelf: 'center',
+    bottom: 5,
   },
   alert: {
     alignItems: 'center',

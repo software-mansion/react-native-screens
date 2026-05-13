@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 
 class TabsHostTabSelectedEvent(
     surfaceId: Int,
@@ -12,7 +13,7 @@ class TabsHostTabSelectedEvent(
     val provenance: Int,
     val isRepeated: Boolean,
     val hasTriggeredSpecialEffect: Boolean,
-    val isNativeAction: Boolean,
+    val actionOrigin: TabsActionOrigin,
 ) : Event<TabsHostTabSelectedEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
@@ -28,7 +29,7 @@ class TabsHostTabSelectedEvent(
             putInt(EK_PROVENANCE, provenance)
             putBoolean(EK_IS_REPEATED, isRepeated)
             putBoolean(EK_HAS_TRIGGERED_SPECIAL_EFFECT, hasTriggeredSpecialEffect)
-            putBoolean(EK_IS_NATIVE_ACTION, isNativeAction)
+            putString(EK_ACTION_ORIGIN, actionOrigin.toString())
         }
 
     companion object : NamingAwareEventType {
@@ -39,7 +40,7 @@ class TabsHostTabSelectedEvent(
         private const val EK_PROVENANCE = "provenance"
         private const val EK_IS_REPEATED = "isRepeated"
         private const val EK_HAS_TRIGGERED_SPECIAL_EFFECT = "hasTriggeredSpecialEffect"
-        private const val EK_IS_NATIVE_ACTION = "isNativeAction"
+        private const val EK_ACTION_ORIGIN = "actionOrigin"
 
         override fun getEventName() = EVENT_NAME
 
