@@ -7,7 +7,7 @@ export const describeIfiOS =
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
-async function scrollUntilVisible(id: string, scrollViewId: string) {
+export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
