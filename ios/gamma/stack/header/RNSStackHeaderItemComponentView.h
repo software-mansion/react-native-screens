@@ -3,6 +3,7 @@
 #import "RNSHeaderItemPlacement.h"
 #import "RNSReactBaseView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
+#import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,9 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
 @property (nonatomic, readonly) BOOL hasCustomView;
 
-- (nonnull UIBarButtonItem *)makeBarButtonItem;
-
-- (void)updateShadowStateToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar;
+- (nonnull UIBarButtonItem *)makeBarButtonItemWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate;
+- (nonnull UIView *)makeWrappedViewWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate;
 
 @end
 

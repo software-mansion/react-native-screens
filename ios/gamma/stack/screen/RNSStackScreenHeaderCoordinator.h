@@ -5,7 +5,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSStackScreenComponentView;
 @class RNSStackScreenController;
 
 @interface RNSStackScreenHeaderCoordinator : NSObject
@@ -15,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)submitHeaderData:(nonnull RNSStackHeaderData *)data;
 
 - (void)applyBarConfigurationIfNeeded:(BOOL)animated;
-
-- (void)updateShadowStatesToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar;
 
 @end
 

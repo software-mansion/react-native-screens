@@ -2,6 +2,7 @@
 #import "RCTAssert.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackNavigationBarCoordinator.h"
+#import "RNSStackNavigationController.h"
 #import "RNSStackNavigationItemCoordinator.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
@@ -54,25 +55,16 @@
     return;
   }
 
+  if ([navController isKindOfClass:RNSStackNavigationController.class]) {
+    RNSStackScreenComponentView *screenView = static_cast<RNSStackScreenComponentView *>(screenController.view);
+    RNSStackHeaderConfigComponentView *config = [screenView findHeaderConfig];
+    ((RNSStackNavigationController *)navController).navigationBarFrameChangeDelegate = config;
+  }
+
   [_navigationItemCoordinator applyConfiguration:_lastHeaderData forController:screenController];
   [_navigationBarCoordinator applyConfiguration:_lastHeaderData
                         forNavigationController:navController
                                        animated:animated];
-}
-
-#pragma mark - Shadow State Orchestration
-
-- (void)updateShadowStatesToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar
-{
-  RNSStackScreenComponentView *screenView =
-      static_cast<RNSStackScreenComponentView *>([self requireScreenController].view);
-  RNSStackHeaderConfigComponentView *config = [screenView findHeaderConfig];
-  if (config == nil) {
-    return;
-  }
-
-  [config updateShadowStateToMatchNavigationBar:navigationBar];
-  [_navigationItemCoordinator updateShadowStatesOfItems:config.headerItems inNavigationBar:navigationBar];
 }
 
 @end

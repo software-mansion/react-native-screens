@@ -16,7 +16,7 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
-import { ScrollView, StyleSheet } from 'react-native';
+import { Button, ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
@@ -51,50 +51,40 @@ interface PressablePropsContext {
 
 const PressableContext = createContext<PressablePropsContext | null>(null);
 
-function ItemBlueComponent() {
+function ResizingItem() {
   const { pressableProps } = useContext(PressableContext)!;
+  const [large, setLarge] = useState<boolean>(false);
 
   return (
     <PressableWithFeedback
-      {...pressableProps}
-      style={{ width: 30, height: 30, backgroundColor: 'blue' }}
-    />
-  );
-}
-
-function HorizontalGreenItem() {
-  const { pressableProps } = useContext(PressableContext)!;
-
-  return (
-    <PressableWithFeedback
-      {...pressableProps}
-      style={{ width: 100, height: 20, backgroundColor: 'green' }}
-    />
-  );
-}
-
-function HorizontalPinkItem() {
-  const { pressableProps } = useContext(PressableContext)!;
-
-  return (
-    <PressableWithFeedback
-      {...pressableProps}
-      style={{ width: 80, height: 10, backgroundColor: 'pink' }}
-    />
-  );
-}
-
-function ItemRedComponent() {
-  const { pressableProps } = useContext(PressableContext)!;
-
-  return (
-    <PressableWithFeedback
+      onPress={() => setLarge(lg => !lg)}
       {...pressableProps}
       style={{
-        width: 20,
-        height: 20,
-        backgroundColor: 'red',
+        width: large ? 60 : 20,
+        height: large ? 30 : 20,
       }}
+    />
+  );
+}
+
+function LargeHorizontalItem() {
+  const { pressableProps } = useContext(PressableContext)!;
+
+  return (
+    <PressableWithFeedback
+      {...pressableProps}
+      style={{ width: 100, height: 20 }}
+    />
+  );
+}
+
+function SmallHorizontalItem() {
+  const { pressableProps } = useContext(PressableContext)!;
+
+  return (
+    <PressableWithFeedback
+      {...pressableProps}
+      style={{ width: 80, height: 10 }}
     />
   );
 }
@@ -103,6 +93,8 @@ interface Config {
   enabled: boolean;
   hidden: boolean;
   largeTitleEnabled: boolean;
+  leftItemsCount: number;
+  rightItemsCount: number;
   title: TitleOption;
   subtitle: TitleOption;
   hitSlop: HitSlopValue;
@@ -113,6 +105,8 @@ const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
   largeTitleEnabled: false,
+  leftItemsCount: 2,
+  rightItemsCount: 2,
   title: 'short',
   subtitle: 'short',
   hitSlop: '0',
@@ -149,6 +143,28 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     return undefined;
   }
 
+  let leftItems = Array.from({ length: config.leftItemsCount }).map((_, i) => ({
+    key: `left-${i}`,
+    component: ResizingItem,
+  }));
+  if (leftItems.length > 1) {
+    leftItems.splice(1, 0, { key: 'spacer-left-1', size: 'fixed', width: 100 });
+  }
+
+  let rightItems = Array.from({ length: config.rightItemsCount }).map(
+    (_, i) => ({
+      key: `right-${i}`,
+      component: ResizingItem,
+    }),
+  );
+  if (rightItems.length > 1) {
+    rightItems.splice(1, 0, {
+      key: 'spacer-right-1',
+      size: 'fixed',
+      width: 100,
+    });
+  }
+
   return {
     title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
     subtitle: config.subtitle === 'short' ? SHORT_TITLE : LONG_TITLE,
@@ -159,45 +175,27 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
         config.title === 'view'
           ? {
               key: 'title',
-              component: HorizontalGreenItem,
+              label: 'title',
+              component: LargeHorizontalItem,
             }
           : undefined,
       subtitleItem:
         config.subtitle === 'view'
           ? {
               key: 'subtitle',
-              component: HorizontalPinkItem,
+              label: 'subtitle',
+              component: SmallHorizontalItem,
             }
           : undefined,
       largeSubtitleItem:
         config.subtitle === 'view'
           ? {
               key: 'largeSubtitle',
-              component: HorizontalGreenItem,
+              component: LargeHorizontalItem,
             }
           : undefined,
-      leftItems: [
-        {
-          key: 'left-0',
-          component: ItemRedComponent,
-        },
-        { key: 'left-1', size: 'fixed', width: 100 },
-        {
-          key: 'left-2',
-          component: ItemRedComponent,
-        },
-        {
-          key: 'left-3',
-          component: ItemBlueComponent,
-        },
-        { key: 'left-4', label: 'An item' },
-      ],
-      rightItems: [
-        {
-          key: 'right-0',
-          component: ItemRedComponent,
-        },
-      ],
+      leftItems,
+      rightItems,
     },
   };
 }
@@ -274,6 +272,18 @@ function ConfigScreen() {
         value={config.pressRetentionOffset}
         onValueChange={v => updateConfig('pressRetentionOffset', v)}
         items={PRESS_RETENTION_VALUES}
+      />
+      <Button
+        title={`Toggle left items count (${config.leftItemsCount}/3)`}
+        onPress={() => {
+          updateConfig('leftItemsCount', (config.leftItemsCount + 1) % 4);
+        }}
+      />
+      <Button
+        title={`Toggle right items count (${config.rightItemsCount}/3)`}
+        onPress={() => {
+          updateConfig('rightItemsCount', (config.rightItemsCount + 1) % 4);
+        }}
       />
     </ScrollView>
   );

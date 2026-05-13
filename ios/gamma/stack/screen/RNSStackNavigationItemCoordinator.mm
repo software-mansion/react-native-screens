@@ -1,6 +1,5 @@
 #import "RNSStackNavigationItemCoordinator.h"
 #import "RNSDefines.h"
-#import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackScreenController.h"
 
 @implementation RNSStackNavigationItemCoordinator
@@ -12,16 +11,6 @@
   [self setupTitleIfNeeded:data forController:controller];
   [self setupLargeTitleDisplayModeIfNeeded:data forController:controller];
   [self setupBarButtonItemsIfNeeded:data forController:controller];
-}
-
-- (void)updateShadowStatesOfItems:(nonnull NSArray<RNSStackHeaderItemComponentView *> *)items
-                  inNavigationBar:(nonnull UINavigationBar *)navigationBar
-{
-  for (RNSStackHeaderItemComponentView *item in items) {
-    if (item.hasCustomView) {
-      [item updateShadowStateToMatchNavigationBar:navigationBar];
-    }
-  }
 }
 
 - (void)setupTitleIfNeeded:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller

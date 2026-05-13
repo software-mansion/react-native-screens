@@ -1,4 +1,5 @@
 #import "RNSStackHeaderConfigComponentView.h"
+#import "RNSLog.h"
 #import "RNSShadowStateFrameTracker.h"
 #import "RNSStackHeaderData.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -24,10 +25,7 @@ namespace react = facebook::react;
   BOOL _hidden;
   BOOL _largeTitle;
 
-  // Ordered list of children as mounted by Fabric
-  // Instead of being mounted natively here, they are used to build header items.
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
-  NSMutableArray<RNSStackHeaderItemComponentView *> *_Nonnull _headerItems;
 
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
   RNSShadowStateFrameTracker *_Nonnull _frameTracker;
@@ -46,7 +44,6 @@ namespace react = facebook::react;
     _props = defaultProps;
     _children = [NSMutableArray new];
     _frameTracker = [RNSShadowStateFrameTracker new];
-    _headerItems = [NSMutableArray new];
   }
   return self;
 }
@@ -69,9 +66,7 @@ namespace react = facebook::react;
   [_children insertObject:childComponentView atIndex:index];
 
   if ([childComponentView isKindOfClass:RNSStackHeaderItemComponentView.class]) {
-    RNSStackHeaderItemComponentView *item = ((RNSStackHeaderItemComponentView *)childComponentView);
-    item.invalidationDelegate = self;
-    [_headerItems addObject:item];
+    ((RNSStackHeaderItemComponentView *)childComponentView).invalidationDelegate = self;
   } else if ([childComponentView isKindOfClass:RNSStackHeaderItemSpacerComponentView.class]) {
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = self;
   }
@@ -82,22 +77,13 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderItemComponentView.class]) {
-    RNSStackHeaderItemComponentView *item = ((RNSStackHeaderItemComponentView *)childComponentView);
-    item.invalidationDelegate = nil;
-    [_headerItems removeObject:item];
+    ((RNSStackHeaderItemComponentView *)childComponentView).invalidationDelegate = nil;
   } else if ([childComponentView isKindOfClass:RNSStackHeaderItemSpacerComponentView.class]) {
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = nil;
   }
 
   [_children removeObjectAtIndex:index];
   [self submitCurrentDataIfMounted];
-}
-
-#pragma mark - Header Items
-
-- (NSArray<RNSStackHeaderItemComponentView *> *)headerItems
-{
-  return _headerItems;
 }
 
 #pragma mark RNSStackHeaderItemInvalidationDelegate
@@ -107,12 +93,18 @@ namespace react = facebook::react;
   [self submitCurrentDataIfMounted];
 }
 
-#pragma mark - Shadow State
+#pragma mark - RNSViewFrameChangeDelegate
 
-- (void)updateShadowStateToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar
+- (void)viewFrameDidChange:(nonnull UINavigationBar *)navigationBar
 {
   if (_state == nullptr || self.superview == nil) {
     return;
+  }
+
+  for (UIView *child in _children) {
+    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
+      [(id<RNSViewFrameChangeDelegate>)(child) viewFrameDidChange:navigationBar];
+    }
   }
 
   UIView *screenView = self.superview;
@@ -222,24 +214,24 @@ namespace react = facebook::react;
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
         case RNSHeaderItemPlacementLeft:
-          [leftItems addObject:[item makeBarButtonItem]];
+          [leftItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementRight:
-          [rightItems addObject:[item makeBarButtonItem]];
+          [rightItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.hasCustomView) {
-            *outTitleView = item;
+            *outTitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementSubtitle:
           if (item.hasCustomView) {
-            *outSubtitleView = item;
+            *outSubtitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementLargeSubtitle:
           if (item.hasCustomView) {
-            *outLargeSubtitleView = item;
+            *outLargeSubtitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
           }
           break;
       }

@@ -2,7 +2,11 @@
 
 #include "RNSStackScreenComponentView.h"
 
+@protocol RNSViewFrameChangeDelegate;
+
 @interface RNSStackNavigationController : UINavigationController
+
+@property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> navigationBarFrameChangeDelegate;
 
 - (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
 

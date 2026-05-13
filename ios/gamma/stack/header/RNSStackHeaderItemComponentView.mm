@@ -3,6 +3,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSShadowStateFrameTracker.h"
+#import "RNSStackHeaderItemWrapperView.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -10,6 +11,9 @@
 #import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 namespace react = facebook::react;
+
+@interface RNSStackHeaderItemComponentView () <RNSViewFrameChangeDelegate>
+@end
 
 @implementation RNSStackHeaderItemComponentView {
   RNSHeaderItemPlacement _placement;
@@ -19,8 +23,6 @@ namespace react = facebook::react;
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
   RNSShadowStateFrameTracker *_Nonnull _frameTracker;
   react::LayoutMetrics _layoutMetrics;
-
-  UINavigationBar *_Nullable _navigationBar;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -64,17 +66,38 @@ namespace react = facebook::react;
 
 #pragma mark - Bar Button Item
 
-- (nonnull UIBarButtonItem *)makeBarButtonItem
+- (nonnull UIView *)makeWrappedViewWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
 {
+  // The wrapper view is delegating the state update outside the view
+  // and we expect that delegate to call viewFrameDidChange from outside.
+  // This is needed for iOS 18 where there is no other way to sync all child elements
+  // when one updates its side in a way that impacts the layout of others
+  // (on iOS 26, this would work with just attaching self here).
+  RNSStackHeaderItemWrapperView *wrapperView = [[RNSStackHeaderItemWrapperView alloc] initWithDelegate:delegate];
+  wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+  [wrapperView addSubview:self];
+
+  [NSLayoutConstraint activateConstraints:@[
+    [self.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
+    [self.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],
+    [self.topAnchor constraintEqualToAnchor:wrapperView.topAnchor],
+    [self.bottomAnchor constraintEqualToAnchor:wrapperView.bottomAnchor],
+  ]];
+
+  return wrapperView;
+}
+
+- (nonnull UIBarButtonItem *)makeBarButtonItemWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
+{
+  // Similarly to makeWrappedViewWithDelegate, we're attaching outside delegate here.
+  // See the reasoning in the aforementioned function.
   if (self.hasCustomView) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
       // (taken from #3868)
-      // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
-      // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
-      // of the center. To mitigate this, we add a wrapper view that will center
-      // RNSScreenStackHeaderSubview inside of itself.
-      UIView *wrapperView = [UIView new];
+      // Starting from iOS 26, UIBarButtonItem's customView is stretched to have at least 36 width.
+      // To mitigate this, we add a wrapper view that will center the item inside of itself.
+      RNSStackHeaderItemWrapperView *wrapperView = [[RNSStackHeaderItemWrapperView alloc] initWithDelegate:delegate];
       wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
       // self has already opted out of default constraints with `translateAutoresizingMaskIntoConstraints = NO`
       [wrapperView addSubview:self];
@@ -105,15 +128,15 @@ namespace react = facebook::react;
       return [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
     }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    return [[UIBarButtonItem alloc] initWithCustomView:self];
+    return [[UIBarButtonItem alloc] initWithCustomView:[self makeWrappedViewWithFrameChangeDelegate:delegate]];
   }
 
   return [[UIBarButtonItem alloc] initWithTitle:_label ?: @"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
-#pragma mark - Shadow State
+#pragma mark - RNSViewFrameChangeDelegate
 
-- (void)updateShadowStateToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar
+- (void)viewFrameDidChange:(nonnull UINavigationBar *)navigationBar
 {
   if (_state == nullptr || self.superview == nil) {
     return;
@@ -127,33 +150,6 @@ namespace react = facebook::react;
   auto newState =
       react::RNSStackHeaderItemState(RCTSizeFromCGSize(frameInNavBar.size), RCTPointFromCGPoint(frameInNavBar.origin));
   _state->updateState(std::move(newState));
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-
-  UINavigationBar *navBar = [self findNavigationBar];
-  if (navBar != nil) {
-    [self updateShadowStateToMatchNavigationBar:navBar];
-  }
-}
-
-- (nullable UINavigationBar *)findNavigationBar
-{
-  if (_navigationBar) {
-    return _navigationBar;
-  }
-
-  UIView *current = self.superview;
-  while (current != nil) {
-    if ([current isKindOfClass:UINavigationBar.class]) {
-      _navigationBar = (UINavigationBar *)current;
-      return _navigationBar;
-    }
-    current = current.superview;
-  }
-  return nil;
 }
 
 #pragma mark - RCTComponentViewProtocol

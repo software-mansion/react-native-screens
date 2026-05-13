@@ -2,7 +2,7 @@
 #import "RNSLog.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
-#import "RNSStackScreenHeaderCoordinator.h"
+#import "RNSViewFrameChangeDelegate.h"
 #import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
@@ -91,17 +91,7 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-
-  UIViewController *topVC = self.topViewController;
-  if (topVC == nil) {
-    return;
-  }
-
-  if ([topVC isKindOfClass:RNSStackScreenController.class]) {
-    auto *screenController = static_cast<RNSStackScreenController *>(topVC);
-    // headerCoordinator handles ShadowNode state for both header config and its navigation items
-    [screenController.headerCoordinator updateShadowStatesToMatchNavigationBar:self.navigationBar];
-  }
+  [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
 }
 
 #pragma mark - Debug

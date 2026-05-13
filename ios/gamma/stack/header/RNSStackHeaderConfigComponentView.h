@@ -1,16 +1,11 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
+#import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSStackHeaderItemComponentView;
-
-@interface RNSStackHeaderConfigComponentView : RNSReactBaseView
-
-@property (nonatomic, readonly, nonnull) NSArray<RNSStackHeaderItemComponentView *> *headerItems;
-
-- (void)updateShadowStateToMatchNavigationBar:(nonnull UINavigationBar *)navigationBar;
+@interface RNSStackHeaderConfigComponentView : RNSReactBaseView <RNSViewFrameChangeDelegate>
 
 @end
 
