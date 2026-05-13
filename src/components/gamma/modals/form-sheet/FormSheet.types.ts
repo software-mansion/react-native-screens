@@ -99,7 +99,7 @@ export interface FormSheetProps {
   /**
    * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
    *
-   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap
+   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
    * remaining on the resting detent. Dismissal programmatically via `isOpen={false}` will still work.
    * The default value is `false`.
    *
