@@ -1,7 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
-import BottomAccessoryScenario from './bottom-accessory-layout';
-import OverrideScrollViewContentInsetScenario from './override-scroll-view-content-inset';
+import TestTabBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
+import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
@@ -9,16 +9,18 @@ import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
-import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller';
+import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
+import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
+import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 
 const scenarios = {
-  BottomAccessoryScenario,
-  OverrideScrollViewContentInsetScenario,
+  TestTabBottomAccessory,
+  TestTabsOverrideScrollViewContentInset,
   TabBarAppearanceDefinedBySelectedTabScenario,
   TestTabsTabBarHidden,
   TabsScreenOrientationScenario,
@@ -31,6 +33,8 @@ const scenarios = {
   TestTabsStaleStateUpdateRejection,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
+  TestTabsSpecialEffectsScrollToTop,
+  TestTabsTabBarExperimentalUserInterfaceStyle,
   TestTabsLifecycleEvents,
 };
 

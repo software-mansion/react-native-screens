@@ -27,10 +27,9 @@ RCT_EXPORT_VIEW_PROPERTY(tabBarHidden, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(nativeContainerBackgroundColor, UIColor);
 // This remapping allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input
 // from JS.
-RCT_REMAP_VIEW_PROPERTY(
-    tabBarMinimizeBehavior,
-    tabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior,
-    RNSTabBarMinimizeBehavior);
+RCT_REMAP_VIEW_PROPERTY(tabBarMinimizeBehavior,
+                        tabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior,
+                        RNSTabBarMinimizeBehavior);
 // This remapping allows us to store UITabBarControllerMode in the component while accepting a custom enum as input
 // from JS.
 RCT_REMAP_VIEW_PROPERTY(tabBarControllerMode, tabBarControllerModeFromRNSTabBarControllerMode, RNSTabBarControllerMode);

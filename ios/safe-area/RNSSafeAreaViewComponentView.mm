@@ -105,11 +105,10 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   }
 
   auto newData = facebook::react::RNSSafeAreaViewState{RCTEdgeInsetsFromUIEdgeInsets(_currentSafeAreaInsets)};
-  _state->updateState(
-      std::move(newData)
+  _state->updateState(std::move(newData)
 #if REACT_NATIVE_VERSION_MINOR >= 82
-          ,
-      facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                          ,
+                      facebook::react::EventQueue::UpdateMode::unstable_Immediate
 #endif // REACT_NATIVE_VERSION_MINOR >= 82
   );
 }

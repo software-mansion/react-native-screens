@@ -578,17 +578,16 @@ RCT_EXPORT_METHOD(cancelSearch : (NSNumber *_Nonnull)reactTag)
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(
-    RNSSearchBarPlacement,
-    (@{
-      @"automatic" : @(RNSSearchBarPlacementAutomatic),
-      @"inline" : @(RNSSearchBarPlacementInline),
-      @"stacked" : @(RNSSearchBarPlacementStacked),
-      @"integrated" : @(RNSSearchBarPlacementIntegrated),
-      @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
-      @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
-    }),
-    RNSSearchBarPlacementAutomatic,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSSearchBarPlacement,
+                   (@{
+                     @"automatic" : @(RNSSearchBarPlacementAutomatic),
+                     @"inline" : @(RNSSearchBarPlacementInline),
+                     @"stacked" : @(RNSSearchBarPlacementStacked),
+                     @"integrated" : @(RNSSearchBarPlacementIntegrated),
+                     @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
+                     @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
+                   }),
+                   RNSSearchBarPlacementAutomatic,
+                   integerValue)
 
 @end

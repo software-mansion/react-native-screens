@@ -68,20 +68,6 @@ class ScreenStackViewManager :
             StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning"),
         )
 
-    // iosPreventReattachmentOfDismissedScreens is not available on Android,
-    // however we must override the setter
-    override fun setIosPreventReattachmentOfDismissedScreens(
-        view: ScreenStack?,
-        value: Boolean,
-    ) = Unit
-
-    // iosPreventReattachmentOfDismissedModals is not available on Android,
-    // however we must override the setter
-    override fun setIosPreventReattachmentOfDismissedModals(
-        view: ScreenStack?,
-        value: Boolean,
-    ) = Unit
-
     // nativeContainerBackgroundColor is iOS-only because the native view hierarchy
     // differs between platforms. On Android, ScreenStack is used directly as the
     // container, so `style.backgroundColor` achieves the same effect.

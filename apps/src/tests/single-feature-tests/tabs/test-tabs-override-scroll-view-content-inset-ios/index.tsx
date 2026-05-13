@@ -10,7 +10,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Override ScrollView Content Inset',
-  key: 'override-scroll-view-content-inset',
+  key: 'test-tabs-override-scroll-view-content-inset-ios',
   details:
     'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
     'False: content scrolls behind bars. True/Default: content is inset from bars.',
@@ -19,16 +19,22 @@ const scenarioDescription: ScenarioDescription = {
 
 const ITEM_COUNT = 30;
 
-function ScrollContent({ label }: { label: string }) {
+export function ScrollContent({
+  label,
+  testID,
+}: {
+  label: string;
+  testID: string;
+}) {
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView style={styles.scrollView} testID={`${testID}-scrollview`}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>
+        <Text style={styles.headerText} testID={`${testID}-header`}>
           overrideScrollViewContentInsetAdjustmentBehavior: {label}
         </Text>
       </View>
       {Array.from({ length: ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.item}>
+        <View key={i} style={styles.item} testID={`${testID}-item-${i + 1}`}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
@@ -36,16 +42,31 @@ function ScrollContent({ label }: { label: string }) {
   );
 }
 
-function FalseTab() {
-  return <ScrollContent label="false" />;
+export function FalseTab() {
+  return (
+    <ScrollContent
+      label="false"
+      testID="override-inset-false"
+    />
+  );
 }
 
-function TrueTab() {
-  return <ScrollContent label="true" />;
+export function TrueTab() {
+  return (
+    <ScrollContent
+      label="true"
+      testID="override-inset-true"
+    />
+  );
 }
 
-function DefaultTab() {
-  return <ScrollContent label="(not set, defaults to true)" />;
+export function DefaultTab() {
+  return (
+    <ScrollContent
+      label="(not set, defaults to true)"
+      testID="override-inset-default"
+    />
+  );
 }
 
 export function App() {
@@ -59,6 +80,7 @@ export function App() {
               Component: FalseTab,
               options: {
                 title: 'False',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-false',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: false,
                   icon: { type: 'sfSymbol', name: 'xmark.circle' },
@@ -70,6 +92,7 @@ export function App() {
               Component: TrueTab,
               options: {
                 title: 'True',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-true',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: true,
                   icon: { type: 'sfSymbol', name: 'checkmark.circle' },
@@ -81,6 +104,7 @@ export function App() {
               Component: DefaultTab,
               options: {
                 title: 'Default',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },
             },
