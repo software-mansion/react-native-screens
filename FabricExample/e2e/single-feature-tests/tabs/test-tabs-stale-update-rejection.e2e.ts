@@ -77,11 +77,11 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
 
     await device.enableSynchronization();
 
-    await waitFor(element(by.label('1. onTabSelectionRejected')))
+    await waitFor(element(by.label('1. onTabSelectionRejected: Third')))
       .toBeVisible()
       .withTimeout(20000);
 
-    await dismissToast('1. onTabSelectionRejected');
+    await dismissToast('1. onTabSelectionRejected: Third');
 
     await expect(element(by.id('Second-route-key-label'))).toBeVisible();
   });
@@ -141,7 +141,7 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:false', () => {
 
     await device.enableSynchronization();
 
-    await waitFor(element(by.label('1. onTabSelectionRejected')))
+    await waitFor(element(by.label('1. onTabSelectionRejected: Third')))
       .not.toBeVisible()
       .withTimeout(8000);
 
