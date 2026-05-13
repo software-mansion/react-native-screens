@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sheetController:(RNSFormSheetContentController *)controller
     didChangeDetentIdentifier:(nullable NSString *)identifier;
 #endif // !TARGET_OS_TV
+- (void)sheetControllerDidPreventNativeDismiss:(RNSFormSheetContentController *)controller;
 @end
 
 @interface RNSFormSheetContentController : UIViewController
@@ -26,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSFormSheetBehaviorProvider> behaviorProvider;
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
+
+@property (nonatomic, assign) BOOL preventNativeDismiss;
 
 #pragma mark - Presentation
 

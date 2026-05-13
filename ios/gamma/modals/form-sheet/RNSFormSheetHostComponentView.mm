@@ -36,6 +36,7 @@ namespace react = facebook::react;
   NSInteger _largestUndimmedDetentIndex;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
+  BOOL _preventNativeDismiss;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -67,6 +68,7 @@ namespace react = facebook::react;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
+  _preventNativeDismiss = NO;
 }
 
 - (void)setupController
@@ -109,6 +111,11 @@ namespace react = facebook::react;
 {
   _isOpen = NO;
   [_reactEventEmitter emitOnNativeDismiss];
+}
+
+- (void)sheetControllerDidPreventNativeDismiss:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnNativeDismissPrevented];
 }
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
@@ -213,6 +220,11 @@ namespace react = facebook::react;
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
+  }
+
+  if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
+    _preventNativeDismiss = static_cast<BOOL>(newComponentProps.preventNativeDismiss);
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   [super updateProps:props oldProps:oldProps];

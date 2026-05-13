@@ -18,7 +18,11 @@ interface NativeProps extends ViewProps {
   largestUndimmedDetentIndex?: CT.WithDefault<CT.Int32, -1>;
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
+  preventNativeDismiss?: CT.WithDefault<boolean, false>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onNativeDismissPrevented?:
+  | CT.DirectEventHandler<GenericEmptyEvent>
+  | undefined;
   onDetentChanged?: CT.DirectEventHandler<DetentChangedEvent> | undefined;
 }
 
