@@ -102,7 +102,7 @@ function ConfigScreen() {
             styles.card,
             selected === item.id ? styles.selectedCard : styles.unselectedCard,
           ]}>
-          {item.content}
+          {React.createElement(item.content)}
         </Pressable>
       ))}
     </ScrollView>
