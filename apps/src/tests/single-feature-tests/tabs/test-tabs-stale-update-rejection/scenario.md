@@ -68,7 +68,7 @@ Ensure the app's behavior strictly matches the expected results at each transiti
 
 - [ ] Expected: The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
-  `onTabSelectionRejected` appears. The final active tab is
+  `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.
 
 ---
@@ -96,5 +96,5 @@ Ensure the app's behavior strictly matches the expected results at each transiti
 
 - [ ] Expected: The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
-  `onTabSelectionRejected` appears. The final active tab is
+  `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.
