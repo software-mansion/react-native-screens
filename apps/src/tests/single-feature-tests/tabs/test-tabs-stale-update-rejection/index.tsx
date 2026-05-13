@@ -30,23 +30,31 @@ function ContentView() {
 
   return (
     <CenteredLayoutView>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+      <Text
+        testID={`${routeKey}-route-key-label`}
+        style={{ fontWeight: 'bold', textAlign: 'center' }}>
         {routeKey}
       </Text>
-      <Text style={{ textAlign: 'center' }}>
+      <Text
+        testID={`${routeKey}-heavy-render-label`}
+        style={{ textAlign: 'center' }}>
         heavyRender: {JSON.stringify(heavyRenderEnabled)}
       </Text>
-      <Text style={{ textAlign: 'center' }}>
+      <Text
+        testID={`${routeKey}-reject-stale-label`}
+        style={{ textAlign: 'center' }}>
         rejectStaleNavStateUpdates:{' '}
         {JSON.stringify(hostConfig.rejectStaleNavStateUpdates)}
       </Text>
       <HeavyRenderHierarchy enabled={heavyRenderEnabled} timeMs={3000} />
       <TabsNavigationButtons />
       <Button
+        testID={`${routeKey}-toggle-heavy-render`}
         title="Toggle heavyRender"
         onPress={() => setHeavyRenderEnabled(prev => !prev)}
       />
       <Button
+        testID={`${routeKey}-toggle-reject-stale`}
         title="Toggle rejectStaleNavStateUpdates"
         onPress={() =>
           updateHostConfig({
@@ -60,13 +68,30 @@ function ContentView() {
 
 function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
+  const { routeKey } = useTabsNavigationContext();
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
-      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
+      <Button
+        testID={`${routeKey}-select-first`}
+        title="Select First"
+        onPress={() => nav.selectTab('First')}
+      />
+      <Button
+        testID={`${routeKey}-select-second`}
+        title="Select Second"
+        onPress={() => nav.selectTab('Second')}
+      />
+      <Button
+        testID={`${routeKey}-select-third`}
+        title="Select Third"
+        onPress={() => nav.selectTab('Third')}
+      />
+      <Button
+        testID={`${routeKey}-select-fourth`}
+        title="Select Fourth"
+        onPress={() => nav.selectTab('Fourth')}
+      />
     </View>
   );
 }
@@ -75,22 +100,42 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'First',
+      tabBarItemTestID: 'stale-rejection-tab-first',
+      tabBarItemAccessibilityLabel: 'stale-rejection-tab-first-label',
+    },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Second',
+      tabBarItemTestID: 'stale-rejection-tab-second',
+      tabBarItemAccessibilityLabel: 'stale-rejection-tab-second-label',
+    },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Third',
+      tabBarItemTestID: 'stale-rejection-tab-third',
+      tabBarItemAccessibilityLabel: 'stale-rejection-tab-third-label',
+    },
   },
   {
     name: 'Fourth',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Fourth',
+      tabBarItemTestID: 'stale-rejection-tab-fourth',
+      tabBarItemAccessibilityLabel: 'stale-rejection-tab-fourth-label',
+    },
   },
 ];
 
