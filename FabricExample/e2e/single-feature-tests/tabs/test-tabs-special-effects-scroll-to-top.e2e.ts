@@ -1,9 +1,9 @@
 import { device, expect, element, by } from 'detox';
 import {
+  scrollUntilVisible,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
 } from '../../e2e-utils';
-
 /**
  * Selects a tab bar item. On iOS, this uses a forced coordinate tap to
  * ensure the tab is selected even if it is obstructed by the iOS 26 Liquid Glass lens.
@@ -16,12 +16,6 @@ async function forceSelectTabByLabel(label: string) {
   }
 }
 
-async function scrollDown(targetId: string, scrollViewId: string) {
-  await waitFor(element(by.id(targetId)))
-    .toBeVisible()
-    .whileElement(by.id(scrollViewId))
-    .scroll(500, 'down', NaN, 0.85);
-}
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -44,7 +38,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
   });
 
   it('Tab1 (scrollToTop: true) — re-tapping active tab scrolls list back to top', async () => {
-    await scrollDown('tab1-item-22', 'tab1-scrollview');
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab1-tab-item-label');
@@ -58,7 +52,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab2-tab-item')).tap();
     await expect(element(by.id('tab2-item-1'))).toBeVisible();
 
-    await scrollDown('tab2-item-22', 'tab2-scrollview');
+    await scrollUntilVisible('tab2-item-22', 'tab2-scrollview');
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab2-tab-item-label');
@@ -70,7 +64,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab3-tab-item')).tap();
     await expect(element(by.id('tab3-item-1'))).toBeVisible();
 
-    await scrollDown('tab3-item-22', 'tab3-scrollview');
+    await scrollUntilVisible('tab3-item-22', 'tab3-scrollview');
     await expect(element(by.id('tab3-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab3-tab-item-label');
@@ -84,7 +78,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await forceSelectTabByLabel('tab1-tab-item-label');
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
 
-    await scrollDown('tab1-item-22', 'tab1-scrollview');
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab3-tab-item-label');
