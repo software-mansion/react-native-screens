@@ -23,7 +23,12 @@ interface ScrollScreenProps {
 
 export function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
-    <SafeAreaView edges={{ bottom: Platform.OS === 'android', top:Platform.OS === 'android' }}>
+    <SafeAreaView
+      edges={{
+        bottom: Platform.OS === 'android',
+        top: Platform.OS === 'android',
+      }}
+    >
       <ScrollView testID={`${tabName}-scrollview`}>
         <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
         {Array.from({ length: 50 }, (_, i) => (
