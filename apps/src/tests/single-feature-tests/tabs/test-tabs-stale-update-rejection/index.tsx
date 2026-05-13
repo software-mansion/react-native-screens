@@ -8,9 +8,9 @@ import {
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
   useTabsHostConfig,
-} from '../../../shared/gamma/containers/tabs';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import { ToastProvider, useToast } from '../../../shared/';
+} from '@apps/shared/gamma/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 
 const scenarioDescription: ScenarioDescription = {
@@ -116,7 +116,7 @@ function AppContents() {
           2,
         )}`;
         console.warn(message);
-        toast.push({ message: message, backgroundColor: Colors.GreenLight60 });
+        toast.push({ message: `onTabSelectionRejected: ${event.nativeEvent.rejectedScreenKey}`, backgroundColor: Colors.GreenLight60 });
       }}
     />
   );
@@ -143,7 +143,7 @@ function HeavyRenderHierarchy({
 
 function blockThread(ms: number) {
   const end = Date.now() + ms;
-  while (Date.now() < end) {}
+  while (Date.now() < end) { }
 }
 
 export default createScenario(App, scenarioDescription);
