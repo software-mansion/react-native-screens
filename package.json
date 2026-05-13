@@ -220,6 +220,24 @@
         },
         "RNSScrollViewMarker": {
           "className": "RNSScrollViewMarkerComponentView"
+        },
+        "RNSBarView": {
+          "className": "RNSBarView"
+        },
+        "RNSBarItem": {
+          "className": "RNSBarItemView"
+        },
+        "RNSBarMenu": {
+          "className": "RNSBarMenuView"
+        },
+        "RNSBarMenuAction": {
+          "className": "RNSBarMenuActionView"
+        },
+        "RNSBarMenuSubmenu": {
+          "className": "RNSBarMenuSubmenuView"
+        },
+        "RNSBarSpacer": {
+          "className": "RNSBarSpacerView"
         }
       }
     }
