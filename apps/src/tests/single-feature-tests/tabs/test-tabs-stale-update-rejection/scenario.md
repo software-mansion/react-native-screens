@@ -51,7 +51,7 @@ Other: Planned, but will be implemented separately after research.
 
 3. Tap the **First** tab bar item to go back to the First tab. Tap
    **Select Third** (JS dispatches a navigation update to Third), then
-   imediately tap the **Second** tab bar item.
+   immediately tap the **Second** tab bar item.
 
 - [ ] Expected: The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
@@ -72,7 +72,7 @@ Other: Planned, but will be implemented separately after research.
    tap **Second** in the tab bar before the heavy render ends.
 
 - [ ] Expected: No `onTabSelectionRejected` toast appears. Tab Second is selected
-  imediately but after the 3 000 ms block, the final active tab is
+  immediately but after the 3 000 ms block, the final active tab is
   **Third**.
 
 6. Tap **Toggle rejectStaleNavStateUpdates** to re-enable it.
