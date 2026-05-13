@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -7,6 +7,7 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tabs special effect scroll to top',
@@ -22,14 +23,16 @@ interface ScrollScreenProps {
 
 export function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
-    <ScrollView testID={`${tabName}-scrollview`}>
-      <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
-      {Array.from({ length: 50 }, (_, i) => (
-        <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
-          Item {i + 1}
-        </Text>
-      ))}
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView testID={`${tabName}-scrollview`}>
+        <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
+        {Array.from({ length: 50 }, (_, i) => (
+          <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
+            Item {i + 1}
+          </Text>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
