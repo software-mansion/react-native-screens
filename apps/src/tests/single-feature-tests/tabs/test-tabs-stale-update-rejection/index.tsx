@@ -116,7 +116,7 @@ function AppContents() {
           2,
         )}`;
         console.warn(message);
-        toast.push({ message: `onTabSelectionRejected`, backgroundColor: Colors.GreenLight60 });
+        toast.push({ message: `onTabSelectionRejected: ${event.nativeEvent.rejectedScreenKey}`, backgroundColor: Colors.GreenLight60 });
       }}
     />
   );
@@ -143,7 +143,7 @@ function HeavyRenderHierarchy({
 
 function blockThread(ms: number) {
   const end = Date.now() + ms;
-  while (Date.now() < end) {}
+  while (Date.now() < end) { }
 }
 
 export default createScenario(App, scenarioDescription);
