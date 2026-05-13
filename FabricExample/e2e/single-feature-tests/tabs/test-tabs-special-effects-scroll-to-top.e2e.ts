@@ -1,9 +1,9 @@
 import { device, expect, element, by } from 'detox';
 import {
+  scrollUntilVisible,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
 } from '../../e2e-utils';
-
 /**
  * Selects a tab bar item. On iOS, this uses a forced coordinate tap to
  * ensure the tab is selected even if it is obstructed by the iOS 26 Liquid Glass lens.
@@ -38,7 +38,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
   });
 
   it('Tab1 (scrollToTop: true) — re-tapping active tab scrolls list back to top', async () => {
-    await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab1-tab-item-label');
@@ -52,7 +52,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab2-tab-item')).tap();
     await expect(element(by.id('tab2-item-1'))).toBeVisible();
 
-    await element(by.id('tab2-scrollview')).scroll(300, 'down', NaN, 0.85);
+    await scrollUntilVisible('tab2-item-22', 'tab2-scrollview');
     await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab2-tab-item-label');
@@ -64,7 +64,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await element(by.id('tab3-tab-item')).tap();
     await expect(element(by.id('tab3-item-1'))).toBeVisible();
 
-    await element(by.id('tab3-scrollview')).scroll(300, 'down', NaN, 0.85);
+    await scrollUntilVisible('tab3-item-22', 'tab3-scrollview');
     await expect(element(by.id('tab3-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab3-tab-item-label');
@@ -78,7 +78,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await forceSelectTabByLabel('tab1-tab-item-label');
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
 
-    await element(by.id('tab1-scrollview')).scroll(300, 'down', NaN, 0.85);
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
     await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
 
     await forceSelectTabByLabel('tab3-tab-item-label');
