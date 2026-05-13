@@ -1,39 +1,75 @@
 # Contributing to react-native-screens
 
-## Welcome!
+## Welcome
 
-Thank you for considering contributing to `react-native-screens`. It's people like you that make open source projects thrive! We love to receive contributions from our community and there are many ways for _you_ to be a part of this.
+Thank you for considering contributing to `react-native-screens`. It's people like
+you that make open source projects thrive!
 
-### Found a bug?
+We are open for community contributions to the project and there are many ways
+for you to make a change.
 
-If you’ve encountered a bug, don't hesitate to submit [an issue](https://github.com/software-mansion/react-native-screens/issues). Just check if someone didn't report it lately.
-
-When filing an issue, make sure to provide:
-
-- a short description of the problem
-- an operating system that you are currently working on
-- what happened
-- what you expected to happen
-- **snippet of code or Snack that reproduces the bug**. Check out [this guide](https://stackoverflow.com/help/minimal-reproducible-example)
-- version of `react-native` and `react-native-screens`
-
-### Got a question or an idea for a feature?
-
-We use GitHub issues exclusively for tracking bugs. For questions and feature requests check out [Discussions](https://github.com/software-mansion/react-native-screens/discussions).
-
-We've provided a template on GitHub that simplifies the process of filing an issue.
-
-Following these few steps will show great respect for the time of the developers managing and developing this open-source project.
-
-We inform you that unrespectful issues will be closed.
+See sections below for instructions on what you can do, to help us in the project
+development.
 
 ## Ways to Contribute
 
-1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues. We often get issues that have generic errors, occur only in very specific cases, do not have proper example or reproducible repository. One way to help is preparing and filling those details, which will help other contributors get up to speed with the issue faster.
+1. **Reporting issues** &ndash; this is one of the most impactful thing you can do.
 
-2. **Reviewing pull requests** &ndash; reviewing Pull Requests is crucial as it may help catch the corner cases or bugs that the developer did not notice. Every review matters as it may help polish quality of the library.
+   We do our best to assure quality of the solution we produce, however bugs happen.
+   Some of them only surface in production-scale applications or we could simply miss something.
+   Let us know. See [section on bug reporting for instructions](#reporting-a-bug).
 
-3. **Contributing to Code** &ndash; code-level contributions generally come in the form of pull requests. By contributing to code you help us with solving issues, fixing bugs or introducing new amazing features. If you want to start your adventure with open source it's good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) on GitHub. Read more about [contributing to code](#contributing-to-code).
+1. **Providing feedback and ideas** &ndash; great form of support is telling us what you think!
+
+   Maybe you have an idea for a feature that you find missing from the library, or
+   you want to share your opinion on futures that are currently planned for development?
+   Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-or-you-want-to-share-your-feedback) for more details.
+
+1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues.
+
+   We often get issues that have generic errors, occur only in very specific cases,
+   do not have proper example or reproducible repository.
+   One way to help is preparing and filling those details,
+   which will help other contributors get up to speed with the issue faster.
+
+1. **Reviewing pull requests**
+
+   Reviewing Pull Requests is crucial as it may help catch the corner cases or bugs that the developer did not notice.
+   Every review matters as it may help polish quality of the library.
+
+1. **Contributing to Code**
+
+   Code-level contributions generally come in the form of pull requests.
+   By contributing to code you help us with solving issues, fixing bugs
+   or introducing new amazing features. If you want to start your adventure
+   with open source it's good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) on GitHub. Read more about [contributing to code](#contributing-to-code).
+
+### Reporting a bug
+
+If you’ve encountered a bug, don't hesitate to submit [an issue](https://github.com/software-mansion/react-native-screens/issues).
+Please do a short research, whether the problem you are about to report, haven't been
+already reported or even solved.
+
+When filing an issue, please make sure to provide us with any information that might be
+helpful to identify and reproduce the undesired behavior.
+
+Exact list of information we expect is included in our [issue template](/.github/ISSUE_TEMPLATE/issue_template.md).
+Please adhere to it.
+
+One thing we want to emphasize here is the requirement for reproduction. It's crucial,
+and it vastly increases chances that we'll be able to solve the issue.
+
+### Got a question, an idea for a feature or you want to share your feedback?
+
+> [!note]
+> We use GitHub Issues exclusively for tracking bugs.
+> We kindly inform you, that misplaced issues or discussions might end up closed unresolved.
+
+For questions, feature requests and feedback threads we have dedicated space in
+the GitHub [Discussions](https://github.com/software-mansion/react-native-screens/discussions).
+
+Following these few steps will show great respect for the time of the developers
+managing and developing this open-source project.
 
 ### Repository overview
 
@@ -66,16 +102,23 @@ What you can do is ask the owner of an issue for such details or try provide the
 
 ## Contributing to Code
 
-Submitting Pull Requests that resolve issues is a great way to contribute to Screens. If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
+Submitting Pull Requests that resolve issues is a great way to contribute to Screens.
+If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+
+> [!note]
+> Before committing yourself to full implementation of a new feature, it's recommended to first open
+> a discussion with idea suggestion to see, whether the effect you want to achieve is aligned with
+> current library development direction. We want to avoid situations, where hours of work on feature PR
+> are wasted due to misalignment.
 
 We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The former work as a showcase of the library, the latter contain isolated props' behavior, selected interactions between props, and specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare dedicated showcases. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
 
 - `apps/Example` &ndash; source code with showcase app
 - `apps/src/tests` &ndash; source code with test examples app
-- `apps/App` &ndash; source code management
+- `apps/App` &ndash; shared source code between our example apps
 - `FabricExample/src` &ndash; wrapper with fabric architecture for showcase and test examples app
 - `TVOSExample/src` &ndash; source code with example app for TVOS
 - `src` &ndash; contains JS core code of the library
@@ -88,11 +131,11 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-4. `cd FabricExample`
-5. `yarn`
-6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
+3. `cd FabricExample`
+4. `yarn`
+5. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio.
 
-and open `react-native-screens/FabricExample/android` with Android Studio.
+Next open `react-native-screens/FabricExample/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
@@ -124,11 +167,11 @@ Codegen introduced by the [new architecture](https://github.com/reactwg/react-na
 
 If you wish to work on next major, 5.0 version of Screens (codename: "Project Gamma") or just test the new components you need to do some additional configuration.
 
-"Project Gamma" files are excluded from regular library builds, therefore any usage of "Gamma" components will crash in runtime when React Native discovers that 
+"Project Gamma" files are excluded from regular library builds, therefore any usage of "Gamma" components will crash in runtime when React Native discovers that
 component implementation is missing. To include the implementation files **you need to set `RNS_GAMMA_ENABLED` environment variable to `1` before installing pods**.
 
-Recommended approach is to set up [direnv](https://direnv.net/) as suggested [here](https://github.com/software-mansion/react-native-screens-labs/pull/197/files), 
-so that you don't have to do this manually each time. 
+Recommended approach is to set up [direnv](https://direnv.net/) as suggested [here](https://github.com/software-mansion/react-native-screens-labs/pull/197/files),
+so that you don't have to do this manually each time.
 
 ### Preparing Pull Request
 
@@ -139,9 +182,9 @@ When your code changes are ready, it is time to open your Pull Request. GitHub a
 - If you're solving specific issue, start with linking it.
 - Write what are your motivations.
 
-2. **Changes** - write what you have changes and why.
-3. **Screenshots / GIFs** &ndash; if applicable it's great idea to attach screen or video before and after changes.
-4. **Test code and steps to reproduce** &ndash; describe how others can test your change, if you didn't add `Test*.tsx` file it's good idea to add code snippets here.
+1. **Changes** - write what you have changes and why.
+2. **Screenshots / GIFs** &ndash; if applicable it's great idea to attach screen or video before and after changes.
+3. **Test code and steps to reproduce** &ndash; describe how others can test your change, if you didn't add `Test*.tsx` file it's good idea to add code snippets here.
 
 ### Do I need to prepare Pull Request for react-navigation too?
 
