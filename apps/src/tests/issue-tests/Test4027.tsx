@@ -5,7 +5,10 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button } from 'react-native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import {
+  DEFAULT_TAB_ROUTE_OPTIONS,
+  TabsContainer,
+} from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 type RouteParamList = {
@@ -36,14 +39,26 @@ function Screen1({ navigation }: StackNavigationProp) {
         {
           name: 'Tab1',
           Component: () => TabsScreen({ navigation }),
+          options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab1',
+          },
         },
         {
           name: 'Tab2',
           Component: () => TabsScreen({ navigation }),
+          options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab2',
+          },
         },
         {
           name: 'Tab3',
           Component: () => TabsScreen({ navigation }),
+          options: {
+            ...DEFAULT_TAB_ROUTE_OPTIONS,
+            title: 'Tab3',
+          },
         },
       ]}
     />
