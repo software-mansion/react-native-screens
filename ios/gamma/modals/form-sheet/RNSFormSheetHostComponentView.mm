@@ -26,8 +26,8 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
-  BOOL _prefersGrabberVisible;
   std::vector<double> _detents;
+  BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
 
   // Invalidation flags
@@ -61,9 +61,9 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
+  _detents = {};
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
-  _detents = {};
 }
 
 - (void)setupController
