@@ -14,6 +14,8 @@
 
 namespace react = facebook::react;
 
+// Predefined values for `initialDetentIndex`.
+static NSInteger const kRNSFormSheetLastDetent = -1;
 // Predefined values for `largestUndimmedDetentIndex`.
 static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
 static NSInteger const kRNSFormSheetNeverDimmed = -2;
@@ -34,6 +36,10 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
   NSInteger _largestUndimmedDetentIndex;
+  NSInteger _initialDetentIndex;
+
+  // State
+  BOOL _initialDetentApplied;
 
   // Invalidation flags
   BOOL _needsSheetPresentationUpdate;
@@ -56,6 +62,8 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
 
+  _initialDetentApplied = NO;
+
   _needsSheetPresentationUpdate = NO;
   _needsSheetConfigurationUpdate = NO;
 }
@@ -70,6 +78,7 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
+  _initialDetentIndex = 0;
 }
 
 - (void)setupController
@@ -185,10 +194,13 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
     _needsSheetPresentationUpdate = YES;
 
-    // ALWAYS refresh the sheet configuration when reopening,
-    // because UIKit destroys the presentationController after the modal is dismissed.
     if (_isOpen) {
+      // ALWAYS refresh the sheet configuration when reopening,
+      // because UIKit destroys the presentationController after the modal is dismissed.
       _needsSheetConfigurationUpdate = YES;
+      // Reset the initial-detent applied flag when reopening so the
+      // configured initialDetentIndex can be applied again.
+      _initialDetentApplied = NO;
     }
   }
 
@@ -210,6 +222,10 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
     _needsSheetConfigurationUpdate = YES;
+  }
+
+  if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
+    _initialDetentIndex = newComponentProps.initialDetentIndex;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -273,6 +289,9 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
       @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
+  UISheetPresentationControllerDetentIdentifier initialDetentIdentifier =
+      [self consumeInitialDetentIdentifierForDetents:nativeDetents];
+
   UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
       [self largestUndimmedDetentIdentifierForDetents:nativeDetents];
 
@@ -283,6 +302,10 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
     sheet.preferredCornerRadius =
         _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
     sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
+
+    if (initialDetentIdentifier != nil) {
+      sheet.selectedDetentIdentifier = initialDetentIdentifier;
+    }
   }];
 #endif // !TARGET_OS_TV
 }
@@ -347,6 +370,42 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   }
 
   return nativeDetents;
+}
+
+- (UISheetPresentationControllerDetentIdentifier)consumeInitialDetentIdentifierForDetents:
+    (NSArray<UISheetPresentationControllerDetent *> *)detents
+{
+  if (_initialDetentApplied) {
+    return nil;
+  }
+
+  _initialDetentApplied = YES;
+
+  NSInteger initialIndex =
+      _initialDetentIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : _initialDetentIndex;
+
+  if (initialIndex < 0 || initialIndex >= (NSInteger)detents.count) {
+    RCTLogError(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
+                (long)_initialDetentIndex,
+                (unsigned long)detents.count);
+    initialIndex = 0;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return detents[(NSUInteger)initialIndex].identifier;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetents
+    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)initialIndex];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
+    }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
+  }
 }
 
 - (UISheetPresentationControllerDetentIdentifier)largestUndimmedDetentIdentifierForDetents:

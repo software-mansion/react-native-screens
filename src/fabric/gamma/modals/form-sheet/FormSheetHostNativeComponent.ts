@@ -12,6 +12,7 @@ interface NativeProps extends ViewProps {
   prefersGrabberVisible?: CT.WithDefault<boolean, false>;
   preferredCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
   largestUndimmedDetentIndex?: CT.WithDefault<CT.Int32, -1>;
+  initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
