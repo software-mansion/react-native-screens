@@ -16,6 +16,7 @@
   }
 }
 
+#if !TARGET_OS_TV
 - (BOOL)emitOnDetentChangedWithIndex:(NSInteger)index
 {
   if (_reactEventEmitter != nullptr) {
@@ -26,6 +27,7 @@
     return NO;
   }
 }
+#endif // !TARGET_OS_TV
 
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSFormSheetHostEventEmitter> &)emitter
 {
