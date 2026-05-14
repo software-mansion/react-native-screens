@@ -26,6 +26,18 @@ export interface FormSheetProps {
   detents?: number[] | undefined;
 
   /**
+   * @summary Determines whether the sheet requests a grabber at the top.
+   *
+   * When `true`, the sheet requests that a small grabber indicator be shown
+   * at the top to hint that the sheet can be resized. The system may still
+   * hide the grabber in some presentation contexts.
+   *
+   * @default false
+   * @platform ios
+   */
+  prefersGrabberVisible?: boolean | undefined;
+
+  /**
    * @summary The corner radius that the sheet will attempt to present with.
    *
    * If set to `systemDefault` or a negative number, it defaults to the system's
