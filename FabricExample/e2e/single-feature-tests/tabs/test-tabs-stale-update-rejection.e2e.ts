@@ -70,13 +70,13 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
       .withTimeout(6000);
 
     await device.disableSynchronization();
+    try {
+      await element(by.id('First-select-third')).tap();
 
-    await element(by.id('First-select-third')).tap();
-
-    await element(by.label('stale-rejection-tab-second-label')).tap();
-
-    await device.enableSynchronization();
-
+      await element(by.label('stale-rejection-tab-second-label')).tap();
+    } finally {
+      await device.enableSynchronization();
+    }
     await waitFor(element(by.label('1. onTabSelectionRejected: Third')))
       .toBeVisible()
       .withTimeout(20000);
@@ -134,13 +134,13 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:false', () => {
       .withTimeout(3000);
 
     await device.disableSynchronization();
+    try {
+      await element(by.id('First-select-third')).tap();
 
-    await element(by.id('First-select-third')).tap();
-
-    await element(by.label('stale-rejection-tab-second-label')).tap();
-
-    await device.enableSynchronization();
-
+      await element(by.label('stale-rejection-tab-second-label')).tap();
+    } finally {
+      await device.enableSynchronization();
+    }
     await waitFor(element(by.label('1. onTabSelectionRejected: Third')))
       .not.toBeVisible()
       .withTimeout(8000);
