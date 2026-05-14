@@ -3,7 +3,8 @@
 
 #import <React/RCTAssert.h>
 
-@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate>
+@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
+                                             UISheetPresentationControllerDelegate>
 @end
 
 @implementation RNSFormSheetContentController
@@ -37,6 +38,7 @@
   // The presentation controller is recreated by UIKit on every present/dismiss cycle.
   // We must assign this delegate before actual presentation
   self.presentationController.delegate = self;
+  self.sheetPresentationController.delegate = self;
 }
 
 - (void)viewDidLayoutSubviews
@@ -51,6 +53,16 @@
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   [self.delegate sheetControllerDidNativeDismiss:self];
+}
+
+#pragma mark - UISheetPresentationControllerDelegate
+
+- (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
+    (UISheetPresentationController *)sheetPresentationController
+{
+  if ([self.delegate respondsToSelector:@selector(sheetController:didChangeDetentIdentifier:)]) {
+    [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
+  }
 }
 
 @end

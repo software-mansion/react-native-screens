@@ -1,5 +1,9 @@
 import { ViewProps } from 'react-native';
 
+export interface FormSheetDetentChangedEvent {
+  index: number;
+}
+
 export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
 
@@ -95,4 +99,15 @@ export interface FormSheetProps {
    * @platform ios
    */
   onNativeDismiss?: (() => void) | undefined;
+
+  /**
+   * @summary Called when the sheet settles at a new detent.
+   *
+   * Provides the `index` of the newly selected detent from the `detents` array.
+   *
+   * @platform ios
+   */
+  onDetentChanged?:
+    | ((event: { nativeEvent: FormSheetDetentChangedEvent }) => void)
+    | undefined;
 }

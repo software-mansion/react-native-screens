@@ -4,6 +4,7 @@ import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible-ios';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index-ios';
 import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
+import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed-ios';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius-ios';
 
 const scenarios = {
@@ -12,6 +13,7 @@ const scenarios = {
   TestFormSheetGrabberVisible,
   TestFormSheetInitialDetentIndex,
   TestFormSheetLargestUndimmedDetentIndex,
+  TestFormSheetOnDetentChanged,
   TestFormSheetPreferredCornerRadius,
 };
 

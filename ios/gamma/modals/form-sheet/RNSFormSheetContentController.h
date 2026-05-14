@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
+- (void)sheetController:(RNSFormSheetContentController *)controller didChangeDetentIdentifier:(NSString *)identifier;
 @end
 
 @interface RNSFormSheetContentController : UIViewController

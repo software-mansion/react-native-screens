@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSFormSheetHostEventEmitter : NSObject
 
 - (BOOL)emitOnNativeDismiss;
+- (BOOL)emitOnDetentChangedWithIndex:(NSInteger)index;
 
 @end
 
