@@ -67,30 +67,29 @@ function ContentView() {
 }
 
 function TabsNavigationButtons() {
-  const nav = useTabsNavigationContext();
-  const { routeKey } = useTabsNavigationContext();
+  const { routeKey, selectTab } = useTabsNavigationContext();
 
   return (
     <View>
       <Button
         testID={`${routeKey}-select-first`}
         title="Select First"
-        onPress={() => nav.selectTab('First')}
+        onPress={() => selectTab('First')}
       />
       <Button
         testID={`${routeKey}-select-second`}
         title="Select Second"
-        onPress={() => nav.selectTab('Second')}
+        onPress={() => selectTab('Second')}
       />
       <Button
         testID={`${routeKey}-select-third`}
         title="Select Third"
-        onPress={() => nav.selectTab('Third')}
+        onPress={() => selectTab('Third')}
       />
       <Button
         testID={`${routeKey}-select-fourth`}
         title="Select Fourth"
-        onPress={() => nav.selectTab('Fourth')}
+        onPress={() => selectTab('Fourth')}
       />
     </View>
   );
