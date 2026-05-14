@@ -137,9 +137,6 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   afterAll(async () => {
-    await device.launchApp({
-      newInstance: true,
-    });
     await device.reloadReactNative();
   });
 
