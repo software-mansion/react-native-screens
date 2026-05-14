@@ -60,3 +60,4 @@ The reproduction code should be minimal & complete. Don't exclude exports or rem
 - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change.
 - [ ] For API changes, updated relevant public types.
 - [ ] Ensured that CI passes
+- [ ] Updated documentation in [react-native-screens-docs](https://github.com/software-mansion/react-native-screens-docs) — link the matching docs PR here, or note "N/A" if this change does not need docs updates.

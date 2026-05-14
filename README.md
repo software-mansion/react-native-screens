@@ -2,6 +2,10 @@
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
+## Documentation
+
+📘 Full documentation lives at <https://docs.swmansion.com/react-native-screens/>. The source is in a dedicated repo: [software-mansion/react-native-screens-docs](https://github.com/software-mansion/react-native-screens-docs).
+
 ## Fabric
 
 To learn about how to use `react-native-screens` with Fabric architecture, head over to [Fabric README](README-Fabric.md). Instructions on how to run Fabric Example within this repo can be found in the [FabricExample README](FabricExample/README.md).
