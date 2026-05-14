@@ -4,6 +4,19 @@ import type { FormSheetProps } from './FormSheet.types';
 const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
 
+export function resolveNativeCornerRadius(
+  radius?: number | 'systemDefault',
+): number | undefined {
+  if (radius === 'systemDefault') {
+    return -1.0;
+  }
+  if (typeof radius === 'number' && radius < 0) {
+    return -1.0;
+  }
+
+  return radius;
+}
+
 /**
  * Resolves the JS `largestUndimmedDetentIndex` prop to a native numeric value.
  *
