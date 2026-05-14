@@ -137,7 +137,41 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   afterAll(async () => {
-    await device.reloadReactNative();
+    if (device.getPlatform() === 'ios') {
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: {
+          AppleTextDirection: 'NO',
+          NSForceRightToLeftWritingDirection: 'NO',
+          I18NIsRTL: 'NO',
+        },
+      });
+    } else {
+      await device.launchApp({ newInstance: true });
+      await selectSingleFeatureTestsScreen(
+        'Tabs',
+        'test-tabs-tab-bar-layout-direction',
+      );
+      try {
+        await element(by.id('react-force-rtl-picker')).tap();
+        await waitFor(element(by.id('react-force-rtl-picker')))
+          .toHaveLabel('forceRTL: true')
+          .withTimeout(3000);
+      } finally {
+        const attrs = await element(
+          by.id('react-force-rtl-picker'),
+        ).getAttributes();
+        const currentLabel =
+          'elements' in attrs ? attrs.elements[0]?.label : attrs.label;
+        if (currentLabel === 'forceRTL: true') {
+          await element(by.id('react-force-rtl-picker')).tap();
+          await waitFor(element(by.id('react-force-rtl-picker')))
+            .toHaveLabel('forceRTL: false')
+            .withTimeout(3000);
+        }
+        await device.reloadReactNative();
+      }
+    }
   });
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
