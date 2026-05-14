@@ -27,6 +27,7 @@ namespace react = facebook::react;
   // Props
   BOOL _isOpen;
   std::vector<double> _detents;
+  CGFloat _preferredCornerRadius;
 
   // Invalidation flags
   BOOL _needsSheetPresentationUpdate;
@@ -60,6 +61,7 @@ namespace react = facebook::react;
 
   _isOpen = NO;
   _detents = {};
+  _preferredCornerRadius = -1.0;
 }
 
 - (void)setupController
@@ -187,6 +189,11 @@ namespace react = facebook::react;
     _needsSheetConfigurationUpdate = YES;
   }
 
+  if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
+    _preferredCornerRadius = newComponentProps.preferredCornerRadius;
+    _needsSheetConfigurationUpdate = YES;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -251,6 +258,8 @@ namespace react = facebook::react;
 
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;
+    sheet.preferredCornerRadius =
+        _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
   }];
 #endif // !TARGET_OS_TV
 }
