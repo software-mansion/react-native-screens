@@ -45,13 +45,6 @@ async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
   }
 }
 
-async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
-  await device.launchApp({
-    newInstance: true,
-    ...(launchArgs && { launchArgs }),
-  });
-}
-
 describe('Tab Bar Layout Direction - system settings: LTR', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -132,6 +125,9 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
         'test-tabs-tab-bar-layout-direction',
       );
       await element(by.id('react-force-rtl-picker')).tap();
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: true',
+      );
       await device.reloadReactNative();
     }
     await selectSingleFeatureTestsScreen(
@@ -141,16 +137,10 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   afterAll(async () => {
-    if (device.getPlatform() === 'ios') {
-      await launchAppWithAttributes({
-        AppleTextDirection: 'NO',
-        NSForceRightToLeftWritingDirection: 'NO',
-        I18NIsRTL: 'NO',
-      });
-    } else {
-      await launchAppWithAttributes();
-      await device.reloadReactNative();
-    }
+    await device.launchApp({
+      newInstance: true,
+    });
+    await device.reloadReactNative();
   });
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
