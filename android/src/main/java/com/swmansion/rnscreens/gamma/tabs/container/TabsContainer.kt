@@ -275,6 +275,7 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
+        colorSchemeCoordinator.teardown()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
