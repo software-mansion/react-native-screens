@@ -14,7 +14,14 @@ was committed before the JS update reached the UI thread. Each rejection fires
 
 ## E2E test
 
-Other: Planned, but will be implemented separately after research.
+Yes, partially. Steps 1–3 (rejectStaleNavStateUpdates:true) and steps 4–5
+(rejectStaleNavStateUpdates:false) are covered as separate test suites,
+each preceded by a reloadReactNative to guarantee a clean baseline.
+Not covered:
+Testing changes to rejectStaleNavStateUpdates within the same session - including
+switching from false back to true - is not automated. Due to inconsistent behavior
+in Detox when toggling this setting at runtime, the only reliable way to verify
+the logic for both states is to restart the app between tests.
 
 ## Prerequisites
 
@@ -28,6 +35,12 @@ Other: Planned, but will be implemented separately after research.
 - `heavyRender` is per-tab state. Toggling it on a given tab blocks the
   JS thread for 3 000 ms on every render of that tab, simulating a slow
   update that can arrive after the user has already acted.
+- Runtime State Changes (Steps 5–7): Automated coverage is limited to fresh app
+launches. Testing the transition from true to false and back to true mid-session
+(starting at Step 5) must be done manually.
+Attention: Because of the 3000ms "heavy render" window, these steps are highly
+sensitive to timing. If the interaction is too slow, you will get a false pass.
+Ensure the app's behavior strictly matches the expected results at each transition.
 
 ## Steps
 
@@ -55,7 +68,7 @@ Other: Planned, but will be implemented separately after research.
 
 - [ ] Expected: The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
-  `onTabSelectionRejected` appears. The final active tab is
+  `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.
 
 ---
@@ -83,5 +96,5 @@ Other: Planned, but will be implemented separately after research.
 
 - [ ] Expected: The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
-  `onTabSelectionRejected` appears. The final active tab is
+  `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.
