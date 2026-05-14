@@ -2,7 +2,8 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
+# Gamma is opt-out: enabled unless RNS_GAMMA_ENABLED is explicitly '0'.
+gamma_project_enabled = !(ENV['RNS_GAMMA_ENABLED'] == '0')
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 debug_logging_enabled = ENV['RNS_DEBUG_LOGGING'] == '1'
 

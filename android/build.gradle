@@ -34,8 +34,9 @@ def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
 }
 
+// Gamma is opt-out: enabled unless rnsGammaEnabled is explicitly "false".
 def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
+    return !(project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "false")
 }
 
 def resolveReactNativeDirectory() {
