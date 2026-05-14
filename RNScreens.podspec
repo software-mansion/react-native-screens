@@ -34,12 +34,6 @@ rnscreens_config  =  {
 }
 
 if gamma_project_enabled
-  # This setting is required to make Swift code build. However we have 
-  # dependency on `React-RCTImage` pod, which does not set `DEFINES_MODULE` 
-  # and therefore it fails to build. Currently we do patch react-native source
-  # code to make it work & the fix is already merged, however it'll be most likely released 
-  # with 0.81. We can not expect users to patch the react-native sources, thus 
-  # we can not have Swift code in stable package. 
   rnscreens_config['DEFINES_MODULE'] = 'YES'
 end
 
