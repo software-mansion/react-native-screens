@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
-describe('Tab Bar preventNativeSelection', () => {
+describe('Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -10,7 +10,7 @@ describe('Tab Bar preventNativeSelection', () => {
     );
   });
 
-  it('preventNativeSelection should be set to false for First tab', async () => {
+  it('should be set to false for First tab', async () => {
     await expect(
       element(by.id('tab-bar-prevent-native-selection-view')),
     ).toBeVisible();
@@ -72,7 +72,7 @@ describe('Tab Bar preventNativeSelection', () => {
     );
   });
 
-  it('native selection should be possible after disabling preventNativeSelection', async () => {
+  it('should work independently per tab', async () => {
     await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
     await element(by.id('Third')).tap();
     await expect(element(by.id('screen-name-label'))).toHaveLabel('Third');
@@ -104,7 +104,8 @@ describe('Tab Bar preventNativeSelection', () => {
       'preventNativeSelection: false',
     );
   });
-  it('iOS only: preventNativeSelection for tabs hidden under More tab blocks native selection', async () => {
+
+  it('iOS only: for tabs hidden under More tab blocks native selection', async () => {
     if (device.getPlatform() !== 'ios') {
       return;
     }
