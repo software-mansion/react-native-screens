@@ -577,7 +577,10 @@ class TabsContainer internal constructor(
         }
 
         val currentFragments =
-            requireFragmentManager.fragments.filterIsInstance<TabsScreenFragment>().toList()
+            requireFragmentManager.fragments
+                .filterIsInstance<TabsScreenFragment>()
+                .filter { it in tabsModel }
+                .toList()
 
         if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
             return
