@@ -155,11 +155,16 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
           .toHaveLabel('forceRTL: true')
           .withTimeout(3000);
       } finally {
-        const label = await element(
+        const attrs = await element(
           by.id('react-force-rtl-picker'),
         ).getAttributes();
-        if ((label as any).label === 'forceRTL: true') {
+        const currentLabel =
+          'elements' in attrs ? attrs.elements[0]?.label : attrs.label;
+        if (currentLabel === 'forceRTL: true') {
           await element(by.id('react-force-rtl-picker')).tap();
+          await waitFor(element(by.id('react-force-rtl-picker')))
+            .toHaveLabel('forceRTL: false')
+            .withTimeout(3000);
         }
         await device.reloadReactNative();
       }
