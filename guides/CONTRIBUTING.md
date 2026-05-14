@@ -111,7 +111,7 @@ If you are eager to start contributing right away, we have list of [good first i
 > [!note]
 > Before committing yourself to full implementation of a new feature, it's recommended to first open
 > a discussion with idea suggestion to see, whether the effect you want to achieve is aligned with
-> current library development direction. We want to avoid situations, where hours of work on feature PR
+> current library development direction. We want to avoid situations, where hours of work on a feature PR
 > are wasted due to misalignment.
 
 We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The former work as a showcase of the library, the latter contain isolated props' behavior, selected interactions between props, and specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare dedicated showcases. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
