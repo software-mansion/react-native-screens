@@ -13,7 +13,7 @@ development.
 
 ## Ways to Contribute
 
-1. **Reporting issues** &ndash; this is one of the most impactful thing you can do.
+1. **Reporting issues** &ndash; this is one of the most impactful things you can do.
 
    We do our best to assure quality of the solution we produce, however bugs happen.
    Some of them only surface in production-scale applications or we could simply miss something.
@@ -22,7 +22,7 @@ development.
 1. **Providing feedback and ideas** &ndash; great form of support is telling us what you think!
 
    Maybe you have an idea for a feature that you find missing from the library, or
-   you want to share your opinion on futures that are currently planned for development?
+   you want to share your opinion on features that are currently planned for development?
    Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-or-you-want-to-share-your-feedback) for more details.
 
 1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues.
@@ -42,30 +42,30 @@ development.
    Code-level contributions generally come in the form of pull requests.
    By contributing to code you help us with solving issues, fixing bugs
    or introducing new amazing features. If you want to start your adventure
-   with open source it's good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) on GitHub. Read more about [contributing to code](#contributing-to-code).
+   with open source it's good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) on GitHub. Read more about [contributing to code](#contributing-to-code).
 
 ### Reporting a bug
 
 If you’ve encountered a bug, don't hesitate to submit [an issue](https://github.com/software-mansion/react-native-screens/issues).
-Please do a short research, whether the problem you are about to report, haven't been
-already reported or even solved.
+Please do some brief research on whether the problem you are about to report has
+already been reported or even solved.
 
 When filing an issue, please make sure to provide us with any information that might be
 helpful to identify and reproduce the undesired behavior.
 
-Exact list of information we expect is included in our [issue template](/.github/ISSUE_TEMPLATE/issue_template.md).
+Exact list of information we expect is included in our [issue template](/.github/ISSUE_TEMPLATE/bug-report.yml).
 Please adhere to it.
 
 One thing we want to emphasize here is the requirement for reproduction. It's crucial,
-and it vastly increases chances that we'll be able to solve the issue.
+and it vastly increases the chances that we'll be able to solve the issue.
 
 ### Got a question, an idea for a feature or you want to share your feedback?
 
 > [!note]
 > We use GitHub Issues exclusively for tracking bugs.
-> We kindly inform you, that misplaced issues or discussions might end up closed unresolved.
+> We kindly inform you that misplaced issues or discussions might be closed without resolution.
 
-For questions, feature requests and feedback threads we have dedicated space in
+For questions, feature requests and feedback threads we have a dedicated space in
 the GitHub [Discussions](https://github.com/software-mansion/react-native-screens/discussions).
 
 Following these few steps will show great respect for the time of the developers
@@ -103,14 +103,14 @@ What you can do is ask the owner of an issue for such details or try provide the
 ## Contributing to Code
 
 Submitting Pull Requests that resolve issues is a great way to contribute to Screens.
-If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
+If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
 > [!note]
 > Before committing yourself to full implementation of a new feature, it's recommended to first open
-> a discussion with idea suggestion to see, whether the effect you want to achieve is aligned with
+> a discussion with an idea or feature suggestion to see whether the effect you want to achieve is aligned with
 > current library development direction. We want to avoid situations, where hours of work on a feature PR
 > are wasted due to misalignment.
 
@@ -182,8 +182,8 @@ When your code changes are ready, it is time to open your Pull Request. GitHub a
 - If you're solving specific issue, start with linking it.
 - Write what are your motivations.
 
-1. **Changes** - write what you have changes and why.
-2. **Screenshots / GIFs** &ndash; if applicable it's great idea to attach screen or video before and after changes.
+1. **Changes** - write what you have changed and why.
+2. **Screenshots / GIFs** &ndash; if applicable it's a great idea to attach screen or video before and after changes.
 3. **Test code and steps to reproduce** &ndash; describe how others can test your change, if you didn't add `Test*.tsx` file it's good idea to add code snippets here.
 
 ### Do I need to prepare Pull Request for react-navigation too?
