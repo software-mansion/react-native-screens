@@ -11,7 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
 #if !TARGET_OS_TV
-- (void)sheetController:(RNSFormSheetContentController *)controller didChangeDetentIdentifier:(NSString *)identifier;
+- (void)sheetController:(RNSFormSheetContentController *)controller
+    didChangeDetentIdentifier:(nullable NSString *)identifier;
 #endif // !TARGET_OS_TV
 @end
 
