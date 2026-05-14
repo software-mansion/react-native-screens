@@ -266,6 +266,7 @@ class TabsContainer internal constructor(
         super.onAttachedToWindow()
         setupFragmentManager()
 
+        // Handle reattachment
         if (navState.isNotEmpty()) {
             restoreNavigationStateIfNeeded()
         }
@@ -564,9 +565,15 @@ class TabsContainer internal constructor(
         return true
     }
 
+    /**
+     * When Tabs are reattached to window, they might find new fragment manager. In this case
+     * we need to restore navigation state.
+     *
+     * This function is a no-op if navigation state is empty.
+     */
     private fun restoreNavigationStateIfNeeded() {
-        check(navState.isNotEmpty()) {
-            "[RNScreens] Attempted to restore empty navigation state."
+        if (navState.isEmpty()) {
+            return
         }
 
         val currentFragments =
