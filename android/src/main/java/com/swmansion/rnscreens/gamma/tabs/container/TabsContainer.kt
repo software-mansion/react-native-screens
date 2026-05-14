@@ -265,6 +265,11 @@ class TabsContainer internal constructor(
 
         super.onAttachedToWindow()
         setupFragmentManager()
+
+        if (navState.isNotEmpty()) {
+            restoreNavigationStateIfNeeded()
+        }
+
         flushPendingUpdates()
 
         colorSchemeCoordinator.setup(this) { uiNightMode ->
@@ -557,6 +562,26 @@ class TabsContainer internal constructor(
 
         // Block other callbacks
         return true
+    }
+
+    private fun restoreNavigationStateIfNeeded() {
+        check(navState.isNotEmpty()) {
+            "[RNScreens] Attempted to restore empty navigation state."
+        }
+
+        val currentFragments =
+            requireFragmentManager.fragments.filterIsInstance<TabsScreenFragment>().toList()
+
+        if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
+            return
+        } else if (currentFragments.isEmpty()) {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .add(contentView.id, selectedTab)
+                .commitAllowingStateLoss()
+        } else {
+            error("[RNScreens] Unexpected fragment manager state.")
+        }
     }
 
     private fun applyDayNightUiMode(uiMode: Int) {
