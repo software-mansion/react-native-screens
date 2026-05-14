@@ -60,9 +60,7 @@
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
     (UISheetPresentationController *)sheetPresentationController
 {
-  if ([self.delegate respondsToSelector:@selector(sheetController:didChangeDetentIdentifier:)]) {
-    [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
-  }
+  [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
 }
 
 @end
