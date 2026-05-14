@@ -266,7 +266,14 @@ class TabsContainer internal constructor(
         super.onAttachedToWindow()
         setupFragmentManager()
 
-        // Handle reattachment
+        // When TabsContainer is reattached to window, it might find new fragment manager (other
+        // than previous instance, e.g. in Stack v4 when screen is pushed & popped over screen with
+        // Tabs). In such case, we need to re-add currently selected tab screen fragment. As there
+        // might be another operation pending, we need to make sure that the state is restored
+        // before flushPendingUpdates is called. That's why inside restoreNavigationStateIfNeeded
+        // we're commiting the transaction synchronously. This might lead to a crash if another
+        // transaction is currently being commited. If this happens to be problematic, we might need
+        // to reevaluate our approach. See #4035.
         if (navState.isNotEmpty()) {
             restoreNavigationStateIfNeeded()
         }
@@ -566,8 +573,9 @@ class TabsContainer internal constructor(
     }
 
     /**
-     * When Tabs are reattached to window, they might find new fragment manager. In this case
-     * we need to restore navigation state.
+     * When Tabs are reattached to window, they might find new fragment manager. In this case we
+     * need to restore navigation state. We're commiting the transaction synchronously so that any
+     * following operations have valid restored state before their execution.
      *
      * This function is a no-op if navigation state is empty.
      */
@@ -588,7 +596,7 @@ class TabsContainer internal constructor(
             requireFragmentManager
                 .createTransactionWithReordering()
                 .add(contentView.id, selectedTab)
-                .commitAllowingStateLoss()
+                .commitNowAllowingStateLoss()
         } else {
             error("[RNScreens] Unexpected fragment manager state.")
         }
