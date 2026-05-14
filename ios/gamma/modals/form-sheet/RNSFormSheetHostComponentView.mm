@@ -14,6 +14,10 @@
 
 namespace react = facebook::react;
 
+// Predefined values for `largestUndimmedDetentIndex`.
+static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
+static NSInteger const kRNSFormSheetNeverDimmed = -2;
+
 @interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
 @end
 
@@ -29,6 +33,7 @@ namespace react = facebook::react;
   std::vector<double> _detents;
   BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
+  NSInteger _largestUndimmedDetentIndex;
 
   // Invalidation flags
   BOOL _needsSheetPresentationUpdate;
@@ -64,6 +69,7 @@ namespace react = facebook::react;
   _detents = {};
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
+  _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
 }
 
 - (void)setupController
@@ -201,6 +207,11 @@ namespace react = facebook::react;
     _needsSheetConfigurationUpdate = YES;
   }
 
+  if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
+    _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
+    _needsSheetConfigurationUpdate = YES;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -262,6 +273,8 @@ namespace react = facebook::react;
       @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
+  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
+      [self largestUndimmedDetentIdentifierForDetents:nativeDetents];
 
   // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
   [sheet animateChanges:^{
@@ -269,6 +282,7 @@ namespace react = facebook::react;
     sheet.prefersGrabberVisible = _prefersGrabberVisible;
     sheet.preferredCornerRadius =
         _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
+    sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
   }];
 #endif // !TARGET_OS_TV
 }
@@ -334,6 +348,42 @@ namespace react = facebook::react;
 
   return nativeDetents;
 }
+
+- (UISheetPresentationControllerDetentIdentifier)largestUndimmedDetentIdentifierForDetents:
+    (NSArray<UISheetPresentationControllerDetent *> *)detents
+{
+  if (_largestUndimmedDetentIndex == kRNSFormSheetAlwaysDimmed) {
+    return nil;
+  }
+
+  NSInteger ludIndex = _largestUndimmedDetentIndex == kRNSFormSheetNeverDimmed ? (NSInteger)detents.count - 1
+                                                                               : _largestUndimmedDetentIndex;
+
+  if (ludIndex < 0 || ludIndex >= (NSInteger)detents.count) {
+    RCTLogError(
+        @"[RNScreens] largestUndimmedDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to the default behavior (always dimmed).",
+        (long)_largestUndimmedDetentIndex,
+        (unsigned long)detents.count);
+    return nil;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return detents[(NSUInteger)ludIndex].identifier;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetents
+    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)ludIndex];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
+    }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
+  }
+}
+
 #endif // !TARGET_OS_TV
 
 - (BOOL)areDetentsValid
