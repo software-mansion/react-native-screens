@@ -12,7 +12,7 @@ with tabBarMinimizeBehavior.
 
 ## E2E test
 
-Yes: covers most of manual scenario steps only for iPhone; iPad testing would
+Partial: covers most of manual scenario steps only for iPhone; iPad testing would
 require app window resizing not supported by Detox.
 Not covered:
 - Text alignment verification in the bottom accessory.
