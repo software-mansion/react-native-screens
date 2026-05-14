@@ -45,6 +45,13 @@ async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
   }
 }
 
+async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
+  await device.launchApp({
+    newInstance: true,
+    ...(launchArgs && { launchArgs }),
+  });
+}
+
 describe('Tab Bar Layout Direction - system settings: LTR', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -137,10 +144,15 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
   });
 
   afterAll(async () => {
-    await device.launchApp({
-      newInstance: true,
-    });
-    await device.reloadReactNative();
+    if (device.getPlatform() === 'ios') {
+      await launchAppWithAttributes({
+        AppleTextDirection: 'NO',
+        NSForceRightToLeftWritingDirection: 'NO',
+        I18NIsRTL: 'NO',
+      });
+    } else {
+      await launchAppWithAttributes();
+    }
   });
 
   it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
