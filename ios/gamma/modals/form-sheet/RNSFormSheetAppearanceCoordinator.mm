@@ -19,6 +19,10 @@
 
 - (BOOL)isNeeded:(RNSFormSheetAppearanceUpdateFlags)flag
 {
+  if (flag == RNSFormSheetAppearanceUpdateFlagsNone) {
+    return NO;
+  }
+
   return (_updateFlags & flag) == flag;
 }
 
