@@ -295,7 +295,7 @@ namespace react = facebook::react;
 
   UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
       [RNSFormSheetDetentResolver largestUndimmedDetentIdentifierForDetents:nativeDetents
-                                                                    atIndex:_largestUndimmedDetentIndex];
+                                                           atRequestedIndex:_largestUndimmedDetentIndex];
 
   // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
   [sheet animateChanges:^{

@@ -121,7 +121,7 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
 
 + (nullable UISheetPresentationControllerDetentIdentifier)
     largestUndimmedDetentIdentifierForDetents:(NSArray<UISheetPresentationControllerDetent *> *)detents
-                                      atIndex:(NSInteger)requestedIndex
+                             atRequestedIndex:(NSInteger)requestedIndex
 {
   if (requestedIndex == kRNSFormSheetAlwaysDimmed) {
     return nil;

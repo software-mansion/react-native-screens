@@ -30,7 +30,7 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 + (nullable UISheetPresentationControllerDetentIdentifier)
     largestUndimmedDetentIdentifierForDetents:(NSArray<UISheetPresentationControllerDetent *> *)detents
-                                      atIndex:(NSInteger)requestedIndex;
+                             atRequestedIndex:(NSInteger)requestedIndex;
 
 #endif // !TARGET_OS_TV
 
