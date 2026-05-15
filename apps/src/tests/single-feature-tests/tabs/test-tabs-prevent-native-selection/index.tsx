@@ -27,11 +27,14 @@ function ContentView() {
     nav.routeOptions.preventNativeSelection ?? false;
 
   return (
-    <CenteredLayoutView>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+    <CenteredLayoutView
+      testID='tab-bar-prevent-native-selection-view'>
+      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}
+        testID='screen-name-label'>
         {nav.routeKey}
       </Text>
-      <Text style={{ textAlign: 'center' }}>
+      <Text style={{ textAlign: 'center' }}
+        testID='prevent-native-selection-state'>
         preventNativeSelection: {JSON.stringify(preventNativeSelection)}
       </Text>
       <Button
@@ -41,6 +44,7 @@ function ContentView() {
             preventNativeSelection: !preventNativeSelection,
           })
         }
+        testID='prevent-native-selection-button'
       />
       <TabsNavigationButtons />
     </CenteredLayoutView>
@@ -52,12 +56,17 @@ function TabsNavigationButtons() {
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
-      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')} />
-      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')} />
-      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')} />
+      <Button title="Select First" onPress={() => nav.selectTab('First')} testID='first-button' />
+      <Button title="Select Second" onPress={() => nav.selectTab('Second')}
+        testID='second-button' />
+      <Button title="Select Third" onPress={() => nav.selectTab('Third')}
+        testID='third-button' />
+      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')}
+        testID='fourth-button' />
+      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')}
+        testID='fifth-button' />
+      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')}
+        testID='sixth-button' />
     </View>
   );
 }
@@ -77,32 +86,32 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'First' },
+    options: { ...ROUTE_OPTIONS, title: 'First', tabBarItemTestID: 'First' },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'Second' },
+    options: { ...ROUTE_OPTIONS, title: 'Second', tabBarItemTestID: 'Second' },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'Third' },
+    options: { ...ROUTE_OPTIONS, title: 'Third', tabBarItemTestID: 'Third' },
   },
   {
     name: 'Fourth',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'Fourth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fourth', tabBarItemTestID: 'Fourth' },
   },
   {
     name: 'Fifth',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'Fifth' },
+    options: { ...ROUTE_OPTIONS, title: 'Fifth', tabBarItemTestID: 'Fifth' },
   },
   {
     name: 'Sixth',
     Component: ContentView,
-    options: { ...ROUTE_OPTIONS, title: 'Sixth' },
+    options: { ...ROUTE_OPTIONS, title: 'Sixth', tabBarItemTestID: 'Sixth' },
   },
 ];
 
