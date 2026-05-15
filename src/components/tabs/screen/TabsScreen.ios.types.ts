@@ -58,6 +58,13 @@ export interface TabsScreenAppearanceIOS {
    *
    * This property does not affect the tab bar starting from iOS 26.
    *
+   * `tabBarBackgroundColor` set for `standardAppearance` is always injected
+   * into the UIView
+   * hierarchy once set. When `scrollEdgeAppearance` is active, its
+   * `tabBarBackgroundColor`
+   * renders on top — but if that color is transparent, the `standardAppearance`
+   * `tabBarBackgroundColor` will show through from beneath.
+   *
    * @platform ios
    * @supported iOS 18 or lower
    */
