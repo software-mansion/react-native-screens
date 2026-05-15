@@ -37,13 +37,15 @@
 #if !TARGET_OS_TV
   controller.navigationItem.largeTitleDisplayMode =
       data.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
-#endif
+#endif // !TARGET_OS_TV
 }
 
 - (void)setupBarButtonItemsIfNeeded:(RNSStackHeaderData *)data
                       forController:(nonnull RNSStackScreenController *)controller
 {
+#if !TARGET_OS_TV
   controller.navigationItem.leftItemsSupplementBackButton = YES;
+#endif // !TARGET_OS_TV
   [controller.navigationItem setLeftBarButtonItems:data.leftBarButtonItems animated:YES];
   [controller.navigationItem setRightBarButtonItems:data.rightBarButtonItems animated:YES];
 }
