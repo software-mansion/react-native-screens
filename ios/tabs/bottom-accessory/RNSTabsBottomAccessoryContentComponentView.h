@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
-@property (nonatomic) RNSTabsBottomAccessoryEnvironment environment;
+@property (nonatomic, readonly) RNSTabsBottomAccessoryEnvironment environment;
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 @end
