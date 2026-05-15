@@ -227,14 +227,14 @@ namespace react = facebook::react;
   [super finalizeUpdates:updateMask];
 
   [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsConfiguration
-                            performBlock:^{
-                              [self updateConfiguration];
-                            }];
+                       performOperations:^{
+                         [self updateConfiguration];
+                       }];
 
   [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsPresentation
-                            performBlock:^{
-                              [self updatePresentationState];
-                            }];
+                       performOperations:^{
+                         [self updatePresentationState];
+                       }];
 }
 
 - (void)invalidate
