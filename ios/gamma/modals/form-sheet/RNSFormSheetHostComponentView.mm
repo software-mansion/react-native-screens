@@ -1,5 +1,6 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
 #import "RNSFormSheetDetentResolver.h"
@@ -21,6 +22,7 @@ namespace react = facebook::react;
 @implementation RNSFormSheetHostComponentView {
   RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
 
   RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
@@ -35,10 +37,6 @@ namespace react = facebook::react;
 
   // State
   BOOL _initialDetentApplied;
-
-  // Invalidation flags
-  BOOL _needsSheetPresentationUpdate;
-  BOOL _needsSheetConfigurationUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -56,11 +54,9 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
+  _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
 
   _initialDetentApplied = NO;
-
-  _needsSheetPresentationUpdate = NO;
-  _needsSheetConfigurationUpdate = NO;
 }
 
 - (void)resetProps
@@ -187,12 +183,12 @@ namespace react = facebook::react;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
-    _needsSheetPresentationUpdate = YES;
+    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsPresentation];
 
     if (_isOpen) {
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
-      _needsSheetConfigurationUpdate = YES;
+      [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
       _initialDetentApplied = NO;
@@ -201,22 +197,22 @@ namespace react = facebook::react;
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
@@ -230,15 +226,15 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 
-  if (_needsSheetConfigurationUpdate) {
-    _needsSheetConfigurationUpdate = NO;
-    [self updateConfiguration];
-  }
+  [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsConfiguration
+                            performBlock:^{
+                              [self updateConfiguration];
+                            }];
 
-  if (_needsSheetPresentationUpdate) {
-    _needsSheetPresentationUpdate = NO;
-    [self updatePresentationState];
-  }
+  [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsPresentation
+                            performBlock:^{
+                              [self updatePresentationState];
+                            }];
 }
 
 - (void)invalidate
