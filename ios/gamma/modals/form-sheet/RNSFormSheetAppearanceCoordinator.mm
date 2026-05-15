@@ -26,7 +26,7 @@
   return (_updateFlags & flag) == flag;
 }
 
-- (void)updateIfNeeded:(RNSFormSheetAppearanceUpdateFlags)flag performOperations:(NS_NOESCAPE dispatch_block_t)block
+- (void)updateIfNeeded:(RNSFormSheetAppearanceUpdateFlags)flag performOperations:(dispatch_block_t)block
 {
   if ([self isNeeded:flag]) {
     _updateFlags &= ~flag;
