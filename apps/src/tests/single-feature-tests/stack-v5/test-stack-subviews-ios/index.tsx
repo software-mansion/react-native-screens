@@ -145,6 +145,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
 
   let leftItems = Array.from({ length: config.leftItemsCount }).map((_, i) => ({
     key: `left-${i}`,
+    label: `left-${i}`,
     component: ResizingItem,
   }));
   if (leftItems.length > 1) {
@@ -154,6 +155,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   let rightItems = Array.from({ length: config.rightItemsCount }).map(
     (_, i) => ({
       key: `right-${i}`,
+      label: `right-${i}`,
       component: ResizingItem,
     }),
   );
