@@ -1,0 +1,159 @@
+#import "RNSFormSheetDetentResolver.h"
+#import "RNSDefines.h"
+
+#import <React/RCTLog.h>
+
+#if !TARGET_OS_TV
+
+static BOOL RNSAreDetentsValid(const std::vector<double> &detents)
+{
+  for (double currentDetent : detents) {
+    if (isnan(currentDetent)) {
+      return NO;
+    }
+    if (currentDetent < 0.0 || currentDetent > 1.0) {
+      return NO;
+    }
+  }
+  return YES;
+}
+
+static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
+{
+  for (size_t i = 1; i < detents.size(); i++) {
+    if (detents[i - 1] >= detents[i]) {
+      return NO;
+    }
+  }
+  return YES;
+}
+
+@implementation RNSFormSheetDetentResolver
+
++ (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsForFractions:(const std::vector<double> &)detents
+{
+  size_t detentsCount = detents.size();
+
+  // Defaults to large detent across all iOS versions
+  if (detentsCount == 0) {
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
+  if (!RNSAreDetentsValid(detents)) {
+    RCTLogError(
+        @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
+  if (!RNSAreDetentsStrictlyAscending(detents)) {
+    RCTLogError(
+        @"[RNScreens] The values in the detents array must be in strictly ascending order. Falling back to large detent.");
+    return @[ [UISheetPresentationControllerDetent largeDetent] ];
+  }
+
+  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents =
+      [[NSMutableArray alloc] initWithCapacity:detentsCount];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    for (size_t i = 0; i < detentsCount; i++) {
+      double fraction = detents[i];
+      NSString *ident = [NSString stringWithFormat:@"%zu", i];
+
+      [nativeDetents
+          addObject:[UISheetPresentationControllerDetent
+                        customDetentWithIdentifier:ident
+                                          resolver:^CGFloat(
+                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                            return context.maximumDetentValue * fraction;
+                                          }]];
+    }
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Legacy Fallback
+    if (detentsCount == 1) {
+      double firstDetentFraction = detents[0];
+      if (firstDetentFraction < 1.0) {
+        [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+      } else {
+        [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
+      }
+    } else {
+      // Handles detentsCount > 1
+      [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+      [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
+    }
+  }
+
+  return nativeDetents;
+}
+
++ (nullable UISheetPresentationControllerDetentIdentifier)initialDetentIdentifierForDetents:
+                                                              (NSArray<UISheetPresentationControllerDetent *> *)detents
+                                                                           atRequestedIndex:(NSInteger)requestedIndex
+{
+  NSInteger initialIndex = requestedIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : requestedIndex;
+
+  if (initialIndex < 0 || initialIndex >= (NSInteger)detents.count) {
+    RCTLogError(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
+                (long)requestedIndex,
+                (unsigned long)detents.count);
+    initialIndex = 0;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return detents[(NSUInteger)initialIndex].identifier;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetentsForFractions:
+    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)initialIndex];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
+    }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
+  }
+}
+
++ (nullable UISheetPresentationControllerDetentIdentifier)
+    largestUndimmedDetentIdentifierForDetents:(NSArray<UISheetPresentationControllerDetent *> *)detents
+                                      atIndex:(NSInteger)requestedIndex
+{
+  if (requestedIndex == kRNSFormSheetAlwaysDimmed) {
+    return nil;
+  }
+
+  NSInteger ludIndex = requestedIndex == kRNSFormSheetNeverDimmed ? (NSInteger)detents.count - 1 : requestedIndex;
+
+  if (ludIndex < 0 || ludIndex >= (NSInteger)detents.count) {
+    RCTLogError(
+        @"[RNScreens] largestUndimmedDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to the default behavior (always dimmed).",
+        (long)requestedIndex,
+        (unsigned long)detents.count);
+    return nil;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return detents[(NSUInteger)ludIndex].identifier;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetentsForFractions:
+    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)ludIndex];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
+    }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
+  }
+}
+
+@end
+
+#endif // !TARGET_OS_TV
