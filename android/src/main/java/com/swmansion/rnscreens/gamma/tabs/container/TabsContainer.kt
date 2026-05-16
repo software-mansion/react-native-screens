@@ -84,8 +84,19 @@ class TabsContainer internal constructor(
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
     internal val selectedTab: TabsScreenFragment
+        // During the Fabric initial-mount race, no fragment has bound
+        // its screenKey yet so the strict lookup throws. Fall back to
+        // the first bound fragment; only throw if tabsModel is truly
+        // empty (genuine programmer error vs Fabric prop-batching
+        // ordering). Without this, applyDayNightUiMode →
+        // updateTabAppearance → selectedTab crashes onAttachedToWindow
+        // even when other appearance entry points are guarded, because
+        // ColorSchemeCoordinator invokes the callback on a different
+        // code path that bypasses the entry guards.
         get() =
-            checkNotNull(getFragmentForScreenKey(navState.selectedScreenKey)) { "[RNScreens] No selected tab present" }
+            getFragmentForScreenKey(navState.selectedScreenKey)
+                ?: tabsModel.firstOrNull { !it.tabsScreen.screenKey.isNullOrBlank() }
+                ?: checkNotNull(null as TabsScreenFragment?) { "[RNScreens] No selected tab present" }
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
