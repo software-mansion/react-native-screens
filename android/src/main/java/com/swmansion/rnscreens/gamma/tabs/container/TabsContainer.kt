@@ -481,6 +481,19 @@ class TabsContainer internal constructor(
     private fun updateBottomNavigationViewAppearance() {
         RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
+        // Skip the appearance pass while any child fragment is still
+        // waiting on its screenKey prop. On Fabric Android, onAttached-
+        // ToWindow can fire and invalidate the navigation menu before
+        // setScreenKey has propagated for every tab, in which case the
+        // downstream `selectedTab` getter -> getFragmentForScreenKey
+        // -> requireScreenKey would throw IllegalStateException. The
+        // next invalidation cycle re-enters this method once all
+        // fragments have settled, so deferring is safe.
+        if (tabsModel.any { it.tabsScreen.screenKey.isNullOrBlank() }) {
+            RNSLog.w(TAG, "Skip appearance update — fragment screenKey not yet bound")
+            return
+        }
+
         appearanceCoordinator.updateTabAppearance(themedContext, this)
 
         post {
@@ -630,7 +643,10 @@ class TabsContainer internal constructor(
 
     private fun getSelectedTabsScreenFragmentId(): Int? =
         tabsModel
-            .indexOfFirst { it.requireScreenKey == navState.selectedScreenKey }
+            // Use the nullable accessor so a fragment with an unbound
+            // screenKey compares to false and is skipped rather than
+            // throwing IllegalStateException from `requireScreenKey`.
+            .indexOfFirst { it.tabsScreen.screenKey == navState.selectedScreenKey }
             .takeIf { it != -1 }
 
     private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
@@ -641,7 +657,11 @@ class TabsContainer internal constructor(
                 bottomNavigationView.menu.findItem(menuItemIdForFragmentAtIndex(index))
             }
 
-    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
+    // Use the nullable accessor so unbound fragments are simply skipped
+    // by `find` instead of throwing from `requireScreenKey`. This makes
+    // lookups safe during the Fabric initial-mount window where
+    // setScreenKey has not yet propagated for all tabs.
+    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.tabsScreen.screenKey == screenKey }
 
     private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
         checkNotNull(getFragmentForScreenKey(screenKey)) {
