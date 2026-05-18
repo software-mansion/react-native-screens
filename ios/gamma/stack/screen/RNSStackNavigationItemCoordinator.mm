@@ -20,7 +20,12 @@
   navItem.titleView = data.titleView;
 
   NSString *title = data.title;
-  navItem.title = title.length > 0 ? title : data.screenKey;
+  NSString *largeTitle = data.largeTitle;
+  if (data.largeTitleEnabled && largeTitle.length > 0) {
+    navItem.title = largeTitle;
+  } else {
+    navItem.title = title.length > 0 ? title : data.screenKey;
+  }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -36,7 +41,7 @@
 {
 #if !TARGET_OS_TV
   controller.navigationItem.largeTitleDisplayMode =
-      data.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
+      data.largeTitleEnabled ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif // !TARGET_OS_TV
 }
 

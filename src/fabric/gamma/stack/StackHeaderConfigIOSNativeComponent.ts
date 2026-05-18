@@ -11,7 +11,8 @@ export interface NativeProps extends ViewProps {
   backButtonHidden?: CT.WithDefault<boolean, false>;
 
   // iOS-specific props
-  largeTitle?: CT.WithDefault<boolean, false>;
+  largeTitle?: string | undefined;
+  largeTitleEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfigIOS', {

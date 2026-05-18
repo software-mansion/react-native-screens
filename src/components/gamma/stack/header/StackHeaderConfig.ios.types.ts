@@ -39,6 +39,7 @@ export interface StackHeaderConfigPropsIOS {
   trailingItems?:
     | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
     | undefined;
+  largeTitle?: string | undefined;
   largeTitleEnabled?: boolean | undefined;
   largeSubtitle?: string | undefined;
   largeSubtitleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;

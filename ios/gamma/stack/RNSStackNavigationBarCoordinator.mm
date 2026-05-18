@@ -21,7 +21,7 @@
         forNavigationController:(nonnull UINavigationController *)navigationController
 {
 #if !TARGET_OS_TV
-  navigationController.navigationBar.prefersLargeTitles = data.largeTitle;
+  navigationController.navigationBar.prefersLargeTitles = data.largeTitleEnabled;
 #endif
 }
 

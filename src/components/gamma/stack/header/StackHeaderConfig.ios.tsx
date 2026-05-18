@@ -56,6 +56,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     titleItem,
     subtitleItem,
     largeSubtitleItem,
+    largeTitle,
     largeTitleEnabled,
   } = ios ?? {};
 
@@ -63,7 +64,8 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     <StackHeaderConfigIOSNativeComponent
       {...restProps}
       collapsable={false}
-      largeTitle={!!largeTitleEnabled}
+      largeTitle={largeTitle}
+      largeTitleEnabled={!!largeTitleEnabled}
       style={styles.config}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}

@@ -25,13 +25,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Navigation Bar props
 
 @property (nonatomic, readonly) BOOL hidden;
-@property (nonatomic, readonly) BOOL largeTitle;
+@property (nonatomic, copy, readonly, nullable) NSString *largeTitle;
+@property (nonatomic, readonly) BOOL largeTitleEnabled;
 
 - (instancetype)initWithTitle:(nullable NSString *)title
                      subtitle:(nullable NSString *)subtitle
                     screenKey:(nullable NSString *)screenKey
                        hidden:(BOOL)hidden
-                   largeTitle:(BOOL)largeTitle
+                   largeTitle:(nullable NSString *)largeTitle
+            largeTitleEnabled:(BOOL)largeTitleEnabled
         leadingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)leadingBarButtonItems
        trailingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)trailingBarButtonItems
                     titleView:(nullable UIView *)titleView

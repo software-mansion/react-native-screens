@@ -23,7 +23,8 @@ namespace react = facebook::react;
   NSString *_Nullable _title;
   NSString *_Nullable _subtitle;
   BOOL _hidden;
-  BOOL _largeTitle;
+  NSString *_Nullable _largeTitle;
+  BOOL _largeTitleEnabled;
 
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
 
@@ -143,7 +144,11 @@ namespace react = facebook::react;
   }
 
   if (oldHeaderProps.largeTitle != newHeaderProps.largeTitle) {
-    _largeTitle = newHeaderProps.largeTitle;
+    _largeTitle = RCTNSStringFromString(newHeaderProps.largeTitle);
+  }
+
+  if (oldHeaderProps.largeTitleEnabled != newHeaderProps.largeTitleEnabled) {
+    _largeTitleEnabled = newHeaderProps.largeTitleEnabled;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -195,6 +200,7 @@ namespace react = facebook::react;
                                                              screenKey:screen.screenKey
                                                                 hidden:_hidden
                                                             largeTitle:_largeTitle
+                                                     largeTitleEnabled:_largeTitleEnabled
                                                  leadingBarButtonItems:leadingItems
                                                 trailingBarButtonItems:trailingItems
                                                              titleView:titleView

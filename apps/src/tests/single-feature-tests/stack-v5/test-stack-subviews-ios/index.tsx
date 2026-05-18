@@ -34,10 +34,12 @@ const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
 const HIT_SLOP_VALUES = ['0', '10', '30'];
 const PRESS_RETENTION_VALUES = ['0', '20', '50'];
 const TITLE_OPTIONS = ['short', 'long', 'view'];
+const LARGE_TITLE_OPTIONS = ['none', 'short', 'long'];
 
 type HitSlopValue = (typeof HIT_SLOP_VALUES)[number];
 type PressRetentionValue = (typeof PRESS_RETENTION_VALUES)[number];
 type TitleOption = (typeof TITLE_OPTIONS)[number];
+type LargeTitleOption = (typeof LARGE_TITLE_OPTIONS)[number];
 
 interface PressableProps {
   hitSlop: number;
@@ -93,6 +95,7 @@ interface Config {
   enabled: boolean;
   hidden: boolean;
   largeTitleEnabled: boolean;
+  largeTitle: LargeTitleOption;
   leadingItemsCount: number;
   trailingItemsCount: number;
   title: TitleOption;
@@ -105,6 +108,7 @@ const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
   largeTitleEnabled: false,
+  largeTitle: 'none',
   leadingItemsCount: 2,
   trailingItemsCount: 2,
   title: 'short',
@@ -186,6 +190,12 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     hidden: config.hidden,
     ios: {
       largeTitleEnabled: config.largeTitleEnabled,
+      largeTitle:
+        config.largeTitle === 'short'
+          ? SHORT_TITLE
+          : config.largeTitle === 'long'
+            ? LONG_TITLE
+            : undefined,
       titleItem:
         config.title === 'view'
           ? {
@@ -263,6 +273,12 @@ function ConfigScreen() {
         label="large header enabled"
         value={config.largeTitleEnabled}
         onValueChange={v => updateConfig('largeTitleEnabled', v)}
+      />
+      <SettingsPicker<LargeTitleOption>
+        label="large title"
+        value={config.largeTitle}
+        onValueChange={v => updateConfig('largeTitle', v)}
+        items={LARGE_TITLE_OPTIONS}
       />
       <SettingsPicker<TitleOption>
         label="title"
