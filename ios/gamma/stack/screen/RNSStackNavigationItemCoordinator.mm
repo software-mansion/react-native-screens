@@ -8,12 +8,12 @@
 
 - (void)applyConfiguration:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
 {
-  [self setupTitleIfNeeded:data forController:controller];
-  [self setupLargeTitleDisplayModeIfNeeded:data forController:controller];
-  [self setupBarButtonItemsIfNeeded:data forController:controller];
+  [self setupTitle:data forController:controller];
+  [self setupLargeTitleDisplayMode:data forController:controller];
+  [self setupBarButtonItems:data forController:controller];
 }
 
-- (void)setupTitleIfNeeded:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
+- (void)setupTitle:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
 {
   UINavigationItem *navItem = controller.navigationItem;
 
@@ -36,8 +36,8 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
-- (void)setupLargeTitleDisplayModeIfNeeded:(RNSStackHeaderData *)data
-                             forController:(nonnull RNSStackScreenController *)controller
+- (void)setupLargeTitleDisplayMode:(RNSStackHeaderData *)data
+                     forController:(nonnull RNSStackScreenController *)controller
 {
 #if !TARGET_OS_TV
   controller.navigationItem.largeTitleDisplayMode =
@@ -45,8 +45,7 @@
 #endif // !TARGET_OS_TV
 }
 
-- (void)setupBarButtonItemsIfNeeded:(RNSStackHeaderData *)data
-                      forController:(nonnull RNSStackScreenController *)controller
+- (void)setupBarButtonItems:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
 {
 #if !TARGET_OS_TV
   controller.navigationItem.leftItemsSupplementBackButton = YES;

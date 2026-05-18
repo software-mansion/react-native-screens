@@ -6,19 +6,19 @@
     forNavigationController:(nonnull UINavigationController *)navigationController
                    animated:(BOOL)animated
 {
-  [self setupVisibilityIfNeeded:data forNavigationController:navigationController animated:animated];
-  [self setupLargeTitleIfNeeded:data forNavigationController:navigationController];
+  [self setupVisibility:data forNavigationController:navigationController animated:animated];
+  [self setupLargeTitle:data forNavigationController:navigationController];
 }
 
-- (void)setupVisibilityIfNeeded:(RNSStackHeaderData *)data
-        forNavigationController:(nonnull UINavigationController *)navigationController
-                       animated:(BOOL)animated
+- (void)setupVisibility:(RNSStackHeaderData *)data
+    forNavigationController:(nonnull UINavigationController *)navigationController
+                   animated:(BOOL)animated
 {
   [navigationController setNavigationBarHidden:data.hidden animated:animated];
 }
 
-- (void)setupLargeTitleIfNeeded:(RNSStackHeaderData *)data
-        forNavigationController:(nonnull UINavigationController *)navigationController
+- (void)setupLargeTitle:(RNSStackHeaderData *)data
+    forNavigationController:(nonnull UINavigationController *)navigationController
 {
 #if !TARGET_OS_TV
   navigationController.navigationBar.prefersLargeTitles = data.largeTitleEnabled;
