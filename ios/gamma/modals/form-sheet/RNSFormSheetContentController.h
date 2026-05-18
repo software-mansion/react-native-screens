@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)presentFromWindow:(nullable UIWindow *)window;
 - (void)dismiss;
 
+- (void)invalidate;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
 - (void)removeReactSubview:(UIView *)subview;
 
+- (void)invalidate;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -90,4 +90,11 @@
   [self.delegate sheetControllerDidNativeDismiss:self];
 }
 
+#pragma mark - Teardown
+
+- (void)invalidate
+{
+  [self.contentView invalidate];
+}
+
 @end

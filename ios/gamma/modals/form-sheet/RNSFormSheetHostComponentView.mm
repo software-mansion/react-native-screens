@@ -8,7 +8,6 @@
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 
-#import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSFormSheetHostComponentDescriptor.h>
@@ -25,7 +24,6 @@ namespace react = facebook::react;
   RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
 
   RNSFormSheetContentController *_Nullable _controller;
-  RCTSurfaceTouchHandler *_Nullable _touchHandler;
 
   // Props
   BOOL _isOpen;
@@ -95,7 +93,6 @@ namespace react = facebook::react;
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
 {
-  [self syncTouchHandlerOrigin];
   [self syncShadowNodeState];
 }
 
@@ -201,15 +198,11 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-  if (_touchHandler != nil) {
-    [_touchHandler detachFromView:_controller.contentView];
-    _touchHandler = nil;
-  }
-
   if (_controller != nil) {
     if (_controller.presentingViewController != nil) {
       [_controller dismissViewControllerAnimated:NO completion:nil];
     }
+    [_controller invalidate];
     _controller = nil;
   }
 }
@@ -240,30 +233,6 @@ namespace react = facebook::react;
   // The actual React children are "teleported" and mounted inside a separate view hierarchy (RNSFormSheetContentView).
   // Returning nil ensures that this host view never intercepts touch events meant for the underlying screen.
   return nil;
-}
-
-#pragma mark - Touch Handling helpers
-
-- (void)syncTouchHandlerOrigin
-{
-  if (_controller == nil || _controller.contentView == nil) {
-    return;
-  }
-
-  // Touch handler requires absolute positioning coordinates, relatively to root (UIWindow)
-  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
-  [self updateTouchHandlerWithOrigin:contentViewOriginInWindow];
-}
-
-- (void)updateTouchHandlerWithOrigin:(CGPoint)origin
-{
-  if (_touchHandler == nil) {
-    _touchHandler = [RCTSurfaceTouchHandler new];
-    [_touchHandler attachToView:_controller.contentView];
-  }
-
-  // Aligns touch coordinate space with window coordinate space
-  _touchHandler.viewOriginOffset = origin;
 }
 
 #pragma mark - Dynamic frameworks support
