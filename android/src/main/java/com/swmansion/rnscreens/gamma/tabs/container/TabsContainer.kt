@@ -265,19 +265,6 @@ class TabsContainer internal constructor(
 
         super.onAttachedToWindow()
         setupFragmentManager()
-
-        // When TabsContainer is reattached to window, it might find new fragment manager (other
-        // than previous instance, e.g. in Stack v4 when screen is pushed & popped over screen with
-        // Tabs). In such case, we need to re-add currently selected tab screen fragment. As there
-        // might be another operation pending, we need to make sure that the state is restored
-        // before flushPendingUpdates is called. That's why inside restoreNavigationStateIfNeeded
-        // we're committing the transaction synchronously. This might lead to a crash if another
-        // transaction is currently being committed. If this happens to be problematic, we might need
-        // to reevaluate our approach. See #4035.
-        if (navState.isNotEmpty()) {
-            restoreNavigationStateIfNeeded()
-        }
-
         flushPendingUpdates()
 
         colorSchemeCoordinator.setup(this) { uiNightMode ->
@@ -288,7 +275,6 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
-        colorSchemeCoordinator.teardown()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -570,36 +556,6 @@ class TabsContainer internal constructor(
 
         // Block other callbacks
         return true
-    }
-
-    /**
-     * When Tabs are reattached to window, they might find new fragment manager. In this case we
-     * need to restore navigation state. We're committing the transaction synchronously so that any
-     * following operations have valid restored state before their execution.
-     *
-     * This function is a no-op if navigation state is empty.
-     */
-    private fun restoreNavigationStateIfNeeded() {
-        if (navState.isEmpty()) {
-            return
-        }
-
-        val currentFragments =
-            requireFragmentManager.fragments
-                .filterIsInstance<TabsScreenFragment>()
-                .filter { it in tabsModel }
-                .toList()
-
-        if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
-            return
-        } else if (currentFragments.isEmpty()) {
-            requireFragmentManager
-                .createTransactionWithReordering()
-                .add(contentView.id, selectedTab)
-                .commitNowAllowingStateLoss()
-        } else {
-            error("[RNScreens] Unexpected fragment manager state.")
-        }
     }
 
     private fun applyDayNightUiMode(uiMode: Int) {
