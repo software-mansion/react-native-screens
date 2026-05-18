@@ -17,6 +17,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Test prevent native dismiss behavior in simple single-stack scenario',
   platforms: ['android'],
+  e2eCoverage: 'tbd',
 };
 
 export function App() {

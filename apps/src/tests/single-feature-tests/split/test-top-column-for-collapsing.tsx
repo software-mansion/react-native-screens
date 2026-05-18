@@ -12,6 +12,7 @@ const scenarioDescription: ScenarioDescription = {
     Modification of this prop requires app restart.
   `,
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 export function App() {

@@ -18,6 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-stale-update-rejection',
   details: 'Test stale update rejection mechanism',
   platforms: ['android', 'ios'],
+  e2eCoverage: 'tbd',
 };
 
 function ContentView() {

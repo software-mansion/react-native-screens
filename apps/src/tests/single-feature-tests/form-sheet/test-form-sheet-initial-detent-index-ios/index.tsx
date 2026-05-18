@@ -10,6 +10,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-form-sheet-initial-detent-index-ios',
   details: 'Allows to test initialDetentIndex prop of FormSheet component.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 type InitialDetentProp = FormSheetProps['initialDetentIndex'];

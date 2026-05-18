@@ -15,6 +15,7 @@ const scenarioDescription: ScenarioDescription = {
     'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
     'False: content scrolls behind bars. True/Default: content is inset from bars.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 const ITEM_COUNT = 30;

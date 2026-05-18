@@ -25,6 +25,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-tab-bar-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
   platforms: ['android', 'ios'],
+  e2eCoverage: 'tbd',
 };
 
 function ConfigScreen() {

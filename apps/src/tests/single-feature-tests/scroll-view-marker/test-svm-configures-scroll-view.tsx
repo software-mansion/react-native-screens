@@ -17,6 +17,7 @@ const scenarioDescription: ScenarioDescription = {
     'applied to the container edges. On Android this test serves only as a setup ' +
     'for native debugging.',
   platforms: ['ios', 'android'],
+  e2eCoverage: 'tbd',
 };
 
 export function App() {

@@ -31,6 +31,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-subviews-android',
   details: 'Tests header config and subview customization.',
   platforms: ['android'],
+  e2eCoverage: 'tbd',
 };
 
 const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';

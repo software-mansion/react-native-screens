@@ -13,6 +13,7 @@ const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Appearance',
   key: 'test-tabs-appearance-defined-by-selected-tab',
   platforms: ['ios', 'android'],
+  e2eCoverage: 'tbd',
 };
 
 const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {

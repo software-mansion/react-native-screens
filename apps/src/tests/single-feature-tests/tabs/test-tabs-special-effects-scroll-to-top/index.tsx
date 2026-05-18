@@ -15,6 +15,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Test settings of specialEffect scrollToTop.',
   platforms: ['ios', 'android'],
+  e2eCoverage: 'tbd',
 };
 
 interface ScrollScreenProps {

@@ -18,6 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-more-navigation-controller',
   details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 function ContentView() {

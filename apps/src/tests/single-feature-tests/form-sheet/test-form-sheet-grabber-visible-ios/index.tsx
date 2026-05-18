@@ -11,6 +11,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows to test the `prefersGrabberVisible` prop of the FormSheet component.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 export function App() {

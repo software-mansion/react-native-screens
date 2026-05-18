@@ -18,6 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Verify lifecycle events (onWillAppear, etc.) fire on tab switch',
   platforms: ['ios', 'android'],
+  e2eCoverage: 'tbd',
 };
 
 function TabScreen() {

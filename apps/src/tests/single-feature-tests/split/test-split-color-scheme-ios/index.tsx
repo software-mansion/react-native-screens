@@ -22,6 +22,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Tests how Split handles system, React Native and prop color scheme.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 export function ConfigColumn({

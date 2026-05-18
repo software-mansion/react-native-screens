@@ -11,6 +11,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows to test largestUndimmedDetentIndex prop of FormSheet component.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 type LargestUndimmedDetentIndexProp = NonNullable<

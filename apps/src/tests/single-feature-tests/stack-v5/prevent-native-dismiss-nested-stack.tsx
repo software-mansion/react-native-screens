@@ -17,6 +17,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
   platforms: ['android'],
+  e2eCoverage: 'tbd',
 };
 
 export function App() {

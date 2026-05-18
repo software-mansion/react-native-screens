@@ -21,6 +21,13 @@ export interface ScenarioDescription {
    * What platforms does this test cover.
    */
   platforms?: ('android' | 'ios')[];
+  /**
+   * Indicates the current status of end-to-end (E2E) test coverage for this scenario.
+   * - 'full': The scenario is completely covered by E2E tests.
+   * - 'incomplete': The scenario is only partially covered.
+   * - 'tbd': The E2E coverage is yet to be determined or implemented.
+   */
+  e2eCoverage: 'full' | 'incomplete' | 'tbd';
 }
 
 /**

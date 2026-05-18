@@ -11,6 +11,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows to test the preferredCornerRadius property of the FormSheet component.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 type FormSheetCornerRadiusProp = NonNullable<

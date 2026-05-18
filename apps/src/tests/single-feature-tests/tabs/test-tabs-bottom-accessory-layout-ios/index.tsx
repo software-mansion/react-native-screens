@@ -16,6 +16,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-bottom-accessory-layout-ios',
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
 };
 
 function ShortViewUL() {

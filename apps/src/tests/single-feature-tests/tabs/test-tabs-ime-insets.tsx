@@ -18,6 +18,7 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Tests prop that determines whether BottomNavigationView respects IME insets.',
   platforms: ['android'],
+  e2eCoverage: 'tbd',
 };
 
 function ConfigScreen() {
