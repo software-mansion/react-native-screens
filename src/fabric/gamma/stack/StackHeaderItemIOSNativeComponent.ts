@@ -3,10 +3,15 @@
 import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
-type Placement = 'left' | 'right' | 'title' | 'subtitle' | 'largeSubtitle';
+type Placement =
+  | 'leading'
+  | 'trailing'
+  | 'title'
+  | 'subtitle'
+  | 'largeSubtitle';
 
 export interface NativeProps extends ViewProps {
-  placement?: CT.WithDefault<Placement, 'right'>;
+  placement?: CT.WithDefault<Placement, 'trailing'>;
   label?: CT.WithDefault<string, ''>;
 }
 

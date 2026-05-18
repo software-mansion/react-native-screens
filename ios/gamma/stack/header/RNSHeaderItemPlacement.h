@@ -3,8 +3,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, RNSHeaderItemPlacement) {
-  RNSHeaderItemPlacementLeft,
-  RNSHeaderItemPlacementRight,
+  RNSHeaderItemPlacementLeading,
+  RNSHeaderItemPlacementTrailing,
   RNSHeaderItemPlacementTitle,
   RNSHeaderItemPlacementSubtitle,
   RNSHeaderItemPlacementLargeSubtitle,

@@ -16,10 +16,10 @@ template <>
 RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement)
 {
   switch (placement) {
-    case react::RNSStackHeaderItemIOSPlacement::Left:
-      return RNSHeaderItemPlacementLeft;
-    case react::RNSStackHeaderItemIOSPlacement::Right:
-      return RNSHeaderItemPlacementRight;
+    case react::RNSStackHeaderItemIOSPlacement::Leading:
+      return RNSHeaderItemPlacementLeading;
+    case react::RNSStackHeaderItemIOSPlacement::Trailing:
+      return RNSHeaderItemPlacementTrailing;
     case react::RNSStackHeaderItemIOSPlacement::Title:
       return RNSHeaderItemPlacementTitle;
     case react::RNSStackHeaderItemIOSPlacement::Subtitle:
@@ -33,11 +33,11 @@ template <>
 RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement placement)
 {
   switch (placement) {
-    case react::RNSStackHeaderItemSpacerIOSPlacement::Left:
-      return RNSHeaderItemSpacerPlacementLeft;
-    case react::RNSStackHeaderItemSpacerIOSPlacement::Right:
+    case react::RNSStackHeaderItemSpacerIOSPlacement::Leading:
+      return RNSHeaderItemSpacerPlacementLeading;
+    case react::RNSStackHeaderItemSpacerIOSPlacement::Trailing:
     default:
-      return RNSHeaderItemSpacerPlacementRight;
+      return RNSHeaderItemSpacerPlacementTrailing;
   }
 };
 

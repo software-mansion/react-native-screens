@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 @property (nonatomic, copy, readonly, nullable) NSString *subtitle;
 @property (nonatomic, copy, readonly, nullable) NSString *screenKey;
-@property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *leftBarButtonItems;
-@property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *rightBarButtonItems;
+@property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *leadingBarButtonItems;
+@property (nonatomic, copy, readonly, nullable) NSArray<UIBarButtonItem *> *trailingBarButtonItems;
 
 /*
  * Custom views for title/subtitle/largeSubtitle placements.
@@ -32,8 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
                     screenKey:(nullable NSString *)screenKey
                        hidden:(BOOL)hidden
                    largeTitle:(BOOL)largeTitle
-           leftBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)leftBarButtonItems
-          rightBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)rightBarButtonItems
+        leadingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)leadingBarButtonItems
+       trailingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)trailingBarButtonItems
                     titleView:(nullable UIView *)titleView
                  subtitleView:(nullable UIView *)subtitleView
             largeSubtitleView:(nullable UIView *)largeSubtitleView;

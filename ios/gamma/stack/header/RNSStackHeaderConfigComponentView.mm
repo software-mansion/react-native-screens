@@ -179,13 +179,13 @@ namespace react = facebook::react;
 
   RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
 
-  NSMutableArray<UIBarButtonItem *> *leftItems = [NSMutableArray new];
-  NSMutableArray<UIBarButtonItem *> *rightItems = [NSMutableArray new];
+  NSMutableArray<UIBarButtonItem *> *leadingItems = [NSMutableArray new];
+  NSMutableArray<UIBarButtonItem *> *trailingItems = [NSMutableArray new];
   UIView *titleView = nil;
   UIView *subtitleView = nil;
   UIView *largeSubtitleView = nil;
-  [self buildBarButtonItems:leftItems
-                 rightItems:rightItems
+  [self buildBarButtonItems:leadingItems
+              trailingItems:trailingItems
                   titleView:&titleView
                subtitleView:&subtitleView
           largeSubtitleView:&largeSubtitleView];
@@ -195,16 +195,16 @@ namespace react = facebook::react;
                                                              screenKey:screen.screenKey
                                                                 hidden:_hidden
                                                             largeTitle:_largeTitle
-                                                    leftBarButtonItems:leftItems
-                                                   rightBarButtonItems:rightItems
+                                                 leadingBarButtonItems:leadingItems
+                                                trailingBarButtonItems:trailingItems
                                                              titleView:titleView
                                                           subtitleView:subtitleView
                                                      largeSubtitleView:largeSubtitleView];
   [screen.controller.headerCoordinator submitHeaderData:data];
 }
 
-- (void)buildBarButtonItems:(NSMutableArray<UIBarButtonItem *> *)leftItems
-                 rightItems:(NSMutableArray<UIBarButtonItem *> *)rightItems
+- (void)buildBarButtonItems:(NSMutableArray<UIBarButtonItem *> *)leadingItems
+              trailingItems:(NSMutableArray<UIBarButtonItem *> *)trailingItems
                   titleView:(UIView *_Nullable *_Nonnull)outTitleView
                subtitleView:(UIView *_Nullable *_Nonnull)outSubtitleView
           largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
@@ -213,11 +213,11 @@ namespace react = facebook::react;
     if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
-        case RNSHeaderItemPlacementLeft:
-          [leftItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
+        case RNSHeaderItemPlacementLeading:
+          [leadingItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
           break;
-        case RNSHeaderItemPlacementRight:
-          [rightItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
+        case RNSHeaderItemPlacementTrailing:
+          [trailingItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.hasCustomView) {
@@ -238,11 +238,11 @@ namespace react = facebook::react;
     } else if ([child isKindOfClass:RNSStackHeaderItemSpacerComponentView.class]) {
       auto *spacer = static_cast<RNSStackHeaderItemSpacerComponentView *>(child);
       switch (spacer.placement) {
-        case RNSHeaderItemSpacerPlacementLeft:
-          [leftItems addObject:[spacer makeBarButtonItem]];
+        case RNSHeaderItemSpacerPlacementLeading:
+          [leadingItems addObject:[spacer makeBarButtonItem]];
           break;
-        case RNSHeaderItemSpacerPlacementRight:
-          [rightItems addObject:[spacer makeBarButtonItem]];
+        case RNSHeaderItemSpacerPlacementTrailing:
+          [trailingItems addObject:[spacer makeBarButtonItem]];
           break;
       }
     }

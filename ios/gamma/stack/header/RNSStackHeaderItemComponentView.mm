@@ -50,7 +50,7 @@ namespace react = facebook::react;
 - (void)resetProps
 {
   _label = nil;
-  _placement = RNSHeaderItemPlacementRight;
+  _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
 }
 

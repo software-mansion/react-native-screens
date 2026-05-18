@@ -46,8 +46,8 @@
 #if !TARGET_OS_TV
   controller.navigationItem.leftItemsSupplementBackButton = YES;
 #endif // !TARGET_OS_TV
-  [controller.navigationItem setLeftBarButtonItems:data.leftBarButtonItems animated:YES];
-  [controller.navigationItem setRightBarButtonItems:data.rightBarButtonItems animated:YES];
+  [controller.navigationItem setLeftBarButtonItems:data.leadingBarButtonItems animated:YES];
+  [controller.navigationItem setRightBarButtonItems:data.trailingBarButtonItems animated:YES];
 }
 
 @end

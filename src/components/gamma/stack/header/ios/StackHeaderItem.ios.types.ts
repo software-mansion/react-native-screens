@@ -1,8 +1,8 @@
 import { ComponentType } from 'react';
 
 export type HeaderItemPlacement =
-  | 'left'
-  | 'right'
+  | 'leading'
+  | 'trailing'
   | 'title'
   | 'subtitle'
   | 'largeSubtitle';

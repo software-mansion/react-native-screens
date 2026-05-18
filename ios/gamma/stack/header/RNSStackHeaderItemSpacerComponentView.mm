@@ -33,7 +33,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _placement = RNSHeaderItemSpacerPlacementRight;
+  _placement = RNSHeaderItemSpacerPlacementTrailing;
   _didSetHeaderItemSpacerPlacement = NO;
   _isFlexible = YES;
   _width = 0;

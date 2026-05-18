@@ -51,8 +51,8 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
   const { ios, android, ...restProps } = props;
 
   const {
-    leftItems,
-    rightItems,
+    leadingItems,
+    trailingItems,
     titleItem,
     subtitleItem,
     largeSubtitleItem,
@@ -65,12 +65,12 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       collapsable={false}
       largeTitle={!!largeTitleEnabled}
       style={styles.config}>
-      {leftItems?.map(item => makeItemViewFromItem(item, 'left'))}
+      {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}
       {largeSubtitleItem &&
         makeItemViewFromItem(largeSubtitleItem, 'largeSubtitle')}
-      {rightItems?.map(item => makeItemViewFromItem(item, 'right'))}
+      {trailingItems?.map(item => makeItemViewFromItem(item, 'trailing'))}
     </StackHeaderConfigIOSNativeComponent>
   );
 }

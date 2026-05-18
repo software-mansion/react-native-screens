@@ -93,8 +93,8 @@ interface Config {
   enabled: boolean;
   hidden: boolean;
   largeTitleEnabled: boolean;
-  leftItemsCount: number;
-  rightItemsCount: number;
+  leadingItemsCount: number;
+  trailingItemsCount: number;
   title: TitleOption;
   subtitle: TitleOption;
   hitSlop: HitSlopValue;
@@ -105,8 +105,8 @@ const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
   largeTitleEnabled: false,
-  leftItemsCount: 2,
-  rightItemsCount: 2,
+  leadingItemsCount: 2,
+  trailingItemsCount: 2,
   title: 'short',
   subtitle: 'short',
   hitSlop: '0',
@@ -143,35 +143,38 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     return undefined;
   }
 
-  let leftItems: NonNullable<StackHeaderConfigProps['ios']>['leftItems'] =
+  let leadingItems: NonNullable<StackHeaderConfigProps['ios']>['leadingItems'] =
     Array.from({
-      length: config.leftItemsCount,
+      length: config.leadingItemsCount,
     }).map((_, i) => ({
       type: 'item',
-      key: `left-${i}`,
-      label: `left-${i}`,
+      key: `leading-${i}`,
+      label: `leading-${i}`,
       component: ResizingItem,
     }));
-  if (leftItems.length > 1) {
-    leftItems.splice(1, 0, {
+  if (leadingItems.length > 1) {
+    leadingItems.splice(1, 0, {
       type: 'spacer',
-      key: 'spacer-left-1',
+      key: 'spacer-leading-1',
       sizing: 'fixed',
       width: 100,
     });
   }
 
-  let rightItems: NonNullable<StackHeaderConfigProps['ios']>['rightItems'] =
-    Array.from({ length: config.rightItemsCount }).map((_, i) => ({
+  let trailingItems: NonNullable<
+    StackHeaderConfigProps['ios']
+  >['trailingItems'] = Array.from({ length: config.trailingItemsCount }).map(
+    (_, i) => ({
       type: 'item',
-      key: `right-${i}`,
-      label: `right-${i}`,
+      key: `trailing-${i}`,
+      label: `trailing-${i}`,
       component: ResizingItem,
-    }));
-  if (rightItems.length > 1) {
-    rightItems.splice(1, 0, {
+    }),
+  );
+  if (trailingItems.length > 1) {
+    trailingItems.splice(1, 0, {
       type: 'spacer',
-      key: 'spacer-right-1',
+      key: 'spacer-trailing-1',
       sizing: 'fixed',
       width: 100,
     });
@@ -206,8 +209,8 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
               component: LargeHorizontalItem,
             }
           : undefined,
-      leftItems,
-      rightItems,
+      leadingItems,
+      trailingItems,
     },
   };
 }
@@ -286,15 +289,21 @@ function ConfigScreen() {
         items={PRESS_RETENTION_VALUES}
       />
       <Button
-        title={`Toggle left items count (${config.leftItemsCount}/3)`}
+        title={`Toggle leading items count (${config.leadingItemsCount}/3)`}
         onPress={() => {
-          updateConfig('leftItemsCount', (config.leftItemsCount + 1) % 4);
+          updateConfig(
+            'leadingItemsCount',
+            (config.leadingItemsCount + 1) % 4,
+          );
         }}
       />
       <Button
-        title={`Toggle right items count (${config.rightItemsCount}/3)`}
+        title={`Toggle trailing items count (${config.trailingItemsCount}/3)`}
         onPress={() => {
-          updateConfig('rightItemsCount', (config.rightItemsCount + 1) % 4);
+          updateConfig(
+            'trailingItemsCount',
+            (config.trailingItemsCount + 1) % 4,
+          );
         }}
       />
     </ScrollView>
