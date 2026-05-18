@@ -16,6 +16,16 @@
 
 namespace react = facebook::react;
 
+static void RNSAssertIsValidHeaderChild(UIView *child)
+{
+  RCTAssert([child isKindOfClass:RNSStackHeaderItemComponentView.class] ||
+                [child isKindOfClass:RNSStackHeaderItemSpacerComponentView.class],
+            @"[RNScreens] Unexpected child of type: %@, expected %@ or %@",
+            child.class,
+            RNSStackHeaderItemComponentView.class,
+            RNSStackHeaderItemSpacerComponentView.class);
+}
+
 @interface RNSStackHeaderConfigComponentView () <RNSStackHeaderItemInvalidationDelegate>
 @end
 
@@ -72,6 +82,8 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  RNSAssertIsValidHeaderChild(childComponentView);
+
   // Do NOT call super — children are not added to the view hierarchy.
   // They are tracked here and converted to UIBarButtonItems in submitCurrentData.
   [_children insertObject:childComponentView atIndex:index];
@@ -87,6 +99,8 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  RNSAssertIsValidHeaderChild(childComponentView);
+
   if ([childComponentView isKindOfClass:RNSStackHeaderItemComponentView.class]) {
     ((RNSStackHeaderItemComponentView *)childComponentView).invalidationDelegate = nil;
   } else if ([childComponentView isKindOfClass:RNSStackHeaderItemSpacerComponentView.class]) {
@@ -226,6 +240,8 @@ namespace react = facebook::react;
           largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
 {
   for (UIView *child in _children) {
+    RNSAssertIsValidHeaderChild(child);
+
     if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
