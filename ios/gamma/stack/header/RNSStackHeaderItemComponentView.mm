@@ -2,8 +2,8 @@
 #import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderItemWrapperView.h"
-#import "RNSStackHeaderShadowStateProxy.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -21,7 +21,7 @@ namespace react = facebook::react;
   NSString *_Nullable _label;
 
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
-  RNSStackHeaderShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSStackHeaderItemShadowStateProxy *_Nonnull _shadowStateProxy;
   react::LayoutMetrics _layoutMetrics;
 }
 
@@ -37,7 +37,7 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderItemIOSProps>();
     _props = defaultProps;
     [self resetProps];
-    _shadowStateProxy = [RNSStackHeaderShadowStateProxy new];
+    _shadowStateProxy = [RNSStackHeaderItemShadowStateProxy new];
 
     // For custom items (header subviews), we rely on `intrinsicContentSize`
     // which passes correct view size from layoutMetrics to iOS
