@@ -30,7 +30,6 @@ export interface HeaderTitleCustomItem {
 }
 
 export interface StackHeaderConfigPropsIOS {
-  leadingItemsSupplementBackButton?: boolean | undefined;
   subtitleItem?: undefined;
   leadingItems?:
     | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
