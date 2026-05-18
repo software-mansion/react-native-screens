@@ -67,6 +67,10 @@
 
   for (RNSPushOperation *op in _pendingPushOperations) {
     UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
+
+    // A workaround for largeHeader bug in UIKit - see initState
+    // and
+    // https://github.com/software-mansion/react-native-screens/blob/c8a4b9b6b69184110879b219fad3cd88f696d0b8/ios/RNSScreenStack.mm#L618
     BOOL isFirstPush = ![self.topViewController isKindOfClass:RNSStackScreenController.class];
     if (isFirstPush) {
       // For the first real push (replacing the dummy VC), use
