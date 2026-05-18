@@ -45,8 +45,18 @@ namespace react = facebook::react;
     _props = defaultProps;
     _children = [NSMutableArray new];
     _shadowStateProxy = [RNSStackHeaderShadowStateProxy new];
+    [self resetProps];
   }
   return self;
+}
+
+- (void)resetProps
+{
+  _title = nil;
+  _subtitle = nil;
+  _hidden = NO;
+  _largeTitle = nil;
+  _largeTitleEnabled = NO;
 }
 
 #pragma mark - UIView lifecycle
