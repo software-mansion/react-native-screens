@@ -30,7 +30,7 @@
 
 - (RNSStackScreenController *)requireScreenController
 {
-  RCTAssert(_screenController != nil, @"Screen Controller cannot be nil");
+  RCTAssert(_screenController != nil, @"[RNScreens] Screen Controller cannot be nil");
   return _screenController;
 }
 
