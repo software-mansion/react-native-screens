@@ -20,7 +20,7 @@ Each matrix section exercises `inherit`, `ltr`, and `rtl` prop values.
 
 ## E2E test
 
-Yes: Covers all manual scenario steps for LTR/RTL configured:
+Incomplet: Covers all manual scenario steps for LTR/RTL configured:
 
 - iOS: The system RTL direction is set by app configuration setting
   `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
