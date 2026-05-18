@@ -22,7 +22,6 @@ namespace react = facebook::react;
 
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
   RNSStackHeaderItemShadowStateProxy *_Nonnull _shadowStateProxy;
-  react::LayoutMetrics _layoutMetrics;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -171,7 +170,7 @@ namespace react = facebook::react;
   _state = std::static_pointer_cast<const react::RNSStackHeaderItemShadowNode::ConcreteState>(state);
 }
 
-// (adapted from #3868)
+// (adapted from #3489)
 // UIKit controls our position in the navigation bar for all placements.
 // Do NOT call super — it would set the full frame (including the shadow node's
 // origin correction) and fight with UIKit's positioning.
