@@ -85,7 +85,7 @@ class ScreenStackFragment :
 
     private var lastInsetsCompat: WindowInsetsCompat? = null
 
-    private var sheetContainerLayoutListener: View.OnLayoutChangeListener? = null
+    private var removeLayoutListenerAction: (() -> Unit)? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -326,10 +326,8 @@ class ScreenStackFragment :
     }
 
     override fun onDestroyView() {
-        sheetContainerLayoutListener?.let { listener ->
-            screen.container?.removeOnLayoutChangeListener(listener)
-        }
-        sheetContainerLayoutListener = null
+        removeLayoutListenerAction?.invoke()
+        removeLayoutListenerAction = null
 
         if (::sheetTransitionCoordinator.isInitialized) {
             sheetTransitionCoordinator.cancel()
@@ -560,8 +558,10 @@ class ScreenStackFragment :
                 View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
                     sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
                 }
-            sheetContainerLayoutListener = listener
             addOnLayoutChangeListener(listener)
+            removeLayoutListenerAction = {
+                removeOnLayoutChangeListener(listener)
+            }
 
             // The layout listener only catches future passes, so this prevents the
             // transition coordinator from hanging indefinitely in cases where the layout has
