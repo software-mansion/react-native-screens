@@ -37,14 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
-// TODO: All of these properties should be `readonly`. Do this when support for legacy
-// architecture is dropped.
+@property (nonatomic, readonly, nullable) NSString *screenKey;
+@property (nonatomic, readonly, nullable) NSString *badgeValue;
 
-@property (nonatomic, nullable) NSString *screenKey;
-@property (nonatomic, nullable) NSString *badgeValue;
-
-@property (nonatomic, nullable) NSString *tabBarItemTestID;
-@property (nonatomic, nullable) NSString *tabBarItemAccessibilityLabel;
+@property (nonatomic, readonly, nullable) NSString *tabBarItemTestID;
+@property (nonatomic, readonly, nullable) NSString *tabBarItemAccessibilityLabel;
 
 @property (nonatomic, readonly) RNSTabsIconType iconType;
 
@@ -57,22 +54,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *scrollEdgeAppearance;
 
-@property (nonatomic, nullable) NSString *title;
+@property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly) BOOL isTitleUndefined;
 @property (nonatomic, readonly) RNSOrientation orientation;
 
-@property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
-@property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
+@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
-@property (nonatomic) BOOL preventNativeSelection;
+@property (nonatomic, readonly) BOOL preventNativeSelection;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
-@property (nonatomic, nullable) NSString *tabItemTestID;
-@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
+@property (nonatomic, readonly, nullable) NSString *tabItemTestID;
+@property (nonatomic, readonly, nullable) NSString *tabItemAccessibilityLabel;
 @property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
 
-@property (nonatomic) RNSTabsScreenSystemItem systemItem;
+@property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
 
 @end
 
@@ -80,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsScreenComponentView ()
 
-@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+@property (nonatomic, readonly) UIUserInterfaceStyle userInterfaceStyle;
 
 @end
 
