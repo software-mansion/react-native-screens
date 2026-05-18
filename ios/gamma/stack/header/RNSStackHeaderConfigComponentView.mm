@@ -213,11 +213,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   UIView *titleView = nil;
   UIView *subtitleView = nil;
   UIView *largeSubtitleView = nil;
-  [self buildBarButtonItems:leadingItems
-              trailingItems:trailingItems
-                  titleView:&titleView
-               subtitleView:&subtitleView
-          largeSubtitleView:&largeSubtitleView];
+  [self buildBarButtonItemsWithLeadingItems:leadingItems
+                              trailingItems:trailingItems
+                                  titleView:&titleView
+                               subtitleView:&subtitleView
+                          largeSubtitleView:&largeSubtitleView];
 
   RNSStackHeaderData *data = [[RNSStackHeaderData alloc] initWithTitle:_title
                                                               subtitle:_subtitle
@@ -233,11 +233,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [screen.controller.headerCoordinator submitHeaderData:data];
 }
 
-- (void)buildBarButtonItems:(NSMutableArray<UIBarButtonItem *> *)leadingItems
-              trailingItems:(NSMutableArray<UIBarButtonItem *> *)trailingItems
-                  titleView:(UIView *_Nullable *_Nonnull)outTitleView
-               subtitleView:(UIView *_Nullable *_Nonnull)outSubtitleView
-          largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
+- (void)buildBarButtonItemsWithLeadingItems:(NSMutableArray<UIBarButtonItem *> *)leadingItems
+                              trailingItems:(NSMutableArray<UIBarButtonItem *> *)trailingItems
+                                  titleView:(UIView *_Nullable *_Nonnull)outTitleView
+                               subtitleView:(UIView *_Nullable *_Nonnull)outSubtitleView
+                          largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
 {
   for (UIView *child in _children) {
     RNSAssertIsValidHeaderChild(child);
