@@ -85,6 +85,8 @@ class ScreenStackFragment :
 
     private var lastInsetsCompat: WindowInsetsCompat? = null
 
+    private var sheetContainerLayoutListener: View.OnLayoutChangeListener? = null
+
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
 
@@ -324,9 +326,15 @@ class ScreenStackFragment :
     }
 
     override fun onDestroyView() {
+        sheetContainerLayoutListener?.let { listener ->
+            screen.container?.removeOnLayoutChangeListener(listener)
+        }
+        sheetContainerLayoutListener = null
+
         if (::sheetTransitionCoordinator.isInitialized) {
             sheetTransitionCoordinator.cancel()
         }
+
         // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
         // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
         // its mActionBar field for the lifetime of the activity. When a screen is popped and the new
@@ -548,9 +556,12 @@ class ScreenStackFragment :
         }
 
         screen.container?.apply {
-            addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
-            }
+            val listener =
+                View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                    sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+                }
+            sheetContainerLayoutListener = listener
+            addOnLayoutChangeListener(listener)
 
             // The layout listener only catches future passes, so this prevents the
             // transition coordinator from hanging indefinitely in cases where the layout has
