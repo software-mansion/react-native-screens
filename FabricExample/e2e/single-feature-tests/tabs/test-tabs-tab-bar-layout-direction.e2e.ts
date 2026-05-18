@@ -45,6 +45,13 @@ async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
   }
 }
 
+async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
+  await device.launchApp({
+    newInstance: true,
+    ...(launchArgs && { launchArgs }),
+  });
+}
+
 describe('Tab Bar Layout Direction - system settings: LTR', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -125,6 +132,9 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
         'test-tabs-tab-bar-layout-direction',
       );
       await element(by.id('react-force-rtl-picker')).tap();
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: true',
+      );
       await device.reloadReactNative();
     }
     await selectSingleFeatureTestsScreen(
@@ -135,25 +145,13 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
 
   afterAll(async () => {
     if (device.getPlatform() === 'ios') {
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          AppleTextDirection: 'NO',
-          NSForceRightToLeftWritingDirection: 'NO',
-          I18NIsRTL: 'NO',
-        },
+      await launchAppWithAttributes({
+        AppleTextDirection: 'NO',
+        NSForceRightToLeftWritingDirection: 'NO',
+        I18NIsRTL: 'NO',
       });
     } else {
-      await device.launchApp({ newInstance: true });
-      await selectSingleFeatureTestsScreen(
-        'Tabs',
-        'test-tabs-tab-bar-layout-direction',
-      );
-      await element(by.id('react-force-rtl-picker')).multiTap(2);
-      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
-        'forceRTL: false',
-      );
-      await device.reloadReactNative();
+      await launchAppWithAttributes();
     }
   });
 

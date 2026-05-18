@@ -7,10 +7,6 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTInvalidating.h>
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSTabsHostComponentView;
@@ -20,12 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding
-#if !RCT_NEW_ARCH_ENABLED
-                                                          ,
-                                                          RCTInvalidating
-#endif
-                                                          >
+@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -101,14 +92,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsScreenEventEmitter *)reactEventEmitter;
-
-#if !RCT_NEW_ARCH_ENABLED
-#pragma mark - LEGACY Event emitting blocks
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillAppear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidAppear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillDisappear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidDisappear;
-#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 

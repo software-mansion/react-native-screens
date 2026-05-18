@@ -2,12 +2,8 @@
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <rnscreens/RNSTabsBottomAccessoryShadowNode.h>
-#else // RCT_NEW_ARCH_ENABLED
-#import <React/RCTUIManager.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSTabsBottomAccessoryShadowStateProxy {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
@@ -32,7 +28,6 @@
 - (void)updateShadowStateWithFrame:(CGRect)frame
 {
   if (!CGRectEqualToRect(frame, _previousFrame)) {
-#if RCT_NEW_ARCH_ENABLED
     if (_bottomAccessoryView.state != nullptr) {
       auto newState =
           react::RNSTabsBottomAccessoryState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
@@ -44,10 +39,6 @@
       );
       _previousFrame = frame;
     }
-#else // RCT_NEW_ARCH_ENABLED
-    [_bottomAccessoryView.bridge.uiManager setSize:frame.size forView:_bottomAccessoryView];
-    _previousFrame = frame;
-#endif // RCT_NEW_ARCH_ENABLED
   }
 }
 
