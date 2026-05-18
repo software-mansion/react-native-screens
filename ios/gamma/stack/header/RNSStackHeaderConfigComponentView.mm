@@ -1,10 +1,10 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSLog.h"
-#import "RNSShadowStateFrameTracker.h"
 #import "RNSStackHeaderData.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
+#import "RNSStackHeaderShadowStateProxy.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -29,7 +29,7 @@ namespace react = facebook::react;
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
 
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
-  RNSShadowStateFrameTracker *_Nonnull _frameTracker;
+  RNSStackHeaderShadowStateProxy *_Nonnull _shadowStateProxy;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -44,7 +44,7 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderConfigIOSProps>();
     _props = defaultProps;
     _children = [NSMutableArray new];
-    _frameTracker = [RNSShadowStateFrameTracker new];
+    _shadowStateProxy = [RNSStackHeaderShadowStateProxy new];
   }
   return self;
 }
@@ -110,7 +110,7 @@ namespace react = facebook::react;
 
   UIView *screenView = self.superview;
   CGRect navBarFrame = [navigationBar convertRect:navigationBar.bounds toView:screenView];
-  if (![_frameTracker updateFrameIfNeeded:navBarFrame]) {
+  if (![_shadowStateProxy updateShadowStateWithFrame:navBarFrame]) {
     return;
   }
 
