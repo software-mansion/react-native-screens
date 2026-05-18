@@ -324,6 +324,9 @@ class ScreenStackFragment :
     }
 
     override fun onDestroyView() {
+        if (::sheetTransitionCoordinator.isInitialized) {
+            sheetTransitionCoordinator.cancel()
+        }
         // ScreenStackHeaderConfig.onUpdate() calls activity.setSupportActionBar(toolbar) each time
         // the top screen updates. AppCompatDelegateImpl stores the resulting ToolbarActionBar in
         // its mActionBar field for the lifetime of the activity. When a screen is popped and the new
@@ -544,8 +547,17 @@ class ScreenStackFragment :
             }
         }
 
-        screen.container?.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+        screen.container?.apply {
+            addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+            }
+
+            // The layout listener only catches future passes, so this prevents the
+            // transition coordinator from hanging indefinitely in cases where the layout has
+            // finished before we attached the listener.
+            if (isLaidOut && width > 0 && height > 0) {
+                sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+            }
         }
     }
 
