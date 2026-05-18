@@ -18,6 +18,9 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
 
   RNSStackHeaderConfigState() {}
 
+  Size frameSize{};
+  Point contentOffset{};
+
 #ifdef ANDROID
   RNSStackHeaderConfigState(
       RNSStackHeaderConfigState const &previousState,
@@ -31,9 +34,6 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
                 (Float)data["contentOffsetX"].getDouble(),
                 (Float)data["contentOffsetY"].getDouble()}) {}
 
-  Size frameSize{};
-  Point contentOffset{};
-
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
@@ -41,9 +41,6 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
 #else // ANDROID
   RNSStackHeaderConfigState(Size frameSize_, Point contentOffset_)
       : frameSize(frameSize_), contentOffset(contentOffset_) {};
-
-  const Size frameSize{};
-  const Point contentOffset{};
 #endif // ANDROID
 };
 
