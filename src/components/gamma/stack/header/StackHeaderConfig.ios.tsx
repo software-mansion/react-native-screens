@@ -13,35 +13,6 @@ import {
   HeaderTitleItem,
 } from './StackHeaderConfig.ios.types';
 
-function makeItemViewFromItem(
-  item:
-    | HeaderInlineItem
-    | HeaderInlineCustomItem
-    | HeaderTitleItem
-    | HeaderTitleCustomItem
-    | HeaderSpacerItem,
-  placement: HeaderItemPlacement,
-) {
-  if ('type' in item && item.type === 'spacer') {
-    const { key, ...rest } = item as HeaderSpacerItem;
-
-    return (
-      <StackHeaderItemSpacer
-        key={key}
-        itemKey={key}
-        placement={placement}
-        {...rest}
-      />
-    );
-  }
-
-  const { key, ...rest } = item;
-
-  return (
-    <StackHeaderItem key={key} itemKey={key} placement={placement} {...rest} />
-  );
-}
-
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
@@ -74,6 +45,35 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
         makeItemViewFromItem(largeSubtitleItem, 'largeSubtitle')}
       {trailingItems?.map(item => makeItemViewFromItem(item, 'trailing'))}
     </StackHeaderConfigIOSNativeComponent>
+  );
+}
+
+function makeItemViewFromItem(
+  item:
+    | HeaderInlineItem
+    | HeaderInlineCustomItem
+    | HeaderTitleItem
+    | HeaderTitleCustomItem
+    | HeaderSpacerItem,
+  placement: HeaderItemPlacement,
+) {
+  if ('type' in item && item.type === 'spacer') {
+    const { key, ...rest } = item as HeaderSpacerItem;
+
+    return (
+      <StackHeaderItemSpacer
+        key={key}
+        itemKey={key}
+        placement={placement}
+        {...rest}
+      />
+    );
+  }
+
+  const { key, ...rest } = item;
+
+  return (
+    <StackHeaderItem key={key} itemKey={key} placement={placement} {...rest} />
   );
 }
 
