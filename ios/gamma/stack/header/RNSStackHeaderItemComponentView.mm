@@ -1,11 +1,11 @@
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
-#import "RNSLog.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderItemWrapperView.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
@@ -209,11 +209,11 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newItemProps = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(props);
   const auto &oldItemProps = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(_props);
 
-  bool needsUpdate = NO;
+  BOOL needsUpdate = NO;
 
   if (oldItemProps.placement != newItemProps.placement) {
     if (_didSetHeaderItemPlacement) {
-      RNSLog(@"Changing item placement at runtime is not supported");
+      RCTLogWarn(@"[RNScreens] Changing header item placement at runtime is not supported");
     } else {
       _placement = rnscreens::conversion::convert<RNSHeaderItemPlacement>(newItemProps.placement);
     }

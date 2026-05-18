@@ -1,7 +1,7 @@
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSConversions-Stack.h"
-#import "RNSLog.h"
 
+#import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -62,7 +62,7 @@ namespace react = facebook::react;
 
   if (oldSpacerProps.placement != newSpacerProps.placement) {
     if (_didSetHeaderItemSpacerPlacement) {
-      RNSLog(@"Changing item placement at runtime is not supported");
+      RCTLogWarn(@"[RNScreens] Changing header item spacer placement at runtime is not supported");
     } else {
       _placement = rnscreens::conversion::convert<RNSHeaderItemSpacerPlacement>(newSpacerProps.placement);
     }
