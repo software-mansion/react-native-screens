@@ -1,6 +1,6 @@
-#import "RNSStackHeaderShadowStateProxy.h"
+#import "RNSStackHeaderConfigShadowStateProxy.h"
 
-@implementation RNSStackHeaderShadowStateProxy {
+@implementation RNSStackHeaderConfigShadowStateProxy {
   CGRect _previousFrame;
 }
 

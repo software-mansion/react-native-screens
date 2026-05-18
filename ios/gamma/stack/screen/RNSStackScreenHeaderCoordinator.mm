@@ -44,12 +44,11 @@
 
 - (void)applyBarConfigurationIfNeeded:(BOOL)animated
 {
-  RNSStackScreenController *screenController = [self requireScreenController];
-
   if (_lastHeaderData == nil) {
     return;
   }
 
+  RNSStackScreenController *screenController = [self requireScreenController];
   UINavigationController *navController = screenController.navigationController;
   if (navController == nil) {
     return;

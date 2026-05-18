@@ -1,10 +1,10 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSLog.h"
+#import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderData.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
-#import "RNSStackHeaderShadowStateProxy.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -39,7 +39,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
 
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
-  RNSStackHeaderShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -48,7 +48,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderConfigIOSProps>();
     _props = defaultProps;
     _children = [NSMutableArray new];
-    _shadowStateProxy = [RNSStackHeaderShadowStateProxy new];
+    _shadowStateProxy = [RNSStackHeaderConfigShadowStateProxy new];
     [self resetProps];
   }
   return self;

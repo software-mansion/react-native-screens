@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @class RNSStackHeaderShadowStateProxy
  * @brief Tracks frame changes for stack header shadow state updates.
  */
-@interface RNSStackHeaderShadowStateProxy : NSObject
+@interface RNSStackHeaderConfigShadowStateProxy : NSObject
 
 /**
  * Updates the tracked frame if it differs from the previously recorded frame.
