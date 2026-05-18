@@ -1,17 +1,28 @@
 import { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import React from 'react';
-import { HeaderItem, HeaderSpacerItem } from './StackHeaderConfig.ios.types';
 import { HeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
 import { StyleSheet } from 'react-native';
+import {
+  HeaderInlineCustomItem,
+  HeaderInlineItem,
+  HeaderSpacerItem,
+  HeaderTitleCustomItem,
+  HeaderTitleItem,
+} from './StackHeaderConfig.ios.types';
 
 function makeItemViewFromItem(
-  item: HeaderItem | HeaderSpacerItem,
+  item:
+    | HeaderInlineItem
+    | HeaderInlineCustomItem
+    | HeaderTitleItem
+    | HeaderTitleCustomItem
+    | HeaderSpacerItem,
   placement: HeaderItemPlacement,
 ) {
-  if ('size' in item) {
+  if ('type' in item && item.type === 'spacer') {
     const { key, ...rest } = item as HeaderSpacerItem;
 
     return (
@@ -24,7 +35,7 @@ function makeItemViewFromItem(
     );
   }
 
-  const { key, ...rest } = item as HeaderItem;
+  const { key, ...rest } = item;
 
   return (
     <StackHeaderItem key={key} itemKey={key} placement={placement} {...rest} />

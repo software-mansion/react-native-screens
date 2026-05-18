@@ -5,25 +5,41 @@ export interface HeaderBaseItem {
   label?: string | undefined;
 }
 
-export interface HeaderCustomItem extends HeaderBaseItem {
+export interface HeaderInlineItem extends HeaderBaseItem {
+  type: 'item';
+}
+
+export interface HeaderInlineCustomItem {
+  key: string;
+  type: 'item';
   component: ComponentType;
 }
 
 export interface HeaderSpacerItem {
   key: string;
-  size?: 'fixed' | 'flexible';
+  type: 'spacer';
+  sizing?: 'fixed' | 'flexible';
   width?: number;
 }
 
-export type HeaderItem = HeaderBaseItem | HeaderCustomItem;
+export interface HeaderTitleItem extends HeaderBaseItem {}
+
+export interface HeaderTitleCustomItem {
+  key: string;
+  component: ComponentType;
+}
 
 export interface StackHeaderConfigPropsIOS {
   leftItemsSupplementBackButton?: boolean | undefined;
-  subtitleItem?: HeaderItem | undefined;
-  leftItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
-  titleItem?: HeaderItem | undefined;
-  rightItems?: (HeaderItem | HeaderSpacerItem)[] | undefined;
+  subtitleItem?: undefined;
+  leftItems?:
+    | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
+    | undefined;
+  titleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
+  rightItems?:
+    | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
+    | undefined;
   largeTitleEnabled?: boolean | undefined;
   largeSubtitle?: string | undefined;
-  largeSubtitleItem?: HeaderItem | undefined;
+  largeSubtitleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
 }

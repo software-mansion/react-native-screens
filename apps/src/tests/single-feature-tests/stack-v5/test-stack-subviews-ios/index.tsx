@@ -143,26 +143,36 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     return undefined;
   }
 
-  let leftItems = Array.from({ length: config.leftItemsCount }).map((_, i) => ({
-    key: `left-${i}`,
-    label: `left-${i}`,
-    component: ResizingItem,
-  }));
+  let leftItems: NonNullable<StackHeaderConfigProps['ios']>['leftItems'] =
+    Array.from({
+      length: config.leftItemsCount,
+    }).map((_, i) => ({
+      type: 'item',
+      key: `left-${i}`,
+      label: `left-${i}`,
+      component: ResizingItem,
+    }));
   if (leftItems.length > 1) {
-    leftItems.splice(1, 0, { key: 'spacer-left-1', size: 'fixed', width: 100 });
+    leftItems.splice(1, 0, {
+      type: 'spacer',
+      key: 'spacer-left-1',
+      sizing: 'fixed',
+      width: 100,
+    });
   }
 
-  let rightItems = Array.from({ length: config.rightItemsCount }).map(
-    (_, i) => ({
+  let rightItems: NonNullable<StackHeaderConfigProps['ios']>['rightItems'] =
+    Array.from({ length: config.rightItemsCount }).map((_, i) => ({
+      type: 'item',
       key: `right-${i}`,
       label: `right-${i}`,
       component: ResizingItem,
-    }),
-  );
+    }));
   if (rightItems.length > 1) {
     rightItems.splice(1, 0, {
+      type: 'spacer',
       key: 'spacer-right-1',
-      size: 'fixed',
+      sizing: 'fixed',
       width: 100,
     });
   }
