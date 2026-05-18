@@ -7,6 +7,7 @@ const scenarioDescription: ScenarioDescription = {
     'Tests how Split handles system, React Native and prop color scheme.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

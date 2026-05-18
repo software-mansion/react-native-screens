@@ -7,6 +7,7 @@ const scenarioDescription: ScenarioDescription = {
     'Allows to test the preferredCornerRadius property of the FormSheet component.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

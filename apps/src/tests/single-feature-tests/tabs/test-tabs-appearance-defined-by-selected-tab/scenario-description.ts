@@ -5,6 +5,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-appearance-defined-by-selected-tab',
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

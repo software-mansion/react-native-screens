@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Test stale update rejection mechanism',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

@@ -7,6 +7,7 @@ const scenarioDescription: ScenarioDescription = {
     'Test settings of specialEffect scrollToTop.',
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

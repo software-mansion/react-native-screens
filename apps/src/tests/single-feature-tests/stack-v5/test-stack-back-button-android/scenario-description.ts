@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Tests back button customization: hidden, tint color, custom icon.',
   platforms: ['android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

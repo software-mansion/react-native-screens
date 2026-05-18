@@ -5,6 +5,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'tabs-screen-orientation',
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

@@ -7,6 +7,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'cit-orientation-tabs-in-stack',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

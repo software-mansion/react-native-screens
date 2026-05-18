@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Test tabs bottom accessory with various contents',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

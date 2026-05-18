@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Allows to test the basic functionality of FormSheet component.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

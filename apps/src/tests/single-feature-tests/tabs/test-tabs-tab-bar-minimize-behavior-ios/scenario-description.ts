@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Test tab bar minimize behavior for iOS 26+.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

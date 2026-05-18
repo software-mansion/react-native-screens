@@ -8,6 +8,7 @@ const scenarioDescription: ScenarioDescription = {
     'False: content scrolls behind bars. True/Default: content is inset from bars.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

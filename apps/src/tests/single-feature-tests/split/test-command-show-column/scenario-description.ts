@@ -5,6 +5,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-command-show-column',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

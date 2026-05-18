@@ -28,6 +28,10 @@ export interface ScenarioDescription {
    * - 'tbd': The E2E coverage is yet to be determined or implemented.
    */
   e2eCoverage: 'full' | 'incomplete' | 'tbd';
+  /**
+   * Whether this scenario should be included in the smoke test suite.
+   */
+  smokeTest: boolean;
 }
 
 /**

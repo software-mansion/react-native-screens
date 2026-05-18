@@ -5,6 +5,7 @@ const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-tab-bar-experimental-user-interface-style-ios',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

@@ -7,6 +7,7 @@ const scenarioDescription: ScenarioDescription = {
     'Verify lifecycle events (onWillAppear, etc.) fire on tab switch',
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

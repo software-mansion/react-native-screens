@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'High contrast screens to test animations on Android',
   platforms: ['android'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

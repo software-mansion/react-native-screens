@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;

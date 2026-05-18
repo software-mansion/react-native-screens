@@ -6,6 +6,7 @@ const scenarioDescription: ScenarioDescription = {
   details: 'Test nesting Stack v5 inside a FormSheet',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 export default scenarioDescription;
