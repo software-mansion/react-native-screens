@@ -4,8 +4,6 @@
 
 @implementation RNSStackNavigationItemCoordinator
 
-#pragma mark - Public
-
 - (void)applyConfiguration:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
 {
   [self setupTitle:data forController:controller];
