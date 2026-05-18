@@ -40,7 +40,7 @@ class BottomSheetTransitionCoordinator {
     // - a WindowInsets dispatch reaching the listener attached in
     // ScreenStackFragment#attachInsetsAndLayoutListenersToBottomSheet.
     //
-    // In some setups, e.g. in brownfield these signals are unreliable, because
+    // In some setups, e.g. in brownfield setups these signals are unreliable because
     // the host Activity has already dispatched its insets and these might not be
     // reached e.g. when some View higher in the hierarchy decided to consume them.
     //
