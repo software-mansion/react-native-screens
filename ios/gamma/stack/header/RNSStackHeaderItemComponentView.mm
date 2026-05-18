@@ -131,7 +131,7 @@ namespace react = facebook::react;
     return [[UIBarButtonItem alloc] initWithCustomView:[self makeWrappedViewWithFrameChangeDelegate:delegate]];
   }
 
-  return [[UIBarButtonItem alloc] initWithTitle:_label ?: @"" style:UIBarButtonItemStylePlain target:nil action:nil];
+  return [[UIBarButtonItem alloc] initWithTitle:_label style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 #pragma mark - RNSViewFrameChangeDelegate

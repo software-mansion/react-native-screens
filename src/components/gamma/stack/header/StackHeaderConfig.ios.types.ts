@@ -15,12 +15,20 @@ export interface HeaderInlineCustomItem {
   component: ComponentType;
 }
 
-export interface HeaderSpacerItem {
+interface HeaderFixedSpacerItem {
   key: string;
   type: 'spacer';
-  sizing?: 'fixed' | 'flexible';
-  width?: number;
+  sizing: 'fixed';
+  width: number;
 }
+
+interface HeaderFlexibleSpacerItem {
+  key: string;
+  type: 'spacer';
+  sizing: 'flexible';
+}
+
+export type HeaderSpacerItem = HeaderFixedSpacerItem | HeaderFlexibleSpacerItem;
 
 export interface HeaderTitleItem extends HeaderBaseItem {}
 
