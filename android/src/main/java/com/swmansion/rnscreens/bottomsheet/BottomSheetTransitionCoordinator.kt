@@ -51,11 +51,12 @@ class BottomSheetTransitionCoordinator {
         if (areInsetsApplied || insetsFallbackRunnable != null) {
             return
         }
-        val runnable = Runnable {
-            insetsFallbackRunnable = null
-            areInsetsApplied = true
-            triggerSheetEnterTransitionIfReady(screen)
-        }
+        val runnable =
+            Runnable {
+                insetsFallbackRunnable = null
+                areInsetsApplied = true
+                triggerSheetEnterTransitionIfReady(screen)
+            }
 
         insetsFallbackRunnable = runnable
         handler.postDelayed(runnable, INSETS_FALLBACK_MS)
