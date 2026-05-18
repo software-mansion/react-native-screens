@@ -24,7 +24,7 @@
   if (data.largeTitleEnabled && largeTitle.length > 0) {
     navItem.title = largeTitle;
   } else {
-    navItem.title = title.length > 0 ? title : data.screenKey;
+    navItem.title = title;
   }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
