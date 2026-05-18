@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
-import {
-  createScenario,
-  ScenarioDescription,
-} from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
@@ -14,14 +12,6 @@ import type {
   StackHeaderConfigProps,
   StackHeaderConfigPropsAndroid,
 } from 'react-native-screens/experimental';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Back Button',
-  key: 'test-stack-back-button',
-  details: 'Tests back button customization: hidden, tint color, custom icon.',
-  platforms: ['android'],
-  e2eCoverage: 'tbd',
-};
 
 type TintColorOption = 'default' | 'purple' | 'red' | 'green';
 type IconOption = 'default' | 'imageSource' | 'drawableResource';

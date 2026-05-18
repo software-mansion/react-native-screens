@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { FormSheet, type FormSheetProps } from 'react-native-screens/experimental';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Sheet preferred corner radius',
-  key: 'test-form-sheet-preferred-corner-radius-ios',
-  details:
-    'Allows to test the preferredCornerRadius property of the FormSheet component.',
-  platforms: ['ios'],
-  e2eCoverage: 'tbd',
-};
 
 type FormSheetCornerRadiusProp = NonNullable<
   FormSheetProps['preferredCornerRadius']

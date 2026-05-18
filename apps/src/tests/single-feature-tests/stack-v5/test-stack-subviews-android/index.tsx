@@ -8,10 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import {
-  createScenario,
-  ScenarioDescription,
-} from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
@@ -25,14 +23,6 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
 } from 'react-native-screens/experimental';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Subviews',
-  key: 'test-stack-subviews-android',
-  details: 'Tests header config and subview customization.',
-  platforms: ['android'],
-  e2eCoverage: 'tbd',
-};
 
 const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';
 const LONG_TITLE = I18nManager.isRTL

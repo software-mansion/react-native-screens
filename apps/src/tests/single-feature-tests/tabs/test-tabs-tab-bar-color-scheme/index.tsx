@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';
@@ -19,14 +19,6 @@ import {
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar Color Scheme',
-  key: 'test-tabs-tab-bar-color-scheme',
-  details: 'Tests how tabs handle system, React Native and prop color scheme.',
-  platforms: ['android', 'ios'],
-  e2eCoverage: 'tbd',
-};
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();

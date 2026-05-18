@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Switch, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Grabber visibility',
-  key: 'test-form-sheet-grabber-visible-ios',
-  details:
-    'Allows to test the `prefersGrabberVisible` prop of the FormSheet component.',
-  platforms: ['ios'],
-  e2eCoverage: 'tbd',
-};
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);
