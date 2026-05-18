@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Prop: topColumnForCollapsing',
   key: 'test-split-top-column-for-collapsing',
   details: `
@@ -10,3 +10,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

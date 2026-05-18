@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Basic functionality',
   key: 'test-svm-configures-scroll-view',
   details:
@@ -11,3 +11,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

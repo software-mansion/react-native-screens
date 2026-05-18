@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'IME insets',
   key: 'test-tabs-ime-insets',
   details:
@@ -8,3 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['android'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

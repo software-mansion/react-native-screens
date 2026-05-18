@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tabs special effect scroll to top',
   key: 'test-tabs-special-effects-scroll-to-top',
   details:
@@ -8,3 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

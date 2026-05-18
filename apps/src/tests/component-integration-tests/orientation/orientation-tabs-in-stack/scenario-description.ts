@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'TabsInStack',
   details:
     'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
@@ -8,3 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

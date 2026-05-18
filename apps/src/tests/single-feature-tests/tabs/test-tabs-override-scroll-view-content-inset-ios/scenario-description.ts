@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Override ScrollView Content Inset',
   key: 'test-tabs-override-scroll-view-content-inset-ios',
   details:
@@ -9,3 +9,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

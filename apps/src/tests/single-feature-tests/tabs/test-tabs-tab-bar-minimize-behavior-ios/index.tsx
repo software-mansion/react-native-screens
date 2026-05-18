@@ -6,7 +6,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { TabBarMinimizeBehavior } from 'react-native-screens';

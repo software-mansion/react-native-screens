@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Tabs lifecycle events',
   key: 'test-tabs-lifecycle-events',
   details:
@@ -8,3 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

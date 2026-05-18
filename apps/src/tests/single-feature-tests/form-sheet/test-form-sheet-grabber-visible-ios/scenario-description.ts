@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-export const scenarioDescription: ScenarioDescription = {
+const scenarioDescription: ScenarioDescription = {
   name: 'Grabber visibility',
   key: 'test-form-sheet-grabber-visible-ios',
   details:
@@ -8,3 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
   e2eCoverage: 'tbd',
 };
+
+export default scenarioDescription;

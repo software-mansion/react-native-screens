@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Switch, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 

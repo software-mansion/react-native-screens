@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';

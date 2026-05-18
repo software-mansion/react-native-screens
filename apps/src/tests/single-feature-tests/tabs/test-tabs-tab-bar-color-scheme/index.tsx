@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';

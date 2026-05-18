@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,

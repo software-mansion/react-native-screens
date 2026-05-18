@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { StackContainer, StackRouteConfig, useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
 import {  LightRootScreen, LightInterfaceStyleScreen, DarkRootScreen, DarkInterfaceStyleScreen } from './ThemeScreen';
-import { scenarioDescription } from './scenario-description';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
 export function HomeScreen() {
