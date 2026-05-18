@@ -60,21 +60,12 @@ function makeItemViewFromItem(
   if ('type' in item && item.type === 'spacer') {
     const { key, ...rest } = item as HeaderSpacerItem;
 
-    return (
-      <StackHeaderItemSpacer
-        key={key}
-        itemKey={key}
-        placement={placement}
-        {...rest}
-      />
-    );
+    return <StackHeaderItemSpacer key={key} placement={placement} {...rest} />;
   }
 
   const { key, ...rest } = item;
 
-  return (
-    <StackHeaderItem key={key} itemKey={key} placement={placement} {...rest} />
-  );
+  return <StackHeaderItem key={key} placement={placement} {...rest} />;
 }
 
 const styles = StyleSheet.create({

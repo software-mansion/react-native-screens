@@ -3,9 +3,9 @@ import StackHeaderItemIOSNativeComponent from '../../../../../fabric/gamma/stack
 import { StackHeaderItemProps } from './StackHeaderItem.ios.types';
 
 export default function StackHeaderItem(props: StackHeaderItemProps) {
-  const { itemKey, component: ItemComponent, ...rest } = props;
+  const { component: ItemComponent, ...rest } = props;
   return (
-    <StackHeaderItemIOSNativeComponent key={itemKey} {...rest}>
+    <StackHeaderItemIOSNativeComponent {...rest}>
       {ItemComponent && <ItemComponent />}
     </StackHeaderItemIOSNativeComponent>
   );
