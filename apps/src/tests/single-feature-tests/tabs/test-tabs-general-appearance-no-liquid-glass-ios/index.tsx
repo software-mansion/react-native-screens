@@ -39,11 +39,18 @@ const STANDARD_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarShadowColor: Colors.RedDark100,
 };
 
-const TAB3_BASE_SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
+const TAB3_BASE_STANDARD_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarBackgroundColor: Colors.NavyLightTransparent,
   tabBarBlurEffect: 'none',
   tabBarShadowColor: Colors.NavyDark80,
 };
+
+const TAB3_SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
+  tabBarBackgroundColor: Colors.PurpleDark100,
+  tabBarBlurEffect: 'none',
+  tabBarShadowColor: Colors.PurpleLight100,
+};
+
 
 const SCROLL_ITEM_COUNT = 30;
 
@@ -83,7 +90,7 @@ export function Tab3Screen() {
         ios: {
           ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
           standardAppearance: {
-            ...TAB3_BASE_SCROLL_EDGE_APPEARANCE,
+            ...TAB3_BASE_STANDARD_APPEARANCE,
             tabBarBlurEffect: value,
           },
         },
@@ -158,8 +165,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab3',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: TAB3_BASE_SCROLL_EDGE_APPEARANCE,
-        scrollEdgeAppearance: SCROLL_EDGE_APPEARANCE,
+        standardAppearance: TAB3_BASE_STANDARD_APPEARANCE,
+        scrollEdgeAppearance: TAB3_SCROLL_EDGE_APPEARANCE,
       },
     },
   },
