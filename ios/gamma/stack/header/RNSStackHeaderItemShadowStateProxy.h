@@ -4,18 +4,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackHeaderItemComponentView;
+
 /**
  * @class RNSStackHeaderItemShadowStateProxy
  * @brief Tracks frame changes for stack header item shadow state updates.
  */
 @interface RNSStackHeaderItemShadowStateProxy : NSObject
 
+- (instancetype)initWithHeaderItemView:(RNSStackHeaderItemComponentView *)headerItemView;
+
 /**
- * Updates the tracked frame if it differs from the previously recorded frame.
- *
- * @return YES if the frame was updated, NO if the frame is unchanged.
+ * Updates header item's frame in ShadowTree if new frame is different than previously sent frame.
  */
-- (BOOL)updateShadowStateWithFrame:(CGRect)frame;
+- (void)updateShadowStateWithFrame:(CGRect)frame;
 
 /**
  * Resets internal properties.

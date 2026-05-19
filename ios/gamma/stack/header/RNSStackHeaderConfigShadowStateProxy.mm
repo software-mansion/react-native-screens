@@ -1,12 +1,20 @@
 #import "RNSStackHeaderConfigShadowStateProxy.h"
+#import "RNSStackHeaderConfigComponentView.h"
+
+#import <React/RCTConversions.h>
+#import <rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+
+namespace react = facebook::react;
 
 @implementation RNSStackHeaderConfigShadowStateProxy {
+  RNSStackHeaderConfigComponentView *__weak _headerConfigView;
   CGRect _previousFrame;
 }
 
-- (instancetype)init
+- (instancetype)initWithHeaderConfigView:(RNSStackHeaderConfigComponentView *)headerConfigView
 {
   if (self = [super init]) {
+    _headerConfigView = headerConfigView;
     [self initState];
   }
   return self;
@@ -17,13 +25,17 @@
   _previousFrame = CGRectNull;
 }
 
-- (BOOL)updateShadowStateWithFrame:(CGRect)frame
+- (void)updateShadowStateWithFrame:(CGRect)frame
 {
   if (CGRectEqualToRect(frame, _previousFrame)) {
-    return NO;
+    return;
   }
+  if (_headerConfigView.state == nullptr) {
+    return;
+  }
+  auto newState = react::RNSStackHeaderConfigState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
+  _headerConfigView.state->updateState(std::move(newState));
   _previousFrame = frame;
-  return YES;
 }
 
 - (void)invalidate

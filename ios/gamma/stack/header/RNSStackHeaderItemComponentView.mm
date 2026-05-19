@@ -30,7 +30,7 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderItemIOSProps>();
     _props = defaultProps;
     [self resetProps];
-    _shadowStateProxy = [RNSStackHeaderItemShadowStateProxy new];
+    _shadowStateProxy = [[RNSStackHeaderItemShadowStateProxy alloc] initWithHeaderItemView:self];
 
     // For custom items (header subviews), we rely on `intrinsicContentSize`
     // which passes correct view size from layoutMetrics to iOS
@@ -136,13 +136,7 @@ namespace react = facebook::react;
   }
 
   CGRect frameInNavBar = [self convertRect:self.bounds toView:navigationBar];
-  if (![_shadowStateProxy updateShadowStateWithFrame:frameInNavBar]) {
-    return;
-  }
-
-  auto newState =
-      react::RNSStackHeaderItemState(RCTSizeFromCGSize(frameInNavBar.size), RCTPointFromCGPoint(frameInNavBar.origin));
-  _state->updateState(std::move(newState));
+  [_shadowStateProxy updateShadowStateWithFrame:frameInNavBar];
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -168,6 +162,11 @@ namespace react = facebook::react;
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderItemShadowNode::ConcreteState>(state);
+}
+
+- (react::RNSStackHeaderItemShadowNode::ConcreteState::Shared)state
+{
+  return _state;
 }
 
 // (adapted from #3489)

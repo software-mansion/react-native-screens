@@ -49,7 +49,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderConfigIOSProps>();
     _props = defaultProps;
     _children = [NSMutableArray new];
-    _shadowStateProxy = [RNSStackHeaderConfigShadowStateProxy new];
+    _shadowStateProxy = [[RNSStackHeaderConfigShadowStateProxy alloc] initWithHeaderConfigView:self];
     [self resetProps];
   }
   return self;
@@ -130,13 +130,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   UIView *screenView = self.superview;
   CGRect navBarFrame = [navigationBar convertRect:navigationBar.bounds toView:screenView];
-  if (![_shadowStateProxy updateShadowStateWithFrame:navBarFrame]) {
-    return;
-  }
-
-  auto newState =
-      react::RNSStackHeaderConfigState(RCTSizeFromCGSize(navBarFrame.size), RCTPointFromCGPoint(navBarFrame.origin));
-  _state->updateState(std::move(newState));
+  [_shadowStateProxy updateShadowStateWithFrame:navBarFrame];
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -144,6 +138,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderConfigShadowNode::ConcreteState>(state);
+}
+
+- (react::RNSStackHeaderConfigShadowNode::ConcreteState::Shared)state
+{
+  return _state;
 }
 
 - (void)updateProps:(const react::Props::Shared &)props oldProps:(const react::Props::Shared &)oldProps

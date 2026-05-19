@@ -20,3 +20,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#pragma mark - Hidden from Swift
+
+#if defined(__cplusplus)
+
+#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+
+@interface RNSStackHeaderItemComponentView ()
+
+- (facebook::react::RNSStackHeaderItemShadowNode::ConcreteState::Shared)state;
+
+@end
+
+#endif // defined(__cplusplus)
