@@ -24,7 +24,8 @@ export interface ScenarioDescription {
   /**
    * Indicates the current status of end-to-end (E2E) test coverage for this scenario.
    * - 'full': The scenario is completely covered by E2E tests.
-   * - 'incomplete': The scenario is only partially covered.
+   * - 'incomplete': The scenario is only partially covered or not covered at all.
+   * Familiarize yourself with the scenario and manually complete the relevant parts.
    * - 'tbd': The E2E coverage is yet to be determined or implemented.
    */
   e2eCoverage: 'full' | 'incomplete' | 'tbd';

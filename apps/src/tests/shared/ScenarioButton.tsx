@@ -32,10 +32,7 @@ export function ScenarioButton(props: {
         {hasAndroid && <Text style={styles.android}>a</Text>}
         {props.smokeTest && <Text style={styles.smokeTest}>s</Text>}
         {props.e2eCoverage === 'full' && (
-          <Text style={styles.e2eFull}>e</Text>
-        )}
-        {props.e2eCoverage === 'incomplete' && (
-          <Text style={styles.e2eIncomplete}>e</Text>
+          <Text style={styles.e2eFull}>e2e</Text>
         )}
       </View>
     </TouchableOpacity>
@@ -87,11 +84,5 @@ const styles = StyleSheet.create({
     padding: 4,
     fontWeight: '900',
     color: 'purple',
-  },
-  e2eIncomplete: {
-    fontSize: 18,
-    padding: 4,
-    fontWeight: '900',
-    color: 'gray',
   },
 });
