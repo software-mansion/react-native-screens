@@ -29,10 +29,10 @@
                              controller:(RNSFormSheetContentController *)controller
                             coordinator:(RNSFormSheetAppearanceCoordinator *)coordinator
 {
-  [coordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsConfiguration
-            performOperations:^{
-              [self updateSheetConfigurationForHost:host controller:controller];
-            }];
+  [coordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration
+           performOperations:^{
+             [self updateSheetConfigurationForHost:host controller:controller];
+           }];
 }
 
 #pragma mark - Updaters
@@ -58,7 +58,7 @@
 
   UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
       [RNSFormSheetDetentResolver largestUndimmedDetentIdentifierForDetents:nativeDetents
-                                                                    atIndex:host.largestUndimmedDetentIndex];
+                                                           atRequestedIndex:host.largestUndimmedDetentIndex];
 
   BOOL prefersGrabberVisible = host.prefersGrabberVisible;
   CGFloat preferredCornerRadius = host.preferredCornerRadius;
