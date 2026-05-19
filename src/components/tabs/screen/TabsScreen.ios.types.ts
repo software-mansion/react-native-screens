@@ -58,11 +58,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * This property does not affect the tab bar starting from iOS 26.
    *
-   * `tabBarBackgroundColor` set for `standardAppearance` persists even
-   * when `scrollEdgeAppearance` is active - if `scrollEdgeAppearance'
-   * 'tabBarBackgroundColor` is transparent, the `standardAppearance`
-   * background color will show through from beneath.
-   *
    * @platform ios
    * @supported iOS 18 or lower
    */
@@ -228,6 +223,8 @@ export interface TabsScreenPropsIOS {
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
    *
+   *  When `tabBarBackgroundColor` is transparent and `tabBarBlurEffect` is `'none'`,
+   * the `tabBarBackgroundColor` from `standardAppearance` will show through from beneath.
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
