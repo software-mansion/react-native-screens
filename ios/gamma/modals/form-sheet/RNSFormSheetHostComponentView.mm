@@ -183,12 +183,12 @@ namespace react = facebook::react;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
-    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsPresentation];
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
 
     if (_isOpen) {
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
-      [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+      [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
       _initialDetentApplied = NO;
@@ -197,22 +197,22 @@ namespace react = facebook::react;
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
-    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
-    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
-    [_appearanceCoordinator needs:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {

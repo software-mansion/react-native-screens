@@ -12,7 +12,7 @@
   return self;
 }
 
-- (void)needs:(RNSFormSheetAppearanceUpdateFlags)flag
+- (void)setNeeds:(RNSFormSheetAppearanceUpdateFlags)flag
 {
   _updateFlags |= flag;
 }
