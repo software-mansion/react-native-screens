@@ -19,8 +19,6 @@ export interface ToolbarMenuItemAndroid {
   id: string;
   title: string;
   hidden?: CT.WithDefault<boolean, false>;
-
-  // TODO: add Menu
 }
 
 export interface NativeProps extends ViewProps {
