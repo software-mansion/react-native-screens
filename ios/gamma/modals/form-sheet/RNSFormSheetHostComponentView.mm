@@ -80,10 +80,10 @@ namespace react = facebook::react;
 {
   if (_isOpen) {
     if (self.window != nil) {
-      [_controller presentFromWindow:self.window];
+      [_controller presentFromWindowIfNeeded:self.window];
     }
   } else {
-    [_controller dismiss];
+    [_controller dismissIfNeeded];
   }
 }
 

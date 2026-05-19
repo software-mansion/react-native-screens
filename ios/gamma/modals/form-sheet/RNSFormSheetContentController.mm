@@ -54,11 +54,8 @@
 // might require an approach similar to the tabs implementation using state provenance,
 // which will be handled separately.
 // Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-- (void)presentFromWindow:(nullable UIWindow *)window
+- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window
 {
-  if (window == nil) {
-    return;
-  }
   if (self.presentingViewController != nil) {
     return;
   }
@@ -75,7 +72,7 @@
   [presentationSourceViewController presentViewController:self animated:YES completion:nil];
 }
 
-- (void)dismiss
+- (void)dismissIfNeeded
 {
   if (self.presentingViewController == nil) {
     return;
