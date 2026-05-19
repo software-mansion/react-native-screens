@@ -17,7 +17,7 @@
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RNSFormSheetContentControllerDelegate>
 @end
 
 @implementation RNSFormSheetHostComponentView {
@@ -125,7 +125,7 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - RNSFormSheetHostControllerDelegate
+#pragma mark - RNSFormSheetContentControllerDelegate
 
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
 {
