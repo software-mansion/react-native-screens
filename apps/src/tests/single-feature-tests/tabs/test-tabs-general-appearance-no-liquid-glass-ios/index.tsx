@@ -23,7 +23,7 @@ const BLUR_EFFECT_OPTIONS: BlurEffect[] = [
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar General Appearance (iOS 18 or lower)',
-  key: 'test-tabs-general-appearance-ios',
+  key: 'test-tabs-general-appearance-no-liquid-glass-ios',
   details:
     'Exercises per-tab tab bar appearance props via both standardAppearance and scrollEdgeAppearance: tabBarBackgroundColor, tabBarBlurEffect, tabBarShadowColor.',
   platforms: ['ios'],
