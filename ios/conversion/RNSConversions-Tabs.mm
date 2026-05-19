@@ -375,7 +375,6 @@ RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UI
   }
 }
 
-#if REACT_NATIVE_VERSION_MINOR >= 82
 RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
     react::RNSTabsBottomAccessoryContentEnvironment environment)
 {
@@ -392,7 +391,6 @@ RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquiva
       RCTLogError(@"[RNScreens] Unsupported TabsBottomAccessory environment");
   }
 }
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
