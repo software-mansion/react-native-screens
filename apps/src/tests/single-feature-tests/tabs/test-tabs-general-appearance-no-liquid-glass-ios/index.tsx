@@ -30,7 +30,7 @@ const scenarioDescription: ScenarioDescription = {
 };
 
 const SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
-  tabBarBackgroundColor: Colors.GreenDark100,
+  tabBarBackgroundColor: Colors.PurpleDarkTransparent,
   tabBarShadowColor: Colors.PurpleLight100,
 };
 
@@ -40,7 +40,7 @@ const STANDARD_APPEARANCE: TabsScreenAppearanceIOS = {
 };
 
 const TAB3_BASE_SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
-  tabBarBackgroundColor: Colors.RedTransparentLight100,
+  tabBarBackgroundColor: Colors.NavyLightTransparent,
   tabBarBlurEffect: 'none',
   tabBarShadowColor: Colors.NavyDark80,
 };
@@ -82,7 +82,7 @@ export function Tab3Screen() {
       setRouteOptions(routeKey, {
         ios: {
           ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-          scrollEdgeAppearance: {
+          standardAppearance: {
             ...TAB3_BASE_SCROLL_EDGE_APPEARANCE,
             tabBarBlurEffect: value,
           },
@@ -143,7 +143,10 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: STANDARD_APPEARANCE,
-        scrollEdgeAppearance: SCROLL_EDGE_APPEARANCE,
+        scrollEdgeAppearance: {
+          ...SCROLL_EDGE_APPEARANCE,
+          tabBarBlurEffect: 'systemChromeMaterialDark',
+        },
       },
     },
   },
@@ -155,7 +158,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab3',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        scrollEdgeAppearance: TAB3_BASE_SCROLL_EDGE_APPEARANCE,
+        standardAppearance: TAB3_BASE_SCROLL_EDGE_APPEARANCE,
+        scrollEdgeAppearance: SCROLL_EDGE_APPEARANCE,
       },
     },
   },
@@ -171,9 +175,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
-    backgroundColor: '#f0f0f0',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ccc',
   },
   headerText: {
     fontSize: 14,
