@@ -17,7 +17,7 @@ type ToolbarMenuItemClickedEvent = Readonly<{
 
 export interface ToolbarMenuItemAndroid {
   id: string;
-  title: string;
+  title?: CT.WithDefault<string, ''>;
   hidden?: CT.WithDefault<boolean, false>;
 }
 

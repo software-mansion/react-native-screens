@@ -23,7 +23,13 @@ const scenarioDescription: ScenarioDescription = {
 };
 
 type IdOption = 'item-1' | 'item-2' | 'item-3';
-type TitleOption = 'Title A' | 'Title B' | 'Title C' | 'Long Title' | 'Changed';
+type TitleOption =
+  | 'Title A'
+  | 'Title B'
+  | 'Title C'
+  | 'Long Title'
+  | 'Changed'
+  | 'undefined';
 type HiddenOption = 'true' | 'false' | 'undefined';
 
 type CmdTitleOption = TitleOption | 'no change';
@@ -36,6 +42,7 @@ const TITLE_OPTIONS: TitleOption[] = [
   'Title C',
   'Long Title',
   'Changed',
+  'undefined',
 ];
 const HIDDEN_OPTIONS: HiddenOption[] = ['true', 'false', 'undefined'];
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', ...TITLE_OPTIONS];
@@ -56,6 +63,10 @@ const DEFAULT_SLOTS: Slots = [
   { include: true, id: 'item-3', title: 'Title C', hidden: 'false' },
 ];
 
+function resolveTitle(t: TitleOption): string | undefined {
+  return t === 'undefined' ? undefined : t;
+}
+
 function resolveHidden(h: HiddenOption): boolean | undefined {
   return h === 'undefined' ? undefined : h === 'true';
 }
@@ -65,7 +76,7 @@ function buildItems(slots: Slots) {
     .filter(s => s.include)
     .map(({ id, title, hidden }) => ({
       id,
-      title,
+      title: resolveTitle(title),
       hidden: resolveHidden(hidden),
     }));
 }
@@ -141,7 +152,7 @@ function MainScreen() {
 
   const sendCommand = useCallback(() => {
     const options: ToolbarMenuItemOptionsAndroid = {
-      ...(cmdTitle !== 'no change' && { title: cmdTitle }),
+      ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
     headerConfigRef.current?.android?.setToolbarMenuItemOptions(

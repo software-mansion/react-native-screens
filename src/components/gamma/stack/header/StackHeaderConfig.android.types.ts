@@ -63,7 +63,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
 
 export interface ToolbarMenuItemAndroid {
   id: string;
-  title: string;
+  title?: string | undefined;
   hidden?: boolean | undefined; // default: false
 }
 
