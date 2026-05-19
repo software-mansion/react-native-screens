@@ -14,7 +14,7 @@ import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegat
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemFieldUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
@@ -208,8 +208,8 @@ open class StackHeaderConfigViewManager :
                     val item = requireNotNull(array.getMap(i))
                     StackHeaderToolbarMenuItemConfig(
                         id = item.requireNotNullString("id"),
-                        title = item.requireNotNullString("title"),
-                        hidden = item.getBoolean("hidden"),
+                        title = item.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+                        hidden = item.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
                     )
                 }
             } ?: emptyList()
@@ -224,8 +224,8 @@ open class StackHeaderConfigViewManager :
         view.dispatchMenuItemUpdate(
             id,
             StackHeaderToolbarMenuItemOptions(
-                title = map.readStringFieldUpdate("title"),
-                hidden = map.readBooleanFieldUpdate("hidden"),
+                title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+                hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             ),
         )
     }
@@ -235,26 +235,41 @@ open class StackHeaderConfigViewManager :
     }
 }
 
-private fun ReadableMap.requireNotNullString(key: String): String {
-    return requireNotNull(this.getString(key)) {
+private fun ReadableMap.requireNotNullString(key: String): String =
+    requireNotNull(this.getString(key)) {
         "[RNScreens] toolbarMenuItem $key property must not be null."
     }
-}
 
-private fun ReadableMap.readStringFieldUpdate(
+// Helpers for regular props (null/not defined -> default)
+private fun ReadableMap.readString(
     key: String,
-): StackHeaderToolbarMenuItemFieldUpdate<String> =
+    default: String,
+): String = if (!this.hasKey(key) || this.isNull(key)) default else this.getString(key) ?: default
+
+private fun ReadableMap.readBoolean(
+    key: String,
+    default: Boolean,
+): Boolean = if (!this.hasKey(key) || this.isNull(key)) default else this.getBoolean(key)
+
+// Helpers for view commands:
+// - not defined -> null (means "no update")
+// - null -> default (means "reset to default value")
+private fun ReadableMap.readNullableStringUpdate(
+    key: String,
+    default: String,
+): String? =
     when {
-        !this.hasKey(key) -> StackHeaderToolbarMenuItemFieldUpdate.Absent
-        this.isNull(key) -> StackHeaderToolbarMenuItemFieldUpdate.Reset
-        else -> StackHeaderToolbarMenuItemFieldUpdate.Set(this.getString(key)!!)
+        !this.hasKey(key) -> null
+        this.isNull(key) -> default
+        else -> this.getString(key) ?: default
     }
 
-private fun ReadableMap.readBooleanFieldUpdate(
+private fun ReadableMap.readNullableBooleanUpdate(
     key: String,
-): StackHeaderToolbarMenuItemFieldUpdate<Boolean> =
+    default: Boolean,
+): Boolean? =
     when {
-        !this.hasKey(key) -> StackHeaderToolbarMenuItemFieldUpdate.Absent
-        this.isNull(key) -> StackHeaderToolbarMenuItemFieldUpdate.Reset
-        else -> StackHeaderToolbarMenuItemFieldUpdate.Set(this.getBoolean(key))
+        !this.hasKey(key) -> null
+        this.isNull(key) -> default
+        else -> this.getBoolean(key)
     }

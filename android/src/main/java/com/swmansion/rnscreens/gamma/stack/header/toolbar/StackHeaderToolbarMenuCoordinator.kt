@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import com.google.android.material.appbar.MaterialToolbar
 
 internal class StackHeaderToolbarMenuCoordinator(
@@ -27,14 +28,12 @@ internal class StackHeaderToolbarMenuCoordinator(
             val nativeId = index + 1
             forwardIdMap[item.id] = nativeId
             reverseIdMap[nativeId] = item.id
-            toolbar.menu
-                .add(Menu.NONE, nativeId, index, item.title)
-                .apply {
-                    isVisible = !item.hidden
+            val menuItem = toolbar.menu.add(Menu.NONE, nativeId, index, null)
 
-                    // This property will be exposed to the user in the future
-                    setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER)
-                }
+            applyOptions(menuItem, item.toOptions())
+
+            // This property will be exposed to the user in the future.
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         }
 
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -69,18 +68,22 @@ internal class StackHeaderToolbarMenuCoordinator(
             return
         }
 
-        when (val title = options.title) {
-            StackHeaderToolbarMenuItemFieldUpdate.Absent -> Unit
-            StackHeaderToolbarMenuItemFieldUpdate.Reset -> item.title = ""
-            is StackHeaderToolbarMenuItemFieldUpdate.Set -> item.title = title.value
-        }
-
-        when (val hidden = options.hidden) {
-            StackHeaderToolbarMenuItemFieldUpdate.Absent -> Unit
-            StackHeaderToolbarMenuItemFieldUpdate.Reset -> item.isVisible = true
-            is StackHeaderToolbarMenuItemFieldUpdate.Set -> item.isVisible = !hidden.value
-        }
+        applyOptions(item, options)
     }
+
+    private fun applyOptions(
+        menuItem: MenuItem,
+        options: StackHeaderToolbarMenuItemOptions,
+    ) {
+        options.title?.let { menuItem.title = it }
+        options.hidden?.let { menuItem.isVisible = !it }
+    }
+
+    private fun StackHeaderToolbarMenuItemConfig.toOptions() =
+        StackHeaderToolbarMenuItemOptions(
+            title = title,
+            hidden = hidden,
+        )
 
     companion object {
         private const val TAG = "StackHeaderToolbarMenuCoordinator"
