@@ -93,6 +93,7 @@ export function Tab3Screen() {
             ...TAB3_BASE_STANDARD_APPEARANCE,
             tabBarBlurEffect: value,
           },
+          scrollEdgeAppearance: TAB3_SCROLL_EDGE_APPEARANCE,
         },
       });
     },
@@ -124,6 +125,7 @@ export function Tab3Screen() {
         </View>
       ))}
     </ScrollView>
+
   );
 }
 
