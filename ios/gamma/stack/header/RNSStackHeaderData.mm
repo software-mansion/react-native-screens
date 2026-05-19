@@ -7,6 +7,7 @@
                     screenKey:(nullable NSString *)screenKey
                        hidden:(BOOL)hidden
                    largeTitle:(nullable NSString *)largeTitle
+                largeSubtitle:(nullable NSString *)largeSubtitle
             largeTitleEnabled:(BOOL)largeTitleEnabled
         leadingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)leadingBarButtonItems
        trailingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)trailingBarButtonItems
@@ -20,6 +21,7 @@
     _screenKey = [screenKey copy];
     _hidden = hidden;
     _largeTitle = [largeTitle copy];
+    _largeSubtitle = [largeSubtitle copy];
     _largeTitleEnabled = largeTitleEnabled;
     _leadingBarButtonItems = [leadingBarButtonItems copy];
     _trailingBarButtonItems = [trailingBarButtonItems copy];

@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL hidden;
 @property (nonatomic, copy, readonly, nullable) NSString *largeTitle;
+@property (nonatomic, copy, readonly, nullable) NSString *largeSubtitle;
 @property (nonatomic, readonly) BOOL largeTitleEnabled;
 
 - (instancetype)initWithTitle:(nullable NSString *)title
@@ -33,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
                     screenKey:(nullable NSString *)screenKey
                        hidden:(BOOL)hidden
                    largeTitle:(nullable NSString *)largeTitle
+                largeSubtitle:(nullable NSString *)largeSubtitle
             largeTitleEnabled:(BOOL)largeTitleEnabled
         leadingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)leadingBarButtonItems
        trailingBarButtonItems:(nullable NSArray<UIBarButtonItem *> *)trailingBarButtonItems

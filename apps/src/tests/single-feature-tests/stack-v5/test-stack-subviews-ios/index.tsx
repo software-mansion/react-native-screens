@@ -30,16 +30,19 @@ const scenarioDescription: ScenarioDescription = {
 
 const SHORT_TITLE = 'Title';
 const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
+const VIEW_TITLE = 'Neither short nor long';
 
 const HIT_SLOP_VALUES = ['0', '10', '30'];
 const PRESS_RETENTION_VALUES = ['0', '20', '50'];
 const TITLE_OPTIONS = ['short', 'long', 'view'];
 const LARGE_TITLE_OPTIONS = ['none', 'short', 'long'];
+const LARGE_SUBTITLE_OPTIONS = ['none', 'short', 'long', 'view'];
 
 type HitSlopValue = (typeof HIT_SLOP_VALUES)[number];
 type PressRetentionValue = (typeof PRESS_RETENTION_VALUES)[number];
 type TitleOption = (typeof TITLE_OPTIONS)[number];
 type LargeTitleOption = (typeof LARGE_TITLE_OPTIONS)[number];
+type LargeSubtitleOption = (typeof LARGE_SUBTITLE_OPTIONS)[number];
 
 interface PressableProps {
   hitSlop: number;
@@ -96,6 +99,7 @@ interface Config {
   hidden: boolean;
   largeTitleEnabled: boolean;
   largeTitle: LargeTitleOption;
+  largeSubtitle: LargeSubtitleOption;
   leadingItemsCount: number;
   trailingItemsCount: number;
   title: TitleOption;
@@ -104,11 +108,27 @@ interface Config {
   pressRetentionOffset: PressRetentionValue;
 }
 
+function resolveTitle(
+  value: TitleOption | LargeTitleOption | LargeSubtitleOption,
+) {
+  switch (value) {
+    case 'short':
+      return SHORT_TITLE;
+    case 'long':
+      return LONG_TITLE;
+    case 'view':
+      return VIEW_TITLE;
+    default:
+      return undefined;
+  }
+}
+
 const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
   largeTitleEnabled: false,
   largeTitle: 'none',
+  largeSubtitle: 'none',
   leadingItemsCount: 2,
   trailingItemsCount: 2,
   title: 'short',
@@ -185,17 +205,13 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   }
 
   return {
-    title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
-    subtitle: config.subtitle === 'short' ? SHORT_TITLE : LONG_TITLE,
+    title: resolveTitle(config.title),
+    subtitle: resolveTitle(config.subtitle),
     hidden: config.hidden,
     ios: {
       largeTitleEnabled: config.largeTitleEnabled,
-      largeTitle:
-        config.largeTitle === 'short'
-          ? SHORT_TITLE
-          : config.largeTitle === 'long'
-            ? LONG_TITLE
-            : undefined,
+      largeTitle: resolveTitle(config.largeTitle),
+      largeSubtitle: resolveTitle(config.largeSubtitle),
       titleItem:
         config.title === 'view'
           ? {
@@ -213,9 +229,10 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
             }
           : undefined,
       largeSubtitleItem:
-        config.subtitle === 'view'
+        config.largeSubtitle === 'view'
           ? {
               key: 'largeSubtitle',
+              label: 'largeSubtitle',
               component: LargeHorizontalItem,
             }
           : undefined,
@@ -274,12 +291,6 @@ function ConfigScreen() {
         value={config.largeTitleEnabled}
         onValueChange={v => updateConfig('largeTitleEnabled', v)}
       />
-      <SettingsPicker<LargeTitleOption>
-        label="large title"
-        value={config.largeTitle}
-        onValueChange={v => updateConfig('largeTitle', v)}
-        items={LARGE_TITLE_OPTIONS}
-      />
       <SettingsPicker<TitleOption>
         label="title"
         value={config.title}
@@ -291,6 +302,18 @@ function ConfigScreen() {
         value={config.subtitle}
         onValueChange={v => updateConfig('subtitle', v)}
         items={TITLE_OPTIONS}
+      />
+      <SettingsPicker<LargeTitleOption>
+        label="large title"
+        value={config.largeTitle}
+        onValueChange={v => updateConfig('largeTitle', v)}
+        items={LARGE_TITLE_OPTIONS}
+      />
+      <SettingsPicker<LargeSubtitleOption>
+        label="large subtitle"
+        value={config.largeSubtitle}
+        onValueChange={v => updateConfig('largeSubtitle', v)}
+        items={LARGE_SUBTITLE_OPTIONS}
       />
       <SettingsPicker<HitSlopValue>
         label="hit slop"
@@ -307,10 +330,7 @@ function ConfigScreen() {
       <Button
         title={`Toggle leading items count (${config.leadingItemsCount}/3)`}
         onPress={() => {
-          updateConfig(
-            'leadingItemsCount',
-            (config.leadingItemsCount + 1) % 4,
-          );
+          updateConfig('leadingItemsCount', (config.leadingItemsCount + 1) % 4);
         }}
       />
       <Button

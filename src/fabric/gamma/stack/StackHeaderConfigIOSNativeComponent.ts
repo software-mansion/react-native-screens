@@ -12,6 +12,7 @@ export interface NativeProps extends ViewProps {
 
   // iOS-specific props
   largeTitle?: string | undefined;
+  largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 }
 

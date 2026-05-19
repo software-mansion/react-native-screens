@@ -34,6 +34,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   NSString *_Nullable _subtitle;
   BOOL _hidden;
   NSString *_Nullable _largeTitle;
+  NSString *_Nullable _largeSubtitle;
   BOOL _largeTitleEnabled;
 
   NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
@@ -60,6 +61,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _subtitle = nil;
   _hidden = NO;
   _largeTitle = nil;
+  _largeSubtitle = nil;
   _largeTitleEnabled = NO;
 }
 
@@ -165,6 +167,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _largeTitle = RCTNSStringFromString(newHeaderProps.largeTitle);
   }
 
+  if (oldHeaderProps.largeSubtitle != newHeaderProps.largeSubtitle) {
+    _largeSubtitle = RCTNSStringFromString(newHeaderProps.largeSubtitle);
+  }
+
   if (oldHeaderProps.largeTitleEnabled != newHeaderProps.largeTitleEnabled) {
     _largeTitleEnabled = newHeaderProps.largeTitleEnabled;
   }
@@ -218,6 +224,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                                                              screenKey:screen.screenKey
                                                                 hidden:_hidden
                                                             largeTitle:_largeTitle
+                                                         largeSubtitle:_largeSubtitle
                                                      largeTitleEnabled:_largeTitleEnabled
                                                  leadingBarButtonItems:leadingItems
                                                 trailingBarButtonItems:trailingItems

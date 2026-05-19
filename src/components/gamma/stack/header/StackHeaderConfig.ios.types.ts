@@ -38,7 +38,7 @@ export interface HeaderTitleCustomItem {
 }
 
 export interface StackHeaderConfigPropsIOS {
-  subtitleItem?: undefined;
+  subtitleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
   leadingItems?:
     | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
     | undefined;
