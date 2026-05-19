@@ -76,14 +76,19 @@ namespace react = facebook::react;
   _controller.delegate = self;
 }
 
-- (void)didMoveToWindow
+- (void)updatePresentationState
 {
-  [super didMoveToWindow];
   if (_isOpen) {
     [_controller presentFromWindow:self.window];
   } else {
     [_controller dismiss];
   }
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  [self updatePresentationState];
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
@@ -199,11 +204,7 @@ namespace react = facebook::react;
 
   [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
                       performOperations:^{
-                        if (_isOpen) {
-                           [_controller presentFromWindow:self.window];
-                         } else {
-                           [_controller dismiss];
-                         }
+                        [self updatePresentationState];
                       }];
 }
 
