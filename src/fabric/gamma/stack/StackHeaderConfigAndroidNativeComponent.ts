@@ -11,11 +11,11 @@ import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
-type ToolbarMenuItemClickedEvent = Readonly<{
+type StackHeaderToolbarMenuItemClickedEvent = Readonly<{
   id: string;
 }>;
 
-export interface ToolbarMenuItemAndroid {
+export interface StackHeaderToolbarMenuItemAndroid {
   id: string;
   title?: CT.WithDefault<string, ''>;
   hidden?: CT.WithDefault<boolean, false>;
@@ -40,16 +40,16 @@ export interface NativeProps extends ViewProps {
   scrollFlagExitUntilCollapsed?: CT.WithDefault<boolean, false>;
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
-  toolbarMenuItems?: ToolbarMenuItemAndroid[] | undefined;
+  toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
   onToolbarMenuItemClicked?:
-    | CT.DirectEventHandler<ToolbarMenuItemClickedEvent>
+    | CT.DirectEventHandler<StackHeaderToolbarMenuItemClickedEvent>
     | undefined;
 }
 
 type ComponentType = HostComponent<NativeProps>;
 
-export type ToolbarMenuItemOptionsAndroid = Partial<
-  Omit<ToolbarMenuItemAndroid, 'id'>
+export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+  Omit<StackHeaderToolbarMenuItemAndroid, 'id'>
 >;
 
 export interface NativeCommands {
@@ -58,7 +58,7 @@ export interface NativeCommands {
     id: string,
     // We use the array here only due to codegen limitation. We're using only
     // the first index of the array.
-    options: ToolbarMenuItemOptionsAndroid[],
+    options: StackHeaderToolbarMenuItemOptionsAndroid[],
   ) => void;
 }
 

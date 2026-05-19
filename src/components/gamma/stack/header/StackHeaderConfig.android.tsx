@@ -15,13 +15,13 @@ import StackHeaderConfigAndroidNativeComponent, {
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
-  ToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
   StackHeaderTypeAndroid,
-  ToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
 
 /**
@@ -219,7 +219,7 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
 
 // Doesn't support nested props.
 function parseToolbarMenuItemOptionsToNativeProps(
-  options: ToolbarMenuItemOptionsAndroid,
+  options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
   const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
     Object.entries(options).map(([key, value]) => [

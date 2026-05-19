@@ -26,7 +26,7 @@ Other — automation is not implemented yet.
 
 ## Note (Optional)
 
-- `ToolbarMenuItemOptionsAndroid` semantics:
+- `StackHeaderToolbarMenuItemOptionsAndroid` semantics:
   - A field missing from the options object means "preserve current
     value".
   - A field set to `undefined` (sent over the bridge as `null`) means

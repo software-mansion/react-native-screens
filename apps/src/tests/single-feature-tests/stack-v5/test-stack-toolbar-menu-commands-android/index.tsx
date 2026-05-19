@@ -12,7 +12,7 @@ import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import {
   type StackHeaderConfigRef,
-  type ToolbarMenuItemOptionsAndroid,
+  type StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 
 const scenarioDescription: ScenarioDescription = {
@@ -151,7 +151,7 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: ToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };

@@ -61,20 +61,20 @@ export interface StackHeaderBackgroundSubviewAndroid {
   Component: NonNullable<ReactNode>;
 }
 
-export interface ToolbarMenuItemAndroid {
+export interface StackHeaderToolbarMenuItemAndroid {
   id: string;
   title?: string | undefined;
   hidden?: boolean | undefined; // default: false
 }
 
-export type ToolbarMenuItemOptionsAndroid = Partial<
-  Omit<ToolbarMenuItemAndroid, 'id'>
+export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+  Omit<StackHeaderToolbarMenuItemAndroid, 'id'>
 >;
 
 export interface StackHeaderConfigCommandsAndroid {
   setToolbarMenuItemOptions: (
     id: string,
-    options: ToolbarMenuItemOptionsAndroid,
+    options: StackHeaderToolbarMenuItemOptionsAndroid,
   ) => void;
 }
 
@@ -232,7 +232,7 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @platform android
    */
-  toolbarMenuItems?: ToolbarMenuItemAndroid[] | undefined;
+  toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
   /**
    * @summary Callback invoked when a toolbar menu item is clicked.
    *
