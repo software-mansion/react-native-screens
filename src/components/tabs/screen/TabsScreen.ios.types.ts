@@ -223,7 +223,7 @@ export interface TabsScreenPropsIOS {
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
    *
-   * When `tabBarBackgroundColor` is transparent and `tabBarBlurEffect` is `'none'`,
+   * When `tabBarBackgroundColor` is transparent and `tabBarBlurEffect` is `none`,
    * the `tabBarBackgroundColor` from `standardAppearance` will show through from beneath.
    * @platform ios
    */
