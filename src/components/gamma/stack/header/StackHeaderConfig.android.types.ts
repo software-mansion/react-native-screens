@@ -71,11 +71,11 @@ export interface StackHeaderToolbarMenuItemAndroid {
   /**
    * @summary Title of the menu item.
    *
-   * @platfom android
+   * @platform android
    */
   title?: string | undefined;
   /**
-   * @summary Soecifies if the menu item should be hidden.
+   * @summary Specifies if the menu item should be hidden.
    *
    * @default false
    * @platform android
