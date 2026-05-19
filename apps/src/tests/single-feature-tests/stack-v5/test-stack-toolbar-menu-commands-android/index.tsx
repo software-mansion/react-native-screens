@@ -1,19 +1,12 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
 import {
   createScenario,
   ScenarioDescription,
 } from '@apps/tests/shared/helpers';
 import {
-  StackContainerWithDynamicRouteConfigs,
+  StackContainer,
   useStackNavigationContext,
-  useStackRouteConfigContext,
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
@@ -31,6 +24,10 @@ const scenarioDescription: ScenarioDescription = {
 
 type IdOption = 'item-1' | 'item-2' | 'item-3';
 type TitleOption = 'Title A' | 'Title B' | 'Title C' | 'Long Title' | 'Changed';
+type HiddenOption = 'true' | 'false' | 'undefined';
+
+type CmdTitleOption = TitleOption | 'no change';
+type CmdHiddenOption = HiddenOption | 'no change';
 
 const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
 const TITLE_OPTIONS: TitleOption[] = [
@@ -40,26 +37,37 @@ const TITLE_OPTIONS: TitleOption[] = [
   'Long Title',
   'Changed',
 ];
+const HIDDEN_OPTIONS: HiddenOption[] = ['true', 'false', 'undefined'];
+const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', ...TITLE_OPTIONS];
+const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = ['no change', ...HIDDEN_OPTIONS];
 
 interface SlotConfig {
   include: boolean;
   id: IdOption;
   title: TitleOption;
-  hidden: boolean;
+  hidden: HiddenOption;
 }
 
 type Slots = [SlotConfig, SlotConfig, SlotConfig];
 
 const DEFAULT_SLOTS: Slots = [
-  { include: true, id: 'item-1', title: 'Title A', hidden: false },
-  { include: true, id: 'item-2', title: 'Title B', hidden: false },
-  { include: true, id: 'item-3', title: 'Title C', hidden: false },
+  { include: true, id: 'item-1', title: 'Title A', hidden: 'false' },
+  { include: true, id: 'item-2', title: 'Title B', hidden: 'false' },
+  { include: true, id: 'item-3', title: 'Title C', hidden: 'false' },
 ];
+
+function resolveHidden(h: HiddenOption): boolean | undefined {
+  return h === 'undefined' ? undefined : h === 'true';
+}
 
 function buildItems(slots: Slots) {
   return slots
     .filter(s => s.include)
-    .map(({ id, title, hidden }) => ({ id, title, hidden }));
+    .map(({ id, title, hidden }) => ({
+      id,
+      title,
+      hidden: resolveHidden(hidden),
+    }));
 }
 
 function updateSlotAt(
@@ -70,97 +78,71 @@ function updateSlotAt(
   return slots.map((s, i) => (i === index ? { ...s, ...patch } : s)) as Slots;
 }
 
-const InitialSlotsContext = React.createContext<{
-  initialSlots: Slots;
-  setInitialSlots: React.Dispatch<React.SetStateAction<Slots>>;
-}>({
-  initialSlots: DEFAULT_SLOTS,
-  setInitialSlots: () => {},
-});
+const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
 export function App() {
-  const [initialSlots, setInitialSlots] = useState<Slots>(DEFAULT_SLOTS);
-
   return (
-    <InitialSlotsContext.Provider value={{ initialSlots, setInitialSlots }}>
-      <StackContainerWithDynamicRouteConfigs
-        routeConfigs={[
-          { name: 'Root', Component: RootScreen, options: {} },
-          { name: 'Pushed', Component: PushedScreen, options: {} },
-        ]}
-      />
-    </InitialSlotsContext.Provider>
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'Main',
+          Component: MainScreen,
+          options: {
+            headerConfig: {
+              title: HEADER_TITLE,
+              android: { toolbarMenuItems: buildItems(DEFAULT_SLOTS) },
+            },
+          },
+        },
+      ]}
+    />
   );
 }
 
-function RootScreen() {
-  const { initialSlots, setInitialSlots } =
-    React.useContext(InitialSlotsContext);
-  const { updateRouteConfigWithOptions } = useStackRouteConfigContext();
-  const { push, setRouteOptions, routeKey } = useStackNavigationContext();
-
-  useEffect(() => {
-    setRouteOptions(routeKey, {
-      headerConfig: { title: 'Menu Commands Test' },
-    });
-  }, [setRouteOptions, routeKey]);
-
-  useEffect(() => {
-    updateRouteConfigWithOptions('Pushed', {
-      headerConfig: {
-        title: 'Toolbar Menu Commands Test',
-        android: { toolbarMenuItems: buildItems(initialSlots) },
-      },
-    });
-  }, [initialSlots, updateRouteConfigWithOptions]);
-
-  return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Initial Items for Screen 2</Text>
-      <SlotControls
-        slots={initialSlots}
-        updateSlot={(i, patch) =>
-          setInitialSlots(prev => updateSlotAt(prev, i, patch))
-        }
-      />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push Screen 2" onPress={() => push('Pushed')} />
-    </ScrollView>
-  );
-}
-
-function PushedScreen() {
-  const { initialSlots } = React.useContext(InitialSlotsContext);
-  const [slots, setSlots] = useState<Slots>(() => initialSlots);
+function MainScreen() {
+  const [slots, setSlots] = useState<Slots>(DEFAULT_SLOTS);
   const [lastClicked, setLastClicked] = useState<string | null>(null);
 
   const [cmdTargetId, setCmdTargetId] = useState<IdOption>('item-1');
-  const [cmdTitle, setCmdTitle] = useState<TitleOption>('Changed');
-  const [cmdHidden, setCmdHidden] = useState(false);
+  const [cmdTitle, setCmdTitle] = useState<CmdTitleOption>('no change');
+  const [cmdHidden, setCmdHidden] = useState<CmdHiddenOption>('no change');
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
 
   useLayoutEffect(() => {
-    setRouteOptions(routeKey, { headerConfigRef });
-  }, [setRouteOptions, routeKey]);
-
-  useEffect(() => {
     setRouteOptions(routeKey, {
       headerConfig: {
-        title: 'Toolbar Menu Commands Test',
+        title: HEADER_TITLE,
         android: {
-          toolbarMenuItems: buildItems(slots),
+          toolbarMenuItems: buildItems(DEFAULT_SLOTS),
           onToolbarMenuItemClicked: id => setLastClicked(id),
         },
       },
+      headerConfigRef,
     });
-  }, [slots, setRouteOptions, routeKey]);
+  }, [setRouteOptions, routeKey]);
+
+  const applySlots = useCallback(
+    (next: Slots) => {
+      setSlots(next);
+      setRouteOptions(routeKey, {
+        headerConfig: {
+          title: HEADER_TITLE,
+          android: {
+            toolbarMenuItems: buildItems(next),
+            onToolbarMenuItemClicked: id => setLastClicked(id),
+          },
+        },
+      });
+    },
+    [setRouteOptions, routeKey],
+  );
 
   const sendCommand = useCallback(() => {
     const options: ToolbarMenuItemOptionsAndroid = {
-      title: cmdTitle,
-      hidden: cmdHidden,
+      ...(cmdTitle !== 'no change' && { title: cmdTitle }),
+      ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
     headerConfigRef.current?.android?.setToolbarMenuItemOptions(
       cmdTargetId,
@@ -177,15 +159,16 @@ function PushedScreen() {
         items={ID_OPTIONS}
         onValueChange={setCmdTargetId}
       />
-      <SettingsPicker<TitleOption>
+      <SettingsPicker<CmdTitleOption>
         label="title"
         value={cmdTitle}
-        items={TITLE_OPTIONS}
+        items={CMD_TITLE_OPTIONS}
         onValueChange={setCmdTitle}
       />
-      <SettingsSwitch
+      <SettingsPicker<CmdHiddenOption>
         label="hidden"
         value={cmdHidden}
+        items={CMD_HIDDEN_OPTIONS}
         onValueChange={setCmdHidden}
       />
       <Button title="Send Command" onPress={sendCommand} />
@@ -196,9 +179,7 @@ function PushedScreen() {
       <Text style={styles.heading}>Menu Items — Props</Text>
       <SlotControls
         slots={slots}
-        updateSlot={(i, patch) =>
-          setSlots(prev => updateSlotAt(prev, i, patch))
-        }
+        updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
       />
     </ScrollView>
   );
@@ -228,9 +209,10 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             items={TITLE_OPTIONS}
             onValueChange={v => updateSlot(i, { title: v })}
           />
-          <SettingsSwitch
+          <SettingsPicker<HiddenOption>
             label="hidden"
             value={slot.hidden}
+            items={HIDDEN_OPTIONS}
             onValueChange={v => updateSlot(i, { hidden: v })}
           />
         </React.Fragment>
