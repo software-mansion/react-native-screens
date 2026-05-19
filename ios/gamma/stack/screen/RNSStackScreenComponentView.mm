@@ -152,7 +152,7 @@ namespace react = facebook::react;
 
 - (nullable RNSStackHeaderConfigComponentView *)findHeaderConfig
 {
-  for (UIView *subview in self.subviews) {
+  for (UIView *subview in [self.subviews reverseObjectEnumerator]) {
     if ([subview isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
       return (RNSStackHeaderConfigComponentView *)subview;
     }
