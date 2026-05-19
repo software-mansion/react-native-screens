@@ -64,7 +64,6 @@ export const Palette = {
   RedLight60: '#ffa3a1',
   RedLight40: '#ffd2d7',
   RedLight20: '#ffedf0',
-  RedTransparentLight100: '#ff625980',
 
   RedDark140: '#5a3b46',
   RedDark120: '#914f55',
