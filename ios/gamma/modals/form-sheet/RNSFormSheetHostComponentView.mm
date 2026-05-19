@@ -1,5 +1,6 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetAppearanceApplicator.h"
 #import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
@@ -23,6 +24,7 @@ namespace react = facebook::react;
   RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
+  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
 
   RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
@@ -30,13 +32,6 @@ namespace react = facebook::react;
   // Props
   BOOL _isOpen;
   std::vector<double> _detents;
-  BOOL _prefersGrabberVisible;
-  CGFloat _preferredCornerRadius;
-  NSInteger _largestUndimmedDetentIndex;
-  NSInteger _initialDetentIndex;
-
-  // State
-  BOOL _initialDetentApplied;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -55,8 +50,7 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
   _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
-
-  _initialDetentApplied = NO;
+  _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
 }
 
 - (void)resetProps
@@ -70,6 +64,11 @@ namespace react = facebook::react;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
   _initialDetentIndex = 0;
+}
+
+- (const std::vector<double> &)detents
+{
+  return _detents;
 }
 
 - (void)setupController
@@ -191,7 +190,7 @@ namespace react = facebook::react;
       [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
-      _initialDetentApplied = NO;
+      [_appearanceApplicator resetInitialDetent];
     }
   }
 
@@ -226,10 +225,9 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 
-  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration
-                      performOperations:^{
-                        [self updateConfiguration];
-                      }];
+  [_appearanceApplicator updateAppearanceIfNeededForHost:self
+                                              controller:_controller
+                                             coordinator:_appearanceCoordinator];
 
   [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
                       performOperations:^{
@@ -269,43 +267,6 @@ namespace react = facebook::react;
                                             contentViewOriginInWindow.y - hostOriginInWindow.y);
 
   [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentOriginOffset];
-}
-
-- (void)updateConfiguration
-{
-#if !TARGET_OS_TV
-  UISheetPresentationController *sheet = _controller.sheetPresentationController;
-  RCTAssert(
-      sheet != nil,
-      @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
-
-  NSArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [RNSFormSheetDetentResolver buildSheetDetentsForFractions:_detents];
-
-  UISheetPresentationControllerDetentIdentifier initialDetentIdentifier = nil;
-  if (!_initialDetentApplied) {
-    initialDetentIdentifier = [RNSFormSheetDetentResolver initialDetentIdentifierForDetents:nativeDetents
-                                                                           atRequestedIndex:_initialDetentIndex];
-    _initialDetentApplied = YES;
-  }
-
-  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
-      [RNSFormSheetDetentResolver largestUndimmedDetentIdentifierForDetents:nativeDetents
-                                                           atRequestedIndex:_largestUndimmedDetentIndex];
-
-  // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
-  [sheet animateChanges:^{
-    sheet.detents = nativeDetents;
-    sheet.prefersGrabberVisible = _prefersGrabberVisible;
-    sheet.preferredCornerRadius =
-        _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
-    sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
-
-    if (initialDetentIdentifier != nil) {
-      sheet.selectedDetentIdentifier = initialDetentIdentifier;
-    }
-  }];
-#endif // !TARGET_OS_TV
 }
 
 #pragma mark - Touch Handling overrides
