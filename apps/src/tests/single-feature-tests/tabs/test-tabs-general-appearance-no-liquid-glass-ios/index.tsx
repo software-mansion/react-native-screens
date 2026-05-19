@@ -100,7 +100,7 @@ export function Tab3Screen() {
       <View style={styles.header} testID="tab3-header">
         <Text style={styles.headerText}>
           Pick a value to update scrollEdgeAppearance.tabBarBlurEffect on this
-          tab live. Background and shadow stay constant so
+          tab in runtime. Background and shadow stay constant so
           the blur is the only varying input.
         </Text>
       </View>
