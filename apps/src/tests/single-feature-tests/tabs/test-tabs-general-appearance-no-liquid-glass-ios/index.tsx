@@ -22,7 +22,7 @@ const BLUR_EFFECT_OPTIONS: BlurEffect[] = [
 ];
 
 const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar General Appearance (iOS 18 or lower)',
+  name: 'Tab Bar General Appearance No Liquid Glass',
   key: 'test-tabs-general-appearance-no-liquid-glass-ios',
   details:
     'Exercises per-tab tab bar appearance props via both standardAppearance and scrollEdgeAppearance: tabBarBackgroundColor, tabBarBlurEffect, tabBarShadowColor.',
@@ -111,6 +111,11 @@ export function Tab3Screen() {
         onValueChange={onBlurChange}
         items={BLUR_EFFECT_OPTIONS}
       />
+      {Array.from({ length: SCROLL_ITEM_COUNT }, (_, i) => (
+        <View key={i} style={styles.scrollItem} testID={`tab2-item-${i + 1}`}>
+          <Text style={styles.itemText}>Item {i + 1}</Text>
+        </View>
+      ))}
     </ScrollView>
   );
 }
