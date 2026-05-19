@@ -226,15 +226,15 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 
-  [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsConfiguration
-                       performOperations:^{
-                         [self updateConfiguration];
-                       }];
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration
+                      performOperations:^{
+                        [self updateConfiguration];
+                      }];
 
-  [_appearanceCoordinator updateIfNeeded:RNSFormSheetAppearanceUpdateFlagsPresentation
-                       performOperations:^{
-                         [self updatePresentationState];
-                       }];
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
+                      performOperations:^{
+                        [self updatePresentationState];
+                      }];
 }
 
 - (void)invalidate

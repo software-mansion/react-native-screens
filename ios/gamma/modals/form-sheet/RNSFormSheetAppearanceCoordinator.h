@@ -8,11 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetAppearanceCoordinator : NSObject
 
-- (void)setNeeds:(RNSFormSheetAppearanceUpdateFlags)flag;
+- (void)setNeeds:(RNSFormSheetAppearanceUpdateFlags)flags;
 
-- (BOOL)isNeeded:(RNSFormSheetAppearanceUpdateFlags)flag;
+- (BOOL)needsAll:(RNSFormSheetAppearanceUpdateFlags)flags;
 
-- (void)updateIfNeeded:(RNSFormSheetAppearanceUpdateFlags)flag performOperations:(dispatch_block_t)block;
+- (void)updateIfNeeds:(RNSFormSheetAppearanceUpdateFlags)flags performOperations:(dispatch_block_t)block;
 
 @end
 

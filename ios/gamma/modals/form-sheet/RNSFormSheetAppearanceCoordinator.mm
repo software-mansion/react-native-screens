@@ -12,24 +12,24 @@
   return self;
 }
 
-- (void)setNeeds:(RNSFormSheetAppearanceUpdateFlags)flag
+- (void)setNeeds:(RNSFormSheetAppearanceUpdateFlags)flags
 {
-  _updateFlags |= flag;
+  _updateFlags |= flags;
 }
 
-- (BOOL)isNeeded:(RNSFormSheetAppearanceUpdateFlags)flag
+- (BOOL)needsAll:(RNSFormSheetAppearanceUpdateFlags)flags
 {
-  if (flag == RNSFormSheetAppearanceUpdateFlagsNone) {
+  if (flags == RNSFormSheetAppearanceUpdateFlagsNone) {
     return NO;
   }
 
-  return (_updateFlags & flag) == flag;
+  return (_updateFlags & flags) == flags;
 }
 
-- (void)updateIfNeeded:(RNSFormSheetAppearanceUpdateFlags)flag performOperations:(dispatch_block_t)block
+- (void)updateIfNeeds:(RNSFormSheetAppearanceUpdateFlags)flags performOperations:(dispatch_block_t)block
 {
-  if ([self isNeeded:flag]) {
-    _updateFlags &= ~flag;
+  if ([self needsAll:flags]) {
+    _updateFlags &= ~flags;
     block();
   }
 }
