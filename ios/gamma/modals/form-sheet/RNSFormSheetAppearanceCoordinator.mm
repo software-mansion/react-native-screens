@@ -29,8 +29,8 @@
 - (void)updateIfNeeds:(RNSFormSheetAppearanceUpdateFlags)flags performOperations:(dispatch_block_t)block
 {
   if ([self needsAll:flags]) {
-    _updateFlags &= ~flags;
     block();
+    _updateFlags &= ~flags;
   }
 }
 
