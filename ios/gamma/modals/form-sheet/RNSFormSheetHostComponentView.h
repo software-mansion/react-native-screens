@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGFloat preferredCornerRadius;
 @property (nonatomic, readonly) NSInteger largestUndimmedDetentIndex;
 @property (nonatomic, readonly) NSInteger initialDetentIndex;
+@property (nonatomic, readonly) BOOL prefersScrollingExpandsWhenScrolledToEdge;
 
 @end
 

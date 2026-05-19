@@ -64,6 +64,7 @@ namespace react = facebook::react;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
   _initialDetentIndex = 0;
+  _prefersScrollingExpandsWhenScrolledToEdge = YES;
 }
 
 - (const std::vector<double> &)detents
@@ -216,6 +217,13 @@ namespace react = facebook::react;
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
+  }
+
+  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
+      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
+    _prefersScrollingExpandsWhenScrolledToEdge =
+        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   [super updateProps:props oldProps:oldProps];

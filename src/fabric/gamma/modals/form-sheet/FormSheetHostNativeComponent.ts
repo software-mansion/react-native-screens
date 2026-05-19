@@ -13,6 +13,7 @@ interface NativeProps extends ViewProps {
   preferredCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
   largestUndimmedDetentIndex?: CT.WithDefault<CT.Int32, -1>;
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
+  prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
