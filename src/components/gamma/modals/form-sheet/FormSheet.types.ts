@@ -1,4 +1,4 @@
-import { ViewProps } from 'react-native';
+import { NativeSyntheticEvent, ViewProps } from 'react-native';
 
 export interface FormSheetDetentChangedEvent {
   index: number;
@@ -108,6 +108,6 @@ export interface FormSheetProps {
    * @platform ios
    */
   onDetentChanged?:
-    | ((event: { nativeEvent: FormSheetDetentChangedEvent }) => void)
+    | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
     | undefined;
 }
