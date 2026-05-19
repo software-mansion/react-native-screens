@@ -158,7 +158,7 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
                                forRawDetents:(const std::vector<double> &)detents
 {
   if (identifier == nil) {
-    return 0;
+    return -1;
   }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
