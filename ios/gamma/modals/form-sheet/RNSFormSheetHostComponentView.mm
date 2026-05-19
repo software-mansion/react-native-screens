@@ -79,7 +79,9 @@ namespace react = facebook::react;
 - (void)updatePresentationState
 {
   if (_isOpen) {
-    [_controller presentFromWindow:self.window];
+    if (self.window != nil) {
+      [_controller presentFromWindow:self.window];
+    }
   } else {
     [_controller dismiss];
   }
