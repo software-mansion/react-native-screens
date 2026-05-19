@@ -144,7 +144,7 @@ namespace react = facebook::react;
 - (void)sheetController:(RNSFormSheetContentController *)controller
     didChangeDetentIdentifier:(nullable NSString *)identifier
 {
-  NSInteger index = [self detentIndexFromDetentIdentifier:identifier];
+  NSInteger index = [RNSFormSheetDetentResolver detentIndexFromDetentIdentifier:identifier forRawDetents:_detents];
   [_reactEventEmitter emitOnDetentChangedWithIndex:index];
 }
 #endif // !TARGET_OS_TV
