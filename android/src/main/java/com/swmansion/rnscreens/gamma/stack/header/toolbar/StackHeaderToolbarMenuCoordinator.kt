@@ -63,10 +63,11 @@ internal class StackHeaderToolbarMenuCoordinator(
             return
         }
 
-        val item = forwardIdMap[id]?.let { menu.findItem(it) } ?: run {
-            Log.e(TAG, "[RNScreens] Unable to find menu item.")
-            return
-        }
+        val item =
+            forwardIdMap[id]?.let { menu.findItem(it) } ?: run {
+                Log.e(TAG, "[RNScreens] Unable to find menu item.")
+                return
+            }
 
         applyOptions(item, options)
     }

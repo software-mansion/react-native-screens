@@ -4,5 +4,9 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 
 interface StackHeaderConfigDelegate {
     fun onConfigChange(config: StackHeaderConfigProviding)
-    fun onMenuItemUpdate(id: String, options: StackHeaderToolbarMenuItemOptions)
+
+    fun onMenuItemUpdate(
+        id: String,
+        options: StackHeaderToolbarMenuItemOptions,
+    )
 }

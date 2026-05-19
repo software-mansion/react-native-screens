@@ -65,7 +65,10 @@ internal class StackHeaderCoordinatorLayout(
                 }
             }
 
-            override fun onMenuItemUpdate(id: String, options: StackHeaderToolbarMenuItemOptions) {
+            override fun onMenuItemUpdate(
+                id: String,
+                options: StackHeaderToolbarMenuItemOptions,
+            ) {
                 headerCoordinator.handleMenuItemUpdate(id, options)
             }
         }

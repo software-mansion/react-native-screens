@@ -135,7 +135,10 @@ class StackHeaderConfig(
         delegate?.get()?.onConfigChange(this)
     }
 
-    internal fun dispatchMenuItemUpdate(id: String, options: StackHeaderToolbarMenuItemOptions) {
+    internal fun dispatchMenuItemUpdate(
+        id: String,
+        options: StackHeaderToolbarMenuItemOptions,
+    ) {
         delegate?.get()?.onMenuItemUpdate(id, options)
     }
 

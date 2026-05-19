@@ -8,7 +8,8 @@ class StackHeaderToolbarMenuItemClickedEvent(
     surfaceId: Int,
     viewTag: Int,
     private val id: String,
-) : Event<StackHeaderToolbarMenuItemClickedEvent>(surfaceId, viewTag), NamingAwareEventType {
+) : Event<StackHeaderToolbarMenuItemClickedEvent>(surfaceId, viewTag),
+    NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
