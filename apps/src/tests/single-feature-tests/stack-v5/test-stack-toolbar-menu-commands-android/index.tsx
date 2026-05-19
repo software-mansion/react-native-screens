@@ -127,7 +127,8 @@ function MainScreen() {
         title: HEADER_TITLE,
         android: {
           toolbarMenuItems: buildItems(DEFAULT_SLOTS),
-          onToolbarMenuItemClicked: id => setLastClicked(id),
+          onToolbarMenuItemClicked: event =>
+            setLastClicked(event.nativeEvent.id),
         },
       },
       headerConfigRef,
@@ -142,7 +143,8 @@ function MainScreen() {
           title: HEADER_TITLE,
           android: {
             toolbarMenuItems: buildItems(next),
-            onToolbarMenuItemClicked: id => setLastClicked(id),
+            onToolbarMenuItemClicked: event =>
+              setLastClicked(event.nativeEvent.id),
           },
         },
       });

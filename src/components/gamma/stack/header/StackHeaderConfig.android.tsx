@@ -48,7 +48,6 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
-    onToolbarMenuItemClicked,
     ...filteredAndroidProps
   } = android ?? {};
 
@@ -61,11 +60,6 @@ function StackHeaderConfig(
     scrollFlagSnap,
   });
 
-  const nativeOnToolbarMenuItemClicked = onToolbarMenuItemClicked
-    ? (event: { nativeEvent: { id: string } }) =>
-        onToolbarMenuItemClicked(event.nativeEvent.id)
-    : undefined;
-
   return (
     <StackHeaderConfigAndroidNativeComponent
       ref={ref}
@@ -74,8 +68,7 @@ function StackHeaderConfig(
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
-      {...scrollFlagProps}
-      onToolbarMenuItemClicked={nativeOnToolbarMenuItemClicked}>
+      {...scrollFlagProps}>
       {/*
         Please note that the order of the subviews MUST match
         the order in native StackHeaderConfig.getConfigSubviewAt.
