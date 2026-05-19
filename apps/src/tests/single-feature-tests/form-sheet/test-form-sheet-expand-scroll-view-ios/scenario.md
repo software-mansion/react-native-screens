@@ -17,6 +17,7 @@ Other: Planned, but will be implemented separately.
 ## Note
 
 - The default value of `prefersScrollingExpandsWhenScrolledToEdge` in UIKit is `true`.
+- This property only takes effect when scrolling begins exactly from the top edge of the `ScrollView` (i.e., when the content offset is at 0).
 
 ## Steps - iPhone
 
@@ -46,7 +47,7 @@ Other: Planned, but will be implemented separately.
 
 - [ ] Expected: The FormSheet opens at the initial lower detent (0.5).
 
-7. Swipe up on the scrollable list content.
+7. Swipe up on the scrollable list content (ensure you are starting from the very top edge of the ScrollView).
 
 - [ ] Expected: The list scrolls normally to reveal lower items. The FormSheet **does not** expand to the maximum detent and remains at 0.5. 
 
