@@ -24,9 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTConvert (RNSScreen)
 
-+ (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
-+ (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
-
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;

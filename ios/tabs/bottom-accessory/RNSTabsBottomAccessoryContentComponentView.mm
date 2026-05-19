@@ -3,9 +3,7 @@
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace react = facebook::react;
 
@@ -54,8 +52,6 @@ namespace react = facebook::react;
 }
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
-
-#if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol
 
@@ -107,8 +103,6 @@ namespace react = facebook::react;
   return NO;
 }
 
-#endif // RCT_NEW_ARCH_ENABLED
-
 #pragma mark - Dynamic frameworks support
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -121,12 +115,9 @@ namespace react = facebook::react;
 
 @end
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSTabsBottomAccessoryContentCls(void)
 {
   return RNSTabsBottomAccessoryContentComponentView.class;
 }
-
-#endif // RCT_NEW_ARCH_ENABLED

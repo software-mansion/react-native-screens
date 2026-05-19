@@ -28,17 +28,7 @@
 #define MUTATION_PARENT_TAG(mutation) mutation.parentTag
 #endif
 
-#pragma mark - React Native architecture dependent code
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollViewComponentView
-
-#else
-
-#define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollView
-
-#endif
 
 #pragma mark - SDK availability utility
 

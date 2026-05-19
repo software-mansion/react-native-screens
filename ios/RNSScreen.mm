@@ -2045,53 +2045,6 @@ RCT_EXPORT_MODULE()
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(RNSScreenStackPresentation,
-                   (@{
-                     @"push" : @(RNSScreenStackPresentationPush),
-                     @"modal" : @(RNSScreenStackPresentationModal),
-                     @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
-                     @"formSheet" : @(RNSScreenStackPresentationFormSheet),
-                     @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
-                     @"containedModal" : @(RNSScreenStackPresentationContainedModal),
-                     @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
-                     @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
-                   }),
-                   RNSScreenStackPresentationPush,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenStackAnimation,
-                   (@{
-                     @"default" : @(RNSScreenStackAnimationDefault),
-                     @"none" : @(RNSScreenStackAnimationNone),
-                     @"fade" : @(RNSScreenStackAnimationFade),
-                     @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
-                     @"flip" : @(RNSScreenStackAnimationFlip),
-                     @"simple_push" : @(RNSScreenStackAnimationSimplePush),
-                     @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
-                     @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                     @"ios_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                   }),
-                   RNSScreenStackAnimationDefault,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation,
-                   (@{
-                     @"push" : @(RNSScreenReplaceAnimationPush),
-                     @"pop" : @(RNSScreenReplaceAnimationPop),
-                   }),
-                   RNSScreenReplaceAnimationPop,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenSwipeDirection,
-                   (@{
-                     @"vertical" : @(RNSScreenSwipeDirectionVertical),
-                     @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
-                   }),
-                   RNSScreenSwipeDirectionHorizontal,
-                   integerValue)
-
 #if !TARGET_OS_TV
 RCT_ENUM_CONVERTER(UIStatusBarAnimation,
                    (@{
@@ -2110,15 +2063,6 @@ RCT_ENUM_CONVERTER(RNSStatusBarStyle,
                      @"dark" : @(RNSStatusBarStyleDark),
                    }),
                    RNSStatusBarStyleAuto,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenDetentType,
-                   (@{
-                     @"large" : @(RNSScreenDetentTypeLarge),
-                     @"medium" : @(RNSScreenDetentTypeMedium),
-                     @"all" : @(RNSScreenDetentTypeAll),
-                   }),
-                   RNSScreenDetentTypeAll,
                    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
