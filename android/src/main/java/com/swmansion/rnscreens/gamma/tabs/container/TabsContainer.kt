@@ -559,6 +559,10 @@ class TabsContainer internal constructor(
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
+        if (stateChanged && !isRepeated) {
+            onAppearanceChanged(selectedTab.tabsScreen)
+        }
+
         if (stateChanged) {
             observerRegistry.emitOnNavigationStateUpdate(
                 navState,
