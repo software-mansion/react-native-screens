@@ -1,4 +1,4 @@
-# Test Scenario: Layout direction
+# Test Scenario: Layout Direction
 
 ## Details
 
@@ -14,10 +14,10 @@ because `direction = inherit` falls back to the **native** app direction
 (i.e. the system setting), potentially overriding React Native's `forceRTL`.
 On Android, scenarios only set the RN direction, because `direction =
 inherit` propagates via `style.direction` through the view hierarchy and
-therefore follows the RN setting — no system-direction dimension is needed.
+therefore follows the RN setting - no system-direction dimension is needed.
 Each section exercises `inherit`, `ltr`, and `rtl` prop values.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -26,7 +26,7 @@ Yes: Covers all manual scenario steps for LTR/RTL configurations:
 - iOS: The system RTL direction is set by app configuration setting
   `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
   to `YES` during the app launch sequence.
-- Android: Via React Native — RTL direction must be triggered using the
+- Android: Via React Native - RTL direction must be triggered using the
   `forceRTL` toggle located within the Layout Direction screen.
 
 Scenarios where RTL is enabled at the device level by setting a system-wide
@@ -49,7 +49,7 @@ RTL language are NOT covered by E2E tests.
 - For iOS, scenarios labeled e.g. `System LTR / RN LTR` require configuring
   **both** the system direction and the RN direction to match the label
   before running the steps.
-- For Android, only the RN direction needs to be set — the system direction
+- For Android, only the RN direction needs to be set - the system direction
   is ignored because RN's setting overrides it.
 - After toggling `forceRTL` or `allowRTL`, **restart the app** for the
   change to take effect (the screen shows a reminder).
@@ -59,7 +59,7 @@ RTL language are NOT covered by E2E tests.
   above: when `direction` is switched to `inherit` after being set to
   another value, the tab bar follows the native (system) layout direction
   rather than RN's `forceRTL`. The initial value of `TabsHost direction`
-  is not fixed — it reflects whatever direction is actually displayed on
+  is not fixed - it reflects whatever direction is actually displayed on
   mount, which depends on the system and RN settings. When the two
   disagree, the displayed direction at startup is the resolved one (e.g.
   RN RTL with LTR system can display as RTL initially).
@@ -131,19 +131,19 @@ result described as expected above.
 > Setup: iOS system: System language is RTL (e.g. Arabic or Hebrew). Disable RN RTL `forceRTL = false`, 
 > `allowRTL = false` and restart the app. `I18nManager.isRTL == false` and `TabsHost direction = ltr`.
 
-9. Set `TabsHost direction = ltr`.
+9. Set `TabsHost direction = inherit`.
+
+- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
+
+10. Set `TabsHost direction = ltr`.
 
 - [ ] Expected: Tab bar displays in LTR order. Tab1 is
   the leftmost item.
 
-10.   Set `TabsHost direction = rtl`.
+11. Set `TabsHost direction = rtl`.
 
 - [ ] Expected: Tab bar displays in RTL order. Tab2 is
   the leftmost item.
-
-11.  Set `TabsHost direction = inherit`.
-
-- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
 
 ---
 
@@ -152,16 +152,16 @@ result described as expected above.
 > Setup: System language is LTR (e.g. English). Enable `forceRTL = true`
 > and restart the app. `I18nManager.isRTL == true` and `TabsHost direction = rtl`
 
-12. Set `TabsHost direction = ltr`.
+12. Set `TabsHost direction = inherit`.
+
+- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
+
+13. Set `TabsHost direction = ltr`.
 
 - [ ] Expected: Tab bar displays in LTR order. Tab1 is
   the leftmost item.
 
-13.  Set `TabsHost direction = rtl`.
+14. Set `TabsHost direction = rtl`.
 
 - [ ] Expected: Tab bar displays in RTL order. Tab2 is
   the leftmost item.
-
-14.  Set `TabsHost direction = inherit`.
-
-- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.

@@ -56,7 +56,7 @@ function ConfigScreen() {
         <Text style={styles.heading}>System layout direction</Text>
         <Text>
           System layout direction depends on the language of the device
-          (Android/iOS) and supportRtl in app manifest (Android) or available
+          (Android/iOS) and supportsRtl in app manifest (Android) or available
           localizations in Xcode (iOS). In Xcode remember that you must select
           the language as default or provide at least 1 localization file (e.g.
           empty ar.lproj/InfoPlist.strings).
