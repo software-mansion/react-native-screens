@@ -8,8 +8,6 @@
 
 #define RNS_IGNORE_SUPER_CALL_END _Pragma("clang diagnostic pop")
 
-#define MUTATION_PARENT_TAG(mutation) mutation.parentTag
-
 #pragma mark - React Native architecture dependent code
 
 #ifdef RCT_NEW_ARCH_ENABLED
