@@ -154,6 +154,32 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
   }
 }
 
++ (NSInteger)detentIndexFromDetentIdentifier:(nullable UISheetPresentationControllerDetentIdentifier)identifier
+                               forRawDetents:(const std::vector<double> &)detents
+{
+  if (identifier == nil) {
+    return -1;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    if (!detents.empty()) {
+      return [identifier integerValue];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+
+  // Legacy Fallback for iOS 15 or when no custom detents are provided -
+  // mirroring buildSheetDetentsForFractions:
+  if ([identifier isEqualToString:UISheetPresentationControllerDetentIdentifierMedium]) {
+    return 0;
+  } else if ([identifier isEqualToString:UISheetPresentationControllerDetentIdentifierLarge]) {
+    return detents.size() > 1 ? 1 : 0;
+  }
+
+  return 0;
+}
+
 @end
 
 #endif // !TARGET_OS_TV

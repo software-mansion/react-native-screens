@@ -6,6 +6,10 @@ import { codegenNativeComponent } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
+type DetentChangedEvent = Readonly<{
+  index: CT.Int32;
+}>;
+
 interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
   detents?: CT.Double[] | undefined;
@@ -15,6 +19,7 @@ interface NativeProps extends ViewProps {
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDetentChanged?: CT.DirectEventHandler<DetentChangedEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSFormSheetHost', {

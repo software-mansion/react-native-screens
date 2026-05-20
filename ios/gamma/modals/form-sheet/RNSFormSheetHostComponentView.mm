@@ -140,6 +140,17 @@ namespace react = facebook::react;
   [self syncShadowNodeState];
 }
 
+#if !TARGET_OS_TV
+- (void)sheetController:(RNSFormSheetContentController *)controller
+    didChangeDetentIdentifier:(nullable NSString *)identifier
+{
+  NSInteger index = [RNSFormSheetDetentResolver detentIndexFromDetentIdentifier:identifier forRawDetents:_detents];
+  if (index >= 0) {
+    [_reactEventEmitter emitOnDetentChangedWithIndex:index];
+  }
+}
+#endif // !TARGET_OS_TV
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState

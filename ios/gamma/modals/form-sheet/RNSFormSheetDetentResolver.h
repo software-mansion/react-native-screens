@@ -34,6 +34,13 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 #endif // !TARGET_OS_TV
 
+#if !TARGET_OS_TV && defined(__cplusplus)
+
++ (NSInteger)detentIndexFromDetentIdentifier:(nullable UISheetPresentationControllerDetentIdentifier)identifier
+                               forRawDetents:(const std::vector<double> &)detents;
+
+#endif // !TARGET_OS_TV && __cplusplus
+
 @end
 
 NS_ASSUME_NONNULL_END
