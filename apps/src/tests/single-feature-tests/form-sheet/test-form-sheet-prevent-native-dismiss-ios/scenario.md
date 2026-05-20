@@ -1,4 +1,4 @@
-# Test Scenario: preventNativeDismiss
+# Test Scenario: PreventNativeDismiss
 
 ## Details
 
@@ -13,10 +13,6 @@ Other: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator (iPhone)
-
-## Note
-
-- The default value of `preventNativeDismiss` is `false`.
 
 ## Steps
 
