@@ -73,8 +73,7 @@ function makeItemViewFromItem(
 const styles = StyleSheet.create({
   config: {
     position: 'absolute',
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    left: 0,
+    top: 0,
   },
 });
