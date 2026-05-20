@@ -53,7 +53,7 @@ struct ContentWrapperBox {
 @end
 
 @implementation RNSScreenView {
-  __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
+  __weak RCTScrollViewComponentView *_sheetsScrollView;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -182,7 +182,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
-  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self tryFindDescendantScrollView];
+  RCTScrollViewComponentView *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -196,7 +196,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
+- (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
   RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
@@ -215,7 +215,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UIView *scrollView = (UIView *)object;
 
-  if (![scrollView isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+  if (![scrollView isKindOfClass:RCTScrollViewComponentView.class]) {
     return;
   }
 
@@ -707,12 +707,12 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)tryFindDescendantScrollView
+- (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+  if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
@@ -722,8 +722,8 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
+    if ([firstSubview isKindOfClass:RCTScrollViewComponentView.class]) {
+      return static_cast<RCTScrollViewComponentView *>(firstSubview);
     }
   }
 
@@ -733,8 +733,8 @@ RNS_IGNORE_SUPER_CALL_END
     UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
-        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
+          return static_cast<RCTScrollViewComponentView *>(subview);
         }
       }
     }

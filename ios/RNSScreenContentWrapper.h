@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenContentWrapper;
-@class RNS_REACT_SCROLL_VIEW_COMPONENT;
+@class RCTScrollViewComponentView;
 
 @protocol RNSScreenContentWrapperDelegate <NSObject>
 
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef struct {
-  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollViewComponent;
+  RCTScrollViewComponentView *scrollViewComponent;
   UIView *contentContainerView;
 } RNSScrollViewSearchResult;
 

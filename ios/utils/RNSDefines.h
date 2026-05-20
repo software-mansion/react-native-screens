@@ -28,8 +28,6 @@
 #define MUTATION_PARENT_TAG(mutation) mutation.parentTag
 #endif
 
-#define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollViewComponentView
-
 #pragma mark - SDK availability utility
 
 #define RNS_IPHONE_OS_VERSION_AVAILABLE(v)                              \
