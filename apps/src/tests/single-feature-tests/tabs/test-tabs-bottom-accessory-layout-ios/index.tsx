@@ -56,7 +56,7 @@ function ShortViewLR() {
 
 function LongView() {
   return (
-    <View style={styles.fullView}>
+    <View style={styles.fullView} testID="accessory-long">
       <LongText />
     </View>
   );
@@ -64,20 +64,20 @@ function LongView() {
 
 function RGBView() {
   return (
-    <View style={styles.fullView}>
-      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
+    <View style={styles.fullView} testID="accessory-rgb">
+      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} testID='rgb-strip-0' />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} testID='rgb-strip-1' />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} testID='rgb-strip-2' />
     </View>
   );
 }
 
 const ACCESSORY_VARIANTS = [
-  { id: 0, content: ShortViewUL, testID: 'variant-upper-left' },
-  { id: 1, content: ShortViewC, testID: 'variant-center' },
-  { id: 2, content: ShortViewLR, testID: 'variant-lower-right' },
-  { id: 3, content: LongView, testID: 'variant-long' },
-  { id: 4, content: RGBView, testID: 'variant-rgb' },
+  { id: 0, Content: ShortViewUL, testID: 'variant-upper-left' },
+  { id: 1, Content: ShortViewC, testID: 'variant-center' },
+  { id: 2, Content: ShortViewLR, testID: 'variant-lower-right' },
+  { id: 3, Content: LongView, testID: 'variant-long' },
+  { id: 4, Content: RGBView, testID: 'variant-rgb' },
 ];
 
 function ConfigScreen() {
@@ -86,7 +86,7 @@ function ConfigScreen() {
 
   useEffect(() => {
     updateHostConfig({
-      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
+      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].Content },
     });
   }, [selected, updateHostConfig]);
 
@@ -102,7 +102,7 @@ function ConfigScreen() {
             styles.card,
             selected === item.id ? styles.selectedCard : styles.unselectedCard,
           ]}>
-          {item.content}
+          {<item.Content />}
         </Pressable>
       ))}
     </ScrollView>
@@ -126,7 +126,7 @@ function ScrollDownTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={i === 0 ? 'scroll-down-item-1' : undefined}
+            testID={`scroll-down-item-${i + 1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
@@ -159,7 +159,7 @@ function ScrollUpTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={i === 0 ? 'scroll-up-item-1' : undefined}
+            testID={`scroll-up-item-${i + 1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
