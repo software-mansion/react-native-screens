@@ -40,9 +40,10 @@ RTL language are NOT covered by E2E tests.
 
 ## Prerequisites
 
-- iOS device or simulator with at least one RTL language localization
-  configured in Xcode (e.g., an empty `ar.lproj/InfoPlist.strings`) and system
-  language set to Arabic/Hebrew.
+- iOS device or simulator with system language set to Arabic/Hebrew.
+- Valid RTL configuration in Xcode application project (RTL language set as app's
+default language or RTL language added to supported languages + at least one
+localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
 - Android emulator with `supportsRtl` enabled in app manifest.
 
 ## Note
