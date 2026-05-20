@@ -73,11 +73,11 @@ function RGBView() {
 }
 
 const ACCESSORY_VARIANTS = [
-  { id: 0, content: ShortViewUL, testID: 'variant-upper-left' },
-  { id: 1, content: ShortViewC, testID: 'variant-center' },
-  { id: 2, content: ShortViewLR, testID: 'variant-lower-right' },
-  { id: 3, content: LongView, testID: 'variant-long' },
-  { id: 4, content: RGBView, testID: 'variant-rgb' },
+  { id: 0, Content: ShortViewUL, testID: 'variant-upper-left' },
+  { id: 1, Content: ShortViewC, testID: 'variant-center' },
+  { id: 2, Content: ShortViewLR, testID: 'variant-lower-right' },
+  { id: 3, Content: LongView, testID: 'variant-long' },
+  { id: 4, Content: RGBView, testID: 'variant-rgb' },
 ];
 
 function ConfigScreen() {
@@ -86,7 +86,7 @@ function ConfigScreen() {
 
   useEffect(() => {
     updateHostConfig({
-      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
+      ios: { bottomAccessory: ACCESSORY_VARIANTS[selected].Content },
     });
   }, [selected, updateHostConfig]);
 
@@ -102,7 +102,7 @@ function ConfigScreen() {
             styles.card,
             selected === item.id ? styles.selectedCard : styles.unselectedCard,
           ]}>
-          {React.createElement(item.content)}
+          {<item.Content />}
         </Pressable>
       ))}
     </ScrollView>
@@ -126,7 +126,7 @@ function ScrollDownTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-down-item-${i+1}`}
+            testID={`scroll-down-item-${i + 1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
@@ -159,7 +159,7 @@ function ScrollUpTab() {
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.scrollItem}>
           <Text
-            testID={`scroll-up-item-${i+1}`}
+            testID={`scroll-up-item-${i + 1}`}
             style={styles.scrollItemText}>
             Row {i + 1}
           </Text>
