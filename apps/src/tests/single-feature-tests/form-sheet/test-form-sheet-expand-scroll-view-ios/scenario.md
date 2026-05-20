@@ -18,6 +18,7 @@ Other: Planned, but will be implemented separately.
 
 - The default value of `prefersScrollingExpandsWhenScrolledToEdge` in UIKit is `true`.
 - This property only takes effect when scrolling begins exactly from the top edge of the `ScrollView` (i.e., when the content offset is at 0).
+- The FormSheet will open with the list scrolled to the point where it was left during dismissal. You may need to scroll back to the top before testing edge behaviors.
 
 ## Steps - iPhone
 

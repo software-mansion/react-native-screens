@@ -78,6 +78,13 @@ export interface FormSheetProps {
   /**
    * @summary Determines whether scrolling expands the sheet to a larger detent.
    *
+   * When set to `true`, scrolling up within a child scroll view (starting from the top edge)
+   * will first expand the sheet to a larger detent before scrolling the content.
+   * When set to `false`, scrolling within the child scroll view will scroll the content normally
+   * without expanding the sheet.
+   * Note that manual dragging of the sheet's non-scrollable area will still expand the
+   * sheet regardless of this setting.
+   *
    * On iOS, this maps directly to `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
    *
    * @default true
