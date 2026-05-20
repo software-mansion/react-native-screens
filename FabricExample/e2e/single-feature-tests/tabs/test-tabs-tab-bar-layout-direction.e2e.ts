@@ -1,7 +1,7 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
-import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
@@ -52,8 +52,8 @@ async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
   });
 }
 
-describe('Tab Bar Layout Direction - system settings: LTR', () => {
-  beforeEach(async () => {
+describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
+  beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
@@ -73,7 +73,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     );
     await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: inherit',
+      'direction: ltr',
     );
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == false',
@@ -81,12 +81,12 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
     await expectTab1ToBeLeftOfTab2(true);
   });
 
-  it('follows system LTR settings when direction is set to inherit', async () => {
+  it('follows system/RN LTR settings when direction is set to inherit', async () => {
     await selectDirection('inherit');
     await expectTab1ToBeLeftOfTab2(true);
   });
 
-  it('overrides system LTR settings and renders the tab bar in RTL order', async () => {
+  it('overrides system/RN LTR settings and renders the tab bar in rtl order', async () => {
     await selectDirection('rtl');
     await expectTab1ToBeLeftOfTab2(false);
   });
@@ -114,7 +114,7 @@ describe('Tab Bar Layout Direction - system settings: LTR', () => {
   });
 });
 
-describe('Tab Bar Layout Direction - system settings: RTL', () => {
+describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
   beforeAll(async () => {
     if (device.getPlatform() === 'ios') {
       await device.launchApp({
@@ -167,7 +167,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     );
     await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-      'direction: inherit',
+      'direction: rtl',
     );
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == true',
@@ -175,7 +175,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expectTab1ToBeLeftOfTab2(false);
   });
 
-  it('follows system RTL settings when direction is set to inherit', async () => {
+  it('follows system/RN RTL settings when direction is set to inherit', async () => {
     await selectDirection('inherit');
     await expectTab1ToBeLeftOfTab2(false);
   });
@@ -185,7 +185,7 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expectTab1ToBeLeftOfTab2(false);
   });
 
-  it('overrides system RTL settings and renders the tab bar in LTR order', async () => {
+  it('overrides system RTL settings and renders the tab bar in ltr order', async () => {
     await selectDirection('ltr');
     await expectTab1ToBeLeftOfTab2(true);
   });
@@ -207,3 +207,170 @@ describe('Tab Bar Layout Direction - system settings: RTL', () => {
     await expectTab1ToBeLeftOfTab2(false);
   });
 });
+
+describeIfiOS(
+  'iOS only: Tab Bar Layout Direction - system settings: LTR and RN settings: RTL',
+  () => {
+    beforeAll(async () => {
+      await device.launchApp({ newInstance: true });
+      await selectSingleFeatureTestsScreen(
+        'Tabs',
+        'test-tabs-tab-bar-layout-direction',
+      );
+      await element(by.id('react-force-rtl-picker')).tap();
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: true',
+      );
+      await device.reloadReactNative();
+      await selectSingleFeatureTestsScreen(
+        'Tabs',
+        'test-tabs-tab-bar-layout-direction',
+      );
+    });
+
+    afterAll(async () => {
+      await launchAppWithAttributes();
+    });
+
+    it('displays default options and renders Tab2 at the visually leftmost position (RTL)', async () => {
+      await expect(
+        element(by.id('tab-bar-layout-direction-scrollview')),
+      ).toBeVisible();
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: false',
+      );
+      await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
+        'allowRTL: true',
+      );
+      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await expect(
+        element(by.id('tab-bar-layout-direction-picker')),
+      ).toHaveLabel('direction: rtl');
+      await expect(element(by.id('is-rtl-information'))).toHaveText(
+        'I18nManager.isRTL == true',
+      );
+      await expectTab1ToBeLeftOfTab2(false);
+    });
+
+    it('remains in RTL order when direction is explicitly set to rtl', async () => {
+      await selectDirection('rtl');
+      await expectTab1ToBeLeftOfTab2(false);
+    });
+
+    it('overrides system RTL settings and renders the tab bar in ltr order', async () => {
+      await selectDirection('ltr');
+      await expectTab1ToBeLeftOfTab2(true);
+    });
+
+    it('follows RN RTL settings when direction is set to inherit', async () => {
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(true);
+    });
+
+    it('cycle through inherit → rtl → ltr → rtl → inherit renders the tab bar in correct order', async () => {
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(true);
+
+      await selectDirection('rtl');
+      await expectTab1ToBeLeftOfTab2(false);
+
+      await selectDirection('ltr');
+      await expectTab1ToBeLeftOfTab2(true);
+
+      await selectDirection('rtl');
+      await expectTab1ToBeLeftOfTab2(false);
+
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(true);
+    });
+  },
+);
+describeIfiOS(
+  'Tab Bar Layout Direction - system settings: RTL and RN settings: LTR',
+  () => {
+    beforeAll(async () => {
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: {
+          AppleTextDirection: 'YES',
+          NSForceRightToLeftWritingDirection: 'YES',
+          I18NIsRTL: 'YES',
+        },
+      });
+      await selectSingleFeatureTestsScreen(
+        'Tabs',
+        'test-tabs-tab-bar-layout-direction',
+      );
+      await element(by.id('react-allow-rtl-picker')).tap();
+      await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
+        'allowRTL: false',
+      );
+
+      await device.reloadReactNative();
+      await selectSingleFeatureTestsScreen(
+        'Tabs',
+        'test-tabs-tab-bar-layout-direction',
+      );
+    });
+
+    afterAll(async () => {
+      await launchAppWithAttributes({
+        AppleTextDirection: 'NO',
+        NSForceRightToLeftWritingDirection: 'NO',
+        I18NIsRTL: 'NO',
+      });
+    });
+
+    it('displays default options and renders Tab1 at the visually leftmost position (LTR)', async () => {
+      await expect(
+        element(by.id('tab-bar-layout-direction-scrollview')),
+      ).toBeVisible();
+      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
+        'forceRTL: false',
+      );
+      await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
+        'allowRTL: true',
+      );
+      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await expect(
+        element(by.id('tab-bar-layout-direction-picker')),
+      ).toHaveLabel('direction: ltr');
+      await expect(element(by.id('is-rtl-information'))).toHaveText(
+        'I18nManager.isRTL == false',
+      );
+      await expectTab1ToBeLeftOfTab2(true);
+    });
+
+    it('follows system RTL settings and renders the tab bar in rtl order', async () => {
+      await selectDirection('rtl');
+      await expectTab1ToBeLeftOfTab2(false);
+    });
+
+    it('overrides system RTL settings and renders the tab bar in ltr order', async () => {
+      await selectDirection('ltr');
+      await expectTab1ToBeLeftOfTab2(true);
+    });
+
+    it('follows system RTL settings when direction is set to inherit', async () => {
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(false);
+    });
+
+    it('cycle through inherit → ltr → rtl → ltr → inherit renders the tab bar in correct order', async () => {
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(false);
+
+      await selectDirection('ltr');
+      await expectTab1ToBeLeftOfTab2(true);
+
+      await selectDirection('rtl');
+      await expectTab1ToBeLeftOfTab2(false);
+
+      await selectDirection('ltr');
+      await expectTab1ToBeLeftOfTab2(true);
+
+      await selectDirection('inherit');
+      await expectTab1ToBeLeftOfTab2(false);
+    });
+  },
+);
