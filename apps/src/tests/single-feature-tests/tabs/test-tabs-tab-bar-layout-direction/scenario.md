@@ -9,13 +9,17 @@ rendering by testing the precedence between system-level settings, React
 Native's I18nManager, and the explicit direction prop from
 react-native-screens.
 
-On iOS, all scenarios follow a system direction × RN direction matrix,
-because `direction = inherit` falls back to the **native** app direction
-(i.e. the system setting), potentially overriding React Native's `forceRTL`.
-On Android, scenarios only set the RN direction, because `direction =
-inherit` propagates via `style.direction` through the view hierarchy and
-therefore follows the RN setting - no system-direction dimension is needed.
-Each section exercises `inherit`, `ltr`, and `rtl` prop values.
+When `direction` is set to `inherit`, the resolution is platform-dependent.
+On iOS, the layout is driven by the native trait system, which ignores
+React Native's `forceRTL` and strictly follows the device or app language.
+On Android, the direction propagates through the view hierarchy and in most cases
+aligns with React Native's own `I18nManager` setting, effectively letting RN override the system.
+
+Reflecting this divide, the iOS scenario set covers the full
+**System Direction × RN Direction** matrix to capture cases where native and JS
+contexts disagree. The Android scenarios omit those conflict cases - because RN's
+setting overrides the system, only the RN-direction dimension is varied.
+Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
 
 **OS test creation version:** iOS: 18.6 and 26.5, Android: API Level 36.
 
