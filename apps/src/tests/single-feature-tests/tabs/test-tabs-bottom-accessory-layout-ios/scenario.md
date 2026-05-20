@@ -33,6 +33,12 @@ is not applied to the full-size app.
 - The **Config** tab is used to select the active accessory variant.
 - "Scrolling down" means dragging the list upward (revealing rows below);
   "scrolling up" means dragging the list downward (revealing rows above).
+- `tabBarMinimizeBehavior` prop is not manipulated externally in this scenario.
+  The test screen sets it internally per tab: `onScrollDown` when the
+  **ScrollDown** tab is active, `onScrollUp` when **ScrollUp** tab is active,
+  and leaves it unset (system default: `automatic`) on the **Config** tab.
+  Steps 1–9 are performed on the **Config** tab, where minimize behavior
+  is effectively `automatic` (no minimization).
 
 ## Steps
 
