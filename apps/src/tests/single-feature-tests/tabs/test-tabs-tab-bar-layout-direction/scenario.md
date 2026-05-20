@@ -84,7 +84,7 @@ RTL language are NOT covered by E2E tests.
 > Setup: System language is LTR (e.g. English). RN: `forceRTL = false` (default).
 > `I18nManager.isRTL == false`.
 
-1. Set `TabsHost direction = inherit`.
+2. Set `TabsHost direction = inherit`.
 
 - [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
 
