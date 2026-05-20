@@ -9,7 +9,8 @@
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate
+@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
+                                             UIGestureRecognizerDelegate
 #if !TARGET_OS_TV
                                              ,
                                              UISheetPresentationControllerDelegate

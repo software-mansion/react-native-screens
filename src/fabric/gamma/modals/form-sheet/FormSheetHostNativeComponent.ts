@@ -21,8 +21,8 @@ interface NativeProps extends ViewProps {
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onNativeDismissPrevented?:
-  | CT.DirectEventHandler<GenericEmptyEvent>
-  | undefined;
+    | CT.DirectEventHandler<GenericEmptyEvent>
+    | undefined;
   onDetentChanged?: CT.DirectEventHandler<DetentChangedEvent> | undefined;
 }
 
