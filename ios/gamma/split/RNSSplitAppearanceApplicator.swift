@@ -186,14 +186,14 @@ class RNSSplitAppearanceApplicator {
     splitHostController.preferredDisplayMode = splitHost.preferredDisplayMode
   }
 
-    func validateColumnConstraints(minWidth: CGFloat, maxWidth: CGFloat) {
-        // Compare values only if both are non-negative.
-        // The default value, which is -1, indicates that the constraint was not provided.
-        if minWidth >= 0 && maxWidth >= 0 {
-            assert(
-                minWidth <= maxWidth,
-                "[RNScreens] Split column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
-            )
-        }
+  func validateColumnConstraints(minWidth: CGFloat, maxWidth: CGFloat) {
+    // Compare values only if both are non-negative.
+    // The default value, which is -1, indicates that the constraint was not provided.
+    if minWidth >= 0 && maxWidth >= 0 {
+      assert(
+        minWidth <= maxWidth,
+        "[RNScreens] Split column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
+      )
     }
+  }
 }
