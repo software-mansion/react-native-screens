@@ -101,8 +101,8 @@ export interface FormSheetProps {
    *
    * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
    * remaining on the resting detent. Dismissal programmatically via `isOpen={false}` will still work.
-   * The default value is `false`.
    *
+   * @default false
    * @platform ios
    */
   preventNativeDismiss?: boolean | undefined;
