@@ -108,7 +108,7 @@ localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
    `inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
 
 - [ ] Expected: Tab bar direction updates immediately with each change with
-result described as expected above.
+  the result described as expected above.
 
 ---
 
