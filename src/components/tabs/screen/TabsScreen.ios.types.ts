@@ -223,6 +223,10 @@ export interface TabsScreenPropsIOS {
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
    *
+   * @remarks
+   * When `scrollEdgeAppearance.tabBarBackgroundColor` is non-opaque (alpha < 1) and
+   * `scrollEdgeAppearance.tabBarBlurEffect` is `none`, the `tabBarBackgroundColor`
+   * from `standardAppearance` will show through from beneath.
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
