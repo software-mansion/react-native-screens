@@ -7,9 +7,7 @@
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
-#import "RNSPresentationSourceProvider.h"
 
-#import <React/RCTLog.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -78,52 +76,21 @@ namespace react = facebook::react;
   _controller.delegate = self;
 }
 
-- (void)didMoveToWindow
+- (void)updatePresentationState
 {
-  [super didMoveToWindow];
-  if (self.window != nil) {
-    [self updatePresentationState];
+  if (_isOpen) {
+    if (self.window != nil) {
+      [_controller presentFromWindowIfNeeded:self.window];
+    }
+  } else {
+    [_controller dismissIfNeeded];
   }
 }
 
-#pragma mark - Presentation Logic
-
-- (void)updatePresentationState
+- (void)didMoveToWindow
 {
-  if (self.window == nil) {
-    return;
-  }
-
-  BOOL isPresented = _controller.presentingViewController != nil;
-
-  // TODO: @t0maboro - This presentation logic is currently quite primitive.
-  // We are not entirely safe from rapid conflicting updates, and there are edge cases
-  // where the presentation state might become desynchronized. Addressing this robustly
-  // might require an approach similar to the tabs implementation using state provenance,
-  // which will be handled separately.
-  // Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-  if (_isOpen && !isPresented) {
-    UIViewController *presentationSourceViewController =
-        [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
-    if (presentationSourceViewController == nil) {
-      RCTLogError(
-          @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
-      return;
-    }
-
-    // TODO: @t0maboro - this log definitely requires refactor now and it should be removed outside Host in a followup
-    // PR
-    [_controller prepareForPresentation];
-    [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
-  } else if (!_isOpen && isPresented) {
-    [_controller dismissViewControllerAnimated:YES completion:nil];
-  } else {
-    // The remaining two combinations are valid and require no action:
-    // 1. _isOpen == NO and isPresented == NO: This occurs on the initial mount before the sheet is opened,
-    //    or when the sheet has already been successfully dismissed.
-    // 2. _isOpen == YES and isPresented == YES: This occurs when the sheet is already visible
-    //    and we are just updating other configuration props (e.g., detents) via updateProps.
-  }
+  [super didMoveToWindow];
+  [self updatePresentationState];
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
