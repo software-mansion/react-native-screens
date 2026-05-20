@@ -123,7 +123,7 @@ result described as expected above.
 > Setup: iOS system: System language is RTL (e.g. Arabic or Hebrew). Disable RN RTL `forceRTL = false`, 
 > `allowRTL = false` and restart the app. `I18nManager.isRTL == false`.
 
-9.   Set `TabsHost direction = ltr`.
+9. Set `TabsHost direction = ltr`.
 
 - [ ] Expected: Tab bar displays in LTR order on both platforms. Tab1 is
   the leftmost item. Explicit `ltr` overrides RN's RTL setting.
@@ -133,7 +133,7 @@ result described as expected above.
 - [ ] Expected: Tab bar displays in RTL order on both platforms. Tab2 is
   the leftmost item.
 
-11.  Set `TabsHost direction = inherit`.
+11. Set `TabsHost direction = inherit`.
 
 - [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
 
@@ -144,16 +144,16 @@ result described as expected above.
 > Setup: System language is LTR (e.g. English). Enable `forceRTL = true`
 > and restart the app. `I18nManager.isRTL == true`.
 
-12.   Set `TabsHost direction = ltr`.
+12. Set `TabsHost direction = ltr`.
 
 - [ ] Expected: Tab bar displays in LTR order on both platforms. Tab1 is
   the leftmost item.
 
-1.  Set `TabsHost direction = rtl`.
+13. Set `TabsHost direction = rtl`.
 
 - [ ] Expected: Tab bar displays in RTL order on both platforms. Tab2 is
   the leftmost item.
 
-14.  Set `TabsHost direction = inherit`.
+14. Set `TabsHost direction = inherit`.
 
 - [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
