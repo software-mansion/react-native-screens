@@ -25,15 +25,13 @@ Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
 
 ## E2E test
 
-Other: Covers first two manual scenarios for LTR/RTL configurations:
+Yes: Covers all scenarios for LTR/RTL configurations:
 
 - iOS: The system RTL direction is set by app configuration setting
   `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
   to `YES` during the app launch sequence.
 - Android: Via React Native - RTL direction must be triggered using the
   `forceRTL` toggle located within the Layout Direction screen.
-
-E2E tests for iOS specific scenarios have to be implemented.
 
 Scenarios where RTL is enabled at the device level by setting a system-wide
 RTL language are NOT covered by E2E tests.
