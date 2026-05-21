@@ -6,6 +6,8 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Exercises per-tab tab bar appearance props via both standardAppearance and scrollEdgeAppearance: tabBarBackgroundColor, tabBarBlurEffect, tabBarShadowColor.',
   platforms: ['ios'],
+  e2eCoverage: 'incomplete',
+  smokeTest: false,
 };
 
 export default scenarioDescription;
