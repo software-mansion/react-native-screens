@@ -147,14 +147,10 @@ RNS_IGNORE_SUPER_CALL_END
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;

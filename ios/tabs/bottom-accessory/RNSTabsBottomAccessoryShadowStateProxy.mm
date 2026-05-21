@@ -31,12 +31,8 @@
     if (_bottomAccessoryView.state != nullptr) {
       auto newState =
           react::RNSTabsBottomAccessoryState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-      _bottomAccessoryView.state->updateState(std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-                                                  ,
-                                              facebook::react::EventQueue::UpdateMode::unstable_Immediate
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-      );
+      _bottomAccessoryView.state->updateState(std::move(newState),
+                                              facebook::react::EventQueue::UpdateMode::unstable_Immediate);
       _previousFrame = frame;
     }
   }

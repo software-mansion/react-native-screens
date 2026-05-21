@@ -62,10 +62,8 @@ API_AVAILABLE(ios(26.0))
 std::optional<react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
 RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
 
-#if REACT_NATIVE_VERSION_MINOR >= 82
 RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
     react::RNSTabsBottomAccessoryContentEnvironment environment);
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 

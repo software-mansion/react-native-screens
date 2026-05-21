@@ -41,8 +41,10 @@ function ConfigScreen() {
   }, [reactAllowRtl]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}
-      testID='tab-bar-layout-direction-scrollview'>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      testID="tab-bar-layout-direction-scrollview">
       <View style={styles.section}>
         <Text>
           There are 3 sources of layout direction: system, React Native and our
@@ -54,7 +56,7 @@ function ConfigScreen() {
         <Text style={styles.heading}>System layout direction</Text>
         <Text>
           System layout direction depends on the language of the device
-          (Android/iOS) and supportRtl in app manifest (Android) or available
+          (Android/iOS) and supportsRtl in app manifest (Android) or available
           localizations in Xcode (iOS). In Xcode remember that you must select
           the language as default or provide at least 1 localization file (e.g.
           empty ar.lproj/InfoPlist.strings).
@@ -63,7 +65,7 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>React Native's isRTL</Text>
-        <Text style={styles.rtlInfo} testID='is-rtl-information'>
+        <Text style={styles.rtlInfo} testID="is-rtl-information">
           {'I18nManager.isRTL == ' + (I18nManager.isRTL ? 'true' : 'false')}
         </Text>
       </View>
@@ -80,7 +82,7 @@ function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             setReactForceRtl(value);
           }}
-          testID='react-force-rtl-picker'
+          testID="react-force-rtl-picker"
         />
       </View>
 
@@ -96,18 +98,29 @@ function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             setReactAllowRtl(value);
           }}
-          testID='react-allow-rtl-picker'
+          testID="react-allow-rtl-picker"
         />
       </View>
 
       <View style={styles.section}>
         <Text style={styles.heading}>TabsHost layout direction</Text>
+        <Text style={styles.description}>
+          TabsContainer by default reads I18nManager.isRTL and applies direction
+          prop based on that value. You can override this by manually choosing
+          different direction below or using "inherit" which will fallback to
+          default behavior which is platform-dependent. On Android, layout
+          direction depends on view hierarchy propagation which in most cases
+          will result in using react-native's preference. On iOS, layout
+          direction depends on trait system which is not affected by
+          react-native and the effective layout direction of the tab bar will
+          depend on app/device language.
+        </Text>
         <SettingsPicker<NonNullable<TabsHostProps['direction']>>
           label={'direction'}
-          value={hostConfig.direction ?? 'inherit'}
+          value={hostConfig.direction ?? (I18nManager.isRTL ? 'rtl' : 'ltr')}
           onValueChange={value => updateHostConfig({ direction: value })}
           items={['inherit', 'ltr', 'rtl']}
-          testID='tab-bar-layout-direction-picker'
+          testID="tab-bar-layout-direction-picker"
         />
       </View>
     </ScrollView>
