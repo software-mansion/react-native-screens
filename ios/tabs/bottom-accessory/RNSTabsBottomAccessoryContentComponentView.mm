@@ -12,9 +12,9 @@ namespace react = facebook::react;
 #pragma mark - View implementation
 
 @implementation RNSTabsBottomAccessoryContentComponentView {
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   RNSTabsBottomAccessoryComponentView *__weak _Nullable _accessoryView;
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -25,7 +25,7 @@ namespace react = facebook::react;
 
 #pragma mark - UIKit callbacks
 
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)didMoveToWindow
 {
@@ -53,15 +53,13 @@ namespace react = facebook::react;
   }
 }
 
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
-
-#if REACT_NATIVE_VERSION_MINOR >= 82
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
@@ -90,8 +88,6 @@ namespace react = facebook::react;
   // visibility, we call `handleContentViewVisibilityForEnvironmentIfNeeded` here.
   [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
 }
-
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
