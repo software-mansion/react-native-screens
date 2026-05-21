@@ -62,6 +62,11 @@ export interface StackHeaderBackgroundSubviewAndroid {
   render: () => ReactElement;
 }
 
+export type StackHeaderToolbarMenuItemShowAsActionAndroid =
+  | 'always'
+  | 'ifRoom'
+  | 'never';
+
 export interface StackHeaderToolbarMenuItemAndroid {
   /**
    * @summary Unique identifier of the menu item.
@@ -82,6 +87,8 @@ export interface StackHeaderToolbarMenuItemAndroid {
    * @platform android
    */
   hidden?: boolean | undefined;
+  showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
+  showAsActionWithText?: boolean | undefined;
 }
 
 export type StackHeaderToolbarMenuItemClickedEvent = {
