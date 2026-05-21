@@ -215,13 +215,10 @@ describeIfiOS(
   'iOS only: Tab Bar Layout Direction - system settings: RTL and RN settings: LTR',
   () => {
     beforeAll(async () => {
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          AppleTextDirection: 'YES',
-          NSForceRightToLeftWritingDirection: 'YES',
-          I18NIsRTL: 'YES',
-        },
+      await launchAppWithAttributes({
+        AppleTextDirection: 'YES',
+        NSForceRightToLeftWritingDirection: 'YES',
+        I18NIsRTL: 'YES',
       });
       await selectSingleFeatureTestsScreen(
         'Tabs',
