@@ -36,7 +36,7 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Content view switching workaround
 
-#if defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#if defined(__cplusplus)
 
 /**
  * Due to *synchronous* events not being actually *synchronous*, we are unable to handle layout modifications
@@ -63,7 +63,7 @@ API_AVAILABLE(ios(26.0))
 
 @end
 
-#endif // defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
 

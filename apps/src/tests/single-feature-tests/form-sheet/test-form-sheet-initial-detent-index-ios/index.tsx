@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { FormSheet, type FormSheetProps } from 'react-native-screens/experimental';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Sheet initial detent index',
-  key: 'test-form-sheet-initial-detent-index-ios',
-  details: 'Allows to test initialDetentIndex prop of FormSheet component.',
-  platforms: ['ios'],
-};
 
 type InitialDetentProp = FormSheetProps['initialDetentIndex'];
 

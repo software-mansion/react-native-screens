@@ -20,7 +20,8 @@ function ScenarioSelect(props: {
         testID={`${props.groupName}-scenarios-scrollview`}>
         {Object.values(props.scenarios).map(
           ({ scenarioDescription }: Scenario) => {
-            const { name, key, details, platforms } = scenarioDescription;
+            const { name, key, details, platforms, smokeTest, e2eCoverage } =
+              scenarioDescription;
             return (
               <ScenarioButton
                 title={name}
@@ -28,6 +29,8 @@ function ScenarioSelect(props: {
                 route={key}
                 key={key}
                 platformsHint={platforms}
+                smokeTest={smokeTest}
+                e2eCoverage={e2eCoverage}
                 testID={key}
               />
             );

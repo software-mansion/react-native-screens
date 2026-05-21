@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
@@ -11,14 +11,6 @@ import {
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs lifecycle events',
-  key: 'test-tabs-lifecycle-events',
-  details:
-    'Verify lifecycle events (onWillAppear, etc.) fire on tab switch',
-  platforms: ['ios', 'android'],
-};
 
 function TabScreen() {
   const { routeKey } = useTabsNavigationContext();

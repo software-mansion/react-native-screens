@@ -248,7 +248,7 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            updateShadowNodeScreenSize(width, height, top)
+            updateShadowNodeScreenSize(width, height, top + translationY.toInt())
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)

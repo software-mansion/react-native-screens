@@ -1,4 +1,8 @@
-import { ViewProps } from 'react-native';
+import type { NativeSyntheticEvent, ViewProps } from 'react-native';
+
+export interface FormSheetDetentChangedEvent {
+  index: number;
+}
 
 export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
@@ -75,6 +79,23 @@ export interface FormSheetProps {
    */
   initialDetentIndex?: number | 'last' | undefined;
 
+  /**
+   * @summary Determines whether scrolling expands the sheet to a larger detent.
+   *
+   * When set to `true`, scrolling up within a child scroll view (starting from the top edge)
+   * will first expand the sheet to a larger detent before scrolling the content.
+   * When set to `false`, scrolling within the child scroll view will scroll the content normally
+   * without expanding the sheet.
+   * Note that manual dragging of the sheet's non-scrollable area will still expand the
+   * sheet regardless of this setting.
+   *
+   * On iOS, this maps directly to `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
+   *
+   * @default true
+   * @platform ios
+   */
+  prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
+
   // Events
   /**
    * @summary Called when the sheet is dismissed natively.
@@ -85,4 +106,15 @@ export interface FormSheetProps {
    * @platform ios
    */
   onNativeDismiss?: (() => void) | undefined;
+
+  /**
+   * @summary Called when the sheet settles at a new detent.
+   *
+   * Provides the `index` of the newly selected detent from the `detents` array.
+   *
+   * @platform ios
+   */
+  onDetentChanged?:
+    | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
+    | undefined;
 }

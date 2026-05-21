@@ -1,12 +1,13 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetAppearanceApplicator.h"
+#import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
-#import "RNSPresentationSourceProvider.h"
 
-#import <React/RCTLog.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -14,18 +15,14 @@
 
 namespace react = facebook::react;
 
-// Predefined values for `initialDetentIndex`.
-static NSInteger const kRNSFormSheetLastDetent = -1;
-// Predefined values for `largestUndimmedDetentIndex`.
-static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
-static NSInteger const kRNSFormSheetNeverDimmed = -2;
-
-@interface RNSFormSheetHostComponentView () <RNSFormSheetHostControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RNSFormSheetContentControllerDelegate>
 @end
 
 @implementation RNSFormSheetHostComponentView {
   RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
+  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
 
   RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
@@ -33,17 +30,6 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   // Props
   BOOL _isOpen;
   std::vector<double> _detents;
-  BOOL _prefersGrabberVisible;
-  CGFloat _preferredCornerRadius;
-  NSInteger _largestUndimmedDetentIndex;
-  NSInteger _initialDetentIndex;
-
-  // State
-  BOOL _initialDetentApplied;
-
-  // Invalidation flags
-  BOOL _needsSheetPresentationUpdate;
-  BOOL _needsSheetConfigurationUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -61,11 +47,8 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
-
-  _initialDetentApplied = NO;
-
-  _needsSheetPresentationUpdate = NO;
-  _needsSheetConfigurationUpdate = NO;
+  _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
+  _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
 }
 
 - (void)resetProps
@@ -79,6 +62,12 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
   _initialDetentIndex = 0;
+  _prefersScrollingExpandsWhenScrolledToEdge = YES;
+}
+
+- (const std::vector<double> &)detents
+{
+  return _detents;
 }
 
 - (void)setupController
@@ -87,55 +76,24 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   _controller.delegate = self;
 }
 
+- (void)updatePresentationState
+{
+  if (_isOpen) {
+    if (self.window != nil) {
+      [_controller presentFromWindowIfNeeded:self.window];
+    }
+  } else {
+    [_controller dismissIfNeeded];
+  }
+}
+
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  if (self.window != nil) {
-    [self updatePresentationState];
-  }
+  [self updatePresentationState];
 }
 
-#pragma mark - Presentation Logic
-
-- (void)updatePresentationState
-{
-  if (self.window == nil) {
-    return;
-  }
-
-  BOOL isPresented = _controller.presentingViewController != nil;
-
-  // TODO: @t0maboro - This presentation logic is currently quite primitive.
-  // We are not entirely safe from rapid conflicting updates, and there are edge cases
-  // where the presentation state might become desynchronized. Addressing this robustly
-  // might require an approach similar to the tabs implementation using state provenance,
-  // which will be handled separately.
-  // Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-  if (_isOpen && !isPresented) {
-    UIViewController *presentationSourceViewController =
-        [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:self.window];
-    if (presentationSourceViewController == nil) {
-      RCTLogError(
-          @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
-      return;
-    }
-
-    // TODO: @t0maboro - this log definitely requires refactor now and it should be removed outside Host in a followup
-    // PR
-    [_controller prepareForPresentation];
-    [presentationSourceViewController presentViewController:_controller animated:YES completion:nil];
-  } else if (!_isOpen && isPresented) {
-    [_controller dismissViewControllerAnimated:YES completion:nil];
-  } else {
-    // The remaining two combinations are valid and require no action:
-    // 1. _isOpen == NO and isPresented == NO: This occurs on the initial mount before the sheet is opened,
-    //    or when the sheet has already been successfully dismissed.
-    // 2. _isOpen == YES and isPresented == YES: This occurs when the sheet is already visible
-    //    and we are just updating other configuration props (e.g., detents) via updateProps.
-  }
-}
-
-#pragma mark - RNSFormSheetHostControllerDelegate
+#pragma mark - RNSFormSheetContentControllerDelegate
 
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
 {
@@ -148,6 +106,17 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
   [self syncTouchHandlerOrigin];
   [self syncShadowNodeState];
 }
+
+#if !TARGET_OS_TV
+- (void)sheetController:(RNSFormSheetContentController *)controller
+    didChangeDetentIdentifier:(nullable NSString *)identifier
+{
+  NSInteger index = [RNSFormSheetDetentResolver detentIndexFromDetentIdentifier:identifier forRawDetents:_detents];
+  if (index >= 0) {
+    [_reactEventEmitter emitOnDetentChangedWithIndex:index];
+  }
+}
+#endif // !TARGET_OS_TV
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -192,40 +161,47 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
-    _needsSheetPresentationUpdate = YES;
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
 
     if (_isOpen) {
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
-      _needsSheetConfigurationUpdate = YES;
+      [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
-      _initialDetentApplied = NO;
+      [_appearanceApplicator resetInitialDetent];
     }
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
-    _needsSheetConfigurationUpdate = YES;
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
+  }
+
+  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
+      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
+    _prefersScrollingExpandsWhenScrolledToEdge =
+        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
+    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -235,15 +211,14 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 {
   [super finalizeUpdates:updateMask];
 
-  if (_needsSheetConfigurationUpdate) {
-    _needsSheetConfigurationUpdate = NO;
-    [self updateConfiguration];
-  }
+  [_appearanceApplicator updateAppearanceIfNeededForHost:self
+                                              controller:_controller
+                                             coordinator:_appearanceCoordinator];
 
-  if (_needsSheetPresentationUpdate) {
-    _needsSheetPresentationUpdate = NO;
-    [self updatePresentationState];
-  }
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
+                      performOperations:^{
+                        [self updatePresentationState];
+                      }];
 }
 
 - (void)invalidate
@@ -278,195 +253,6 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
                                             contentViewOriginInWindow.y - hostOriginInWindow.y);
 
   [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentOriginOffset];
-}
-
-- (void)updateConfiguration
-{
-#if !TARGET_OS_TV
-  UISheetPresentationController *sheet = _controller.sheetPresentationController;
-  RCTAssert(
-      sheet != nil,
-      @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
-
-  NSArray<UISheetPresentationControllerDetent *> *nativeDetents = [self buildSheetDetents];
-  UISheetPresentationControllerDetentIdentifier initialDetentIdentifier =
-      [self consumeInitialDetentIdentifierForDetents:nativeDetents];
-
-  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
-      [self largestUndimmedDetentIdentifierForDetents:nativeDetents];
-
-  // TODO: @t0maboro - consider refactoring to follow the RNSSplitAppearanceCoordinator convention
-  [sheet animateChanges:^{
-    sheet.detents = nativeDetents;
-    sheet.prefersGrabberVisible = _prefersGrabberVisible;
-    sheet.preferredCornerRadius =
-        _preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _preferredCornerRadius;
-    sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
-
-    if (initialDetentIdentifier != nil) {
-      sheet.selectedDetentIdentifier = initialDetentIdentifier;
-    }
-  }];
-#endif // !TARGET_OS_TV
-}
-
-#if !TARGET_OS_TV
-- (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetents
-{
-  size_t detentsCount = _detents.size();
-
-  // Defaults to large detent across all iOS versions
-  if (detentsCount == 0) {
-    return @[ [UISheetPresentationControllerDetent largeDetent] ];
-  }
-
-  if (![self areDetentsValid]) {
-    RCTLogError(
-        @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
-
-    return @[ [UISheetPresentationControllerDetent largeDetent] ];
-  }
-
-  if (![self areDetentsStrictlyAscending]) {
-    RCTLogError(
-        @"[RNScreens] The values in the detents array must be in strictly ascending order. Falling back to large detent.");
-
-    return @[ [UISheetPresentationControllerDetent largeDetent] ];
-  }
-
-  NSMutableArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [[NSMutableArray alloc] initWithCapacity:detentsCount];
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (@available(iOS 16.0, *)) {
-    for (size_t i = 0; i < detentsCount; i++) {
-      double fraction = _detents[i];
-      NSString *ident = [NSString stringWithFormat:@"%zu", i];
-
-      [nativeDetents
-          addObject:[UISheetPresentationControllerDetent
-                        customDetentWithIdentifier:ident
-                                          resolver:^CGFloat(
-                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                            return context.maximumDetentValue * fraction;
-                                          }]];
-    }
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  {
-    // iOS 15 Legacy Fallback
-    if (detentsCount == 1) {
-      double firstDetentFraction = _detents[0];
-      if (firstDetentFraction < 1.0) {
-        [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
-      } else {
-        [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
-      }
-    } else {
-      // Handles detentsCount > 1
-      [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
-      [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
-    }
-  }
-
-  return nativeDetents;
-}
-
-- (UISheetPresentationControllerDetentIdentifier)consumeInitialDetentIdentifierForDetents:
-    (NSArray<UISheetPresentationControllerDetent *> *)detents
-{
-  if (_initialDetentApplied) {
-    return nil;
-  }
-
-  _initialDetentApplied = YES;
-
-  NSInteger initialIndex =
-      _initialDetentIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : _initialDetentIndex;
-
-  if (initialIndex < 0 || initialIndex >= (NSInteger)detents.count) {
-    RCTLogError(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
-                (long)_initialDetentIndex,
-                (unsigned long)detents.count);
-    initialIndex = 0;
-  }
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (@available(iOS 16.0, *)) {
-    return detents[(NSUInteger)initialIndex].identifier;
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  {
-    // iOS 15 Fallback - mirroring buildSheetDetents
-    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)initialIndex];
-
-    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
-      return UISheetPresentationControllerDetentIdentifierMedium;
-    }
-
-    return UISheetPresentationControllerDetentIdentifierLarge;
-  }
-}
-
-- (UISheetPresentationControllerDetentIdentifier)largestUndimmedDetentIdentifierForDetents:
-    (NSArray<UISheetPresentationControllerDetent *> *)detents
-{
-  if (_largestUndimmedDetentIndex == kRNSFormSheetAlwaysDimmed) {
-    return nil;
-  }
-
-  NSInteger ludIndex = _largestUndimmedDetentIndex == kRNSFormSheetNeverDimmed ? (NSInteger)detents.count - 1
-                                                                               : _largestUndimmedDetentIndex;
-
-  if (ludIndex < 0 || ludIndex >= (NSInteger)detents.count) {
-    RCTLogError(
-        @"[RNScreens] largestUndimmedDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to the default behavior (always dimmed).",
-        (long)_largestUndimmedDetentIndex,
-        (unsigned long)detents.count);
-    return nil;
-  }
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (@available(iOS 16.0, *)) {
-    return detents[(NSUInteger)ludIndex].identifier;
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  {
-    // iOS 15 Fallback - mirroring buildSheetDetents
-    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)ludIndex];
-
-    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
-      return UISheetPresentationControllerDetentIdentifierMedium;
-    }
-
-    return UISheetPresentationControllerDetentIdentifierLarge;
-  }
-}
-
-#endif // !TARGET_OS_TV
-
-- (BOOL)areDetentsValid
-{
-  for (double currentDetent : _detents) {
-    if (isnan(currentDetent)) {
-      return NO;
-    }
-
-    if (currentDetent < 0.0 || currentDetent > 1.0) {
-      return NO;
-    }
-  }
-  return YES;
-}
-
-- (BOOL)areDetentsStrictlyAscending
-{
-  for (size_t i = 1; i < _detents.size(); i++) {
-    if (_detents[i - 1] >= _detents[i]) {
-      return NO;
-    }
-  }
-  return YES;
 }
 
 #pragma mark - Touch Handling overrides

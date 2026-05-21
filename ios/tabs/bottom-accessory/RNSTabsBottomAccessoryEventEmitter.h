@@ -8,15 +8,11 @@
 #import <UIKit/UIKit.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 namespace react = facebook::react;
-#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
-
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTComponent.h>
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,16 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsBottomAccessoryEventEmitter ()
 
-#if RCT_NEW_ARCH_ENABLED
-
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsBottomAccessoryEventEmitter> &)emitter;
-
-#else
-#pragma mark - LEGACY Event emitter blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onEnvironmentChange;
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
