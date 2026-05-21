@@ -11,7 +11,6 @@
   __weak RNSStackScreenController *_Nullable _screenController;
 
   RNSStackNavigationItemCoordinator *_Nonnull _navigationItemCoordinator;
-  RNSStackNavigationBarCoordinator *_Nonnull _navigationBarCoordinator;
 
   // Last submitted header data — kept so bar-level configuration can be
   // (re-)applied once the controller is inside a navigation controller.
@@ -23,7 +22,6 @@
   if (self = [super init]) {
     _screenController = controller;
     _navigationItemCoordinator = [RNSStackNavigationItemCoordinator new];
-    _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
   }
   return self;
 }
@@ -34,12 +32,32 @@
   return _screenController;
 }
 
+- (RNSStackNavigationController *)requireNavigationController
+{
+  RNSStackScreenController *screenController = [self requireScreenController];
+  UINavigationController *navController = screenController.navigationController;
+  RCTAssert(navController != nil, @"[RNScreens] NavigationController should be initialized at this point");
+  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
+            @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
+  return (RNSStackNavigationController *)navController;
+}
+
 #pragma mark - Header Data
 
 - (void)submitHeaderData:(nonnull RNSStackHeaderData *)data
 {
   _lastHeaderData = data;
   [self applyBarConfigurationIfNeeded:YES];
+}
+
+- (void)initializeBarConfiguration
+{
+  RNSStackScreenController *screenController = [self requireScreenController];
+  RNSStackScreenComponentView *screenView = static_cast<RNSStackScreenComponentView *>(screenController.view);
+  RNSStackHeaderConfigComponentView *config = [screenView findHeaderConfig];
+
+  RNSStackNavigationController *navController = [self requireNavigationController];
+  navController.navigationBarFrameChangeDelegate = config;
 }
 
 - (void)applyBarConfigurationIfNeeded:(BOOL)animated
@@ -49,21 +67,12 @@
   }
 
   RNSStackScreenController *screenController = [self requireScreenController];
-  UINavigationController *navController = screenController.navigationController;
-  if (navController == nil) {
-    return;
-  }
-
-  if ([navController isKindOfClass:RNSStackNavigationController.class]) {
-    RNSStackScreenComponentView *screenView = static_cast<RNSStackScreenComponentView *>(screenController.view);
-    RNSStackHeaderConfigComponentView *config = [screenView findHeaderConfig];
-    ((RNSStackNavigationController *)navController).navigationBarFrameChangeDelegate = config;
-  }
+  RNSStackNavigationController *navController = [self requireNavigationController];
 
   [_navigationItemCoordinator applyConfiguration:_lastHeaderData forController:screenController];
-  [_navigationBarCoordinator applyConfiguration:_lastHeaderData
-                        forNavigationController:navController
-                                       animated:animated];
+  [navController.navigationBarCoordinator applyConfiguration:_lastHeaderData
+                                     forNavigationController:navController
+                                                    animated:animated];
 }
 
 @end

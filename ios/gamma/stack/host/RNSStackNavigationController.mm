@@ -14,6 +14,7 @@
 {
   if (self = [super init]) {
     [self initState];
+    _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
   }
   return self;
 }
