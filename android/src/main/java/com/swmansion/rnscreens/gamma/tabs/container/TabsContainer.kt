@@ -256,7 +256,10 @@ class TabsContainer internal constructor(
         setPendingNavigationStateUpdate(null)
     }
 
-    internal fun onAfterSetSelectedItemId(itemId: Int, actionOrigin: TabsActionOrigin) {
+    internal fun onAfterSetSelectedItemId(
+        itemId: Int,
+        actionOrigin: TabsActionOrigin,
+    ) {
         if (actionOrigin === TabsActionOrigin.USER) {
             // For non-user actions these will be performed in [performContainerUpdate]
             performPostSelectedTabUpdateActions()
