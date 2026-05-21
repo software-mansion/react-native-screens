@@ -56,22 +56,22 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
         <StackHeaderSubview
           type="background"
           collapseMode={backgroundSubview.collapseMode}>
-          {backgroundSubview.Component}
+          {backgroundSubview.render()}
         </StackHeaderSubview>
       )}
       {leadingSubview && (
         <StackHeaderSubview type="leading">
-          {leadingSubview.Component}
+          {leadingSubview.render()}
         </StackHeaderSubview>
       )}
       {centerSubview && (
         <StackHeaderSubview type="center">
-          {centerSubview.Component}
+          {centerSubview.render()}
         </StackHeaderSubview>
       )}
       {trailingSubview && (
         <StackHeaderSubview type="trailing">
-          {trailingSubview.Component}
+          {trailingSubview.render()}
         </StackHeaderSubview>
       )}
     </StackHeaderConfigAndroidNativeComponent>
