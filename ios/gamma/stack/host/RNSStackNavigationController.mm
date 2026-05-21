@@ -13,8 +13,9 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    [self initState];
     _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
+    [_navigationBarCoordinator initializeNavigationBarOfNavigationController:self];
+    [self initState];
   }
   return self;
 }

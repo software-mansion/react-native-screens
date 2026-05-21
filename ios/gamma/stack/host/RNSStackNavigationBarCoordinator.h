@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
     forNavigationController:(nonnull UINavigationController *)navigationController
                    animated:(BOOL)animated;
 
+- (void)initializeNavigationBarOfNavigationController:(nonnull UINavigationController *)navigationController;
+
 @end
 
 NS_ASSUME_NONNULL_END
