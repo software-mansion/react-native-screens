@@ -1,5 +1,5 @@
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsSwitch } from '@apps/shared';

@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Color Scheme',
   key: 'test-tabs-tab-bar-color-scheme',
   details: 'Tests how tabs handle system, React Native and prop color scheme.',
@@ -8,5 +8,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
-
-export default scenarioDescription;

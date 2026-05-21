@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Text, View } from 'react-native';
 import { TabsContainer, useTabsNavigationContext } from '@apps/shared/gamma/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,

@@ -1,5 +1,5 @@
 import React from 'react';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Split } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
