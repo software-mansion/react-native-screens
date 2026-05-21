@@ -141,7 +141,6 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
     react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior)
@@ -159,29 +158,11 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBe
       return UITabBarMinimizeBehaviorAutomatic;
   }
 }
-#else // RCT_NEW_ARCH_ENABLED
-API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
-    RNSTabBarMinimizeBehavior tabBarMinimizeBehavior)
-{
-  switch (tabBarMinimizeBehavior) {
-    case RNSTabBarMinimizeBehaviorNever:
-      return UITabBarMinimizeBehaviorNever;
-    case RNSTabBarMinimizeBehaviorOnScrollDown:
-      return UITabBarMinimizeBehaviorOnScrollDown;
-    case RNSTabBarMinimizeBehaviorOnScrollUp:
-      return UITabBarMinimizeBehaviorOnScrollUp;
-    default:
-      return UITabBarMinimizeBehaviorAutomatic;
-  }
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 26
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
     react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode)
@@ -199,22 +180,6 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode
       return UITabBarControllerModeAutomatic;
   }
 }
-#else // RCT_NEW_ARCH_ENABLED
-API_AVAILABLE(ios(18.0))
-UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarDisplayMode)
-{
-  switch (tabBarDisplayMode) {
-    case RNSTabBarControllerModeAutomatic:
-      return UITabBarControllerModeAutomatic;
-    case RNSTabBarControllerModeTabBar:
-      return UITabBarControllerModeTabBar;
-    case RNSTabBarControllerModeTabSidebar:
-      return UITabBarControllerModeTabSidebar;
-    default:
-      return UITabBarControllerModeAutomatic;
-  }
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 18
 
@@ -395,7 +360,6 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 std::optional<react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
 RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment)
@@ -411,7 +375,6 @@ RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UI
   }
 }
 
-#if REACT_NATIVE_VERSION_MINOR >= 82
 RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
     react::RNSTabsBottomAccessoryContentEnvironment environment)
 {
@@ -428,34 +391,6 @@ RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquiva
       RCTLogError(@"[RNScreens] Unsupported TabsBottomAccessory environment");
   }
 }
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-
-#else // RCT_NEW_ARCH_ENABLED
-static NSString *const BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT = @"regular";
-static NSString *const BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT = @"inline";
-
-API_AVAILABLE(ios(26.0))
-NSString *RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
-    UITabAccessoryEnvironment environment)
-{
-  NSString *environmentString;
-  switch (environment) {
-    case UITabAccessoryEnvironmentRegular:
-      environmentString = BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT;
-      break;
-    case UITabAccessoryEnvironmentInline:
-      environmentString = BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT;
-      break;
-    default:
-      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
-      environmentString = nil;
-      break;
-  }
-
-  return environmentString;
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 

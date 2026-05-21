@@ -9,18 +9,14 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
-#if RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - View implementation
 
@@ -35,12 +31,6 @@ namespace react = facebook::react;
   // Tracks that the first child was mounted before props were set.
   // The pending override will be applied once updateProps runs.
   BOOL _needsScrollViewBehaviorOverride;
-#if !RCT_NEW_ARCH_ENABLED
-  BOOL _tabItemNeedsAppearanceUpdate;
-  BOOL _tabScreenOrientationNeedsUpdate;
-  BOOL _tabBarItemNeedsRecreation;
-  BOOL _tabBarItemNeedsUpdate;
-#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -53,23 +43,14 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-#if RCT_NEW_ARCH_ENABLED
   static const auto defaultProps = std::make_shared<const react::RNSTabsScreenIOSProps>();
   _props = defaultProps;
-#endif // RCT_NEW_ARCH_ENABLED
 
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
 
   _reactSuperview = nil;
   _reactEventEmitter = [RNSTabsScreenEventEmitter new];
-
-#if !RCT_NEW_ARCH_ENABLED
-  _tabItemNeedsAppearanceUpdate = NO;
-  _tabScreenOrientationNeedsUpdate = NO;
-  _tabBarItemNeedsRecreation = NO;
-  _tabBarItemNeedsUpdate = NO;
-#endif
 
   [self resetProps];
 }
@@ -122,17 +103,6 @@ RNS_IGNORE_SUPER_CALL_END
     }
   });
 }
-
-#if !RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RCTInvalidating
-
-- (void)invalidate
-{
-  [self invalidateImpl];
-}
-
-#endif
 
 #pragma mark - Events
 
@@ -228,7 +198,6 @@ RNS_IGNORE_SUPER_CALL_END
   [self dispatchSafeAreaDidChangeNotification];
 }
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTComponentViewProtocol
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -456,229 +425,6 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateImpl];
 }
 
-#else
-
-#pragma mark - LEGACY RCTComponent protocol
-
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-  [super didSetProps:changedProps];
-
-  // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
-  // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
-  // enabling us to warn users that dynamic changes are not supported.
-  // On Paper, setter for the prop may not be called (when it is undefined in JS).
-  // Therefore we set the flag in didSetProps to make sure to handle this case as well.
-  // didSetProps will always be called because screenKey prop is required.
-  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
-
-  if (_tabBarItemNeedsRecreation) {
-    [self createTabBarItem];
-    _tabBarItemNeedsRecreation = NO;
-
-    _tabBarItemNeedsUpdate = YES;
-    _tabBarItemNeedsA11yUpdate = YES;
-  }
-
-  if (_tabBarItemNeedsUpdate) {
-    [self updateTabBarItem];
-    _tabBarItemNeedsUpdate = NO;
-
-    // Force appearance update to make sure correct image for tab bar item is used
-    _tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (_tabItemNeedsAppearanceUpdate) {
-    [_controller tabItemAppearanceHasChanged];
-    _tabItemNeedsAppearanceUpdate = NO;
-  }
-
-  if (_tabScreenOrientationNeedsUpdate) {
-    [_controller tabScreenOrientationHasChanged];
-    _tabScreenOrientationNeedsUpdate = NO;
-  }
-}
-
-#pragma mark - LEGACY prop setters
-
-- (void)setIsSelectedScreen:(BOOL)isSelectedScreen
-{
-  if (_isSelectedScreen != isSelectedScreen) {
-    _isSelectedScreen = isSelectedScreen;
-    [_controller tabScreenFocusHasChanged];
-  }
-}
-
-- (void)setScreenKey:(NSString *)screenKey
-{
-  RCTAssert([NSString rnscreens_isBlankOrNull:screenKey] == NO, @"[RNScreens] screenKey must not be empty");
-  _screenKey = screenKey;
-}
-
-- (void)setTitle:(NSString *)title
-{
-  _title = title;
-  _isTitleUndefined = title == nil;
-  _tabBarItemNeedsUpdate = YES;
-}
-
-- (void)setBadgeValue:(NSString *)badgeValue
-{
-  _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
-  _tabBarItemNeedsUpdate = YES;
-}
-
-- (void)setTabBarItemTestID:(NSString *)tabBarItemTestID
-{
-  _tabItemTestID = tabBarItemTestID;
-  _tabBarItemNeedsA11yUpdate = YES;
-}
-
-- (void)setTabBarItemAccessibilityLabel:(NSString *)tabBarItemAccessibilityLabel
-{
-  _tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
-  _tabBarItemNeedsA11yUpdate = YES;
-}
-
-- (void)setIconType:(RNSTabsIconType)iconType
-{
-  _iconType = iconType;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setIconImageSource:(RCTImageSource *)iconImageSource
-{
-  _iconImageSource = iconImageSource;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setIconResourceName:(NSString *)iconResourceName
-{
-  _iconResourceName = [NSString rnscreens_stringOrNilIfEmpty:iconResourceName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
-{
-  _selectedIconImageSource = selectedIconImageSource;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setSelectedIconResourceName:(NSString *)selectedIconResourceName
-{
-  _selectedIconResourceName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconResourceName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior
-{
-  _overrideScrollViewContentInsetAdjustmentBehavior = overrideScrollViewContentInsetAdjustmentBehavior;
-
-  if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
-    RCTLogWarn(
-        @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
-  }
-
-  // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
-  // when the prop is undefined in JS and default value is used instead of calling this setter.
-}
-
-- (void)setStandardAppearance:(NSDictionary *)standardAppearanceProps
-{
-  _standardAppearance = [UITabBarAppearance new];
-  if (standardAppearanceProps != nil) {
-    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
-                                          fromAppearanceProps:standardAppearanceProps];
-  }
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setScrollEdgeAppearance:(NSDictionary *)scrollEdgeAppearanceProps
-{
-  if (scrollEdgeAppearanceProps != nil) {
-    _scrollEdgeAppearance = [UITabBarAppearance new];
-    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
-                                          fromAppearanceProps:scrollEdgeAppearanceProps];
-  } else {
-    _scrollEdgeAppearance = nil;
-  }
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-// This is a Paper-only setter method that will be called by the mounting code.
-// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
-- (void)setSystemItem:(RNSTabsScreenSystemItem)systemItem
-{
-  _systemItem = systemItem;
-  _tabBarItemNeedsRecreation = YES;
-}
-
-- (void)setSpecialEffects:(NSDictionary *)specialEffects
-{
-  if (specialEffects == nil || specialEffects[@"repeatedTabSelection"] == nil ||
-      ![specialEffects[@"repeatedTabSelection"] isKindOfClass:[NSDictionary class]]) {
-    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
-    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
-    return;
-  }
-
-  NSDictionary *repeatedTabSelection = specialEffects[@"repeatedTabSelection"];
-
-  if (repeatedTabSelection[@"popToRoot"] != nil) {
-    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"popToRoot"]];
-  } else {
-    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
-  }
-
-  if (repeatedTabSelection[@"scrollToTop"] != nil) {
-    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"scrollToTop"]];
-  } else {
-    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
-  }
-}
-
-- (void)setOrientation:(RNSOrientation)orientation
-{
-  _orientation = orientation;
-  _tabScreenOrientationNeedsUpdate = YES;
-}
-
-- (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear
-{
-  [self.reactEventEmitter setOnWillAppear:onWillAppear];
-}
-
-- (void)setOnWillDisappear:(RCTDirectEventBlock)onWillDisappear
-{
-  [self.reactEventEmitter setOnWillDisappear:onWillDisappear];
-}
-
-- (void)setOnDidAppear:(RCTDirectEventBlock)onDidAppear
-{
-  [self.reactEventEmitter setOnDidAppear:onDidAppear];
-}
-
-- (void)setOnDidDisappear:(RCTDirectEventBlock)onDidDisappear
-{
-  [self.reactEventEmitter setOnDidDisappear:onDidDisappear];
-}
-
-#define RNS_FAILING_EVENT_GETTER(eventName)                                           \
-  -(RCTDirectEventBlock)eventName                                                     \
-  {                                                                                   \
-    RCTAssert(NO, @"[RNScreens] Events should be emitted through reactEventEmitter"); \
-    return nil;                                                                       \
-  }
-
-RNS_FAILING_EVENT_GETTER(onWillAppear);
-RNS_FAILING_EVENT_GETTER(onDidAppear);
-RNS_FAILING_EVENT_GETTER(onWillDisappear);
-RNS_FAILING_EVENT_GETTER(onDidDisappear);
-
-#undef RNS_FAILING_EVENT_GETTER
-
-#endif // RCT_NEW_ARCH_ENABLED
-
 #pragma mark - Dynamic frameworks support
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -691,11 +437,9 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 
 @end
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSTabsScreen(void)
 {
   return RNSTabsScreenComponentView.class;
 }
-#endif // RCT_NEW_ARCH_ENABLED
