@@ -1,13 +1,12 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSDefines.h"
-#import "RNSFormSheetAppearanceApplicator.h"
-#import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 
+#import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -15,20 +14,22 @@
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetHostComponentView () <RNSFormSheetContentControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving, RNSFormSheetContentControllerDelegate>
 @end
 
 @implementation RNSFormSheetHostComponentView {
   RNSFormSheetHostEventEmitter *_Nonnull _reactEventEmitter;
   RNSFormSheetHostShadowStateProxy *_Nonnull _shadowStateProxy;
-  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
-  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
 
   RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
 
+  // Invalidation flags
+  BOOL _needsPresentationUpdate;
+  BOOL _needsAppearanceUpdate;
+  BOOL _needsInitialDetentReset;
+
   // Props
-  BOOL _isOpen;
   std::vector<double> _detents;
 }
 
@@ -47,8 +48,10 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
-  _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
-  _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
+
+  _needsPresentationUpdate = NO;
+  _needsAppearanceUpdate = NO;
+  _needsInitialDetentReset = NO;
 }
 
 - (void)resetProps
@@ -74,23 +77,14 @@ namespace react = facebook::react;
 {
   _controller = [RNSFormSheetContentController new];
   _controller.delegate = self;
-}
-
-- (void)updatePresentationState
-{
-  if (_isOpen) {
-    if (self.window != nil) {
-      [_controller presentFromWindowIfNeeded:self.window];
-    }
-  } else {
-    [_controller dismissIfNeeded];
-  }
+  _controller.hostComponentView = self;
 }
 
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  [self updatePresentationState];
+  _needsPresentationUpdate = YES;
+  [self requestContentControllerForUpdates];
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
@@ -161,36 +155,36 @@ namespace react = facebook::react;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+    _needsPresentationUpdate = YES;
 
     if (_isOpen) {
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
-      [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+      _needsAppearanceUpdate = YES;
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
-      [_appearanceApplicator resetInitialDetent];
+      _needsInitialDetentReset = YES;
     }
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    _needsAppearanceUpdate = YES;
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    _needsAppearanceUpdate = YES;
   }
 
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    _needsAppearanceUpdate = YES;
   }
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    _needsAppearanceUpdate = YES;
   }
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
@@ -201,7 +195,7 @@ namespace react = facebook::react;
       newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
     _prefersScrollingExpandsWhenScrolledToEdge =
         static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+    _needsAppearanceUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -209,16 +203,30 @@ namespace react = facebook::react;
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
+  [self requestContentControllerForUpdates];
   [super finalizeUpdates:updateMask];
+}
 
-  [_appearanceApplicator updateAppearanceIfNeededForHost:self
-                                              controller:_controller
-                                             coordinator:_appearanceCoordinator];
+- (void)requestContentControllerForUpdates
+{
+  if (_controller == nil) {
+    return;
+  }
 
-  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
-                      performOperations:^{
-                        [self updatePresentationState];
-                      }];
+  if (_needsPresentationUpdate) {
+    _needsPresentationUpdate = NO;
+    [_controller setNeedsPresentationUpdate];
+  }
+
+  if (_needsAppearanceUpdate) {
+    _needsAppearanceUpdate = NO;
+    [_controller setNeedsAppearanceUpdate];
+  }
+
+  if (_needsInitialDetentReset) {
+    _needsInitialDetentReset = NO;
+    [_controller setNeedsInitialDetentReset];
+  }
 }
 
 - (void)invalidate
@@ -234,6 +242,20 @@ namespace react = facebook::react;
     }
     _controller = nil;
   }
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  [_controller reactMountingTransactionWillMount];
+}
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  [_controller reactMountingTransactionDidMount];
 }
 
 #pragma mark - Layout helpers

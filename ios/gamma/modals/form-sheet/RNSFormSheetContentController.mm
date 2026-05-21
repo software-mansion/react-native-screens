@@ -1,5 +1,9 @@
 #import "RNSFormSheetContentController.h"
+#import "RNSFormSheetAppearanceApplicator.h"
+#import "RNSFormSheetAppearanceCoordinator.h"
+#import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetHostComponentView.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
@@ -13,12 +17,22 @@
                                              >
 @end
 
-@implementation RNSFormSheetContentController
+@implementation RNSFormSheetContentController {
+  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
+  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
+
+  BOOL _needsInitialDetentReset;
+}
 
 - (instancetype)init
 {
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
+    _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
+
+    _needsInitialDetentReset = NO;
   }
   return self;
 }
@@ -45,6 +59,17 @@
 }
 
 #pragma mark - Presentation
+
+- (void)updatePresentationStateForHost:(nonnull RNSFormSheetHostComponentView *)host
+{
+  if (host.isOpen) {
+    if (host.window != nil) {
+      [self presentFromWindowIfNeeded:host.window];
+    }
+  } else {
+    [self dismissIfNeeded];
+  }
+}
 
 - (void)prepareForPresentation
 {
@@ -86,6 +111,55 @@
     return;
   }
   [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Appearance
+
+- (void)updateAppearanceIfNeededForHost:(nonnull RNSFormSheetHostComponentView *)host
+{
+  if (_needsInitialDetentReset) {
+    _needsInitialDetentReset = NO;
+    [_appearanceApplicator resetInitialDetent];
+  }
+
+  [_appearanceApplicator updateAppearanceIfNeededForHost:host controller:self coordinator:_appearanceCoordinator];
+
+  // TODO: @t0maboro - move presentation logic to dedicated presentationCoordinator with 4-state logic
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
+                      performOperations:^{
+                        [self updatePresentationStateForHost:host];
+                      }];
+}
+
+#pragma mark - Signals
+
+- (void)setNeedsPresentationUpdate
+{
+  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+}
+
+- (void)setNeedsAppearanceUpdate
+{
+  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+}
+
+- (void)setNeedsInitialDetentReset
+{
+  _needsInitialDetentReset = YES;
+}
+
+#pragma mark - Mounting transaction signals
+
+- (void)reactMountingTransactionWillMount
+{
+  // noop
+}
+
+- (void)reactMountingTransactionDidMount
+{
+  RNSFormSheetHostComponentView *host = self.hostComponentView;
+  RCTAssert(host != nil, @"[RNScreens] hostComponentView must be set before mounting transactions are observed");
+  [self updateAppearanceIfNeededForHost:host];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate

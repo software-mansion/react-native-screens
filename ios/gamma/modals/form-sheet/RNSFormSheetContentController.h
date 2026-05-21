@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSFormSheetContentView;
 @class RNSFormSheetContentController;
+@class RNSFormSheetHostComponentView;
 
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
@@ -20,10 +21,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetContentControllerDelegate> delegate;
 
+@property (nonatomic, weak, nullable) RNSFormSheetHostComponentView *hostComponentView;
+
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
-- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window;
-- (void)dismissIfNeeded;
+#pragma mark - Signals
+
+- (void)setNeedsPresentationUpdate;
+- (void)setNeedsAppearanceUpdate;
+- (void)setNeedsInitialDetentReset;
+
+#pragma mark - Mounting transaction signals
+
+- (void)reactMountingTransactionWillMount;
+- (void)reactMountingTransactionDidMount;
 
 @end
 
