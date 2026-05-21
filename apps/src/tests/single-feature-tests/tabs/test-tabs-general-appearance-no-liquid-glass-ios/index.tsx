@@ -8,18 +8,10 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { SettingsPicker } from '@apps/shared';
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import type { TabsScreenAppearanceIOS } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar General Appearance No Liquid Glass',
-  key: 'test-tabs-general-appearance-no-liquid-glass-ios',
-  details:
-    'Exercises per-tab tab bar appearance props via both standardAppearance and scrollEdgeAppearance: tabBarBackgroundColor, tabBarBlurEffect, tabBarShadowColor.',
-  platforms: ['ios'],
-};
 
 type BlurEffect = NonNullable<TabsScreenAppearanceIOS['tabBarBlurEffect']>;
 
