@@ -29,13 +29,11 @@ const BLUR_EFFECT_OPTIONS: BlurEffect[] = [
   'systemDefault',
 ];
 
-// The scrollEdgeAppearance for Tab1 and Tab3.
 const SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarBackgroundColor: Colors.PurpleDarkTransparent,
   tabBarShadowColor: Colors.PurpleLight100,
 };
 
-// The standardAppearance for Tab1 and Tab3.
 const STANDARD_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarBackgroundColor: Colors.NavyDark100,
   tabBarShadowColor: Colors.RedDark100,
