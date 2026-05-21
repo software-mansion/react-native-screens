@@ -7,19 +7,11 @@ import {
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { SettingsPicker } from '@apps/shared';
 import React, { useCallback, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import type { TabsScreenAppearanceIOS } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
-
-type BlurEffect = NonNullable<TabsScreenAppearanceIOS['tabBarBlurEffect']>;
-
-const BLUR_EFFECT_OPTIONS: BlurEffect[] = [
-  'none',
-  'systemChromeMaterialDark',
-  'systemDefault',
-];
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar General Appearance No Liquid Glass',
@@ -29,11 +21,21 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
+type BlurEffect = NonNullable<TabsScreenAppearanceIOS['tabBarBlurEffect']>;
+
+const BLUR_EFFECT_OPTIONS: BlurEffect[] = [
+  'none',
+  'systemChromeMaterialDark',
+  'systemDefault',
+];
+
+// The scrollEdgeAppearance for Tab1 and Tab3.
 const SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarBackgroundColor: Colors.PurpleDarkTransparent,
   tabBarShadowColor: Colors.PurpleLight100,
 };
 
+// The standardAppearance for Tab1 and Tab3.
 const STANDARD_APPEARANCE: TabsScreenAppearanceIOS = {
   tabBarBackgroundColor: Colors.NavyDark100,
   tabBarShadowColor: Colors.RedDark100,
@@ -52,26 +54,56 @@ const TAB3_SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
 };
 
 
-const SCROLL_ITEM_COUNT = 30;
+const SCROLL_ITEM_COUNT1 = 8;
+const SCROLL_ITEM_COUNT2 = 20;
 
 export function Tab1Screen() {
   return (
     <CenteredLayoutView testID="tab1-screen">
       <Text style={styles.description}>
-        No ScrollView. The scrollEdgeAppearance is always active.
+        No ScrollView.{"\n"}
+        No scrollEdgeAppearance defined.{"\n"}
+        Tab bar background should be fully transparent.
       </Text>
+      <Image source={require('@assets/trees.jpg')} style={styles.image} />
     </CenteredLayoutView>
   );
 }
 
 export function Tab2Screen() {
   return (
+    <CenteredLayoutView testID="tab2-screen">
+      <Text style={styles.description}>
+        No ScrollView.{"\n"}
+        The scrollEdgeAppearance is active. The tabBarBlurEffect is not set, so it should fall back to systemDefault.{"\n"}
+        Tab bar background color should be transparent{" "}
+        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark</Text> with{" "}
+        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
+      </Text>
+    </CenteredLayoutView>
+  );
+}
+
+export function Tab3Screen() {
+  return (
     <ScrollView
-      testID="tab2-scrollview"
+      testID="tab3-scrollview"
       style={styles.scrollView}
       contentInsetAdjustmentBehavior="automatic">
-      {Array.from({ length: SCROLL_ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.scrollItem} testID={`tab2-item-${i + 1}`}>
+      <Text style={[styles.description, { marginTop: 20 }]}>
+        ScrollView active.{"\n"}
+        The standardAppearance is active at the top of the page and during scrolling.{"\n"} Tab bar background color should be{" "}
+        <Text style={{ color: Colors.NavyDark100 }}>NavyDark</Text> with{" "}
+        <Text style={{ color: Colors.RedDark100 }}> RedDark</Text> shadow.
+      </Text>
+      <Text style={[styles.description, { marginTop: 20 }]}>
+        The scrollEdgeAppearance activates once the list is scrolled all the way to the bottom and its edge aligns with the tab bar.{"\n"}.
+        The tabBarBlurEffect is set to `systemChromeMaterialDark` so tab bar background color should be darker{" "}
+        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark</Text> with{" "}
+        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
+      </Text>
+      {Array.from({ length: SCROLL_ITEM_COUNT2 }, (_, i) => (
+        <View key={i} style={styles.scrollItem} testID={`tab3-item-${i + 1}`}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
@@ -79,7 +111,7 @@ export function Tab2Screen() {
   );
 }
 
-export function Tab3Screen() {
+export function Tab4Screen() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
   const [blurEffect, setBlurEffect] = useState<BlurEffect>('none');
 
@@ -102,28 +134,35 @@ export function Tab3Screen() {
 
   return (
     <ScrollView
-      testID="tab3-scrollview"
+      testID="tab4-scrollview"
       style={styles.scrollView}
       contentInsetAdjustmentBehavior="automatic">
-      <View style={styles.header} testID="tab3-header">
-        <Text style={styles.headerText}>
-          Pick a value to update scrollEdgeAppearance.tabBarBlurEffect on this
-          tab in runtime. Background and shadow stay constant so
+      <View style={styles.header} testID="tab4-header">
+        <Text style={[styles.description, { marginTop: 20 }]}>
+          Pick a value to update standardAppearance.tabBarBlurEffect on this
+          tab at runtime. Background and shadow stay constant so
           the blur is the only varying input.
+        </Text>
+        <Text style={[styles.description, { marginTop: 20 }]}>
+          The scrollEdgeAppearance activates once the list is scrolled all the way to the bottom.{"\n"}
+          The tabBarBlurEffect is set to `none` so tab bar background color should be exactly{" "}
+          <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark</Text> with{" "}
+          <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
         </Text>
       </View>
       <SettingsPicker<BlurEffect>
-        testID="tab3-blur-picker"
+        testID="tab4-blur-picker"
         label="tabBarBlurEffect"
         value={blurEffect}
         onValueChange={onBlurChange}
         items={BLUR_EFFECT_OPTIONS}
       />
-      {Array.from({ length: SCROLL_ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.scrollItem} testID={`tab2-item-${i + 1}`}>
+      {Array.from({ length: SCROLL_ITEM_COUNT1 }, (_, i) => (
+        <View key={i} style={styles.scrollItem} testID={`tab4-item-${i + 1}`}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
+      <Image source={require('@assets/cat.jpg')} style={styles.image} />
     </ScrollView>
 
   );
@@ -138,8 +177,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab1',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: STANDARD_APPEARANCE,
-        scrollEdgeAppearance: SCROLL_EDGE_APPEARANCE,
       },
     },
   },
@@ -152,10 +189,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: STANDARD_APPEARANCE,
-        scrollEdgeAppearance: {
-          ...SCROLL_EDGE_APPEARANCE,
-          tabBarBlurEffect: 'systemChromeMaterialDark',
-        },
+        scrollEdgeAppearance: SCROLL_EDGE_APPEARANCE,
       },
     },
   },
@@ -165,6 +199,22 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
+      ios: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
+        standardAppearance: STANDARD_APPEARANCE,
+        scrollEdgeAppearance: {
+          ...SCROLL_EDGE_APPEARANCE,
+          tabBarBlurEffect: 'systemChromeMaterialDark',
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab4',
+    Component: Tab4Screen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Tab4',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: TAB3_BASE_STANDARD_APPEARANCE,
@@ -190,8 +240,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   description: {
+    flex: 1,
+    marginTop: 80,
     fontSize: 13,
     color: '#555',
+    alignContent: 'center',
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 24,
@@ -204,6 +257,11 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
   },
+  image: {
+    flex: 3,
+    width: '100%',
+    height: 350
+  }
 });
 
 export default createScenario(App, scenarioDescription);
