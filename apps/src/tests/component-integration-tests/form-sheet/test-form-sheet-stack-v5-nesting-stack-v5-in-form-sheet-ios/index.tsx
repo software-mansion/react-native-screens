@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { StackContainer } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'FormSheet with Nested Stack v5',
-  key: 'test-form-sheet-stack-v5-nesting-stack-v5-in-form-sheet-ios',
-  details: 'Test nesting Stack v5 inside a FormSheet',
-  platforms: ['ios'],
-};
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);

@@ -2,7 +2,7 @@ import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
@@ -10,12 +10,6 @@ import {
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs Screen Orientation',
-  key: 'tabs-screen-orientation',
-  platforms: ['ios', 'android'],
-};
 
 function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =

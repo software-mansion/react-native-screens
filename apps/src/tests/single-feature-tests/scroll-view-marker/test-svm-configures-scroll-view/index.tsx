@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
@@ -7,17 +7,6 @@ import { StackContainer } from '@apps/shared/gamma/containers/stack';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Basic functionality',
-  key: 'test-svm-configures-scroll-view',
-  details:
-    'Allows to test the basic functionality of ScrollViewMarker component. ' +
-    'It utilizes the StackContainer, to allow for observation of edge effects ' +
-    'applied to the container edges. On Android this test serves only as a setup ' +
-    'for native debugging.',
-  platforms: ['ios', 'android'],
-};
 
 export function App() {
   return (
