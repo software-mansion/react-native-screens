@@ -3,7 +3,9 @@
 #import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostComponentView.h"
+#import "RNSFormSheetHostEventEmitter.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
@@ -166,7 +168,10 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  [self.delegate sheetControllerDidNativeDismiss:self];
+  RNSFormSheetHostComponentView *host = self.hostComponentView;
+  RCTAssert(host != nil, @"[RNScreens] hostComponentView must be set before delegate callbacks fire");
+  [host onNativeDismiss];
+  [[host reactEventEmitter] emitOnNativeDismiss];
 }
 
 #if !TARGET_OS_TV
@@ -175,7 +180,14 @@
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
     (UISheetPresentationController *)sheetPresentationController
 {
-  [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
+  RNSFormSheetHostComponentView *host = self.hostComponentView;
+  RCTAssert(host != nil, @"[RNScreens] hostComponentView must be set before delegate callbacks fire");
+  NSInteger index =
+      [RNSFormSheetDetentResolver detentIndexFromDetentIdentifier:sheetPresentationController.selectedDetentIdentifier
+                                                    forRawDetents:host.detents];
+  if (index >= 0) {
+    [[host reactEventEmitter] emitOnDetentChangedWithIndex:index];
+  }
 }
 #endif // !TARGET_OS_TV
 

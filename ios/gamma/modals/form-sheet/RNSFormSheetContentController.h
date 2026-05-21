@@ -8,13 +8,10 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSFormSheetContentController;
 @class RNSFormSheetHostComponentView;
 
+// TODO: @t0maboro - now we should get rid of that delegate and handle ShadowStateProxy/TouchHandler origin sync from
+// controller
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
-- (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
-#if !TARGET_OS_TV
-- (void)sheetController:(RNSFormSheetContentController *)controller
-    didChangeDetentIdentifier:(nullable NSString *)identifier;
-#endif // !TARGET_OS_TV
 @end
 
 @interface RNSFormSheetContentController : UIViewController

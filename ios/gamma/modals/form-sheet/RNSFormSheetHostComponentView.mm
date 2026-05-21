@@ -2,10 +2,10 @@
 #import "RNSDefines.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
-#import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 
+#import <React/RCTAssert.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -87,30 +87,24 @@ namespace react = facebook::react;
   [self requestContentControllerForUpdates];
 }
 
-#pragma mark - RNSFormSheetContentControllerDelegate
-
-- (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
+- (void)onNativeDismiss
 {
   _isOpen = NO;
-  [_reactEventEmitter emitOnNativeDismiss];
 }
+
+- (nonnull RNSFormSheetHostEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
+
+#pragma mark - RNSFormSheetContentControllerDelegate
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
 {
   [self syncTouchHandlerOrigin];
   [self syncShadowNodeState];
 }
-
-#if !TARGET_OS_TV
-- (void)sheetController:(RNSFormSheetContentController *)controller
-    didChangeDetentIdentifier:(nullable NSString *)identifier
-{
-  NSInteger index = [RNSFormSheetDetentResolver detentIndexFromDetentIdentifier:identifier forRawDetents:_detents];
-  if (index >= 0) {
-    [_reactEventEmitter emitOnDetentChangedWithIndex:index];
-  }
-}
-#endif // !TARGET_OS_TV
 
 #pragma mark - RCTComponentViewProtocol
 

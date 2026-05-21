@@ -1,5 +1,6 @@
 #pragma once
 
+#import "RNSFormSheetHostEventEmitter.h"
 #import "RNSReactBaseView.h"
 
 #if defined(__cplusplus)
@@ -9,6 +10,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetHostComponentView : RNSReactBaseView
+
+- (void)onNativeDismiss;
 
 @end
 
@@ -26,6 +29,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger largestUndimmedDetentIndex;
 @property (nonatomic, readonly) NSInteger initialDetentIndex;
 @property (nonatomic, readonly) BOOL prefersScrollingExpandsWhenScrolledToEdge;
+
+@end
+
+#pragma mark - Events
+
+@interface RNSFormSheetHostComponentView ()
+
+- (nonnull RNSFormSheetHostEventEmitter *)reactEventEmitter;
 
 @end
 
