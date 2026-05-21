@@ -77,8 +77,8 @@ export function Tab2Screen() {
         No ScrollView.{"\n"}
         The scrollEdgeAppearance is active. The tabBarBlurEffect is not set, so it should fall back to systemDefault.{"\n"}
         Tab bar background color should be transparent{" "}
-        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark</Text> with{" "}
-        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
+        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark140</Text> with{" "}
+        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight100</Text> shadow.
       </Text>
     </CenteredLayoutView>
   );
@@ -93,14 +93,14 @@ export function Tab3Screen() {
       <Text style={[styles.description, { marginTop: 20 }]}>
         ScrollView active.{"\n"}
         The standardAppearance is active at the top of the page and during scrolling.{"\n"} Tab bar background color should be{" "}
-        <Text style={{ color: Colors.NavyDark100 }}>NavyDark</Text> with{" "}
-        <Text style={{ color: Colors.RedDark100 }}> RedDark</Text> shadow.
+        <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text> with{" "}
+        <Text style={{ color: Colors.RedDark100 }}> RedDark100</Text> shadow.
       </Text>
       <Text style={[styles.description, { marginTop: 20 }]}>
         The scrollEdgeAppearance activates once the list is scrolled all the way to the bottom and its edge aligns with the tab bar.{"\n"}.
         The tabBarBlurEffect is set to `systemChromeMaterialDark` so tab bar background color should be darker{" "}
-        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark</Text> with{" "}
-        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
+        <Text style={{ color: Colors.PurpleDarkTransparent }}>PurpleDark140</Text> with{" "}
+        <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight100</Text> shadow.
       </Text>
       {Array.from({ length: SCROLL_ITEM_COUNT2 }, (_, i) => (
         <View key={i} style={styles.scrollItem} testID={`tab3-item-${i + 1}`}>
@@ -146,8 +146,8 @@ export function Tab4Screen() {
         <Text style={[styles.description, { marginTop: 20 }]}>
           The scrollEdgeAppearance activates once the list is scrolled all the way to the bottom.{"\n"}
           The tabBarBlurEffect is set to `none` so tab bar background color should be exactly{" "}
-          <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark</Text> with{" "}
-          <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight</Text> shadow.
+          <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text> with{" "}
+          <Text style={{ color: Colors.PurpleLight100 }}> PurpleLight100</Text> shadow.
         </Text>
       </View>
       <SettingsPicker<BlurEffect>
