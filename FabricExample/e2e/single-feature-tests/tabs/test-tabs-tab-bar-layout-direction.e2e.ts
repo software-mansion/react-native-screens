@@ -54,7 +54,7 @@ async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
 
 describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
+    await launchAppWithAttributes();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-tab-bar-layout-direction',
@@ -120,16 +120,13 @@ describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
 describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
   beforeAll(async () => {
     if (device.getPlatform() === 'ios') {
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          AppleTextDirection: 'YES',
-          NSForceRightToLeftWritingDirection: 'YES',
-          I18NIsRTL: 'YES',
-        },
+      await launchAppWithAttributes({
+        AppleTextDirection: 'YES',
+        NSForceRightToLeftWritingDirection: 'YES',
+        I18NIsRTL: 'YES',
       });
     } else {
-      await device.launchApp({ newInstance: true });
+      await launchAppWithAttributes();
       await selectSingleFeatureTestsScreen(
         'Tabs',
         'test-tabs-tab-bar-layout-direction',
@@ -311,7 +308,7 @@ describeIfiOS(
   'iOS only: Tab Bar Layout Direction - system settings: LTR and RN settings: RTL',
   () => {
     beforeAll(async () => {
-      await device.launchApp({ newInstance: true });
+      await launchAppWithAttributes();
       await selectSingleFeatureTestsScreen(
         'Tabs',
         'test-tabs-tab-bar-layout-direction',
