@@ -1,13 +1,13 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
-import { createScenario } from '@apps/tests/shared/helpers';
+import { Button, Text, View } from 'react-native';
+import { TabsContainer, useTabsNavigationContext } from '@apps/shared/gamma/containers/tabs';
+import { createScenario, ScenarioDescription } from '@apps/tests/shared/helpers';
 import {
   TabsScreenAppearanceAndroid,
   TabsScreenAppearanceIOS,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Appearance',
@@ -67,9 +67,23 @@ const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
 };
 
 function TabScreen() {
+  const navigation = useTabsNavigationContext()
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Tab</Text>
+    <CenteredLayoutView>
+      <TabsRouteInformation />
+      <Button title='Select tab 1' onPress={() => navigation.selectTab('Tab1')} />
+      <Button title='Select tab 2' onPress={() => navigation.selectTab('Tab2')} />
+      <Button title='Select tab 3' onPress={() => navigation.selectTab('Tab3')} />
+    </CenteredLayoutView>
+  );
+}
+
+export function TabsRouteInformation() {
+  const navigation = useTabsNavigationContext()
+
+  return (
+    <View>
+      <Text>{navigation.routeKey}</Text>
     </View>
   );
 }
