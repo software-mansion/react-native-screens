@@ -9,7 +9,6 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
-
 function TintOverrideTab() {
   return (
     <View style={styles.screen}>
