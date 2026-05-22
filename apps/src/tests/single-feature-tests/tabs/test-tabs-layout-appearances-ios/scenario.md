@@ -29,24 +29,27 @@ simulated device is required for all steps.
 
 ## Prerequisites
 
-- iOS simulator or device running **iOS 18** and second with **iOS 26**.
+- iOS simulator or device running **iOS 18**, and a second simulator or
+  device running **iOS 26**.
 - For full coverage of all three display modes:
   - iPhone (any) in portrait → `stacked`
   - iPhone Pro Max in landscape → `inline` (iOS 18 or lower only)
-  - iPhone Pro (non-Max) in landscape → `compactInline` (for iOS26 displayed also on Max)
+  - iPhone Pro (non-Max) in landscape → `compactInline`
+  - On **iOS 26**, landscape iPhone Pro Max also use `compactInline`
+    instead of `inline`
 
 ## Note
 
-- On **iOS 26**, the `normal` (unselected) state appearance — is not applied
-to unselected tabs. All unselected tabs adopt a system-default appearance.
-Therefore the normal / colored label on unselected tabs is only observable
-on iOS 18.
+- On **iOS 26**, the `normal` (unselected) state appearance is not applied
+  to unselected tabs. All unselected tabs adopt a system-default appearance.
+  Therefore the normal / colored label on unselected tabs is only observable
+  on iOS 18.
 - On **iOS 26**, configuring the `inline` bucket has no visible effect on
-iPhone because the system never activates the `inlineLayoutAppearance` on
-that platform version. Testers should not expect blue titles to appear on
-an iPhone running iOS 26. Instead of it `compactInline` configuration is displayed.
-- Icon color is set to system default - for selected tab is blue and for
-unselected black or gray depends on OS version.
+  iPhone because the system never activates the `inlineLayoutAppearance` on
+  that platform version. Testers should not expect blue titles to appear on
+  an iPhone running iOS 26.  Instead, the `compactInline` configuration is displayed.
+- Icon color is set to the system default: blue for the selected tab, and
+  black or gray for unselected tabs, depending on the iOS version.
 
 ## Steps
 

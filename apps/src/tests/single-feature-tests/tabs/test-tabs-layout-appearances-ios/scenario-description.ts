@@ -1,4 +1,4 @@
-import { ScenarioDescription } from "@apps/tests/shared/helpers";
+import type { ScenarioDescription } from "@apps/tests/shared/helpers";
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Layout Appearances (iOS)',
