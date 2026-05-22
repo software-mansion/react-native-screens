@@ -1,7 +1,7 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Presentation State',
+  name: 'Presentation state',
   key: 'test-form-sheet-presentation-state-ios',
   details:
     'Verifies the presentation state machine when subjected to rapid consecutive open/close state changes from JS.',

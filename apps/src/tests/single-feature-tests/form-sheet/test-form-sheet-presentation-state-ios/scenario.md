@@ -1,4 +1,4 @@
-# Test Scenario: Presentation State
+# Test Scenario: Presentation state
 
 ## Details
 
