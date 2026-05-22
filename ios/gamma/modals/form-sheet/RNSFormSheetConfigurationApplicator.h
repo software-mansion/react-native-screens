@@ -10,10 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetConfigurationApplicator : NSObject
 
-- (void)applyConfigurationIfNeededForAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
-                                       behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
-                                             controller:(RNSFormSheetContentController *)controller
-                                            coordinator:(RNSFormSheetUpdateCoordinator *)coordinator;
+- (void)applyConfigurationIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
+                                        behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
+                                              controller:(RNSFormSheetContentController *)controller
+                                             coordinator:(RNSFormSheetUpdateCoordinator *)coordinator;
 
 - (void)resetInitialDetent;
 
