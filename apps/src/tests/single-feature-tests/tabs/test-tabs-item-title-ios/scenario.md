@@ -25,10 +25,10 @@ native tab bar items, so automated assertion is not feasible.
 
 ## Note
 
-- **Normal (unselected) state (iOS26 KI):** On iOS 18 and lower, if the normal
+- **Normal (unselected) state ([iOS26 KI](https://github.com/software-mansion/react-native-screens-labs/discussions/395)):** On iOS 18 and lower, if the normal
 (unselected) is set it will applies to unselected tab titles. On iOS 26,
 normal-state color is not applied.
-- **Long-title truncation (iOS 18 KI):** On iOS 18 and lower, a
+- **Long-title truncation ([iOS 18 KI](https://github.com/software-mansion/react-native-screens-labs/issues/1485)):** On iOS 18 and lower, a
   native bug prevents truncation; the long title may overflow into
   adjacent items instead of showing an ellipsis.
 
