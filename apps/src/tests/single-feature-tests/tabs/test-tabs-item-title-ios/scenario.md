@@ -25,9 +25,9 @@ native tab bar items, so automated assertion is not feasible.
 
 ## Note
 
-- **Normal (unselected) state ([iOS26 KI](https://github.com/software-mansion/react-native-screens-labs/discussions/395)):** On iOS 18 and lower, if the normal
-(unselected) is set it will applies to unselected tab titles. On iOS 26,
-normal-state color is not applied.
+- **Normal (unselected) state ([iOS26 KI](https://github.com/software-mansion/react-native-screens-labs/discussions/395)):**
+  On iOS 18 and lower, the normal tab title color is applied to unselected tab
+  titles. On iOS 26, the normal-state title color is not applied.
 - **Long-title truncation ([iOS 18 KI](https://github.com/software-mansion/react-native-screens-labs/issues/1485)):** On iOS 18 and lower, a
   native bug prevents truncation; the long title may overflow into
   adjacent items instead of showing an ellipsis.
@@ -65,24 +65,25 @@ is reproduced immediately with no visual glitch.
 
 ---
 
-### Font and possition
+### Font and Position
 
 4. Tap the **Font and Position** tab.
 
 - [ ] Expected: When the tab is selected, the "Font and Position" title label is
 rendered in a bold, italic Georgia font at approximately 12 pt tinted GreenDark100.
-The contrast with the system default (San Francisco, non-italic, 10 pt) is clearly visible.
-The title label is shifted noticeably upward (by ~6 points) compared to the
-baseline position seen on the **Color** tab, while the icon position remains unchanged.
-For **iOS 18** and lower, the title color for unselected tabs is blue.
+The contrast with the system default (San Francisco, non-italic, 10 pt) is clearly
+visible. The title label is shifted noticeably upward (by ~6 points) compared to
+the baseline position seen on the **Color** tab, while the icon position remains
+unchanged. For **iOS 18** and lower, the title color for unselected tabs is blue.
 
 5. Tap any other tab, then tap **Font and Position** again.
 
 - [ ] Expected: The custom typography and position reappear when the tab is
 re-selected. The vertical offset is consistent across selections.
 On iOS 26, the unselected state reverts to the system default appearance
-(no font override is applied to the normal state).
- On iOS 18 and lower, unselected tab titles appear in BlueDark100.
+(item title color is not blue).
+ On iOS 18 and lower, unselected tab titles appear in blue.
+
 ---
 
 ### Stability check

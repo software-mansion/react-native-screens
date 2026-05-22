@@ -1,24 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
-  useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
 
 function TintOverrideTab() {
-  const { updateHostConfig } = useTabsHostConfig();
-  useEffect(() => {
-    updateHostConfig({
-      ios: { tabBarTintColor: Colors.GreenDark100 },
-    });
-  }, [updateHostConfig]);
-
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>Tint Override</Text>
@@ -109,7 +101,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'Font and Position',
+    name: 'FontAndPosition',
     Component: FontTab,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
@@ -138,7 +130,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} ios={{ tabBarTintColor: Colors.GreenDark100 }}/>;
 }
 
 const styles = StyleSheet.create({
