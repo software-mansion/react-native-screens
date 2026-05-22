@@ -41,8 +41,9 @@
     return;
   }
 
-  UIViewController *sourceVC = [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
-  if (sourceVC == nil) {
+  UIViewController *presentationSourceViewController =
+      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
+  if (presentationSourceViewController == nil) {
     RCTLogError(
         @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
     return;
@@ -55,17 +56,18 @@
   [controller prepareForPresentation];
 
   __weak auto weakSelf = self;
-  [sourceVC presentViewController:controller
-                         animated:YES
-                       completion:^{
-                         auto strongSelf = weakSelf;
-                         if (!strongSelf) {
-                           return;
-                         }
+  [presentationSourceViewController presentViewController:controller
+                                                 animated:YES
+                                               completion:^{
+                                                 auto strongSelf = weakSelf;
+                                                 if (!strongSelf) {
+                                                   return;
+                                                 }
 
-                         strongSelf->_state = RNSFormSheetPresentationStatePresented;
-                         [strongSelf updatePresentationIfNeededWithProvider:provider controller:controller];
-                       }];
+                                                 strongSelf->_state = RNSFormSheetPresentationStatePresented;
+                                                 [strongSelf updatePresentationIfNeededWithProvider:provider
+                                                                                         controller:controller];
+                                               }];
 }
 
 - (void)dismissIfNeededForProvider:(id<RNSFormSheetPresentationProvider>)provider
