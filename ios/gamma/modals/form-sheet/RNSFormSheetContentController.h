@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setNeedsAppearanceUpdate;
 - (void)setNeedsInitialDetentReset;
 
-#pragma mark - Updating
+#pragma mark - Updates
 
 - (void)flushPendingUpdates;
 

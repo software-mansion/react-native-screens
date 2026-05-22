@@ -171,7 +171,7 @@
   _needsInitialDetentReset = YES;
 }
 
-#pragma mark - Updating
+#pragma mark - Updates
 
 - (void)flushPendingUpdates
 {
