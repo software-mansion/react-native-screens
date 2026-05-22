@@ -97,7 +97,7 @@ namespace react = facebook::react;
   return _isOpen;
 }
 
-- (UIWindow *)hostWindow
+- (nullable UIWindow *)hostWindow;
 {
   return self.window;
 }
