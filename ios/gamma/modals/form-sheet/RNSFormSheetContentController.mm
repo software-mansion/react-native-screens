@@ -150,9 +150,9 @@
   }
 
   [_configurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
-                                                           behaviorProvider:behaviorProvider
-                                                                 controller:self
-                                                                coordinator:_updateCoordinator];
+                                                            behaviorProvider:behaviorProvider
+                                                                  controller:self
+                                                                 coordinator:_updateCoordinator];
 }
 
 #pragma mark - Signals

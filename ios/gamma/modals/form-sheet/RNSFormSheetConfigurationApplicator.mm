@@ -25,9 +25,9 @@
 }
 
 - (void)applyConfigurationIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
-                                       behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
-                                             controller:(RNSFormSheetContentController *)controller
-                                            coordinator:(RNSFormSheetUpdateCoordinator *)coordinator
+                                        behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
+                                              controller:(RNSFormSheetContentController *)controller
+                                             coordinator:(RNSFormSheetUpdateCoordinator *)coordinator
 {
   RNSFormSheetUpdateFlags configFlags = RNSFormSheetUpdateFlagsAppearance | RNSFormSheetUpdateFlagsBehavior;
 
