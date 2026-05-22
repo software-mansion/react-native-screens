@@ -124,7 +124,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} ios={{ tabBarTintColor: Colors.GreenDark100 }}/>;
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} ios={{ tabBarTintColor: Colors.GreenDark100 }} />;
 }
 
 const styles = StyleSheet.create({
