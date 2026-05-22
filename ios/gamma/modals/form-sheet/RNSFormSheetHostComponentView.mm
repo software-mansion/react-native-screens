@@ -77,7 +77,8 @@ namespace react = facebook::react;
 {
   _controller = [RNSFormSheetContentController new];
   _controller.delegate = self;
-  _controller.hostComponentView = self;
+  // TODO: @t0maboro - migrate
+  // _controller.hostComponentView = self;
 }
 
 - (void)didMoveToWindow

@@ -60,11 +60,12 @@
 
 #pragma mark - Presentation
 
-- (void)updatePresentationStateForHost:(nonnull RNSFormSheetHostComponentView *)host
+- (void)updatePresentationState
 {
-  if (host.isOpen) {
-    if (host.window != nil) {
-      [self presentFromWindowIfNeeded:host.window];
+  if (self.presentationProvider.isOpen) {
+    UIWindow *window = self.presentationProvider.hostWindow;
+    if (window != nil) {
+      [self presentFromWindowIfNeeded:window];
     }
   } else {
     [self dismissIfNeeded];
@@ -115,19 +116,21 @@
 
 #pragma mark - Appearance
 
-- (void)updateAppearanceIfNeededForHost:(nonnull RNSFormSheetHostComponentView *)host
+- (void)updateAppearanceIfNeeded
 {
   if (_needsInitialDetentReset) {
     _needsInitialDetentReset = NO;
     [_appearanceApplicator resetInitialDetent];
   }
 
-  [_appearanceApplicator updateAppearanceIfNeededForHost:host controller:self coordinator:_appearanceCoordinator];
+  [_appearanceApplicator updateAppearanceIfNeededForAppearanceProvider:self.appearanceProvider
+                                                      behaviorProvider:self.behaviorProvider
+                                                            controller:self
+                                                           coordinator:_appearanceCoordinator];
 
-  // TODO: @t0maboro - move presentation logic to dedicated presentationCoordinator with 4-state logic
   [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
                       performOperations:^{
-                        [self updatePresentationStateForHost:host];
+                        [self updatePresentationState];
                       }];
 }
 
@@ -157,9 +160,9 @@
 
 - (void)reactMountingTransactionDidMount
 {
-  RNSFormSheetHostComponentView *host = self.hostComponentView;
-  RCTAssert(host != nil, @"[RNScreens] hostComponentView must be set before mounting transactions are observed");
-  [self updateAppearanceIfNeededForHost:host];
+  RCTAssert(self.presentationProvider != nil,
+            @"[RNScreens] presentationProvider must be set before mounting transactions are observed");
+  [self updateAppearanceIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate

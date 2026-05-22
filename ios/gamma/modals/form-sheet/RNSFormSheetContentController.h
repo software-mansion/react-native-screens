@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSFormSheetProviders.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetContentControllerDelegate> delegate;
 
-@property (nonatomic, weak, nullable) RNSFormSheetHostComponentView *hostComponentView;
+@property (nonatomic, weak, nullable) id<RNSFormSheetPresentationProvider> presentationProvider;
+@property (nonatomic, weak, nullable) id<RNSFormSheetAppearanceProvider> appearanceProvider;
+@property (nonatomic, weak, nullable) id<RNSFormSheetBehaviorProvider> behaviorProvider;
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
