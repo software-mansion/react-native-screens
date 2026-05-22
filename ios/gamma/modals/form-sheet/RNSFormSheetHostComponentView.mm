@@ -1,5 +1,4 @@
 #import "RNSFormSheetHostComponentView.h"
-#import "RNSDefines.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
 #import "RNSFormSheetDetentResolver.h"

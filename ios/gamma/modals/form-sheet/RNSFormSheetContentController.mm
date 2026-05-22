@@ -3,7 +3,6 @@
 #import "RNSFormSheetAppearanceCoordinator.h"
 #import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentView.h"
-#import "RNSFormSheetHostComponentView.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
