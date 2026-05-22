@@ -37,7 +37,7 @@ simulated device is required for all steps.
 
 ## Note
 
-- On iOS 26, the `normal` (unselected) state appearance — is not applied
+- On **iOS 26**, the `normal` (unselected) state appearance — is not applied
 to unselected tabs. All unselected tabs adopt a system-default appearance.
 Therefore the normal / colored label on unselected tabs is only observable
 on iOS 18.
