@@ -1,0 +1,132 @@
+import React from 'react';
+import scenarioDescription from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
+import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import { Colors } from '@apps/shared/styling';
+import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
+
+export function App() {
+  return <StackSetup />;
+}
+
+function StackSetup() {
+  return (
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'Home',
+          Component: HomeScreen,
+          options: {},
+        },
+        {
+          name: 'Blue',
+          Component: BlueScreen,
+          options: {},
+        },
+        {
+          name: 'Red',
+          Component: RedScreen,
+          options: {},
+        },
+        {
+          name: 'NestedHost',
+          Component: NestedHostScreen,
+          options: {},
+        },
+      ]}
+    />
+  );
+}
+
+function HomeScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={false}
+        routeNames={['Blue', 'Red', 'NestedHost']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function BlueScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['Red', 'Blue', 'NestedHost']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function RedScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['Blue', 'Red', 'NestedHost']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedHostScreen() {
+  return (
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'NestedHome',
+          Component: NestedHomeScreen,
+          options: {},
+        },
+        {
+          name: 'NestedBlue',
+          Component: NestedBlueScreen,
+          options: {},
+        },
+        {
+          name: 'NestedRed',
+          Component: NestedRedScreen,
+          options: {},
+        },
+      ]}
+    />
+  );
+}
+
+function NestedHomeScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedBlue', 'NestedRed']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedBlueScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedRed', 'NestedBlue']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedRedScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedBlue', 'NestedRed']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+export default createScenario(App, scenarioDescription);

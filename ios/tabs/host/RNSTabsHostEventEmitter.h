@@ -4,15 +4,11 @@
 #import "RNSTabsNavigationState.h"
 
 // Hide C++ symbols from C compiler used when building Swift module
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 namespace react = facebook::react;
 #endif // __cplusplus
-
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTComponent.h>
-#endif // !RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -76,16 +72,7 @@ typedef struct {
 
 @interface RNSTabsHostEventEmitter ()
 
-#if RCT_NEW_ARCH_ENABLED
-
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsHostIOSEventEmitter> &)emitter;
-
-#else
-#pragma mark - LEGACY Event emitter blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 

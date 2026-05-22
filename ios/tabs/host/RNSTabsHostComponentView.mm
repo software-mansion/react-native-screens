@@ -1,6 +1,5 @@
 #import "RNSTabsHostComponentView.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -10,7 +9,6 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSTabsHostComponentDescriptor.h>
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
-#endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -33,10 +31,7 @@ namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-@interface RNSTabsHostComponentView ()
-#if RCT_NEW_ARCH_ENABLED
-    <RCTMountingTransactionObserving>
-#endif // RCT_NEW_ARCH_ENABLED
+@interface RNSTabsHostComponentView () <RCTMountingTransactionObserving>
 @end
 
 @implementation RNSTabsHostComponentView {
@@ -64,16 +59,6 @@ namespace react = facebook::react;
   return self;
 }
 
-#if !RCT_NEW_ARCH_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader
-{
-  if (self = [self initWithFrame:frame]) {
-    _imageLoader = imageLoader;
-  }
-  return self;
-}
-#endif // !RCT_NEW_ARCH_ENABLED
-
 - (nonnull RNSTabBarController *)controller
 {
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
@@ -99,10 +84,8 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-#if RCT_NEW_ARCH_ENABLED
   static const auto defaultProps = std::make_shared<const react::RNSTabsHostIOSProps>();
   _props = defaultProps;
-#endif
   _tabBarTintColor = nil;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
@@ -134,11 +117,6 @@ namespace react = facebook::react;
 {
   if ([self window] != nil) {
     [self reactAddControllerToClosestParent:_controller];
-
-#if !RCT_NEW_ARCH_ENABLED
-    // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
-    _controller.view.frame = self.bounds;
-#endif // !RCT_NEW_ARCH_ENABLED
   }
 }
 
@@ -226,24 +204,6 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
-#if !RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RCTInvalidating
-
-- (void)invalidate
-{
-  // We assume that tabs host is removed from view hierarchy **only** when
-  // whole component is destroyed & therefore we do the necessary cleanup here.
-  // If at some point that statement does not hold anymore, this cleanup
-  // should be moved to a different place.
-  for (UIView<RCTInvalidating> *subview in _reactSubviews) {
-    [subview invalidate];
-  }
-  [self invalidateImpl];
-}
-
-#endif
-
 #pragma mark - React events
 
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter
@@ -253,8 +213,6 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
-
-#if RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -419,132 +377,6 @@ namespace react = facebook::react;
   [_controller reactMountingTransactionDidMount];
 }
 
-#else
-#pragma mark - LEGACY architecture implementation
-
-#pragma mark - LEGACY RCTComponent protocol
-
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
-{
-  [super insertReactSubview:subview atIndex:index];
-  [self validateAndHandleReactSubview:subview atIndex:index shouldMount:YES];
-}
-
-- (void)removeReactSubview:(UIView *)subview
-{
-  [super removeReactSubview:subview];
-  // index is not used for unmount
-  [self validateAndHandleReactSubview:subview atIndex:-1 shouldMount:NO];
-}
-
-RNS_IGNORE_SUPER_CALL_BEGIN
-- (void)didUpdateReactSubviews
-{
-  [self invalidateFlagsOnControllerIfNeeded];
-}
-RNS_IGNORE_SUPER_CALL_END
-
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-  [super didSetProps:changedProps];
-  _needsTabBarAppearanceUpdate = YES;
-  [self invalidateFlagsOnControllerIfNeeded];
-}
-
-#pragma mark - LEGACY update methods
-
-- (void)invalidateFlagsOnControllerIfNeeded
-{
-  if (_needsTabBarAppearanceUpdate) {
-    _needsTabBarAppearanceUpdate = NO;
-    [_controller setNeedsUpdateOfTabBarAppearance:true];
-  }
-
-  if (self.hasModifiedReactSubviewsInCurrentTransaction) {
-    [self updateContainer];
-    _hasModifiedTabsScreensInCurrentTransaction = NO;
-    _hasModifiedBottomAccessoryInCurrentTransation = NO;
-  }
-}
-
-- (void)invalidateTabBarAppearance
-{
-  _needsTabBarAppearanceUpdate = YES;
-  [self invalidateFlagsOnControllerIfNeeded];
-}
-
-#pragma mark - LEGACY prop setters
-
-// Paper will call property setters
-
-- (void)setTabBarTintColor:(UIColor *_Nullable)tabBarTintColor
-{
-  _tabBarTintColor = tabBarTintColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarHidden:(BOOL)tabBarHidden
-{
-  _tabBarHidden = tabBarHidden;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
-  if (@available(iOS 18.0, *)) {
-    [_controller setTabBarHidden:_tabBarHidden animated:NO];
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
-  {
-    _controller.tabBar.hidden = _tabBarHidden;
-  }
-}
-
-- (void)setNativeContainerBackgroundColor:(UIColor *_Nullable)nativeContainerBackgroundColor
-{
-  _nativeContainerBackgroundColor = nativeContainerBackgroundColor;
-#if !TARGET_OS_TV
-  if (_nativeContainerBackgroundColor == nil) {
-    _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
-  }
-#endif // !TARGET_OS_TV
-
-  _controller.view.backgroundColor = _nativeContainerBackgroundColor;
-}
-
-// This is a Paper-only setter method that will be called by the mounting code.
-// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
-- (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
-{
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (@available(iOS 26.0, *)) {
-    _tabBarMinimizeBehavior =
-        rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(tabBarMinimizeBehavior);
-    _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
-  } else
-#endif // Check for iOS >= 26
-    if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
-      RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
-    }
-}
-
-- (void)setTabBarControllerModeFromRNSTabBarControllerMode:(RNSTabBarControllerMode)tabBarControllerMode
-{
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
-  if (@available(iOS 18.0, *)) {
-    _tabBarControllerMode =
-        rnscreens::conversion::UITabBarControllerModeFromRNSTabBarControllerMode(tabBarControllerMode);
-    _controller.mode = _tabBarControllerMode;
-  } else
-#endif // Check for iOS >= 18
-    if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
-      RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
-    }
-}
-
-- (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange
-{
-  [self.reactEventEmitter setOnNativeFocusChange:onNativeFocusChange];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
-
 #pragma mark - Common
 
 - (void)validateAndHandleReactSubview:(UIView *)subview atIndex:(NSInteger)index shouldMount:(BOOL)mount
@@ -681,11 +513,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 @end
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSTabsHostCls(void)
 {
   return RNSTabsHostComponentView.class;
 }
-#endif // RCT_NEW_ARCH_ENABLED

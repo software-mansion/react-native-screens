@@ -14,13 +14,8 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
   UIView *__weak _observedNativeWrapperView;
 
-#if REACT_NATIVE_VERSION_MINOR < 82
-  BOOL _initialStateUpdateSent;
-  CADisplayLink *_displayLink;
-#else // REACT_NATIVE_VERSION_MINOR < 82
   RNSTabsBottomAccessoryContentComponentView *__weak _regularContentView;
   RNSTabsBottomAccessoryContentComponentView *__weak _inlineContentView;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 
   id<UITraitChangeRegistration> _traitChangeRegistration;
 }
@@ -39,18 +34,11 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 - (void)initState
 {
   _observedNativeWrapperView = nil;
-#if REACT_NATIVE_VERSION_MINOR < 82
-  _initialStateUpdateSent = NO;
-  _displayLink = nil;
-#else // REACT_NATIVE_VERSION_MINOR < 82
   _regularContentView = nil;
   _inlineContentView = nil;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
 #pragma mark - Content view switching workaround
-
-#if REACT_NATIVE_VERSION_MINOR >= 82
 
 - (BOOL)isContentViewSwitchingWorkaroundActive
 {
@@ -94,8 +82,6 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   }
 }
 
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-
 #pragma mark - Observing environment changes
 
 - (id<UITraitChangeRegistration>)registerForAccessoryEnvironmentChanges
@@ -106,9 +92,7 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
                     UITabAccessoryEnvironment environment =
                         self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment;
                     [self->_bottomAccessoryView.reactEventEmitter emitOnEnvironmentChangeIfNeeded:environment];
-#if REACT_NATIVE_VERSION_MINOR >= 82
                     [self handleContentViewVisibilityForEnvironmentIfNeeded];
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
                   }];
 }
 
@@ -163,58 +147,10 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
 - (void)notifyWrapperViewFrameHasChanged
 {
-#if REACT_NATIVE_VERSION_MINOR < 82
-  // Make sure that bottom accessory's size is sent to ShadowNode as soon as possible.
-  // We set origin to (0,0) because initially self.nativeWrapperView's origin is incorrect.
-  // We want the enable the display link as well so that it takes over later with correct origin.
-  if (!_initialStateUpdateSent) {
-    CGRect frame = CGRectMake(0, 0, self.nativeWrapperView.frame.size.width, self.nativeWrapperView.frame.size.height);
-    [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:frame];
-    _initialStateUpdateSent = YES;
-  }
-
-  if (_displayLink == nil) {
-    [self setupDisplayLink];
-  }
-#else // REACT_NATIVE_VERSION_MINOR < 82
   // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
   [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:self.nativeWrapperView.frame];
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
-
-#if REACT_NATIVE_VERSION_MINOR < 82
-- (void)setupDisplayLink
-{
-  _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
-  [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-}
-
-- (void)handleDisplayLink:(CADisplayLink *)sender
-{
-  // We use self.nativeWrapperView because it has both the size and the origin
-  // that we want to send to the ShadowNode.
-  CGRect presentationFrame = self.nativeWrapperView.layer.presentationLayer.frame;
-  if (CGRectEqualToRect(presentationFrame, CGRectZero)) {
-    return;
-  }
-
-  [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:presentationFrame];
-
-  // self.nativeWrapperView.frame is set to final value at the beginning of the transition.
-  // When frame from presentation layer matches self.nativeWrapperView.frame, it indicates that
-  // the transition is over and we can disable the display link.
-  if (CGRectEqualToRect(presentationFrame, self.nativeWrapperView.frame)) {
-    [self invalidateDisplayLink];
-  }
-}
-
-- (void)invalidateDisplayLink
-{
-  [_displayLink invalidate];
-  _displayLink = nil;
-}
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 
 #pragma mark - Invalidation
 
@@ -224,12 +160,8 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   _traitChangeRegistration = nil;
   [self unregisterForAccessoryFrameChanges];
   _bottomAccessoryView = nil;
-#if REACT_NATIVE_VERSION_MINOR < 82
-  [self invalidateDisplayLink];
-#else // REACT_NATIVE_VERSION_MINOR < 82
   _regularContentView = nil;
   _inlineContentView = nil;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
 @end

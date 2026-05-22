@@ -12,21 +12,33 @@ with tabBarMinimizeBehavior.
 
 ## E2E test
 
-Other: ongoing research.
+Partial: covers most of manual scenario steps only for iPhone; iPad testing would
+require app window resizing not supported by Detox.
+Not covered:
+- Text alignment verification in the bottom accessory.
+- Content verification for the last two variants.
+- Variant selection visual check (the blue border is not automated).
+- Extending the tab bar using the collapsed tab bar state.
 
 ## Prerequisites
 
-- iOS 26+ device or simulator iPhone and iPad
+- iOS 26+ device or simulator: iPhone and iPad
 
 ## Note
 
 - `bottomAccessory` is only available on iOS 26 or higher.
 - Each of the below steps must be executed twice: once on iPhone and once on iPad.
 - On iPad: Resize the window to the compact width size class as the `inline effect`
-effect is not applied to the full-size app.
+is not applied to the full-size app.
 - The **Config** tab is used to select the active accessory variant.
 - "Scrolling down" means dragging the list upward (revealing rows below);
   "scrolling up" means dragging the list downward (revealing rows above).
+- `tabBarMinimizeBehavior` prop is not manipulated externally in this scenario.
+  The test screen sets it internally per tab: `onScrollDown` when the
+  **ScrollDown** tab is active, `onScrollUp` when **ScrollUp** tab is active,
+  and leaves it unset (system default: `automatic`) on the **Config** tab.
+  Steps 1–9 are performed on the **Config** tab, where minimize behavior
+  is effectively `automatic` (no minimization).
 
 ## Steps
 

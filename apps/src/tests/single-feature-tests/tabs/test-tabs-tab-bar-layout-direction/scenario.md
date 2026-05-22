@@ -1,4 +1,4 @@
-# Test Scenario: direction
+# Test Scenario: Layout Direction
 
 ## Details
 
@@ -9,97 +9,184 @@ rendering by testing the precedence between system-level settings, React
 Native's I18nManager, and the explicit direction prop from
 react-native-screens.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
+When `direction` is set to `inherit`, the resolution is platform-dependent.
+On iOS, the layout is driven by the native trait system, which ignores
+React Native's `forceRTL` and strictly follows the device or app language.
+On Android, the direction propagates through the view hierarchy and in most cases
+aligns with React Native's own `I18nManager` setting, effectively letting RN override the system.
+
+Reflecting this divide, the iOS scenario set covers the full
+**System Direction × RN Direction** matrix to capture cases where native and JS
+contexts disagree. The Android scenarios omit those conflict cases - because RN's
+setting overrides the system, only the RN-direction dimension is varied.
+Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
+
+**OS test creation version:** iOS: 18.6 and 26.5, Android: API Level 36.
 
 ## E2E test
 
-Yes: Covers all manual scenario steps for LTR/RTL configured via React Native.
+Other: Covers first two manual scenarios for LTR/RTL configurations:
 
-Implementation Details:
+- iOS: The system RTL direction is set by app configuration setting
+  `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
+  to `YES` during the app launch sequence.
+- Android: Via React Native - RTL direction must be triggered using the
+  `forceRTL` toggle located within the Layout Direction screen.
 
-- iOS: The system RTL direction is set by configuring I18NIsRTL to YES
-  during the app launch sequence.
-- Android: RTL direction must be triggered using the forceRTL toggle located
-  within the Layout Direction screen.
+E2E tests for iOS specific scenarios have to be implemented.
 
 Scenarios where RTL is enabled at the device level by setting a system-wide
-RTL language are NOT covered by e2e tests.
+RTL language are NOT covered by E2E tests.
 
 ## Prerequisites
 
-- iOS device or simulator with at least one RTL language localization
-  configured in Xcode (e.g. empty ar.lproj/InfoPlist.strings), or system
-  language set to Arabic/Hebrew,
-- Android emulator with supportRtl enabled in app manifest.
+- iOS device or simulator with system language set to Arabic/Hebrew.
+- Valid RTL configuration in Xcode application project (RTL language set as app's
+default language or RTL language added to supported languages + at least one
+localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
+- Android emulator with `supportsRtl` enabled in app manifest.
 
 ## Note
 
-- Assumption: System and RN settings are working correctly. Here only
-  react-native-screens prop is tested.
-- Each of the below steps must be executed twice: once with a system-wide RTL
-  language enabled at the device level and once with the RTL direction set
-  via React Native. The device-level test is particularly critical, as the
-  React Native configuration is already covered by E2E tests.
+- Assumption: System and RN settings are working correctly. Here only the
+  `direction` prop on `TabsHost` is tested.
+- **Tab order reference:** Tab1 is the first-defined tab, Tab2 is the
+  second. In LTR order Tab1 is the leftmost item; in RTL order Tab2 is the
+  leftmost item.
+- For iOS, scenarios labeled e.g. `System LTR / RN LTR` require configuring
+  **both** the system direction and the RN direction to match the label
+  before running the steps.
+- For Android, only the RN direction needs to be set - the system direction
+  is ignored because RN's setting overrides it.
+- After toggling `forceRTL` or `allowRTL`, **restart the app** for the
+  change to take effect (the screen shows a reminder).
+- The `I18nManager.isRTL` readout on the config screen reflects the current
+  effective RN direction after restart.
+- The last two iOS scenarios are a consequence of the behavior described
+  above: when `direction` is switched to `inherit` after being set to
+  another value, the tab bar follows the native (system) layout direction
+  rather than RN's `forceRTL`. The initial value of `TabsHost direction`
+  is not fixed - it reflects whatever direction is actually displayed on
+  mount, which depends on the system and RN settings. When the two
+  disagree, the displayed direction at startup is the resolved one (e.g.
+  RN RTL with LTR system can display as RTL initially).
+
+---
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the scenario.
+1. Launch the app and navigate to the **Layout Direction** scenario.
 
-- [ ] Expected: Tab1 and Tab2 are shown in LTR order. Tab1 displayed as the
-  leftmost item and Tab2 as second. All controls default to
-  forceRTL=false, allowRTL=true, TabsHost direction = inherit.
-
----
-
-### TabsHost inherit — follows RN/system
-
-2. Ensure system/RN is LTR (I18nManager.isRTL == false), set TabsHost
-   direction = inherit.
-
-- [ ] Expected: Tab bar displays in LTR order. Tab1 is displayed as the
-  leftmost item and Tab2 as second.
-
-3. Set system/RN to RTL (I18nManager.isRTL == true), keep TabsHost
-   direction = inherit.
-
-- [ ] Expected: Tab bar displays in RTL order. Tab2 displayed as the
-  leftmost item and Tab1 as second.
+- [ ] Expected: Tab1 and Tab2 are shown in LTR order. Tab1 is the leftmost
+  item. Controls default to `forceRTL = false`, `allowRTL = true`, and
+  `TabsHost direction = ltr`. The `I18nManager.isRTL == false` label
+  is shown.
 
 ---
 
-### TabsHost ltr
+### System LTR / RN LTR
 
-4. Set system/RN to RTL, set TabsHost direction = ltr.
+> Setup: System language is LTR (e.g. English). RN: `forceRTL = false` (default).
+> `I18nManager.isRTL == false`.
 
-- [ ] Expected: Tab bar displays in LTR order — TabsHost overrides RTL from
-  RN/system. Tab1 is displayed as the leftmost item.
+2. Set `TabsHost direction = inherit`.
 
-1. Set system/RN to LTR, keep TabsHost direction = ltr.
+- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
 
-- [ ] Expected: Tab bar remains in LTR order. Tab1 is displayed as the the
-  leftmost item.
+3. Set `TabsHost direction = ltr`.
 
-6. Cycle through inherit → rtl → ltr → rtl → inherit.
+- [ ] Expected: Tab bar remains in LTR order. Tab1 is the leftmost item.
 
-- [ ] Expected: Tab bar direction updates immediately with each change; no
-  crashes or layout freezes occur.
+4. Set `TabsHost direction = rtl`.
+
+- [ ] Expected: Tab bar switches to RTL order. Tab2 becomes the leftmost
+  item.
+
+5. Cycle `TabsHost direction` through
+   `inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
+
+- [ ] Expected: Tab bar direction updates immediately with each change with
+  the result described as expected above.
 
 ---
 
-### TabsHost rtl
+### System RTL / RN RTL
 
-7. Set system/RN to LTR, set TabsHost direction = rtl.
+> Setup: System language is RTL (e.g. Arabic or Hebrew). RN: Enable
+> `forceRTL = true` and restart the app. `I18nManager.isRTL == true` and `TabsHost direction = rtl`.
 
-- [ ] Expected: Tab bar displays in RTL order — TabsHost overrides LTR from
-  RN/system. Tab2 displayed as the leftmost item.
+6. Set `TabsHost direction = inherit`.
 
-8. Set system/RN to RTL, keep TabsHost direction = rtl.
+- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
 
-- [ ] Expected: Tab bar remains RTL. Tab2 displayed as the leftmost item.
+7. Set `TabsHost direction = ltr`.
 
-9. Cycle through inherit → ltr → rtl → ltr → inherit.
+- [ ] Expected: Tab bar displays in LTR order on both platforms. Tab1 is
+  the leftmost item.
 
-- [ ] Expected: Tab bar direction updates immediately with each change, no
-  crashes or layout freezes occur.
+8. Set `TabsHost direction = rtl`.
+
+- [ ] Expected: Tab bar displays in RTL order on both platforms. Tab2 is
+  the leftmost item.
+
+9. Cycle `TabsHost direction` through
+   `inherit` → `ltr` → `rtl` → `ltr` → `inherit` rapidly.
+
+- [ ] Expected: Tab bar direction updates immediately with each change with
+result described as expected above.
+
+---
+
+### iOS only: System RTL / RN LTR
+
+> Setup: iOS system: System language is RTL (e.g. Arabic or Hebrew). Disable RN RTL `forceRTL = false`, 
+> `allowRTL = false` and restart the app. `I18nManager.isRTL == false` and `TabsHost direction = ltr`.
+
+10. Set `TabsHost direction = inherit`.
+
+- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
+
+11. Set `TabsHost direction = ltr`.
+
+- [ ] Expected: Tab bar displays in LTR order. Tab1 is
+  the leftmost item.
+
+12. Set `TabsHost direction = rtl`.
+
+- [ ] Expected: Tab bar displays in RTL order. Tab2 is
+  the leftmost item.
+
+13. Cycle `TabsHost direction` through
+   `inherit` → `ltr` → `rtl` → `ltr` → `inherit` rapidly.
+
+- [ ] Expected: Tab bar direction updates immediately with each change with
+result described as expected above.
+
+---
+
+### iOS only: System LTR / RN RTL
+
+> Setup: System language is LTR (e.g. English). Enable `forceRTL = true`
+> and restart the app. `I18nManager.isRTL == true` and `TabsHost direction = rtl`
+
+14. Set `TabsHost direction = inherit`.
+
+- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
+
+15. Set `TabsHost direction = ltr`.
+
+- [ ] Expected: Tab bar displays in LTR order. Tab1 is
+  the leftmost item.
+
+16. Set `TabsHost direction = rtl`.
+
+- [ ] Expected: Tab bar displays in RTL order. Tab2 is
+  the leftmost item.
+
+17. Cycle `TabsHost direction` through
+`inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
+
+- [ ] Expected: Tab bar direction updates immediately with each change with
+result described as expected above.

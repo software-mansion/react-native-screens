@@ -6,17 +6,10 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { TabBarMinimizeBehavior } from 'react-native-screens';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar Minimize Behavior',
-  key: 'test-tabs-tab-bar-minimize-behavior-ios',
-  details: 'Test tab bar minimize behavior for iOS 26+.',
-  platforms: ['ios'],
-};
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();

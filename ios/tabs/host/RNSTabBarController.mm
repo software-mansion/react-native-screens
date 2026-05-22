@@ -86,10 +86,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
   BOOL _isHandlingExplicitSelectionUpdate;
 
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
-
-#if !RCT_NEW_ARCH_ENABLED
-  BOOL _isControllerFlushBlockScheduled;
-#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)init
@@ -105,10 +101,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
     // Delegate field retains weakly, no risk of cycle.
     self.delegate = self;
-
-#if !RCT_NEW_ARCH_ENABLED
-    _isControllerFlushBlockScheduled = NO;
-#endif // !RCT_NEW_ARCH_ENABLED
   }
   return self;
 }
@@ -218,25 +210,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)setNeedsUpdateOfChildViewControllers:(bool)needsReactChildrenUpdate
 {
   _needsUpdateOfChildViewControllers = true;
-#if !RCT_NEW_ARCH_ENABLED
-  [self scheduleControllerUpdateIfNeeded];
-#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (void)setNeedsUpdateOfTabBarAppearance:(bool)needsUpdateOfTabBarAppearance
 {
   _needsUpdateOfTabBarAppearance = needsUpdateOfTabBarAppearance;
-#if !RCT_NEW_ARCH_ENABLED
-  [self scheduleControllerUpdateIfNeeded];
-#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (void)setNeedsOrientationUpdate:(bool)needsOrientationUpdate
 {
   _needsOrientationUpdate = needsOrientationUpdate;
-#if !RCT_NEW_ARCH_ENABLED
-  [self scheduleControllerUpdateIfNeeded];
-#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (void)setNeedsLayoutDirectionUpdateBelowIOS17:(bool)needsLayoutDirectionUpdate
@@ -996,34 +979,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
   return nil;
 }
-
-#if !RCT_NEW_ARCH_ENABLED
-
-#pragma mark - LEGACY Paper scheduling methods
-
-// TODO: These could be moved to separate scheduler class
-
-- (void)scheduleControllerUpdateIfNeeded
-{
-  if (_isControllerFlushBlockScheduled) {
-    return;
-  }
-
-  _isControllerFlushBlockScheduled = YES;
-
-  auto *__weak weakSelf = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
-    auto *strongSelf = weakSelf;
-    if (strongSelf == nil) {
-      return;
-    }
-    strongSelf->_isControllerFlushBlockScheduled = NO;
-    [strongSelf reactMountingTransactionWillMount];
-    [strongSelf reactMountingTransactionDidMount];
-  });
-}
-
-#endif // !RCT_NEW_ARCH_ENABLED
 
 - (void)updateOrientationIfNeeded
 {
