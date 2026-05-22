@@ -50,9 +50,6 @@
   }
 
   _state = RNSFormSheetPresentationStatePresenting;
-
-  // The presentation controller is recreated by UIKit on every present/dismiss cycle.
-  // We must assign this delegate before actual presentation
   [controller prepareForPresentation];
 
   __weak auto weakSelf = self;
