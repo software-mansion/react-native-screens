@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Item Title (iOS)',
   key: 'test-tabs-item-title-ios',
   details:
@@ -10,5 +10,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };
-
-export default scenarioDescription;
