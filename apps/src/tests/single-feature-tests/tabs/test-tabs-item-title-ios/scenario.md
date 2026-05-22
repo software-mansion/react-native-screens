@@ -55,8 +55,8 @@ native tab bar items, so automated assertion is not feasible.
 2. Tap the **Color** tab.
 
 - [ ] Expected: The **Color** tab is selected. The host `tabBarTintColor`
-  is GreenDark100, so the selected icon tints green. The tab's
-  `tabBarItemTitleFontColor` is RedLight100, so the title text
+  is green, so the selected icon tints green. The tab's
+  `tabBarItemTitleFontColor` is red, so the title text
   "Color" renders in red - not green.
 
 3. Tap the long title tab, then tap **Color** again.
@@ -71,7 +71,7 @@ is reproduced immediately with no visual glitch.
 4. Tap the **Font and Position** tab.
 
 - [ ] Expected: When the tab is selected, the "Font and Position" title label is
-rendered in a bold, italic Georgia font at approximately 12 pt tinted GreenDark100.
+rendered in a bold, italic Georgia font at approximately 12 pt tinted green.
 The contrast with the system default (San Francisco, non-italic, 10 pt) is clearly
 visible. The title label is shifted noticeably upward (by ~6 points) compared to
 the baseline position seen on the **Color** tab, while the icon position remains
