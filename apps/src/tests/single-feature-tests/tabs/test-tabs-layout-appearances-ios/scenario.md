@@ -85,7 +85,7 @@ default color)
 Unselected tab titles: display normal, on iOS 18: darker green, on iOS 26: system
 default color.
 
-5. Tap Tab1, Tab2, Tab3 in turn.
+5. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
 - [ ] Expected: Each tapped tab's title becomes italic and green. All other tab
 (unselected) display normal titles, on iOS 18: darker green, on iOS 26: system
@@ -111,7 +111,7 @@ rotation to match the newly active layout appearance.
 - [ ] Expected: Selected tab title appears in the **italic**, **blue**.
 Unselected tab titles: display normal, darker blue.
 
-8. Tap Tab1, Tab2, Tab3 in turn.
+8. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
 - [ ] Expected: Each tapped tab's title becomes italic and blue.
 Unselected tabs remain normal and darker blue.
