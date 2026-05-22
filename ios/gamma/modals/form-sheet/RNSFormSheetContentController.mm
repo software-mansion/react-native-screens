@@ -148,6 +148,7 @@
                                                             controller:self
                                                            coordinator:_appearanceCoordinator];
 
+  // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
   [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
                       performOperations:^{
                         [self updatePresentationState];
