@@ -36,7 +36,7 @@ normal-state color is not applied.
 
 ### `title` prop and long-string truncation
 
-1. Launch the app and navigate to the **Tab Bar Item Title** screen.
+1. Launch the app and navigate to the **Tab Bar Item Title (iOS)** screen.
 
 - [ ] Expected: Three tabs are visible in the tab bar. The first tab
   is selected by default and its title is truncated with an ellipsis
