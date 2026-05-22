@@ -5,7 +5,6 @@
 
 @class RNSFormSheetAppearanceCoordinator;
 @class RNSFormSheetContentController;
-@class RNSFormSheetHostComponentView;
 
 NS_ASSUME_NONNULL_BEGIN
 
