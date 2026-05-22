@@ -138,7 +138,7 @@
   id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
 
   RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
-  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating appearance.");
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
 
   if (appearanceProvider == nil || behaviorProvider == nil) {
     return;
