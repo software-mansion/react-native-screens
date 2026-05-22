@@ -59,6 +59,14 @@
 
 #pragma mark - Presentation
 
+- (void)updatePresentationIfNeeded
+{
+  [_updateCoordinator updateIfNeeds:RNSFormSheetUpdateFlagsPresentation
+                  performOperations:^{
+                    [self updatePresentationState];
+                  }];
+}
+
 - (void)updatePresentationState
 {
   id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
@@ -145,12 +153,6 @@
                                                            behaviorProvider:behaviorProvider
                                                                  controller:self
                                                                 coordinator:_updateCoordinator];
-
-  // TODO: @t0maboro - should we decouple presentation logic from here?
-  [_updateCoordinator updateIfNeeds:RNSFormSheetUpdateFlagsPresentation
-                  performOperations:^{
-                    [self updatePresentationState];
-                  }];
 }
 
 #pragma mark - Signals
@@ -180,6 +182,7 @@
 - (void)flushPendingUpdates
 {
   [self updateConfigurationIfNeeded];
+  [self updatePresentationIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
