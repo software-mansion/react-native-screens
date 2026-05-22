@@ -39,13 +39,14 @@ normal-state color is not applied.
 1. Launch the app and navigate to the **Tab Bar Item Title (iOS)** screen.
 
 - [ ] Expected: Three tabs are visible in the tab bar. The first tab
-  is selected by default and its title is truncated with an ellipsis
-  (e.g. "A Very Long Tab Title T..."). The second tab is titled
-  **Color** and the third **Font and Position**. All labels use the
-  system default font, weight, and position. The active tab title
-  color is the system default tint - green. The long title does not overflow
-  into adjacent items or wrap to a second line (see iOS 18 KI in
-  Note).
+  is selected by default. On iOS 26, its title is truncated with an
+  ellipsis (e.g. "A Very Long Tab Title T...") and does not overflow
+  into adjacent items or wrap to a second line. On iOS 18 and lower,
+  due to the known native bug noted above, the long title may overflow
+  into adjacent items instead of showing an ellipsis. The second tab is
+  titled **Color** and the third **Font and Position**. All labels use
+  the system default font, weight, and position. The active tab title
+  color is the system default tint - green.
 
 ---
 
