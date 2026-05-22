@@ -27,18 +27,4 @@ N/A
 
 ## Steps
 
-Step-by-step instructions for a tester to manually verify the scenario.
-
-You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step sections for different device types if their execution paths differ significantly.
-
-1. Navigate to ...
-
-- [ ] Expected:
-
-1. Tap ...
-
-- [ ] Expected:
-
-1. Verify that ...
-
-- [ ] Expected:
+TBD
