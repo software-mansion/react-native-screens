@@ -5,6 +5,7 @@
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
+#import "RNSFormSheetProviders.h"
 
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -14,7 +15,11 @@
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving, RNSFormSheetContentControllerDelegate>
+@interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
+                                             RNSFormSheetContentControllerDelegate,
+                                             RNSFormSheetPresentationProvider,
+                                             RNSFormSheetAppearanceProvider,
+                                             RNSFormSheetBehaviorProvider>
 @end
 
 @implementation RNSFormSheetHostComponentView {
@@ -30,7 +35,13 @@ namespace react = facebook::react;
   BOOL _needsInitialDetentReset;
 
   // Props
+  BOOL _isOpen;
   std::vector<double> _detents;
+  BOOL _prefersGrabberVisible;
+  CGFloat _preferredCornerRadius;
+  NSInteger _largestUndimmedDetentIndex;
+  NSInteger _initialDetentIndex;
+  BOOL _prefersScrollingExpandsWhenScrolledToEdge;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -68,17 +79,14 @@ namespace react = facebook::react;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
 }
 
-- (const std::vector<double> &)detents
-{
-  return _detents;
-}
-
 - (void)setupController
 {
   _controller = [RNSFormSheetContentController new];
   _controller.delegate = self;
-  // TODO: @t0maboro - migrate
-  // _controller.hostComponentView = self;
+
+  _controller.presentationProvider = self;
+  _controller.appearanceProvider = self;
+  _controller.behaviorProvider = self;
 }
 
 - (void)didMoveToWindow
@@ -86,6 +94,52 @@ namespace react = facebook::react;
   [super didMoveToWindow];
   _needsPresentationUpdate = YES;
   [self requestContentControllerForUpdates];
+}
+
+#pragma mark - RNSFormSheetPresentationProvider
+
+- (BOOL)isOpen
+{
+  return _isOpen;
+}
+
+- (UIWindow *)hostWindow
+{
+  return self.window;
+}
+
+#pragma mark - RNSFormSheetAppearanceProvider
+
+- (BOOL)prefersGrabberVisible
+{
+  return _prefersGrabberVisible;
+}
+
+- (CGFloat)preferredCornerRadius
+{
+  return _preferredCornerRadius;
+}
+
+- (NSInteger)largestUndimmedDetentIndex
+{
+  return _largestUndimmedDetentIndex;
+}
+
+#pragma mark - RNSFormSheetBehaviorProvider
+
+- (const std::vector<double> &)detents
+{
+  return _detents;
+}
+
+- (NSInteger)initialDetentIndex
+{
+  return _initialDetentIndex;
+}
+
+- (BOOL)prefersScrollingExpandsWhenScrolledToEdge
+{
+  return _prefersScrollingExpandsWhenScrolledToEdge;
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
@@ -247,16 +301,10 @@ namespace react = facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  [_controller reactMountingTransactionWillMount];
-}
-
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_controller reactMountingTransactionDidMount];
+  [_controller flushPendingUpdates];
 }
 
 #pragma mark - Layout helpers

@@ -151,14 +151,9 @@
   _needsInitialDetentReset = YES;
 }
 
-#pragma mark - Mounting transaction signals
+#pragma mark - Updating
 
-- (void)reactMountingTransactionWillMount
-{
-  // noop
-}
-
-- (void)reactMountingTransactionDidMount
+- (void)flushPendingUpdates
 {
   RCTAssert(self.presentationProvider != nil,
             @"[RNScreens] presentationProvider must be set before mounting transactions are observed");

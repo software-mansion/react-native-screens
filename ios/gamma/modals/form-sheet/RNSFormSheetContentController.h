@@ -34,10 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setNeedsAppearanceUpdate;
 - (void)setNeedsInitialDetentReset;
 
-#pragma mark - Mounting transaction signals
+#pragma mark - Updating
 
-- (void)reactMountingTransactionWillMount;
-- (void)reactMountingTransactionDidMount;
+- (void)flushPendingUpdates;
 
 @end
 
