@@ -73,8 +73,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'A Very Long Tab Title That Should Truncate',
-      tabBarItemTestID: 'tab-long-title',
-      tabBarItemAccessibilityLabel: 'long-title-tab-label',
     },
   },
   {
@@ -83,8 +81,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Color',
-      tabBarItemTestID: 'tab-color',
-      tabBarItemAccessibilityLabel: 'color-tab-label',
       ios: {
         icon: {
           type: 'sfSymbol',
@@ -106,8 +102,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Font and Position',
-      tabBarItemTestID: 'tab-font',
-      tabBarItemAccessibilityLabel: 'font-and-position-label',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
