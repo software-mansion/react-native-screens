@@ -13,7 +13,10 @@ import {
 } from "@apps/tests/shared/components/safe-area-view";
 
 export function TestSAVRespectsWindowInsets() {
-  const contextPayload = useSafeAreaInitialConfig();
+  const contextPayload = useSafeAreaInitialConfig({
+    isTopEnabled: true,
+    isBottomEnabled: true,
+  });
   return (
     <SafeAreaConfigContext value={contextPayload}>
       <ContentsView />
