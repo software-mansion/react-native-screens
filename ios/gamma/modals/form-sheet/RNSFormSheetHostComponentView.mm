@@ -91,31 +91,9 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetPresentationProvider
 
-- (BOOL)isOpen
-{
-  return _isOpen;
-}
-
 - (nullable UIWindow *)hostWindow
 {
   return self.window;
-}
-
-#pragma mark - RNSFormSheetAppearanceProvider
-
-- (BOOL)prefersGrabberVisible
-{
-  return _prefersGrabberVisible;
-}
-
-- (CGFloat)preferredCornerRadius
-{
-  return _preferredCornerRadius;
-}
-
-- (NSInteger)largestUndimmedDetentIndex
-{
-  return _largestUndimmedDetentIndex;
 }
 
 #pragma mark - RNSFormSheetBehaviorProvider
@@ -123,16 +101,6 @@ namespace react = facebook::react;
 - (const std::vector<double> &)detents
 {
   return _detents;
-}
-
-- (NSInteger)initialDetentIndex
-{
-  return _initialDetentIndex;
-}
-
-- (BOOL)prefersScrollingExpandsWhenScrolledToEdge
-{
-  return _prefersScrollingExpandsWhenScrolledToEdge;
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
