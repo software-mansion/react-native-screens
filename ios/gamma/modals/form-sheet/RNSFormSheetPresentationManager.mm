@@ -23,14 +23,14 @@
   BOOL shouldBeOpen = provider.isOpen;
 
   if (shouldBeOpen) {
-    [self presentIfNeededForProvider:provider controller:controller];
+    [self presentIfNeededWithProvider:provider controller:controller];
   } else {
-    [self dismissIfNeededForProvider:provider controller:controller];
+    [self dismissIfNeededWithProvider:provider controller:controller];
   }
 }
 
-- (void)presentIfNeededForProvider:(id<RNSFormSheetPresentationProvider>)provider
-                        controller:(RNSFormSheetContentController *)controller
+- (void)presentIfNeededWithProvider:(id<RNSFormSheetPresentationProvider>)provider
+                         controller:(RNSFormSheetContentController *)controller
 {
   if (_state != RNSFormSheetPresentationStateDismissed) {
     return;
@@ -70,8 +70,8 @@
                                                }];
 }
 
-- (void)dismissIfNeededForProvider:(id<RNSFormSheetPresentationProvider>)provider
-                        controller:(RNSFormSheetContentController *)controller
+- (void)dismissIfNeededWithProvider:(id<RNSFormSheetPresentationProvider>)provider
+                         controller:(RNSFormSheetContentController *)controller
 {
   if (_state != RNSFormSheetPresentationStatePresented) {
     return;
