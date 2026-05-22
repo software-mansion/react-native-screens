@@ -31,12 +31,12 @@
 {
   RNSFormSheetUpdateFlags configFlags = RNSFormSheetUpdateFlagsAppearance | RNSFormSheetUpdateFlagsBehavior;
 
-  [coordinator updateIfNeedsAny:configFlags
-              performOperations:^{
-                [self applyConfigurationWithAppearanceProvider:appearanceProvider
-                                              behaviorProvider:behaviorProvider
-                                                    controller:controller];
-              }];
+  [coordinator updateIfAnyNeeded:configFlags
+               performOperations:^{
+                 [self applyConfigurationWithAppearanceProvider:appearanceProvider
+                                               behaviorProvider:behaviorProvider
+                                                     controller:controller];
+               }];
 }
 
 #pragma mark - Updaters

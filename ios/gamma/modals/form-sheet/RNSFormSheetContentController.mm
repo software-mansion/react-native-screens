@@ -61,10 +61,10 @@
 
 - (void)updatePresentationIfNeeded
 {
-  [_updateCoordinator updateIfNeeds:RNSFormSheetUpdateFlagsPresentation
-                  performOperations:^{
-                    [self updatePresentationState];
-                  }];
+  [_updateCoordinator updateIfNeeded:RNSFormSheetUpdateFlagsPresentation
+                   performOperations:^{
+                     [self updatePresentationState];
+                   }];
 }
 
 - (void)updatePresentationState

@@ -33,7 +33,7 @@
   return (_updateFlags & flags) != 0;
 }
 
-- (void)updateIfNeeds:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block
+- (void)updateIfNeeded:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block
 {
   if ([self needsAll:flags]) {
     block();
@@ -41,7 +41,7 @@
   }
 }
 
-- (void)updateIfNeedsAny:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block
+- (void)updateIfAnyNeeded:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block
 {
   if ([self needsAny:flags]) {
     block();

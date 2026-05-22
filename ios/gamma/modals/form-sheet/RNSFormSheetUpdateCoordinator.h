@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)needsAll:(RNSFormSheetUpdateFlags)flags;
 - (BOOL)needsAny:(RNSFormSheetUpdateFlags)flags;
 
-- (void)updateIfNeeds:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block;
-- (void)updateIfNeedsAny:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block;
+- (void)updateIfNeeded:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block;
+- (void)updateIfAnyNeeded:(RNSFormSheetUpdateFlags)flags performOperations:(dispatch_block_t)block;
 
 @end
 
