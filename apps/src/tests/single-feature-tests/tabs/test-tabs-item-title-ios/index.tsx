@@ -1,70 +1,37 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import scenarioDescription from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsHostConfig,
-  useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
-import type { TabsScreenItemStateAppearanceIOS } from 'react-native-screens';
 
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar Item Title (iOS)',
-  key: 'test-tabs-item-title-ios',
-  details:
-    'Exercises every iOS tab bar item title prop: title, font color,' +
-    ' font family, size, style, weight, and position adjustment.',
-  platforms: ['ios'],
-};
-
-function makeSelectedAppearance(
-  state: TabsScreenItemStateAppearanceIOS,
-) {
-  return {
-    stacked: { selected: state },
-    inline: { selected: state },
-    compactInline: { selected: state },
-  };
-}
-
-function DefaultTab() {
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.label}>Default</Text>
-      <Text style={styles.hint}>
-        No title-styling overrides applied.{'\n'}
-        Demonstrates that `options.title` alone renders a label in the tab bar
-        using the system default font, color, and position.
-      </Text>
-    </View>
-  );
-}
 
 function TintOverrideTab() {
   const { updateHostConfig } = useTabsHostConfig();
-  const { isSelected } = useTabsNavigationContext();
-
   useEffect(() => {
     updateHostConfig({
-      ios: { tabBarTintColor: isSelected ? Colors.GreenDark100 : undefined },
+      ios: { tabBarTintColor: Colors.GreenDark100 },
     });
-  }, [isSelected, updateHostConfig]);
+  }, [updateHostConfig]);
 
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>Tint Override</Text>
       <Text style={styles.hint}>
-        Host `tabBarTintColor`: GreenDark100 ({Colors.GreenDark100}){'\n'}
-        This tab&apos;s `tabBarItemTitleFontColor`: RedLight100 (
-        {Colors.RedLight100}){'\n'}
+        Host `tabBarTintColor`:{" "}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
+        This tab&apos;s `tabBarItemTitleFontColor`:{" "}
+        <Text style={{ color: Colors.RedLight100 }}>RedLight100</Text>{'\n'}
         {'\n'}
-        When selected: title text should appear RED; icon should appear GREEN.{'\n'}
+        When selected: title text should appear <Text style={{ color: Colors.RedLight100 }}>RED</Text>{'\n'} and icon should appear <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>{'\n'}
+        {'\n'}
         Confirms `tabBarItemTitleFontColor` overrides `tabBarTintColor` for the
-        label while the icon still uses tintColor.
+        label but not the icon, which should still be tinted by the host config.
       </Text>
     </View>
   );
@@ -73,38 +40,20 @@ function TintOverrideTab() {
 function FontTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Font</Text>
+      <Text style={styles.label}>Font and Position</Text>
       <Text style={styles.hint}>
+        Host `tabBarTintColor`:{" "}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
         `tabBarItemTitleFontFamily`: &quot;Georgia&quot;{'\n'}
-        `tabBarItemTitleFontSize`: 16{'\n'}
-        `tabBarItemTitleFontStyle`: italic{'\n'}
+        `tabBarItemTitleFontSize`: &quot;12&quot;{'\n'}
+        `tabBarItemTitleFontStyle`: &quot;italic&quot;{'\n'}
         `tabBarItemTitleFontWeight`: &quot;700&quot;{'\n'}
-        {'\n'}
-        When selected: title should render in bold italic Georgia at 16 pt.
-      </Text>
-    </View>
-  );
-}
-
-function PositionTab() {
-  const { updateHostConfig } = useTabsHostConfig();
-  const { isSelected } = useTabsNavigationContext();
-
-  useEffect(() => {
-    updateHostConfig({
-      ios: { tabBarTintColor: isSelected ? Colors.GreenDark100 : undefined },
-    });
-  }, [isSelected, updateHostConfig]);
-  
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.label}>Position</Text>
-      <Text style={styles.hint}>
         `tabBarItemTitlePositionAdjustment`:{'\n'}
-        {'  '}vertical: -6, horizontal: 0{'\n'}
+        vertical: -6, horizontal: 0{'\n'}
+        {'\n'}
         {'\n'}
         When selected: title text should be visibly shifted upward relative to a
-        default-positioned label.
+        default-positioned label in <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>{'\n'}bold italic Georgia at 12 pt. For iOS 18 and lower, the title color for unselected tabs is <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>
       </Text>
     </View>
   );
@@ -127,13 +76,13 @@ function LongTitleTab() {
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
-    name: 'Default',
-    Component: DefaultTab,
+    name: 'LongTitle',
+    Component: LongTitleTab,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Default',
-      tabBarItemTestID: 'tab-default',
-      tabBarItemAccessibilityLabel: 'Default tab',
+      title: 'A Very Long Tab Title That Should Truncate',
+      tabBarItemTestID: 'tab-long-title',
+      tabBarItemAccessibilityLabel: 'Long Title tab',
     },
   },
   {
@@ -145,58 +94,45 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       tabBarItemTestID: 'tab-color',
       tabBarItemAccessibilityLabel: 'Color tab',
       ios: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: makeSelectedAppearance({
-          tabBarItemTitleFontColor: Colors.RedLight100,
-          tabBarItemTitleFontSize: 8,
-        }),
+        icon: {
+          type: 'sfSymbol',
+          name: 'house.fill',
+        },
+        standardAppearance: {
+          stacked: {
+            selected: {
+              tabBarItemTitleFontColor: Colors.RedLight100,
+            },
+          },
+        },
       },
     },
   },
   {
-    name: 'Font',
+    name: 'Font and Position',
     Component: FontTab,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Font',
+      title: 'Font and Position',
       tabBarItemTestID: 'tab-font',
-      tabBarItemAccessibilityLabel: 'Font tab',
+      tabBarItemAccessibilityLabel: 'Font and Position tab',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: makeSelectedAppearance({
-          tabBarItemTitleFontColor: Colors.PurpleDark40,
-          tabBarItemTitleFontFamily: 'Georgia',
-          tabBarItemTitleFontSize: 19,
-          tabBarItemTitleFontStyle: 'italic',
-          tabBarItemTitleFontWeight: '700',
-        }),
+        standardAppearance: {
+          stacked: {
+            selected: {
+              tabBarItemTitleFontFamily: 'Georgia',
+              tabBarItemTitleFontSize: 12,
+              tabBarItemTitleFontStyle: 'italic',
+              tabBarItemTitleFontWeight: '700',
+              tabBarItemTitlePositionAdjustment: { vertical: -6, horizontal: 0 },
+            },
+            normal: {
+              tabBarItemTitleFontColor: Colors.BlueDark100,
+            },
+          },
+        },
       },
-    },
-  },
-  {
-    name: 'Position',
-    Component: PositionTab,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Position',
-      tabBarItemTestID: 'tab-position',
-      tabBarItemAccessibilityLabel: 'Position tab',
-      ios: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: makeSelectedAppearance({
-          tabBarItemTitlePositionAdjustment: { vertical: -6, horizontal: 0 },
-        }),
-      },
-    },
-  },
-  {
-    name: 'LongTitle',
-    Component: LongTitleTab,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'A Very Long Tab Title That Should Truncate',
-      tabBarItemTestID: 'tab-long-title',
-      tabBarItemAccessibilityLabel: 'Long Title tab',
     },
   },
 ];
