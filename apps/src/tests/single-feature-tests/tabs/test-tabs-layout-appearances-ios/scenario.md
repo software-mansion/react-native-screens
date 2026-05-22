@@ -41,10 +41,10 @@ simulated device is required for all steps.
 to unselected tabs. All unselected tabs adopt a system-default appearance.
 Therefore the normal / colored label on unselected tabs is only observable
 on iOS 18.
-- On **iOS 26+**, configuring the `inline` bucket has no visible effect on
+- On **iOS 26**, configuring the `inline` bucket has no visible effect on
 iPhone because the system never activates the `inlineLayoutAppearance` on
 that platform version. Testers should not expect blue titles to appear on
-an iPhone running iOS 26+. Instead of it `compactInline` configuration is displayed.
+an iPhone running iOS 26. Instead of it `compactInline` configuration is displayed.
 - Icon color is set to system default - for selected tab is blue and for
 unselected black or gray depends on OS version.
 
