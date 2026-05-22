@@ -1,4 +1,7 @@
 #import "RNSFormSheetContentController.h"
+#import "RNSFormSheetAppearanceApplicator.h"
+#import "RNSFormSheetAppearanceCoordinator.h"
+#import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentView.h"
 #import "RNSPresentationSourceProvider.h"
 
@@ -13,12 +16,22 @@
                                              >
 @end
 
-@implementation RNSFormSheetContentController
+@implementation RNSFormSheetContentController {
+  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
+  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
+
+  BOOL _needsInitialDetentReset;
+}
 
 - (instancetype)init
 {
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
+    _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
+
+    _needsInitialDetentReset = NO;
   }
   return self;
 }
@@ -45,6 +58,27 @@
 }
 
 #pragma mark - Presentation
+
+- (void)updatePresentationState
+{
+  id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
+
+  RCTAssert(presentationProvider != nil,
+            @"[RNScreens] Presentation provider must be set before updating presentation state.");
+
+  if (presentationProvider == nil) {
+    return;
+  }
+
+  if (presentationProvider.isOpen) {
+    UIWindow *window = presentationProvider.hostWindow;
+    if (window != nil) {
+      [self presentFromWindowIfNeeded:window];
+    }
+  } else {
+    [self dismissIfNeeded];
+  }
+}
 
 - (void)prepareForPresentation
 {
@@ -86,6 +120,62 @@
     return;
   }
   [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Appearance
+
+- (void)updateAppearanceIfNeeded
+{
+  id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
+  id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
+
+  RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
+
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating appearance.");
+
+  if (appearanceProvider == nil || behaviorProvider == nil) {
+    return;
+  }
+
+  if (_needsInitialDetentReset) {
+    _needsInitialDetentReset = NO;
+    [_appearanceApplicator resetInitialDetent];
+  }
+
+  [_appearanceApplicator updateAppearanceIfNeededWithAppearanceProvider:appearanceProvider
+                                                       behaviorProvider:behaviorProvider
+                                                             controller:self
+                                                            coordinator:_appearanceCoordinator];
+
+  // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
+                      performOperations:^{
+                        [self updatePresentationState];
+                      }];
+}
+
+#pragma mark - Signals
+
+- (void)setNeedsPresentationUpdate
+{
+  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+}
+
+- (void)setNeedsAppearanceUpdate
+{
+  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+}
+
+- (void)setNeedsInitialDetentReset
+{
+  _needsInitialDetentReset = YES;
+}
+
+#pragma mark - Updates
+
+- (void)flushPendingUpdates
+{
+  [self updateAppearanceIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
