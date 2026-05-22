@@ -7,7 +7,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSFormSheetContentView;
 @class RNSFormSheetContentController;
-@class RNSFormSheetHostComponentView;
 
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
