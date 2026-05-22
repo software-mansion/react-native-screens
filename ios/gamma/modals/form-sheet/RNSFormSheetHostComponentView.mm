@@ -83,6 +83,11 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
+
+  if (self.window != nil) {
+    [_controller setNeedsPresentationUpdate];
+    [_controller flushPendingUpdates];
+  }
 }
 
 #pragma mark - RNSFormSheetPresentationProvider
