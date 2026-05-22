@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from "@apps/tests/shared/helpers";
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Layout Appearances (iOS)',
   key: 'test-tabs-layout-appearances-ios',
   details:
@@ -10,4 +10,3 @@ const scenarioDescription: ScenarioDescription = {
   smokeTest: false,
 };
 
-export default scenarioDescription;

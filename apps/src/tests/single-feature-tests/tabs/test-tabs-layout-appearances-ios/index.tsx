@@ -7,7 +7,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { createScenario } from '@apps/tests/shared/helpers';
-import scenarioDescription from './scenario-description';
+import {scenarioDescription} from './scenario-description';
 import type { TabsScreenAppearanceIOS } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 
