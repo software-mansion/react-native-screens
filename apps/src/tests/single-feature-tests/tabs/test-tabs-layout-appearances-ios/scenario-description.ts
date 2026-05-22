@@ -9,4 +9,3 @@ export const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };
-
