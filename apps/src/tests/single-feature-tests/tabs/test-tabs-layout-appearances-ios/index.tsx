@@ -66,7 +66,7 @@ function InfoScreen() {
         <Text style={[styles.description, { marginTop: 8 }]}>
           In each case the{' '}
           <Text style={styles.bold}>selected tab title is italic</Text> and the tab icon color is system default:{' '}
-          <Text style={{color: PlatformColor('systemBlue')}}>blue</Text>;{'\n\n'}  
+          <Text style={{ color: PlatformColor('systemBlue') }}>blue</Text>;{'\n\n'}
           The unselected tab titles font and icons color follows system default values: a normal font and gray or black colors. On iOS 18, the tab item label color is set to a darker shade of the bucket color while on iOS 26 it follows the system default.
         </Text>
       </View>
