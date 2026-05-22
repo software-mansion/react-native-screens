@@ -189,10 +189,6 @@ namespace react = facebook::react;
     [_controller setNeedsBehaviorUpdate];
   }
 
-  if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
-    [_controller setNeedsBehaviorUpdate];
-  }
-
   if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
       newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
     _prefersScrollingExpandsWhenScrolledToEdge =
@@ -213,6 +209,10 @@ namespace react = facebook::react;
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
     [_controller setNeedsAppearanceUpdate];
+  }
+
+  if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
+    _initialDetentIndex = newComponentProps.initialDetentIndex;
   }
 
   [super updateProps:props oldProps:oldProps];
