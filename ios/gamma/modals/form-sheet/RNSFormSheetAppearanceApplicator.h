@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "RNSFormSheetProviders.h"
 
-@class RNSFormSheetAppearanceCoordinator;
+@class RNSFormSheetUpdateCoordinator;
 @class RNSFormSheetContentController;
 
 NS_ASSUME_NONNULL_BEGIN

@@ -1,8 +1,8 @@
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetAppearanceApplicator.h"
-#import "RNSFormSheetAppearanceCoordinator.h"
-#import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetUpdateCoordinator.h"
+#import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
@@ -17,7 +17,7 @@
 @end
 
 @implementation RNSFormSheetContentController {
-  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
+  RNSFormSheetUpdateCoordinator *_Nonnull _appearanceCoordinator;
   RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
 
   BOOL _needsInitialDetentReset;
@@ -28,7 +28,7 @@
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
 
-    _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
+    _appearanceCoordinator = [RNSFormSheetUpdateCoordinator new];
     _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
 
     _needsInitialDetentReset = NO;
@@ -148,7 +148,7 @@
                                                             coordinator:_appearanceCoordinator];
 
   // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
-  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
+  [_appearanceCoordinator updateIfNeeds:RNSFormSheetUpdateFlagsPresentation
                       performOperations:^{
                         [self updatePresentationState];
                       }];
@@ -158,12 +158,14 @@
 
 - (void)setNeedsPresentationUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+  [_appearanceCoordinator setNeeds:RNSFormSheetUpdateFlagsPresentation];
 }
 
 - (void)setNeedsAppearanceUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+  [_appearanceCoordinator setNeeds:RNSFormSheetUpdateFlagsAppearance];
+  // TODO: @t0maboro - move behavior to dedicated signal
+  [_appearanceCoordinator setNeeds:RNSFormSheetUpdateFlagsBehavior];
 }
 
 - (void)setNeedsInitialDetentReset

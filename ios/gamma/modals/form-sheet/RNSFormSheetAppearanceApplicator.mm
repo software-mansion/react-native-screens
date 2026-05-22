@@ -2,10 +2,10 @@
 
 #import <React/RCTAssert.h>
 
-#import "RNSFormSheetAppearanceCoordinator.h"
-#import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetDetentResolver.h"
+#import "RNSFormSheetUpdateCoordinator.h"
+#import "RNSFormSheetUpdateFlags.h"
 
 @implementation RNSFormSheetAppearanceApplicator {
   BOOL _initialDetentApplied;
