@@ -1,7 +1,7 @@
 import LongText from '@apps/shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,

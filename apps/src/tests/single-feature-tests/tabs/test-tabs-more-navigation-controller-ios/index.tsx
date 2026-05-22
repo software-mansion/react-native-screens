@@ -1,5 +1,5 @@
 import React from 'react';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
 import {

@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Simple navigation scenario',
   key: 'test-stack-simple-nav',
   details: 'Test simple push and pop operations',
@@ -8,5 +8,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
-
-export default scenarioDescription;

@@ -1,7 +1,7 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,

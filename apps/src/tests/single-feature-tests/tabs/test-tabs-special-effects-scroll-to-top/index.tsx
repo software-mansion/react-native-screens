@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,

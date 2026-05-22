@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Animation Android',
   key: 'test-animation-android',
   details: 'High contrast screens to test animations on Android',
@@ -8,5 +8,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
-
-export default scenarioDescription;

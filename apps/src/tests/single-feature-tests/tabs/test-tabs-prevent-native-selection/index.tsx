@@ -1,5 +1,5 @@
 import React from 'react';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '../../../shared/helpers';
 import { Button, Text, View } from 'react-native';
 import {
