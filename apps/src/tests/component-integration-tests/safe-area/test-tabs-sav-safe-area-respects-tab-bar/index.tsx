@@ -57,7 +57,7 @@ function TabContents() {
 
 function BackgroundView(props: ViewProps) {
   return (
-    <View {...props} style={[styles.flexContainer, { backgroundColor: Colors.Navy }]} />
+    <View {...props} style={[styles.flexContainer]} />
   );
 }
 
