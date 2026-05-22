@@ -29,11 +29,6 @@ namespace react = facebook::react;
   RNSFormSheetContentController *_Nullable _controller;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
 
-  // Invalidation flags
-  BOOL _needsPresentationUpdate;
-  BOOL _needsAppearanceUpdate;
-  BOOL _needsInitialDetentReset;
-
   // Props
   BOOL _isOpen;
   std::vector<double> _detents;
@@ -59,10 +54,6 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSFormSheetHostEventEmitter new];
   _shadowStateProxy = [RNSFormSheetHostShadowStateProxy new];
-
-  _needsPresentationUpdate = NO;
-  _needsAppearanceUpdate = NO;
-  _needsInitialDetentReset = NO;
 }
 
 - (void)resetProps
@@ -92,8 +83,6 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  _needsPresentationUpdate = YES;
-  [self requestContentControllerForUpdates];
 }
 
 #pragma mark - RNSFormSheetPresentationProvider
@@ -210,36 +199,36 @@ namespace react = facebook::react;
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
-    _needsPresentationUpdate = YES;
+    [_controller setNeedsPresentationUpdate];
 
     if (_isOpen) {
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
-      _needsAppearanceUpdate = YES;
+      [_controller setNeedsAppearanceUpdate];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
-      _needsInitialDetentReset = YES;
+      [_controller setNeedsInitialDetentReset];
     }
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    _needsAppearanceUpdate = YES;
+    [_controller setNeedsAppearanceUpdate];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
-    _needsAppearanceUpdate = YES;
+    [_controller setNeedsAppearanceUpdate];
   }
 
   if (oldComponentProps.preferredCornerRadius != newComponentProps.preferredCornerRadius) {
     _preferredCornerRadius = newComponentProps.preferredCornerRadius;
-    _needsAppearanceUpdate = YES;
+    [_controller setNeedsAppearanceUpdate];
   }
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
-    _needsAppearanceUpdate = YES;
+    [_controller setNeedsAppearanceUpdate];
   }
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
@@ -250,38 +239,10 @@ namespace react = facebook::react;
       newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
     _prefersScrollingExpandsWhenScrolledToEdge =
         static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
-    _needsAppearanceUpdate = YES;
-  }
-
-  [super updateProps:props oldProps:oldProps];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  [self requestContentControllerForUpdates];
-  [super finalizeUpdates:updateMask];
-}
-
-- (void)requestContentControllerForUpdates
-{
-  if (_controller == nil) {
-    return;
-  }
-
-  if (_needsPresentationUpdate) {
-    _needsPresentationUpdate = NO;
-    [_controller setNeedsPresentationUpdate];
-  }
-
-  if (_needsAppearanceUpdate) {
-    _needsAppearanceUpdate = NO;
     [_controller setNeedsAppearanceUpdate];
   }
 
-  if (_needsInitialDetentReset) {
-    _needsInitialDetentReset = NO;
-    [_controller setNeedsInitialDetentReset];
-  }
+  [super updateProps:props oldProps:oldProps];
 }
 
 - (void)invalidate

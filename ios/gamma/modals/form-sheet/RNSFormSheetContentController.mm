@@ -155,8 +155,6 @@
 
 - (void)flushPendingUpdates
 {
-  RCTAssert(self.presentationProvider != nil,
-            @"[RNScreens] presentationProvider must be set before mounting transactions are observed");
   [self updateAppearanceIfNeeded];
 }
 
