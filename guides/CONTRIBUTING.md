@@ -8,41 +8,42 @@ you that make open source projects thrive!
 We are open for community contributions to the project and there are many ways
 for you to make a change.
 
-See sections below for instructions on what you can do, to help us in the project
-development.
+See the sections below for instructions on what you can do, to help us with the
+project development.
 
 ## Ways to Contribute
 
 1. **Reporting issues** &ndash; this is one of the most impactful things you can do.
 
-   We do our best to assure quality of the solution we produce, however bugs happen.
+   We do our best to ensure quality of the solution we produce. However, bugs happen.
    Some of them only surface in production-scale applications or we could simply miss something.
-   Let us know. See [section on bug reporting for instructions](#reporting-a-bug).
+   Let us know. See the [section on bug reporting for instructions](#reporting-a-bug).
 
-1. **Providing feedback and ideas** &ndash; great form of support is telling us what you think!
+1. **Providing feedback and ideas** &ndash; a great form of support is telling us what you think!
 
    Maybe you have an idea for a feature that you find missing from the library, or
    you want to share your opinion on features that are currently planned for development?
-   Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-or-you-want-to-share-your-feedback) for more details.
+   Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-or-you-want-to-share-your-feedback).
 
-1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues.
+1. **Replying and handling open issues** &ndash; a great way to contribute without writing a single line of code is triaging the issues.
 
    We often get issues that have generic errors, occur only in very specific cases,
-   do not have proper example or reproducible repository.
-   One way to help is preparing and filling those details,
+   do not have a proper example or a reproducible repository.
+   One way to help is preparing and providing those details,
    which will help other contributors get up to speed with the issue faster.
 
 1. **Reviewing pull requests**
 
    Reviewing Pull Requests is crucial as it may help catch the corner cases or bugs that the developer did not notice.
-   Every review matters as it may help polish quality of the library.
+   Every review matters as it may help polish the quality of the library.
 
 1. **Contributing to Code**
 
    Code-level contributions generally come in the form of pull requests.
    By contributing to code you help us with solving issues, fixing bugs
    or introducing new amazing features. If you want to start your adventure
-   with open source it's good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) on GitHub. Read more about [contributing to code](#contributing-to-code).
+   Read more about [contributing to code](#contributing-to-code).
+   with open source it's a good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) on GitHub or reach out to us via our [Discord](https://discord.gg/4a6nAnxfST) and ask what could you do.
 
 ### Reporting a bug
 
@@ -59,7 +60,7 @@ Please adhere to it.
 One thing we want to emphasize here is the requirement for reproduction. It's crucial,
 and it vastly increases the chances that we'll be able to solve the issue.
 
-### Got a question, an idea for a feature or you want to share your feedback?
+### Got a question, an idea for a feature, want to share your feedback?
 
 > [!note]
 > We use GitHub Issues exclusively for tracking bugs.
@@ -102,16 +103,16 @@ What you can do is ask the owner of an issue for such details or try provide the
 
 ## Contributing to Code
 
-Submitting Pull Requests that resolve issues is a great way to contribute to Screens.
+Submitting a Pull Requests that resolve issues is a great way to contribute to Screens.
 If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
 > [!note]
-> Before committing yourself to full implementation of a new feature, it's recommended to first open
+> Before committing yourself to a full implementation of a new feature, it's recommended to first open
 > a discussion with an idea or feature suggestion to see whether the effect you want to achieve is aligned with
-> current library development direction. We want to avoid situations, where hours of work on a feature PR
+> current library development direction. We want to avoid situations where hours of work on a feature PR
 > are wasted due to misalignment.
 
 We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The former work as a showcase of the library, the latter contain isolated props' behavior, selected interactions between props, and specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare dedicated showcases. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
@@ -135,7 +136,7 @@ To begin with, let install all dependencies:
 4. `yarn`
 5. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio.
 
-Next open `react-native-screens/FabricExample/android` with Android Studio.
+Next, open `react-native-screens/FabricExample/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
@@ -183,30 +184,28 @@ When your code changes are ready, it is time to open your Pull Request. GitHub a
 - Write what are your motivations.
 
 1. **Changes** - write what you have changed and why.
-2. **Screenshots / GIFs** &ndash; if applicable it's a great idea to attach screen or video before and after changes.
+2. **Screenshots / GIFs** &ndash; if applicable it's a great idea to attach screen or video before and after the changes.
 3. **Test code and steps to reproduce** &ndash; describe how others can test your change, if you didn't add `Test*.tsx` file it's good idea to add code snippets here.
 
 ### Do I need to prepare Pull Request for react-navigation too?
 
-Currently, native stack is both in `react-native-screens` and `react-navigation`. `react-native-screens` contains native-stack v5 (`src/native-stack`), newer versions (v6, v7) are moved to `react-navigation` (available on branches `main`, `6.x`), hence in some cases it is necessary to prepare a pull request for `react-navigation` alongside the `react-native-screens` changes.
-
-> [!CAUTION]
-> Currently, in this setup we have some code duplications that we're aware of. NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
+Yes, to make the newly added feature available for a programmer's usage, you also need to expose it in downstream library.
+React Navigation's native stack implementation is based on the components from `react-native-screens`, therefore when modifying the API,
+we need to apply appropriate changes there too.
 
 #### Changes in native code
 
-If your change is only related to the native code (for example you're fixing a bug), you **do not need** to create a PR in the `react-navigation` repository. `react-native-screens` is a separate library installed alongside `react-navigation`, so you can just increase version of `react-native-screens` in your package.json file.
+If your change is only related to the native code (for example you're fixing a bug), you **do not need** to create a PR in the `react-navigation` repository. `react-native-screens` is a separate library installed alongside `react-navigation`, so you can just increase version of `react-native-screens` in your `package.json` file.
 
 #### Changes in JS code or both
 
-If you're changing native-stack v5 (`src/native-stack`) you **do not need** to create a PR in the `react-navigation` repository.
+If you modify any API behavior (excluding fixes), you likely need to create a PR in the `react-navigation` repository to keep
+the compatibility.
 
-If you're changing native-stack v6, v7 you **need to** create a PR in the `react-navigation` repository, since the code belongs there now.
-
-If you're changing core functionality:
+If you modify core functionality:
 
 - If it's a bug fix and does not change the interface, then you **do not need** to create a PR in `react-navigation` repository.
-- If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository, that exposes new changes.
+- If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository, that exposes these new changes.
 
 > [!TIP]
 > As the rule of thumb, if you're changing the public interface, you need to open PRs to the `react-navigation` repository.
