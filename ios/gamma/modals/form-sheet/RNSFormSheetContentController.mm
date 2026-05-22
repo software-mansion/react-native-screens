@@ -92,6 +92,14 @@
 #if !TARGET_OS_TV
   self.sheetPresentationController.delegate = self;
 #endif // !TARGET_OS_TV
+
+  // Since UIKit has recreated sheetPresentationController, any configuration that could be applied
+  // during the Dismissed or Dismissing state was lost.
+  // We must force a full configuration update for this new instance.
+  [self setNeedsAppearanceUpdate];
+  [self setNeedsBehaviorUpdate];
+  [self setNeedsInitialDetentReset];
+  [self updateConfigurationIfNeeded];
 }
 
 #pragma mark - Sheet Configuration
