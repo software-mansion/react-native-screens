@@ -62,8 +62,17 @@
 
 - (void)updatePresentationState
 {
-  if (self.presentationProvider.isOpen) {
-    UIWindow *window = self.presentationProvider.hostWindow;
+  id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
+
+  RCTAssert(presentationProvider != nil,
+            @"[RNScreens] Presentation provider must be set before updating presentation state.");
+
+  if (presentationProvider == nil) {
+    return;
+  }
+
+  if (presentationProvider.isOpen) {
+    UIWindow *window = presentationProvider.hostWindow;
     if (window != nil) {
       [self presentFromWindowIfNeeded:window];
     }
@@ -118,13 +127,24 @@
 
 - (void)updateAppearanceIfNeeded
 {
+  id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
+  id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
+
+  RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
+
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating appearance.");
+
+  if (appearanceProvider == nil || behaviorProvider == nil) {
+    return;
+  }
+
   if (_needsInitialDetentReset) {
     _needsInitialDetentReset = NO;
     [_appearanceApplicator resetInitialDetent];
   }
 
-  [_appearanceApplicator updateAppearanceIfNeededForAppearanceProvider:self.appearanceProvider
-                                                      behaviorProvider:self.behaviorProvider
+  [_appearanceApplicator updateAppearanceIfNeededForAppearanceProvider:appearanceProvider
+                                                      behaviorProvider:behaviorProvider
                                                             controller:self
                                                            coordinator:_appearanceCoordinator];
 
