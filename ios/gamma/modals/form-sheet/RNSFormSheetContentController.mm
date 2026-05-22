@@ -142,10 +142,10 @@
     [_appearanceApplicator resetInitialDetent];
   }
 
-  [_appearanceApplicator updateAppearanceIfNeededForAppearanceProvider:appearanceProvider
-                                                      behaviorProvider:behaviorProvider
-                                                            controller:self
-                                                           coordinator:_appearanceCoordinator];
+  [_appearanceApplicator updateAppearanceIfNeededWithAppearanceProvider:appearanceProvider
+                                                       behaviorProvider:behaviorProvider
+                                                             controller:self
+                                                            coordinator:_appearanceCoordinator];
 
   // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
   [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation

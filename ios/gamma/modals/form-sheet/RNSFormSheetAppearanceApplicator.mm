@@ -24,10 +24,10 @@
   _initialDetentApplied = NO;
 }
 
-- (void)updateAppearanceIfNeededForAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
-                                     behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
-                                           controller:(RNSFormSheetContentController *)controller
-                                          coordinator:(RNSFormSheetAppearanceCoordinator *)coordinator
+- (void)updateAppearanceIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
+                                      behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
+                                            controller:(RNSFormSheetContentController *)controller
+                                           coordinator:(RNSFormSheetAppearanceCoordinator *)coordinator
 {
   [coordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration
            performOperations:^{
