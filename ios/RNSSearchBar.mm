@@ -24,6 +24,8 @@ namespace react = facebook::react;
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
+  UIColor *_hintTextColor;
+  NSString *_placeholder;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -204,7 +206,14 @@ namespace react = facebook::react;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-  [_controller.searchBar setPlaceholder:placeholder];
+  _placeholder = placeholder;
+
+  if (_hintTextColor != nil && _placeholder != nil) {
+    _controller.searchBar.searchTextField.attributedPlaceholder =
+        [[NSAttributedString alloc] initWithString:_placeholder attributes:@{NSForegroundColorAttributeName : _hintTextColor}];
+  } else {
+    [_controller.searchBar setPlaceholder:_placeholder];
+  }
 }
 
 - (void)setBarTintColor:(UIColor *)barTintColor
@@ -224,6 +233,14 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _textColor = textColor;
   [_controller.searchBar.searchTextField setTextColor:_textColor];
+#endif
+}
+
+- (void)setHintTextColor:(UIColor *)hintTextColor
+{
+#if !TARGET_OS_TV
+  _hintTextColor = hintTextColor;
+  [self setPlaceholder:_placeholder];
 #endif
 }
 
@@ -429,6 +446,10 @@ namespace react = facebook::react;
     [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
   }
 
+  if (oldScreenProps.hintTextColor != newScreenProps.hintTextColor) {
+    [self setHintTextColor:RCTUIColorFromSharedColor(newScreenProps.hintTextColor)];
+  }
+
   if (oldScreenProps.placement != newScreenProps.placement) {
     self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
   }
@@ -512,6 +533,7 @@ RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(hintTextColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)
