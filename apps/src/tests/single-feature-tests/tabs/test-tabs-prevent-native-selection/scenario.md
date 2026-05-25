@@ -16,8 +16,9 @@ subject to prevention.
 
 ## E2E test
 
-Incomplete: The E2E test covers most steps for iPhone and Android
-phone.
+Incomplete: The E2E test covers most steps for iPhone and Android phone.
+
+Not covered:
 
 - iPad specific steps are not automated, as the resize interactions required to
 trigger the More tab (Split View / window resizing between compact and regular

@@ -14,7 +14,7 @@ and `standardAppearance.stacked.normal`.
 
 ## E2E test
 
-No: All observable outcomes are purely visual (color, typography, pixel
+Incomplete: Not automated. All observable outcomes are purely visual (color, typography, pixel
 position of a label). Detox does not expose color or font attributes of
 native tab bar items, so automated assertion is not feasible.
 
