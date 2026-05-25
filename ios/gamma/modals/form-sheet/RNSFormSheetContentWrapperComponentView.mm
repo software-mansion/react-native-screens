@@ -13,7 +13,22 @@ namespace react = facebook::react;
                                                        RCTMountingTransactionObserving>
 @end
 
-@implementation RNSFormSheetContentWrapperComponentView
+@implementation RNSFormSheetContentWrapperComponentView {
+  BOOL _initialHeightReported;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    [self initState];
+  }
+  return self;
+}
+
+- (void)initState
+{
+  _initialHeightReported = NO;
+}
 
 - (id<RNSFormSheetContentWrapperDelegate>)resolveFormSheetContentWrapperDelegate
 {
@@ -32,6 +47,12 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  // We only need to catch the initial mount because subsequent dynamic height changes
+  // are handled directly by `updateLayoutMetrics`.
+  if (_initialHeightReported) {
+    return;
+  }
+
   id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
   if (delegate && self.frame.size.height > 0) {
     [delegate contentWrapper:self didChangeContentHeight:self.frame.size.height];
