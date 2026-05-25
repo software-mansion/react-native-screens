@@ -601,7 +601,9 @@ internal class StackHeaderCoordinator(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
-        toolbarMenuCoordinator.updateItem(id, options)
+        appBarLayout?.toolbar?.let {
+            toolbarMenuCoordinator.updateItem(it.menu, id, options)
+        }
     }
 
     private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)

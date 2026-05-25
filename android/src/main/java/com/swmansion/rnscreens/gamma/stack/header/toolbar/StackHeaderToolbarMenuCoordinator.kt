@@ -8,7 +8,6 @@ import com.google.android.material.appbar.MaterialToolbar
 internal class StackHeaderToolbarMenuCoordinator(
     private val onItemClicked: (id: String) -> Unit,
 ) {
-    private var currentMenu: Menu? = null
     private val forwardIdMap = HashMap<String, Int>()
     private val reverseIdMap = HashMap<Int, String>()
     private var lastMenuItems: List<StackHeaderToolbarMenuItemConfig> = emptyList()
@@ -41,28 +40,20 @@ internal class StackHeaderToolbarMenuCoordinator(
             true
         }
 
-        currentMenu = toolbar.menu
         lastMenuItems = items
     }
 
     fun clear() {
-        currentMenu?.clear()
-        currentMenu = null
         forwardIdMap.clear()
         reverseIdMap.clear()
         lastMenuItems = emptyList()
     }
 
     fun updateItem(
+        menu: Menu,
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
-        val menu = currentMenu
-        if (menu == null) {
-            Log.e(TAG, "[RNScreens] Attempted to update item in non-existing menu.")
-            return
-        }
-
         val item =
             forwardIdMap[id]?.let { menu.findItem(it) } ?: run {
                 Log.e(TAG, "[RNScreens] Unable to find menu item.")
