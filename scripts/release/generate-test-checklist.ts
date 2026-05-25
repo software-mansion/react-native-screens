@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-import type { ScenarioDescription } from '../../apps/src/tests/shared/helpers.ts';
+import type { ScenarioDescription } from '../../apps/src/tests/shared/helpers';
 
 type E2eCoverage = ScenarioDescription['e2eCoverage'];
 
