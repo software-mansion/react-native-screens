@@ -11,7 +11,6 @@ export function App() {
 
   const handleDismiss = () => {
     setIsOpen(false);
-    setTimeout(() => setIsExpanded(false), 300);
   };
 
   return (
