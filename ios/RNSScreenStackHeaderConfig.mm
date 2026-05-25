@@ -1122,24 +1122,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 @implementation RNSScreenStackHeaderConfigManager
 
 @end
-
-@implementation RCTConvert (RNSScreenStackHeader)
-
-RCT_ENUM_CONVERTER(UISemanticContentAttribute,
-                   (@{
-                     @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
-                     @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
-                   }),
-                   UISemanticContentAttributeUnspecified,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(UINavigationItemBackButtonDisplayMode,
-                   (@{
-                     @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
-                     @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
-                     @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
-                   }),
-                   UINavigationItemBackButtonDisplayModeDefault,
-                   integerValue)
-
-@end

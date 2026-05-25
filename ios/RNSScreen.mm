@@ -53,7 +53,7 @@ struct ContentWrapperBox {
 @end
 
 @implementation RNSScreenView {
-  __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
+  __weak RCTScrollViewComponentView *_sheetsScrollView;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -178,7 +178,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
-  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self tryFindDescendantScrollView];
+  RCTScrollViewComponentView *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -192,7 +192,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
+- (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
   RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
@@ -211,7 +211,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UIView *scrollView = (UIView *)object;
 
-  if (![scrollView isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+  if (![scrollView isKindOfClass:RCTScrollViewComponentView.class]) {
     return;
   }
 
@@ -703,12 +703,12 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)tryFindDescendantScrollView
+- (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+  if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
@@ -718,8 +718,8 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
+    if ([firstSubview isKindOfClass:RCTScrollViewComponentView.class]) {
+      return static_cast<RCTScrollViewComponentView *>(firstSubview);
     }
   }
 
@@ -729,8 +729,8 @@ RNS_IGNORE_SUPER_CALL_END
     UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
-        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
+          return static_cast<RCTScrollViewComponentView *>(subview);
         }
       }
     }
@@ -770,13 +770,19 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
+  // Since the scroll view might get immediately recycled we remove ourselves
+  // immediately.
+  if (_sheetsScrollView != nil) {
+    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = nil;
+  }
+
   // We want to run after container updates are performed (transitions etc.)
   __weak auto weakSelf = self;
 
   dispatch_async(dispatch_get_main_queue(), ^{
     auto strongSelf = weakSelf;
     if (strongSelf) {
-      [strongSelf->_sheetsScrollView removeObserver:strongSelf forKeyPath:@"bounds" context:nil];
       strongSelf->_controller = nil;
     }
   });
@@ -2041,53 +2047,6 @@ RCT_EXPORT_MODULE()
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(RNSScreenStackPresentation,
-                   (@{
-                     @"push" : @(RNSScreenStackPresentationPush),
-                     @"modal" : @(RNSScreenStackPresentationModal),
-                     @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
-                     @"formSheet" : @(RNSScreenStackPresentationFormSheet),
-                     @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
-                     @"containedModal" : @(RNSScreenStackPresentationContainedModal),
-                     @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
-                     @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
-                   }),
-                   RNSScreenStackPresentationPush,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenStackAnimation,
-                   (@{
-                     @"default" : @(RNSScreenStackAnimationDefault),
-                     @"none" : @(RNSScreenStackAnimationNone),
-                     @"fade" : @(RNSScreenStackAnimationFade),
-                     @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
-                     @"flip" : @(RNSScreenStackAnimationFlip),
-                     @"simple_push" : @(RNSScreenStackAnimationSimplePush),
-                     @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
-                     @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                     @"ios_from_right" : @(RNSScreenStackAnimationDefault),
-                     @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-                   }),
-                   RNSScreenStackAnimationDefault,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation,
-                   (@{
-                     @"push" : @(RNSScreenReplaceAnimationPush),
-                     @"pop" : @(RNSScreenReplaceAnimationPop),
-                   }),
-                   RNSScreenReplaceAnimationPop,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenSwipeDirection,
-                   (@{
-                     @"vertical" : @(RNSScreenSwipeDirectionVertical),
-                     @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
-                   }),
-                   RNSScreenSwipeDirectionHorizontal,
-                   integerValue)
-
 #if !TARGET_OS_TV
 RCT_ENUM_CONVERTER(UIStatusBarAnimation,
                    (@{
@@ -2106,15 +2065,6 @@ RCT_ENUM_CONVERTER(RNSStatusBarStyle,
                      @"dark" : @(RNSStatusBarStyleDark),
                    }),
                    RNSStatusBarStyleAuto,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(RNSScreenDetentType,
-                   (@{
-                     @"large" : @(RNSScreenDetentTypeLarge),
-                     @"medium" : @(RNSScreenDetentTypeMedium),
-                     @"all" : @(RNSScreenDetentTypeAll),
-                   }),
-                   RNSScreenDetentTypeAll,
                    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
