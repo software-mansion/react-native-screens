@@ -235,10 +235,20 @@ namespace react = facebook::react;
 
 - (void)updatePlaceholder
 {
-  NSString *placeholder = _placeholder != nil ? _placeholder : _defaultPlaceholder;
+  NSString *placeholder = _placeholder;
 
 #if !TARGET_OS_TV
+  if (placeholder == nil) {
+    if (_didSetPlaceholder) {
+      placeholder = _defaultPlaceholder;
+    } else {
+      NSString *currentPlaceholder = _controller.searchBar.placeholder ?: _controller.searchBar.searchTextField.placeholder;
+      placeholder = currentPlaceholder ?: _defaultPlaceholder;
+    }
+  }
+
   if (_hintTextColor != nil && placeholder != nil) {
+    [_controller.searchBar setPlaceholder:placeholder];
     _controller.searchBar.searchTextField.attributedPlaceholder =
         [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName : _hintTextColor}];
   } else {
@@ -248,6 +258,10 @@ namespace react = facebook::react;
     }
   }
 #else
+  if (placeholder == nil) {
+    placeholder = _defaultPlaceholder;
+  }
+
   if (placeholder != nil || _didSetPlaceholder) {
     [_controller.searchBar setPlaceholder:placeholder];
   }
