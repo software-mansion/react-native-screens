@@ -309,19 +309,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;
 }
-
-@implementation RCTConvert (RNSScreenStackHeaderSubview)
-
-RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType,
-                   (@{
-                     @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-                     @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-                     @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-                     @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-                     @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-                     @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-                   }),
-                   RNSScreenStackHeaderSubviewTypeTitle,
-                   integerValue)
-
-@end

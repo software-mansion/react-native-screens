@@ -1,6 +1,6 @@
 #import "RNSConversions-ScrollViewMarker.h"
 
-#if RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#if RNS_GAMMA_ENABLED
 
 #import <React/RCTLog.h>
 
@@ -41,4 +41,4 @@ EDGE_EFFECT_CONV_FUNC_IMPL(Bottom);
 #undef EDGE_EFFECT_CONV_FUNC_IMPL
 #undef SWITCH_EDGE_EFFECT
 
-#endif // RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#endif // RNS_GAMMA_ENABLED
