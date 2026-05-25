@@ -10,11 +10,14 @@ Example: Test Scenario: colorScheme
 
 ## E2E test
 
-Yes/No/Other
+Full/Incomplete/Tbd
 
-- If **Yes:** Add a description of what is covered by automated E2E tests and what remains manual only.
-- If **No:** - If the scenario cannot be automated, include an explanation why.
-- If **Other:** Add relevant information e.g. research is required, or automation is possible and planned but not yet implemented.
+- **Full:** The scenario is completely covered by E2E tests.
+- **Incomplete:** The scenario is only partially covered or not covered at all.
+Include an explanation why.
+- **Tbd:** The E2E coverage is yet to be determined or implemented. Add relevant
+information e.g. research is required, or automation is possible and planned but
+not yet implemented.
 
 ## Prerequisites
 
