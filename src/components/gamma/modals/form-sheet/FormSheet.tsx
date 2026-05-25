@@ -6,6 +6,7 @@ import {
   resolveInitialDetentIndex,
   resolveLargestUndimmedDetentIndex,
   resolveNativeCornerRadius,
+  resolveNativeDetents,
 } from './FormSheetUtils';
 
 export function FormSheet(props: FormSheetProps) {
@@ -18,8 +19,9 @@ export function FormSheet(props: FormSheetProps) {
   } = props;
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
+  const nativeDetents = resolveNativeDetents(detents);
 
-  const detentsCount = detents?.length ?? 0;
+  const detentsCount = nativeDetents?.length ?? 0;
 
   const resolvedInitialDetentIndex = resolveInitialDetentIndex(
     initialDetentIndex,
@@ -34,7 +36,7 @@ export function FormSheet(props: FormSheetProps) {
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
-      detents={detents}
+      detents={nativeDetents}
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
