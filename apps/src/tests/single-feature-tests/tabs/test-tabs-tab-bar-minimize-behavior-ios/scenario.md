@@ -8,7 +8,7 @@
 
 ## E2E test
 
-No: Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed.
+Incomplete: Not automated. Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed.
 
 ## Prerequisites
 
