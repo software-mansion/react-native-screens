@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: 13,
-    color: '#555',
+    color: Colors.LightOffNavy,
     textAlign: 'center',
     lineHeight: 20,
   },
