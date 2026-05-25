@@ -58,7 +58,7 @@ function makeItemViewFromItem(
   placement: HeaderItemPlacement,
 ) {
   if ('type' in item && item.type === 'spacer') {
-    const { key, ...rest } = item as StackHeaderSpacerItemIOS;
+    const { key, ...rest } = item;
 
     return <StackHeaderItemSpacer key={key} placement={placement} {...rest} />;
   }
