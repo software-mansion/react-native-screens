@@ -7,6 +7,7 @@
 - (void)applyConfiguration:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
 {
   [self setupTitle:data forController:controller];
+  [self setupSubtitle:data forController:controller];
   [self setupLargeTitleDisplayMode:data forController:controller];
   [self setupBarButtonItems:data forController:controller];
 }
@@ -16,24 +17,25 @@
   UINavigationItem *navItem = controller.navigationItem;
 
   navItem.titleView = data.titleView;
-
-  NSString *title = data.title;
-  NSString *largeTitle = data.largeTitle;
-  if (data.largeTitleEnabled && largeTitle.length > 0) {
-    navItem.title = largeTitle;
-  } else {
-    navItem.title = title;
-  }
+  navItem.title = data.title;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    NSString *subtitle = data.subtitle;
-    NSString *largeSubtitle = data.largeSubtitle;
-    if (data.largeTitleEnabled && largeSubtitle.length > 0) {
-      navItem.subtitle = largeSubtitle;
-    } else {
-      navItem.subtitle = subtitle;
+    navItem.largeTitle = data.largeTitleEnabled ? data.largeTitle : nil;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (data.largeTitleEnabled && data.largeTitle.length > 0) {
+      navItem.title = data.largeTitle;
     }
+}
+
+- (void)setupSubtitle:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    UINavigationItem *navItem = controller.navigationItem;
+    navItem.subtitle = data.subtitle;
+    navItem.largeSubtitle = data.largeSubtitle;
     navItem.subtitleView = data.subtitleView;
     navItem.largeSubtitleView = data.largeSubtitleView;
   }

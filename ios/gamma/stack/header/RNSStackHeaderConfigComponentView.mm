@@ -151,11 +151,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   const auto &oldHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigIOSProps>(_props);
 
   if (oldHeaderProps.title != newHeaderProps.title) {
-    _title = RCTNSStringFromString(newHeaderProps.title);
+    _title = RCTNSStringFromStringNilIfEmpty(newHeaderProps.title);
   }
 
   if (oldHeaderProps.subtitle != newHeaderProps.subtitle) {
-    _subtitle = RCTNSStringFromString(newHeaderProps.subtitle);
+    _subtitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.subtitle);
   }
 
   if (oldHeaderProps.hidden != newHeaderProps.hidden) {
@@ -163,11 +163,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   if (oldHeaderProps.largeTitle != newHeaderProps.largeTitle) {
-    _largeTitle = RCTNSStringFromString(newHeaderProps.largeTitle);
+    _largeTitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.largeTitle);
   }
 
   if (oldHeaderProps.largeSubtitle != newHeaderProps.largeSubtitle) {
-    _largeSubtitle = RCTNSStringFromString(newHeaderProps.largeSubtitle);
+    _largeSubtitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.largeSubtitle);
   }
 
   if (oldHeaderProps.largeTitleEnabled != newHeaderProps.largeTitleEnabled) {
