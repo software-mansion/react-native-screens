@@ -36,7 +36,6 @@ RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement
     case react::RNSStackHeaderItemSpacerIOSPlacement::Leading:
       return RNSHeaderItemSpacerPlacementLeading;
     case react::RNSStackHeaderItemSpacerIOSPlacement::Trailing:
-    default:
       return RNSHeaderItemSpacerPlacementTrailing;
   }
 };

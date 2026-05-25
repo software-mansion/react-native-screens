@@ -1,7 +1,6 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
-#include <objc/NSObject.h>
 
 // These symbols are a stubs for components defined in Gamma project implementation.
 // We need these, because we can not really trick codegen to generate code only for components

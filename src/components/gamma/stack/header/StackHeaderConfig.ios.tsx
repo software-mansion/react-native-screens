@@ -1,7 +1,8 @@
 import React from 'react';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
-import type { HeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
+import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
+import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
 import { StyleSheet } from 'react-native';
@@ -55,12 +56,25 @@ function makeItemViewFromItem(
     | StackHeaderInlineCustomItemIOS
     | StackHeaderTitleCustomItemIOS
     | StackHeaderSpacerItemIOS,
-  placement: HeaderItemPlacement,
+  placement: StackHeaderItemPlacement,
 ) {
   if ('type' in item && item.type === 'spacer') {
     const { key, ...rest } = item;
 
-    return <StackHeaderItemSpacer key={key} placement={placement} {...rest} />;
+    if (!(placement === 'leading' || placement === 'trailing')) {
+      console.warn(
+        `[Stack] Invalid placement for spacer: "${placement}", defaulting to "trailing"`,
+      );
+      placement = 'trailing';
+    }
+
+    return (
+      <StackHeaderItemSpacer
+        key={key}
+        placement={placement as StackHeaderItemSpacerPlacement}
+        {...rest}
+      />
+    );
   }
 
   const { key, ...rest } = item;

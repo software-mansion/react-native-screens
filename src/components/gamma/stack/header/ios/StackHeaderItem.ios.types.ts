@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-export type HeaderItemPlacement =
+export type StackHeaderItemPlacement =
   | 'leading'
   | 'trailing'
   | 'title'
@@ -8,7 +8,7 @@ export type HeaderItemPlacement =
   | 'largeSubtitle';
 
 export type StackHeaderItemProps = {
-  placement: HeaderItemPlacement;
+  placement: StackHeaderItemPlacement;
   label?: string | undefined;
   Component?: ComponentType | undefined;
 };
