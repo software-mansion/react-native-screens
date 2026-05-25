@@ -1,6 +1,8 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetContentWrapperComponentView.h"
+#import "RNSFormSheetContentWrapperDelegate.h"
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
@@ -16,6 +18,7 @@ namespace react = facebook::react;
 
 @interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
                                              RNSFormSheetContentControllerDelegate,
+                                             RNSFormSheetContentWrapperDelegate,
                                              RNSFormSheetPresentationProvider,
                                              RNSFormSheetAppearanceProvider,
                                              RNSFormSheetBehaviorProvider>
@@ -37,6 +40,8 @@ namespace react = facebook::react;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
+
+  CGFloat _contentHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -69,6 +74,8 @@ namespace react = facebook::react;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
+
+  _contentHeight = 0.0;
 }
 
 - (void)setupController
@@ -79,6 +86,8 @@ namespace react = facebook::react;
   _controller.presentationProvider = self;
   _controller.appearanceProvider = self;
   _controller.behaviorProvider = self;
+
+  _controller.contentView.contentWrapperDelegate = self;
 }
 
 - (void)didMoveToWindow
@@ -103,6 +112,21 @@ namespace react = facebook::react;
 - (const std::vector<double> &)detents
 {
   return _detents;
+}
+
+- (CGFloat)contentHeight
+{
+  return _contentHeight;
+}
+
+#pragma mark - RNSFormSheetContentWrapperDelegate
+
+- (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper didChangeContentHeight:(CGFloat)contentHeight
+{
+  if (_contentHeight != contentHeight) {
+    _contentHeight = contentHeight;
+    [_controller setNeedsBehaviorUpdate];
+  }
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate

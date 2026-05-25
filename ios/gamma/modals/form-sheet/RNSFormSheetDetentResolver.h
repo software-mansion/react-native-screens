@@ -6,8 +6,12 @@
 #import <vector>
 #endif
 
+@protocol RNSFormSheetBehaviorProvider;
+
 NS_ASSUME_NONNULL_BEGIN
 
+// Predefined value for `fitToContents` detent.
+static const double kRNSFormSheetFitToContents = -1.0;
 // Predefined values for `initialDetentIndex`.
 static NSInteger const kRNSFormSheetLastDetent = -1;
 // Predefined values for `largestUndimmedDetentIndex`.
@@ -18,7 +22,8 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 #if !TARGET_OS_TV && defined(__cplusplus)
 
-+ (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsForFractions:(const std::vector<double> &)detents;
++ (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsWithBehaviorProvider:
+    (id<RNSFormSheetBehaviorProvider>)provider;
 
 #endif // !TARGET_OS_TV && __cplusplus
 

@@ -1,17 +1,44 @@
 #import "RNSFormSheetContentWrapperComponentView.h"
 
+#import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import "RNSFormSheetContentView.h"
+
 namespace react = facebook::react;
 
-@interface RNSFormSheetContentWrapperComponentView () <RCTRNSFormSheetContentWrapperViewProtocol>
+@interface RNSFormSheetContentWrapperComponentView () <RCTRNSFormSheetContentWrapperViewProtocol,
+                                                       RCTMountingTransactionObserving>
 @end
 
-#pragma mark - RCTComponentViewProtocol
-
 @implementation RNSFormSheetContentWrapperComponentView
+
+- (id<RNSFormSheetContentWrapperDelegate>)resolveFormSheetContentWrapperDelegate
+{
+  UIView *view = self.superview;
+  while (view != nil) {
+    if ([view isKindOfClass:[RNSFormSheetContentView class]]) {
+      return ((RNSFormSheetContentView *)view).contentWrapperDelegate;
+    }
+    view = view.superview;
+  }
+  return nil;
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
+  if (delegate && self.frame.size.height > 0) {
+    [delegate contentWrapper:self didChangeContentHeight:self.frame.size.height];
+  }
+}
+
+#pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -27,7 +54,10 @@ namespace react = facebook::react;
   CGFloat oldHeight = oldLayoutMetrics.frame.size.height;
 
   if (newHeight != oldHeight) {
-    [self.delegate contentWrapper:self didChangeContentHeight:newHeight];
+    id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
+    if (delegate) {
+      [delegate contentWrapper:self didChangeContentHeight:newHeight];
+    }
   }
 }
 
