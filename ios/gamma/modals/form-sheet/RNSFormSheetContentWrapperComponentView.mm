@@ -55,6 +55,7 @@ namespace react = facebook::react;
 
   id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
   if (delegate && self.frame.size.height > 0) {
+    _initialHeightReported = YES;
     [delegate contentWrapper:self didChangeContentHeight:self.frame.size.height];
   }
 }
