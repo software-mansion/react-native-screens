@@ -134,7 +134,10 @@ class TabsHostViewManager :
         }
     }
 
-    override fun setTabBarShouldApplyInsetsSynchronously(view: TabsHost, shouldApply: Boolean) {
+    override fun setTabBarShouldApplyInsetsSynchronously(
+        view: TabsHost,
+        shouldApply: Boolean,
+    ) {
         view.tabBarShouldApplyInsetsSynchronously = shouldApply
     }
 
