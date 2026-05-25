@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
+import FormSheetContentWrapperNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetContentWrapperNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 import {
   resolveInitialDetentIndex,
@@ -11,6 +12,7 @@ import {
 
 export function FormSheet(props: FormSheetProps) {
   const {
+    children,
     detents,
     initialDetentIndex,
     largestUndimmedDetentIndex,
@@ -40,8 +42,11 @@ export function FormSheet(props: FormSheetProps) {
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
-      {...rest}
-    />
+      {...rest}>
+      <FormSheetContentWrapperNativeComponent>
+        {children}
+      </FormSheetContentWrapperNativeComponent>
+    </FormSheetHostNativeComponent>
   );
 }
 

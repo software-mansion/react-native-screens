@@ -223,6 +223,9 @@
         },
         "RNSFormSheetHost": {
           "className": "RNSFormSheetHostComponentView"
+        },
+        "RNSFormSheetContentWrapper": {
+          "className": "RNSFormSheetContentWrapperComponentView"
         }
       }
     }

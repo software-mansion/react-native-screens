@@ -17,3 +17,6 @@
 
 @implementation RNSFormSheetHostComponentView
 @end
+
+@implementation RNSFormSheetContentWrapperComponentView
+@end
