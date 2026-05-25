@@ -19,6 +19,7 @@ Other: feature is WiP, e2e is TODO
 
 ## Note (Optional)
 
+- "Position of items on device matches element tree" means that the DevTools overlay the item highlight with correct position and size. Alternatively, this could be checked by pressing and moving the cursor over the button to see if the whole visible area works, not triggering onPressOut immediately
 - on iOS 26, view may move to overflow menu if there is no space for them, iOS 18 tries to render all of them (including the header)
 - spacers on iOS 26 work only to split the glass "bubble" around the item, setting width only works on iOS < 26
 - `subtitle`, `largeSubtitle` is only supported on iOS 26
@@ -29,21 +30,39 @@ Other: feature is WiP, e2e is TODO
 - the test adds an option for changing the hit slop, but this remains to be handled in the future on the native side (TODO)
 - for now, large subtitle view on iOS 26 doesn't respond to clicks (TODO)
 
-## Steps
+## Steps on iPhone
 
-1. On both iOS 18 and 26
-- Open Dev Console
-- Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
-- [ ] Verify that the position of items on devices matches element tree
-- [ ] Click "Toggle leading/trailing items count" to add items. Verify that positions match element tree.
-- [ ] Set title to be `view`. Verify that positions match element tree.
-- [ ] Click on header items to force other items to move. Verify that positions match element tree.
-- [ ] Rotate the screen to landscape. Verify that positions match element tree.
-- [ ] Rotate the screen back to portrait. Verify that positions match element tree.
-- [ ] Click "Toggle leading items count" to remove all leading items. Verify that positions of still present items match element tree.
-- [ ] Click "large header enabled" to show large header. You may need to scroll down. Verify that:
-  - [ ] On iOS 18, regular title is still present and item positions match element tree.
-  - [ ] On iOS 26, regular title is removed whenever large title shows and item positions match element tree. You may need to remove some items to give space for the regular title.
+1. Open Dev Console
+2. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
+3. Verify first layout.
+  - [ ] Expected: Position of items on device matches element tree.
+4. Click "Toggle leading/trailing items count" to add items. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+5. Set title to `view`. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+6. Click on header items to force other items to move. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+7. Rotate the screen to landscape. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+8. Rotate the screen back to portrait. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+9. Click "Toggle leading items count" to remove all leading items. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+10. Click "large header enabled" to show large header. You may need to scroll down.
+  - [ ] Expected on iOS 18: Regular title is still present and item positions match element tree.
+  - [ ] Expected on iOS 26: Regular title is removed whenever large title shows and item positions match element tree. You may need to remove some items to give space for the regular title.
 
-2. On iOS 26
-- [ ] Set subtitle to `view`. Verify that its position matches element tree.
+### iOS 26 only
+11. Set subtitle to `view`. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+
+## Steps on iPad (smoke)
+
+1. Open Dev Console
+2. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
+3. Verify first layout.
+  - [ ] Expected: Position of items on device matches element tree.
+5. Set title to `view`. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
+4. Resize the application. Verify layout.
+  - [ ] Expected: Position of items on device matches element tree.
