@@ -1,7 +1,7 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Tab Bar Item Title (iOS)',
+  name: 'Tab Bar Item Title',
   key: 'test-tabs-item-title-ios',
   details:
     'Exercises every iOS tab bar item title prop: title, font color,' +

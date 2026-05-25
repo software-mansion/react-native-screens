@@ -36,7 +36,7 @@ native tab bar items, so automated assertion is not feasible.
 
 ### `title` prop and long-string truncation
 
-1. Launch the app and navigate to the **Tab Bar Item Title (iOS)** screen.
+1. Launch the app and navigate to the **Tab Bar Item Title** screen.
 
 - [ ] Expected: Three tabs are visible in the tab bar. The first tab
   is selected by default. On iOS 26, its title is truncated with an
