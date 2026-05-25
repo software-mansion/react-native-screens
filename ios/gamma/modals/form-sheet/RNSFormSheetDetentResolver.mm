@@ -1,5 +1,6 @@
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSDefines.h"
+#import "RNSFormSheetProviders.h"
 
 #import <React/RCTLog.h>
 
@@ -8,6 +9,9 @@
 static BOOL RNSAreDetentsValid(const std::vector<double> &detents)
 {
   for (double currentDetent : detents) {
+    if (currentDetent == kRNSFormSheetFitToContents) {
+      continue;
+    }
     if (isnan(currentDetent)) {
       return NO;
     }
@@ -30,8 +34,10 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
 
 @implementation RNSFormSheetDetentResolver
 
-+ (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsForFractions:(const std::vector<double> &)detents
++ (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsWithBehaviorProvider:
+    (id<RNSFormSheetBehaviorProvider>)provider
 {
+  const std::vector<double> &detents = provider.detents;
   size_t detentsCount = detents.size();
 
   // Defaults to large detent across all iOS versions
@@ -56,17 +62,30 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
+    __weak id<RNSFormSheetBehaviorProvider> weakProvider = provider;
+
     for (size_t i = 0; i < detentsCount; i++) {
       double fraction = detents[i];
       NSString *ident = [NSString stringWithFormat:@"%zu", i];
-
-      [nativeDetents
-          addObject:[UISheetPresentationControllerDetent
-                        customDetentWithIdentifier:ident
-                                          resolver:^CGFloat(
-                                              id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                            return context.maximumDetentValue * fraction;
-                                          }]];
+      if (fraction == kRNSFormSheetFitToContents) {
+        [nativeDetents
+            addObject:[UISheetPresentationControllerDetent
+                          customDetentWithIdentifier:ident
+                                            resolver:^CGFloat(
+                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                              CGFloat currentHeight =
+                                                  weakProvider ? [weakProvider contentHeight] : -1.0;
+                                              return currentHeight;
+                                            }]];
+      } else {
+        [nativeDetents
+            addObject:[UISheetPresentationControllerDetent
+                          customDetentWithIdentifier:ident
+                                            resolver:^CGFloat(
+                                                id<UISheetPresentationControllerDetentResolutionContext> context) {
+                                              return context.maximumDetentValue * fraction;
+                                            }]];
+      }
     }
   } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -74,7 +93,11 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
     // iOS 15 Legacy Fallback
     if (detentsCount == 1) {
       double firstDetentFraction = detents[0];
-      if (firstDetentFraction < 1.0) {
+      if (firstDetentFraction == kRNSFormSheetFitToContents) {
+        RCTLogError(
+            @"[RNScreens] 'fitToContents' is unsupported on iOS versions below 16. Falling back to medium detent.");
+        [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+      } else if (firstDetentFraction < 1.0) {
         [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
       } else {
         [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
