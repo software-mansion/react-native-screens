@@ -34,5 +34,6 @@ interface StackHeaderConfigProviding {
     fun onMenuItemClick(id: String)
 
     fun setDelegate(delegate: StackHeaderConfigDelegate)
+
     fun removeDelegate(delegate: StackHeaderConfigDelegate)
 }
