@@ -1,6 +1,9 @@
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { TabsContainer, useTabsNavigationContext } from '@apps/shared/gamma/containers/tabs';
+import {
+  TabsContainer,
+  useTabsNavigationContext,
+} from '@apps/shared/gamma/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import {
@@ -62,19 +65,28 @@ const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
 };
 
 function TabScreen() {
-  const navigation = useTabsNavigationContext()
+  const navigation = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
       <TabsRouteInformation />
-      <Button title='Select tab 1' onPress={() => navigation.selectTab('Tab1')} />
-      <Button title='Select tab 2' onPress={() => navigation.selectTab('Tab2')} />
-      <Button title='Select tab 3' onPress={() => navigation.selectTab('Tab3')} />
+      <Button
+        title="Select tab 1"
+        onPress={() => navigation.selectTab('Tab1')}
+      />
+      <Button
+        title="Select tab 2"
+        onPress={() => navigation.selectTab('Tab2')}
+      />
+      <Button
+        title="Select tab 3"
+        onPress={() => navigation.selectTab('Tab3')}
+      />
     </CenteredLayoutView>
   );
 }
 
 export function TabsRouteInformation() {
-  const navigation = useTabsNavigationContext()
+  const navigation = useTabsNavigationContext();
 
   return (
     <View>

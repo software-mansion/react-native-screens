@@ -1,5 +1,8 @@
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { styles } from '@apps/shared/styles';
 import { Button, Text, View } from 'react-native';
@@ -22,7 +25,11 @@ function Home({ navigation }: StackNavigationProps) {
   return (
     <View style={[styles.flexContainer, { backgroundColor: 'darkorange' }]}>
       <Text>Home</Text>
-      <Button title="Open modal" onPress={() => navigation.navigate('Modal')} testID="home-button-open-modal" />
+      <Button
+        title="Open modal"
+        onPress={() => navigation.navigate('Modal')}
+        testID="home-button-open-modal"
+      />
     </View>
   );
 }
@@ -31,7 +38,11 @@ function Modal({ navigation }: StackNavigationProps) {
   return (
     <View style={[styles.flexContainer, { backgroundColor: 'lightblue' }]}>
       <Text>Modal</Text>
-      <Button title="Close modal" onPress={() => navigation.pop()} testID="modal-button-close" />
+      <Button
+        title="Close modal"
+        onPress={() => navigation.pop()}
+        testID="modal-button-close"
+      />
     </View>
   );
 }
@@ -49,9 +60,14 @@ function HeaderRight() {
       }}
       onPressOut={() => {
         toast.push({ backgroundColor: 'blue', message: 'onPressOut' });
-      }}
-    >
-      <Rectangle width={128} height={36} color={'lightgreen'} style={{ borderRadius: 16 }} testID="subview-headerright" />
+      }}>
+      <Rectangle
+        width={128}
+        height={36}
+        color={'lightgreen'}
+        style={{ borderRadius: 16 }}
+        testID="subview-headerright"
+      />
     </PressableWithFeedback>
   );
 }
@@ -62,10 +78,14 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Modal" component={Modal} options={{
-            presentation: 'modal',
-            headerRight: HeaderRight,
-          }} />
+          <Stack.Screen
+            name="Modal"
+            component={Modal}
+            options={{
+              presentation: 'modal',
+              headerRight: HeaderRight,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ToastProvider>

@@ -65,7 +65,12 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ options: { headerConfig, ...options }, activityMode, routeKey, name }) => {
+        ({
+          options: { headerConfig, ...options },
+          activityMode,
+          routeKey,
+          name,
+        }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },

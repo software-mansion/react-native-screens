@@ -1,15 +1,11 @@
 import * as React from 'react';
-import {
-  Button,
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-} from 'react-native';
+import { Button, View, Text, ScrollView, TextInput } from 'react-native';
 
 import { NavPropObj } from '../types';
 
-export default function PushWithScrollView({ navigation }: NavPropObj): React.JSX.Element {
+export default function PushWithScrollView({
+  navigation,
+}: NavPropObj): React.JSX.Element {
   const [additionalContentVisible, setAdditionalContentVisible] =
     React.useState(true);
 
@@ -48,4 +44,3 @@ export default function PushWithScrollView({ navigation }: NavPropObj): React.JS
     </View>
   );
 }
-

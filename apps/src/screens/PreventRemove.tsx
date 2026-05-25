@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Platform, Alert, ScrollView, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Platform,
+  Alert,
+  ScrollView,
+  Text,
+} from 'react-native';
 import { usePreventRemove } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -45,7 +53,7 @@ const PreventRemoveScreen = ({
       'Discard changes?',
       'You have unsaved changes. Discard them and leave the screen?',
       [
-        { text: "Don't leave", style: 'cancel', onPress: () => { } },
+        { text: "Don't leave", style: 'cancel', onPress: () => {} },
         {
           text: 'Discard',
           style: 'destructive',
@@ -59,8 +67,7 @@ const PreventRemoveScreen = ({
     <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        keyboardDismissMode="interactive"
-      >
+        keyboardDismissMode="interactive">
         <TextInput
           autoFocus
           value={text}
