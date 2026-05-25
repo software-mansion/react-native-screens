@@ -6,7 +6,6 @@
 #import "RNSFormSheetAppearanceUpdateFlags.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetDetentResolver.h"
-#import "RNSFormSheetHostComponentView.h"
 
 @implementation RNSFormSheetAppearanceApplicator {
   BOOL _initialDetentApplied;
@@ -25,20 +24,24 @@
   _initialDetentApplied = NO;
 }
 
-- (void)updateAppearanceIfNeededForHost:(RNSFormSheetHostComponentView *)host
-                             controller:(RNSFormSheetContentController *)controller
-                            coordinator:(RNSFormSheetAppearanceCoordinator *)coordinator
+- (void)updateAppearanceIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
+                                      behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
+                                            controller:(RNSFormSheetContentController *)controller
+                                           coordinator:(RNSFormSheetAppearanceCoordinator *)coordinator
 {
   [coordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration
            performOperations:^{
-             [self updateSheetConfigurationForHost:host controller:controller];
+             [self updateSheetConfigurationForAppearanceProvider:appearanceProvider
+                                                behaviorProvider:behaviorProvider
+                                                      controller:controller];
            }];
 }
 
 #pragma mark - Updaters
 
-- (void)updateSheetConfigurationForHost:(RNSFormSheetHostComponentView *)host
-                             controller:(RNSFormSheetContentController *)controller
+- (void)updateSheetConfigurationForAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
+                                     behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
+                                           controller:(RNSFormSheetContentController *)controller
 {
 #if !TARGET_OS_TV
   UISheetPresentationController *sheet = controller.sheetPresentationController;
@@ -47,22 +50,23 @@
       @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [RNSFormSheetDetentResolver buildSheetDetentsForFractions:host.detents];
+      [RNSFormSheetDetentResolver buildSheetDetentsForFractions:behaviorProvider.detents];
 
   UISheetPresentationControllerDetentIdentifier initialDetentIdentifier = nil;
   if (!_initialDetentApplied) {
-    initialDetentIdentifier = [RNSFormSheetDetentResolver initialDetentIdentifierForDetents:nativeDetents
-                                                                           atRequestedIndex:host.initialDetentIndex];
+    initialDetentIdentifier =
+        [RNSFormSheetDetentResolver initialDetentIdentifierForDetents:nativeDetents
+                                                     atRequestedIndex:behaviorProvider.initialDetentIndex];
     _initialDetentApplied = YES;
   }
 
-  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier =
-      [RNSFormSheetDetentResolver largestUndimmedDetentIdentifierForDetents:nativeDetents
-                                                           atRequestedIndex:host.largestUndimmedDetentIndex];
+  UISheetPresentationControllerDetentIdentifier largestUndimmedDetentIdentifier = [RNSFormSheetDetentResolver
+      largestUndimmedDetentIdentifierForDetents:nativeDetents
+                               atRequestedIndex:appearanceProvider.largestUndimmedDetentIndex];
 
-  BOOL prefersGrabberVisible = host.prefersGrabberVisible;
-  CGFloat preferredCornerRadius = host.preferredCornerRadius;
-  BOOL prefersScrollingExpandsWhenScrolledToEdge = host.prefersScrollingExpandsWhenScrolledToEdge;
+  BOOL prefersGrabberVisible = appearanceProvider.prefersGrabberVisible;
+  CGFloat preferredCornerRadius = appearanceProvider.preferredCornerRadius;
+  BOOL prefersScrollingExpandsWhenScrolledToEdge = behaviorProvider.prefersScrollingExpandsWhenScrolledToEdge;
 
   [sheet animateChanges:^{
     sheet.detents = nativeDetents;

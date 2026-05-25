@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import {
@@ -10,14 +10,6 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Prevent native dismiss - single stack',
-  key: 'prevent-native-dismiss-single-stack',
-  details:
-    'Test prevent native dismiss behavior in simple single-stack scenario',
-  platforms: ['android'],
-};
 
 export function App() {
   return (
@@ -53,15 +45,23 @@ function StackSetup() {
           options: {
             preventNativeDismiss: true,
             onNativeDismissPrevented: () => {
-              console.info('Native dismiss prevented');
+              console.info('Native dismiss prevented - B');
               toast.push({
-                message: 'Native dismiss prevented',
+                message: 'Native dismiss prevented - B',
                 backgroundColor: Colors.GreenLight60,
               });
             },
             headerConfig: {
               title: 'B',
             },
+          },
+        },
+        {
+          name: 'NestedStack',
+          Component: NestedStackScreen,
+          options: {
+            // This one is interesting. It will prevent nested stack from being popped.
+            preventNativeDismiss: false,
           },
         },
       ]}
@@ -73,7 +73,10 @@ function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
-      <StackNavigationButtons isPopEnabled={false} routeNames={['A', 'B']} />
+      <StackNavigationButtons
+        isPopEnabled={false}
+        routeNames={['A', 'B', 'NestedStack']}
+      />
     </CenteredLayoutView>
   );
 }
@@ -83,7 +86,10 @@ function AScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
       <PreventNativeDismissInfo />
-      <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['A', 'B', 'NestedStack']}
+      />
     </CenteredLayoutView>
   );
 }
@@ -93,7 +99,103 @@ function BScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
       <PreventNativeDismissInfo />
-      <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['A', 'B', 'NestedStack']}
+      />
+      <TogglePreventNativeDismiss />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedStackScreen() {
+  const toast = useToast();
+
+  return (
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'NestedHome',
+          Component: NestedHomeScreen,
+          options: {
+            // This one will also prevent!
+            preventNativeDismiss: true,
+            onNativeDismissPrevented: () => {
+              console.info('Native dismiss prevented - NestedHome');
+              toast.push({
+                message: 'Native dismiss prevented - NestedHome',
+                backgroundColor: Colors.GreenLight60,
+              });
+            },
+          },
+        },
+        {
+          name: 'NestedA',
+          Component: NestedAScreen,
+          options: {
+            headerConfig: {
+              title: 'NestedA',
+            },
+          },
+        },
+        {
+          name: 'NestedB',
+          Component: NestedBScreen,
+          options: {
+            preventNativeDismiss: true,
+            onNativeDismissPrevented: () => {
+              console.info('Native dismiss prevented - NestedB');
+              toast.push({
+                message: 'Native dismiss prevented - NestedB',
+                backgroundColor: Colors.GreenLight60,
+              });
+            },
+            headerConfig: {
+              title: 'NestedB',
+            },
+          },
+        },
+      ]}
+    />
+  );
+}
+
+function NestedHomeScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
+      <RouteInformation routeName="NestedHome" />
+      <PreventNativeDismissInfo />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
+      <TogglePreventNativeDismiss />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedAScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
+      <RouteInformation routeName="NestedA" />
+      <PreventNativeDismissInfo />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedBScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
+      <RouteInformation routeName="NestedB" />
+      <PreventNativeDismissInfo />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
       <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );

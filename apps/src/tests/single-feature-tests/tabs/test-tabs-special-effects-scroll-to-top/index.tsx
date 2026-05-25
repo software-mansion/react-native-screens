@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
@@ -8,14 +8,6 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 import { SafeAreaView } from 'react-native-screens/experimental';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs special effect scroll to top',
-  key: 'test-tabs-special-effects-scroll-to-top',
-  details:
-    'Test settings of specialEffect scrollToTop.',
-  platforms: ['ios', 'android'],
-};
 
 interface ScrollScreenProps {
   tabName: string;
