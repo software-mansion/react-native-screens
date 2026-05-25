@@ -15,4 +15,10 @@ export interface TabsHostPropsAndroid {
    * @supported API 30 or higher
    */
   tabBarRespectsIMEInsets?: boolean | undefined;
+
+  /**
+   * Defines whether window insets should be applied synchronously
+   * from the DecorView during view attachment.
+   */
+  tabBarShouldApplyInsetsSynchronously?: boolean;
 }

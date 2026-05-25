@@ -10,10 +10,12 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.size
 import androidx.fragment.app.FragmentManager
+import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
@@ -126,6 +128,9 @@ class TabsContainer internal constructor(
 
     internal var colorScheme: ColorScheme by colorSchemeCoordinator::colorScheme
     internal var tabBarRespectsIMEInsets: Boolean = false
+
+    internal var tabBarShouldApplyInsetsSynchronously: Boolean = true
+    private var insetsAppliedBySystem = false
 
     private val contentView: FrameLayout =
         FrameLayout(context).apply {
@@ -274,6 +279,8 @@ class TabsContainer internal constructor(
         RNSLog.d(TAG, "TabsContainer [$id] attached to window")
 
         super.onAttachedToWindow()
+
+        maybeApplyDecorViewInsetsSynchronously()
         setupFragmentManager()
 
         // When TabsContainer is reattached to window, it might find new fragment manager (other
@@ -306,6 +313,19 @@ class TabsContainer internal constructor(
         colorSchemeCoordinator.onConfigurationChanged(newConfig)
     }
 
+    private fun maybeApplyDecorViewInsetsSynchronously() {
+        if (insetsAppliedBySystem || !tabBarShouldApplyInsetsSynchronously) return
+
+        val activity = (context as? ThemedReactContext)?.currentActivity ?: return
+        val decorView = activity.window.decorView
+        val insetsCompat = ViewCompat.getRootWindowInsets(decorView) ?: return
+
+        val windowInsets = insetsCompat.toWindowInsets()
+        if (windowInsets != null) {
+            dispatchApplyWindowInsets(windowInsets)
+        }
+    }
+
     override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
         // On Android versions prior to R, insets dispatch is broken.
         // In order to mitigate this, we override dispatchApplyWindowInsets with
@@ -315,6 +335,8 @@ class TabsContainer internal constructor(
         if (insets?.isConsumed ?: true) {
             return insets
         }
+
+        insetsAppliedBySystem = true
 
         for (child in children) {
             if (child === bottomNavigationView) {

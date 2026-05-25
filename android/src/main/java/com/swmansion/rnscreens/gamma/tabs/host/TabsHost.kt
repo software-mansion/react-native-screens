@@ -58,6 +58,8 @@ class TabsHost(
     internal var colorScheme: ColorScheme by container::colorScheme
     var tabBarRespectsIMEInsets: Boolean by container::tabBarRespectsIMEInsets
 
+    internal var tabBarShouldApplyInsetsSynchronously: Boolean by container::tabBarShouldApplyInsetsSynchronously
+
     init {
         addView(container)
         check(container.addNavigationStateObserver(this)) {
