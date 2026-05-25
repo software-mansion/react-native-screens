@@ -111,8 +111,14 @@ class StackHeaderConfig(
 
     private var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
 
-    override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener?) {
-        onConfigChangeListener = listener?.let { WeakReference(it) }
+    override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener) {
+        onConfigChangeListener = WeakReference(listener)
+    }
+
+    override fun removeOnConfigChangeListener(listener: OnHeaderConfigChangeListener) {
+        if (onConfigChangeListener?.get() === listener) {
+            onConfigChangeListener = null
+        }
     }
 
     internal fun notifyConfigChanged() {

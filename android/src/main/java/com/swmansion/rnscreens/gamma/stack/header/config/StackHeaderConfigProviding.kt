@@ -29,5 +29,7 @@ interface StackHeaderConfigProviding {
         contentOffsetY: Int,
     )
 
-    fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener?)
+    fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener)
+
+    fun removeOnConfigChangeListener(listener: OnHeaderConfigChangeListener)
 }
