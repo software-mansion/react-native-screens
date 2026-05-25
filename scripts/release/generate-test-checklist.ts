@@ -131,7 +131,7 @@ async function main() {
   const customTestPath = getCustomTestPath();
   const searchDir = customTestPath
     ? path.resolve(process.cwd(), customTestPath)
-    : path.resolve(__dirname, DEFAULT_TESTS_DIR);
+    : DEFAULT_TESTS_DIR;
 
   const files = findScenarioFiles(searchDir);
 
