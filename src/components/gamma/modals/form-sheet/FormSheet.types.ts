@@ -18,6 +18,7 @@ export interface FormSheetProps {
    */
   isOpen: boolean;
 
+  // TODO: @t0maboro - update description after implementing fitToContents
   /**
    * @summary An array of fractional screen heights (ranging from `0.0` to `1.0`) that define
    * the resting positions of the sheet.
@@ -27,7 +28,7 @@ export interface FormSheetProps {
    *
    * @platform ios
    */
-  detents?: number[] | undefined;
+  detents?: number[] | 'fitToContents' | undefined;
 
   /**
    * @summary Determines whether the sheet requests a grabber at the top.
