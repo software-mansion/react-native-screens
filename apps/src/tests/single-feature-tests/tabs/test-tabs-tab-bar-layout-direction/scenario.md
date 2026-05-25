@@ -25,7 +25,7 @@ Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
 
 ## E2E test
 
-Yes: Covers all scenarios for LTR/RTL configurations:
+Full: Covers all scenarios for LTR/RTL configurations:
 
 - iOS: The system RTL direction is set by app configuration setting
   `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
