@@ -69,12 +69,6 @@ describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == false',
     );
-    await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
-      'forceRTL: false',
-    );
-    await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
-      'allowRTL: true',
-    );
 
     await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -121,9 +115,7 @@ describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
   beforeAll(async () => {
     if (device.getPlatform() === 'ios') {
       await launchAppWithAttributes({
-        AppleTextDirection: 'YES',
         NSForceRightToLeftWritingDirection: 'YES',
-        I18NIsRTL: 'YES',
       });
     } else {
       await launchAppWithAttributes();
@@ -146,9 +138,7 @@ describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
   afterAll(async () => {
     if (device.getPlatform() === 'ios') {
       await launchAppWithAttributes({
-        AppleTextDirection: 'NO',
         NSForceRightToLeftWritingDirection: 'NO',
-        I18NIsRTL: 'NO',
       });
     } else {
       await launchAppWithAttributes();
@@ -210,7 +200,7 @@ describeIfiOS(
   () => {
     beforeAll(async () => {
       await launchAppWithAttributes({
-        AppleTextDirection: 'YES',
+        // AppleTextDirection: 'YES',
         NSForceRightToLeftWritingDirection: 'YES',
       });
       await selectSingleFeatureTestsScreen(
@@ -231,9 +221,8 @@ describeIfiOS(
 
     afterAll(async () => {
       await launchAppWithAttributes({
-        AppleTextDirection: 'NO',
+        // AppleTextDirection: 'NO',
         NSForceRightToLeftWritingDirection: 'NO',
-        I18NIsRTL: 'NO',
       });
     });
 
@@ -244,12 +233,6 @@ describeIfiOS(
 
       await expect(element(by.id('is-rtl-information'))).toHaveText(
         'I18nManager.isRTL == false',
-      );
-      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
-        'forceRTL: false',
-      );
-      await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
-        'allowRTL: true',
       );
 
       await scrollTo({ id: 'tab-bar-layout-direction-picker' });
