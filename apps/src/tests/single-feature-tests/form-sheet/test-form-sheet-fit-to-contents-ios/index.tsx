@@ -7,6 +7,12 @@ import { Colors } from '@apps/shared/styling';
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleDismiss = () => {
+    setIsOpen(false);
+    setTimeout(() => setIsExpanded(false), 300);
+  };
 
   return (
     <View style={styles.container}>
@@ -18,15 +24,39 @@ export function App() {
       />
       <FormSheet
         isOpen={isOpen}
-        onNativeDismiss={() => setIsOpen(false)}
+        onNativeDismiss={handleDismiss}
         detents="fitToContents">
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>FormSheet content</Text>
+
+          <Text style={styles.description}>
+            This sheet dynamically wraps its content. Press the button below to
+            change the height.
+          </Text>
+
           <View style={styles.spacing} />
+
+          <Button
+            title={isExpanded ? 'Collapse Content' : 'Expand Content'}
+            color={Colors.primary}
+            onPress={() => setIsExpanded(!isExpanded)}
+          />
+
+          {isExpanded && (
+            <View style={styles.extraContentBox}>
+              <Text style={styles.extraText}>
+                Here is some extra content! The FormSheet should seamlessly
+                animate to accommodate this new height without any glitches.
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.spacing} />
+
           <Button
             title="Dismiss from JS"
             color={Colors.primary}
-            onPress={() => setIsOpen(false)}
+            onPress={handleDismiss}
           />
         </View>
       </FormSheet>
@@ -48,7 +78,6 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   sheetContent: {
-    flex: 1,
     backgroundColor: Colors.background,
     padding: 24,
     justifyContent: 'center',
@@ -60,8 +89,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: Colors.text,
   },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.text,
+    paddingHorizontal: 16,
+  },
+  extraContentBox: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: Colors.offBackground,
+    borderRadius: 8,
+    width: '100%',
+  },
+  extraText: {
+    fontSize: 15,
+    color: Colors.text,
+    textAlign: 'center',
+  },
   spacing: {
-    height: 32,
+    height: 24,
   },
 });
 
