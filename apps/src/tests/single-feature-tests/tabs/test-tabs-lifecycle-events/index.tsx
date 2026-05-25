@@ -20,7 +20,9 @@ function TabScreen() {
       <Text style={styles.tabLabel} testID={`tabLabel-${routeKey}`}>
         {routeKey}
       </Text>
-      <Text style={styles.tabHint}>Switch tabs to trigger lifecycle events</Text>
+      <Text style={styles.tabHint}>
+        Switch tabs to trigger lifecycle events
+      </Text>
     </CenteredLayoutView>
   );
 }

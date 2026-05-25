@@ -5,4 +5,3 @@ export function generateID(): number {
   GLOBAL_ID += 1;
   return nextID;
 }
-

@@ -1,5 +1,5 @@
 import { View, Button, StyleSheet } from 'react-native';
-import {  NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   NativeStackScreenProps,
   createNativeStackNavigator,
@@ -21,7 +21,6 @@ type SecondStackParamList = {
 const HomeScreen = ({
   navigation,
 }: NativeStackScreenProps<FirstStackParamList>) => {
-
   useLayoutEffect(() => {
     // Set initial title
     navigation.setOptions({
@@ -31,7 +30,7 @@ const HomeScreen = ({
     // Set headerLeft and headerRight after 2 seconds
     const timer1 = setTimeout(() => {
       navigation.setOptions({
-        headerLeft: () =>  <Square size={16} color="goldenrod" />,
+        headerLeft: () => <Square size={16} color="goldenrod" />,
         headerRight: () => <Square size={20} color="green" />,
       });
     }, 3000);
@@ -118,10 +117,7 @@ const FirstStack = createNativeStackNavigator<FirstStackParamList>();
 const FirstStackNavigator = () => {
   return (
     <FirstStack.Navigator>
-      <FirstStack.Screen
-        name="Home"
-        component={HomeScreen}
-      />
+      <FirstStack.Screen name="Home" component={HomeScreen} />
       <FirstStack.Screen name="Details" component={DetailsScreen} />
     </FirstStack.Navigator>
   );
@@ -146,14 +142,12 @@ const SecondStackNavigator = () => {
 
 const Tabs = createBottomTabNavigator();
 
-
-
 export function BottomTabNavigator() {
   return (
     <Tabs.Navigator screenOptions={{ headerShown: false }}>
-        <Tabs.Screen name="First" component={FirstStackNavigator} />
-        <Tabs.Screen name="Second" component={SecondStackNavigator} />
-      </Tabs.Navigator>
+      <Tabs.Screen name="First" component={FirstStackNavigator} />
+      <Tabs.Screen name="Second" component={SecondStackNavigator} />
+    </Tabs.Navigator>
   );
 }
 
@@ -167,8 +161,8 @@ export default function App() {
           name="Root"
           component={BottomTabNavigator}
           options={{ headerShown: false }}
-          />
-        </RootStack.Navigator>
+        />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
