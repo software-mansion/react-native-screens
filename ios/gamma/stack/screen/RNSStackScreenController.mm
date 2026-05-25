@@ -29,7 +29,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [_headerCoordinator applyBarConfigurationIfNeeded:animated];
   [[self reactEventEmitter] emitOnWillAppear];
 }
 

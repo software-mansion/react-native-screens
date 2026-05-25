@@ -50,16 +50,6 @@
   [self applyBarConfigurationIfNeeded:YES];
 }
 
-- (void)initializeBarConfiguration
-{
-  RNSStackScreenController *screenController = [self requireScreenController];
-  RNSStackScreenComponentView *screenView = static_cast<RNSStackScreenComponentView *>(screenController.view);
-  RNSStackHeaderConfigComponentView *config = [screenView findHeaderConfig];
-
-  RNSStackNavigationController *navController = [self requireNavigationController];
-  navController.navigationBarFrameChangeDelegate = config;
-}
-
 - (void)applyBarConfigurationIfNeeded:(BOOL)animated
 {
   if (_lastHeaderData == nil) {

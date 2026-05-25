@@ -10,6 +10,7 @@
 #import "RNSConversions-Stack.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
+#import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
 
 #import "Swift-Bridging.h"
@@ -75,6 +76,15 @@ namespace react = facebook::react;
       strongSelf->_controller = nil;
     }
   });
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [super mountChildComponentView:childComponentView index:index];
+  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+    id<RNSViewFrameChangeDelegate> delegate = (id<RNSViewFrameChangeDelegate>)[self findHeaderConfig];
+    [(RNSStackNavigationController *)_controller.navigationController setNavigationBarFrameChangeDelegate:delegate];
+  }
 }
 
 #pragma mark - Events
