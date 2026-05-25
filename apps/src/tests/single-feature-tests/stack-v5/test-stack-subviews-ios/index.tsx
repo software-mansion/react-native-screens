@@ -173,7 +173,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     }).map((_, i) => ({
       type: 'item',
       key: `leading-${i}`,
-      label: `leading-${i}`,
       Component: ResizingItem,
     }));
   if (leadingItems.length > 1) {
@@ -191,7 +190,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     (_, i) => ({
       type: 'item',
       key: `trailing-${i}`,
-      label: `trailing-${i}`,
       Component: ResizingItem,
     }),
   );
@@ -216,7 +214,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
         config.title === 'view'
           ? {
               key: 'title',
-              label: 'title',
               Component: LargeHorizontalItem,
             }
           : undefined,
@@ -224,7 +221,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
         config.subtitle === 'view'
           ? {
               key: 'subtitle',
-              label: 'subtitle',
               Component: SmallHorizontalItem,
             }
           : undefined,
@@ -232,7 +228,6 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
         config.largeSubtitle === 'view'
           ? {
               key: 'largeSubtitle',
-              label: 'largeSubtitle',
               Component: LargeHorizontalItem,
             }
           : undefined,
