@@ -16,7 +16,7 @@ subject to prevention.
 
 ## E2E test
 
-Yes: Partially automated. The E2E test covers most steps for iPhone and Android
+Partial: The E2E test covers most steps for iPhone and Android
 phone.
 
 - iPad specific steps are not automated, as the resize interactions required to

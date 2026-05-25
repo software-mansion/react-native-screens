@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Not automated. Verification requires observing UI transitions (Tab Bar appearance and flicker detection) which are not reliably detectable by Detox snapshot or view-hierarchy testing.
+No: Verification requires observing UI transitions (Tab Bar appearance and flicker detection) which are not reliably detectable by Detox snapshot or view-hierarchy testing.
 
 ## Prerequisites
 

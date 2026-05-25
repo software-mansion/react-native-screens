@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Other: Pending. Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed. A potential workaround for future implementation is to verify the state via getAttributes() by comparing the element's frame/height.
+No: Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed.
 
 ## Prerequisites
 

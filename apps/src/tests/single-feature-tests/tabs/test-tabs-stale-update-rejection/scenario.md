@@ -14,7 +14,7 @@ was committed before the JS update reached the UI thread. Each rejection fires
 
 ## E2E test
 
-Yes, partially. Steps 1–3 (rejectStaleNavStateUpdates:true) and steps 4–5
+Partial: Steps 1–3 (rejectStaleNavStateUpdates:true) and steps 4–5
 (rejectStaleNavStateUpdates:false) are covered as separate test suites,
 each preceded by a reloadReactNative to guarantee a clean baseline.
 Not covered:
