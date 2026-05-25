@@ -9,11 +9,9 @@ interface ScenarioFile {
   subdirectory: string;
 }
 
-interface TableColumn {
-  header: string;
-  prop: keyof ScenarioDescription | null;
-  defaultValue?: string;
-}
+type TableColumn =
+  | { header: string; prop: keyof ScenarioDescription }
+  | { header: string; prop: null; defaultValue: string };
 
 interface Entry extends ScenarioDescription {
   subdirectory: string;
@@ -105,9 +103,9 @@ function formatTable(entries: Entry[]): string {
   }
 
   const cellValue = (col: TableColumn, entry: Entry) =>
-    col.prop
+    col.prop !== null
       ? String(entry[col.prop as keyof Entry] ?? 'N/A')
-      : col.defaultValue!;
+      : col.defaultValue;
 
   const colWidths = TABLE_COLUMNS.map(col =>
     Math.max(col.header.length, ...entries.map(e => cellValue(col, e).length)),
