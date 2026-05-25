@@ -13,7 +13,7 @@ internal class StackHeaderToolbarMenuCoordinator(
     private val reverseIdMap = HashMap<Int, String>()
     private var lastMenuItems: List<StackHeaderToolbarMenuItemConfig> = emptyList()
 
-    internal fun buildMenu(
+    internal fun rebuildMenuIfNeeded(
         toolbar: MaterialToolbar,
         items: List<StackHeaderToolbarMenuItemConfig>,
     ) {

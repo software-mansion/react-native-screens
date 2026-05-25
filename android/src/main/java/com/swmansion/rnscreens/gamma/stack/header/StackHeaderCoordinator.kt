@@ -348,7 +348,7 @@ internal class StackHeaderCoordinator(
         toolbar: MaterialToolbar,
         config: StackHeaderConfigProviding,
     ) {
-        toolbarMenuCoordinator.buildMenu(toolbar, config.toolbarMenuItems)
+        toolbarMenuCoordinator.rebuildMenuIfNeeded(toolbar, config.toolbarMenuItems)
     }
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
