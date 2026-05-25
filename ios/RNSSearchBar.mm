@@ -20,12 +20,19 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
+@interface RNSSearchBar ()
+- (void)setPlaceholder:(NSString *)placeholder;
+- (void)setHintTextColor:(UIColor *)hintTextColor;
+@end
+
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
   UIColor *_hintTextColor;
   NSString *_placeholder;
+  NSString *_defaultPlaceholder;
+  BOOL _didSetPlaceholder;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -67,6 +74,17 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+
+  _didSetPlaceholder = NO;
+
+#if !TARGET_OS_TV
+  _defaultPlaceholder = _controller.searchBar.placeholder;
+  if (_defaultPlaceholder == nil) {
+    _defaultPlaceholder = _controller.searchBar.searchTextField.placeholder;
+  }
+#else
+  _defaultPlaceholder = _controller.searchBar.placeholder;
+#endif
 
   _isObscureBackgroundSet = NO;
   _isHideNavigationBarSet = NO;
@@ -207,13 +225,33 @@ namespace react = facebook::react;
 - (void)setPlaceholder:(NSString *)placeholder
 {
   _placeholder = placeholder;
+  _didSetPlaceholder = YES;
+}
 
-  if (_hintTextColor != nil && _placeholder != nil) {
+- (void)setHintTextColor:(UIColor *)hintTextColor
+{
+  _hintTextColor = hintTextColor;
+}
+
+- (void)updatePlaceholder
+{
+  NSString *placeholder = _placeholder != nil ? _placeholder : _defaultPlaceholder;
+
+#if !TARGET_OS_TV
+  if (_hintTextColor != nil && placeholder != nil) {
     _controller.searchBar.searchTextField.attributedPlaceholder =
-        [[NSAttributedString alloc] initWithString:_placeholder attributes:@{NSForegroundColorAttributeName : _hintTextColor}];
+        [[NSAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName : _hintTextColor}];
   } else {
-    [_controller.searchBar setPlaceholder:_placeholder];
+    _controller.searchBar.searchTextField.attributedPlaceholder = nil;
+    if (placeholder != nil || _didSetPlaceholder) {
+      [_controller.searchBar setPlaceholder:placeholder];
+    }
   }
+#else
+  if (placeholder != nil || _didSetPlaceholder) {
+    [_controller.searchBar setPlaceholder:placeholder];
+  }
+#endif
 }
 
 - (void)setBarTintColor:(UIColor *)barTintColor
@@ -233,14 +271,6 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _textColor = textColor;
   [_controller.searchBar.searchTextField setTextColor:_textColor];
-#endif
-}
-
-- (void)setHintTextColor:(UIColor *)hintTextColor
-{
-#if !TARGET_OS_TV
-  _hintTextColor = hintTextColor;
-  [self setPlaceholder:_placeholder];
 #endif
 }
 
@@ -424,8 +454,11 @@ namespace react = facebook::react;
                                  RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:newScreenProps.hideNavigationBar]];
   }
 
+  BOOL shouldUpdatePlaceholder = NO;
+
   if (oldScreenProps.placeholder != newScreenProps.placeholder) {
     [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
+    shouldUpdatePlaceholder = YES;
   }
 
 #if !TARGET_OS_VISION
@@ -448,6 +481,11 @@ namespace react = facebook::react;
 
   if (oldScreenProps.hintTextColor != newScreenProps.hintTextColor) {
     [self setHintTextColor:RCTUIColorFromSharedColor(newScreenProps.hintTextColor)];
+    shouldUpdatePlaceholder = YES;
+  }
+
+  if (shouldUpdatePlaceholder) {
+    [self updatePlaceholder];
   }
 
   if (oldScreenProps.placement != newScreenProps.placement) {
@@ -529,11 +567,21 @@ RCT_CUSTOM_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType, RNSSearch
   }
 }
 
-RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
+RCT_CUSTOM_VIEW_PROPERTY(placeholder, NSString, RNSSearchBar)
+{
+  RNSSearchBar *searchBarView = static_cast<RNSSearchBar *>(view);
+  [searchBarView setPlaceholder:[RCTConvert NSString:json]];
+  [searchBarView updatePlaceholder];
+}
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(hintTextColor, UIColor)
+RCT_CUSTOM_VIEW_PROPERTY(hintTextColor, UIColor, RNSSearchBar)
+{
+  RNSSearchBar *searchBarView = static_cast<RNSSearchBar *>(view);
+  [searchBarView setHintTextColor:[RCTConvert UIColor:json]];
+  [searchBarView updatePlaceholder];
+}
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)

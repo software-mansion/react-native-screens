@@ -614,6 +614,7 @@ RNS_IGNORE_SUPER_CALL_END
             }
           }
 #endif /* Check for iOS 26.0 */
+          [searchBar updatePlaceholder];
 #endif /* !TARGET_OS_TV */
         }
         break;

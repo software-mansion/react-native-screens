@@ -26,6 +26,8 @@
 
 @property (nonatomic, retain) UISearchController *controller;
 
+- (void)updatePlaceholder;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
     API_UNAVAILABLE(tvos, watchos);
