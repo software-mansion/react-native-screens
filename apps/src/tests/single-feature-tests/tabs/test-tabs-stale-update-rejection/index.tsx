@@ -13,7 +13,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 
-function ContentView() {
+export function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
@@ -59,7 +59,7 @@ function ContentView() {
   );
 }
 
-function TabsNavigationButtons() {
+export function TabsNavigationButtons() {
   const { routeKey, selectTab } = useTabsNavigationContext();
 
   return (
@@ -139,7 +139,7 @@ export function App() {
   );
 }
 
-function AppContents() {
+export function AppContents() {
   const toast = useToast();
 
   return (
@@ -162,7 +162,7 @@ function AppContents() {
   );
 }
 
-function HeavyRenderHierarchy({
+export function HeavyRenderHierarchy({
   enabled,
   timeMs = 5000,
 }: {

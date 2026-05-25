@@ -16,7 +16,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const {
     routeKey: tabRouteKey,
     routeOptions: tabRouteOptions,
@@ -62,7 +62,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-function StackScreen() {
+export function StackScreen() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
