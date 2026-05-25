@@ -45,6 +45,14 @@ internal class StackHeaderCoordinatorLayout(
 
     private var isHeaderUpdatePending = false
 
+    // Read currentConfig when the runnable executes, not when it's posted,
+    // to avoid applying a stale config that was swapped out in the meantime.
+    private val headerUpdateRunnable =
+        Runnable {
+            isHeaderUpdatePending = false
+            headerCoordinator.applyHeaderConfig(this, currentConfig)
+        }
+
     /**
      * This callback is used to listen for header config changes.
      * We use [isHeaderUpdatePending] to batch changes and pass them to [headerCoordinator].
@@ -53,12 +61,7 @@ internal class StackHeaderCoordinatorLayout(
         OnHeaderConfigChangeListener {
             if (!isHeaderUpdatePending) {
                 isHeaderUpdatePending = true
-                // Read currentConfig when the runnable executes, not when it's posted,
-                // to avoid applying a stale config that was swapped out in the meantime.
-                post {
-                    isHeaderUpdatePending = false
-                    headerCoordinator.applyHeaderConfig(this, currentConfig)
-                }
+                post(headerUpdateRunnable)
             }
         }
 
@@ -87,8 +90,8 @@ internal class StackHeaderCoordinatorLayout(
     }
 
     private fun handleHeaderConfigAttach(config: StackHeaderConfigProviding?) {
-        // Disconnect old config to prevent spurious updates from a detached config
-        currentConfig?.setOnConfigChangeListener(null)
+        // Disconnect old config to prevent spurious updates from a detached config.
+        currentConfig?.removeOnConfigChangeListener(onHeaderConfigChange)
         currentConfig = config
 
         config?.setOnConfigChangeListener(onHeaderConfigChange)
@@ -96,5 +99,22 @@ internal class StackHeaderCoordinatorLayout(
         // We run this even if config is null to properly remove the header if config
         // is removed in runtime.
         headerCoordinator.applyHeaderConfig(this, config)
+    }
+
+    internal fun tearDown() {
+        removeCallbacks(headerUpdateRunnable)
+        isHeaderUpdatePending = false
+
+        stackScreenWrapper.removeView(stackScreen)
+
+        currentConfig?.removeOnConfigChangeListener(onHeaderConfigChange)
+        currentConfig = null
+
+        stackScreen.onHeaderConfigAttachListener
+            ?.get()
+            ?.takeIf { it === onHeaderConfigAttach }
+            ?.let { stackScreen.onHeaderConfigAttachListener = null }
+
+        headerCoordinator.tearDown(this)
     }
 }
