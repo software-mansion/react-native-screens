@@ -1,5 +1,7 @@
 #pragma once
 
+#import <UIKit/UIKit.h>
+
 @class RNSFormSheetContentWrapperComponentView;
 
 NS_ASSUME_NONNULL_BEGIN
