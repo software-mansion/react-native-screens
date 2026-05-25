@@ -36,7 +36,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 
 export function App() {
   return (
-    <TabsContainer routeConfigs={ROUTE_CONFIGS} />
+    <TabsContainer routeConfigs={ROUTE_CONFIGS} ios={{ tabBarControllerMode: 'tabSidebar' }} />
   );
 }
 
