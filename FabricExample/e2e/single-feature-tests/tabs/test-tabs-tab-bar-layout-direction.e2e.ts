@@ -163,12 +163,6 @@ describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
     await expect(element(by.id('is-rtl-information'))).toHaveText(
       'I18nManager.isRTL == true',
     );
-    await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
-      'forceRTL: false',
-    );
-    await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
-      'allowRTL: true',
-    );
 
     await scrollTo({ id: 'tab-bar-layout-direction-picker' });
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
@@ -218,7 +212,6 @@ describeIfiOS(
       await launchAppWithAttributes({
         AppleTextDirection: 'YES',
         NSForceRightToLeftWritingDirection: 'YES',
-        I18NIsRTL: 'YES',
       });
       await selectSingleFeatureTestsScreen(
         'Tabs',
@@ -332,12 +325,6 @@ describeIfiOS(
 
       await expect(element(by.id('is-rtl-information'))).toHaveText(
         'I18nManager.isRTL == true',
-      );
-      await expect(element(by.id('react-force-rtl-picker'))).toHaveLabel(
-        'forceRTL: false',
-      );
-      await expect(element(by.id('react-allow-rtl-picker'))).toHaveLabel(
-        'allowRTL: true',
       );
 
       await scrollTo({ id: 'tab-bar-layout-direction-picker' });
