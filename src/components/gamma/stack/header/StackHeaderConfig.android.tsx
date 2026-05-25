@@ -215,12 +215,22 @@ function parseToolbarMenuItemOptionsToNativeProps(
   options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
   const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
-    Object.entries(options).map(([key, value]) => [
-      key,
-      // We need to replace explicit `undefined` with `null`
-      // so that we're able to read that information on the native side.
-      value === undefined ? null : value,
-    ]),
+    Object.entries(options).map(([key, value]) => {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        throw new Error(`[RNScreens] Unexpected nested object.`);
+      }
+
+      return [
+        key,
+        // We need to replace explicit `undefined` with `null`
+        // so that we're able to read that information on the native side.
+        value === undefined ? null : value,
+      ];
+    }),
   );
 
   // For some reason Codegen requires passing an array (we can't use plain object).
