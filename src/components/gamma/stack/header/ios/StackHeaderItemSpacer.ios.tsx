@@ -1,6 +1,6 @@
 import React from 'react';
 import StackHeaderItemSpacerIOSNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderItemSpacerIOSNativeComponent';
-import { StackHeaderItemSpacerProps } from './StackHeaderItemSpacer.ios.types';
+import type { StackHeaderItemSpacerProps } from './StackHeaderItemSpacer.ios.types';
 import { StyleSheet } from 'react-native';
 
 export default function StackHeaderItemSpacer(

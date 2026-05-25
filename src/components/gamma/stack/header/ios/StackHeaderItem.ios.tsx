@@ -1,6 +1,6 @@
 import React from 'react';
 import StackHeaderItemIOSNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
-import { StackHeaderItemProps } from './StackHeaderItem.ios.types';
+import type { StackHeaderItemProps } from './StackHeaderItem.ios.types';
 import { StyleSheet } from 'react-native';
 
 export default function StackHeaderItem(props: StackHeaderItemProps) {

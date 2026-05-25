@@ -1,11 +1,11 @@
-import { StackHeaderConfigProps } from './StackHeaderConfig.types';
-import StackHeaderConfigIOSNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import React from 'react';
-import { HeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
+import StackHeaderConfigIOSNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
+import type { HeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
 import { StyleSheet } from 'react-native';
-import {
+import type {
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderSpacerItemIOS,
