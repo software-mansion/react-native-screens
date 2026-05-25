@@ -87,7 +87,7 @@ localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
 ### System LTR / RN LTR
 
 > Setup: System language is LTR (e.g. English). RN: `forceRTL = false` (default).
-> `I18nManager.isRTL == false`.
+> `I18nManager.isRTL == false` and `TabsHost direction = ltr`.
 
 2. Set `TabsHost direction = inherit`.
 
