@@ -1,4 +1,4 @@
-import React from 'react-native';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ConfigWithNavigation } from './Config';
 import {
