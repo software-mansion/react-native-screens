@@ -35,6 +35,8 @@ export function FormSheet(props: FormSheetProps) {
     detentsCount,
   );
 
+  const isFitToContents = detents === 'fitToContents';
+
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
@@ -43,7 +45,12 @@ export function FormSheet(props: FormSheetProps) {
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}>
-      <FormSheetContentWrapperNativeComponent>
+      <FormSheetContentWrapperNativeComponent
+        style={
+          isFitToContents
+            ? styles.absoluteWithNoBottom
+            : StyleSheet.absoluteFill
+        }>
         {children}
       </FormSheetContentWrapperNativeComponent>
     </FormSheetHostNativeComponent>
@@ -61,5 +68,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+  },
+  absoluteWithNoBottom: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });
