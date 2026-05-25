@@ -127,8 +127,14 @@ class StackHeaderConfig(
         eventEmitter.emitOnToolbarMenuItemClicked(id)
     }
 
-    override fun setDelegate(delegate: StackHeaderConfigDelegate?) {
-        this.delegate = delegate?.let { WeakReference(it) }
+    override fun setDelegate(delegate: StackHeaderConfigDelegate) {
+        this.delegate = WeakReference(delegate)
+    }
+
+    override fun removeDelegate(delegate: StackHeaderConfigDelegate) {
+        if (this.delegate?.get() === delegate) {
+            this.delegate = null
+        }
     }
 
     internal fun notifyConfigChanged() {

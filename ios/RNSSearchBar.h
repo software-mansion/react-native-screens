@@ -2,19 +2,18 @@
 
 #import <UIKit/UIKit.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #endif
 
-#import <React/RCTBridge.h>
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
 @interface RNSSearchBar :
-#ifdef RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
     RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 #else
     UIView <UISearchBarDelegate>
@@ -30,15 +29,6 @@
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
     API_UNAVAILABLE(tvos, watchos);
 #endif // Check for iOS >= 16 && !TARGET_OS_TV
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-@property (nonatomic, copy) RCTDirectEventBlock onChangeText;
-@property (nonatomic, copy) RCTDirectEventBlock onCancelButtonPress;
-@property (nonatomic, copy) RCTDirectEventBlock onSearchButtonPress;
-@property (nonatomic, copy) RCTDirectEventBlock onSearchFocus;
-@property (nonatomic, copy) RCTDirectEventBlock onSearchBlur;
-#endif
 
 @end
 

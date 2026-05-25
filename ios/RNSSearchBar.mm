@@ -3,25 +3,18 @@
 #import "RNSDefines.h"
 #import "RNSSearchBar.h"
 
-#import <React/RCTBridge.h>
 #import <React/RCTComponent.h>
-#import <React/RCTUIManager.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSConvert.h"
-#endif // RCT_NEW_ARCH_ENABLED
 
-#ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSSearchBar {
-  __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
 
@@ -33,17 +26,6 @@ namespace react = facebook::react;
 
 @synthesize controller = _controller;
 
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-    [self initCommonProps];
-  }
-  return self;
-}
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -53,7 +35,6 @@ namespace react = facebook::react;
   }
   return self;
 }
-#endif
 
 - (void)initCommonProps
 {
@@ -77,77 +58,43 @@ namespace react = facebook::react;
 
 - (void)emitOnFocusEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchFocus(react::RNSSearchBarEventEmitter::OnSearchFocus{});
   }
-#else
-  if (self.onSearchFocus) {
-    self.onSearchFocus(@{});
-  }
-#endif
 }
 
 - (void)emitOnBlurEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchBlur(react::RNSSearchBarEventEmitter::OnSearchBlur{});
   }
-#else
-  if (self.onSearchBlur) {
-    self.onSearchBlur(@{});
-  }
-#endif
 }
 
 - (void)emitOnSearchButtonPressEventWithText:(NSString *)text
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchButtonPress(
             react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
   }
-#else
-  if (self.onSearchButtonPress) {
-    self.onSearchButtonPress(@{
-      @"text" : text,
-    });
-  }
-#endif
 }
 
 - (void)emitOnCancelButtonPressEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onCancelButtonPress(react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
   }
-#else
-  if (self.onCancelButtonPress) {
-    self.onCancelButtonPress(@{});
-  }
-#endif
 }
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
-#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
   }
-#else
-  if (self.onChangeText) {
-    self.onChangeText(@{
-      @"text" : text,
-    });
-  }
-#endif
 }
 
 - (void)setObscureBackground:(RNSOptionalBoolean)obscureBackground
@@ -381,7 +328,6 @@ namespace react = facebook::react;
 
 #pragma mark-- Fabric specific
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
@@ -458,9 +404,6 @@ namespace react = facebook::react;
   return NO;
 }
 
-#else
-#endif // RCT_NEW_ARCH_ENABLED
-
 #pragma mark - Dynamic frameworks support
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -473,122 +416,13 @@ namespace react = facebook::react;
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 {
   return RNSSearchBar.class;
 }
-#endif
 
 @implementation RNSSearchBarManager
 
 RCT_EXPORT_MODULE()
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (UIView *)view
-{
-  return [[RNSSearchBar alloc] initWithBridge:self.bridge];
-}
-#endif
-
-RCT_EXPORT_VIEW_PROPERTY(obscureBackground, RNSOptionalBoolean)
-RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, RNSOptionalBoolean)
-RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
-
-// We want to use "systemDefault" option which is not in UITextAutocapitalizationType
-// but RCTConvert enum conversion already exists.
-RCT_CUSTOM_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType, RNSSearchBar)
-{
-  RNSSearchBar *searchBarView = static_cast<RNSSearchBar *>(view);
-  if ([json isKindOfClass:[NSString class]] && [static_cast<NSString *>(json) isEqualToString:@"systemDefault"]) {
-    [searchBarView setAutoCapitalize:UITextAutocapitalizationTypeSentences];
-  } else {
-    [searchBarView setAutoCapitalize:[RCTConvert UITextAutocapitalizationType:json]];
-  }
-}
-
-RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
-RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
-RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
-RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)
-
-RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onSearchFocus, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onSearchBlur, RCTDirectEventBlock)
-
-#ifndef RCT_NEW_ARCH_ENABLED
-
-RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar focus];
-  }];
-}
-
-RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar blur];
-  }];
-}
-
-RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar clearText];
-  }];
-}
-
-RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL)flag)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar toggleCancelButton:flag];
-  }];
-}
-
-RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar setText:text];
-  }];
-}
-
-RCT_EXPORT_METHOD(cancelSearch : (NSNumber *_Nonnull)reactTag)
-{
-  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
-    RNSSearchBar *searchBar = viewRegistry[reactTag];
-    [searchBar cancelSearch];
-  }];
-}
-
-#endif /* !RCT_NEW_ARCH_ENABLED */
-
-@end
-
-@implementation RCTConvert (RNSScreen)
-
-RCT_ENUM_CONVERTER(
-    RNSSearchBarPlacement,
-    (@{
-      @"automatic" : @(RNSSearchBarPlacementAutomatic),
-      @"inline" : @(RNSSearchBarPlacementInline),
-      @"stacked" : @(RNSSearchBarPlacementStacked),
-      @"integrated" : @(RNSSearchBarPlacementIntegrated),
-      @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
-      @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
-    }),
-    RNSSearchBarPlacementAutomatic,
-    integerValue)
 
 @end

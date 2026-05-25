@@ -10,7 +10,7 @@ type TabSelectedEvent = Readonly<{
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
-  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 }>;
 
 type NavigationStateRequest = Readonly<{
@@ -22,7 +22,7 @@ type TabSelectionRejectedEvent = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
   rejectedScreenKey: string;
-  rejectedProvenance: CT.Int32;
+  rejectedBaseProvenance: CT.Int32;
   rejectionReason: 'stale' | 'repeated';
 }>;
 

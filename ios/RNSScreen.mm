@@ -43,18 +43,17 @@ struct ContentWrapperBox {
   float contentHeightErrata{0.f};
 };
 
-@interface RNSScreenView () <
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
+@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate,
+                             UIGestureRecognizerDelegate,
 #if !TARGET_OS_TV
-    UISheetPresentationControllerDelegate,
+                             UISheetPresentationControllerDelegate,
 #endif
-    RCTRNSScreenViewProtocol,
-    CAAnimationDelegate>
+                             RCTRNSScreenViewProtocol,
+                             CAAnimationDelegate>
 @end
 
 @implementation RNSScreenView {
-  __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
+  __weak RCTScrollViewComponentView *_sheetsScrollView;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -106,17 +105,6 @@ struct ContentWrapperBox {
   _synchronousShadowStateUpdatesEnabled = YES;
 }
 
-+ (RNSViewInteractionManager *)viewInteractionManagerInstance
-{
-  static RNSViewInteractionManager *manager = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    manager = [[RNSViewInteractionManager alloc] init];
-  });
-
-  return manager;
-}
-
 - (BOOL)getFullScreenSwipeShadowEnabled
 {
   if (@available(iOS 26, *)) {
@@ -159,14 +147,10 @@ RNS_IGNORE_SUPER_CALL_END
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -194,7 +178,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
-  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self tryFindDescendantScrollView];
+  RCTScrollViewComponentView *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -208,7 +192,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
+- (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
   RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
@@ -227,7 +211,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UIView *scrollView = (UIView *)object;
 
-  if (![scrollView isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+  if (![scrollView isKindOfClass:RCTScrollViewComponentView.class]) {
     return;
   }
 
@@ -564,9 +548,8 @@ RNS_IGNORE_SUPER_CALL_END
   if (_eventEmitter != nullptr) {
     int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetDetentChanged(
-            react::RNSScreenEventEmitter::OnSheetDetentChanged{
-                .index = index, .isStable = static_cast<bool>(isStable)});
+        ->onSheetDetentChanged(react::RNSScreenEventEmitter::OnSheetDetentChanged{
+            .index = index, .isStable = static_cast<bool>(isStable)});
   }
 }
 
@@ -637,9 +620,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(
-            react::RNSScreenEventEmitter::OnTransitionProgress{
-                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInteger:self.tag]
@@ -647,22 +629,6 @@ RNS_IGNORE_SUPER_CALL_END
                                                                     closing:closing
                                                                goingForward:goingForward];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
-}
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  if (@available(iOS 26, *)) {
-    // In iOS 26, as soon as another screen appears in transition, it is interactable
-    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
-    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
-    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
-
-    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
-    // starting from reactSuperview
-    if (![self isPresentedAsNativeModal]) {
-      [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
-    }
-  }
 }
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
@@ -675,11 +641,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
-
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
   // with usePreventRemove API of react-navigation v7.
   [self notifyGestureCancel];
@@ -690,12 +651,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions
-    // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
-
   [_controller notifyPresentedControllerDismissed];
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
@@ -748,12 +703,12 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)tryFindDescendantScrollView
+- (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+  if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
@@ -763,8 +718,8 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
+    if ([firstSubview isKindOfClass:RCTScrollViewComponentView.class]) {
+      return static_cast<RCTScrollViewComponentView *>(firstSubview);
     }
   }
 
@@ -774,8 +729,8 @@ RNS_IGNORE_SUPER_CALL_END
     UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
-        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
+          return static_cast<RCTScrollViewComponentView *>(subview);
         }
       }
     }
@@ -815,13 +770,19 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
+  // Since the scroll view might get immediately recycled we remove ourselves
+  // immediately.
+  if (_sheetsScrollView != nil) {
+    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = nil;
+  }
+
   // We want to run after container updates are performed (transitions etc.)
   __weak auto weakSelf = self;
 
   dispatch_async(dispatch_get_main_queue(), ^{
     auto strongSelf = weakSelf;
     if (strongSelf) {
-      [strongSelf->_sheetsScrollView removeObserver:strongSelf forKeyPath:@"bounds" context:nil];
       strongSelf->_controller = nil;
     }
   });
@@ -1299,8 +1260,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
-  [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
-
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -1542,10 +1501,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
-  if (@available(iOS 26, *)) {
-    // Reenable interactions, see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
@@ -1582,11 +1537,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
-
-  if (@available(iOS 26, *)) {
-    // Reenable interactions, see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
 }
 
 - (void)viewDidLayoutSubviews
@@ -2097,88 +2047,25 @@ RCT_EXPORT_MODULE()
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(
-    RNSScreenStackPresentation,
-    (@{
-      @"push" : @(RNSScreenStackPresentationPush),
-      @"modal" : @(RNSScreenStackPresentationModal),
-      @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
-      @"formSheet" : @(RNSScreenStackPresentationFormSheet),
-      @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
-      @"containedModal" : @(RNSScreenStackPresentationContainedModal),
-      @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
-      @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
-    }),
-    RNSScreenStackPresentationPush,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    RNSScreenStackAnimation,
-    (@{
-      @"default" : @(RNSScreenStackAnimationDefault),
-      @"none" : @(RNSScreenStackAnimationNone),
-      @"fade" : @(RNSScreenStackAnimationFade),
-      @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
-      @"flip" : @(RNSScreenStackAnimationFlip),
-      @"simple_push" : @(RNSScreenStackAnimationSimplePush),
-      @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
-      @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-      @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-      @"ios_from_right" : @(RNSScreenStackAnimationDefault),
-      @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-    }),
-    RNSScreenStackAnimationDefault,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    RNSScreenReplaceAnimation,
-    (@{
-      @"push" : @(RNSScreenReplaceAnimationPush),
-      @"pop" : @(RNSScreenReplaceAnimationPop),
-    }),
-    RNSScreenReplaceAnimationPop,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    RNSScreenSwipeDirection,
-    (@{
-      @"vertical" : @(RNSScreenSwipeDirectionVertical),
-      @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
-    }),
-    RNSScreenSwipeDirectionHorizontal,
-    integerValue)
-
 #if !TARGET_OS_TV
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
+RCT_ENUM_CONVERTER(UIStatusBarAnimation,
+                   (@{
+                     @"none" : @(UIStatusBarAnimationNone),
+                     @"fade" : @(UIStatusBarAnimationFade),
+                     @"slide" : @(UIStatusBarAnimationSlide)
+                   }),
+                   UIStatusBarAnimationNone,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSStatusBarStyle,
-    (@{
-      @"auto" : @(RNSStatusBarStyleAuto),
-      @"inverted" : @(RNSStatusBarStyleInverted),
-      @"light" : @(RNSStatusBarStyleLight),
-      @"dark" : @(RNSStatusBarStyleDark),
-    }),
-    RNSStatusBarStyleAuto,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    RNSScreenDetentType,
-    (@{
-      @"large" : @(RNSScreenDetentTypeLarge),
-      @"medium" : @(RNSScreenDetentTypeMedium),
-      @"all" : @(RNSScreenDetentTypeAll),
-    }),
-    RNSScreenDetentTypeAll,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSStatusBarStyle,
+                   (@{
+                     @"auto" : @(RNSStatusBarStyleAuto),
+                     @"inverted" : @(RNSStatusBarStyleInverted),
+                     @"light" : @(RNSStatusBarStyleLight),
+                     @"dark" : @(RNSStatusBarStyleDark),
+                   }),
+                   RNSStatusBarStyleAuto,
+                   integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {

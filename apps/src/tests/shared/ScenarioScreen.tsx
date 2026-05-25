@@ -14,25 +14,30 @@ function ScenarioSelect(props: {
   groupName: string;
 }) {
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      testID={`${props.groupName}-scenarios-scrollview`}>
-      {Object.values(props.scenarios).map(
-        ({ scenarioDescription }: Scenario) => {
-          const { name, key, details, platforms } = scenarioDescription;
-          return (
-            <ScenarioButton
-              title={name}
-              details={details}
-              route={key}
-              key={key}
-              platformsHint={platforms}
-              testID={key}
-            />
-          );
-        },
-      )}
-    </ScrollView>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        testID={`${props.groupName}-scenarios-scrollview`}>
+        {Object.values(props.scenarios).map(
+          ({ scenarioDescription }: Scenario) => {
+            const { name, key, details, platforms, smokeTest, e2eCoverage } =
+              scenarioDescription;
+            return (
+              <ScenarioButton
+                title={name}
+                details={details}
+                route={key}
+                key={key}
+                platformsHint={platforms}
+                smokeTest={smokeTest}
+                e2eCoverage={e2eCoverage}
+                testID={key}
+              />
+            );
+          },
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -42,40 +47,38 @@ export default function ScenarioSelectionScreen(props: {
   const Stack = useMemo(() => createNativeStackNavigator(), []);
 
   return (
-    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
-      <NavigationIndependentTree>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              key="Main"
-              name="Main"
-              options={{
-                headerShown: true,
-                headerLargeTitleEnabled: true,
-                headerTitle: props.scenarioGroup.name,
-              }}>
-              {() => (
-                <ScenarioSelect
-                  scenarios={props.scenarioGroup.scenarios}
-                  groupName={props.scenarioGroup.name}
-                />
-              )}
-            </Stack.Screen>
-            {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
-              (ScenarioComponent: Scenario) => {
-                const { key } = ScenarioComponent.scenarioDescription;
-                return (
-                  <Stack.Screen
-                    key={key}
-                    name={key}
-                    component={ScenarioComponent}
-                  />
-                );
-              },
+    <NavigationIndependentTree>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+            key="Main"
+            name="Main"
+            options={{
+              headerShown: true,
+              headerLargeTitleEnabled: true,
+              headerTitle: props.scenarioGroup.name,
+            }}>
+            {() => (
+              <ScenarioSelect
+                scenarios={props.scenarioGroup.scenarios}
+                groupName={props.scenarioGroup.name}
+              />
             )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </NavigationIndependentTree>
-    </SafeAreaView>
+          </Stack.Screen>
+          {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
+            (ScenarioComponent: Scenario) => {
+              const { key } = ScenarioComponent.scenarioDescription;
+              return (
+                <Stack.Screen
+                  key={key}
+                  name={key}
+                  component={ScenarioComponent}
+                />
+              );
+            },
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NavigationIndependentTree>
   );
 }

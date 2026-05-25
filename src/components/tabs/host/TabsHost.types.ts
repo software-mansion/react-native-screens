@@ -67,11 +67,13 @@ export type TabSelectedEvent = {
    * @description
    * - `user` — direct native UI interaction (e.g. tab bar tap, iOS tab drag-and-drop).
    * - `programmatic-js` — JS-initiated request delivered via the `navStateRequest` prop.
+   * - `programmatic-native` — request initiated from the native side by an actor
+   *   integrating directly against the native container.
    * - `implicit` — platform side effect not attributable to an explicit actor
    *   (e.g. UIKit reshuffling the selection during a horizontal size-class transition on iPad).
    *   Currently only emitted on iOS.
    */
-  actionOrigin: 'user' | 'programmatic-js' | 'implicit';
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 };
 
 /**
@@ -101,8 +103,8 @@ export type TabSelectionRejectedEvent = {
   provenance: number;
   /** Screen key of the tab whose selection was rejected. */
   rejectedScreenKey: string;
-  /** Provenance of the rejected navigation state update. */
-  rejectedProvenance: number;
+  /** Base provenance of the rejected navigation state update. */
+  rejectedBaseProvenance: number;
   /** Reason the selection was rejected. */
   rejectionReason: TabSelectionRejectionReason;
 };

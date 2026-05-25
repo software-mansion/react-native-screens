@@ -192,6 +192,8 @@ export { default as Test3835 } from './Test3835';
 export { default as Test3867 } from './Test3867';
 export { default as Test3885 } from './Test3885';
 export { default as Test3910 } from './Test3910';
+export { default as Test4027 } from './Test4027';
+export { default as Test4064 } from './Test4064';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -212,3 +214,4 @@ export { default as TestScreenStack } from './TestScreenStack';
 export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
+export { default as Test4090 } from './Test4090';

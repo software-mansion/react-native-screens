@@ -108,16 +108,16 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   RNSBlurEffectStyleSystemMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterial,
   RNSBlurEffectStyleSystemThickMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterial,
   RNSBlurEffectStyleSystemChromeMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterial,
-  RNSBlurEffectStyleSystemUltraThinMaterialLight API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemUltraThinMaterialLight,
+  RNSBlurEffectStyleSystemUltraThinMaterialLight API_UNAVAILABLE(watchos,
+                                                                 tvos) = UIBlurEffectStyleSystemUltraThinMaterialLight,
   RNSBlurEffectStyleSystemThinMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialLight,
   RNSBlurEffectStyleSystemMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialLight,
   RNSBlurEffectStyleSystemThickMaterialLight API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialLight,
-  RNSBlurEffectStyleSystemChromeMaterialLight API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemChromeMaterialLight,
+  RNSBlurEffectStyleSystemChromeMaterialLight API_UNAVAILABLE(watchos,
+                                                              tvos) = UIBlurEffectStyleSystemChromeMaterialLight,
 
-  RNSBlurEffectStyleSystemUltraThinMaterialDark API_UNAVAILABLE(watchos, tvos) =
-      UIBlurEffectStyleSystemUltraThinMaterialDark,
+  RNSBlurEffectStyleSystemUltraThinMaterialDark API_UNAVAILABLE(watchos,
+                                                                tvos) = UIBlurEffectStyleSystemUltraThinMaterialDark,
   RNSBlurEffectStyleSystemThinMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialDark,
   RNSBlurEffectStyleSystemMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialDark,
   RNSBlurEffectStyleSystemThickMaterialDark API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialDark,
@@ -131,23 +131,6 @@ typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeSfSymbol,
   RNSTabsIconTypeXcasset,
 };
-
-#if !RCT_NEW_ARCH_ENABLED
-typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
-  RNSTabBarMinimizeBehaviorAutomatic,
-  RNSTabBarMinimizeBehaviorNever,
-  RNSTabBarMinimizeBehaviorOnScrollDown,
-  RNSTabBarMinimizeBehaviorOnScrollUp,
-};
-#endif
-
-#if !RCT_NEW_ARCH_ENABLED
-typedef NS_ENUM(NSInteger, RNSTabBarControllerMode) {
-  RNSTabBarControllerModeAutomatic,
-  RNSTabBarControllerModeTabBar,
-  RNSTabBarControllerModeTabSidebar,
-};
-#endif
 
 // TODO: investigate objc - swift interop and deduplicate this code
 // This enum needs to be compatible with the RNSOrientationSwift enum.

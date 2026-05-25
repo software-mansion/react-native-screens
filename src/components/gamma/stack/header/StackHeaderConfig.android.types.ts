@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import type { ColorValue, NativeSyntheticEvent } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../../../types';
@@ -10,13 +10,12 @@ export type StackHeaderBackgroundSubviewCollapseModeAndroid =
 
 export interface StackHeaderToolbarSubviewAndroid {
   /**
-   * @summary The React component rendered in this toolbar slot.
+   * @summary Render callback for the React element placed in this toolbar slot.
    *
    * The subview is sized by React Native's layout engine but positioned by the
    * platform native layout. Each subview is placed independently — subviews do
    * not participate in a shared flex layout and cannot influence each other's
    * sizing.
-   *
    *
    * @remarks
    * Intrinsic sizing and explicit dimensions work as expected. Avoid
@@ -26,7 +25,7 @@ export interface StackHeaderToolbarSubviewAndroid {
    *
    * @platform android
    */
-  Component: NonNullable<ReactNode>;
+  render: () => ReactElement;
 }
 
 export interface StackHeaderBackgroundSubviewAndroid {
@@ -51,14 +50,16 @@ export interface StackHeaderBackgroundSubviewAndroid {
    */
   collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
   /**
-   * @summary The React component rendered as the header background.
+   * @summary Render callback for the React element used as the header
+   * background.
    *
+   * @remarks
    * The subview is stretched to match the header (`AppBarLayout`) dimensions,
    * so parent-relative sizing (e.g. `flex: 1`) works correctly.
    *
    * @platform android
    */
-  Component: NonNullable<ReactNode>;
+  render: () => ReactElement;
 }
 
 export interface StackHeaderToolbarMenuItemAndroid {

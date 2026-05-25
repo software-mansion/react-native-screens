@@ -7,10 +7,6 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTInvalidating.h>
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSTabsHostComponentView;
@@ -20,13 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <
-                                            RNSSafeAreaProviding
-#if !RCT_NEW_ARCH_ENABLED
-                                            ,
-                                            RCTInvalidating
-#endif
-                                            >
+@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -47,14 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
-// TODO: All of these properties should be `readonly`. Do this when support for legacy
-// architecture is dropped.
+@property (nonatomic, readonly, nullable) NSString *screenKey;
+@property (nonatomic, readonly, nullable) NSString *badgeValue;
 
-@property (nonatomic, nullable) NSString *screenKey;
-@property (nonatomic, nullable) NSString *badgeValue;
-
-@property (nonatomic, nullable) NSString *tabBarItemTestID;
-@property (nonatomic, nullable) NSString *tabBarItemAccessibilityLabel;
+@property (nonatomic, readonly, nullable) NSString *tabBarItemTestID;
+@property (nonatomic, readonly, nullable) NSString *tabBarItemAccessibilityLabel;
 
 @property (nonatomic, readonly) RNSTabsIconType iconType;
 
@@ -67,22 +54,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *scrollEdgeAppearance;
 
-@property (nonatomic, nullable) NSString *title;
+@property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly) BOOL isTitleUndefined;
 @property (nonatomic, readonly) RNSOrientation orientation;
 
-@property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
-@property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
+@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
-@property (nonatomic) BOOL preventNativeSelection;
+@property (nonatomic, readonly) BOOL preventNativeSelection;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
-@property (nonatomic, nullable) NSString *tabItemTestID;
-@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
+@property (nonatomic, readonly, nullable) NSString *tabItemTestID;
+@property (nonatomic, readonly, nullable) NSString *tabItemAccessibilityLabel;
 @property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
 
-@property (nonatomic) RNSTabsScreenSystemItem systemItem;
+@property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
 
 @end
 
@@ -90,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsScreenComponentView ()
 
-@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+@property (nonatomic, readonly) UIUserInterfaceStyle userInterfaceStyle;
 
 @end
 
@@ -102,14 +89,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsScreenEventEmitter *)reactEventEmitter;
-
-#if !RCT_NEW_ARCH_ENABLED
-#pragma mark - LEGACY Event emitting blocks
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillAppear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidAppear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillDisappear;
-@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidDisappear;
-#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 
