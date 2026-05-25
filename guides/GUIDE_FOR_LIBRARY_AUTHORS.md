@@ -533,7 +533,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `placement` - Placement of the search bar in the navigation bar. (iOS only)
 - `allowToolbarIntegration` - Indicates whether the system can place the search bar among other toolbar items on iPhone. (iOS only)
 - `textColor` - The search field text color.
-- `hintTextColor` - The search hint text color. (Android only)
+- `hintTextColor` - The search hint text color.
 - `headerIconColor` - The search and close icon color shown in the header. (Android only)
 - `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 - `ref` - A React ref to imperatively modify search bar.
