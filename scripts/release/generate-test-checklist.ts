@@ -90,11 +90,11 @@ function compareEntries(a: Entry, b: Entry): number {
     return coverageDiff;
   }
 
-  if (a.subdirectory !== b.subdirectory) {
+  if (a.key !== b.subdirectory) {
     return a.subdirectory.localeCompare(b.subdirectory);
   }
 
-  return a.name.localeCompare(b.name);
+  return a.key.localeCompare(b.key);
 }
 
 function formatTable(entries: Entry[]): string {
