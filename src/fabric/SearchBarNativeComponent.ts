@@ -60,6 +60,7 @@ export interface NativeProps extends ViewProps {
   barTintColor?: ColorValue | undefined;
   tintColor?: ColorValue | undefined;
   textColor?: ColorValue | undefined;
+  hintTextColor?: ColorValue | undefined;
 
   // Android only
   autoFocus?: CT.WithDefault<boolean, false>;
@@ -68,7 +69,6 @@ export interface NativeProps extends ViewProps {
   inputType?: string | undefined;
   onClose?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
   onOpen?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
-  hintTextColor?: ColorValue | undefined;
   headerIconColor?: ColorValue | undefined;
   shouldShowHintSearchIcon?: CT.WithDefault<boolean, true>;
 }

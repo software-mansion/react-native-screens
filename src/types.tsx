@@ -1064,8 +1064,6 @@ export interface SearchBarProps {
   textColor?: ColorValue | undefined;
   /**
    * The search hint text color
-   *
-   * @plaform android
    */
   hintTextColor?: ColorValue | undefined;
   /**
