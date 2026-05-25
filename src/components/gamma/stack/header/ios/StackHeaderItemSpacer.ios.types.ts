@@ -7,6 +7,6 @@ export type StackHeaderItemSpacerPlacement = Extract<
 
 export type StackHeaderItemSpacerProps = {
   placement: StackHeaderItemSpacerPlacement;
-  size?: 'fixed' | 'flexible' | undefined;
+  sizing?: 'fixed' | 'flexible' | undefined;
   width?: number | undefined;
 };

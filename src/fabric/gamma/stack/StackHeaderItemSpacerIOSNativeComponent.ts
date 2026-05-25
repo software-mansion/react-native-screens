@@ -8,7 +8,7 @@ type Placement = 'leading' | 'trailing';
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
-  size?: CT.WithDefault<SpacerSize, 'flexible'>;
+  sizing?: CT.WithDefault<SpacerSize, 'flexible'>;
   width?: CT.Float | undefined;
 }
 

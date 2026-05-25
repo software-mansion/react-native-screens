@@ -69,8 +69,8 @@ namespace react = facebook::react;
   }
   _didSetHeaderItemSpacerPlacement = YES;
 
-  if (oldSpacerProps.size != newSpacerProps.size) {
-    _isFlexible = newSpacerProps.size == react::RNSStackHeaderItemSpacerIOSSize::Flexible;
+  if (oldSpacerProps.sizing != newSpacerProps.sizing) {
+    _isFlexible = newSpacerProps.sizing == react::RNSStackHeaderItemSpacerIOSSizing::Flexible;
     needsUpdate = YES;
   }
 
