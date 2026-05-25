@@ -80,6 +80,44 @@ namespace react = facebook::react;
   return wrapperView;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (nonnull UIView *)makeWrappedInlineItemViewForIOS26WithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
+{
+  // (taken from #3868)
+  // Starting from iOS 26, UIBarButtonItem's customView is stretched to have at least 36 width.
+  // To mitigate this, we add a wrapper view that will center the item inside of itself.
+  RNSStackHeaderItemWrapperView *wrapperView = [[RNSStackHeaderItemWrapperView alloc] initWithDelegate:delegate];
+  wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+  // self has already opted out of default constraints with `translateAutoresizingMaskIntoConstraints = NO`
+  [wrapperView addSubview:self];
+
+  [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
+  [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
+
+  // To prevent UIKit from stretching subviews to all available width, we need to:
+  // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
+  //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
+  //    UIKit's constraint. That's why we need to lower the priority of the constraint.
+  NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
+  widthEqual.priority = UILayoutPriorityDefaultHigh;
+  widthEqual.active = YES;
+
+  NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
+  heightEqual.priority = UILayoutPriorityDefaultHigh;
+  heightEqual.active = YES;
+
+  // 2. Set content hugging priority for header subview
+  [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+  [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+
+  // 3. Set compression resistance to prevent UIKit from shrinking the subview below its intrinsic size.
+  [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+  [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+
+  return wrapperView;
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
 - (nonnull UIBarButtonItem *)makeBarButtonItemWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
 {
   // Similarly to makeWrappedViewWithDelegate, we're attaching outside delegate here.
@@ -87,38 +125,8 @@ namespace react = facebook::react;
   if (self.hasCustomView) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
-      // (taken from #3868)
-      // Starting from iOS 26, UIBarButtonItem's customView is stretched to have at least 36 width.
-      // To mitigate this, we add a wrapper view that will center the item inside of itself.
-      RNSStackHeaderItemWrapperView *wrapperView = [[RNSStackHeaderItemWrapperView alloc] initWithDelegate:delegate];
-      wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
-      // self has already opted out of default constraints with `translateAutoresizingMaskIntoConstraints = NO`
-      [wrapperView addSubview:self];
-
-      [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
-      [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
-
-      // To prevent UIKit from stretching subviews to all available width, we need to:
-      // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
-      //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
-      //    UIKit's constraint. That's why we need to lower the priority of the constraint.
-      NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
-      widthEqual.priority = UILayoutPriorityDefaultHigh;
-      widthEqual.active = YES;
-
-      NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
-      heightEqual.priority = UILayoutPriorityDefaultHigh;
-      heightEqual.active = YES;
-
-      // 2. Set content hugging priority for header subview
-      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-
-      // 3. Set compression resistance to prevent UIKit from shrinking the subview below its intrinsic size.
-      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-
-      return [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
+      return [[UIBarButtonItem alloc]
+          initWithCustomView:[self makeWrappedInlineItemViewForIOS26WithFrameChangeDelegate:delegate]];
     }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     return [[UIBarButtonItem alloc] initWithCustomView:[self makeWrappedViewWithFrameChangeDelegate:delegate]];
