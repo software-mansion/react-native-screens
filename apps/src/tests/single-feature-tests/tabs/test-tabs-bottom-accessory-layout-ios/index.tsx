@@ -11,7 +11,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-function ShortViewUL() {
+export function ShortViewUL() {
   return (
     <View
       style={[
@@ -25,7 +25,7 @@ function ShortViewUL() {
   );
 }
 
-function ShortViewC() {
+export function ShortViewC() {
   return (
     <View
       style={[
@@ -39,7 +39,7 @@ function ShortViewC() {
   );
 }
 
-function ShortViewLR() {
+export function ShortViewLR() {
   return (
     <View
       style={[
@@ -53,7 +53,7 @@ function ShortViewLR() {
   );
 }
 
-function LongView() {
+export function LongView() {
   return (
     <View style={styles.fullView} testID="accessory-long">
       <LongText />
@@ -61,7 +61,7 @@ function LongView() {
   );
 }
 
-function RGBView() {
+export function RGBView() {
   return (
     <View style={styles.fullView} testID="accessory-rgb">
       <View
@@ -88,7 +88,7 @@ const ACCESSORY_VARIANTS = [
   { id: 4, Content: RGBView, testID: 'variant-rgb' },
 ];
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const [selected, setSelected] = useState(0);
   const { updateHostConfig } = useTabsHostConfig();
 
@@ -117,7 +117,7 @@ function ConfigScreen() {
   );
 }
 
-function ScrollDownTab() {
+export function ScrollDownTab() {
   const { updateHostConfig } = useTabsHostConfig();
   const { isSelected } = useTabsNavigationContext();
 
@@ -144,7 +144,7 @@ function ScrollDownTab() {
   );
 }
 
-function ScrollUpTab() {
+export function ScrollUpTab() {
   const { updateHostConfig } = useTabsHostConfig();
   const { isSelected } = useTabsNavigationContext();
 
