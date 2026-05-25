@@ -1,53 +1,61 @@
 import { ComponentType } from 'react';
 
-export interface HeaderBaseItem {
+export interface StackHeaderBaseItemIOS {
   key: string;
   label?: string | undefined;
 }
 
-export interface HeaderInlineItem extends HeaderBaseItem {
+export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
   type: 'item';
 }
 
-export interface HeaderInlineCustomItem {
+export interface StackHeaderInlineCustomItemIOS {
   key: string;
   type: 'item';
   component: ComponentType;
 }
 
-interface HeaderFixedSpacerItem {
+interface StackHeaderFixedSpacerItemIOS {
   key: string;
   type: 'spacer';
   sizing: 'fixed';
   width: number;
 }
 
-interface HeaderFlexibleSpacerItem {
+interface StackHeaderFlexibleSpacerItemIOS {
   key: string;
   type: 'spacer';
   sizing: 'flexible';
 }
 
-export type HeaderSpacerItem = HeaderFixedSpacerItem | HeaderFlexibleSpacerItem;
+export type StackHeaderSpacerItemIOS =
+  | StackHeaderFixedSpacerItemIOS
+  | StackHeaderFlexibleSpacerItemIOS;
 
-export interface HeaderTitleItem extends HeaderBaseItem {}
-
-export interface HeaderTitleCustomItem {
+export interface StackHeaderTitleCustomItemIOS {
   key: string;
   component: ComponentType;
 }
 
 export interface StackHeaderConfigPropsIOS {
-  subtitleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
+  subtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
   leadingItems?:
-    | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
+    | (
+        | StackHeaderInlineItemIOS
+        | StackHeaderInlineCustomItemIOS
+        | StackHeaderSpacerItemIOS
+      )[]
     | undefined;
-  titleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
+  titleItem?: StackHeaderTitleCustomItemIOS | undefined;
   trailingItems?:
-    | (HeaderInlineItem | HeaderInlineCustomItem | HeaderSpacerItem)[]
+    | (
+        | StackHeaderInlineItemIOS
+        | StackHeaderInlineCustomItemIOS
+        | StackHeaderSpacerItemIOS
+      )[]
     | undefined;
   largeTitle?: string | undefined;
   largeTitleEnabled?: boolean | undefined;
   largeSubtitle?: string | undefined;
-  largeSubtitleItem?: HeaderTitleItem | HeaderTitleCustomItem | undefined;
+  largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
 }

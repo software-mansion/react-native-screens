@@ -6,11 +6,10 @@ import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
 import { StyleSheet } from 'react-native';
 import {
-  HeaderInlineCustomItem,
-  HeaderInlineItem,
-  HeaderSpacerItem,
-  HeaderTitleCustomItem,
-  HeaderTitleItem,
+  StackHeaderInlineCustomItemIOS,
+  StackHeaderInlineItemIOS,
+  StackHeaderSpacerItemIOS,
+  StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
 
 /**
@@ -52,15 +51,14 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
 
 function makeItemViewFromItem(
   item:
-    | HeaderInlineItem
-    | HeaderInlineCustomItem
-    | HeaderTitleItem
-    | HeaderTitleCustomItem
-    | HeaderSpacerItem,
+    | StackHeaderInlineItemIOS
+    | StackHeaderInlineCustomItemIOS
+    | StackHeaderTitleCustomItemIOS
+    | StackHeaderSpacerItemIOS,
   placement: HeaderItemPlacement,
 ) {
   if ('type' in item && item.type === 'spacer') {
-    const { key, ...rest } = item as HeaderSpacerItem;
+    const { key, ...rest } = item as StackHeaderSpacerItemIOS;
 
     return <StackHeaderItemSpacer key={key} placement={placement} {...rest} />;
   }

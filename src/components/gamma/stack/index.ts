@@ -24,11 +24,10 @@ export type {
   StackHeaderConfigPropsAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
-  HeaderInlineItem,
-  HeaderInlineCustomItem,
-  HeaderTitleItem,
-  HeaderTitleCustomItem,
-  HeaderSpacerItem,
+  StackHeaderInlineItemIOS,
+  StackHeaderInlineCustomItemIOS,
+  StackHeaderTitleCustomItemIOS,
+  StackHeaderSpacerItemIOS,
 } from './header';
 
 /**
