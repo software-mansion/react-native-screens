@@ -770,10 +770,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
- if (_sheetsScrollView != nil) {
-   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
-   _sheetsScrollView = nil;
- }
+  // Since the scroll view might get immediately recycled we remove ourselves
+  // immediately.
+  if (_sheetsScrollView != nil) {
+    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = nil;
+  }
 
   // We want to run after container updates are performed (transitions etc.)
   __weak auto weakSelf = self;
