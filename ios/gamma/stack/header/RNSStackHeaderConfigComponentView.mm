@@ -74,6 +74,16 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [self submitCurrentDataIfMounted];
 }
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    [self resetProps];
+    [self submitCurrentData];
+  }
+
+  [super willMoveToWindow:newWindow];
+}
+
 #pragma mark - Child mounting
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
