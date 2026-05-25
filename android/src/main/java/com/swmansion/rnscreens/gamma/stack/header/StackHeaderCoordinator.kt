@@ -90,7 +90,7 @@ internal class StackHeaderCoordinator(
     }
 
     private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
-        tearDownHeader(coordinatorLayout)
+        resetHeader(coordinatorLayout)
         removeContentBehavior(coordinatorLayout)
         coordinatorLayout.requestLayout()
     }
@@ -121,7 +121,7 @@ internal class StackHeaderCoordinator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigProviding,
     ) {
-        tearDownHeader(coordinatorLayout)
+        resetHeader(coordinatorLayout)
 
         if (!config.hidden) {
             val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
@@ -151,11 +151,11 @@ internal class StackHeaderCoordinator(
     }
 
     internal fun tearDown(coordinatorLayout: StackHeaderCoordinatorLayout) {
-        tearDownHeader(coordinatorLayout)
+        removeHeader(coordinatorLayout)
         currentConfig = null
     }
 
-    private fun tearDownHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
+    private fun resetHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
         detachSubviews()
         appBarLayout?.let {
             detachAppBarListeners(it)
