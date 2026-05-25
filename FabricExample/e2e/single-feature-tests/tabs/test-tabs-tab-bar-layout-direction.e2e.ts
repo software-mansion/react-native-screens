@@ -200,7 +200,6 @@ describeIfiOS(
   () => {
     beforeAll(async () => {
       await launchAppWithAttributes({
-        // AppleTextDirection: 'YES',
         NSForceRightToLeftWritingDirection: 'YES',
       });
       await selectSingleFeatureTestsScreen(
@@ -221,7 +220,6 @@ describeIfiOS(
 
     afterAll(async () => {
       await launchAppWithAttributes({
-        // AppleTextDirection: 'NO',
         NSForceRightToLeftWritingDirection: 'NO',
       });
     });
