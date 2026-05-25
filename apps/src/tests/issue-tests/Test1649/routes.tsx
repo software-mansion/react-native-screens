@@ -13,25 +13,25 @@ import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 export type RouteDescriptor = {
-  name: string,
-  component: (props: any) => React.JSX.Element,
-  options?: NativeStackNavigationOptions,
+  name: string;
+  component: (props: any) => React.JSX.Element;
+  options?: NativeStackNavigationOptions;
 };
 
 const routes: Record<string, RouteDescriptor> = {
   First: {
-    name: "First",
+    name: 'First',
     component: Home,
   },
   Second: {
-    name: "Second",
+    name: 'Second',
     component: Second,
     options: {
       fullScreenGestureEnabled: true,
     },
   },
   Third: {
-    name: "Third",
+    name: 'Third',
     component: Third,
     options: {
       headerShown: true,
@@ -39,7 +39,7 @@ const routes: Record<string, RouteDescriptor> = {
     },
   },
   Sheet: {
-    name: "SheetScreen",
+    name: 'SheetScreen',
     component: SheetScreen,
     options: {
       headerShown: false,
@@ -49,7 +49,7 @@ const routes: Record<string, RouteDescriptor> = {
     },
   },
   Modal: {
-    name: "ModalScreen",
+    name: 'ModalScreen',
     component: ModalScreen,
     options: {
       headerShown: false,
@@ -58,7 +58,7 @@ const routes: Record<string, RouteDescriptor> = {
     },
   },
   SheetWithScrollView: {
-    name: "SheetWithScrollView",
+    name: 'SheetWithScrollView',
     component: SheetScreenWithScrollView,
     options: {
       headerShown: false,
@@ -67,7 +67,7 @@ const routes: Record<string, RouteDescriptor> = {
     },
   },
   SheetWithTextInput: {
-    name: "SheetWithTextInput",
+    name: 'SheetWithTextInput',
     component: SheetScreenWithTextInput,
     options: {
       headerShown: false,
@@ -76,10 +76,9 @@ const routes: Record<string, RouteDescriptor> = {
     },
   },
   PushWithScrollView: {
-    name: "PushWithScrollView",
+    name: 'PushWithScrollView',
     component: PushWithScrollView,
   },
 };
 
 export default routes;
-

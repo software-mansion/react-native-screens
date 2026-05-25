@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 
 import CommonSheetContent from '../components/CommonSheetContent';
 import { NavPropObj } from '../types';

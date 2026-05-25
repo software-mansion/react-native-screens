@@ -490,11 +490,9 @@ export default function BarButtonItemsExample() {
                         type: 'action',
                         icon: {
                           type: 'templateSource',
-                          templateSource:
-                            require('@assets/search_black.png'),
+                          templateSource: require('@assets/search_black.png'),
                         },
-                        onPress: () =>
-                          Alert.alert('Sub Image Action pressed'),
+                        onPress: () => Alert.alert('Sub Image Action pressed'),
                       },
                     ],
                   },

@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  Button,
-  View,
-  TextInput,
-  Text,
-} from 'react-native';
+import { Button, View, TextInput, Text } from 'react-native';
 
 import * as jotai from 'jotai';
 
@@ -15,7 +10,7 @@ import {
   grabberVisibleAtom,
   isAdditionalContentVisibleAtom,
   largestUndimmedDetentAtom,
-  selectedDetentIndexAtom
+  selectedDetentIndexAtom,
 } from '../state';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import GestureHandlerButton from './GestureHandlerButton';
@@ -61,16 +56,13 @@ export default function CommonSheetContent(): React.JSX.Element {
           inputMode="numeric"
           ref={ref}
         />
-        <Button
-          title="PopTo First"
-          onPress={() => navigation.popTo('First')}
-        />
+        <Button title="PopTo First" onPress={() => navigation.popTo('First')} />
         <Button
           title="PopTo Second"
           onPress={() => navigation.popTo('Second')}
         />
         <Button
-          title='Navigate Third'
+          title="Navigate Third"
           onPress={() => navigation.navigate('Third')}
         />
         <Button
@@ -160,4 +152,3 @@ export default function CommonSheetContent(): React.JSX.Element {
     </View>
   );
 }
-

@@ -25,4 +25,3 @@ function isMergeableObject(val: unknown): val is object {
     !React.isValidElement(val)
   );
 }
-

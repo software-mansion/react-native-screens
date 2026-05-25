@@ -1,8 +1,11 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 function SharedPressable() {
   return (

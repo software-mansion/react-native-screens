@@ -34,21 +34,11 @@ export function ScrollContent({
 }
 
 export function FalseTab() {
-  return (
-    <ScrollContent
-      label="false"
-      testID="override-inset-false"
-    />
-  );
+  return <ScrollContent label="false" testID="override-inset-false" />;
 }
 
 export function TrueTab() {
-  return (
-    <ScrollContent
-      label="true"
-      testID="override-inset-true"
-    />
-  );
+  return <ScrollContent label="true" testID="override-inset-true" />;
 }
 
 export function DefaultTab() {

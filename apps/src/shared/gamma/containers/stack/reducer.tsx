@@ -80,7 +80,9 @@ function navigationActionPushHandler(
   const stack = state.stack;
   const renderedRouteIndex = stack.findIndex(
     route =>
-      route.name === action.routeName && route.activityMode === 'detached' && !route.isMarkedForDismissal,
+      route.name === action.routeName &&
+      route.activityMode === 'detached' &&
+      !route.isMarkedForDismissal,
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
@@ -161,10 +163,14 @@ function navigationActionPopHandler(
   }
 
   // Pop operation on not-top screen is forbidden and might crash.
-  const topAttachedRouteIndex = state.stack.findLastIndex(r => r.activityMode === 'attached');
+  const topAttachedRouteIndex = state.stack.findLastIndex(
+    r => r.activityMode === 'attached',
+  );
 
   if (topAttachedRouteIndex > routeIndex) {
-    console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - not a top screen`);
+    console.warn(
+      `[Stack] Can not perform pop action on route: ${action.routeKey} - not a top screen`,
+    );
     return state;
   }
 

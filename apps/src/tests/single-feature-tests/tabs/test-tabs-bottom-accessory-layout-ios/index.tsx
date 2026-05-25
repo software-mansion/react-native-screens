@@ -18,7 +18,9 @@ function ShortViewUL() {
         styles.shortView,
         { alignItems: 'flex-start', justifyContent: 'flex-start' },
       ]}>
-      <Text testID="accessory-upper-left" style={styles.shortViewText}>Upper Left</Text>
+      <Text testID="accessory-upper-left" style={styles.shortViewText}>
+        Upper Left
+      </Text>
     </View>
   );
 }
@@ -30,7 +32,9 @@ function ShortViewC() {
         styles.shortView,
         { alignItems: 'center', justifyContent: 'center' },
       ]}>
-      <Text testID="accessory-center" style={styles.shortViewText}>Center</Text>
+      <Text testID="accessory-center" style={styles.shortViewText}>
+        Center
+      </Text>
     </View>
   );
 }
@@ -42,7 +46,9 @@ function ShortViewLR() {
         styles.shortView,
         { alignItems: 'flex-end', justifyContent: 'flex-end' },
       ]}>
-      <Text testID="accessory-lower-right" style={styles.shortViewText}>Lower Right</Text>
+      <Text testID="accessory-lower-right" style={styles.shortViewText}>
+        Lower Right
+      </Text>
     </View>
   );
 }
@@ -58,9 +64,18 @@ function LongView() {
 function RGBView() {
   return (
     <View style={styles.fullView} testID="accessory-rgb">
-      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} testID='rgb-strip-0' />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} testID='rgb-strip-1' />
-      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} testID='rgb-strip-2' />
+      <View
+        style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]}
+        testID="rgb-strip-0"
+      />
+      <View
+        style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]}
+        testID="rgb-strip-1"
+      />
+      <View
+        style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]}
+        testID="rgb-strip-2"
+      />
     </View>
   );
 }

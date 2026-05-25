@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet, type FormSheetProps } from 'react-native-screens/experimental';
+import {
+  FormSheet,
+  type FormSheetProps,
+} from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
@@ -11,7 +14,8 @@ type FormSheetCornerRadiusProp = NonNullable<
 
 export function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [radius, setRadius] = useState<FormSheetCornerRadiusProp>('systemDefault');
+  const [radius, setRadius] =
+    useState<FormSheetCornerRadiusProp>('systemDefault');
 
   return (
     <View style={styles.container}>
@@ -33,7 +37,10 @@ export function App() {
           <Text style={styles.sheetTitle}>Current Radius: {radius}</Text>
           <View style={styles.spacing} />
           <View style={styles.buttonGroup}>
-            <Button title="System default" onPress={() => setRadius('systemDefault')} />
+            <Button
+              title="System default"
+              onPress={() => setRadius('systemDefault')}
+            />
             <Button title="Sharp (0)" onPress={() => setRadius(0)} />
             <Button title="Small (10)" onPress={() => setRadius(10)} />
             <Button title="Large (50)" onPress={() => setRadius(50)} />

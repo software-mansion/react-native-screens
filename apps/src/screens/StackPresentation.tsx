@@ -160,9 +160,7 @@ const FullScreenModalScreen = ({
   navigation,
 }: FullScreenModalProps): React.JSX.Element => (
   <View style={{ flex: 1 }}>
-    <ImageBackground
-      style={styles.image}
-      source={require('@assets/trees.jpg')}>
+    <ImageBackground style={styles.image} source={require('@assets/trees.jpg')}>
       <Button
         testID="stack-presentation-fullscreen-modal-go-back-button"
         title="Go back"

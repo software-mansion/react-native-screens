@@ -20,14 +20,15 @@ function ContentView() {
     nav.routeOptions.preventNativeSelection ?? false;
 
   return (
-    <CenteredLayoutView
-      testID='tab-bar-prevent-native-selection-view'>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}
-        testID='screen-name-label'>
+    <CenteredLayoutView testID="tab-bar-prevent-native-selection-view">
+      <Text
+        style={{ fontWeight: 'bold', textAlign: 'center' }}
+        testID="screen-name-label">
         {nav.routeKey}
       </Text>
-      <Text style={{ textAlign: 'center' }}
-        testID='prevent-native-selection-state'>
+      <Text
+        style={{ textAlign: 'center' }}
+        testID="prevent-native-selection-state">
         preventNativeSelection: {JSON.stringify(preventNativeSelection)}
       </Text>
       <Button
@@ -37,7 +38,7 @@ function ContentView() {
             preventNativeSelection: !preventNativeSelection,
           })
         }
-        testID='prevent-native-selection-button'
+        testID="prevent-native-selection-button"
       />
       <TabsNavigationButtons />
     </CenteredLayoutView>
@@ -49,17 +50,36 @@ function TabsNavigationButtons() {
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} testID='first-button' />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')}
-        testID='second-button' />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')}
-        testID='third-button' />
-      <Button title="Select Fourth" onPress={() => nav.selectTab('Fourth')}
-        testID='fourth-button' />
-      <Button title="Select Fifth" onPress={() => nav.selectTab('Fifth')}
-        testID='fifth-button' />
-      <Button title="Select Sixth" onPress={() => nav.selectTab('Sixth')}
-        testID='sixth-button' />
+      <Button
+        title="Select First"
+        onPress={() => nav.selectTab('First')}
+        testID="first-button"
+      />
+      <Button
+        title="Select Second"
+        onPress={() => nav.selectTab('Second')}
+        testID="second-button"
+      />
+      <Button
+        title="Select Third"
+        onPress={() => nav.selectTab('Third')}
+        testID="third-button"
+      />
+      <Button
+        title="Select Fourth"
+        onPress={() => nav.selectTab('Fourth')}
+        testID="fourth-button"
+      />
+      <Button
+        title="Select Fifth"
+        onPress={() => nav.selectTab('Fifth')}
+        testID="fifth-button"
+      />
+      <Button
+        title="Select Sixth"
+        onPress={() => nav.selectTab('Sixth')}
+        testID="sixth-button"
+      />
     </View>
   );
 }
@@ -70,7 +90,7 @@ const ROUTE_OPTIONS: TabRouteOptions = {
     standardAppearance: {
       // Without 'labeled', Android hides labels on all unselected tabs (auto mode with 6 tabs),
       // making it hard to identify tabs when executing the scenario.
-      tabBarItemLabelVisibilityMode: 'labeled'
+      tabBarItemLabelVisibilityMode: 'labeled',
     },
   },
 };
