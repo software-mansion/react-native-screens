@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { scenarioDescription } from './scenario-description';
@@ -97,21 +100,25 @@ export function App() {
 
   return (
     <TestConfigContext.Provider value={{ syncInsets, setSyncInsets }}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="SetupScreen"
-          component={SetupScreen}
-          options={{ title: 'Setup' }}
-        />
-        <Stack.Screen
-          name="TabsScreen"
-          component={TabsScreen}
-          options={{
-            title: 'Tabs Container',
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
+      <NavigationIndependentTree>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="SetupScreen"
+              component={SetupScreen}
+              options={{ title: 'Setup' }}
+            />
+            <Stack.Screen
+              name="TabsScreen"
+              component={TabsScreen}
+              options={{
+                title: 'Tabs Container',
+                headerShown: false,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NavigationIndependentTree>
     </TestConfigContext.Provider>
   );
 }
