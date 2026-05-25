@@ -12,7 +12,7 @@ export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
 export interface StackHeaderInlineCustomItemIOS {
   key: string;
   type: 'item';
-  component: ComponentType;
+  Component: ComponentType;
 }
 
 interface StackHeaderFixedSpacerItemIOS {
@@ -34,7 +34,7 @@ export type StackHeaderSpacerItemIOS =
 
 export interface StackHeaderTitleCustomItemIOS {
   key: string;
-  component: ComponentType;
+  Component: ComponentType;
 }
 
 export interface StackHeaderConfigPropsIOS {

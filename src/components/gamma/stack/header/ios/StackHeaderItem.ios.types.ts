@@ -10,5 +10,5 @@ export type HeaderItemPlacement =
 export type StackHeaderItemProps = {
   placement: HeaderItemPlacement;
   label?: string | undefined;
-  component?: ComponentType | undefined;
+  Component?: ComponentType | undefined;
 };

@@ -174,7 +174,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       type: 'item',
       key: `leading-${i}`,
       label: `leading-${i}`,
-      component: ResizingItem,
+      Component: ResizingItem,
     }));
   if (leadingItems.length > 1) {
     leadingItems.splice(1, 0, {
@@ -192,7 +192,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       type: 'item',
       key: `trailing-${i}`,
       label: `trailing-${i}`,
-      component: ResizingItem,
+      Component: ResizingItem,
     }),
   );
   if (trailingItems.length > 1) {
@@ -217,7 +217,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
           ? {
               key: 'title',
               label: 'title',
-              component: LargeHorizontalItem,
+              Component: LargeHorizontalItem,
             }
           : undefined,
       subtitleItem:
@@ -225,7 +225,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
           ? {
               key: 'subtitle',
               label: 'subtitle',
-              component: SmallHorizontalItem,
+              Component: SmallHorizontalItem,
             }
           : undefined,
       largeSubtitleItem:
@@ -233,7 +233,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
           ? {
               key: 'largeSubtitle',
               label: 'largeSubtitle',
-              component: LargeHorizontalItem,
+              Component: LargeHorizontalItem,
             }
           : undefined,
       leadingItems,
