@@ -90,7 +90,7 @@ function compareEntries(a: Entry, b: Entry): number {
     return coverageDiff;
   }
 
-  if (a.key !== b.subdirectory) {
+  if (a.subdirectory !== b.subdirectory) {
     return a.subdirectory.localeCompare(b.subdirectory);
   }
 
