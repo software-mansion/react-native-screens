@@ -17,7 +17,9 @@ type StackHeaderToolbarMenuItemClickedEvent = Readonly<{
 
 type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'always'
+  | 'alwaysWithText'
   | 'ifRoom'
+  | 'ifRoomWithText'
   | 'never';
 
 export interface StackHeaderToolbarMenuItemAndroid {
@@ -28,7 +30,6 @@ export interface StackHeaderToolbarMenuItemAndroid {
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
   >;
-  showAsActionWithText?: CT.WithDefault<boolean, false>;
 }
 
 export interface NativeProps extends ViewProps {

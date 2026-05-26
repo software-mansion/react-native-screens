@@ -9,4 +9,6 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
     val hidden: Boolean? = null,
+    val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
+    val showAsActionWithText: Boolean? = null,
 )

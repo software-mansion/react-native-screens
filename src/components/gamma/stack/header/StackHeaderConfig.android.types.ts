@@ -64,7 +64,9 @@ export interface StackHeaderBackgroundSubviewAndroid {
 
 export type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'always'
+  | 'alwaysWithText'
   | 'ifRoom'
+  | 'ifRoomWithText'
   | 'never';
 
 export interface StackHeaderToolbarMenuItemAndroid {
@@ -88,7 +90,6 @@ export interface StackHeaderToolbarMenuItemAndroid {
    */
   hidden?: boolean | undefined;
   showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
-  showAsActionWithText?: boolean | undefined;
 }
 
 export type StackHeaderToolbarMenuItemClickedEvent = {
