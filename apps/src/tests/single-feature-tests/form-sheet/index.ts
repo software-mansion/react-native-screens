@@ -1,5 +1,6 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestFormSheetBase from './test-form-sheet-base-ios';
+import TestFormSheetBackgroundComponent from './test-form-sheet-background-component-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents-ios';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible-ios';
@@ -11,6 +12,7 @@ import TestFormSheetPresentationState from './test-form-sheet-presentation-state
 
 const scenarios = {
   TestFormSheetBase,
+  TestFormSheetBackgroundComponent,
   TestFormSheetExpandScrollView,
   TestFormSheetFitToContents,
   TestFormSheetGrabberVisible,

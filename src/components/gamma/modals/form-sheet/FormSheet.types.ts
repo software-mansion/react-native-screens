@@ -103,6 +103,18 @@ export interface FormSheetProps {
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
+  /**
+   * @summary A custom React component to render as the background of the sheet.
+   *
+   * This component must be positioned absolutely to fill the entire bounds of the native
+   * sheet, including the bottom safe area provided by UIKit. It renders behind the `children`.
+   * Useful for adding custom background components that should extend to the very bottom
+   * edge of the sheet, bypassing the `fitToContents` height restrictions.
+   *
+   * @platform ios
+   */
+  backgroundComponent?: React.ReactNode | undefined;
+
   // Events
   /**
    * @summary Called when the sheet is dismissed natively.

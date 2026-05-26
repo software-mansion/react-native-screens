@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
 import FormSheetContentWrapperNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetContentWrapperNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
@@ -12,6 +12,7 @@ import {
 
 export function FormSheet(props: FormSheetProps) {
   const {
+    backgroundComponent,
     children,
     detents,
     initialDetentIndex,
@@ -45,6 +46,11 @@ export function FormSheet(props: FormSheetProps) {
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}>
+      {backgroundComponent !== undefined && (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          {backgroundComponent}
+        </View>
+      )}
       {isFitToContents ? (
         <FormSheetContentWrapperNativeComponent
           style={styles.absoluteWithNoBottom}>
