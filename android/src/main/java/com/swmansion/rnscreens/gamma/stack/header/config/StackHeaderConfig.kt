@@ -11,6 +11,8 @@ import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
@@ -43,6 +45,9 @@ class StackHeaderConfig(
     override var scrollFlagExitUntilCollapsed: Boolean = false
         internal set
     override var scrollFlagSnap: Boolean = false
+        internal set
+
+    override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig> = emptyList()
         internal set
 
     // Staging fields for back button icon resolution.
@@ -97,6 +102,10 @@ class StackHeaderConfig(
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
+    internal lateinit var eventEmitter: StackHeaderConfigEventEmitter
+
+    private var delegate: WeakReference<StackHeaderConfigDelegate>? = null
+
     override fun updateHeaderFrame(
         width: Int,
         height: Int,
@@ -109,20 +118,34 @@ class StackHeaderConfig(
         )
     }
 
-    private var onConfigChangeListener: WeakReference<OnHeaderConfigChangeListener>? = null
-
-    override fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener) {
-        onConfigChangeListener = WeakReference(listener)
+    internal fun onViewManagerAddEventEmitters() {
+        check(id != NO_ID) { "[RNScreens] StackHeaderConfig must have its tag set when registering event emitters" }
+        eventEmitter = StackHeaderConfigEventEmitter(reactContext, id)
     }
 
-    override fun removeOnConfigChangeListener(listener: OnHeaderConfigChangeListener) {
-        if (onConfigChangeListener?.get() === listener) {
-            onConfigChangeListener = null
+    override fun onMenuItemClick(id: String) {
+        eventEmitter.emitOnToolbarMenuItemClicked(id)
+    }
+
+    override fun setDelegate(delegate: StackHeaderConfigDelegate) {
+        this.delegate = WeakReference(delegate)
+    }
+
+    override fun removeDelegate(delegate: StackHeaderConfigDelegate) {
+        if (this.delegate?.get() === delegate) {
+            this.delegate = null
         }
     }
 
     internal fun notifyConfigChanged() {
-        onConfigChangeListener?.get()?.onHeaderConfigChange(this)
+        delegate?.get()?.onConfigChange(this)
+    }
+
+    internal fun dispatchMenuItemUpdate(
+        id: String,
+        options: StackHeaderToolbarMenuItemOptions,
+    ) {
+        delegate?.get()?.onMenuItemUpdate(id, options)
     }
 
     override fun onStackHeaderSubviewChange() = notifyConfigChanged()
