@@ -6,6 +6,7 @@ import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviews from './test-stack-subviews-android';
 import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
+import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
 
 const scenarios = {
   PreventNativeDismissSingleStack,
@@ -15,6 +16,7 @@ const scenarios = {
   TestStackSubviews,
   TestStackBackButton,
   TestStackToolbarMenuCommands,
+  TestStackToolbarMenuShowAsAction,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
