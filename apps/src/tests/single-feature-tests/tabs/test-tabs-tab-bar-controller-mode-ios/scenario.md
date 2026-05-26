@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Tbd: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
+TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
 
 ## Prerequisites
 

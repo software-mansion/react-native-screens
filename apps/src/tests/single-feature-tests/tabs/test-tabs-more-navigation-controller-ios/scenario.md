@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Tbd: Ongoing research.
+TBD: Ongoing research.
 
 ## Prerequisites
 

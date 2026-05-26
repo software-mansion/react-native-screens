@@ -10,12 +10,12 @@ Example: Test Scenario: colorScheme
 
 ## E2E test
 
-Full/Incomplete/Tbd
+Full/Incomplete/TBD
 
 - **Full:** The scenario is completely covered by E2E tests.
 - **Incomplete:** The scenario is only partially covered or not covered at all.
 Include an explanation why.
-- **Tbd:** The E2E coverage is yet to be determined or implemented. Add relevant
+- **TBD:** The E2E coverage is yet to be determined or implemented. Add relevant
 information e.g. research is required, or automation is possible and planned but
 not yet implemented.
 
