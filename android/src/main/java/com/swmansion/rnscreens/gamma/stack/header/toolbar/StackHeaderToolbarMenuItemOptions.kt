@@ -10,5 +10,4 @@ data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
     val hidden: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
-    val showAsActionWithText: Boolean? = null,
 )
