@@ -40,13 +40,13 @@ internal class StackHeaderToolbarMenuCoordinator(
         lastMenuItems = items
     }
 
-    fun clear() {
+    internal fun clear() {
         forwardIdMap.clear()
         reverseIdMap.clear()
         lastMenuItems = emptyList()
     }
 
-    fun updateItem(
+    internal fun updateItem(
         menu: Menu,
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
