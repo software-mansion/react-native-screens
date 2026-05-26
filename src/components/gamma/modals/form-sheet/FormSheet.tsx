@@ -45,14 +45,14 @@ export function FormSheet(props: FormSheetProps) {
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
       {...rest}>
-      <FormSheetContentWrapperNativeComponent
-        style={
-          isFitToContents
-            ? styles.absoluteWithNoBottom
-            : StyleSheet.absoluteFill
-        }>
-        {children}
-      </FormSheetContentWrapperNativeComponent>
+      {isFitToContents ? (
+        <FormSheetContentWrapperNativeComponent
+          style={styles.absoluteWithNoBottom}>
+          {children}
+        </FormSheetContentWrapperNativeComponent>
+      ) : (
+        children
+      )}
     </FormSheetHostNativeComponent>
   );
 }
