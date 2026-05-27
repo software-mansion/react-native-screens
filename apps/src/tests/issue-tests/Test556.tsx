@@ -59,7 +59,7 @@ export default function App() {
                 ]}>
                 <Text>Right-2</Text>
               </View>
-            ),// Testing that custom view with other button works
+            ), // Testing that custom view with other button works
           }}
         />
       </Stack.Navigator>
@@ -100,7 +100,7 @@ function Second({ navigation }: ScreenBaseProps) {
           });
         }}
       />
-      <Button 
+      <Button
         title="Use multiple right items"
         onPress={() => {
           navigation.setOptions({
@@ -114,22 +114,19 @@ function Second({ navigation }: ScreenBaseProps) {
                     ]}>
                     <Text>Right-2</Text>
                   </View>
-                )
-              }, 
+                ),
+              },
               {
                 customView: () => (
-                  <View
-                    style={[
-                      styles.container,
-                      { backgroundColor: 'red' },
-                    ]}>
+                  <View style={[styles.container, { backgroundColor: 'red' }]}>
                     <Text>Right-3</Text>
                   </View>
-                )
-              }
-            ]
-          }) 
-        }} />
+                ),
+              },
+            ],
+          });
+        }}
+      />
 
       <Button
         title="Tap me for first screen"

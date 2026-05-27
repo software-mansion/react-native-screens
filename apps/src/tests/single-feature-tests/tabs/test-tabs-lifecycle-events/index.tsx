@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
@@ -20,7 +20,9 @@ function TabScreen() {
       <Text style={styles.tabLabel} testID={`tabLabel-${routeKey}`}>
         {routeKey}
       </Text>
-      <Text style={styles.tabHint}>Switch tabs to trigger lifecycle events</Text>
+      <Text style={styles.tabHint}>
+        Switch tabs to trigger lifecycle events
+      </Text>
     </CenteredLayoutView>
   );
 }

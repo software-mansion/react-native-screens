@@ -26,12 +26,7 @@ import { useComponentsByName } from '../shared/use-components-by-name';
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
 
-  const {
-    routeConfigs,
-    defaultRouteName,
-    onTabSelected,
-    ...restProps
-  } = props;
+  const { routeConfigs, defaultRouteName, onTabSelected, ...restProps } = props;
 
   useSanitizeRouteConfigs(routeConfigs);
 
@@ -137,7 +132,9 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
   }
 }
 
-function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>): TabsNavigationMethods {
+function useTabsNavigationMethods(
+  dispatch: React.Dispatch<TabsNavigationAction>,
+): TabsNavigationMethods {
   const setRouteOptions = React.useCallback(
     (routeKey: string, options: Partial<TabRouteOptions>) => {
       dispatch({ type: 'set-options', routeKey, options });
@@ -148,14 +145,20 @@ function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>
   const selectTab: SelectTabMethod = React.useCallback(
     (routeKey: string, forceAction?: boolean) => {
       const shouldForceAction = forceAction ?? false;
-      dispatch({ type: 'tab-select', routeKey, forceAction: shouldForceAction });
+      dispatch({
+        type: 'tab-select',
+        routeKey,
+        forceAction: shouldForceAction,
+      });
     },
     [dispatch],
   );
 
-
-  return React.useMemo(() => ({
-    setRouteOptions,
-    selectTab
-  }), [setRouteOptions, selectTab]);
+  return React.useMemo(
+    () => ({
+      setRouteOptions,
+      selectTab,
+    }),
+    [setRouteOptions, selectTab],
+  );
 }

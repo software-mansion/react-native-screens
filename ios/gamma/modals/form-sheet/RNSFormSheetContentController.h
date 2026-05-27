@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSFormSheetProviders.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,10 +21,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetContentControllerDelegate> delegate;
 
+@property (nonatomic, weak, nullable) id<RNSFormSheetPresentationProvider> presentationProvider;
+@property (nonatomic, weak, nullable) id<RNSFormSheetAppearanceProvider> appearanceProvider;
+@property (nonatomic, weak, nullable) id<RNSFormSheetBehaviorProvider> behaviorProvider;
+
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
-- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window;
-- (void)dismissIfNeeded;
+#pragma mark - Presentation
+
+- (void)prepareForPresentation;
+
+#pragma mark - Signals
+
+- (void)setNeedsPresentationUpdate;
+- (void)setNeedsBehaviorUpdate;
+- (void)setNeedsAppearanceUpdate;
+- (void)setNeedsInitialDetentReset;
+
+#pragma mark - Updates
+
+- (void)flushPendingUpdates;
 
 @end
 

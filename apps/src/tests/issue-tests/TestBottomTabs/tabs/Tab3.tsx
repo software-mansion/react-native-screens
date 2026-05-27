@@ -5,7 +5,9 @@ import { ScrollViewMarker } from 'react-native-screens/experimental';
 
 export function Tab3() {
   return (
-    <ScrollViewMarker style={{ flex: 1 }} scrollEdgeEffects={{ bottom: 'hard' }}>
+    <ScrollViewMarker
+      style={{ flex: 1 }}
+      scrollEdgeEffects={{ bottom: 'hard' }}>
       <ScrollView
         contentContainerStyle={{
           width: '100%',

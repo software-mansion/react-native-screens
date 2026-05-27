@@ -7,11 +7,16 @@
  */
 
 import React from 'react';
-import { StackHeaderConfigProps } from './StackHeaderConfig.types';
+import type {
+  StackHeaderConfigProps,
+  StackHeaderConfigRef,
+} from './StackHeaderConfig.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-export default function StackHeaderConfig(
-  props: StackHeaderConfigProps,
-): React.JSX.Element;
+declare const StackHeaderConfig: React.ForwardRefExoticComponent<
+  StackHeaderConfigProps & React.RefAttributes<StackHeaderConfigRef>
+>;
+
+export default StackHeaderConfig;

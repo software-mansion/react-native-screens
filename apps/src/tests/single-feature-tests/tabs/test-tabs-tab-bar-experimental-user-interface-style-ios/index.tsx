@@ -1,8 +1,17 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { StackContainer, StackRouteConfig, useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
-import {  LightRootScreen, LightInterfaceStyleScreen, DarkRootScreen, DarkInterfaceStyleScreen } from './ThemeScreen';
-import scenarioDescription from './scenario-description';
+import {
+  StackContainer,
+  StackRouteConfig,
+  useStackNavigationContext,
+} from '@apps/shared/gamma/containers/stack';
+import {
+  LightRootScreen,
+  LightInterfaceStyleScreen,
+  DarkRootScreen,
+  DarkInterfaceStyleScreen,
+} from './ThemeScreen';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
 export function HomeScreen() {
@@ -11,8 +20,8 @@ export function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>experimental_userInterfaceStyle</Text>
       <Text style={styles.description}>
-        Select an interface style to preview how the tab bar and
-        navigation bar respond.
+        Select an interface style to preview how the tab bar and navigation bar
+        respond.
       </Text>
       <Button title="Dark" onPress={() => navigation.push('darkRoot')} />
       <Button title="Light" onPress={() => navigation.push('lightRoot')} />

@@ -5,7 +5,7 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
 const ITEM_COUNT = 30;
@@ -34,21 +34,11 @@ export function ScrollContent({
 }
 
 export function FalseTab() {
-  return (
-    <ScrollContent
-      label="false"
-      testID="override-inset-false"
-    />
-  );
+  return <ScrollContent label="false" testID="override-inset-false" />;
 }
 
 export function TrueTab() {
-  return (
-    <ScrollContent
-      label="true"
-      testID="override-inset-true"
-    />
-  );
+  return <ScrollContent label="true" testID="override-inset-true" />;
 }
 
 export function DefaultTab() {

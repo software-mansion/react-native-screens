@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -12,6 +13,9 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -26,6 +30,14 @@ open class StackHeaderConfigViewManager :
     override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackHeaderConfig(reactContext)
+
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: StackHeaderConfig,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
 
     override fun getDelegate(): ViewManagerDelegate<StackHeaderConfig> = delegate
 
@@ -186,7 +198,78 @@ open class StackHeaderConfigViewManager :
         view.scrollFlagSnap = value
     }
 
+    override fun setToolbarMenuItems(
+        view: StackHeaderConfig,
+        value: ReadableArray?,
+    ) {
+        view.toolbarMenuItems =
+            value?.let { array ->
+                (0 until array.size()).map { i ->
+                    val item = requireNotNull(array.getMap(i))
+                    StackHeaderToolbarMenuItemConfig(
+                        id = item.requireNotNullString("id"),
+                        title = item.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+                        hidden = item.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+                    )
+                }
+            } ?: emptyList()
+    }
+
+    override fun setToolbarMenuItemOptions(
+        view: StackHeaderConfig,
+        id: String,
+        options: ReadableArray,
+    ) {
+        val map = options.getMap(0) ?: return
+        view.dispatchMenuItemUpdate(
+            id,
+            StackHeaderToolbarMenuItemOptions(
+                title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+                hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+            ),
+        )
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }
 }
+
+private fun ReadableMap.requireNotNullString(key: String): String =
+    requireNotNull(this.getString(key)) {
+        "[RNScreens] toolbarMenuItem $key property must not be null."
+    }
+
+// Helpers for regular props (null/not defined -> default)
+private fun ReadableMap.readString(
+    key: String,
+    default: String,
+): String = if (!this.hasKey(key) || this.isNull(key)) default else this.getString(key) ?: default
+
+private fun ReadableMap.readBoolean(
+    key: String,
+    default: Boolean,
+): Boolean = if (!this.hasKey(key) || this.isNull(key)) default else this.getBoolean(key)
+
+// Helpers for view commands:
+// - not defined -> null (means "no update")
+// - null -> default (means "reset to default value")
+private fun ReadableMap.readNullableStringUpdate(
+    key: String,
+    default: String,
+): String? =
+    when {
+        !this.hasKey(key) -> null
+        this.isNull(key) -> default
+        else -> this.getString(key) ?: default
+    }
+
+private fun ReadableMap.readNullableBooleanUpdate(
+    key: String,
+    default: Boolean,
+): Boolean? =
+    when {
+        !this.hasKey(key) -> null
+        this.isNull(key) -> default
+        else -> this.getBoolean(key)
+    }

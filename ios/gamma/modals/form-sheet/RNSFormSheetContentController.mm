@@ -1,5 +1,9 @@
 #import "RNSFormSheetContentController.h"
+#import "RNSFormSheetConfigurationApplicator.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetPresentationManager.h"
+#import "RNSFormSheetUpdateCoordinator.h"
+#import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
@@ -13,12 +17,24 @@
                                              >
 @end
 
-@implementation RNSFormSheetContentController
+@implementation RNSFormSheetContentController {
+  RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
+  RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
+  RNSFormSheetPresentationManager *_Nonnull _presentationManager;
+
+  BOOL _needsInitialDetentReset;
+}
 
 - (instancetype)init
 {
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
+    _configurationApplicator = [RNSFormSheetConfigurationApplicator new];
+    _presentationManager = [RNSFormSheetPresentationManager new];
+
+    _needsInitialDetentReset = NO;
   }
   return self;
 }
@@ -46,6 +62,28 @@
 
 #pragma mark - Presentation
 
+- (void)updatePresentationIfNeeded
+{
+  [_updateCoordinator updateIfNeeded:RNSFormSheetUpdateFlagsPresentation
+                   performOperations:^{
+                     [self updatePresentationState];
+                   }];
+}
+
+- (void)updatePresentationState
+{
+  id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
+
+  RCTAssert(presentationProvider != nil,
+            @"[RNScreens] Presentation provider must be set before updating presentation state.");
+
+  if (presentationProvider == nil) {
+    return;
+  }
+
+  [_presentationManager updatePresentationIfNeededWithProvider:presentationProvider controller:self];
+}
+
 - (void)prepareForPresentation
 {
   // The presentation controller is recreated by UIKit on every present/dismiss cycle.
@@ -54,44 +92,77 @@
 #if !TARGET_OS_TV
   self.sheetPresentationController.delegate = self;
 #endif // !TARGET_OS_TV
+
+  // Since UIKit has recreated sheetPresentationController, any configuration that could be applied
+  // during the Dismissed or Dismissing state was lost.
+  // We must force a full configuration update for this new instance.
+  [self setNeedsAppearanceUpdate];
+  [self setNeedsBehaviorUpdate];
+  [self setNeedsInitialDetentReset];
+  [self updateConfigurationIfNeeded];
 }
 
-// TODO: @t0maboro - This presentation logic is currently quite primitive.
-// We are not entirely safe from rapid conflicting updates, and there are edge cases
-// where the presentation state might become desynchronized. Addressing this robustly
-// might require an approach similar to the tabs implementation using state provenance,
-// which will be handled separately.
-// Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window
+#pragma mark - Sheet Configuration
+
+- (void)updateConfigurationIfNeeded
 {
-  if (self.presentingViewController != nil) {
+  id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
+  id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
+
+  RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
+
+  if (appearanceProvider == nil || behaviorProvider == nil) {
     return;
   }
 
-  UIViewController *presentationSourceViewController =
-      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
-  if (presentationSourceViewController == nil) {
-    RCTLogError(
-        @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
-    return;
+  if (_needsInitialDetentReset) {
+    _needsInitialDetentReset = NO;
+    [_configurationApplicator resetInitialDetent];
   }
 
-  [self prepareForPresentation];
-  [presentationSourceViewController presentViewController:self animated:YES completion:nil];
+  [_configurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
+                                                            behaviorProvider:behaviorProvider
+                                                                  controller:self
+                                                                 coordinator:_updateCoordinator];
 }
 
-- (void)dismissIfNeeded
+#pragma mark - Signals
+
+- (void)setNeedsPresentationUpdate
 {
-  if (self.presentingViewController == nil) {
-    return;
-  }
-  [self dismissViewControllerAnimated:YES completion:nil];
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsPresentation];
+}
+
+- (void)setNeedsAppearanceUpdate
+{
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsAppearance];
+}
+
+- (void)setNeedsBehaviorUpdate
+{
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsBehavior];
+}
+
+- (void)setNeedsInitialDetentReset
+{
+  _needsInitialDetentReset = YES;
+}
+
+#pragma mark - Updates
+
+- (void)flushPendingUpdates
+{
+  [self updateConfigurationIfNeeded];
+  [self updatePresentationIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  [_presentationManager handleNativeDismiss];
+
   [self.delegate sheetControllerDidNativeDismiss:self];
 }
 

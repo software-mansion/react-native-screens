@@ -3002,6 +3002,12 @@ __metadata:
   languageName: node
   linkType: soft
 
+"@rnscreens/apps@link:../apps::locator=TVOSExample%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@rnscreens/apps@link:../apps::locator=TVOSExample%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@sideway/address@npm:^4.1.5":
   version: 4.1.5
   resolution: "@sideway/address@npm:4.1.5"
@@ -3388,6 +3394,7 @@ __metadata:
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/"
     "@react-navigation/routers": "link:../react-navigation/packages/routers/"
     "@react-navigation/stack": "link:../react-navigation/packages/stack/"
+    "@rnscreens/apps": "link:../apps"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^19.2.0"
     "@types/react-test-renderer": "npm:^19.1.0"

@@ -132,23 +132,6 @@ typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeXcasset,
 };
 
-#if !RCT_NEW_ARCH_ENABLED
-typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
-  RNSTabBarMinimizeBehaviorAutomatic,
-  RNSTabBarMinimizeBehaviorNever,
-  RNSTabBarMinimizeBehaviorOnScrollDown,
-  RNSTabBarMinimizeBehaviorOnScrollUp,
-};
-#endif
-
-#if !RCT_NEW_ARCH_ENABLED
-typedef NS_ENUM(NSInteger, RNSTabBarControllerMode) {
-  RNSTabBarControllerModeAutomatic,
-  RNSTabBarControllerModeTabBar,
-  RNSTabBarControllerModeTabSidebar,
-};
-#endif
-
 // TODO: investigate objc - swift interop and deduplicate this code
 // This enum needs to be compatible with the RNSOrientationSwift enum.
 typedef NS_ENUM(NSInteger, RNSOrientation) {

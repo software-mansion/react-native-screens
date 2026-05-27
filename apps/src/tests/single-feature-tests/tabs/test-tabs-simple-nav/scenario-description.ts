@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Test simple navigation',
   key: 'test-tabs-simple-nav',
   details: 'Test basic navigation scenarios',
@@ -8,5 +8,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
-
-export default scenarioDescription;

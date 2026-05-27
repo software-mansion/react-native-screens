@@ -9,9 +9,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="First" component={First} options={{
-          headerLargeTitle: true,
-        }}/>
+        <Stack.Screen
+          name="First"
+          component={First}
+          options={{
+            headerLargeTitle: true,
+          }}
+        />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
     </NavigationContainer>

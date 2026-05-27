@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -127,7 +127,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     }
     const dims = getSubviewDimensions(size);
     return {
-      Component: (
+      render: () => (
         <PressableWithFeedback
           hitSlop={hitSlop}
           pressRetentionOffset={pressRetentionOffset}>
@@ -142,7 +142,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   const backgroundSubview = config.backgroundEnabled
     ? {
         collapseMode: config.backgroundCollapseMode,
-        Component: (
+        render: () => (
           <View style={styles.backgroundContainer}>
             <Image
               source={require('@assets/trees.jpg')}

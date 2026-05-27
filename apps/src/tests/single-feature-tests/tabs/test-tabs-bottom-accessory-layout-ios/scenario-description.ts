@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Bottom Accessory',
   key: 'test-tabs-bottom-accessory-layout-ios',
   details: 'Test tabs bottom accessory with various contents',
@@ -8,5 +8,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
-
-export default scenarioDescription;
