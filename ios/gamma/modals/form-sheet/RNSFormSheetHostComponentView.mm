@@ -177,6 +177,7 @@ namespace react = facebook::react;
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
       [_controller setNeedsAppearanceUpdate];
+      [_controller setNeedsBehaviorUpdate];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
       [_controller setNeedsInitialDetentReset];
@@ -185,7 +186,14 @@ namespace react = facebook::react;
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    [_controller setNeedsAppearanceUpdate];
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
+      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
+    _prefersScrollingExpandsWhenScrolledToEdge =
+        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
+    [_controller setNeedsBehaviorUpdate];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
@@ -205,13 +213,6 @@ namespace react = facebook::react;
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
-  }
-
-  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
-      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
-    _prefersScrollingExpandsWhenScrolledToEdge =
-        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
-    [_controller setNeedsAppearanceUpdate];
   }
 
   [super updateProps:props oldProps:oldProps];

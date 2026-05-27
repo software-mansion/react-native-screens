@@ -1,8 +1,8 @@
 #import "RNSFormSheetContentController.h"
-#import "RNSFormSheetAppearanceApplicator.h"
-#import "RNSFormSheetAppearanceCoordinator.h"
-#import "RNSFormSheetAppearanceUpdateFlags.h"
+#import "RNSFormSheetConfigurationApplicator.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetUpdateCoordinator.h"
+#import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
@@ -17,8 +17,8 @@
 @end
 
 @implementation RNSFormSheetContentController {
-  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
-  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
+  RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
+  RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
 
   BOOL _needsInitialDetentReset;
 }
@@ -28,8 +28,8 @@
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
 
-    _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
-    _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
+    _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
+    _configurationApplicator = [RNSFormSheetConfigurationApplicator new];
 
     _needsInitialDetentReset = NO;
   }
@@ -58,6 +58,14 @@
 }
 
 #pragma mark - Presentation
+
+- (void)updatePresentationIfNeeded
+{
+  [_updateCoordinator updateIfNeeded:RNSFormSheetUpdateFlagsPresentation
+                   performOperations:^{
+                     [self updatePresentationState];
+                   }];
+}
 
 - (void)updatePresentationState
 {
@@ -122,16 +130,15 @@
   [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - Appearance
+#pragma mark - Sheet Configuration
 
-- (void)updateAppearanceIfNeeded
+- (void)updateConfigurationIfNeeded
 {
   id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
   id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
 
   RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
-
-  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating appearance.");
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
 
   if (appearanceProvider == nil || behaviorProvider == nil) {
     return;
@@ -139,31 +146,30 @@
 
   if (_needsInitialDetentReset) {
     _needsInitialDetentReset = NO;
-    [_appearanceApplicator resetInitialDetent];
+    [_configurationApplicator resetInitialDetent];
   }
 
-  [_appearanceApplicator updateAppearanceIfNeededWithAppearanceProvider:appearanceProvider
-                                                       behaviorProvider:behaviorProvider
-                                                             controller:self
-                                                            coordinator:_appearanceCoordinator];
-
-  // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
-  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
-                      performOperations:^{
-                        [self updatePresentationState];
-                      }];
+  [_configurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
+                                                            behaviorProvider:behaviorProvider
+                                                                  controller:self
+                                                                 coordinator:_updateCoordinator];
 }
 
 #pragma mark - Signals
 
 - (void)setNeedsPresentationUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsPresentation];
 }
 
 - (void)setNeedsAppearanceUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsAppearance];
+}
+
+- (void)setNeedsBehaviorUpdate
+{
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsBehavior];
 }
 
 - (void)setNeedsInitialDetentReset
@@ -175,7 +181,8 @@
 
 - (void)flushPendingUpdates
 {
-  [self updateAppearanceIfNeeded];
+  [self updateConfigurationIfNeeded];
+  [self updatePresentationIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
