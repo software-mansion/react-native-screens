@@ -899,7 +899,25 @@ RNS_IGNORE_SUPER_CALL_END
  */
 - (void)updateFormSheetPresentationStyle
 {
-  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+  BOOL isFormSheet = _stackPresentation == RNSScreenStackPresentationFormSheet;
+  BOOL isModal = _stackPresentation == RNSScreenStackPresentationModal;
+  BOOL isPageSheet = _stackPresentation == RNSScreenStackPresentationPageSheet;
+
+  if (!isFormSheet && !isModal && !isPageSheet) {
+    return;
+  }
+
+  // For modal/pageSheet, only apply corner radius via UISheetPresentationController.
+  // Detents, grabber, and other formSheet-specific configuration are not applicable.
+  // When sheetCornerRadius is not set (default -1), we skip entirely to preserve
+  // the system default corner radius without any side effects.
+  if (!isFormSheet) {
+    if (_sheetCornerRadius >= 0) {
+      UISheetPresentationController *sheet = _controller.sheetPresentationController;
+      if (sheet != nil) {
+        [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+      }
+    }
     return;
   }
 
