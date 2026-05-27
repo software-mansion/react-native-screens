@@ -275,6 +275,11 @@ open class StackHeaderConfigViewManager :
                         "showAsAction",
                         StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
                     ),
+                icon = null,
+                iconTintColorNormal = null,
+                iconTintColorPressed = null,
+                iconTintColorFocused = null,
+                iconTintColorDisabled = null
             ),
         )
     }

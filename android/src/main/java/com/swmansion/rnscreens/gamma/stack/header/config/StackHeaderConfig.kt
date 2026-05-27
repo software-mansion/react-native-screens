@@ -76,7 +76,7 @@ class StackHeaderConfig(
         val nextResolvers = mutableMapOf<String, IconResolver>()
 
         toolbarMenuItemIconSourceMap.forEach { (id, source) ->
-            val resolver = toolbarMenuItemIconResolvers[id] ?: IconResolver()
+            val resolver = IconResolver()
             nextResolvers[id] = resolver
 
             resolver.resolve(
