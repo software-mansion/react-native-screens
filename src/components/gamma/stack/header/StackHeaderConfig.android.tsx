@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, processColor, StyleSheet } from 'react-native';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
@@ -23,6 +23,7 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
+import { parseIconToNativeProps } from 'react-native-screens/components/shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -215,7 +216,31 @@ function parseToolbarMenuItemOptionsToNativeProps(
   options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
   const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
-    Object.entries(options).map(([key, value]) => {
+    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+      const typedKey = key as keyof StackHeaderToolbarMenuItemOptionsAndroid;
+
+      switch (typedKey) {
+        case 'iconTintColorNormal':
+        case 'iconTintColorPressed':
+        case 'iconTintColorFocused':
+        case 'iconTintColorDisabled':
+          return [
+            [
+              key,
+              processColor(
+                value as StackHeaderToolbarMenuItemOptionsAndroid[typeof typedKey],
+              ),
+            ],
+          ];
+
+        case 'icon': {
+          const iconValue =
+            value as StackHeaderToolbarMenuItemOptionsAndroid['icon'];
+          const parsedIcon = parseIconToNativeProps(iconValue);
+          return Object.entries(parsedIcon);
+        }
+      }
+
       if (
         typeof value === 'object' &&
         value !== null &&
@@ -225,10 +250,12 @@ function parseToolbarMenuItemOptionsToNativeProps(
       }
 
       return [
-        key,
-        // We need to replace explicit `undefined` with `null`
-        // so that we're able to read that information on the native side.
-        value === undefined ? null : value,
+        [
+          key,
+          // We need to replace explicit `undefined` with `null`
+          // so that we're able to read that information on the native side.
+          value === undefined ? null : value,
+        ],
       ];
     }),
   );

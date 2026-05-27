@@ -30,6 +30,12 @@ export interface StackHeaderToolbarMenuItemAndroid {
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
   >;
+  drawableIconResourceName?: string | undefined;
+  imageIconResource?: ImageSource | undefined;
+  iconTintColorNormal?: ColorValue | undefined;
+  iconTintColorPressed?: ColorValue | undefined;
+  iconTintColorFocused?: ColorValue | undefined;
+  iconTintColorDisabled?: ColorValue | undefined;
 }
 
 export interface NativeProps extends ViewProps {
