@@ -1,3 +1,20 @@
+/**
+ * This script aggregates scenario descriptions from test directories and generates
+ * formatted Markdown tables detailing test coverage. It separates the results into
+ * "Smoke Tests" and "Non-Smoke Tests".
+ *
+ * Sorting:
+ * Entries in the output tables are sorted primarily by E2E Coverage ('full' ->
+ * 'incomplete' -> 'tbd'), secondarily by subdirectory (alphabetically), and
+ * finally by the scenario's key (alphabetically).
+ *
+ * Usage:
+ * By default, the script searches for `scenario-description.ts` files inside
+ * the `../../apps/src/tests` directory.
+ * You can override this default search path by using the `--test-path` flag:
+ * Example: `node generate-test-checklist.ts --test-path custom/path/to/tests`
+ */
+
 const fs = require('fs');
 const path = require('path');
 import type { ScenarioDescription } from '../../apps/src/tests/shared/helpers';
