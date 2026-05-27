@@ -37,9 +37,9 @@ detected by Detox view-hierarchy or snapshot testing.
   `standardAppearance` with a transparent background and shadow (UIKit fallback).
 - `tabBarBlurEffect` is only visually apparent when
   `tabBarBackgroundColor` has an alpha value less than 1.
-- A `trees.jpg` image is positioned absolutely behind the tab bar at
-  app level, making semi-transparent/blurred backgrounds easy to verify
-  visually.
+- A `trees.jpg` image is rendered within the scrollable content on the
+  relevant tabs, providing visual texture to help verify semi-transparent
+  backgrounds and blur effects during scrolling and at the scroll edge.
 - The shadow line on the top edge of the tab bar is very faint; if your monitor
 settings make it invisible, please verify it under a high-contrast environment.
 - The color values described as "system defaults" (such as the gray titles for
