@@ -53,8 +53,7 @@ function XcassetTab() {
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
-        `icon`: Xcasset custom-icon{'\n'}
-        `selectedIcon`: Xcasset custom-icon-fill{'\n'}
+        `icon`: Xcasset custom-icon-fill{'\n'}
         `tabBarItemIconColor` is NOT set.{'\n'}
         {'\n'}
         Selected: filled template image, tinted{' '}
@@ -140,10 +139,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Xcasset',
       ios: {
         icon: {
-          type: 'xcasset',
-          name: 'custom-icon',
-        },
-        selectedIcon: {
           type: 'xcasset',
           name: 'custom-icon-fill',
         },
