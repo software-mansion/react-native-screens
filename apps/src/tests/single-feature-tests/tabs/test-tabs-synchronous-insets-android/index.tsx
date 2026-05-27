@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import {
-  NavigationContainer,
-  NavigationIndependentTree,
-} from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -15,6 +10,10 @@ import {
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
+import {
+  StackContainer,
+  useStackNavigationContext,
+} from '@apps/shared/gamma/containers/stack';
 import { Colors } from '@apps/shared/styling';
 
 const TestConfigContext = createContext({
@@ -22,8 +21,9 @@ const TestConfigContext = createContext({
   setSyncInsets: (_: boolean) => {},
 });
 
-function SetupScreen({ navigation }: any) {
+export function SetupScreen() {
   const { syncInsets, setSyncInsets } = useContext(TestConfigContext);
+  const { push } = useStackNavigationContext();
 
   return (
     <View style={styles.centerContainer}>
@@ -40,13 +40,13 @@ function SetupScreen({ navigation }: any) {
       <Button
         title="Push Tabs Screen"
         color={Colors.primary}
-        onPress={() => navigation.push('TabsScreen')}
+        onPress={() => push('TabsScreen')}
       />
     </View>
   );
 }
 
-function DummyTabScreen() {
+export function DummyTabScreen() {
   const { syncInsets } = useContext(TestConfigContext);
   const { updateHostConfig } = useTabsHostConfig();
 
@@ -89,36 +89,29 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TabsScreen() {
+export function TabsScreen() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
-
-const Stack = createNativeStackNavigator();
 
 export function App() {
   const [syncInsets, setSyncInsets] = useState(true);
 
   return (
     <TestConfigContext.Provider value={{ syncInsets, setSyncInsets }}>
-      <NavigationIndependentTree>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="SetupScreen"
-              component={SetupScreen}
-              options={{ title: 'Setup' }}
-            />
-            <Stack.Screen
-              name="TabsScreen"
-              component={TabsScreen}
-              options={{
-                title: 'Tabs Container',
-                headerShown: false,
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </NavigationIndependentTree>
+      <StackContainer
+        routeConfigs={[
+          {
+            name: 'SetupScreen',
+            Component: SetupScreen,
+            options: {},
+          },
+          {
+            name: 'TabsScreen',
+            Component: TabsScreen,
+            options: {},
+          },
+        ]}
+      />
     </TestConfigContext.Provider>
   );
 }
