@@ -10,11 +10,11 @@ takes precedence over the host tint. Covers three `PlatformIconIOS` types:
 `templateSource` (tintable), `sfSymbol` (tintable), and `imageSource`
 (non-tintable).
 
-**OS test creation version:** iOS 18.6 and iOS 26
+**OS test creation version:** iOS 18.6 and iOS 26.5
 
 ## E2E test
 
-No: All observable outcomes are purely visual (icon color, selected vs.
+Incomplete: Not automated. All observable outcomes are purely visual (icon color, selected vs.
 unselected glyph). Detox does not expose tint color or rendered image
 attributes of native tab bar items, so automated assertion is not feasible.
 

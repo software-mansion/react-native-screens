@@ -30,7 +30,7 @@ function TintTab() {
 function OverrideTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Selected Icon Color Override</Text>
+      <Text style={styles.label}>SF Symbol (Tint Color Override)</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
@@ -49,7 +49,7 @@ function OverrideTab() {
 function XcassetTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Xcasset Source (Host Tint)</Text>
+      <Text style={styles.label}>Xcasset (Host Tint)</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
