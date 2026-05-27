@@ -45,9 +45,10 @@ attributes of native tab bar items, so automated assertion is not feasible.
   **Override**, **Xcasset**, and **Image**. The **Tint** tab is
   selected by default. Its icon is the filled template image
   tinted **green** by the host
-  `tabBarTintColor`. The unselected **Override**, **Xcasset**, and
-  **Image** tabs render their icons and titles in the system theme
-  color.
+  `tabBarTintColor`. The unselected **Override** and **Xcasset**
+  tabs render their icons and titles in the system theme color. The
+  unselected **Image** tab title renders in the system theme color,
+  but its icon keeps its original source colors.
 
 ---
 
