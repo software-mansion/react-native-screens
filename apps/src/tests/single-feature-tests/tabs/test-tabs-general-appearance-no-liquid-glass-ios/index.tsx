@@ -86,20 +86,21 @@ export function Tab1Screen() {
   return (
     <View style={styles.content}>
       <Text style={styles.description}>
-        No ScrollView.{"\n"}
-        {"\n"}
-        standardAppearance:{"\n"}
-        bg{" "}
-        <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>,
-        shadow{" "}
-        <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text>.{"\n"}{"\n"}
-        scrollEdgeAppearance:{"\n"}
-        bg{" "}
+        No ScrollView.{'\n'}
+        {'\n'}
+        standardAppearance:{'\n'}
+        bg <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>,
+        shadow <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text>.
+        {'\n'}
+        {'\n'}
+        scrollEdgeAppearance:{'\n'}
+        bg{' '}
         <Text style={{ color: Colors.PurpleDarkTransparent }}>
           PurpleDarkTransparent
         </Text>
-        , shadow{" "}
-        <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>.{"\n"}
+        , shadow{' '}
+        <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>.
+        {'\n'}
       </Text>
       <SettingsSwitch
         label="standardAppearance"
@@ -156,23 +157,24 @@ export function Tab2Screen() {
       contentInsetAdjustmentBehavior="automatic">
       <Text style={[styles.description, { marginTop: 20 }]}>
         ScrollView with {SCROLL_ITEM_COUNT} items - standardAppearance shows
-        while scrolling mid-list, scrollEdgeAppearance shows when content
-        edge aligns with the tab bar.{"\n"}{"\n"}
-        standardAppearance:{"\n"}
-        bg{" "}
-        <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>,
-        shadow{" "}
-        <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text> (no
-        blur).{"\n"}{"\n"}
-        scrollEdgeAppearance:{"\n"}
-        bg{" "}
+        while scrolling mid-list, scrollEdgeAppearance shows when content edge
+        aligns with the tab bar.{'\n'}
+        {'\n'}
+        standardAppearance:{'\n'}
+        bg <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>,
+        shadow <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text> (no
+        blur).{'\n'}
+        {'\n'}
+        scrollEdgeAppearance:{'\n'}
+        bg{' '}
         <Text style={{ color: Colors.PurpleDarkTransparent }}>
           PurpleDarkTransparent
         </Text>
-        , shadow{" "}
-        <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>,{"\n"}
-        blur `systemChromeMaterialDark`.{"\n"}
-        {"\n"}
+        , shadow{' '}
+        <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>,
+        {'\n'}
+        blur `systemChromeMaterialDark`.{'\n'}
+        {'\n'}
       </Text>
       <SettingsSwitch
         label="standardAppearance"
@@ -189,10 +191,7 @@ export function Tab2Screen() {
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
-      <Image
-        source={require('@assets/trees.jpg')}
-        style={styles.image}
-      />
+      <Image source={require('@assets/trees.jpg')} style={styles.image} />
     </ScrollView>
   );
 }
@@ -225,29 +224,27 @@ export function Tab3Screen() {
       <View style={styles.header}>
         <Text style={[styles.description, { marginTop: 20 }]}>
           ScrollView with {SCROLL_ITEM_COUNT} items - standardAppearance shows
-          while scrolling mid-list, scrollEdgeAppearance shows when content
-          edge aligns with the tab bar.{"\n"}
-          {"\n"}
-          standardAppearance:{"\n"}
-          bg{" "}
+          while scrolling mid-list, scrollEdgeAppearance shows when content edge
+          aligns with the tab bar.{'\n'}
+          {'\n'}
+          standardAppearance:{'\n'}
+          bg{' '}
           <Text style={{ color: Colors.NavyLightTransparent }}>
             NavyLightTransparent
           </Text>
-          , shadow{" "}
-          <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text>.{"\n"}{"\n"}
-          Use
-          the picker below to change `standardAppearance.tabBarBlurEffect`
-          at runtime - background and shadow stay constant so the blur
-          is the only varying input.{"\n"}
-          {"\n"}{"\n"}
-          scrollEdgeAppearance:{"\n"}
-          bg{" "}
-          <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
-          , shadow{" "}
-          <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>
-          ,{"\n"}
-          blur `none` (background renders exactly as the configured
-          color).
+          , shadow <Text style={{ color: Colors.RedDark100 }}>RedDark100</Text>.
+          {'\n'}
+          {'\n'}
+          Use the picker below to change `standardAppearance.tabBarBlurEffect`
+          at runtime - background and shadow stay constant so the blur is the
+          only varying input.{'\n'}
+          {'\n'}
+          scrollEdgeAppearance:{'\n'}
+          bg <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>,
+          shadow{' '}
+          <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>,
+          {'\n'}
+          blur `none` (background renders exactly as the configured color).
         </Text>
       </View>
       <SettingsPicker<BlurEffect>
@@ -261,12 +258,8 @@ export function Tab3Screen() {
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
-      <Image
-        source={require('@assets/trees.jpg')}
-        style={styles.image}
-      />
+      <Image source={require('@assets/trees.jpg')} style={styles.image} />
     </ScrollView>
-
   );
 }
 
@@ -362,7 +355,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 350,
     alignSelf: 'center',
-  }
+  },
 });
 
 export default createScenario(App, scenarioDescription);
