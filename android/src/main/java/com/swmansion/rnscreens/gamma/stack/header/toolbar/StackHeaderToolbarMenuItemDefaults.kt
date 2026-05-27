@@ -11,4 +11,10 @@ internal object StackHeaderToolbarMenuItemDefaults {
     const val TITLE: String = ""
     const val HIDDEN: Boolean = false
     val SHOW_AS_ACTION: StackHeaderToolbarMenuItemShowAsAction = StackHeaderToolbarMenuItemShowAsAction.NEVER
+    val ICON_TINT_COLOR_NORMAL: Int? = null
+    val ICON_TINT_COLOR_PRESSED: Int? = null
+    val ICON_TINT_COLOR_FOCUSED: Int? = null
+    val ICON_TINT_COLOR_DISABLED: Int? = null
+    val DRAWABLE_ICON_RESOURCE_NAME: String? = null
+    val IMAGE_ICON_URI: String? = null
 }

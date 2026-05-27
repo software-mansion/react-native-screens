@@ -1,9 +1,12 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
+import android.util.Log
 import android.view.View
+import androidx.core.graphics.toColorInt
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -15,8 +18,10 @@ import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterfa
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager.Companion.TAG
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -99,6 +104,7 @@ open class StackHeaderConfigViewManager :
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
+        view.resolveToolbarMenuItemIconsIfNeeded()
         view.notifyConfigChanged()
     }
 
@@ -203,12 +209,22 @@ open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: ReadableArray?,
     ) {
+        val sourceMap = mutableMapOf<String, StackHeaderToolbarMenuItemIconSource>()
+
         view.toolbarMenuItems =
             value?.let { array ->
                 (0 until array.size()).map { i ->
                     val item = requireNotNull(array.getMap(i))
+                    val id = item.requireNotNullString("id")
+
+                    sourceMap[id] =
+                        StackHeaderToolbarMenuItemIconSource(
+                            item.getString("drawableIconResourceName"),
+                            item.readImageUri("imageIconResource", StackHeaderToolbarMenuItemDefaults.IMAGE_ICON_URI),
+                        )
+
                     StackHeaderToolbarMenuItemConfig(
-                        id = item.requireNotNullString("id"),
+                        id = id,
                         title = item.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
                         hidden = item.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
                         showAsAction =
@@ -216,9 +232,31 @@ open class StackHeaderConfigViewManager :
                                 "showAsAction",
                                 StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
                             ),
+                        icon = null,
+                        iconTintColorNormal =
+                            item.readColor(
+                                "iconTintColorNormal",
+                                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL,
+                            ),
+                        iconTintColorPressed =
+                            item.readColor(
+                                "iconTintColorPressed",
+                                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED,
+                            ),
+                        iconTintColorFocused =
+                            item.readColor(
+                                "iconTintColorFocused",
+                                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED,
+                            ),
+                        iconTintColorDisabled =
+                            item.readColor(
+                                "iconTintColorDisabled",
+                                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED,
+                            ),
                     )
                 }
             } ?: emptyList()
+        view.toolbarMenuItemIconSourceMap = sourceMap
     }
 
     override fun setToolbarMenuItemOptions(
@@ -273,6 +311,38 @@ private fun ReadableMap.readShowAsActionEnum(
 ): StackHeaderToolbarMenuItemShowAsAction {
     val stringValue = this.getString(key) ?: return default
     return toMenuItemShowAsActionEnum(stringValue)
+}
+
+private fun ReadableMap.readColor(
+    key: String,
+    default: Int?,
+): Int? {
+    if (!this.hasKey(key) || this.isNull(key)) {
+        return default
+    }
+
+    return try {
+        when (getType(key)) {
+            ReadableType.Number -> getInt(key)
+            ReadableType.String -> getString(key)?.toColorInt()
+            else -> null
+        }
+    } catch (e: Exception) {
+        Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
+        null
+    }
+}
+
+private fun ReadableMap.readImageUri(
+    key: String,
+    default: String?,
+): String? {
+    if (!this.hasKey(key) || this.getType(key) != ReadableType.Map) {
+        return default
+    }
+
+    val imageMap = getMap(key)
+    return imageMap?.getString("uri") ?: default
 }
 
 // Helpers for view commands:

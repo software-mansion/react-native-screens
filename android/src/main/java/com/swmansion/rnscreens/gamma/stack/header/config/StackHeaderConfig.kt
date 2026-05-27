@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
-import android.R
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
@@ -8,12 +7,11 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.helpers.IconResolver
-import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
-import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import java.lang.ref.WeakReference
 
@@ -57,18 +55,54 @@ class StackHeaderConfig(
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
-
     private val backButtonIconResolver = IconResolver()
 
     internal fun resolveBackButtonIconIfNeeded() {
         backButtonIconResolver.resolve(
             reactContext,
             backButtonDrawableIconResourceName,
-            backButtonImageIconUri
+            backButtonImageIconUri,
         ) { drawable ->
             backButtonIcon = drawable
             notifyConfigChanged()
         }
+    }
+
+    internal var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
+
+    private var toolbarMenuItemIconResolvers = mapOf<String, IconResolver>()
+
+    internal fun resolveToolbarMenuItemIconsIfNeeded() {
+        val nextResolvers = mutableMapOf<String, IconResolver>()
+
+        toolbarMenuItemIconSourceMap.forEach { (id, source) ->
+            val resolver = toolbarMenuItemIconResolvers[id] ?: IconResolver()
+            nextResolvers[id] = resolver
+
+            resolver.resolve(
+                context = reactContext,
+                drawableIconResourceName = source.drawableIconResourceName,
+                imageIconUri = source.imageIconUri,
+            ) { drawable ->
+
+                val currentItems = toolbarMenuItems
+                val itemIndex = currentItems.indexOfFirst { it.id == id }
+
+                if (itemIndex != -1) {
+                    val item = currentItems[itemIndex]
+
+                    if (item.icon != drawable) {
+                        val newItems = currentItems.toMutableList()
+                        newItems[itemIndex] = item.copy(icon = drawable)
+
+                        toolbarMenuItems = newItems
+                        notifyConfigChanged()
+                    }
+                }
+            }
+        }
+
+        toolbarMenuItemIconResolvers = nextResolvers
     }
 
     override var backgroundSubview: StackHeaderSubview? = null
