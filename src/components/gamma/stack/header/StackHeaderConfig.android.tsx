@@ -23,7 +23,7 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
-import { parseIconToNativeProps } from 'react-native-screens/components/shared';
+import { parseIconToNativeProps } from '../../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
