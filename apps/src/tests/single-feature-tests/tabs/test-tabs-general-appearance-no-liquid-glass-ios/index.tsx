@@ -102,14 +102,12 @@ export function Tab1Screen() {
         <Text style={{ color: Colors.PurpleLight100 }}>PurpleLight100</Text>.{"\n"}
       </Text>
       <SettingsSwitch
-        testID="tab1-standard-toggle"
-        label="standardAppearance enabled"
+        label="standardAppearance"
         value={standardEnabled}
         onValueChange={onToggleStandard}
       />
       <SettingsSwitch
-        testID="tab1-scroll-edge-toggle"
-        label="scrollEdgeAppearance enabled"
+        label="scrollEdgeAppearance"
         value={scrollEdgeEnabled}
         onValueChange={onToggleScrollEdge}
       />
@@ -154,7 +152,6 @@ export function Tab2Screen() {
 
   return (
     <ScrollView
-      testID="tab3-scrollview"
       style={styles.scrollView}
       contentInsetAdjustmentBehavior="automatic">
       <Text style={[styles.description, { marginTop: 20 }]}>
@@ -178,19 +175,17 @@ export function Tab2Screen() {
         {"\n"}
       </Text>
       <SettingsSwitch
-        testID="tab3-standard-toggle"
-        label="standardAppearance enabled"
+        label="standardAppearance"
         value={standardEnabled}
         onValueChange={onToggleStandard}
       />
       <SettingsSwitch
-        testID="tab3-scroll-edge-toggle"
-        label="scrollEdgeAppearance enabled"
+        label="scrollEdgeAppearance"
         value={scrollEdgeEnabled}
         onValueChange={onToggleScrollEdge}
       />
       {Array.from({ length: SCROLL_ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.scrollItem} testID={`tab3-item-${i + 1}`}>
+        <View key={i} style={styles.scrollItem}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
@@ -225,10 +220,9 @@ export function Tab3Screen() {
 
   return (
     <ScrollView
-      testID="tab4-scrollview"
       style={styles.scrollView}
       contentInsetAdjustmentBehavior="automatic">
-      <View style={styles.header} testID="tab4-header">
+      <View style={styles.header}>
         <Text style={[styles.description, { marginTop: 20 }]}>
           ScrollView with {SCROLL_ITEM_COUNT} items - standardAppearance shows
           while scrolling mid-list, scrollEdgeAppearance shows when content
@@ -257,14 +251,13 @@ export function Tab3Screen() {
         </Text>
       </View>
       <SettingsPicker<BlurEffect>
-        testID="tab4-blur-picker"
         label="tabBarBlurEffect"
         value={blurEffect}
         onValueChange={onBlurChange}
         items={BLUR_EFFECT_OPTIONS}
       />
       {Array.from({ length: SCROLL_ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.scrollItem} testID={`tab4-item-${i + 1}`}>
+        <View key={i} style={styles.scrollItem}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
