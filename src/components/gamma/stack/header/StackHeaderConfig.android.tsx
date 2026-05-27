@@ -49,9 +49,12 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
+    toolbarMenuItems,
     ...filteredAndroidProps
   } = android ?? {};
 
+  const parsedToolbarMenuItems =
+    parseToolbarMenuItemsToNativeProps(toolbarMenuItems);
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -66,6 +69,7 @@ function StackHeaderConfig(
       ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
+      toolbarMenuItems={parsedToolbarMenuItems}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -211,7 +215,28 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
-// Doesn't support nested props.
+function parseToolbarMenuItemsToNativeProps(
+  items: StackHeaderConfigPropsAndroid['toolbarMenuItems'],
+): StackHeaderConfigAndroidNativeComponentProps['toolbarMenuItems'] {
+  return items?.map(
+    ({
+      icon,
+      iconTintColorNormal,
+      iconTintColorPressed,
+      iconTintColorFocused,
+      iconTintColorDisabled,
+      ...rest
+    }) => ({
+      ...rest,
+      ...parseIconToNativeProps(icon),
+      iconTintColorNormal: processColor(iconTintColorNormal),
+      iconTintColorPressed: processColor(iconTintColorPressed),
+      iconTintColorFocused: processColor(iconTintColorFocused),
+      iconTintColorDisabled: processColor(iconTintColorDisabled),
+    }),
+  );
+}
+
 function parseToolbarMenuItemOptionsToNativeProps(
   options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
