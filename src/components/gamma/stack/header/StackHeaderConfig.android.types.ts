@@ -145,12 +145,20 @@ export interface StackHeaderToolbarMenuItemAndroid {
    * @summary Specifies the tint color to apply to the menu item icon when item
    * is pressed.
    *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
    * @platform android
    */
   iconTintColorPressed?: ColorValue | undefined;
   /**
    * @summary Specifies the tint color to apply to the menu item icon when item
    * is focused (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
    *
    * @platform android
    */
@@ -161,6 +169,9 @@ export interface StackHeaderToolbarMenuItemAndroid {
    *
    * @remarks
    * Disabling menu item isn't currently supported.
+   *
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
    *
    * @platform android
    */

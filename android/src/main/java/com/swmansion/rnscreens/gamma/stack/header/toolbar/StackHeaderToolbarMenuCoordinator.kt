@@ -6,7 +6,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.MenuItemCompat
@@ -64,7 +63,7 @@ internal class StackHeaderToolbarMenuCoordinator(
                 return
             }
 
-        applyOptions(toolbar,item, options)
+        applyOptions(toolbar, item, options)
     }
 
     private fun applyOptions(
@@ -85,71 +84,7 @@ internal class StackHeaderToolbarMenuCoordinator(
         }
 
         if (options.requiresIconTintColorUpdate) {
-            val currentTintList = MenuItemCompat.getIconTintList(menuItem)
-            val currentDefault = currentTintList?.defaultColor
-
-            // 1. Resolve Normal State
-            val finalNormal = when (val update = options.iconTintColorNormal) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
-                null -> currentDefault // Unchanged
-            }
-
-            // 2. Resolve Disabled State
-            val finalDisabled = when (val update = options.iconTintColorDisabled) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
-                null -> currentTintList?.getColorForState(intArrayOf(-android.R.attr.state_enabled), currentDefault ?: 0)
-                    ?.takeIf { it != currentDefault } // Unchanged
-            }
-
-            // 3. Resolve Pressed State
-            val finalPressed = when (val update = options.iconTintColorPressed) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
-                null -> currentTintList?.getColorForState(intArrayOf(android.R.attr.state_pressed), currentDefault ?: 0)
-                    ?.takeIf { it != currentDefault } // Unchanged
-            }
-
-            // 4. Resolve Focused State
-            val finalFocused = when (val update = options.iconTintColorFocused) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
-                null -> currentTintList?.getColorForState(intArrayOf(android.R.attr.state_focused), currentDefault ?: 0)
-                    ?.takeIf { it != currentDefault } // Unchanged
-            }
-
-            // 5. Build the states and colors arrays (Fallback order matters!)
-            val states = mutableListOf<IntArray>()
-            val colors = mutableListOf<Int>()
-
-            finalDisabled?.let {
-                states.add(intArrayOf(-android.R.attr.state_enabled))
-                colors.add(it)
-            }
-
-            finalPressed?.let {
-                states.add(intArrayOf(android.R.attr.state_pressed))
-                colors.add(it)
-            }
-
-            finalFocused?.let {
-                states.add(intArrayOf(android.R.attr.state_focused))
-                colors.add(it)
-            }
-
-            finalNormal?.let {
-                states.add(intArrayOf()) // Empty array acts as the default fallback
-                colors.add(it)
-            }
-
-            // 6. Apply or clear the tint list
-            if (states.isEmpty()) {
-                MenuItemCompat.setIconTintList(menuItem, null)
-            } else {
-                val colorStateList = ColorStateList(states.toTypedArray(), colors.toIntArray())
-                MenuItemCompat.setIconTintList(menuItem, colorStateList)
-            }
+            MenuItemCompat.setIconTintList(menuItem, getResolvedIconTintList(menuItem, options))
         }
     }
 
@@ -171,26 +106,106 @@ internal class StackHeaderToolbarMenuCoordinator(
      *
      * Icon size source: https://m3.material.io/components/app-bars/specs - App bar icon size
      */
-    private fun getResizedDrawable(toolbar: MaterialToolbar, drawable: Drawable): Drawable {
-        val targetHeightPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            24f,
-            toolbar.resources.displayMetrics
-        ).toInt()
+    private fun getResizedDrawable(
+        toolbar: MaterialToolbar,
+        drawable: Drawable,
+    ): Drawable {
+        val targetHeightPx =
+            TypedValue
+                .applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    24f,
+                    toolbar.resources.displayMetrics,
+                ).toInt()
 
         val intrinsicWidth = drawable.intrinsicWidth
         val intrinsicHeight = drawable.intrinsicHeight
 
-        val targetWidthPx = if (intrinsicWidth > 0 && intrinsicHeight > 0) {
-            val aspectRatio = intrinsicWidth.toFloat() / intrinsicHeight.toFloat()
-            (targetHeightPx * aspectRatio).toInt()
-        } else {
-            targetHeightPx
-        }
+        val targetWidthPx =
+            if (intrinsicWidth > 0 && intrinsicHeight > 0) {
+                val aspectRatio = intrinsicWidth.toFloat() / intrinsicHeight.toFloat()
+                (targetHeightPx * aspectRatio).toInt()
+            } else {
+                targetHeightPx
+            }
 
         return drawable
             .toBitmap(width = targetWidthPx, height = targetHeightPx)
             .toDrawable(toolbar.resources)
+    }
+
+    private fun getResolvedIconTintList(
+        menuItem: MenuItem,
+        options: StackHeaderToolbarMenuItemOptions,
+    ): ColorStateList? {
+        val currentTintList = MenuItemCompat.getIconTintList(menuItem)
+        val currentDefault = currentTintList?.defaultColor
+
+        val finalNormal =
+            when (val update = options.iconTintColorNormal) {
+                StackHeaderToolbarUpdate.Reset -> null
+                is StackHeaderToolbarUpdate.Set -> update.value
+                null -> currentDefault
+            }
+
+        val finalDisabled =
+            when (val update = options.iconTintColorDisabled) {
+                StackHeaderToolbarUpdate.Reset -> null
+                is StackHeaderToolbarUpdate.Set -> update.value
+                null ->
+                    currentTintList
+                        ?.getColorForState(intArrayOf(-android.R.attr.state_enabled), currentDefault ?: 0)
+                        ?.takeIf { it != currentDefault }
+            }
+
+        val finalPressed =
+            when (val update = options.iconTintColorPressed) {
+                StackHeaderToolbarUpdate.Reset -> null
+                is StackHeaderToolbarUpdate.Set -> update.value
+                null ->
+                    currentTintList
+                        ?.getColorForState(intArrayOf(android.R.attr.state_pressed), currentDefault ?: 0)
+                        ?.takeIf { it != currentDefault }
+            }
+
+        val finalFocused =
+            when (val update = options.iconTintColorFocused) {
+                StackHeaderToolbarUpdate.Reset -> null
+                is StackHeaderToolbarUpdate.Set -> update.value
+                null ->
+                    currentTintList
+                        ?.getColorForState(intArrayOf(android.R.attr.state_focused), currentDefault ?: 0)
+                        ?.takeIf { it != currentDefault }
+            }
+
+        val states = mutableListOf<IntArray>()
+        val colors = mutableListOf<Int>()
+
+        finalDisabled?.let {
+            states.add(intArrayOf(-android.R.attr.state_enabled))
+            colors.add(it)
+        }
+
+        finalPressed?.let {
+            states.add(intArrayOf(android.R.attr.state_pressed))
+            colors.add(it)
+        }
+
+        finalFocused?.let {
+            states.add(intArrayOf(android.R.attr.state_focused))
+            colors.add(it)
+        }
+
+        finalNormal?.let {
+            states.add(intArrayOf())
+            colors.add(it)
+        }
+
+        return if (states.isNotEmpty()) {
+            ColorStateList(states.toTypedArray(), colors.toIntArray())
+        } else {
+            null
+        }
     }
 
     companion object {
