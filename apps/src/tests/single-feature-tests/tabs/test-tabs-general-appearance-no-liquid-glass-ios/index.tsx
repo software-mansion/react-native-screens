@@ -299,7 +299,10 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab3',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
-        standardAppearance: TAB3_BASE_STANDARD_APPEARANCE,
+        standardAppearance: {
+          ...TAB3_BASE_STANDARD_APPEARANCE,
+          tabBarBlurEffect: 'systemDefault',
+        },
         scrollEdgeAppearance: TAB3_SCROLL_EDGE_APPEARANCE,
       },
     },
@@ -328,10 +331,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
-  },
-  headerText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   description: {
     marginTop: 80,
