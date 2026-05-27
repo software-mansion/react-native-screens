@@ -1,11 +1,14 @@
 package com.swmansion.rnscreens.gamma.stack.header.toolbar
 
-import android.R
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.MenuItemCompat
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -33,7 +36,7 @@ internal class StackHeaderToolbarMenuCoordinator(
             reverseIdMap[nativeId] = item.id
             val menuItem = toolbar.menu.add(Menu.NONE, nativeId, index, null)
 
-            applyOptions(menuItem, item.toOptions())
+            applyOptions(toolbar, menuItem, item.toOptions())
         }
 
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -51,20 +54,21 @@ internal class StackHeaderToolbarMenuCoordinator(
     }
 
     internal fun updateItem(
-        menu: Menu,
+        toolbar: MaterialToolbar,
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
         val item =
-            forwardIdMap[id]?.let { menu.findItem(it) } ?: run {
+            forwardIdMap[id]?.let { toolbar.menu.findItem(it) } ?: run {
                 Log.e(TAG, "[RNScreens] Unable to find menu item.")
                 return
             }
 
-        applyOptions(item, options)
+        applyOptions(toolbar,item, options)
     }
 
     private fun applyOptions(
+        toolbar: MaterialToolbar,
         menuItem: MenuItem,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
@@ -75,7 +79,8 @@ internal class StackHeaderToolbarMenuCoordinator(
         options.icon?.let {
             when (it) {
                 StackHeaderToolbarUpdate.Reset -> menuItem.icon = null
-                is StackHeaderToolbarUpdate.Set<Drawable> -> menuItem.icon = it.value
+                is StackHeaderToolbarUpdate.Set<Drawable> ->
+                    menuItem.icon = getResizedDrawable(toolbar, it.value)
             }
         }
 
@@ -159,6 +164,34 @@ internal class StackHeaderToolbarMenuCoordinator(
             iconTintColorFocused = StackHeaderToolbarUpdate.from(iconTintColorFocused),
             iconTintColorDisabled = StackHeaderToolbarUpdate.from(iconTintColorDisabled),
         )
+
+    /**
+     * Returns drawable resized to 24 dp height. Width is scaled proportionally to keep the aspect
+     * ratio.
+     *
+     * Icon size source: https://m3.material.io/components/app-bars/specs - App bar icon size
+     */
+    private fun getResizedDrawable(toolbar: MaterialToolbar, drawable: Drawable): Drawable {
+        val targetHeightPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            24f,
+            toolbar.resources.displayMetrics
+        ).toInt()
+
+        val intrinsicWidth = drawable.intrinsicWidth
+        val intrinsicHeight = drawable.intrinsicHeight
+
+        val targetWidthPx = if (intrinsicWidth > 0 && intrinsicHeight > 0) {
+            val aspectRatio = intrinsicWidth.toFloat() / intrinsicHeight.toFloat()
+            (targetHeightPx * aspectRatio).toInt()
+        } else {
+            targetHeightPx
+        }
+
+        return drawable
+            .toBitmap(width = targetWidthPx, height = targetHeightPx)
+            .toDrawable(toolbar.resources)
+    }
 
     companion object {
         private const val TAG = "StackHeaderToolbarMenuCoordinator"

@@ -607,7 +607,7 @@ internal class StackHeaderCoordinator(
         options: StackHeaderToolbarMenuItemOptions,
     ) {
         appBarLayout?.toolbar?.let {
-            toolbarMenuCoordinator.updateItem(it.menu, id, options)
+            toolbarMenuCoordinator.updateItem(it, id, options)
         }
     }
 
