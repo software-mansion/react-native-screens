@@ -27,9 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
+#pragma mark - Presentation
+
+- (void)prepareForPresentation;
+
 #pragma mark - Signals
 
 - (void)setNeedsPresentationUpdate;
+- (void)setNeedsBehaviorUpdate;
 - (void)setNeedsAppearanceUpdate;
 - (void)setNeedsInitialDetentReset;
 

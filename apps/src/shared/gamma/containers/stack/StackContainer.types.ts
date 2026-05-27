@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StackScreenProps,
   StackHeaderConfigProps,
+  StackHeaderConfigRef,
 } from 'react-native-screens/experimental';
 
 /// Route definition
@@ -11,6 +12,7 @@ export type StackRouteOptions = Omit<
   'children' | 'activityMode' | 'screenKey'
 > & {
   headerConfig?: StackHeaderConfigProps | undefined;
+  headerConfigRef?: React.Ref<StackHeaderConfigRef> | undefined;
 };
 
 /**

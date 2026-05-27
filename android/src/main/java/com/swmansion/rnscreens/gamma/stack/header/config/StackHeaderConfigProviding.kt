@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 
 interface StackHeaderConfigProviding {
     val type: StackHeaderType
@@ -20,6 +21,7 @@ interface StackHeaderConfigProviding {
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
+    val toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
 
     val isRTL: Boolean
 
@@ -29,7 +31,9 @@ interface StackHeaderConfigProviding {
         contentOffsetY: Int,
     )
 
-    fun setOnConfigChangeListener(listener: OnHeaderConfigChangeListener)
+    fun onMenuItemClick(id: String)
 
-    fun removeOnConfigChangeListener(listener: OnHeaderConfigChangeListener)
+    fun setDelegate(delegate: StackHeaderConfigDelegate)
+
+    fun removeDelegate(delegate: StackHeaderConfigDelegate)
 }

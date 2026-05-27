@@ -16,14 +16,19 @@ export type {
 export type {
   StackHeaderConfigPropsBase,
   StackHeaderConfigProps,
+  StackHeaderConfigRef,
   // Android
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
   StackHeaderToolbarSubviewAndroid,
   StackHeaderBackgroundSubviewAndroid,
   StackHeaderConfigPropsAndroid,
+  StackHeaderConfigCommandsAndroid,
+  StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
+  StackHeaderConfigCommandsIOS,
 } from './header';
 
 /**
