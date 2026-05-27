@@ -1,11 +1,13 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
+import android.R
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.helpers.IconResolver
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
@@ -56,33 +58,16 @@ class StackHeaderConfig(
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
 
-    private var lastResolvedDrawableIconResourceName: String? = null
-    private var lastResolvedImageIconUri: String? = null
+    private val backButtonIconResolver = IconResolver()
 
     internal fun resolveBackButtonIconIfNeeded() {
-        val name = backButtonDrawableIconResourceName
-        val uri = backButtonImageIconUri
-
-        if (name == lastResolvedDrawableIconResourceName && uri == lastResolvedImageIconUri) {
-            return
-        }
-
-        lastResolvedDrawableIconResourceName = name
-        lastResolvedImageIconUri = uri
-
-        if (name != null) {
-            backButtonIcon = getSystemDrawableResource(context, name)
-        } else if (uri != null) {
-            loadImage(context, uri) { drawable ->
-                if (uri == lastResolvedImageIconUri) {
-                    backButtonIcon = drawable
-                    // We need to call notifyConfigChanged because icons are loaded asynchronously
-                    // and regular update path might execute too early.
-                    notifyConfigChanged()
-                }
-            }
-        } else {
-            backButtonIcon = null
+        backButtonIconResolver.resolve(
+            reactContext,
+            backButtonDrawableIconResourceName,
+            backButtonImageIconUri
+        ) { drawable ->
+            backButtonIcon = drawable
+            notifyConfigChanged()
         }
     }
 
