@@ -1,6 +1,7 @@
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetConfigurationApplicator.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetPresentationManager.h"
 #import "RNSFormSheetUpdateCoordinator.h"
 #import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
@@ -19,6 +20,7 @@
 @implementation RNSFormSheetContentController {
   RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
   RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
+  RNSFormSheetPresentationManager *_Nonnull _presentationManager;
 
   BOOL _needsInitialDetentReset;
 }
@@ -30,6 +32,7 @@
 
     _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
     _configurationApplicator = [RNSFormSheetConfigurationApplicator new];
+    _presentationManager = [RNSFormSheetPresentationManager new];
 
     _needsInitialDetentReset = NO;
   }
@@ -78,14 +81,7 @@
     return;
   }
 
-  if (presentationProvider.isOpen) {
-    UIWindow *window = presentationProvider.hostWindow;
-    if (window != nil) {
-      [self presentFromWindowIfNeeded:window];
-    }
-  } else {
-    [self dismissIfNeeded];
-  }
+  [_presentationManager updatePresentationIfNeededWithProvider:presentationProvider controller:self];
 }
 
 - (void)prepareForPresentation
@@ -96,38 +92,14 @@
 #if !TARGET_OS_TV
   self.sheetPresentationController.delegate = self;
 #endif // !TARGET_OS_TV
-}
 
-// TODO: @t0maboro - This presentation logic is currently quite primitive.
-// We are not entirely safe from rapid conflicting updates, and there are edge cases
-// where the presentation state might become desynchronized. Addressing this robustly
-// might require an approach similar to the tabs implementation using state provenance,
-// which will be handled separately.
-// Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window
-{
-  if (self.presentingViewController != nil) {
-    return;
-  }
-
-  UIViewController *presentationSourceViewController =
-      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
-  if (presentationSourceViewController == nil) {
-    RCTLogError(
-        @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
-    return;
-  }
-
-  [self prepareForPresentation];
-  [presentationSourceViewController presentViewController:self animated:YES completion:nil];
-}
-
-- (void)dismissIfNeeded
-{
-  if (self.presentingViewController == nil) {
-    return;
-  }
-  [self dismissViewControllerAnimated:YES completion:nil];
+  // Since UIKit has recreated sheetPresentationController, any configuration that could be applied
+  // during the Dismissed or Dismissing state was lost.
+  // We must force a full configuration update for this new instance.
+  [self setNeedsAppearanceUpdate];
+  [self setNeedsBehaviorUpdate];
+  [self setNeedsInitialDetentReset];
+  [self updateConfigurationIfNeeded];
 }
 
 #pragma mark - Sheet Configuration
@@ -189,6 +161,8 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  [_presentationManager handleNativeDismiss];
+
   [self.delegate sheetControllerDidNativeDismiss:self];
 }
 
