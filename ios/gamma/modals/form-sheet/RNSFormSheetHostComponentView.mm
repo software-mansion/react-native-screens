@@ -203,6 +203,11 @@ namespace react = facebook::react;
     [_controller setNeedsBehaviorUpdate];
   }
 
+  if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
+    _preventNativeDismiss = static_cast<BOOL>(newComponentProps.preventNativeDismiss);
+    [_controller setNeedsBehaviorUpdate];
+  }
+
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
     _prefersGrabberVisible = newComponentProps.prefersGrabberVisible;
     [_controller setNeedsAppearanceUpdate];
@@ -220,11 +225,6 @@ namespace react = facebook::react;
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
-  }
-
-  if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
-    _preventNativeDismiss = static_cast<BOOL>(newComponentProps.preventNativeDismiss);
-    [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
   }
 
   [super updateProps:props oldProps:oldProps];

@@ -89,6 +89,8 @@
         preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : preferredCornerRadius;
     sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
   }];
+
+  controller.preventNativeDismiss = behaviorProvider.preventNativeDismiss;
 #endif // !TARGET_OS_TV
 }
 
