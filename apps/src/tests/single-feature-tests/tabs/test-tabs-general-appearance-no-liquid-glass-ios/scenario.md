@@ -43,7 +43,7 @@ detected by Detox view-hierarchy or snapshot testing.
 - The shadow line on the top edge of the tab bar is very faint; if your monitor
 settings make it invisible, please verify it under a high-contrast environment.
 - The color values described as "system defaults" (such as the gray titles for
-unselected tabs in Step 3) are controlled entirely by UIKit and can changein future
+unselected tabs in Step 3) are controlled entirely by UIKit and can change in future
 iOS versions.
 
 ## Steps
