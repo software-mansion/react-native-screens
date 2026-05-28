@@ -2,20 +2,18 @@
 
 ## Details
 
-**Description:** Validates iOS tab bar item icon props: `icon` and
-`selectedIcon` (different images for selected vs. unselected states), the
-host-level `tabBarTintColor`, and the per-tab
-`standardAppearance.stacked.selected.tabBarItemIconColor` override that
-takes precedence over the host tint. Covers four `PlatformIconIOS` types:
-`templateSource` (tintable), `sfSymbol` (tintable), `xcasset` (tintable), and `imageSource`
-(non-tintable).
+**Description:** Validates tab bar item icon properties (icon, selectedIcon) and
+tinting behaviors for iOS and Android. Covers cross-platform icon types including
+templateSource, sfSymbol, xcasset, drawableResource, and imageSource.
+Verifies that per-tab appearance color configurations (selected, normal,
+Android only: focused) correctly override host-level color tints.
 
 **OS test creation version:** iOS 18.6 and iOS 26.5, Android: API Level 36.
 
 ## E2E test
 
-Incomplete: Not automated. All observable outcomes are purely visual (icon color, selected vs.
-unselected glyph). Detox does not expose tint color or rendered image
+Incomplete: Not automated. All observable outcomes are purely visual (icon color,
+selected vs. unselected glyph). Detox does not expose tint color or rendered image
 attributes of native tab bar items, so automated assertion is not feasible.
 
 ## Prerequisites
