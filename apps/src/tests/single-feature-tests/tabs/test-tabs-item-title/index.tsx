@@ -81,14 +81,11 @@ function FontTab() {
             `tabBarItemTitleLargeLabelFontSize`: 18{'\n'}
             `tabBarItemTitleFontStyle`: &quot;italic&quot;{'\n'}
             `tabBarItemTitleFontWeight`: &quot;700&quot;{'\n'}
-            `selected.tabBarItemTitleFontColor`:{' '}
-            <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
             {'\n'}
             {'\n'}
             Title should render in <Text style={{ fontWeight:'700' }}>bold</Text> <Text style={{ fontStyle:'italic' }}>italic</Text> <Text style={{ fontFamily:'monospace' }}>monospace</Text>. Unselected tabs use the <Text style={{ fontStyle:'italic' }}>italic </Text> 
             <Text style={{ fontSize:8 }}>small label size (8sp)</Text>; the selected tab scales up to the <Text style={{ fontSize:18 }}>large label
-            size (18sp)</Text>. When selected, the title should also turn{' '}
-            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.
+            size (18sp)</Text>.
           </Text>
         </>
       )}
@@ -189,9 +186,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
           tabBarItemTitleLargeLabelFontSize: 18,
           tabBarItemTitleFontStyle: 'italic',
           tabBarItemTitleFontWeight: '700',
-          selected: {
-            tabBarItemTitleFontColor: Colors.GreenDark100,
-          },
         },
       },
     },

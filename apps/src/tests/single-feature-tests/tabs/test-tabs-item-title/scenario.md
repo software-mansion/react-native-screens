@@ -2,13 +2,18 @@
 
 ## Details
 
-**Description:** Validates iOS tab bar item title prop: the
-`options.title` (plain label and long-string truncation), `tabBarItemTitleFontColor` (including its override
-of the host-level `tabBarTintColor`), `tabBarItemTitleFontFamily`,
-`tabBarItemTitleFontSize`, `tabBarItemTitleFontStyle`,
-`tabBarItemTitleFontWeight`, and `tabBarItemTitlePositionAdjustment`.
-Appearance props are set under `standardAppearance.stacked.selected`
-and `standardAppearance.stacked.normal`.
+Validates the tab bar item title configuration across both platforms, verifying
+the core options.title rendering alongside long-string truncation.It checks
+`tabBarItemTitleFontColor` behavior across multiple states, including its override
+of the host-level `tabBarTintColor` on iOS, the standard selected and normal states
+on both platforms, and the keyboard-focused state specific to Android. Typography
+and layout adjustments are verified according to platform-specific structures:
+on iOS, it tests `tabBarItemTitleFontFamily`, `tabBarItemTitleFontSize`, `tabBarItemTitleFontStyle`,
+`tabBarItemTitleFontWeight`, and vertical offsets via `tabBarItemTitlePositionAdjustment`
+nested under `standardAppearance.stacked`; on Android, it verifies the shared font
+family, weight, and style props alongside Android-specific dynamic sizing via
+`tabBarItemTitleSmallLabelFontSize` and `tabBarItemTitleLargeLabelFontSize` configured
+directly under the `standardAppearance` object
 
 **OS test creation version:** iOS 18.6 and iOS 26.5, Android: API Level 36.
 
@@ -25,6 +30,7 @@ native tab bar items, so automated assertion is not feasible.
 
 ## Note
 
+iOS Known Issues:
 - **Normal (unselected) state ([iOS26 KI](https://github.com/software-mansion/react-native-screens-labs/discussions/395)):**
   On iOS 18 and lower, the normal tab title color is applied to unselected tab
   titles. On iOS 26, the normal-state title color is not applied.
@@ -41,12 +47,13 @@ native tab bar items, so automated assertion is not feasible.
 - [ ] Expected: Three tabs are visible in the tab bar. The first tab
   is selected by default. Its title is truncated with an
   ellipsis (e.g. "A Very Long Tab Title T...") and does not overflow
-  into adjacent items or wrap to a second line. On iOS 18 and lower,
+  into adjacent items or wrap to a second line.
+  **On iOS 18 and lower**,
   due to the known native bug noted above, the long title may overflow
   into adjacent items instead of showing an ellipsis. The second tab is
   titled **Color** and the third **Font**. All labels use
   the system default font, weight, and position. On iOS the active tab title
-  color is the system default tint - green.
+  color is the host default tint (green).
 
 ---
 
@@ -61,16 +68,16 @@ native tab bar items, so automated assertion is not feasible.
   For **Android and iOS 18** and lower, the title color
   for unselected tabs is blue.
 
-3. Android only: While **Color** tab is selected use Tab botton on keyboard to
+3. Android only: While **Color** tab is selected, use the Tab key on keyboard to
 switch focus to the long title tab.
 
-- [ ] Expected: Focused tab title is yellow while selected tab title reminds
-red, and unselected blue.
+- [ ] Expected: Focused tab title is yellow while selected tab title
+remains red, and unselected tabs remain blue.
 
 4. Tap the long title tab, then tap **Color** again.
 
 - [ ] Expected: On re-selection the same split appearance (red title for selected tab,
-blue title for unselected tabs, on ios: green icon)
+blue title for unselected tabs, on iOS: green icon)
 is reproduced immediately with no visual glitch.
 
 ---
@@ -81,8 +88,10 @@ is reproduced immediately with no visual glitch.
 
 - [ ] Expected: When the tab is selected, the "Font" title label is
 rendered in a bold, italic font at approximately 18 pt.
-On Android: monospace font with green color. Unselected tabs display in small italic font at approximately 8 pt.
-On iOS: Georigia font tinted green. Unselected tabs display in system default (San Francisco, non-italic, 10 pt). 
+On Android: monospace font family applied. Unselected tabs display in small
+italic font at approximately 8 pt.
+On iOS: Georgia font tinted green. Unselected tabs display in system default
+(San Francisco, non-italic, 10 pt).
 The title label is shifted noticeably upward (by ~6 points) compared to
 the baseline position seen on the **Color** tab, while the icon position remains
 unchanged.
