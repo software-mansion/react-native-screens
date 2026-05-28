@@ -1,4 +1,4 @@
-# Test Scenario: Tab Bar Item Icon (iOS)
+# Test Scenario: Tab Bar Item Icon
 
 ## Details
 
@@ -10,7 +10,7 @@ takes precedence over the host tint. Covers four `PlatformIconIOS` types:
 `templateSource` (tintable), `sfSymbol` (tintable), `xcasset` (tintable), and `imageSource`
 (non-tintable).
 
-**OS test creation version:** iOS 18.6 and iOS 26.5
+**OS test creation version:** iOS 18.6 and iOS 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -20,8 +20,9 @@ attributes of native tab bar items, so automated assertion is not feasible.
 
 ## Prerequisites
 
+- Android device or emulator.
 - iOS device or simulator running iOS 18 or later.
-- The iPhone in portrait orientation is the primary verification surface (stacked layout).
+- The device/simulator/emulator portrait orientation is the primary verification surface (stacked layout).
 
 ## Note
 
