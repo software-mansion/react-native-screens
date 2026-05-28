@@ -41,10 +41,10 @@ detected by Detox view-hierarchy or snapshot testing.
   relevant tabs, providing visual texture to help verify semi-transparent
   backgrounds and blur effects during scrolling and at the scroll edge.
 - The shadow line on the top edge of the tab bar is very faint; if your monitor
-settings make it invisible, please verify it under a high-contrast environment.
+  settings make it invisible, please verify it under a high-contrast environment.
 - The color values described as "system defaults" (such as the gray titles for
-unselected tabs in Step 3) are controlled entirely by UIKit and can change in future
-iOS versions.
+  unselected tabs in Step 3) are controlled entirely by UIKit and can change in future
+  iOS versions.
 
 ## Steps
 
