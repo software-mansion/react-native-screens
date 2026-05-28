@@ -10,11 +10,11 @@ of the host-level `tabBarTintColor`), `tabBarItemTitleFontFamily`,
 Appearance props are set under `standardAppearance.stacked.selected`
 and `standardAppearance.stacked.normal`.
 
-**OS test creation version:** iOS 18.6 and iOS 26
+**OS test creation version:** iOS 18.6 and iOS 26.5, Android: API Level 36.
 
 ## E2E test
 
-No: All observable outcomes are purely visual (color, typography, pixel
+Incomplete: Not automated. All observable outcomes are purely visual (color, typography, pixel
 position of a label). Detox does not expose color or font attributes of
 native tab bar items, so automated assertion is not feasible.
 
@@ -39,57 +39,64 @@ native tab bar items, so automated assertion is not feasible.
 1. Launch the app and navigate to the **Tab Bar Item Title** screen.
 
 - [ ] Expected: Three tabs are visible in the tab bar. The first tab
-  is selected by default. On iOS 26, its title is truncated with an
+  is selected by default. Its title is truncated with an
   ellipsis (e.g. "A Very Long Tab Title T...") and does not overflow
   into adjacent items or wrap to a second line. On iOS 18 and lower,
   due to the known native bug noted above, the long title may overflow
   into adjacent items instead of showing an ellipsis. The second tab is
-  titled **Color** and the third **Font and Position**. All labels use
-  the system default font, weight, and position. The active tab title
+  titled **Color** and the third **Font**. All labels use
+  the system default font, weight, and position. On iOS the active tab title
   color is the system default tint - green.
 
 ---
 
-### `tabBarItemTitleFontColor` overrides `tabBarTintColor`
+### `tabBarItemTitleFontColor` in different states
 
 2. Tap the **Color** tab.
 
-- [ ] Expected: The **Color** tab is selected. The host `tabBarTintColor`
-  is green, so the selected icon tints green. The tab's
+- [ ] Expected: The **Color** tab is selected. The tab's
   `tabBarItemTitleFontColor` is red, so the title text
-  "Color" renders in red - not green.
+  "Color" renders in red.
+  On iOS: The host `tabBarTintColor` is green, so the selected icon tints green.
+  For **Android and iOS 18** and lower, the title color
+  for unselected tabs is blue.
 
-3. Tap the long title tab, then tap **Color** again.
+3. Android only: While **Color** tab is selected use Tab botton on keyboard to
+switch focus to the long title tab.
 
-- [ ] Expected: On re-selection the same split appearance (red title, green icon)
+- [ ] Expected: Focused tab title is yellow while selected tab title reminds
+red, and unselected blue.
+
+4. Tap the long title tab, then tap **Color** again.
+
+- [ ] Expected: On re-selection the same split appearance (red title for selected tab,
+blue title for unselected tabs, on ios: green icon)
 is reproduced immediately with no visual glitch.
 
 ---
 
 ### Font and Position
 
-4. Tap the **Font and Position** tab.
+5. Tap the **Font** tab.
 
-- [ ] Expected: When the tab is selected, the "Font and Position" title label is
-rendered in a bold, italic Georgia font at approximately 12 pt tinted green.
-The contrast with the system default (San Francisco, non-italic, 10 pt) is clearly
-visible. The title label is shifted noticeably upward (by ~6 points) compared to
+- [ ] Expected: When the tab is selected, the "Font" title label is
+rendered in a bold, italic font at approximately 18 pt.
+On Android: monospace font with green color. Unselected tabs display in small italic font at approximately 8 pt.
+On iOS: Georigia font tinted green. Unselected tabs display in system default (San Francisco, non-italic, 10 pt). 
+The title label is shifted noticeably upward (by ~6 points) compared to
 the baseline position seen on the **Color** tab, while the icon position remains
-unchanged. For **iOS 18** and lower, the title color for unselected tabs is blue.
+unchanged.
 
-5. Tap any other tab, then tap **Font and Position** again.
+6. Tap any other tab, then tap **Font** again.
 
 - [ ] Expected: The custom typography and position reappear when the tab is
-re-selected. The vertical offset is consistent across selections.
-On iOS 26, the unselected state reverts to the system default appearance
-(item title color is not blue).
- On iOS 18 and lower, unselected tab titles appear in blue.
+re-selected. On iOS: The vertical offset is consistent across selections.
 
 ---
 
 ### Stability check
 
-6. Cycle through all three tabs in order, then in reverse.
+7. Cycle through all three tabs in order, then in reverse.
 
 - [ ] Expected: Each tab's title styling applies correctly on selection, and
   no crash, layout freeze, or visual artifact occurs during rapid cycling.
