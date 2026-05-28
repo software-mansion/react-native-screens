@@ -4,10 +4,10 @@ import type { StackHeaderItemProps } from './StackHeaderItem.ios.types';
 import { StyleSheet } from 'react-native';
 
 export default function StackHeaderItem(props: StackHeaderItemProps) {
-  const { Component: ItemComponent, ...rest } = props;
+  const { render, ...rest } = props;
   return (
     <StackHeaderItemIOSNativeComponent {...rest} style={styles.config}>
-      {ItemComponent && <ItemComponent />}
+      {render?.()}
     </StackHeaderItemIOSNativeComponent>
   );
 }

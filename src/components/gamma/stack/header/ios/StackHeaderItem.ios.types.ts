@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ReactElement } from 'react';
 
 export type StackHeaderItemPlacement =
   | 'leading'
@@ -10,5 +10,5 @@ export type StackHeaderItemPlacement =
 export type StackHeaderItemProps = {
   placement: StackHeaderItemPlacement;
   label?: string | undefined;
-  Component?: ComponentType | undefined;
+  render?: (() => ReactElement) | undefined;
 };

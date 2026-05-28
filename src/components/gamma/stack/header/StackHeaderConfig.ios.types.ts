@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ReactElement } from 'react';
 
 export interface StackHeaderBaseItemIOS {
   key: string;
@@ -12,7 +12,7 @@ export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
 export interface StackHeaderInlineCustomItemIOS {
   key: string;
   type: 'item';
-  Component: ComponentType;
+  render: () => ReactElement;
 }
 
 interface StackHeaderFixedSpacerItemIOS {
@@ -34,7 +34,7 @@ export type StackHeaderSpacerItemIOS =
 
 export interface StackHeaderTitleCustomItemIOS {
   key: string;
-  Component: ComponentType;
+  render: () => ReactElement;
 }
 
 export interface StackHeaderConfigPropsIOS {
