@@ -178,14 +178,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
   }
 }
 
@@ -1124,26 +1120,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 }
 
 @implementation RNSScreenStackHeaderConfigManager
-
-@end
-
-@implementation RCTConvert (RNSScreenStackHeader)
-
-RCT_ENUM_CONVERTER(UISemanticContentAttribute,
-                   (@{
-                     @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
-                     @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
-                   }),
-                   UISemanticContentAttributeUnspecified,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(UINavigationItemBackButtonDisplayMode,
-                   (@{
-                     @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
-                     @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
-                     @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
-                   }),
-                   UINavigationItemBackButtonDisplayModeDefault,
-                   integerValue)
 
 @end

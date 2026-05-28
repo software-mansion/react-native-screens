@@ -15,6 +15,9 @@
 @implementation RNSScrollViewMarkerComponentView
 @end
 
+@implementation RNSFormSheetHostComponentView
+@end
+
 @implementation RNSStackHeaderConfigComponentView
 @end
 

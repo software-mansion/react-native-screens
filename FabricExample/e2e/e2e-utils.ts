@@ -7,7 +7,7 @@ export const describeIfiOS =
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
-async function scrollUntilVisible(id: string, scrollViewId: string) {
+export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
@@ -72,18 +72,18 @@ export async function getElementAttributes(
   testLabel: string,
 ): Promise<ElementAttributes> {
   const attrs = await element(by.label(testLabel)).getAttributes();
-  
+
   if ('elements' in attrs) {
     throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for label: "${testLabel}". `
+      `Multiple elements (${attrs.elements.length}) found for label: "${testLabel}". `,
     );
   }
-  
+
   return attrs as ElementAttributes;
 }
 
 /**
- * Performs a coordinate-based tap on iOS to interact with an element that may be 
+ * Performs a coordinate-based tap on iOS to interact with an element that may be
  * obstructed by other UI layers, bypassing Detox's default visibility checks.
  */
 export async function forceTapByLabeliOS(testLabel: string) {

@@ -16,7 +16,7 @@ import {
   SplitWithNativeStackHeaderStyles,
   SplitWithNativeStackModal,
   SplitWithNativeStackPresentation,
-  SplitWithNativeStackSheet
+  SplitWithNativeStackSheet,
 } from './SplitWithNativeStack';
 import { SplitBaseConfig } from './helpers/types';
 
@@ -26,9 +26,7 @@ const App = () => {
     preferredSplitBehavior: 'tile',
   };
 
-  return (
-    <SplitBaseApp splitBaseConfig={splitBaseConfig} />
-  );
-}
+  return <SplitBaseApp splitBaseConfig={splitBaseConfig} />;
+};
 
 export default App;

@@ -18,7 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-Other: Ongoing research.
+Yes: Covers all manual scenario steps.
 
 ## Prerequisites
 
@@ -106,8 +106,8 @@ Other: Ongoing research.
 9. Scroll the list to the top.
 
 - [ ] Expected: The text label
-  `overrideScrollViewContentInsetAdjustmentBehavior: (not set, defaults to true)`
-  at the top of the scroll content
+  `overrideScrollViewContentInsetAdjustmentBehavior:
+  (not set, defaults to true)` at the top of the scroll content
   is fully visible below the navigation bar and not obscured
   behind it — identical behavior to the **True** tab.
 
@@ -125,7 +125,7 @@ Other: Ongoing research.
   behind it. No layout jump or
   visual difference between the two tabs.
 
-11.  Switch to the **False** tab and scroll to the top, then
+11. Switch to the **False** tab and scroll to the top, then
     immediately switch to the **True** tab.
 
 - [ ] Expected: The **True** tab correctly shows the text label

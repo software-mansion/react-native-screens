@@ -91,14 +91,10 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     _lastScheduledFrame = frame;
   }
@@ -313,19 +309,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;
 }
-
-@implementation RCTConvert (RNSScreenStackHeaderSubview)
-
-RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType,
-                   (@{
-                     @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-                     @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-                     @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-                     @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-                     @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-                     @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-                   }),
-                   RNSScreenStackHeaderSubviewTypeTitle,
-                   integerValue)
-
-@end

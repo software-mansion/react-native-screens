@@ -52,10 +52,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RCTConvert (RNSScreenStackHeaderSubview)
-
-+ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
-
-@end
-
 NS_ASSUME_NONNULL_END

@@ -16,7 +16,7 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
-import { Button, ScrollView, StyleSheet } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
@@ -76,10 +76,11 @@ function LargeHorizontalItem() {
   const { pressableProps } = useContext(PressableContext)!;
 
   return (
-    <PressableWithFeedback
-      {...pressableProps}
-      style={{ width: 100, height: 20 }}
-    />
+    // <PressableWithFeedback
+    //   {...pressableProps}
+    //   style={{ width: 100, height: 20 }}
+    // />
+    <Text>A quick brown fox jumped over a lazy dog</Text>
   );
 }
 

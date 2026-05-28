@@ -1,8 +1,11 @@
 import React from 'react';
-import { Tabs } from "react-native-screens";
+import { Tabs } from 'react-native-screens';
 import type { TabRouteConfig } from './TabsContainer.types';
 import type { TabsContainerItemProps } from './TabsContainerItem.types';
-import { SafeAreaView, type SafeAreaViewProps } from 'react-native-screens/experimental';
+import {
+  SafeAreaView,
+  type SafeAreaViewProps,
+} from 'react-native-screens/experimental';
 import { Platform } from 'react-native';
 import { TabsNavigationContext } from './contexts/TabsNavigationContext';
 import { RNSLog } from 'react-native-screens/private';
@@ -10,9 +13,9 @@ import { RNSLog } from 'react-native-screens/private';
 export const TabsContainerItem = React.memo(TabsContainerItemImpl);
 
 function TabsContainerItemImpl(props: TabsContainerItemProps) {
-
   RNSLog.info(
-    `TabsContainerItem render: ${props.route.routeKey} ${props.isSelected ? '(selected)' : ''
+    `TabsContainerItem render: ${props.route.routeKey} ${
+      props.isSelected ? '(selected)' : ''
     } ${props.pendingForUpdate ? '(pending)' : ''}`,
   );
 
@@ -24,18 +27,21 @@ function TabsContainerItemImpl(props: TabsContainerItemProps) {
       selectTab: props.navMethods.selectTab,
       isSelected: props.isSelected,
       shouldRenderContents: props.isSelected || props.pendingForUpdate,
-    }
-  }, [props.route.routeKey, props.route.options, props.navMethods, props.isSelected, props.pendingForUpdate]);
+    };
+  }, [
+    props.route.routeKey,
+    props.route.options,
+    props.navMethods,
+    props.isSelected,
+    props.pendingForUpdate,
+  ]);
 
   const { safeAreaConfiguration, ...nativeOptions } = props.route.options ?? {};
 
   const screenKey = props.route.routeKey;
 
   return (
-    <Tabs.Screen
-      key={screenKey}
-      {...nativeOptions}
-      screenKey={screenKey}>
+    <Tabs.Screen key={screenKey} {...nativeOptions} screenKey={screenKey}>
       <TabsNavigationContext value={tabsNavigationContext}>
         {getContent(props.Component, safeAreaConfiguration)}
       </TabsNavigationContext>
@@ -82,4 +88,3 @@ function getSafeAreaViewEdges(
 
   return { ...defaultEdges, ...edges };
 }
-

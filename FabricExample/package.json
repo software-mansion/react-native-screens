@@ -23,6 +23,7 @@
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
     "@react-navigation/routers": "link:../react-navigation/packages/routers/",
     "@react-navigation/stack": "link:../react-navigation/packages/stack/",
+    "@rnscreens/apps": "link:../apps",
     "nanoid": "^4.0.2",
     "react": "19.2.3",
     "react-native": "0.85.0",

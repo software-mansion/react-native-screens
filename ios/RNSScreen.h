@@ -9,7 +9,6 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "RNSViewInteractionManager.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -24,9 +23,6 @@ namespace react = facebook::react;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTConvert (RNSScreen)
-
-+ (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
-+ (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
 
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
@@ -152,12 +148,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
-
-/**
- * Holds a shared instance to a service that finds the view that needs to have interactions disabled for stack to not
- * have multiple screen transitions at once.
- */
-+ (RNSViewInteractionManager *)viewInteractionManagerInstance;
 
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup

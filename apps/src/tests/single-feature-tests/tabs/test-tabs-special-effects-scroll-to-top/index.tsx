@@ -1,20 +1,13 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { Platform, ScrollView, StyleSheet, Text } from 'react-native';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Tabs special effect scroll to top',
-  key: 'test-tabs-special-effects-scroll-to-top',
-  details:
-    'Test settings of specialEffect scrollToTop.',
-  platforms: ['ios', 'android'],
-};
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 interface ScrollScreenProps {
   tabName: string;
@@ -22,14 +15,22 @@ interface ScrollScreenProps {
 
 export function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
-    <ScrollView testID={`${tabName}-scrollview`}>
-      <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
-      {Array.from({ length: 50 }, (_, i) => (
-        <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
-          Item {i + 1}
+    <SafeAreaView
+      edges={{
+        bottom: Platform.OS === 'android',
+        top: Platform.OS === 'android',
+      }}>
+      <ScrollView testID={`${tabName}-scrollview`}>
+        <Text style={styles.hint}>
+          Scroll Screen — scroll down or re-tap the tab.
         </Text>
-      ))}
-    </ScrollView>
+        {Array.from({ length: 50 }, (_, i) => (
+          <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
+            Item {i + 1}
+          </Text>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -59,7 +60,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       tabBarItemAccessibilityLabel: 'tab2-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
-          scrollToTop: false
+          scrollToTop: false,
         },
       },
     },

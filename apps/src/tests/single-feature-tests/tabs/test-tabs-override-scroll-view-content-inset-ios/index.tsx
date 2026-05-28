@@ -5,17 +5,8 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Override ScrollView Content Inset',
-  key: 'test-tabs-override-scroll-view-content-inset-ios',
-  details:
-    'Tests overrideScrollViewContentInsetAdjustmentBehavior with different static values per tab. ' +
-    'False: content scrolls behind bars. True/Default: content is inset from bars.',
-  platforms: ['ios'],
-};
 
 const ITEM_COUNT = 30;
 
@@ -27,14 +18,14 @@ export function ScrollContent({
   testID: string;
 }) {
   return (
-    <ScrollView style={styles.scrollView} testID={testID}>
+    <ScrollView style={styles.scrollView} testID={`${testID}-scrollview`}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>
+        <Text style={styles.headerText} testID={`${testID}-header`}>
           overrideScrollViewContentInsetAdjustmentBehavior: {label}
         </Text>
       </View>
       {Array.from({ length: ITEM_COUNT }, (_, i) => (
-        <View key={i} style={styles.item}>
+        <View key={i} style={styles.item} testID={`${testID}-item-${i + 1}`}>
           <Text style={styles.itemText}>Item {i + 1}</Text>
         </View>
       ))}
@@ -43,28 +34,18 @@ export function ScrollContent({
 }
 
 export function FalseTab() {
-  return (
-    <ScrollContent
-      label="false"
-      testID="override-inset-false-scrollview"
-    />
-  );
+  return <ScrollContent label="false" testID="override-inset-false" />;
 }
 
 export function TrueTab() {
-  return (
-    <ScrollContent
-      label="true"
-      testID="override-inset-true-scrollview"
-    />
-  );
+  return <ScrollContent label="true" testID="override-inset-true" />;
 }
 
-function DefaultTab() {
+export function DefaultTab() {
   return (
     <ScrollContent
       label="(not set, defaults to true)"
-      testID="override-inset-default-scrollview"
+      testID="override-inset-default"
     />
   );
 }
@@ -92,7 +73,7 @@ export function App() {
               Component: TrueTab,
               options: {
                 title: 'True',
-                tabBarItemTestID: 'override-inset-tab-true',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-true',
                 ios: {
                   overrideScrollViewContentInsetAdjustmentBehavior: true,
                   icon: { type: 'sfSymbol', name: 'checkmark.circle' },
@@ -104,7 +85,7 @@ export function App() {
               Component: DefaultTab,
               options: {
                 title: 'Default',
-                tabBarItemTestID: 'override-inset-tab-default',
+                tabBarItemAccessibilityLabel: 'override-inset-tab-default',
                 ios: { icon: { type: 'sfSymbol', name: 'circle.dashed' } },
               },
             },
