@@ -4,10 +4,6 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 
-#if defined(__cplusplus)
-
-#endif // defined(__cplusplus)
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsBottomAccessoryContentComponentView : RNSReactBaseView
