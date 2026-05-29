@@ -143,7 +143,7 @@ function ImageTab() {
             Selected: filled image in {' '}
             <Text style={{ color: Colors.RedDark100 }}>RED</Text> color.
             {'\n'}
-            Uselected: outline icons in {' '}
+            Unselected: outline icons in {' '}
             <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> color.
             {'\n'}
             Focused (via keyboard navigation Tab key):{'\n'}
