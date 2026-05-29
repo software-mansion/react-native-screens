@@ -21,7 +21,7 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- Ensure the soft keyboard pops up fully when focusing text inputs to correctly evaluate window insect recalculations.
+- Ensure the soft keyboard pops up fully when focusing text inputs to correctly evaluate window inset recalculations.
 
 ## Steps
 
