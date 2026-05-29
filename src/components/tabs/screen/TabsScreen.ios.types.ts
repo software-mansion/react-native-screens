@@ -224,8 +224,7 @@ export interface TabsScreenPropsIOS {
    * have a transparent background.
    *
    * @remarks
-   * When `scrollEdgeAppearance.tabBarBackgroundColor` is non-opaque (alpha < 1) and
-   * `scrollEdgeAppearance.tabBarBlurEffect` is `none`, the `tabBarBackgroundColor`
+   * When `scrollEdgeAppearance.tabBarBackgroundColor` is non-opaque (alpha < 1) the `tabBarBackgroundColor`
    * from `standardAppearance` will show through from beneath.
    * @platform ios
    */
