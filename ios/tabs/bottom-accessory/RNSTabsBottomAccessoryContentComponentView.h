@@ -6,8 +6,6 @@
 
 #if defined(__cplusplus)
 
-#import <cxxreact/ReactNativeVersion.h>
-
 #endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
