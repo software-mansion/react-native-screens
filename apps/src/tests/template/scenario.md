@@ -33,16 +33,18 @@ Include any critical information for scenario execution not covered elsewhere. U
 
 Step-by-step instructions for a tester to manually verify the scenario.
 
-You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step sections for different device types if their execution paths differ significantly.
+**Format Convention:** Action steps are numbered (e.g., 1. Action). The expected results for that action immediately
+follow as Markdown checkboxes (- [ ] Expected result). You can use multiple checkboxes to separate distinct outcomes or
+to differentiate between OS/app versions.
+
+You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step
+sections for different device or OS types if their execution paths differ significantly (## Steps - iOS or ## Steps - iPad).
 
 1. Navigate to ...
 
-- [ ] Expected:
+- [ ] Description of expected behavior after the navigation action.
 
 2. Tap ...
 
-- [ ] Expected:
-
-3. Verify that ...
-
-- [ ] Expected:
+- [ ] iOS18: expected behavior on this OS version.
+- [ ] iOS26: expected behavior on this OS version.
