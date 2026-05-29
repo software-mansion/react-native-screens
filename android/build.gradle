@@ -162,11 +162,11 @@ android {
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so",
-                "**/libreactnativejni.so",
-                "**/libreact_performance_timeline.so",
-                // In 0.76 multiple react-native's libraries were merged and these are the main new artifacts we're using.
-                // Some of above lib* names could be removed after we remove support for 0.76.
+                // In 0.76 multiple react-native's libraries were merged into libreactnative.so via
+                // SoMerging-utils.cmake (target_merge_so) or OBJECT libraries. Since we require RN >= 0.82
+                // (see peerDependencies), the previously listed standalone .so artifacts
+                // (libreact_render*.so, libreactnativejni.so, libreact_performance_timeline.so) no longer
+                // exist in any supported RN version and were removed from this exclude list.
                 // https://github.com/facebook/react-native/pull/43909
                 // https://github.com/facebook/react-native/pull/46059
                 "**/libfbjni.so",
@@ -209,10 +209,4 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation "androidx.core:core-ktx:1.17.0"
-
-    constraints {
-        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
-            because("on older React Native versions this dependency conflicts with react-native-screens")
-        }
-    }
 }
