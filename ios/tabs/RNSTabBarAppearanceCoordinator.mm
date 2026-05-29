@@ -92,16 +92,30 @@
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSTabsIconTypeTemplate;
 
+    // Weak-capture to avoid updating a tab bar item whose internal
+    // view hierarchy has been torn down (iOS 26 UIKit regression:
+    // unowned refs inside UITabBarItem._updateViewAndPositionItems:).
+    __weak UITabBarItem *weakTabBarItem = tabBarItem;
+    __weak RNSTabsScreenComponentView *weakScreenView = screenView;
+
     // Normal icon
     if (screenView.iconImageSource != nil) {
       [RNSImageLoadingHelper loadImageFromSource:screenView.iconImageSource
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   [self updateTabBarItem:tabBarItem
+                                   UITabBarItem *strongItem = weakTabBarItem;
+                                   RNSTabsScreenComponentView *strongView = weakScreenView;
+                                   if (strongItem == nil || strongView == nil) {
+                                     return;
+                                   }
+                                   if (![strongView.controller.parentViewController isKindOfClass:[UITabBarController class]]) {
+                                     return;
+                                   }
+                                   [self updateTabBarItem:strongItem
                                                 withImage:image
                                                isSelected:NO
-                                            forScreenView:screenView];
+                                            forScreenView:strongView];
                                  }];
     } else {
       tabBarItem.image = nil;
@@ -113,10 +127,18 @@
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   [self updateTabBarItem:tabBarItem
+                                   UITabBarItem *strongItem = weakTabBarItem;
+                                   RNSTabsScreenComponentView *strongView = weakScreenView;
+                                   if (strongItem == nil || strongView == nil) {
+                                     return;
+                                   }
+                                   if (![strongView.controller.parentViewController isKindOfClass:[UITabBarController class]]) {
+                                     return;
+                                   }
+                                   [self updateTabBarItem:strongItem
                                                 withImage:image
                                                isSelected:YES
-                                            forScreenView:screenView];
+                                            forScreenView:strongView];
                                  }];
     } else {
       tabBarItem.selectedImage = nil;
