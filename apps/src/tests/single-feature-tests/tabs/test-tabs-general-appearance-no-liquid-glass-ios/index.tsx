@@ -284,10 +284,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: STANDARD_APPEARANCE,
-        scrollEdgeAppearance: {
-          ...SCROLL_EDGE_APPEARANCE,
-          tabBarBlurEffect: 'systemChromeMaterialDark',
-        },
+        scrollEdgeAppearance: TAB2_SCROLL_EDGE_WITH_BLUR,
       },
     },
   },
