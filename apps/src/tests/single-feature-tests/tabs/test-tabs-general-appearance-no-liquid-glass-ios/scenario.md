@@ -25,7 +25,7 @@ detected by Detox view-hierarchy or snapshot testing.
 
 ## Note
 
-- The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor`properties
+- The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor` properties
   are explicitly configured for iOS in this scenario,
   and have no effect on Android.
 - On iOS 26+ (Liquid Glass), all three props are inert; this scenario
