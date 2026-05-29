@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainer,
@@ -19,10 +19,11 @@ export function ScrollScreen({ tabName }: ScrollScreenProps) {
       edges={{
         bottom: Platform.OS === 'android',
         top: Platform.OS === 'android',
-      }}
-    >
+      }}>
       <ScrollView testID={`${tabName}-scrollview`}>
-        <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
+        <Text style={styles.hint}>
+          Scroll Screen — scroll down or re-tap the tab.
+        </Text>
         {Array.from({ length: 50 }, (_, i) => (
           <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
             Item {i + 1}
@@ -59,7 +60,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       tabBarItemAccessibilityLabel: 'tab2-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
-          scrollToTop: false
+          scrollToTop: false,
         },
       },
     },

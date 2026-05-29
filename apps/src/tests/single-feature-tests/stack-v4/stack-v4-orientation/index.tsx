@@ -6,7 +6,7 @@ import {
   createAutoConfiguredStack,
   findStackScreenOptions,
 } from '@apps/tests/shared/stack';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
 type StackParamList = {

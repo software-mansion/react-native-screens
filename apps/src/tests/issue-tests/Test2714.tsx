@@ -27,21 +27,30 @@ const HomeScreen = ({ navigation }: any) => {
 
   const headerRight = React.useCallback(() => {
     return (
-      <View style={[styles.buttonsView, !showAllButtons && { display: 'none' }]}>
-        <PressableWithFeedback style={isLargeSize ? styles.largeButton : styles.button} onPress={() => console.log(1)}>
+      <View
+        style={[styles.buttonsView, !showAllButtons && { display: 'none' }]}>
+        <PressableWithFeedback
+          style={isLargeSize ? styles.largeButton : styles.button}
+          onPress={() => console.log(1)}>
           <Text>1</Text>
         </PressableWithFeedback>
         {secondButtonShown && (
-          <PressableWithFeedback style={styles.button} onPress={() => console.log(2)}>
+          <PressableWithFeedback
+            style={styles.button}
+            onPress={() => console.log(2)}>
             <Text>2</Text>
           </PressableWithFeedback>
         )}
         {thirdButtonShown && (
-          <PressableWithFeedback style={styles.button} onPress={() => console.log(3)}>
+          <PressableWithFeedback
+            style={styles.button}
+            onPress={() => console.log(3)}>
             <Text>3</Text>
           </PressableWithFeedback>
         )}
-        <PressableWithFeedback style={styles.button} onPress={() => console.log('D')}>
+        <PressableWithFeedback
+          style={styles.button}
+          onPress={() => console.log('D')}>
           <Text>[D]</Text>
         </PressableWithFeedback>
       </View>
@@ -58,10 +67,7 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View>
       <Text>Home Screen</Text>
-      <Button
-        title="Toggle size"
-        onPress={() => setLargeSize(p => !p)}
-      />
+      <Button title="Toggle size" onPress={() => setLargeSize(p => !p)} />
       <Button
         title="Toggle 2nd button"
         onPress={() => setSecondButtonShown(p => !p)}
@@ -85,7 +91,12 @@ function SimpleHome() {
   const headerRight = React.useCallback(() => {
     return (
       <PressableWithFeedback>
-        <View style={[{ width: 128, height: 42 }, isExpanded ? { width: 192 } : null]} />
+        <View
+          style={[
+            { width: 128, height: 42 },
+            isExpanded ? { width: 192 } : null,
+          ]}
+        />
       </PressableWithFeedback>
     );
   }, [isExpanded]);
@@ -98,8 +109,14 @@ function SimpleHome() {
 
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Toggle subview size" onPress={() => setExpanded(val => !val)} />
-      <Button title="Go to HomeScreen" onPress={() => navigation.navigate('HomeScreen')} />
+      <Button
+        title="Toggle subview size"
+        onPress={() => setExpanded(val => !val)}
+      />
+      <Button
+        title="Go to HomeScreen"
+        onPress={() => navigation.navigate('HomeScreen')}
+      />
     </View>
   );
 }
@@ -131,7 +148,6 @@ function AppSimplified() {
 
 // export default App;
 export default AppSimplified;
-
 
 const styles = StyleSheet.create({
   button: {

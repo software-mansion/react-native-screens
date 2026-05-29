@@ -4,7 +4,11 @@ import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
 
-export const SplitWithNativeStackSheet = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNativeStackSheet = ({
+  splitBaseConfig,
+}: {
+  splitBaseConfig: SplitBaseConfig;
+}) => {
   return (
     <Split.Host {...splitBaseConfig}>
       <Split.Column>
@@ -30,7 +34,7 @@ export const SplitWithNativeStackSheet = ({ splitBaseConfig }: { splitBaseConfig
             presentation: 'formSheet',
             sheetAllowedDetents: [0.3, 0.8],
             sheetCornerRadius: 100,
-            sheetExpandsWhenScrolledToEdge: false
+            sheetExpandsWhenScrolledToEdge: false,
           }}
           CustomScreenThree={ScrollViewWithText}
         />
@@ -41,7 +45,7 @@ export const SplitWithNativeStackSheet = ({ splitBaseConfig }: { splitBaseConfig
             presentation: 'formSheet',
             sheetAllowedDetents: [0.3, 0.8],
             sheetInitialDetentIndex: 1,
-            sheetLargestUndimmedDetentIndex: 1
+            sheetLargestUndimmedDetentIndex: 1,
           }}
           customScreenThreeNavigationOptions={{
             presentation: 'formSheet',

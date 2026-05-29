@@ -65,7 +65,10 @@ function tabsActionSelectTabHandler(
     return state;
   }
 
-  if (state.confirmedState.selectedRouteKey === action.routeKey && !action.forceAction) {
+  if (
+    state.confirmedState.selectedRouteKey === action.routeKey &&
+    !action.forceAction
+  ) {
     return state;
   }
 

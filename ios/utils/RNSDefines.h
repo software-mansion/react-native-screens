@@ -8,18 +8,6 @@
 
 #define RNS_IGNORE_SUPER_CALL_END _Pragma("clang diagnostic pop")
 
-#pragma mark - React Native architecture dependent code
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollViewComponentView
-
-#else
-
-#define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollView
-
-#endif
-
 #pragma mark - SDK availability utility
 
 #define RNS_IPHONE_OS_VERSION_AVAILABLE(v)                              \

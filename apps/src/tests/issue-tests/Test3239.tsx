@@ -1,16 +1,19 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { findNodeHandle, Text, View } from 'react-native';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 type StackParamList = {
-  Home: undefined,
-}
+  Home: undefined;
+};
 
 type RouteProps = {
   navigation: NativeStackNavigationProp<StackParamList>;
-}
+};
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -30,11 +33,18 @@ function HeaderTitle(): React.JSX.Element {
       ref={node => {
         console.log(findNodeHandle(node));
         node?.measure((x, y, width, height, pageX, pageY) => {
-          console.log('header component measure', { x, y, width, height, pageX, pageY });
+          console.log('header component measure', {
+            x,
+            y,
+            width,
+            height,
+            pageX,
+            pageY,
+          });
         });
-      }}
-    >
-      <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+      }}>
+      <View
+        style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ alignItems: 'center' }}>Regular Pressable</Text>
       </View>
     </PressableWithFeedback>
@@ -42,22 +52,30 @@ function HeaderTitle(): React.JSX.Element {
 }
 
 function HeaderLeft(): React.JSX.Element {
-  return (
-    <HeaderTitle />
-  );
+  return <HeaderTitle />;
 }
 
 function Home(_: RouteProps): React.JSX.Element {
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, .8)' }}
-    >
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',marginTop: 48 }}>
+    <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, .8)' }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 48,
+        }}>
         <PressableWithFeedback
           onPressIn={() => console.log('Pressable onPressIn')}
           onPress={() => console.log('Pressable onPress')}
-          onPressOut={() => console.log('Pressable onPressOut')}
-        >
-          <View style={{ height: 40, width: 200, justifyContent: 'center', alignItems: 'center' }}>
+          onPressOut={() => console.log('Pressable onPressOut')}>
+          <View
+            style={{
+              height: 40,
+              width: 200,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <Text style={{ alignItems: 'center' }}>Regular Pressable</Text>
           </View>
         </PressableWithFeedback>

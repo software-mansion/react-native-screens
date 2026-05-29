@@ -2,13 +2,13 @@
 
 #import "RNSTabsHostComponentView.h"
 
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 #import "RNSTabsHostShadowNode.h"
-#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#if defined(__cplusplus)
 
 @class RCTImageLoader;
 
@@ -19,6 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END

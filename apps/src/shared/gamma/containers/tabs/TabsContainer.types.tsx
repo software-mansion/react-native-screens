@@ -79,8 +79,7 @@ export type TabsNavigationAction =
 
 export type TabsHostConfig = Omit<
   TabsHostProps,
-  | 'children'
-  | 'navStateRequest'
+  'children' | 'navStateRequest'
 >;
 
 export type TabsContainerProps = Omit<
@@ -108,4 +107,4 @@ export type SelectTabMethod = (routeKey: string, forceAction?: boolean) => void;
 export type TabsNavigationMethods = {
   setRouteOptions: SetTabOptionsMethod;
   selectTab: SelectTabMethod;
-}
+};
