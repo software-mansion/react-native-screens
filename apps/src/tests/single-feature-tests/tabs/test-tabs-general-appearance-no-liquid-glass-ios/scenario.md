@@ -108,8 +108,8 @@ featuring a bright purple shadow line.
 
 - [ ] Expected: Both appearances are set. The tab bar shows a
   semi-transparent dark purple background and a bright purple shadow line from `scrollEdgeAppearance`.
-  System default blur is applied as `tabBarBlurEffect` is not set. Background color define for `standardAppearance` is
-  visible through the blur (making the background look darker then in step 4).
+  System default blur is applied as `tabBarBlurEffect` is not set. Background color defined for `standardAppearance` is
+  visible through the blur (making the background look darker than in step 4).
 
 6. Disable both toggles to restore default state before moving to Tab2.
 
