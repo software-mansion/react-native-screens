@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
-      API_LEVEL: 34
+      API_LEVEL: 36
       RNS_GAMMA_ENABLED: 1
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
@@ -41,6 +41,23 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+
+      - name: Cache Android command-line tools
+        id: cmdline-tools-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.tool_cache }}/android-cmdline-tools
+          key: android-cmdline-tools-latest-v1
+
+      - name: Update Android command-line tools
+        if: steps.cmdline-tools-cache.outputs.cache-hit != 'true'
+        run: |
+          SDKMANAGER=$(find / -name sdkmanager 2>/dev/null | head -1)
+          CMDLINE_TOOLS_DIR=$(dirname $(dirname $(dirname $SDKMANAGER)))
+          yes | $SDKMANAGER --install "cmdline-tools;latest"
+          rm -rf $CMDLINE_TOOLS_DIR/latest
+          mv $CMDLINE_TOOLS_DIR/latest-2 $CMDLINE_TOOLS_DIR/latest
+          echo "$CMDLINE_TOOLS_DIR/latest/bin" >> $GITHUB_PATH
 
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
