@@ -11,7 +11,9 @@
 
 - (void)initializeNavigationBarOfNavigationController:(nonnull UINavigationController *)navigationController
 {
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   navigationController.navigationBar.prefersLargeTitles = YES;
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 - (void)setupVisibility:(RNSStackHeaderData *)data

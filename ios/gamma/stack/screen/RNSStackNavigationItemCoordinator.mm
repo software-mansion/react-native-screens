@@ -21,12 +21,9 @@
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    navItem.largeTitle = data.largeTitleEnabled ? data.largeTitle : nil;
-  } else
+    navItem.largeTitle = data.largeTitle;
+  }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    if (data.largeTitleEnabled && data.largeTitle.length > 0) {
-      navItem.title = data.largeTitle;
-    }
 }
 
 - (void)setupSubtitle:(RNSStackHeaderData *)data forController:(nonnull RNSStackScreenController *)controller
