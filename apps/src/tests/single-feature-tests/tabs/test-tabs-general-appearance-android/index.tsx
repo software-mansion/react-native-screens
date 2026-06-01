@@ -9,7 +9,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import { Colors } from '@apps/shared/styling';
 import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/gamma/containers/tabs';
-import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { SettingsPicker } from '@apps/shared';
 import { TabsScreenAppearanceAndroid } from 'react-native-screens';
 
 type LabelVisibilityMode = NonNullable<TabsScreenAppearanceAndroid['tabBarItemLabelVisibilityMode']>;
