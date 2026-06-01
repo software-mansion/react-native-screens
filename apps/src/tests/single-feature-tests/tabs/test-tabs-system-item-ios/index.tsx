@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -7,114 +7,116 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
-import { SettingsPicker } from '@apps/shared';
-import type { TabsScreenSystemItem } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 
-const SYSTEM_ITEMS: TabsScreenSystemItem[] = [
-  'bookmarks',
-  'contacts',
-  'downloads',
-  'favorites',
-  'featured',
-  'history',
-  'more',
-  'mostRecent',
-  'mostViewed',
-  'recents',
-  'search',
-  'topRated',
-];
-
-function ConfigScreen() {
-  const [selectedSystemItem, setSelectedSystemItem] = useState<TabsScreenSystemItem | undefined>(
-    'bookmarks'
-  );
-
+function NormalTabScreen() {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>System Item Selection</Text>
-        <Text style={styles.description}>
-          The selected system item will override the custom title and icon on the tab. Observe how the
-          system icon and appearance changes as you select different items.
-        </Text>
-        <SettingsPicker<TabsScreenSystemItem | undefined>
-          label="systemItem"
-          value={selectedSystemItem}
-          onValueChange={setSelectedSystemItem}
-          items={[undefined, ...SYSTEM_ITEMS] as Array<TabsScreenSystemItem | undefined>}
-        />
-        {selectedSystemItem && (
-          <Text style={styles.info}>
-            Current: <Text style={styles.highlight}>{selectedSystemItem}</Text>
-          </Text>
-        )}
-      </View>
-    </ScrollView>
-  );
-}
-
-function DemoScreen() {
-  return (
-    <View style={styles.centeredScreen}>
-      <Text style={styles.label}>Demo Tab</Text>
+    <View style={styles.screen}>
+      <Text style={styles.label}>Normal Tab</Text>
       <Text style={styles.hint}>
-        This tab demonstrates how the selected system item appears in the tab bar.{'\n'}
+        This tab does not use systemItem.{'\n'}
         {'\n'}
-        When a system item is set, the tab bar automatically displays the
-        appropriate system icon and label, overriding any custom title or icon
-        you may have configured.
+        Only the custom title and (if provided) custom icon appear in the tab bar.
+        This is the baseline behavior when systemItem is undefined.
       </Text>
     </View>
   );
 }
 
-interface AppProps {
-  systemItem: TabsScreenSystemItem | undefined;
+function DefaultTitleScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Default System Item</Text>
+      <Text style={styles.hint}>
+        This tab uses a systemItem: `bookmarks`{'\n'}with no custom title or icon override.
+      </Text>
+    </View>
+  );
 }
 
-function AppWithSystemItem({ systemItem }: AppProps) {
-  const routeConfigs: TabRouteConfig[] = [
-    {
-      name: 'Config',
-      Component: ConfigScreen,
-      options: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS,
-        title: 'Config',
+function CustomTitleIconOverrideScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Custom Title and Icon Override</Text>
+      <Text style={styles.hint}>
+        This tab uses a systemItem: `contacts`.{'\n'}
+        {'\n'}
+        Custom title and icon are provide and display in tab bar instead of the system-provided one.
+      </Text>
+    </View>
+  );
+}
+
+function SearchScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Search</Text>
+      <Text style={styles.hint}>
+        This tab uses a systemItem: `search`.{'\n'}
+        {'\n'}
+        The tab bar iteam is displayed as a magnifying glass icon with no title, which is the expected appearance for the `search` system item.
+      </Text>
+    </View>
+  );
+}
+
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'NormalTab',
+    Component: NormalTabScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'NormalTab',
+    },
+  },
+  {
+    name: 'DefaultTitle',
+    Component: DefaultTitleScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      ios: {
+        systemItem: 'bookmarks',
       },
     },
-    {
-      name: 'Demo',
-      Component: DemoScreen,
-      options: {
-        ...DEFAULT_TAB_ROUTE_OPTIONS,
-        title: 'Demo Tab',
-        ios: {
-          ...(systemItem ? { systemItem } : {}),
+  },
+  {
+    name: 'CustomTitleIconOverride',
+    Component: CustomTitleIconOverrideScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Custom',
+      ios: {
+        systemItem: 'contacts',
+        icon: {
+          type: 'sfSymbol',
+          name: 'house',
+        },
+        selectedIcon: {
+          type: 'sfSymbol',
+          name: 'house.fill',
         },
       },
     },
-  ];
-
-  return <TabsContainerWithHostConfigContext routeConfigs={routeConfigs} />;
-}
+  },
+  {
+    name: 'SearchScreen',
+    Component: SearchScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      ios: {
+        systemItem: 'search',
+      },
+    },
+  },
+];
 
 export function App() {
-  const [systemItem, setSystemItem] = useState<TabsScreenSystemItem | undefined>('bookmarks');
-
   return (
     <View style={styles.appContainer}>
-      <View style={styles.controlPanel}>
-        <Text style={styles.controlLabel}>System Item</Text>
-        <SettingsPicker<TabsScreenSystemItem | undefined>
-          label=""
-          value={systemItem}
-          onValueChange={setSystemItem}
-          items={[undefined, ...SYSTEM_ITEMS] as Array<TabsScreenSystemItem | undefined>}
-        />
-      </View>
-      <AppWithSystemItem systemItem={systemItem} />
+      <TabsContainerWithHostConfigContext
+        routeConfigs={ROUTE_CONFIGS}
+        defaultRouteName="NormalTab"
+      />
     </View>
   );
 }
@@ -129,43 +131,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    gap: 8,
   },
   controlLabel: {
     fontSize: 12,
     fontWeight: '600',
     color: '#666',
-    marginBottom: 8,
   },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  content: {
-    gap: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#000',
-  },
-  description: {
-    fontSize: 13,
-    color: Colors.LightOffNavy,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  info: {
-    fontSize: 13,
+  controlInfo: {
+    fontSize: 11,
     color: '#555',
-    textAlign: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
   highlight: {
     fontWeight: '600',
     color: Colors.GreenDark100,
   },
-  centeredScreen: {
+  screen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
