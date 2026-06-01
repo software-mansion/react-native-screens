@@ -1,8 +1,8 @@
 <img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
-[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-1?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-react-native-screens-1&n=1)
-[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-2?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-react-native-screens-2&n=1)
-[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-3?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-react-native-screens-3&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-1?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-1&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-2?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-2&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-3?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-3&n=1)
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
