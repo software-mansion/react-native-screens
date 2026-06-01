@@ -18,7 +18,7 @@ import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scrol
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 import TestTabsItemTitle from './test-tabs-item-title-ios';
-import TestTabsGeneralApperance from './test-tabs-general-apperance-android';
+import TestTabsGeneralApperance from './test-tabs-general-appearance-android';
 
 
 
