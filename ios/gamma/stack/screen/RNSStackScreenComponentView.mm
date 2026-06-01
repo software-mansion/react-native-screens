@@ -78,17 +78,6 @@ namespace react = facebook::react;
   });
 }
 
-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  [super mountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
-    id<RNSViewFrameChangeDelegate> delegate = (id<RNSViewFrameChangeDelegate>)childComponentView;
-    RCTAssert([_controller.navigationController isKindOfClass:RNSStackNavigationController.class],
-              @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
-    [(RNSStackNavigationController *)_controller.navigationController setNavigationBarFrameChangeDelegate:delegate];
-  }
-}
-
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter

@@ -24,11 +24,6 @@
 {
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
-
-  // We have to initialize viewControllers with a non-empty array for
-  // largeTitle header to render in the opened state. If it is empty,
-  // the header will render in collapsed state — a UIKit bug.
-  [self setViewControllers:@[ [UIViewController new] ]];
 }
 
 - (BOOL)hasPendingOperations
@@ -69,19 +64,7 @@
 
   for (RNSPushOperation *op in _pendingPushOperations) {
     UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
-
-    // A workaround for largeHeader bug in UIKit - see initState
-    // and
-    // https://github.com/software-mansion/react-native-screens/blob/c8a4b9b6b69184110879b219fad3cd88f696d0b8/ios/RNSScreenStack.mm#L618
-    BOOL isFirstPush = ![self.topViewController isKindOfClass:RNSStackScreenController.class];
-    if (isFirstPush) {
-      // For the first real push (replacing the dummy VC), use
-      // setViewControllers: without animation. Using pushViewController:
-      // on the dummy stack causes large title to render collapsed.
-      [self setViewControllers:@[ controller ] animated:NO];
-    } else {
-      [self pushViewController:controller animated:YES];
-    }
+    [self pushViewController:controller animated:YES];
   }
 
   RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");

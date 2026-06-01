@@ -5,6 +5,7 @@
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
+#import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -67,21 +68,17 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - UIView lifecycle
 
-- (void)didMoveToSuperview
+- (void)didMoveToWindow
 {
-  [super didMoveToSuperview];
-
-  [self submitCurrentDataIfMounted];
-}
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  if (newWindow == nil) {
+  if (self.window != nil) {
+    [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
+  } else {
     [self resetProps];
-    [self submitCurrentData];
   }
 
-  [super willMoveToWindow:newWindow];
+  [self submitCurrentDataIfMounted];
+
+  [super didMoveToWindow];
 }
 
 #pragma mark - Child mounting
@@ -210,11 +207,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 - (void)submitCurrentData
 {
-  RCTAssert(
-      [self.superview isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] RNSStackHeaderConfig expects to be mounted directly below RNSStackScreenComponentView, got: %@",
-      self.superview.class);
-
   RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
 
   NSMutableArray<UIBarButtonItem *> *leadingItems = [NSMutableArray new];
@@ -287,6 +279,18 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       }
     }
   }
+}
+
+- (RNSStackNavigationController *)requireNavigationController
+{
+  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
+  RNSStackScreenController *screenController = static_cast<RNSStackScreenComponentView *>(self.superview).controller;
+  UINavigationController *navController = screenController.navigationController;
+  RCTAssert(navController != nil, @"[RNScreens] NavigationController should be initialized at this point");
+  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
+            @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
+  return (RNSStackNavigationController *)navController;
 }
 
 #pragma mark - Dynamic frameworks support
