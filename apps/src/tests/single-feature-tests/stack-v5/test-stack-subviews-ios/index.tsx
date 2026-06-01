@@ -76,11 +76,10 @@ function LargeHorizontalItem() {
   const { pressableProps } = useContext(PressableContext)!;
 
   return (
-    // <PressableWithFeedback
-    //   {...pressableProps}
-    //   style={{ width: 100, height: 20 }}
-    // />
-    <Text>A quick brown fox jumped over a lazy dog</Text>
+    <PressableWithFeedback
+      {...pressableProps}
+      style={{ width: 100, height: 20 }}
+    />
   );
 }
 
