@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
+  TabRouteConfig,
   TabsContainer,
-  useTabsHostConfig,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -59,34 +59,27 @@ function LabelTab() {
   );
 }
 
-function IndicatorTab() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
- 
+function RippleIndicatorTab() {
+  const { routeKey, setRouteOptions } = useTabsNavigationContext();
+  const [activeIndicatorEnabled, setActiveIndicatorEnabled] = useState(false);
 
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.label}>
-        Active Indicator Enabled
-      </Text>
-      <Text style={styles.hint}>
-        `tabBarBackgroundColor`:{' '}
-        <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
-        {'\n'}
-        `tabBarItemActiveIndicatorColor`:{' '}
-        <Text style={{ color: Colors.PurpleDark120 }}>PurpleDark120</Text>
-        {'\n'}
-      </Text>
-      <SettingsSwitch
-              style={{ marginTop: 20, marginBottom: 15 }}
-              label="tabBarItemActiveIndicatorEnabled"
-              value={hostConfig.tabBarItemActiveIndicatorEnabled ?? true}
-              onValueChange={value => updateHostConfig({ tabBarHidden: value })}
-            />
-    </View>
+  const onActiveIndicatorChange = useCallback(
+    (value: boolean) => {
+      setActiveIndicatorEnabled(value);
+      setRouteOptions(routeKey, {
+        android: {
+          ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+          standardAppearance: {
+            tabBarBackgroundColor: Colors.PurpleDark100,
+            tabBarItemRippleColor: Colors.YellowDark100,
+            tabBarItemActiveIndicatorEnabled: value,
+            tabBarItemActiveIndicatorColor: Colors.GreenLight100,
+          },
+        },
+      });
+    },
+    [routeKey, setRouteOptions],
   );
-}
-
-function RippleTab() {
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>
@@ -94,81 +87,61 @@ function RippleTab() {
       </Text>
       <Text style={styles.hint}>
         `tabBarBackgroundColor`:{' '}
-        <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>
+        <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
         {'\n'}
         `tabBarItemRippleColor`:{' '}
         <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
         {'\n'}
-        {'\n'}
-        `tabBarItemActiveIndicatorEnabled`: false
-        {'\n'}
+
         `tabBarItemActiveIndicatorColor`:{' '}
         <Text style={{ color: Colors.GreenLight100 }}>GreenLight100</Text>
         {'\n'}
       </Text>
+      <SettingsSwitch
+        style={{ marginTop: 20, marginBottom: 15 }}
+        label="tabBarItemActiveIndicatorEnabled"
+        value={activeIndicatorEnabled}
+        onValueChange={onActiveIndicatorChange}
+        testID="tab-bar-active-indicator-switch"
+      />
     </View>
   );
 }
 
-export function TabsRouteInformation() {
-  const navigation = useTabsNavigationContext();
-  return (
-    <View>
-      <Text>{navigation.routeKey}</Text>
-    </View>
-  );
-}
-
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Default',
+    Component: LabelTab,
+    options: {
+      title: 'Label',
+      android: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+        standardAppearance: {
+          tabBarItemLabelVisibilityMode: 'auto',
+        },
+      },
+    },
+  },
+  {
+    name: 'Custom',
+    Component: RippleIndicatorTab,
+    options: {
+      title: 'Custom',
+      android: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+        standardAppearance: {
+          tabBarBackgroundColor: Colors.PurpleDark100,
+          tabBarItemRippleColor: Colors.YellowDark100,
+          tabBarItemActiveIndicatorEnabled: false,
+          tabBarItemActiveIndicatorColor: Colors.GreenLight100,
+        },
+      },
+    },
+  },
+];
 export function App() {
   return (
-    <TabsContainer
-      routeConfigs={[
-        {
-          name: 'Label',
-          Component: LabelTab,
-          options: {
-            title: 'Label',
-            android: {
-              ...DEFAULT_TAB_ROUTE_OPTIONS.android,
-              standardAppearance: {
-                tabBarItemLabelVisibilityMode: 'auto',
-              },
-            },
-          },
-        },
-        {
-          name: 'Indicator',
-          Component: IndicatorTab,
-          options: {
-            title: 'Indicator',
-            android: {
-              ...DEFAULT_TAB_ROUTE_OPTIONS.android,
-              standardAppearance: {
-                tabBarBackgroundColor: Colors.PurpleDark100,
-                tabBarItemActiveIndicatorEnabled: true,
-                tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
-              },
-            },
-          },
-        },
-        {
-          name: 'Ripple',
-          Component: RippleTab,
-          options: {
-            title: 'Ripple',
-            android: {
-              ...DEFAULT_TAB_ROUTE_OPTIONS.android,
-              standardAppearance: {
-                tabBarBackgroundColor: Colors.NavyDark100,
-                tabBarItemRippleColor: Colors.YellowDark100,
-                tabBarItemActiveIndicatorEnabled: false,
-                tabBarItemActiveIndicatorColor: Colors.GreenLight100,
-              },
-            },
-          },
-        },
-      ]}
-    />
+    <TabsContainer routeConfigs={ROUTE_CONFIGS}/>
   );
 }
 
