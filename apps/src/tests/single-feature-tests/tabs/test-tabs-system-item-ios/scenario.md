@@ -25,9 +25,9 @@ TBD: Planned, but will be implemented separately.
   differ visually from iOS 18, but the `systemItem` semantics are the
   same across versions.
 - "System icon" refers to the icon defined by UIKit for each system
-  item type. Custom `icon`/`selectedIcon` props override the system
+  item type. Custom `icon`/`selectedIcon` props overridden the system
   icon
-- System-defined title text can be override via custom `title`.
+- System-defined title text can be overridden via custom `title`.
 - iOS18 KI([Issue#1074](https://github.com/software-mansion/react-native-screens-labs/issues/1074)): SystemItem Icon is not override for compactInline appearance.
 
 ## Steps
@@ -53,10 +53,10 @@ TBD: Planned, but will be implemented separately.
 - [ ] Its tab bar item shows the UIKit bookmarks icon and the iOS-localized title for
   "bookmarks" (`Bookmarks`).
 
-3. Tap the **NormalTab** tab, then tap the **bookmarks** tab again.
+1. Tap the **NormalTab**, then tap the **bookmarks** tab again.
 
-- [ ] The bookmarks tab item re-selects correctly. The icon
-  and localized title are unchanged on re-selection.
+- [ ] The bookmarks tab is successfully re-selected.
+The icon and localized title remain unchanged on re-selection.
 
 ---
 
@@ -82,8 +82,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The fourth tab becomes selected.
 - [ ] Its tab bar item shows a magnifying glass icon.
-- [ ] iOS18: Title label is visible (`Search`).
-- [ ] iOS26: No visible title label, tab bar item is detached from other tab bar items.
+- [ ] iOS 18: Title label is visible (`Search`).
+- [ ] iOS 26: No visible title label is present; the search tab bar item is
+detached from other tab bar items.
 
 ---
 
@@ -103,16 +104,16 @@ TBD: Planned, but will be implemented separately.
    rotate the device to landscape orientation.
 
 - [ ] The layout adapts to landscape.
-- [ ] The tab bar icon switch from above title to beside title layout.
-- [ ] All four tab items remain visible and their titles are the same as in portrait orientation correct.
-- [ ] iOS18: Override icon for `Custom` tab is set to systemItem icon (see KI in Notes section).
+- [ ] The tab bar icon switch from an above-title to beside-title layout.
+- [ ] All four tab items remain visible and their titles are the same as in portrait orientation.
+- [ ] iOS18: Override icon for the `Custom` tab reverts to the systemItem icon (see KI in Notes section).
 - [ ] iOS26: Icons are the same as in portrait orientation.
 
-9. While in landscape orientation, tap each of the four tabs in
+1. While in landscape orientation, tap each of the four tabs in
    sequence.
 
 - [ ] Tab switching works correctly in landscape.
-- [ ] Each tab item's icon and title match the expected appearance as described in previous step.
+- [ ] Each tab item's icon and title match the expected appearance described in the previous steps.
 
 10.  Rotate the device back to portrait orientation.
 
