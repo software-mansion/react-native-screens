@@ -34,7 +34,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   }
 ]
 
-export function App() {
+export function TestSavTabsSafeAreaRespectsTabBar() {
   return (
     <TabsContainer routeConfigs={ROUTE_CONFIGS} ios={{ tabBarControllerMode: 'tabSidebar' }} />
   );
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestSavTabsSafeAreaRespectsTabBar, scenarioDescription);
