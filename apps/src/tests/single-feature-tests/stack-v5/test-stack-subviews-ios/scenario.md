@@ -52,15 +52,11 @@ TBD
   - [ ] Position of items on device matches element tree.
 11. Click "large header enabled" to show large header. You may need to scroll down.
   - [ ] Regular title is removed whenever large title shows and item positions match element tree. You may need to remove some items to give space for the regular title.
-12. Set title to long and largeTitle to short. Scroll to reveal large title.
+12. Set title to `long` and `largeTitle` to short. Scroll to reveal large title.
   - [ ] on iOS 18, largeTitle should be long
   - [ ] on iOS 26, largeTitle should be short
-13. Set largeTitle to none.
+13. Set largeTitle to `none`.
   - [ ] on iOS 26, largeTitle should be long
-
-### iOS 26 only
-11. Set subtitle to `view`. Verify layout.
-  - [ ] Position of items on device matches element tree.
 
 ## Steps on iPad
 
