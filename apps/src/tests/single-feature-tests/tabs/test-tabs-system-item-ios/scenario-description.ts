@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Validates different cofigurations of the systemItem prop.',
   platforms: ['ios'],
-  e2eCoverage: 'incomplete',
+  e2eCoverage: 'tbd',
   smokeTest: false,
 };
