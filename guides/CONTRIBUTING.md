@@ -41,9 +41,9 @@ project development.
 
    Code-level contributions generally come in the form of pull requests.
    By contributing to code you help us with solving issues, fixing bugs
-   or introducing new amazing features. If you want to start your adventure
-   Read more about [contributing to code](#contributing-to-code).
-   with open source it's a good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue%20is%3Aopen%20label%3Agood-first-issue) on GitHub or reach out to us via our [Discord](https://discord.gg/4a6nAnxfST) and ask what could you do.
+   or introducing new amazing features. If you want to start your adventure,
+   read more about [contributing to code](#contributing-to-code).
+   It's a good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue%20is%3Aopen%20label%3Agood-first-issue) on GitHub or reach out to us via our [Discord](https://discord.gg/4a6nAnxfST) and ask what could you do.
 
 ### Reporting a bug
 
@@ -82,7 +82,6 @@ managing and developing this open-source project.
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
-- `native-stack` &ndash; description of native stack v5, actual implementation can be found in `src/native-stack`, this will be deprecated in favor of react-navigation in near feature
 - `react-navigation` &ndash; git submodule that refers to the react-navigation repository. Used mainly to test changes for newer versions of native stack.
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
 - `scripts` &ndash; utility scripts, used by CLI
@@ -109,7 +108,7 @@ If you are eager to start contributing right away, we have list of [good first i
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
-> [!note]
+> [!important]
 > Before committing yourself to a full implementation of a new feature, it's recommended to first open
 > a discussion with an idea or feature suggestion to see whether the effect you want to achieve is aligned with
 > current library development direction. We want to avoid situations where hours of work on a feature PR
