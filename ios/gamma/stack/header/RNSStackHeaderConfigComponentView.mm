@@ -250,8 +250,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                           largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
 {
   for (UIView *child in _children) {
-    RNSAssertIsValidHeaderChild(child);
-
     if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
