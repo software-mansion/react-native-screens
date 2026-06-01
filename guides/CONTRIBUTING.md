@@ -23,7 +23,7 @@ project development.
 
    Maybe you have an idea for a feature that you find missing from the library, or
    you want to share your opinion on features that are currently planned for development?
-   Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-or-you-want-to-share-your-feedback).
+   Please see [the dedicated section for instructions](#got-a-question-an-idea-for-a-feature-want-to-share-your-feedback).
 
 1. **Replying and handling open issues** &ndash; a great way to contribute without writing a single line of code is triaging the issues.
 
@@ -43,7 +43,7 @@ project development.
    By contributing to code you help us with solving issues, fixing bugs
    or introducing new amazing features. If you want to start your adventure
    Read more about [contributing to code](#contributing-to-code).
-   with open source it's a good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) on GitHub or reach out to us via our [Discord](https://discord.gg/4a6nAnxfST) and ask what could you do.
+   with open source it's a good idea to take a look at [good first issue](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue%20is%3Aopen%20label%3Agood-first-issue) on GitHub or reach out to us via our [Discord](https://discord.gg/4a6nAnxfST) and ask what could you do.
 
 ### Reporting a bug
 
@@ -104,7 +104,7 @@ What you can do is ask the owner of an issue for such details or try provide the
 ## Contributing to Code
 
 Submitting a Pull Requests that resolve issues is a great way to contribute to Screens.
-If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
+If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue%20is%3Aopen%20label%3Agood-first-issue) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
