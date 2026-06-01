@@ -102,7 +102,7 @@ What you can do is ask the owner of an issue for such details or try provide the
 
 ## Contributing to Code
 
-Submitting a Pull Requests that resolve issues is a great way to contribute to Screens.
+Submitting Pull Requests that resolve issues is a great way to contribute to Screens.
 If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/issues?q=is%3Aissue%20is%3Aopen%20label%3Agood-first-issue) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
