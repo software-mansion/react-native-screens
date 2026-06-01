@@ -21,6 +21,19 @@ const LABEL_VISIBILITY_OPTIONS: LabelVisibilityMode[] = [
   'unlabeled',
 ];
 
+function DefaultTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>
+        Default configuration
+      </Text>
+      <Text style={styles.hint}>
+        Tab bar renders in the system default configuration.
+      </Text>
+    </View>
+  );
+}
+
 function LabelTab() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
   const [labelVisibility, setLabelVisibility] = useState<LabelVisibilityMode>('auto');
@@ -47,7 +60,7 @@ function LabelTab() {
       </Text>
       <Text style={styles.hint}>
         Only `tabBarItemLabelVisibilityMode` is defined.{'\n'}
-        Tab bar renders in the system default configuration, except for labels, which follow the toggled value.
+        Labels follow the toggled value.
       </Text>
       <SettingsPicker<LabelVisibilityMode>
         label="tabBarItemLabelVisibilityMode"
@@ -59,51 +72,52 @@ function LabelTab() {
   );
 }
 
-function RippleIndicatorTab() {
-  const { routeKey, setRouteOptions } = useTabsNavigationContext();
-  const [activeIndicatorEnabled, setActiveIndicatorEnabled] = useState(false);
-
-  const onActiveIndicatorChange = useCallback(
-    (value: boolean) => {
-      setActiveIndicatorEnabled(value);
-      setRouteOptions(routeKey, {
-        android: {
-          ...DEFAULT_TAB_ROUTE_OPTIONS.android,
-          standardAppearance: {
-            tabBarBackgroundColor: Colors.PurpleDark100,
-            tabBarItemRippleColor: Colors.YellowDark100,
-            tabBarItemActiveIndicatorEnabled: value,
-            tabBarItemActiveIndicatorColor: Colors.GreenLight100,
-          },
-        },
-      });
-    },
-    [routeKey, setRouteOptions],
-  );
+function RippleTab() {
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>
-        Ripple Color
+        Ripple Effect
       </Text>
       <Text style={styles.hint}>
+        `tabBarItemLabelVisibilityMode`: 'selected'
+        {'\n'}
+        `tabBarBackgroundColor`:{' '}
+        <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>
+        {'\n'}
+        `tabBarItemRippleColor`:{' '}
+        <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
+        {'\n'}
+        `tabBarItemActiveIndicatorEnabled`: `false`
+        {'\n'}
+        `tabBarItemActiveIndicatorColor`:{' '}
+        <Text style={{ color: Colors.GreenLight100 }}>GreenLight100</Text>
+        {'\n'}
+      </Text>
+    </View>
+  );
+}
+
+function IndicatorTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>
+        Active Indicator Enabled
+      </Text>
+      <Text style={styles.hint}>
+        `tabBarItemLabelVisibilityMode`: 'selected'
+        {'\n'}
         `tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
         {'\n'}
         `tabBarItemRippleColor`:{' '}
         <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
         {'\n'}
-
+        `tabBarItemActiveIndicatorEnabled`: `true`
+        {'\n'}
         `tabBarItemActiveIndicatorColor`:{' '}
         <Text style={{ color: Colors.GreenLight100 }}>GreenLight100</Text>
         {'\n'}
       </Text>
-      <SettingsSwitch
-        style={{ marginTop: 20, marginBottom: 15 }}
-        label="tabBarItemActiveIndicatorEnabled"
-        value={activeIndicatorEnabled}
-        onValueChange={onActiveIndicatorChange}
-        testID="tab-bar-active-indicator-switch"
-      />
     </View>
   );
 }
@@ -111,6 +125,16 @@ function RippleIndicatorTab() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Default',
+    Component: DefaultTab,
+    options: {
+      title: 'Default',
+      android: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+      },
+    },
+  },
+  {
+    name: 'Label',
     Component: LabelTab,
     options: {
       title: 'Label',
@@ -123,17 +147,36 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'Custom',
-    Component: RippleIndicatorTab,
+    name: 'Ripple',
+    Component: RippleTab,
     options: {
-      title: 'Custom',
+      title: 'Ripple',
+      android: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+        standardAppearance: {
+          tabBarBackgroundColor: Colors.NavyDark100,
+          tabBarItemRippleColor: Colors.YellowDark100,
+          tabBarItemActiveIndicatorEnabled: false,
+          tabBarItemActiveIndicatorColor: Colors.GreenLight100,
+          tabBarItemLabelVisibilityMode: 'labeled',
+
+        },
+      },
+    },
+  },
+  {
+    name: 'Indicator',
+    Component: IndicatorTab,
+    options: {
+      title: 'Indicator',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
           tabBarBackgroundColor: Colors.PurpleDark100,
           tabBarItemRippleColor: Colors.YellowDark100,
-          tabBarItemActiveIndicatorEnabled: false,
+          tabBarItemActiveIndicatorEnabled: true,
           tabBarItemActiveIndicatorColor: Colors.GreenLight100,
+          tabBarItemLabelVisibilityMode: 'labeled',
         },
       },
     },
@@ -141,7 +184,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 export function App() {
   return (
-    <TabsContainer routeConfigs={ROUTE_CONFIGS}/>
+    <TabsContainer routeConfigs={ROUTE_CONFIGS} />
   );
 }
 

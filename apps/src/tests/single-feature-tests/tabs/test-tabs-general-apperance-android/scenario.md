@@ -2,24 +2,17 @@
 
 ## Details
 
-**Description:** Verifies tab bar appearance props for Android. The test
-covers two independent appearance axes:
-
-1. **Label visibility** - `tabBarItemLabelVisibilityMode` controls whether
-   tab labels are shown always (`labeled`), never (`unlabeled`), only for
-   the selected tab (`selected`), or follow the system default (`auto`).
-2. **Colors and active indicator** — `tabBarBackgroundColor`,
-   `tabBarItemRippleColor`, `tabBarItemActiveIndicatorColor`, and
-   `tabBarItemActiveIndicatorEnabled` together control the background
-   tint, touch-ripple color, and the pill-shaped indicator drawn behind
-   the active tab icon.
+**Description:** Verifies Android tab bar appearance behaviors,
+specifically checking native system defaults, dynamic text label visibility rules,
+and the interaction between the touch-ripple animation and the persistent active
+indicator shape.
 
 **OS test creation version:** Android: API Level 36.
 
 ## E2E test
 
-Incomplete: Not automated. Detox does not have access to color or visibility attributes on
-Android views, so it is not possible to programmatically assert whether
+Incomplete: Not automated. Detox does not have access to color or visibility
+attributes on Android views, so it is not possible to programmatically assert whether
 a label is hidden or a specific color value has been applied.
 
 ## Prerequisites
@@ -28,93 +21,120 @@ a label is hidden or a specific color value has been applied.
 
 ## Note
 
-- This scenario is **Android-only**. The props under test are configured only for Android.
-- The two tabs ("Label" and "Ripple") are independent; changes on one
-  tab do not affect the other.
-- The active indicator toggle on the Ripple tab starts in the **off**
-  (disabled) state on every fresh launch.
+- This scenario is **Android-only**. All props under test are configured
+  only for the Android platform.
+- The four tabs (Default, Label, Ripple, Indicator) are independent;
+  changes on one tab do not affect the others.
+- The Label tab picker resets to `auto` on every fresh launch.
+- The Ripple and Indicator tabs are static — they have no interactive
+  controls. Verification is purely visual.
+- The ripple (`tabBarItemRippleColor`) is a **transient** touch-feedback
+  color seen only while pressing or holding a tab item. It is distinct
+  from the active indicator (`tabBarItemActiveIndicatorColor`), which
+  is a **persistent** pill visible behind the selected tab icon.
 
 ## Steps
 
-### Baseline
+### Default tab
 
 1. Launch the app and navigate to the **Tab Bar Appearance** screen.
 
-- [ ] Two tabs are shown — "Label" (selected by default) and
-  "Custom". The Label tab content is visible. The
-  `tabBarItemLabelVisibilityMode` picker shows `auto`.
+- [ ] The **Default** tab is selected and its content ("Default configuration")
+is visible.
+- [ ] Four tabs are shown in the tab bar - selected tab has visible
+title ("Default"), for other tabs only icons are shown in the tab bar.
+- [ ] The tab bar renders in the system default colors with no appearance
+overrides applied.
 
 ---
 
 ### Label tab — tabBarItemLabelVisibilityMode
 
-2. Verify the initial state of the Label tab with
-   `tabBarItemLabelVisibilityMode = auto`.
+2. Tap the second tab from the left side.
 
-- [ ] Tab bar renders in the system default configuration.
-  Both tab labels ("Label" and "Custom") are visible.
+- [ ] The Label tab content ("Label Visibility Mode") is visible.
+- [ ] The `tabBarItemLabelVisibilityMode` picker shows `auto`.
+- [ ] Tab bar renders labels using the system default behavior - only selected
+tab title is visible.
 
-3. Select `selected` in the picker.
+3. In the picker, select `labeled`.
 
-- [ ] Only the currently selected tab shows its label. The "Custom" label
-  is hidden.
+- [ ] Labels for all four tabs are shown.
 
-4. In the `tabBarItemLabelVisibilityMode` picker, select `labeled`.
+4. Tap a **Default** tab and observe the tab bar.
 
-- [ ] Labels for all tabs are always shown regardless of
-  selection state.
+- [ ] "Default" becomes selected and its label is now
+  shown. The label for other tabs are no longer visible.
 
-5. Select `unlabeled` in the picker.
+5. Tap the second tab again.
 
-- [ ] Labels for all tabs are hidden; only icons are shown.
+- [ ] "Label" tab is selected, label for all tabs reappears.
 
-6. Select `auto` in the picker.
+6. In the picker, select `selected`.
 
-- [ ] Tab bar returns to the system default label rendering.
+- [ ] Only the currently selected tab ("Label") shows
+  its label. Labels for the other three tabs are hidden.
 
-7. Cycle through all four values (`auto` → `selected` → `labeled` →
-   `unlabeled`) in quick succession.
+7. In the picker, select `unlabeled`.
 
-- [ ] The tab bar updates immediately after each change with
-  no crash or layout freeze. At the end labels for all tabs are hidden.
+- [ ] Labels for all four tabs are hidden; only icons
+  are shown in the tab bar.
+
+8. Cycle through all four values (`auto` → `selected` → `labeled`
+    → `unlabeled`) in quick succession.
+
+- [ ] The tab bar updates immediately after each change with no crash or layout freeze.
+- [ ] At the end, labels for all tabs are hidden (unlabeled).
 
 ---
 
-### Custom tab — colors and active indicator
+### Ripple tab — transient ripple color (indicator disabled)
 
-8. Tap the **Custom** tab.
+9. Tap the **Ripple** tab (third from left).
 
-- [ ] The Custom tab content is visible. The tab bar
-  background changes to PurpleDark100. The
-  `tabBarItemActiveIndicatorEnabled` switch is off.
+- [ ] The Ripple tab content ("Ripple Effect") is visible.
+- [ ] The tab bar background changes to dark navy.
+- [ ] Labels are shown for all tabs.
+- [ ] No persistent indicator pill is visible behind tab icon.
 
-9. Tap the "Label" tab and then tap the "Custom" tab again to
-   observe the touch-ripple color.
+10. Press and hold the **Default** tab item in the tab bar for
+    approximately one second, then release.
 
-- [ ] Tab titles are hidden when selecting the "Label" tab.
-- [ ] A ripple effect in YellowDark100 is visible on the tapped tab item as an
+- [ ] While pressing, a transient ripple expands from
+  the touch point in yellow.
+- [ ] The ripple fades and disappears after release.
+
+11. Tap the **Label** tab, then the **Ripple** tab.
+
+- [ ] When Label tab is selected, labels for all tabs are hidden.
+- [ ] While selecting Ripple tab, a ripple effect is visible as an
 unconstrained yellow circle that expands and smoothly fades outward.
 
-10. Enable the `tabBarItemActiveIndicatorEnabled` switch.
+---
 
-- [ ] A pill-shaped active indicator in GreenLight100
-appears behind the Custom tab's icon in the tab bar.
+### Indicator tab — persistent active indicator + ripple
 
-11.  Tap the **Label** tab, then tap the **Custom** tab again to
-   observe the touch-ripple color.
+12. Tap the **Indicator** tab.
 
-- [ ] The tabs title are hidden when Label tab is selected.
-- [ ] The ripple effect in YellowDark100 is visible on the tapped tab item,
-contained inside the pill-shaped active indicator frame.
-After the ripple animation ends, the indicator color remains GreenLight100.
+- [ ] The Indicator tab content ("Active Indicator Enabled") is visible.
+- [ ] The tab bar background changes to purple.
+- [ ] Labels are shown for all tabs.
+- [ ] A persistent green pill-shaped indicator is visible behind the "Indicator"
+tab icon in the tab bar.
 
-12. Disable the `tabBarItemActiveIndicatorEnabled` switch.
+13.  Tap the **Default** tab, then the **Indicator** tab.
 
-- [ ] The active indicator is no longer visible.
-  Tab bar background and ripple colors remain unchanged.
+- [ ] The yellow ripple effect is visible on the Indicator tab item,
+contained within the pill-shaped active indicator frame.
+- [ ] After the ripple animation ends, the indicator color remains green.
 
-13. Toggle the `tabBarItemActiveIndicatorEnabled` switch on and off
-    few times in quick succession.
+14.  Tap the **Indicator** tab. Then press and hold the **Default**
+    tab item for approximately one second, then release.
 
-- [ ] The indicator appears and disappears correctly with
-  each toggle. No crash or visual artifact occurs.
+- [ ] While pressing, a transient yellow ripple is visible.
+- [ ] The ripple is contained within the pill-shaped indicator frame.
+
+15.  Rapidly tap between **Default**, **Label**, and **Ripple** tabs
+    several times.
+
+- [ ] Per-tab tab bar custom appearance configurations are applied correctly while switching tabs.
