@@ -176,7 +176,7 @@
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
-  if (self.preventNativeDismiss) {
+  if (_behaviorProvider.preventNativeDismiss) {
     return NO;
   }
   return YES;
@@ -227,7 +227,7 @@
 - (void)handleBackdropTap:(UITapGestureRecognizer *)gesture
 {
   if (gesture.state == UIGestureRecognizerStateRecognized) {
-    if (_preventNativeDismiss) {
+    if (_behaviorProvider.preventNativeDismiss) {
       [self.delegate sheetControllerDidPreventNativeDismiss:self];
     }
   }
@@ -240,7 +240,7 @@
   if (gestureRecognizer == _backdropTapGestureRecognizer) {
     // When native dismissal is not being prevented, this recognizer should not
     // participate in handling touches to avoid interfering with UIKit.
-    if (!_preventNativeDismiss) {
+    if (!_behaviorProvider.preventNativeDismiss) {
       return NO;
     }
 

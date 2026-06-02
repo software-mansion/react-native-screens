@@ -28,8 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
 
-@property (nonatomic, assign) BOOL preventNativeDismiss;
-
 #pragma mark - Presentation
 
 - (void)prepareForPresentation;
