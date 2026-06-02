@@ -20,8 +20,6 @@ import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 import TestTabsItemTitle from './test-tabs-item-title-ios';
 import TestTabsGeneralAppearance from './test-tabs-general-appearance-android';
 
-
-
 const scenarios = {
   TestTabBottomAccessory,
   TestTabsOverrideScrollViewContentInset,
