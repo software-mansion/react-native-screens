@@ -22,10 +22,10 @@ export interface FormSheetProps {
    * @summary Defines the resting positions of the sheet.
    *
    * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
-   * or the `'fitToContents'` string literal.
+   * or the `fitToContents` string literal.
    *
    * - **Fractional heights:** The sheet will snap to these specific height proportions.
-   * - **`'fitToContents'`:** The sheet automatically calculates its height to wrap its content.
+   * - **`fitToContents`:** The sheet automatically calculates its height to wrap its content.
    *   It will dynamically animate to adapt to any internal layout changes.
    *  *(Note: `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent).*
    *
