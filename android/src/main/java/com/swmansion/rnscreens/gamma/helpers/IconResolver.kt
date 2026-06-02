@@ -26,9 +26,11 @@ internal class IconResolver {
     private var lastEmittedImageUri: String? = null
 
     /**
-     * Resolves an icon from a drawable resource name or an image uri and always
-     * reports the outcome via [onResult] exactly once — synchronously for drawable
-     * resources and empty sources, asynchronously for image uris.
+     * Resolves an icon from a drawable resource name or an image uri.
+     *
+     * The result is delivered to [onResult] synchronously for drawable resources and empty sources,
+     * and asynchronously for image uris. For image uris, the callback is only invoked if the
+     * resolved uri is still the latest requested source (stale requests are dropped).
      */
     fun resolve(
         context: Context,

@@ -159,7 +159,7 @@ internal class StackHeaderToolbarMenuCoordinator(
                 is StackHeaderToolbarUpdate.Set -> update.value
                 null ->
                     currentTintList
-                        ?.resolvedColorOrNull(intArrayOf())
+                        ?.resolvedColorOrNull(intArrayOf(-android.R.attr.state_enabled))
                         ?.takeIf { it != currentNormal }
             }
 

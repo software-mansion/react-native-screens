@@ -14,18 +14,12 @@ function TintOverrideTab() {
     <View style={styles.screen}>
       <Text style={styles.label}>Tint Override</Text>
       <Text style={styles.hint}>
-        Host `tabBarTintColor`:{' '}
-        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
+        Host `tabBarTintColor`:{" "}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
+        This tab&apos;s `tabBarItemTitleFontColor`:{" "}
+        <Text style={{ color: Colors.RedLight100 }}>RedLight100</Text>{'\n'}
         {'\n'}
-        This tab&apos;s `tabBarItemTitleFontColor`:{' '}
-        <Text style={{ color: Colors.RedLight100 }}>RedLight100</Text>
-        {'\n'}
-        {'\n'}
-        When selected: title text should appear{' '}
-        <Text style={{ color: Colors.RedLight100 }}>RED</Text>
-        {'\n'} and icon should appear{' '}
-        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>
-        {'\n'}
+        When selected: title text should appear <Text style={{ color: Colors.RedLight100 }}>RED</Text>{'\n'} and icon should appear <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>{'\n'}
         {'\n'}
         Confirms `tabBarItemTitleFontColor` overrides `tabBarTintColor` for the
         label but not the icon, which should still be tinted by the host config.
@@ -39,9 +33,8 @@ function FontTab() {
     <View style={styles.screen}>
       <Text style={styles.label}>Font and Position</Text>
       <Text style={styles.hint}>
-        Host `tabBarTintColor`:{' '}
-        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
-        {'\n'}
+        Host `tabBarTintColor`:{" "}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
         `tabBarItemTitleFontFamily`: &quot;Georgia&quot;{'\n'}
         `tabBarItemTitleFontSize`: &quot;12&quot;{'\n'}
         `tabBarItemTitleFontStyle`: &quot;italic&quot;{'\n'}
@@ -51,11 +44,7 @@ function FontTab() {
         {'\n'}
         {'\n'}
         When selected: title text should be visibly shifted upward relative to a
-        default-positioned label in{' '}
-        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>
-        {'\n'}bold italic Georgia at 12 pt. For iOS 18 and lower, the title
-        color for unselected tabs is{' '}
-        <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>
+        default-positioned label in <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>{'\n'}bold italic Georgia at 12 pt. For iOS 18 and lower, the title color for unselected tabs is <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>
       </Text>
     </View>
   );
@@ -69,8 +58,8 @@ function LongTitleTab() {
         Tab title: &quot;A Very Long Tab Title That Should Truncate&quot;{'\n'}
         {'\n'}
         Demonstrates that `options.title` with an overly wide string is
-        truncated by the system tab bar with an ellipsis rather than wrapping or
-        overflowing.
+        truncated by the system tab bar with an ellipsis rather than wrapping
+        or overflowing.
       </Text>
     </View>
   );
@@ -121,10 +110,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
               tabBarItemTitleFontSize: 12,
               tabBarItemTitleFontStyle: 'italic',
               tabBarItemTitleFontWeight: '700',
-              tabBarItemTitlePositionAdjustment: {
-                vertical: -6,
-                horizontal: 0,
-              },
+              tabBarItemTitlePositionAdjustment: { vertical: -6, horizontal: 0 },
             },
             normal: {
               tabBarItemTitleFontColor: Colors.BlueDark100,
@@ -137,12 +123,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return (
-    <TabsContainerWithHostConfigContext
-      routeConfigs={ROUTE_CONFIGS}
-      ios={{ tabBarTintColor: Colors.GreenDark100 }}
-    />
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} ios={{ tabBarTintColor: Colors.GreenDark100 }} />;
 }
 
 const styles = StyleSheet.create({

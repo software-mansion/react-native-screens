@@ -22,7 +22,8 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager.Companion.TAG
+
+private const val TAG = "StackHeaderConfigViewManager"
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -220,7 +221,7 @@ open class StackHeaderConfigViewManager :
 
                     sourceMap[id] =
                         StackHeaderToolbarMenuItemIconSource(
-                            item.getString("drawableIconResourceName"),
+                            item.getString("drawableIconResourceName") ?: StackHeaderToolbarMenuItemDefaults.DRAWABLE_ICON_RESOURCE_NAME,
                             item.readImageUri("imageIconResource", StackHeaderToolbarMenuItemDefaults.IMAGE_ICON_URI),
                         )
 
