@@ -9,21 +9,20 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
-function NormalTabScreen() {
+function NoTitleScreen() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Normal Tab</Text>
+      <Text style={styles.label}>System Item Icon only</Text>
       <Text style={styles.hint}>
-        This tab does not use systemItem.{'\n'}
+        This tab uses a systemItem: `favorites`.{'\n'}
         {'\n'}
-        Only the custom title and (if provided) custom icon appear in the tab bar.
-        This is the baseline behavior when systemItem is undefined.
+        The `title` prop is used but no value is provided, so no title is displayed.
       </Text>
     </View>
   );
 }
 
-function DefaultTitleScreen() {
+function DefaultSystemItemScreen() {
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>Default System Item</Text>
@@ -41,7 +40,7 @@ function CustomTitleIconOverrideScreen() {
       <Text style={styles.hint}>
         This tab uses a systemItem: `contacts`.{'\n'}
         {'\n'}
-        Custom title and icon are provide and display in tab bar instead of the system-provided one.
+        Custom title and icon are provided and displayed in tab bar instead of the system-provided one.
       </Text>
     </View>
   );
@@ -54,28 +53,32 @@ function SearchScreen() {
       <Text style={styles.hint}>
         This tab uses a systemItem: `search`.{'\n'}
         {'\n'}
-        The tab bar iteam is displayed as a magnifying glass icon with no title, which is the expected appearance for the `search` system item.
+        The tab bar item is displayed as a magnifying glass icon.{'\n'}
+        On iOS 26: this tab bar item is detached and does not display a title.
       </Text>
     </View>
   );
 }
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
-  {
-    name: 'NormalTab',
-    Component: NormalTabScreen,
-    options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'NormalTab',
-    },
-  },
-  {
-    name: 'DefaultTitle',
-    Component: DefaultTitleScreen,
+    {
+    name: 'DefaultSystemItem',
+    Component: DefaultSystemItemScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       ios: {
         systemItem: 'bookmarks',
+      },
+    },
+  },
+  {
+    name: 'NoTitle',
+    Component: NoTitleScreen,
+    options: {
+      title: '',
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      ios: {
+        systemItem: 'favorites',
       },
     },
   },
@@ -115,7 +118,6 @@ export function App() {
     <View style={styles.appContainer}>
       <TabsContainerWithHostConfigContext
         routeConfigs={ROUTE_CONFIGS}
-        defaultRouteName="NormalTab"
       />
     </View>
   );
@@ -124,28 +126,6 @@ export function App() {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-  },
-  controlPanel: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#f5f5f5',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    gap: 8,
-  },
-  controlLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666',
-  },
-  controlInfo: {
-    fontSize: 11,
-    color: '#555',
-    marginTop: 4,
-  },
-  highlight: {
-    fontWeight: '600',
-    color: Colors.GreenDark100,
   },
   screen: {
     flex: 1,

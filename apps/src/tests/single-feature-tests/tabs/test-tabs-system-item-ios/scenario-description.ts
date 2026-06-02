@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar System Item',
   key: 'test-tabs-system-item-ios',
   details:
-    'Validates different cofigurations of the systemItem prop.',
+    'Validates different configurations of the systemItem prop.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
