@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Other: Planned, but will be implemented separately.
+TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
