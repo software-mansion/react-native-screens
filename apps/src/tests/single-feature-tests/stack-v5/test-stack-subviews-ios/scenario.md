@@ -26,7 +26,7 @@ TBD
 - custom view buttons don't move to overflow menu (native behavior); one needs to specify `menuRepresentation` for them (not implemented yet)
 - items are collapsed in the order: title, trailing buttons (one by one), leading buttons (all at once); this is in line with native behavior
 - on iOS 26, the title (both regular and custom) moves from center to the leading edge if trailing buttons would otherwise touch it
-- the regular title seems to be present even if large title is enabled on iOS 18
+- the regular title seems to take up space even if large title is enabled on iOS 18 (if set to custom view, it is still rendered)
 - the test adds an option for changing the hit slop, but this remains to be handled in the future on the native side (TODO)
 - for now, large subtitle view on iOS 26 doesn't respond to clicks (TODO)
 
