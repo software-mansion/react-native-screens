@@ -5,8 +5,7 @@ import android.graphics.drawable.Drawable
 /**
  * Partial update for a toolbar menu item.
  *
- * A `null` field means "leave the current value unchanged". A non-null field
- * replaces the current value on the underlying `MenuItem`.
+ * A `null` field means "leave the current value unchanged".
  */
 data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
