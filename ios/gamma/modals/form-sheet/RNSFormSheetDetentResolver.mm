@@ -101,8 +101,8 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
       double firstDetentFraction = detents[0];
       if (firstDetentFraction == kRNSFormSheetFitToContents) {
         RCTLogError(
-            @"[RNScreens] 'fitToContents' is unsupported on iOS versions below 16. Falling back to medium detent.");
-        [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
+            @"[RNScreens] 'fitToContents' is unsupported on iOS versions below 16. Falling back to large detent.");
+        [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
       } else if (firstDetentFraction < 1.0) {
         [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
       } else {
