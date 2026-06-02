@@ -64,7 +64,7 @@ tab title is visible.
 4. Tap a **Default** tab and observe the tab bar.
 
 - [ ] "Default" becomes selected and its label is now
-  shown. The label for other tabs are no longer visible.
+  shown. The labels for other tabs are no longer visible.
 
 5. Tap the second tab again.
 
