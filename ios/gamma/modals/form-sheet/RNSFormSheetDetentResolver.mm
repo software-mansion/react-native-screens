@@ -8,10 +8,11 @@
 
 static BOOL RNSAreDetentsValid(const std::vector<double> &detents)
 {
+  if (detents.size() == 1 && detents[0] == kRNSFormSheetFitToContents) {
+    return YES;
+  }
+
   for (double currentDetent : detents) {
-    if (currentDetent == kRNSFormSheetFitToContents) {
-      continue;
-    }
     if (isnan(currentDetent)) {
       return NO;
     }
