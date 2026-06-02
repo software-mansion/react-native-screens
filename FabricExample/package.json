@@ -27,12 +27,12 @@
     "nanoid": "^4.0.2",
     "react": "19.2.3",
     "react-native": "0.86.0-rc.2",
-    "react-native-gesture-handler": "^2.31.1",
-    "react-native-reanimated": "~4.3.0",
+    "react-native-gesture-handler": "^3.0.0",
+    "react-native-reanimated": "4.5.0-nightly-20260531-e6a8526c5",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.6.0",
     "react-native-screens": "link:../",
-    "react-native-worklets": "~0.8.1"
+    "react-native-worklets": "0.10.0-nightly-20260531-e6a8526c5"
   },
   "resolutions": {
     "@react-navigation/core": "link:../react-navigation/packages/core/"
