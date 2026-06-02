@@ -25,38 +25,38 @@ TBD: Planned, but will be implemented separately.
   differ visually from iOS 18, but the `systemItem` semantics are the
   same across versions.
 - "System icon" refers to the icon defined by UIKit for each system
-  item type. Custom `icon`/`selectedIcon` props overridden the system
-  icon
+  item type. Custom `icon`/`selectedIcon` props override the system
+  icon.
 - System-defined title text can be overridden via custom `title`.
-- iOS18 KI([Issue#1074](https://github.com/software-mansion/react-native-screens-labs/issues/1074)): SystemItem Icon is not override for compactInline appearance.
+- iOS 18 KI([Issue#1074](https://github.com/software-mansion/react-native-screens-labs/issues/1074)):
+SystemItem Icon is not overridden for compactInline appearance.
 
 ## Steps
 
-### Baseline — tab without `systemItem`
+### `systemItem: 'bookmarks'` — system icon and title, no override
 
 1. Launch the app and navigate to the **Tab Bar System Item**
    screen.
 
 - [ ] Four tabs are visible in the tab bar.
-- [ ] The first tab (**NormalTab**) is selected by default. Its tab bar item shows the
-  custom title `NormalTab` and the default system icon (from
-  `DEFAULT_TAB_ROUTE_OPTIONS`).
+- [ ] The first tab (**Bookmarks**) is selected by default.
+- [ ] Its tab bar item shows the iOS-localized title `Bookmarks` and icon.
+
+2. Tap the second tab, then tap the **Bookmarks** tab again.
+
+- [ ] The bookmarks tab is successfully re-selected.
+- [ ] The icon and localized title remain unchanged on re-selection.
 
 ---
 
-### `systemItem: 'bookmarks'` — system icon and title, no override
+### `systemItem: 'favorites'` — system icon, empty title
 
-2. Tap the second tab in the tab bar (the one with the bookmarks
+3. Tap the second tab in the tab bar (the one with the star
    icon).
 
 - [ ] The second tab becomes selected.
-- [ ] Its tab bar item shows the UIKit bookmarks icon and the iOS-localized title for
-  "bookmarks" (`Bookmarks`).
-
-1. Tap the **NormalTab**, then tap the **bookmarks** tab again.
-
-- [ ] The bookmarks tab is successfully re-selected.
-The icon and localized title remain unchanged on re-selection.
+- [ ] Its tab bar item shows the UIKit favorites icon (star).
+- [ ] No title is displayed.
 
 ---
 
@@ -104,12 +104,12 @@ detached from other tab bar items.
    rotate the device to landscape orientation.
 
 - [ ] The layout adapts to landscape.
-- [ ] The tab bar icon switch from an above-title to beside-title layout.
+- [ ] The tab bar icons switch from an above-title to beside-title layout.
 - [ ] All four tab items remain visible and their titles are the same as in portrait orientation.
 - [ ] iOS18: Override icon for the `Custom` tab reverts to the systemItem icon (see KI in Notes section).
 - [ ] iOS26: Icons are the same as in portrait orientation.
 
-1. While in landscape orientation, tap each of the four tabs in
+9. While in landscape orientation, tap each of the four tabs in
    sequence.
 
 - [ ] Tab switching works correctly in landscape.
