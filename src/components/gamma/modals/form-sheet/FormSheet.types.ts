@@ -96,6 +96,17 @@ export interface FormSheetProps {
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
+  /**
+   * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
+   *
+   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
+   * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
+   *
+   * @default false
+   * @platform ios
+   */
+  preventNativeDismiss?: boolean | undefined;
+
   // Events
   /**
    * @summary Called when the sheet is dismissed natively.
@@ -117,4 +128,15 @@ export interface FormSheetProps {
   onDetentChanged?:
     | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
     | undefined;
+
+  /**
+   * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
+   *
+   * This event is only fired if `preventNativeDismiss` is set to `true`.
+   * It is useful for triggering custom feedback, such as an alert
+   * to inform the user why the sheet cannot be closed.
+   *
+   * @platform ios
+   */
+  onNativeDismissPrevented?: (() => void) | undefined;
 }
