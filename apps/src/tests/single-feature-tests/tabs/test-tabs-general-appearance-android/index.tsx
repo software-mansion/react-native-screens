@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
-  type TabRouteConfig,
   TabsContainer,
   useTabsNavigationContext,
+  type TabRouteConfig,
 } from '@apps/shared/gamma/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
