@@ -3,37 +3,59 @@ package com.swmansion.rnscreens.gamma.helpers
 import android.content.Context
 import android.graphics.drawable.Drawable
 
+/**
+ * Outcome of [IconResolver.resolve].
+ *
+ * [Unchanged] is reported when the requested source matches the one the resolver
+ * last emitted, so the caller should keep whatever icon it already has (no reload
+ * happens). [Resolved] carries a freshly resolved drawable, or `null` when the
+ * source resolves to no icon (i.e. the icon should be cleared).
+ */
+internal sealed interface IconResolution {
+    object Unchanged : IconResolution
+
+    data class Resolved(
+        val drawable: Drawable?,
+    ) : IconResolution
+}
+
 internal class IconResolver {
     private var lastDrawableName: String? = null
     private var lastImageUri: String? = null
     private var lastEmittedDrawableName: String? = null
     private var lastEmittedImageUri: String? = null
 
+    /**
+     * Resolves an icon from a drawable resource name or an image uri and always
+     * reports the outcome via [onResult] exactly once — synchronously for drawable
+     * resources and empty sources, asynchronously for image uris.
+     */
     fun resolve(
         context: Context,
         drawableIconResourceName: String?,
         imageIconUri: String?,
-        onResolved: (Drawable?) -> Unit,
+        onResult: (IconResolution) -> Unit,
     ) {
         lastDrawableName = drawableIconResourceName
         lastImageUri = imageIconUri
         if (drawableIconResourceName == lastEmittedDrawableName &&
             imageIconUri == lastEmittedImageUri
         ) {
+            onResult(IconResolution.Unchanged)
             return
         }
         lastEmittedDrawableName = drawableIconResourceName
         lastEmittedImageUri = imageIconUri
         when {
             drawableIconResourceName != null ->
-                onResolved(getSystemDrawableResource(context, drawableIconResourceName))
+                onResult(IconResolution.Resolved(getSystemDrawableResource(context, drawableIconResourceName)))
             imageIconUri != null ->
                 loadImage(context, imageIconUri) { drawable ->
                     if (imageIconUri == lastImageUri && lastDrawableName == null) {
-                        onResolved(drawable)
+                        onResult(IconResolution.Resolved(drawable))
                     }
                 }
-            else -> onResolved(null)
+            else -> onResult(IconResolution.Resolved(null))
         }
     }
 }

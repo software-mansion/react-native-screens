@@ -261,8 +261,22 @@ function parseToolbarMenuItemOptionsToNativeProps(
         case 'icon': {
           const iconValue =
             value as StackHeaderToolbarMenuItemOptionsAndroid['icon'];
-          const parsedIcon = parseIconToNativeProps(iconValue);
-          return Object.entries(parsedIcon);
+
+          // Explicit `undefined` means "reset the icon". The native side treats
+          // an absent key as "no change", so to clear the icon we must send every
+          // native icon key explicitly as `null`.
+          if (iconValue === undefined) {
+            const noIcon: Pick<
+              NativeToolbarMenuItemOptionsAndroid,
+              'imageIconResource' | 'drawableIconResourceName'
+            > = {
+              imageIconResource: null,
+              drawableIconResourceName: null,
+            };
+            return Object.entries(noIcon);
+          }
+
+          return Object.entries(parseIconToNativeProps(iconValue));
         }
       }
 

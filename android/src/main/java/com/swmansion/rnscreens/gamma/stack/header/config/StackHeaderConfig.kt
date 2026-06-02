@@ -7,6 +7,7 @@ import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.helpers.IconResolution
 import com.swmansion.rnscreens.gamma.helpers.IconResolver
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
@@ -64,9 +65,14 @@ class StackHeaderConfig(
             reactContext,
             backButtonDrawableIconResourceName,
             backButtonImageIconUri,
-        ) { drawable ->
-            backButtonIcon = drawable
-            notifyConfigChanged()
+        ) { result ->
+            when (result) {
+                IconResolution.Unchanged -> Unit
+                is IconResolution.Resolved -> {
+                    backButtonIcon = result.drawable
+                    notifyConfigChanged()
+                }
+            }
         }
     }
 
@@ -85,7 +91,8 @@ class StackHeaderConfig(
                 context = reactContext,
                 drawableIconResourceName = source.drawableIconResourceName,
                 imageIconUri = source.imageIconUri,
-            ) { drawable ->
+            ) { result ->
+                if (result !is IconResolution.Resolved) return@resolve
 
                 val currentItems = toolbarMenuItems
                 val itemIndex = currentItems.indexOfFirst { it.id == id }
@@ -93,9 +100,9 @@ class StackHeaderConfig(
                 if (itemIndex != -1) {
                     val item = currentItems[itemIndex]
 
-                    if (item.icon != drawable) {
+                    if (item.icon != result.drawable) {
                         val newItems = currentItems.toMutableList()
-                        newItems[itemIndex] = item.copy(icon = drawable)
+                        newItems[itemIndex] = item.copy(icon = result.drawable)
 
                         toolbarMenuItems = newItems
                         notifyConfigChanged()
@@ -162,22 +169,37 @@ class StackHeaderConfig(
         delegate?.get()?.onConfigChange(this)
     }
 
+    /**
+     * Applies a toolbar menu item view command. When the command does not touch
+     * the icon ([iconSource] is `null`) the options are delivered immediately.
+     * Otherwise, the icon is resolved first and all options — including the icon —
+     * are delivered together in a single update, so the change is applied
+     * atomically once the (possibly async) image has loaded.
+     */
     internal fun dispatchMenuItemUpdate(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
         iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
-        if (iconSource != null) {
-            val resolver = toolbarMenuItemIconResolvers[id]
-            if (resolver != null) {
-                resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { drawable ->
-                    delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = StackHeaderToolbarUpdate.from(drawable)))
-                }
-            } else {
-                Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
-            }
-        } else {
+        if (iconSource == null) {
             delegate?.get()?.onMenuItemUpdate(id, options)
+            return
+        }
+
+        val resolver = toolbarMenuItemIconResolvers[id]
+        if (resolver == null) {
+            Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
+            delegate?.get()?.onMenuItemUpdate(id, options)
+            return
+        }
+
+        resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { result ->
+            val icon =
+                when (result) {
+                    IconResolution.Unchanged -> null // keep the current icon
+                    is IconResolution.Resolved -> StackHeaderToolbarUpdate.from(result.drawable)
+                }
+            delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = icon))
         }
     }
 

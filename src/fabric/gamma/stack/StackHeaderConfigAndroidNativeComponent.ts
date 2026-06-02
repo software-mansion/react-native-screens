@@ -31,8 +31,8 @@ export interface StackHeaderToolbarMenuItemAndroid {
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
   >;
-  drawableIconResourceName?: string | undefined;
-  imageIconResource?: ImageSource | undefined;
+  drawableIconResourceName?: string | null | undefined;
+  imageIconResource?: ImageSource | null | undefined;
   iconTintColorNormal?: ProcessedColorValue | null | undefined;
   iconTintColorPressed?: ProcessedColorValue | null | undefined;
   iconTintColorFocused?: ProcessedColorValue | null | undefined;

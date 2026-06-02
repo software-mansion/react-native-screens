@@ -267,13 +267,6 @@ open class StackHeaderConfigViewManager :
     ) {
         val map = options.getMap(0) ?: return
 
-        val drawableIconResourceName = map.getString("drawableIconResourceName")
-        val imageIconUri = map.readNullableImageUriUpdate("imageIconResource", null)
-        val iconSource = if (drawableIconResourceName != null || imageIconUri != null) StackHeaderToolbarMenuItemIconSource(
-            drawableIconResourceName = drawableIconResourceName,
-            imageIconUri = imageIconUri
-        ) else null
-
         view.dispatchMenuItemUpdate(
             id,
             StackHeaderToolbarMenuItemOptions(
@@ -284,17 +277,14 @@ open class StackHeaderConfigViewManager :
                         "showAsAction",
                         StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
                     ),
+                // The icon is resolved asynchronously and filled in by dispatchMenuItemUpdate.
                 icon = null,
-                iconTintColorNormal = map.readNullableColorUpdate("iconTintColorNormal",
-                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL),
-                iconTintColorPressed = map.readNullableColorUpdate("iconTintColorPressed",
-                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED),
-                iconTintColorFocused = map.readNullableColorUpdate("iconTintColorFocused",
-                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED),
-                iconTintColorDisabled = map.readNullableColorUpdate("iconTintColorDisabled",
-                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED)
+                iconTintColorNormal = map.readNullableColorUpdate("iconTintColorNormal"),
+                iconTintColorPressed = map.readNullableColorUpdate("iconTintColorPressed"),
+                iconTintColorFocused = map.readNullableColorUpdate("iconTintColorFocused"),
+                iconTintColorDisabled = map.readNullableColorUpdate("iconTintColorDisabled"),
             ),
-            iconSource
+            map.readIconSource(),
         )
     }
 
@@ -335,12 +325,10 @@ private fun ReadableMap.readShowAsActionEnum(
 private fun ReadableMap.readColor(
     key: String,
     default: Int?,
-): Int? {
-    if (!this.hasKey(key) || this.isNull(key)) {
-        return default
-    }
+): Int? = if (!this.hasKey(key) || this.isNull(key)) default else parseColor(key)
 
-    return try {
+private fun ReadableMap.parseColor(key: String): Int? =
+    try {
         when (getType(key)) {
             ReadableType.Number -> getInt(key)
             ReadableType.String -> getString(key)?.toColorInt()
@@ -350,7 +338,6 @@ private fun ReadableMap.readColor(
         Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
         null
     }
-}
 
 private fun ReadableMap.readImageUri(
     key: String,
@@ -364,9 +351,15 @@ private fun ReadableMap.readImageUri(
     return imageMap?.getString("uri") ?: default
 }
 
-// Helpers for view commands:
-// - not defined -> null (means "no update")
-// - null -> default (means "reset to default value")
+// Helpers for view commands. Each key has three states:
+// - not defined -> null         (no change)
+// - null        -> default      (reset to default)
+// - value       -> value
+//
+// A plain `T?` return can encode this only when the field's default is non-null,
+// so `null` unambiguously means "no change". Fields whose default is null (the
+// tint colors) must return `StackHeaderToolbarUpdate<T>?` instead, to tell "no
+// change" (null) apart from "reset" (Reset).
 private fun ReadableMap.readNullableStringUpdate(
     key: String,
     default: String,
@@ -400,47 +393,26 @@ private fun ReadableMap.readNullableShowAsActionEnumUpdate(
             } ?: default
     }
 
-private fun ReadableMap.readNullableColorUpdate(
-    key: String,
-    default: Int?
-): StackHeaderToolbarUpdate<Int>? =
+// Assumes null is the default color.
+private fun ReadableMap.readNullableColorUpdate(key: String): StackHeaderToolbarUpdate<Int>? =
     when {
         !this.hasKey(key) -> null
-        this.isNull(key) -> StackHeaderToolbarUpdate.from(default)
-        else -> {
-            try {
-                when (getType(key)) {
-                    ReadableType.Number -> StackHeaderToolbarUpdate.from(getInt(key))
-                    ReadableType.String -> StackHeaderToolbarUpdate.from(getString(key)?.toColorInt())
-                    else -> StackHeaderToolbarUpdate.from(default)
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
-                StackHeaderToolbarUpdate.from(default)
-            }
-        }
+        this.isNull(key) -> StackHeaderToolbarUpdate.Reset
+        else -> StackHeaderToolbarUpdate.from(parseColor(key))
     }
 
-private fun ReadableMap.readNullableImageUriUpdate(
-    key: String,
-    default: String?,
-): String? {
-    if (!this.hasKey(key)) {
+// The icon is composed of two JS keys that together form one source. It is
+// "mentioned" iff at least one key is present; mentioned but empty (both null)
+// means "clear", which the resolver turns into a Reset.
+private fun ReadableMap.readIconSource(): StackHeaderToolbarMenuItemIconSource? {
+    if (!this.hasKey("drawableIconResourceName") && !this.hasKey("imageIconResource")) {
         return null
     }
-
-    if (this.isNull(key)) {
-        return default
-    }
-
-    if (this.getType(key) != ReadableType.Map) {
-        return null
-    }
-
-    val imageMap = getMap(key)
-    return imageMap?.getString("uri") ?: default
+    return StackHeaderToolbarMenuItemIconSource(
+        drawableIconResourceName = this.getString("drawableIconResourceName"),
+        imageIconUri = this.readImageUri("imageIconResource", null),
+    )
 }
-
 
 private fun toMenuItemShowAsActionEnum(value: String): StackHeaderToolbarMenuItemShowAsAction =
     when (value) {
