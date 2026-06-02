@@ -7,6 +7,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderConfigComponentView : RNSReactBaseView <RNSViewFrameChangeDelegate>
 
+- (void)resetProps;
+
 @end
 
 NS_ASSUME_NONNULL_END

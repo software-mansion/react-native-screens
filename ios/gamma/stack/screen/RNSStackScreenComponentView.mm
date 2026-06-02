@@ -12,6 +12,7 @@
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 
 #import "Swift-Bridging.h"
 
@@ -105,6 +106,14 @@ namespace react = facebook::react;
   }
 
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+    [_controller.headerCoordinator clearHeaderConfiguration];
+  }
+  [super unmountChildComponentView:childComponentView index:index];
 }
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask

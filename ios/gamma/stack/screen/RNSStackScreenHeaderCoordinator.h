@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)submitHeaderData:(nonnull RNSStackHeaderData *)data;
 
-- (void)applyBarConfigurationIfNeeded:(BOOL)animated;
+- (void)clearHeaderConfiguration;
 
 @end
 

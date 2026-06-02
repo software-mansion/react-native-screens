@@ -72,12 +72,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (self.window != nil) {
     [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
-  } else {
-    [self resetProps];
+    [self submitCurrentData];
   }
-
-  [self submitCurrentDataIfMounted];
-
   [super didMoveToWindow];
 }
 
