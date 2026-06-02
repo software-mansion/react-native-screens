@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
-  TabRouteConfig,
+  type TabRouteConfig,
   TabsContainer,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
@@ -79,7 +79,7 @@ function RippleTab() {
         Ripple Effect
       </Text>
       <Text style={styles.hint}>
-        `tabBarItemLabelVisibilityMode`: 'selected'
+        `tabBarItemLabelVisibilityMode`: 'labeled'
         {'\n'}
         `tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>
@@ -104,7 +104,7 @@ function IndicatorTab() {
         Active Indicator Enabled
       </Text>
       <Text style={styles.hint}>
-        `tabBarItemLabelVisibilityMode`: 'selected'
+        `tabBarItemLabelVisibilityMode`: 'labeled'
         {'\n'}
         `tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
@@ -159,7 +159,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
           tabBarItemActiveIndicatorEnabled: false,
           tabBarItemActiveIndicatorColor: Colors.GreenLight100,
           tabBarItemLabelVisibilityMode: 'labeled',
-
         },
       },
     },
