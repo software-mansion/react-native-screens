@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
@@ -65,7 +67,9 @@ internal class StackHeaderCoordinator(
     private var lastBackgroundSubviewCollapseMode: StackHeaderSubviewCollapseMode? = null
 
     private var lastBackButtonVisible: Boolean? = null
-    private var lastBackButtonTintColor: Int? = null
+    private var lastBackButtonTintColorNormal: Int? = null
+    private var lastBackButtonTintColorPressed: Int? = null
+    private var lastBackButtonTintColorFocused: Int? = null
     private var lastBackButtonIcon: Drawable? = null
 
     private var lastScrollFlags: Int? = null
@@ -171,7 +175,9 @@ internal class StackHeaderCoordinator(
         appBarLayout = null
         managedTitleView = null
         lastBackButtonVisible = null
-        lastBackButtonTintColor = null
+        lastBackButtonTintColorNormal = null
+        lastBackButtonTintColorPressed = null
+        lastBackButtonTintColorFocused = null
         lastBackButtonIcon = null
         lastScrollFlags = null
         clearCachedRebuildTriggers()
@@ -424,13 +430,18 @@ internal class StackHeaderCoordinator(
         val visible = canNavigateBack && !config.backButtonHidden
         val visibilityChanged = visible != lastBackButtonVisible
         val iconChanged = config.backButtonIcon !== lastBackButtonIcon
-        val tintChanged = config.backButtonTintColor != lastBackButtonTintColor
+        val tintChanged =
+            config.backButtonTintColorNormal != lastBackButtonTintColorNormal ||
+                config.backButtonTintColorPressed != lastBackButtonTintColorPressed ||
+                config.backButtonTintColorFocused != lastBackButtonTintColorFocused
 
         if (!visibilityChanged && !iconChanged && !tintChanged) return
 
         lastBackButtonVisible = visible
         lastBackButtonIcon = config.backButtonIcon
-        lastBackButtonTintColor = config.backButtonTintColor
+        lastBackButtonTintColorNormal = config.backButtonTintColorNormal
+        lastBackButtonTintColorPressed = config.backButtonTintColorPressed
+        lastBackButtonTintColorFocused = config.backButtonTintColorFocused
 
         if (!visible) {
             toolbar.navigationIcon = null
@@ -438,16 +449,50 @@ internal class StackHeaderCoordinator(
             return
         }
 
-        // Clear previous tint before setting icon to ensure clean state
         toolbar.clearNavigationIconTint()
 
-        toolbar.navigationIcon = config.backButtonIcon ?: resolveDefaultBackButtonIcon()
+        val baseDrawable =
+            config.backButtonIcon
+                ?.let { getResizedDrawable(toolbar, it) }
+                ?: resolveDefaultBackButtonIcon()
 
-        config.backButtonTintColor?.let {
-            toolbar.setNavigationIconTint(it)
-        }
+        val tintList = resolveBackButtonTintList(config)
+        toolbar.navigationIcon =
+            if (tintList != null && baseDrawable != null) {
+                DrawableCompat.wrap(baseDrawable.mutate()).also {
+                    DrawableCompat.setTintList(it, tintList)
+                }
+            } else {
+                baseDrawable
+            }
 
         toolbar.setNavigationOnClickListener { onNavigationIconClick() }
+    }
+
+    private fun resolveBackButtonTintList(config: StackHeaderConfigProviding): ColorStateList? {
+        val normal = config.backButtonTintColorNormal
+        val pressed = config.backButtonTintColorPressed
+        val focused = config.backButtonTintColorFocused
+
+        if (normal == null && pressed == null && focused == null) return null
+
+        val states = mutableListOf<IntArray>()
+        val colors = mutableListOf<Int>()
+
+        pressed?.let {
+            states.add(intArrayOf(android.R.attr.state_pressed))
+            colors.add(it)
+        }
+        focused?.let {
+            states.add(intArrayOf(android.R.attr.state_focused))
+            colors.add(it)
+        }
+        normal?.let {
+            states.add(intArrayOf())
+            colors.add(it)
+        }
+
+        return ColorStateList(states.toTypedArray(), colors.toIntArray())
     }
 
     // endregion

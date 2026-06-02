@@ -250,7 +250,7 @@ export interface StackHeaderConfigPropsAndroid {
    */
   trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
   /**
-   * @summary Tint color applied to the back button icon.
+   * @summary Tint color applied to the back button icon in its normal state.
    *
    * When `undefined`, the default tint color is used. This applies to the
    * native back arrow and `drawableResource` icons that have an associated
@@ -258,7 +258,30 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @platform android
    */
-  backButtonTintColor?: ColorValue | undefined;
+  backButtonTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorFocused?: ColorValue | undefined;
   /**
    * @summary Custom icon for the back button.
    *
