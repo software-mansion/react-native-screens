@@ -10,4 +10,5 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 internal object StackHeaderToolbarMenuItemDefaults {
     const val TITLE: String = ""
     const val HIDDEN: Boolean = false
+    val SHOW_AS_ACTION: StackHeaderToolbarMenuItemShowAsAction = StackHeaderToolbarMenuItemShowAsAction.NEVER
 }

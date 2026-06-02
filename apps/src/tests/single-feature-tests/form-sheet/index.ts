@@ -7,6 +7,7 @@ import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-u
 import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed-ios';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius-ios';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state-ios';
+import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
 
 const scenarios = {
   TestFormSheetBase,
@@ -17,6 +18,7 @@ const scenarios = {
   TestFormSheetOnDetentChanged,
   TestFormSheetPreferredCornerRadius,
   TestFormSheetPresentationState,
+  TestFormSheetPreventNativeDismiss,
 };
 
 const FormSheetScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

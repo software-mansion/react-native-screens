@@ -7,7 +7,7 @@ import TabsScreenOrientationScenario from './tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
-import TestTabsIMEInsets from './test-tabs-ime-insets';
+import TestTabsIMEInsets from './test-tabs-ime-insets-android';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';

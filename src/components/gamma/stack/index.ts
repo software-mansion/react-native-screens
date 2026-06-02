@@ -26,6 +26,8 @@ export type {
   StackHeaderConfigCommandsAndroid,
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuItemClickedEvent,
+  StackHeaderToolbarMenuItemShowAsActionAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
   StackHeaderInlineItemIOS,
