@@ -37,7 +37,7 @@ a label is hidden or a specific color value has been applied.
 
 ### Default tab
 
-1. Launch the app and navigate to the **Tab Bar Appearance** screen.
+1. Launch the app and navigate to the **Tab Bar General Appearance** screen.
 
 - [ ] The **Default** tab is selected and its content ("Default configuration")
 is visible.
