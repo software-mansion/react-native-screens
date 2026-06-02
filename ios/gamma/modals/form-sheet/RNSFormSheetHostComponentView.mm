@@ -41,7 +41,7 @@ namespace react = facebook::react;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
 
-  CGFloat _contentHeight;
+  CGFloat _reactContentsHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -75,7 +75,7 @@ namespace react = facebook::react;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
 
-  _contentHeight = 0.0;
+  _reactContentsHeight = 0.0;
 }
 
 - (void)setupController
@@ -112,17 +112,18 @@ namespace react = facebook::react;
   return _detents;
 }
 
-- (CGFloat)contentHeight
+- (CGFloat)reactContentsHeight
 {
-  return _contentHeight;
+  return _reactContentsHeight;
 }
 
 #pragma mark - RNSFormSheetContentWrapperDelegate
 
-- (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper didChangeContentHeight:(CGFloat)contentHeight
+- (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
+    didChangeReactContentsHeight:(CGFloat)reactContentsHeight
 {
-  if (_contentHeight != contentHeight) {
-    _contentHeight = contentHeight;
+  if (_reactContentsHeight != reactContentsHeight) {
+    _reactContentsHeight = reactContentsHeight;
     [_controller setNeedsBehaviorUpdate];
   }
 }

@@ -24,7 +24,7 @@ namespace react = facebook::react;
 
   if (newHeight != oldHeight) {
     if (_delegate) {
-      [_delegate contentWrapper:self didChangeContentHeight:newHeight];
+      [_delegate contentWrapper:self didChangeReactContentsHeight:newHeight];
     }
   }
 }

@@ -74,7 +74,8 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
                           customDetentWithIdentifier:ident
                                             resolver:^CGFloat(
                                                 id<UISheetPresentationControllerDetentResolutionContext> context) {
-                                              CGFloat currentHeight = weakProvider ? [weakProvider contentHeight] : 0.0;
+                                              CGFloat currentHeight =
+                                                  weakProvider ? [weakProvider reactContentsHeight] : 0.0;
 
                                               // Safe fallback for uncalculated layout or deallocated provider
                                               if (currentHeight <= 0.0) {
