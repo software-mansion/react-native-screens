@@ -43,7 +43,7 @@ TBD: Planned, but will be implemented separately.
 - [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard. 
 - [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.
 
-3. Tap outside or dismiss the keyboard.
+3. Dismiss the keyboard.
 
 ---
 
@@ -58,7 +58,7 @@ alongside the keyboard, remaining fully visible on top of it.
 - [ ] The inner content view resizes seamlessly, pushing the "TabsScreen bottom" text
 up so it remains visible right above the elevated tab bar without any visual glitches.
 
-6. Tap outside or dismiss the keyboard.
+6. Dismiss the keyboard.
 
 ---
 
@@ -75,7 +75,7 @@ to hide behind the tab bar layout layer.
 - [ ] The tab bar rises above the soft keyboard, but the inner content text "TabsScreen bottom"
 remains tucked behind the tab bar layer.
 
-9. Tap outside or dismiss the keyboard.
+9. Dismiss the keyboard.
 
 ---
 
