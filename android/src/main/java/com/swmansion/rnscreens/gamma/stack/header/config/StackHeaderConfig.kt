@@ -80,11 +80,19 @@ class StackHeaderConfig(
 
     private var toolbarMenuItemIconResolvers = mapOf<String, IconResolver>()
 
+    // Last resolved icon per menu item id. Unlike every other field on this
+    // config — which mirrors a single prop — this cache deliberately merges
+    // resolved icons from BOTH sources that can set a menu item icon: the
+    // `toolbarMenuItems` prop array (resolveToolbarMenuItemIconsIfNeeded) and
+    // the imperative `setToolbarMenuItemOptions` view command
+    // (dispatchMenuItemUpdate). It is necessary to ensure consistency.
+    private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
+
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
         val nextResolvers = mutableMapOf<String, IconResolver>()
 
         toolbarMenuItemIconSourceMap.forEach { (id, source) ->
-            val resolver = IconResolver()
+            val resolver = toolbarMenuItemIconResolvers[id] ?: IconResolver()
             nextResolvers[id] = resolver
 
             resolver.resolve(
@@ -92,26 +100,39 @@ class StackHeaderConfig(
                 drawableIconResourceName = source.drawableIconResourceName,
                 imageIconUri = source.imageIconUri,
             ) { result ->
-                if (result !is IconResolution.Resolved) return@resolve
-
-                val currentItems = toolbarMenuItems
-                val itemIndex = currentItems.indexOfFirst { it.id == id }
-
-                if (itemIndex != -1) {
-                    val item = currentItems[itemIndex]
-
-                    if (item.icon != result.drawable) {
-                        val newItems = currentItems.toMutableList()
-                        newItems[itemIndex] = item.copy(icon = result.drawable)
-
-                        toolbarMenuItems = newItems
-                        notifyConfigChanged()
+                val icon =
+                    when (result) {
+                        IconResolution.Unchanged -> toolbarMenuItemIcons[id]
+                        is IconResolution.Resolved -> {
+                            toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                            result.drawable
+                        }
                     }
-                }
+
+                applyToolbarMenuItemIcon(id, icon)
             }
         }
 
         toolbarMenuItemIconResolvers = nextResolvers
+        toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in toolbarMenuItemIconSourceMap }
+    }
+
+    private fun applyToolbarMenuItemIcon(
+        id: String,
+        icon: Drawable?,
+    ) {
+        val currentItems = toolbarMenuItems
+        val itemIndex = currentItems.indexOfFirst { it.id == id }
+        if (itemIndex == -1) return
+
+        val item = currentItems[itemIndex]
+        if (item.icon != icon) {
+            val newItems = currentItems.toMutableList()
+            newItems[itemIndex] = item.copy(icon = icon)
+
+            toolbarMenuItems = newItems
+            notifyConfigChanged()
+        }
     }
 
     override var backgroundSubview: StackHeaderSubview? = null
@@ -197,7 +218,12 @@ class StackHeaderConfig(
             val icon =
                 when (result) {
                     IconResolution.Unchanged -> null // keep the current icon
-                    is IconResolution.Resolved -> StackHeaderToolbarUpdate.from(result.drawable)
+                    is IconResolution.Resolved -> {
+                        // Keep the cache in sync with the prop-array path: both share this
+                        // id's resolver.
+                        toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                        StackHeaderToolbarUpdate.from(result.drawable)
+                    }
                 }
             delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = icon))
         }
