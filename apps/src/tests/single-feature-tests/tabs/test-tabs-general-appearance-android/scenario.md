@@ -1,4 +1,4 @@
-# Test Scenario: Tab Bar Appearance (Android)
+# Test Scenario: Tab Bar General Appearance (Android)
 
 ## Details
 
