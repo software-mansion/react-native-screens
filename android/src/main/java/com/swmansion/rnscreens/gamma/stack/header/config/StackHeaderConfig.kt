@@ -34,7 +34,11 @@ class StackHeaderConfig(
         internal set
     override var backButtonHidden: Boolean = false
         internal set
-    override var backButtonTintColor: Int? = null
+    override var backButtonTintColorNormal: Int? = null
+        internal set
+    override var backButtonTintColorPressed: Int? = null
+        internal set
+    override var backButtonTintColorFocused: Int? = null
         internal set
     override var backButtonIcon: Drawable? = null
         internal set
