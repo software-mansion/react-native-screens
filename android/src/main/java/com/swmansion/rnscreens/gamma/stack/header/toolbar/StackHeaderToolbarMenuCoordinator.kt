@@ -139,13 +139,18 @@ internal class StackHeaderToolbarMenuCoordinator(
         options: StackHeaderToolbarMenuItemOptions,
     ): ColorStateList? {
         val currentTintList = MenuItemCompat.getIconTintList(menuItem)
-        val currentDefault = currentTintList?.defaultColor
+        // The currently-applied normal (catch-all) color, if any. Used both as
+        // the "leave unchanged" value for normal and to dedup read-back
+        // overrides: when a normal entry exists every override probe also
+        // matches it, so an override equal to the current normal is the
+        // catch-all leaking through rather than an explicit override.
+        val currentNormal = currentTintList?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled))
 
         val finalNormal =
             when (val update = options.iconTintColorNormal) {
                 StackHeaderToolbarUpdate.Reset -> null
                 is StackHeaderToolbarUpdate.Set -> update.value
-                null -> currentDefault
+                null -> currentNormal
             }
 
         val finalDisabled =
@@ -154,8 +159,8 @@ internal class StackHeaderToolbarMenuCoordinator(
                 is StackHeaderToolbarUpdate.Set -> update.value
                 null ->
                     currentTintList
-                        ?.getColorForState(intArrayOf(-android.R.attr.state_enabled), currentDefault ?: 0)
-                        ?.takeIf { it != currentDefault }
+                        ?.resolvedColorOrNull(intArrayOf())
+                        ?.takeIf { it != currentNormal }
             }
 
         val finalPressed =
@@ -164,8 +169,8 @@ internal class StackHeaderToolbarMenuCoordinator(
                 is StackHeaderToolbarUpdate.Set -> update.value
                 null ->
                     currentTintList
-                        ?.getColorForState(intArrayOf(android.R.attr.state_pressed), currentDefault ?: 0)
-                        ?.takeIf { it != currentDefault }
+                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed))
+                        ?.takeIf { it != currentNormal }
             }
 
         val finalFocused =
@@ -174,8 +179,8 @@ internal class StackHeaderToolbarMenuCoordinator(
                 is StackHeaderToolbarUpdate.Set -> update.value
                 null ->
                     currentTintList
-                        ?.getColorForState(intArrayOf(android.R.attr.state_focused), currentDefault ?: 0)
-                        ?.takeIf { it != currentDefault }
+                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_focused))
+                        ?.takeIf { it != currentNormal }
             }
 
         val states = mutableListOf<IntArray>()
@@ -208,7 +213,29 @@ internal class StackHeaderToolbarMenuCoordinator(
         }
     }
 
+    /**
+     * Resolves the color the receiver applies to [stateSet], or `null` when no
+     * state spec matches it.
+     *
+     * `getColorForState` returns the caller-supplied fallback when nothing
+     * matches, so we probe twice with two distinct sentinels: equal results
+     * mean a real spec matched (the actual color), differing results mean the
+     * slot is absent. This is robust for any color value and keeps the read-back
+     * stateless — see [getResolvedIconTintList].
+     */
+    private fun ColorStateList.resolvedColorOrNull(stateSet: IntArray): Int? {
+        val a = getColorForState(stateSet, SENTINEL_A)
+        val b = getColorForState(stateSet, SENTINEL_B)
+        return if (a == b) a else null
+    }
+
     companion object {
         private const val TAG = "StackHeaderToolbarMenuCoordinator"
+
+        // Two distinct sentinel fallbacks used to detect whether a ColorStateList
+        // actually defines a color for a given state. Their concrete values are
+        // irrelevant as long as they differ — see resolvedColorOrNull.
+        private const val SENTINEL_A = 0x00000001
+        private const val SENTINEL_B = 0x00000002
     }
 }
