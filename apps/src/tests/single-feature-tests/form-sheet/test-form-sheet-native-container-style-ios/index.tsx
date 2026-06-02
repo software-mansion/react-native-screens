@@ -25,7 +25,7 @@ export function App() {
 
   const colorOptions: { name: string; value: ColorValue }[] = [
     { name: 'NAVY', value: Colors.NavyLight100 },
-    { name: 'TRANSPARENT', value: 'transparent' },
+    { name: 'PURPLE', value: Colors.PurpleDark100 },
   ];
 
   return (
