@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens smoothly. Its height is matched to its internal content (it will have an extra empty space on the bottom which is originating from native inset application). There are no visual jumps during the initial presentation animation.
+- [ ] Expected: The FormSheet opens smoothly. Its height is matched to its internal content (on iPhone, it will have an extra empty space on the bottom which is originating from native inset application). There are no visual jumps during the initial presentation animation.
 
 ---
 
