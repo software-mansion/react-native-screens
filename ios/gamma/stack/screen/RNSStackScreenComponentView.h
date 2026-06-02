@@ -21,8 +21,6 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
 @property (nonatomic) BOOL isNativelyDismissed;
 
-- (nullable RNSStackHeaderConfigComponentView *)findHeaderConfig;
-
 @end
 
 #pragma mark - Props
