@@ -32,4 +32,20 @@
   return self;
 }
 
++ (RNSStackHeaderData *)empty
+{
+  return [[RNSStackHeaderData alloc] initWithTitle:nil
+                                          subtitle:nil
+                                         screenKey:nil
+                                            hidden:NO
+                                        largeTitle:nil
+                                     largeSubtitle:nil
+                                 largeTitleEnabled:NO
+                             leadingBarButtonItems:@[]
+                            trailingBarButtonItems:@[]
+                                         titleView:nil
+                                      subtitleView:nil
+                                 largeSubtitleView:nil];
+}
+
 @end

@@ -12,7 +12,6 @@
 
   RNSStackNavigationItemCoordinator *_Nonnull _navigationItemCoordinator;
 
-  RNSStackHeaderData *_Nonnull _emptyHeaderData;
   RNSStackHeaderData *_Nullable _lastHeaderData;
 }
 
@@ -21,18 +20,6 @@
   if (self = [super init]) {
     _screenController = controller;
     _navigationItemCoordinator = [RNSStackNavigationItemCoordinator new];
-    _emptyHeaderData = [[RNSStackHeaderData alloc] initWithTitle:nil
-                                                        subtitle:nil
-                                                       screenKey:nil
-                                                          hidden:NO
-                                                      largeTitle:nil
-                                                   largeSubtitle:nil
-                                               largeTitleEnabled:NO
-                                           leadingBarButtonItems:@[]
-                                          trailingBarButtonItems:@[]
-                                                       titleView:nil
-                                                    subtitleView:nil
-                                               largeSubtitleView:nil];
   }
   return self;
 }
@@ -73,7 +60,7 @@
 
 - (void)clearHeaderConfiguration
 {
-  [self submitHeaderData:_emptyHeaderData];
+  [self submitHeaderData:[RNSStackHeaderData empty]];
 }
 
 @end

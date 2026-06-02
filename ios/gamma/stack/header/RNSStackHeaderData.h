@@ -42,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
                  subtitleView:(nullable UIView *)subtitleView
             largeSubtitleView:(nullable UIView *)largeSubtitleView;
 
+@property (class, nonatomic, readonly, nonnull) RNSStackHeaderData *empty;
+
 @end
 
 NS_ASSUME_NONNULL_END
