@@ -6,8 +6,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.MenuItemCompat
-import com.swmansion.rnscreens.gamma.stack.header.getResizedDrawable
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.gamma.stack.header.getResizedDrawable
 
 internal class StackHeaderToolbarMenuCoordinator(
     private val onItemClicked: (id: String) -> Unit,
