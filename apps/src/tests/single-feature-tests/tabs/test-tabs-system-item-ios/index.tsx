@@ -16,7 +16,7 @@ function NoTitleScreen() {
       <Text style={styles.hint}>
         This tab uses a systemItem: `favorites`.{'\n'}
         {'\n'}
-        The `title` prop is used but no value is provided, so no title is displayed.
+        The `title` prop is set to an empty string, so no title is displayed.
       </Text>
     </View>
   );
@@ -61,7 +61,7 @@ function SearchScreen() {
 }
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
-    {
+  {
     name: 'DefaultSystemItem',
     Component: DefaultSystemItemScreen,
     options: {
