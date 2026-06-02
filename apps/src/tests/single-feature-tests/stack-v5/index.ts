@@ -3,7 +3,8 @@ import PreventNativeDismissSingleStack from './prevent-native-dismiss-single-sta
 import PreventNativeDismissNestedStack from './prevent-native-dismiss-nested-stack';
 import AnimationAndroid from './test-animation-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
-import TestStackSubviews from './test-stack-subviews-android';
+import TestStackSubviewsAndroid from './test-stack-subviews-android';
+import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
@@ -13,7 +14,8 @@ const scenarios = {
   PreventNativeDismissNestedStack,
   AnimationAndroid,
   TestStackSimpleNav,
-  TestStackSubviews,
+  TestStackSubviewsAndroid,
+  TestStackSubviewsIOS,
   TestStackBackButton,
   TestStackToolbarMenuCommands,
   TestStackToolbarMenuShowAsAction,
