@@ -1,4 +1,4 @@
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 
 export type EmptyEventPayload = Record<string, never>;
 
@@ -7,6 +7,15 @@ export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 export interface FormSheetDetentChangedEvent {
   index: number;
 }
+
+export type FormSheetNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container hosting the sheet content.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue | undefined;
+};
 
 export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
@@ -119,6 +128,15 @@ export interface FormSheetProps {
    * @platform ios
    */
   preventNativeDismiss?: boolean | undefined;
+
+  /**
+   * @summary Style applied to the native container hosting the sheet content.
+   *
+   * These properties are forwarded directly to the underlying native view.
+   *
+   * @platform ios
+   */
+  nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
   // Events
 

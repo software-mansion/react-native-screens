@@ -90,6 +90,8 @@
     sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
   }];
 #endif // !TARGET_OS_TV
+
+  controller.view.backgroundColor = appearanceProvider.nativeContainerBackgroundColor ?: UIColor.clearColor;
 }
 
 @end
