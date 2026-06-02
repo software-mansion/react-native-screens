@@ -40,19 +40,18 @@ SystemItem Icon is not overridden for compactInline appearance.
 
 - [ ] Four tabs are visible in the tab bar.
 - [ ] The first tab (**Bookmarks**) is selected by default.
-- [ ] Its tab bar item shows the iOS-localized title `Bookmarks` and icon.
+- [ ] Its tab bar item shows the iOS-localized title `Bookmarks` and icon (open book).
 
 2. Tap the second tab, then tap the **Bookmarks** tab again.
 
 - [ ] The bookmarks tab is successfully re-selected.
-- [ ] The icon and localized title remain unchanged on re-selection.
+- [ ] The localized icon and title remain unchanged on re-selection.
 
 ---
 
 ### `systemItem: 'favorites'` — system icon, empty title
 
-3. Tap the second tab in the tab bar (the one with the star
-   icon).
+3. Tap the second tab in the tab bar (star icon).
 
 - [ ] The second tab becomes selected.
 - [ ] Its tab bar item shows the UIKit favorites icon (star).
@@ -68,7 +67,7 @@ SystemItem Icon is not overridden for compactInline appearance.
 - [ ] Its tab bar item icon is the SF Symbol `house.fill` (selected state).
 - [ ] The title displayed in the tab bar is `Custom`.
 
-5. Tap the **NormalTab** tab (so **Custom** becomes unselected), then
+5. Tap the second tab (so **Custom** becomes unselected), then
    observe the **Custom** tab item in its unselected state.
 
 - [ ] The unselected icon is the SF Symbol `house` (normal
@@ -91,7 +90,7 @@ detached from other tab bar items.
 ### Stability — cycle through all tabs
 
 7. Starting from the **Search** tab, tap each tab in order
-   (Search → Custom → bookmarks → NormalTab → Search).
+   (Search → Custom → Bookmarks → Second tab → Search).
 
 - [ ] Each tab switches correctly on every tap. Icon and
   title for each tab item remain accurate after rapid cycling.
@@ -100,7 +99,7 @@ detached from other tab bar items.
 
 ### Orientation smoke test — portrait to landscape
 
-8. With the device in portrait orientation and **NormalTab** selected,
+8. With the device in portrait orientation and **Bookmarks** selected,
    rotate the device to landscape orientation.
 
 - [ ] The layout adapts to landscape.
