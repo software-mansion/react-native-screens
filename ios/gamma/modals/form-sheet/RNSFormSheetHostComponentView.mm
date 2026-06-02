@@ -1,6 +1,8 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetContentWrapperComponentView.h"
+#import "RNSFormSheetContentWrapperDelegate.h"
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
@@ -16,6 +18,7 @@ namespace react = facebook::react;
 
 @interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
                                              RNSFormSheetContentControllerDelegate,
+                                             RNSFormSheetContentWrapperDelegate,
                                              RNSFormSheetPresentationProvider,
                                              RNSFormSheetAppearanceProvider,
                                              RNSFormSheetBehaviorProvider>
@@ -37,6 +40,8 @@ namespace react = facebook::react;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
+
+  CGFloat _reactContentsHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -69,6 +74,8 @@ namespace react = facebook::react;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
+
+  _reactContentsHeight = 0.0;
 }
 
 - (void)setupController
@@ -103,6 +110,22 @@ namespace react = facebook::react;
 - (const std::vector<double> &)detents
 {
   return _detents;
+}
+
+- (CGFloat)reactContentsHeight
+{
+  return _reactContentsHeight;
+}
+
+#pragma mark - RNSFormSheetContentWrapperDelegate
+
+- (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
+    didChangeReactContentsHeight:(CGFloat)reactContentsHeight
+{
+  if (_reactContentsHeight != reactContentsHeight) {
+    _reactContentsHeight = reactContentsHeight;
+    [_controller setNeedsBehaviorUpdate];
+  }
 }
 
 #pragma mark - RNSFormSheetContentControllerDelegate
@@ -163,10 +186,20 @@ namespace react = facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+
+  // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
+  // RNSFormSheetHostComponentView.
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = self;
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
+  }
+
   [_controller.contentView removeReactSubview:childComponentView];
 }
 
