@@ -151,11 +151,25 @@ open class StackHeaderConfigViewManager :
         view.backButtonHidden = value
     }
 
-    override fun setBackButtonTintColor(
+    override fun setBackButtonTintColorNormal(
         view: StackHeaderConfig,
         value: Int?,
     ) {
-        view.backButtonTintColor = value
+        view.backButtonTintColorNormal = value
+    }
+
+    override fun setBackButtonTintColorPressed(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorPressed = value
+    }
+
+    override fun setBackButtonTintColorFocused(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorFocused = value
     }
 
     override fun setBackButtonDrawableIconResourceName(
