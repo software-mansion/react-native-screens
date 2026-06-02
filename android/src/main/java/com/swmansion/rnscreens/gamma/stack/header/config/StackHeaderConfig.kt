@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
+import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
@@ -13,6 +14,7 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
@@ -163,8 +165,20 @@ class StackHeaderConfig(
     internal fun dispatchMenuItemUpdate(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
+        iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
-        delegate?.get()?.onMenuItemUpdate(id, options)
+        if (iconSource != null) {
+            val resolver = toolbarMenuItemIconResolvers[id]
+            if (resolver != null) {
+                resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { drawable ->
+                    delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = StackHeaderToolbarUpdate.from(drawable)))
+                }
+            } else {
+                Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
+            }
+        } else {
+            delegate?.get()?.onMenuItemUpdate(id, options)
+        }
     }
 
     override fun onStackHeaderSubviewChange() = notifyConfigChanged()
@@ -208,4 +222,8 @@ class StackHeaderConfig(
     // The order of the subviews MUST match the order of JS StackHeaderConfig children.
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
         listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+
+    companion object {
+        private const val TAG = "StackHeaderConfig"
+    }
 }

@@ -254,7 +254,7 @@ function parseToolbarMenuItemOptionsToNativeProps(
               key,
               processColor(
                 value as StackHeaderToolbarMenuItemOptionsAndroid[typeof typedKey],
-              ),
+              ) ?? null,
             ],
           ];
 

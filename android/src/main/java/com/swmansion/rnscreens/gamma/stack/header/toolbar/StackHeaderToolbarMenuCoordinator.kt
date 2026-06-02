@@ -83,7 +83,7 @@ internal class StackHeaderToolbarMenuCoordinator(
             }
         }
 
-        if (options.requiresIconTintColorUpdate) {
+        if (options.requiresIconTintColorUpdate || options.icon != null) {
             MenuItemCompat.setIconTintList(menuItem, getResolvedIconTintList(menuItem, options))
         }
     }

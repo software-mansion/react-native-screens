@@ -21,6 +21,7 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager.Companion.TAG
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
@@ -265,6 +266,14 @@ open class StackHeaderConfigViewManager :
         options: ReadableArray,
     ) {
         val map = options.getMap(0) ?: return
+
+        val drawableIconResourceName = map.getString("drawableIconResourceName")
+        val imageIconUri = map.readNullableImageUriUpdate("imageIconResource", null)
+        val iconSource = if (drawableIconResourceName != null || imageIconUri != null) StackHeaderToolbarMenuItemIconSource(
+            drawableIconResourceName = drawableIconResourceName,
+            imageIconUri = imageIconUri
+        ) else null
+
         view.dispatchMenuItemUpdate(
             id,
             StackHeaderToolbarMenuItemOptions(
@@ -276,11 +285,16 @@ open class StackHeaderConfigViewManager :
                         StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
                     ),
                 icon = null,
-                iconTintColorNormal = null,
-                iconTintColorPressed = null,
-                iconTintColorFocused = null,
-                iconTintColorDisabled = null
+                iconTintColorNormal = map.readNullableColorUpdate("iconTintColorNormal",
+                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL),
+                iconTintColorPressed = map.readNullableColorUpdate("iconTintColorPressed",
+                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED),
+                iconTintColorFocused = map.readNullableColorUpdate("iconTintColorFocused",
+                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED),
+                iconTintColorDisabled = map.readNullableColorUpdate("iconTintColorDisabled",
+                    StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED)
             ),
+            iconSource
         )
     }
 
@@ -385,6 +399,48 @@ private fun ReadableMap.readNullableShowAsActionEnumUpdate(
                 toMenuItemShowAsActionEnum(it)
             } ?: default
     }
+
+private fun ReadableMap.readNullableColorUpdate(
+    key: String,
+    default: Int?
+): StackHeaderToolbarUpdate<Int>? =
+    when {
+        !this.hasKey(key) -> null
+        this.isNull(key) -> StackHeaderToolbarUpdate.from(default)
+        else -> {
+            try {
+                when (getType(key)) {
+                    ReadableType.Number -> StackHeaderToolbarUpdate.from(getInt(key))
+                    ReadableType.String -> StackHeaderToolbarUpdate.from(getString(key)?.toColorInt())
+                    else -> StackHeaderToolbarUpdate.from(default)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
+                StackHeaderToolbarUpdate.from(default)
+            }
+        }
+    }
+
+private fun ReadableMap.readNullableImageUriUpdate(
+    key: String,
+    default: String?,
+): String? {
+    if (!this.hasKey(key)) {
+        return null
+    }
+
+    if (this.isNull(key)) {
+        return default
+    }
+
+    if (this.getType(key) != ReadableType.Map) {
+        return null
+    }
+
+    val imageMap = getMap(key)
+    return imageMap?.getString("uri") ?: default
+}
+
 
 private fun toMenuItemShowAsActionEnum(value: String): StackHeaderToolbarMenuItemShowAsAction =
     when (value) {
