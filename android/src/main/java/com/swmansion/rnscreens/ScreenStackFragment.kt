@@ -263,6 +263,11 @@ class ScreenStackFragment :
             )
             coordinatorLayout.layout(0, 0, container.width, container.height)
 
+            if (screen.width > 0 && screen.height > 0) {
+                screen.requestTriggeringPostponedEnterTransition()
+                screen.triggerPostponedEnterTransitionIfNeeded()
+            }
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 val bottomSheetWindowInsetListenerChain = requireBottomSheetWindowInsetsListenerChain()
                 bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
