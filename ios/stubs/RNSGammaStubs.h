@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackHeaderItemComponentView : NSObject
 @end
 
+@interface RNSFormSheetContentWrapperComponentView : NSObject
+@end
+
 @interface RNSStackHeaderItemSpacerComponentView : NSObject
 @end
 
