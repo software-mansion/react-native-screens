@@ -1,5 +1,6 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestFormSheetBase from './test-form-sheet-base-ios';
+import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents-ios';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible-ios';
@@ -13,6 +14,7 @@ import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-
 
 const scenarios = {
   TestFormSheetBase,
+  TestFormSheetDismissEvents,
   TestFormSheetExpandScrollView,
   TestFormSheetFitToContents,
   TestFormSheetGrabberVisible,

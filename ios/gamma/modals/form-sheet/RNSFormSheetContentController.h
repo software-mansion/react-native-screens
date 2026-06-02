@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSFormSheetContentController;
 
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
+- (void)sheetControllerDidDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
 #if !TARGET_OS_TV

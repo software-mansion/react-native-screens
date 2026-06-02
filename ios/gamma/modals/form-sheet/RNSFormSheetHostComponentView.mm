@@ -130,6 +130,11 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetContentControllerDelegate
 
+- (void)sheetControllerDidDismiss:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDismiss];
+}
+
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
 {
   _isOpen = NO;

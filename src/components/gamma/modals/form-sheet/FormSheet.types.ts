@@ -155,6 +155,15 @@ export interface FormSheetProps {
   onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
+   * @summary Called when the sheet is dismissed programmatically.
+   *
+   * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
+   *
+   * @platform ios
+   */
+  onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
    * @summary Called when the sheet is dismissed natively.
    *
    * It is highly recommended to use this callback to synchronize
