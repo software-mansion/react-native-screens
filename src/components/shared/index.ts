@@ -1,5 +1,5 @@
 import { Image, type ImageResolvedAssetSource } from 'react-native';
-import { PlatformIconAndroid } from '../../types';
+import type { PlatformIconAndroid } from '../../types';
 
 export function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
