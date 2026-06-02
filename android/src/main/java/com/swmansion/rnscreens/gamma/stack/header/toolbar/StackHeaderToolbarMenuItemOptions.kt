@@ -12,7 +12,6 @@ data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
     val hidden: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
-
     val icon: StackHeaderToolbarUpdate<Drawable>?,
     val iconTintColorNormal: StackHeaderToolbarUpdate<Int>?,
     val iconTintColorPressed: StackHeaderToolbarUpdate<Int>?,
@@ -20,7 +19,8 @@ data class StackHeaderToolbarMenuItemOptions(
     val iconTintColorDisabled: StackHeaderToolbarUpdate<Int>?,
 ) {
     val requiresIconTintColorUpdate: Boolean
-        get() = iconTintColorNormal != null ||
+        get() =
+            iconTintColorNormal != null ||
                 iconTintColorPressed != null ||
                 iconTintColorFocused != null ||
                 iconTintColorDisabled != null
