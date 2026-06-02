@@ -21,7 +21,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: TabContents,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab 2',
+      title: 'ScrollViewTab',
     },
   },
   {
@@ -36,7 +36,10 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 
 export function TestSavTabsSafeAreaRespectsTabBar() {
   return (
-    <TabsContainer routeConfigs={ROUTE_CONFIGS} ios={{ tabBarControllerMode: 'tabSidebar' }} />
+    <TabsContainer routeConfigs={ROUTE_CONFIGS} ios={{
+      tabBarControllerMode: 'tabSidebar',
+      tabBarMinimizeBehavior: 'onScrollUp'
+    }} />
   );
 }
 

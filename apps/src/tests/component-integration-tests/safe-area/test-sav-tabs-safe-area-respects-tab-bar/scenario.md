@@ -27,4 +27,10 @@ N/A
 
 ## Steps
 
-TBD
+### Compact width scenario
+
+### Regular width scenario
+
+### Transition between compact and regular width
+
+### Transition from topbar to sidebar in regular width
