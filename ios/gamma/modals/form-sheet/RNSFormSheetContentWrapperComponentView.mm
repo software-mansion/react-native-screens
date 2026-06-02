@@ -5,8 +5,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RNSFormSheetContentView.h"
-
 namespace react = facebook::react;
 
 @interface RNSFormSheetContentWrapperComponentView () <RCTRNSFormSheetContentWrapperViewProtocol,
@@ -30,18 +28,6 @@ namespace react = facebook::react;
   _initialHeightReported = NO;
 }
 
-- (id<RNSFormSheetContentWrapperDelegate>)resolveFormSheetContentWrapperDelegate
-{
-  UIView *view = self.superview;
-  while (view != nil) {
-    if ([view isKindOfClass:[RNSFormSheetContentView class]]) {
-      return ((RNSFormSheetContentView *)view).contentWrapperDelegate;
-    }
-    view = view.superview;
-  }
-  return nil;
-}
-
 #pragma mark - RCTMountingTransactionObserving
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -53,10 +39,9 @@ namespace react = facebook::react;
     return;
   }
 
-  id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
-  if (delegate && self.frame.size.height > 0) {
+  if (_delegate && self.frame.size.height > 0) {
     _initialHeightReported = YES;
-    [delegate contentWrapper:self didChangeContentHeight:self.frame.size.height];
+    [_delegate contentWrapper:self didChangeContentHeight:self.frame.size.height];
   }
 }
 
@@ -76,11 +61,20 @@ namespace react = facebook::react;
   CGFloat oldHeight = oldLayoutMetrics.frame.size.height;
 
   if (newHeight != oldHeight) {
-    id<RNSFormSheetContentWrapperDelegate> delegate = [self resolveFormSheetContentWrapperDelegate];
-    if (delegate) {
-      [delegate contentWrapper:self didChangeContentHeight:newHeight];
+    if (_delegate) {
+      [_delegate contentWrapper:self didChangeContentHeight:newHeight];
     }
   }
+}
+
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
+- (void)invalidate
+{
+  _delegate = nil;
 }
 
 @end

@@ -86,8 +86,6 @@ namespace react = facebook::react;
   _controller.presentationProvider = self;
   _controller.appearanceProvider = self;
   _controller.behaviorProvider = self;
-
-  _controller.contentView.contentWrapperDelegate = self;
 }
 
 - (void)didMoveToWindow
@@ -187,10 +185,20 @@ namespace react = facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+
+  // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
+  // RNSFormSheetHostComponentView.
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = self;
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
+  }
+
   [_controller.contentView removeReactSubview:childComponentView];
 }
 
