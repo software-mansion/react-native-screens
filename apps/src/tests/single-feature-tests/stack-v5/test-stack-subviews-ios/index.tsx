@@ -16,10 +16,11 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
+import LongText from '@apps/shared/LongText';
 
 const scenarioDescription: ScenarioDescription = {
   name: 'Stack Subviews (iOS)',
@@ -153,6 +154,11 @@ function StackSetup() {
         routeConfigs={[
           {
             name: 'Home',
+            Component: ConfigScreen,
+            options: {},
+          },
+          {
+            name: 'Second',
             Component: ConfigScreen,
             options: {},
           },
@@ -337,6 +343,13 @@ function ConfigScreen() {
           );
         }}
       />
+      {routeKey.includes('Home') && (
+        <Button
+          title="Go to Second"
+          onPress={() => navigation.push('Second')}
+        />
+      )}
+      <LongText />
     </ScrollView>
   );
 }
