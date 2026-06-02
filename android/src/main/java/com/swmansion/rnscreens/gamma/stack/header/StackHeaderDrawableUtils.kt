@@ -35,7 +35,7 @@ internal fun getResizedDrawable(
             targetHeightPx
         }
 
-    return drawable
-        .toBitmap(width = targetWidthPx, height = targetHeightPx)
-        .toDrawable(toolbar.resources)
+    val bitmap = drawable.toBitmap(width = targetWidthPx, height = targetHeightPx)
+    bitmap.density = toolbar.resources.displayMetrics.densityDpi
+    return bitmap.toDrawable(toolbar.resources)
 }
