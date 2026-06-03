@@ -9,17 +9,6 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
-// Badge colors, reused so the on-screen legend matches the native rendering.
-const BADGE = {
-  red: Colors.RedLight100,
-  green: Colors.GreenDark100,
-  blue: Colors.BlueDark100,
-  purple: Colors.PurpleDark100,
-  yellow: Colors.YellowDark100,
-  white: Colors.White,
-  navy: Colors.NavyLight100,
-};
-
 function Tab1Screen() {
   return (
     <View style={styles.screen}>
@@ -30,7 +19,7 @@ function Tab1Screen() {
             `badgeValue`: "1"{'\n'}{'\n'}
             `standardAppearance` and `scrollEdgeAppearance` are not defined.{'\n'}{'\n'}
             Badges render with the default iOS appearance:
-            badge background{' '}
+            `tabBarItemBadgeBackgroundColor`{' '}
             <Text style={{ color: 'red', fontWeight: 'bold' }}>RED</Text> with white text.
           </Text>
         </>
@@ -38,10 +27,10 @@ function Tab1Screen() {
         <>
           <Text style={styles.hint}>
             `badgeValue`: " "{'\n'}
-            Empty string badge value renders as "small dot" badge.{'\n'}{'\n'}
+            Empty string badge value renders as "small dot" with color define in `tabBarItemBadgeBackgroundColor` or system default if not set.{'\n'}{'\n'}
             Badge appearance is not defined.{'\n'}{'\n'}
             Badges render with the default system appearance:
-            badge background{' '}
+            background{' '}
             <Text style={{ color: Colors.RedDark120, fontWeight: 'bold' }}>DARK RED</Text> with white text.
           </Text>
         </>
@@ -52,7 +41,7 @@ function Tab1Screen() {
 
 function Tab2Screen() {
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView>
       <View style={styles.screen}>
         <Text style={styles.label}>Long Badge Value</Text>
         {Platform.OS === 'ios' ? (
@@ -61,11 +50,11 @@ function Tab2Screen() {
               `badgeValue`: "1234567890"{'\n'}{'\n'}
               `standardAppearance`{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
+              <Text style={{ color: Colors.BlueDark100, fontWeight: 'bold' }}>BLUE</Text>
               {'\n'}{'\n'}
               `scrollEdgeAppearance`{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.yellow, fontWeight: 'bold' }}>YELLOW</Text>
+              <Text style={{ color: Colors.YellowDark100, fontWeight: 'bold' }}>YELLOW</Text>
               {'\n'}{'\n'}
             </Text>
             <View style={styles.spacer} />
@@ -80,10 +69,10 @@ function Tab2Screen() {
             <Text style={styles.hint}>
               `badgeValue`: "1234567890" displayed as "999+"{'\n'}{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
+              <Text style={{ color: Colors.BlueDark100, fontWeight: 'bold' }}>BLUE</Text>
               {'\n'}
               `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.yellow, fontWeight: 'bold' }}>YELLOW</Text>
+              <Text style={{ color: Colors.YellowDark100, fontWeight: 'bold' }}>YELLOW</Text>
             </Text>
           </>
         )}
@@ -94,40 +83,40 @@ function Tab2Screen() {
 
 function Tab3Screen() {
   return (
-      <View style={styles.screen}>
-        <Text style={styles.label}>String Badge Value</Text>
-        {Platform.OS === 'ios' ? (
-          <>
-            <Text style={styles.hint}>
-              `badgeValue`: "NEW!"{'\n'}{'\n'}
-              selected: `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
-              {'\n'}{'\n'}
-              normal: `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.purple, fontWeight: 'bold' }}>PURPLE</Text>
-              {'\n'}{'\n'}
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text style={styles.hint}>
-              `badgeValue`: "NEW!"{'\n'}{'\n'}
-              `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.purple, fontWeight: 'bold' }}>PURPLE</Text>
-              {'\n'}
-              `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.navy, fontWeight: 'bold' }}>NAVY</Text>
-            </Text>
-          </>
-        )}
-      </View>
+    <View style={styles.screen}>
+      <Text style={styles.label}>String Badge Value</Text>
+      {Platform.OS === 'ios' ? (
+        <>
+          <Text style={styles.hint}>
+            `badgeValue`: "NEW!"{'\n'}{'\n'}
+            selected: `tabBarItemBadgeBackgroundColor`:{' '}
+            <Text style={{ color: Colors.BlueDark100, fontWeight: 'bold' }}>BLUE</Text>
+            {'\n'}{'\n'}
+            normal: `tabBarItemBadgeBackgroundColor`:{' '}
+            <Text style={{ color: Colors.PurpleDark100, fontWeight: 'bold' }}>PURPLE</Text>
+            {'\n'}{'\n'}
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.hint}>
+            `badgeValue`: "NEW!"{'\n'}{'\n'}
+            `tabBarItemBadgeBackgroundColor`:{' '}
+            <Text style={{ color: Colors.PurpleDark100, fontWeight: 'bold' }}>PURPLE</Text>
+            {'\n'}
+            `tabBarItemBadgeTextColor`:{' '}
+            <Text style={{ color: Colors.NavyLight100, fontWeight: 'bold' }}>NAVY</Text>
+          </Text>
+        </>
+      )}
+    </View>
   );
 }
 
 function Tab4Screen() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Default badge appearance</Text>
+      <Text style={styles.label}>Transparent badge background</Text>
       {Platform.OS === 'ios' ? (
         <>
           <Text style={styles.hint}>
@@ -143,10 +132,10 @@ function Tab4Screen() {
           <Text style={styles.hint}>
             `badgeValue`: "⚠️"{'\n'}{'\n'}
             `tabBarItemBadgeBackgroundColor`: `transparent`
-              {'\n'}
-              `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.red, fontWeight: 'bold' }}>RED</Text>
-            </Text>
+            {'\n'}
+            `tabBarItemBadgeTextColor`:{' '}
+            <Text style={{ color: Colors.RedLight100, fontWeight: 'bold' }}>RED</Text>
+          </Text>
         </>
       )}
     </View >
@@ -158,7 +147,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'Tab1',
     Component: Tab1Screen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
       badgeValue: Platform.OS === 'ios' ? '1' : '',
       ios: {
@@ -176,24 +164,23 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'Tab2',
     Component: Tab2Screen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
       badgeValue: '1234567890',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
-          stacked: { normal: { tabBarItemBadgeBackgroundColor: BADGE.blue } },
+          stacked: { normal: { tabBarItemBadgeBackgroundColor: Colors.BlueDark100 } },
         },
         scrollEdgeAppearance: {
-          stacked: { normal: { tabBarItemBadgeBackgroundColor: BADGE.yellow } },
+          stacked: { normal: { tabBarItemBadgeBackgroundColor: Colors.YellowDark100 } },
         },
       },
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
           tabBarItemLabelVisibilityMode: 'labeled',
-          tabBarItemBadgeBackgroundColor: BADGE.blue,
-          tabBarItemBadgeTextColor: BADGE.yellow,
+          tabBarItemBadgeBackgroundColor: Colors.BlueDark100,
+          tabBarItemBadgeTextColor: Colors.YellowDark100,
         },
       },
     },
@@ -202,15 +189,14 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'Tab3',
     Component: Tab3Screen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
       badgeValue: 'NEW!',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
           stacked: {
-            normal: { tabBarItemBadgeBackgroundColor: BADGE.purple },
-            selected: { tabBarItemBadgeBackgroundColor: BADGE.blue },
+            normal: { tabBarItemBadgeBackgroundColor: Colors.PurpleDark100 },
+            selected: { tabBarItemBadgeBackgroundColor: Colors.BlueDark100 },
           },
         },
       },
@@ -218,8 +204,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
           tabBarItemLabelVisibilityMode: 'labeled',
-          tabBarItemBadgeBackgroundColor: BADGE.purple,
-          tabBarItemBadgeTextColor: BADGE.navy,
+          tabBarItemBadgeBackgroundColor: Colors.PurpleDark100,
+          tabBarItemBadgeTextColor: Colors.NavyLight100,
         },
       },
     },
@@ -228,7 +214,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'Tab4',
     Component: Tab4Screen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab4',
       badgeValue: '⚠️',
       ios: {
@@ -244,7 +229,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         standardAppearance: {
           tabBarItemLabelVisibilityMode: 'labeled',
           tabBarItemBadgeBackgroundColor: 'transparent',
-          tabBarItemBadgeTextColor: BADGE.red,
+          tabBarItemBadgeTextColor: Colors.RedLight100,
         },
       },
     },
@@ -256,19 +241,12 @@ export function App() {
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
   screen: {
     flex: 1,
     margin: 24,
     padding: 24,
     gap: 12,
 
-  },
-  scrollContent: {
-    paddingBottom: 24,
-    gap: 12,
   },
   spacer: {
     height: 220,
@@ -285,10 +263,6 @@ const styles = StyleSheet.create({
     color: Colors.LightOffNavy,
     lineHeight: 20,
     textAlign: 'center',
-  },
-  platformHeader: {
-    fontWeight: '700',
-    color: Colors.LightOffNavy,
   },
 });
 
