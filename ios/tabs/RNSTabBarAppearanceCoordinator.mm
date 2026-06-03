@@ -104,18 +104,10 @@
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   UITabBarItem *strongItem = weakTabBarItem;
-                                   RNSTabsScreenComponentView *strongView = weakScreenView;
-                                   if (strongItem == nil || strongView == nil) {
-                                     return;
-                                   }
-                                   if (![strongView.controller.parentViewController isKindOfClass:[UITabBarController class]]) {
-                                     return;
-                                   }
-                                   [self updateTabBarItem:strongItem
+                                   [self updateTabBarItem:weakTabBarItem
                                                 withImage:image
                                                isSelected:NO
-                                            forScreenView:strongView];
+                                            forScreenView:weakScreenView];
                                  }];
     } else {
       tabBarItem.image = nil;
@@ -127,18 +119,10 @@
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   UITabBarItem *strongItem = weakTabBarItem;
-                                   RNSTabsScreenComponentView *strongView = weakScreenView;
-                                   if (strongItem == nil || strongView == nil) {
-                                     return;
-                                   }
-                                   if (![strongView.controller.parentViewController isKindOfClass:[UITabBarController class]]) {
-                                     return;
-                                   }
-                                   [self updateTabBarItem:strongItem
+                                   [self updateTabBarItem:weakTabBarItem
                                                 withImage:image
                                                isSelected:YES
-                                            forScreenView:strongView];
+                                            forScreenView:weakScreenView];
                                  }];
     } else {
       tabBarItem.selectedImage = nil;
@@ -148,11 +132,23 @@
   }
 }
 
-- (void)updateTabBarItem:(UITabBarItem *)tabBarItem
-               withImage:(UIImage *)image
+- (void)updateTabBarItem:(nullable UITabBarItem *)tabBarItem
+               withImage:(nullable UIImage *)image
               isSelected:(BOOL)isSelected
-           forScreenView:(RNSTabsScreenComponentView *)screenView
+           forScreenView:(nullable RNSTabsScreenComponentView *)screenView
 {
+  // This method is sometimes called from an asynchronous context and we got reports
+  // that on iOS 26+ it can happen that the tab bar item is already nullish, or the
+  // screen's controller is not attached to the UITabBarController.
+  if (tabBarItem == nil || screenView == nil) {
+    return;
+  }
+
+  UIViewController *screenParentViewController = [screenView.controller parentViewController];
+  if (screenParentViewController == nil) {
+    return;
+  }
+
   if (isSelected) {
     tabBarItem.selectedImage = image;
   } else {
@@ -164,9 +160,8 @@
   // This code handles case where image passed by the user is not
   // of appropriate size & needs to be readjusted. W/o additional
   // layout here the icon would be displayed with original dimensions.
-  UIViewController *parent = screenView.controller.parentViewController;
-  if ([parent isKindOfClass:[UITabBarController class]]) {
-    UITabBarController *tabBarVC = (UITabBarController *)parent;
+  if ([screenParentViewController isKindOfClass:[UITabBarController class]]) {
+    UITabBarController *tabBarVC = (UITabBarController *)screenParentViewController;
     [tabBarVC.tabBar setNeedsLayout];
   }
 }
