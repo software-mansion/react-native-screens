@@ -1,32 +1,11 @@
 #import "RNSInlineModalProviderComponentView.h"
+#import "RNSInlineModalProviderController.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 
 using namespace facebook::react;
-
-@interface RNSInlineModalProviderController : UIViewController
-@end
-
-@implementation RNSInlineModalProviderController
-
-- (instancetype)init
-{
-  if (self = [super init]) {
-    self.definesPresentationContext = YES;
-  }
-  return self;
-}
-
-- (void)loadView
-{
-  UIView *view = [[UIView alloc] init];
-  view.backgroundColor = [UIColor clearColor];
-  self.view = view;
-}
-
-@end
 
 @implementation RNSInlineModalProviderComponentView
 
