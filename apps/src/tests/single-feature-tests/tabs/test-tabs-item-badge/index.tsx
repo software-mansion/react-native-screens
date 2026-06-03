@@ -31,7 +31,7 @@ function Tab1Screen() {
             `standardAppearance` and `scrollEdgeAppearance` are not defined.{'\n'}{'\n'}
             Badges render with the default iOS appearance:
             badge background{' '}
-            <Text style={{ color: 'red' }}>RED</Text> with white text.
+            <Text style={{ color: 'red', fontWeight: 'bold' }}>RED</Text> with white text.
           </Text>
         </>
       ) : (
@@ -41,7 +41,7 @@ function Tab1Screen() {
             Badge appearance is not defined.{'\n'}{'\n'}
             Badges render with the default system appearance:
             badge background{' '}
-            <Text style={{ color: BADGE.red }}>RED</Text> with white text.
+            <Text style={{ color: Colors.RedDark120, fontWeight: 'bold' }}>DARK RED</Text> with white text.
           </Text>
         </>
       )}
@@ -60,11 +60,11 @@ function Tab2Screen() {
               `badgeValue`: "1234567890"{'\n'}{'\n'}
               `standardAppearance`{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue }}>BLUE</Text>
+              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
               {'\n'}{'\n'}
               `scrollEdgeAppearance`{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.yellow }}>YELLOW</Text>
+              <Text style={{ color: BADGE.yellow, fontWeight: 'bold' }}>YELLOW</Text>
               {'\n'}{'\n'}
             </Text>
             <View style={styles.spacer} />
@@ -79,10 +79,10 @@ function Tab2Screen() {
             <Text style={styles.hint}>
               `badgeValue`: "1234567890" displayed as "999+"{'\n'}{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue }}>BLUE</Text>
+              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
               {'\n'}
               `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.yellow }}>YELLOW</Text>
+              <Text style={{ color: BADGE.yellow, fontWeight: 'bold' }}>YELLOW</Text>
             </Text>
           </>
         )}
@@ -100,10 +100,10 @@ function Tab3Screen() {
             <Text style={styles.hint}>
               `badgeValue`: "NEW!"{'\n'}{'\n'}
               selected: `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.blue }}>BLUE</Text>
+              <Text style={{ color: BADGE.blue, fontWeight: 'bold' }}>BLUE</Text>
               {'\n'}{'\n'}
               normal: `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.purple }}>PURPLE</Text>
+              <Text style={{ color: BADGE.purple, fontWeight: 'bold' }}>PURPLE</Text>
               {'\n'}{'\n'}
             </Text>
           </>
@@ -112,10 +112,10 @@ function Tab3Screen() {
             <Text style={styles.hint}>
               `badgeValue`: "NEW!"{'\n'}{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
-              <Text style={{ color: BADGE.purple }}>PURPLE</Text>
+              <Text style={{ color: BADGE.purple, fontWeight: 'bold' }}>PURPLE</Text>
               {'\n'}
               `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.navy }}>NAVY</Text>
+              <Text style={{ color: BADGE.navy, fontWeight: 'bold' }}>NAVY</Text>
             </Text>
           </>
         )}
@@ -134,7 +134,7 @@ function Tab4Screen() {
             Badge appearance is defined only for selected tab: setting background to `transparent` value.{'\n'}{'\n'}
             Unselected badges render with the default system appearance:
             badge background{' '}
-            <Text style={{ color: 'red' }}>RED</Text> with white text.
+            <Text style={{ color: 'red', fontWeight: 'bold' }}>RED</Text> with white text.
           </Text>
         </>
       ) : (
@@ -144,7 +144,7 @@ function Tab4Screen() {
             `tabBarItemBadgeBackgroundColor`: `transparent`
               {'\n'}
               `tabBarItemBadgeTextColor`:{' '}
-              <Text style={{ color: BADGE.red }}>RED</Text>
+              <Text style={{ color: BADGE.red, fontWeight: 'bold' }}>RED</Text>
             </Text>
         </>
       )}
