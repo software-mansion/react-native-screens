@@ -37,7 +37,8 @@ function Tab1Screen() {
       ) : (
         <>
           <Text style={styles.hint}>
-            `badgeValue`: "1"{'\n'}{'\n'}
+            `badgeValue`: " "{'\n'}
+            Empty string badge value renders as "small dot" badge.{'\n'}{'\n'}
             Badge appearance is not defined.{'\n'}{'\n'}
             Badges render with the default system appearance:
             badge background{' '}
@@ -159,7 +160,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
-      badgeValue: '1',
+      badgeValue: Platform.OS === 'ios' ? '1' : '',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
       },
