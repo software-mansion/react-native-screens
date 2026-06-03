@@ -26,8 +26,8 @@ function Tab1Screen() {
       ) : (
         <>
           <Text style={styles.hint}>
-            `badgeValue`: " "{'\n'}
-            Empty string badge value renders as "small dot" with color define in `tabBarItemBadgeBackgroundColor` or system default if not set.{'\n'}{'\n'}
+            `badgeValue`: ""{'\n'}
+            An empty string badge value renders as a "small dot" using the color defined in `tabBarItemBadgeBackgroundColor`, or the system default if not set.{'\n'}{'\n'}
             Badge appearance is not defined.{'\n'}{'\n'}
             Badges render with the default system appearance:
             background{' '}
@@ -35,7 +35,7 @@ function Tab1Screen() {
           </Text>
         </>
       )}
-    </View >
+    </View>
   );
 }
 
@@ -138,7 +138,7 @@ function Tab4Screen() {
           </Text>
         </>
       )}
-    </View >
+    </View>
   );
 }
 
