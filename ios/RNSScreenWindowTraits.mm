@@ -98,7 +98,7 @@
 #endif
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-+ (UIWindowScene *)windowSceneForOrientationUpdate
++ (UIWindowScene *)windowSceneForOrientationUpdate API_AVAILABLE(ios(16.0))
 {
   UIWindow *keyWindow = RCTKeyWindow();
   if (keyWindow.windowScene != nil) {
@@ -117,45 +117,74 @@
   return nil;
 }
 
-+ (void)setNeedsUpdateOfSupportedInterfaceOrientations
++ (UIViewController *)topViewControllerFromRootViewController:(UIViewController *)rootViewController
 {
-  UIViewController *topController = RCTKeyWindow().rootViewController;
+  UIViewController *topController = rootViewController;
   while (topController.presentedViewController) {
     topController = topController.presentedViewController;
   }
 
-  [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+  return topController;
 }
 
-+ (void)requestGeometryUpdateForOrientationMask:(UIInterfaceOrientationMask)orientationMask
++ (UIViewController *)topViewControllerForOrientationUpdateInScene:(UIWindowScene *)scene API_AVAILABLE(ios(16.0))
 {
-  UIWindowScene *scene = [RNSScreenWindowTraits windowSceneForOrientationUpdate];
-  if (scene == nil) {
-    return;
+  UIWindow *keyWindow = RCTKeyWindow();
+  if (keyWindow.windowScene == scene) {
+    return [RNSScreenWindowTraits topViewControllerFromRootViewController:keyWindow.rootViewController];
   }
 
-  [RNSScreenWindowTraits setNeedsUpdateOfSupportedInterfaceOrientations];
+  for (UIWindow *window in scene.windows) {
+    if (window.isKeyWindow) {
+      return [RNSScreenWindowTraits topViewControllerFromRootViewController:window.rootViewController];
+    }
+  }
 
-  UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
-      [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
-  [scene
-      requestGeometryUpdateWithPreferences:geometryPreferences
-                              errorHandler:^(NSError *_Nonnull error) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                  [RNSScreenWindowTraits setNeedsUpdateOfSupportedInterfaceOrientations];
+  for (UIWindow *window in scene.windows) {
+    if (window.rootViewController != nil) {
+      return [RNSScreenWindowTraits topViewControllerFromRootViewController:window.rootViewController];
+    }
+  }
 
-                                  UIWindowSceneGeometryPreferencesIOS *retryGeometryPreferences =
-                                      [[UIWindowSceneGeometryPreferencesIOS alloc]
-                                          initWithInterfaceOrientations:orientationMask];
-                                  [scene
-                                      requestGeometryUpdateWithPreferences:retryGeometryPreferences
-                                                              errorHandler:^(NSError *_Nonnull retryError) {
-                                                                RCTLogWarn(
-                                                                    @"[RNScreens] Failed to update interface orientation: %@",
-                                                                    retryError);
-                                                              }];
-                                });
-                              }];
+  return nil;
+}
+
++ (void)requestGeometryUpdateForOrientationMask:(UIInterfaceOrientationMask)orientationMask API_AVAILABLE(ios(16.0))
+{
+  if (@available(iOS 16.0, *)) {
+    UIWindowScene *scene = [RNSScreenWindowTraits windowSceneForOrientationUpdate];
+    if (scene == nil) {
+      return;
+    }
+
+    UIViewController *topController = [RNSScreenWindowTraits topViewControllerForOrientationUpdateInScene:scene];
+    if (topController == nil) {
+      return;
+    }
+
+    [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+
+    UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
+        [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
+    [scene
+        requestGeometryUpdateWithPreferences:geometryPreferences
+                                errorHandler:^(NSError *_Nonnull error) {
+                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                    [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+
+                                    UIWindowSceneGeometryPreferencesIOS *retryGeometryPreferences =
+                                        [[UIWindowSceneGeometryPreferencesIOS alloc]
+                                            initWithInterfaceOrientations:orientationMask];
+                                    [scene
+                                        requestGeometryUpdateWithPreferences:retryGeometryPreferences
+                                                                errorHandler:^(NSError *_Nonnull retryError) {
+                                                                  RCTLogWarn(
+                                                                      @"[RNScreens] Failed to update interface orientation: %@",
+                                                                      retryError);
+                                                                }];
+                                  });
+                                }];
+  }
 }
 #endif
 
