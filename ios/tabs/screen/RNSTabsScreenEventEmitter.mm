@@ -4,6 +4,8 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
+namespace react = facebook::react;
+
 @implementation RNSTabsScreenEventEmitter {
   std::shared_ptr<const react::RNSTabsScreenIOSEventEmitter> _reactEventEmitter;
 }
@@ -48,6 +50,18 @@
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnDidDisappear event emission due to nullish emitter");
+    return NO;
+  }
+}
+
+- (BOOL)emitOnPressToolbarItem:(NSString *)buttonId
+{
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onPressToolbarItem(
+        react::RNSTabsScreenIOSEventEmitter::OnPressToolbarItem{.buttonId = std::string([buttonId UTF8String])});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnPressToolbarItem event emission due to nullish emitter");
     return NO;
   }
 }

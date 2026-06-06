@@ -22,6 +22,7 @@
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSSearchBar.h"
+#import "RNSTabBarController.h"
 #import "UINavigationBar+RNSUtility.h"
 
 namespace react = facebook::react;
@@ -626,6 +627,11 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
   if (!searchBarPresent) {
     navitem.searchController = nil;
+  }
+  if ([vc.tabBarController isKindOfClass:RNSTabBarController.class]) {
+    RNSTabBarController *tabBarController = static_cast<RNSTabBarController *>(vc.tabBarController);
+    tabBarController.needsUpdateOfSearchToolbarItems = true;
+    [tabBarController updateSearchToolbarItemsIfNeeded];
   }
 #endif /* !TARGET_OS_TV */
 

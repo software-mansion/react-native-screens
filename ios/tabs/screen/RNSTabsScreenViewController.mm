@@ -1,10 +1,15 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSBarButtonItem.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
-@implementation RNSTabsScreenViewController
+@implementation RNSTabsScreenViewController {
+  __weak UIViewController *_searchToolbarItemsOwner;
+  NSArray<UIBarButtonItem *> *_searchToolbarItemsOwnerBaseItems;
+}
 
 - (nullable RNSTabBarController *)findTabBarController
 {
@@ -26,6 +31,104 @@
   [[self findTabBarController] setNeedsOrientationUpdate:true];
 }
 
+- (void)clearSearchToolbarItems
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  if (@available(iOS 26.0, *)) {
+    if (_searchToolbarItemsOwner != nil) {
+      [_searchToolbarItemsOwner setToolbarItems:_searchToolbarItemsOwnerBaseItems animated:YES];
+      _searchToolbarItemsOwner = nil;
+      _searchToolbarItemsOwnerBaseItems = nil;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+}
+
+- (void)updateSearchToolbarItemsWithImageLoader:(nullable RCTImageLoader *)imageLoader
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  if (@available(iOS 26.0, *)) {
+    RNSTabsScreenComponentView *screenView = self.tabScreenComponentView;
+    UIViewController *toolbarOwner = [self activeSearchToolbarViewController];
+    UINavigationItem *navigationItem = toolbarOwner.navigationItem;
+    UIBarButtonItem *searchBarItem = navigationItem.searchBarPlacementBarButtonItem;
+
+    if (screenView.systemItem != RNSTabsScreenSystemItemSearch || screenView.searchToolbarItems.count == 0 ||
+        navigationItem.searchController == nil || !navigationItem.searchBarPlacementAllowsToolbarIntegration ||
+        searchBarItem == nil) {
+      [self clearSearchToolbarItems];
+      return;
+    }
+
+    NSArray<UIBarButtonItem *> *baseItems = nil;
+    if (_searchToolbarItemsOwner == toolbarOwner) {
+      baseItems = _searchToolbarItemsOwnerBaseItems ?: @[];
+    } else {
+      [self clearSearchToolbarItems];
+      _searchToolbarItemsOwner = toolbarOwner;
+      _searchToolbarItemsOwnerBaseItems = toolbarOwner.toolbarItems ?: @[];
+      baseItems = _searchToolbarItemsOwnerBaseItems;
+    }
+
+    NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithArray:baseItems ?: @[]];
+    [items addObject:searchBarItem];
+    [items addObjectsFromArray:[self toolbarButtonItemsFromConfigs:screenView.searchToolbarItems
+                                                       imageLoader:imageLoader]];
+    [toolbarOwner setToolbarItems:items animated:YES];
+  }
+#else
+  [self clearSearchToolbarItems];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+- (UIViewController *)activeSearchToolbarViewController API_AVAILABLE(ios(26.0))
+{
+  UIViewController *controller = self;
+  while (true) {
+    if ([controller isKindOfClass:UINavigationController.class]) {
+      UINavigationController *navigationController = static_cast<UINavigationController *>(controller);
+      UIViewController *visibleViewController =
+          navigationController.visibleViewController ?: navigationController.topViewController;
+      if (visibleViewController == nil || visibleViewController == controller) {
+        return controller;
+      }
+      controller = visibleViewController;
+      continue;
+    }
+
+    UIViewController *childViewController = controller.childViewControllers.lastObject;
+    if (childViewController == nil) {
+      return controller;
+    }
+    controller = childViewController;
+  }
+}
+
+- (NSArray<UIBarButtonItem *> *)toolbarButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+                                                  imageLoader:(nullable RCTImageLoader *)imageLoader
+    API_AVAILABLE(ios(26.0))
+{
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count];
+  __weak RNSTabsScreenViewController *weakSelf = self;
+  for (NSDictionary<NSString *, id> *dict in dicts) {
+    if (dict[@"buttonId"] == nil) {
+      continue;
+    }
+
+    RNSBarButtonItem *item = [[RNSBarButtonItem alloc]
+        initWithConfig:dict
+                action:^(NSString *buttonId) {
+                  [weakSelf.tabScreenComponentView.reactEventEmitter emitOnPressToolbarItem:buttonId];
+                }
+            menuAction:nil
+           imageLoader:imageLoader];
+    [items addObject:item];
+  }
+  return items;
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -36,6 +139,9 @@
 {
   [super viewDidAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
+  RNSTabBarController *tabBarController = [self findTabBarController];
+  tabBarController.needsUpdateOfSearchToolbarItems = true;
+  [tabBarController updateSearchToolbarItemsIfNeeded];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

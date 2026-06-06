@@ -227,6 +227,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateTabBarAppearance;
 
 /**
+ * Updates native toolbar items associated with the selected search tab.
+ */
+- (void)updateSearchToolbarItemsIfNeeded;
+
+/**
+ * Updates native toolbar items associated with the selected search tab.
+ */
+- (void)updateSearchToolbarItems;
+
+/**
  * Updates the interface orientation based on selected tab screen and its children.
  *
  * This method does nothing if the update has not been previously requested.
@@ -286,6 +296,11 @@ NS_ASSUME_NONNULL_BEGIN
  * appearance requires update.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfTabBarAppearance;
+
+/**
+ * Tell the controller that toolbar items associated with the selected search tab need an update.
+ */
+@property (nonatomic, readwrite) bool needsUpdateOfSearchToolbarItems;
 
 /**
  * Tell the controller that some configuration regarding interface orientation has changed & it

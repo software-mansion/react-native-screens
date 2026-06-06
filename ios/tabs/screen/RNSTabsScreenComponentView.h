@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
 
 @property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
+@property (nonatomic, copy, readonly, nullable) NSArray<NSDictionary<NSString *, id> *> *searchToolbarItems;
 
 @end
 
