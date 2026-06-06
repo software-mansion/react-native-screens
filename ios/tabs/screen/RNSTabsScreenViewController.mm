@@ -6,6 +6,10 @@
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
+static constexpr CGFloat RNSSearchToolbarDefaultLeadingReservedWidth = 80.0;
+static constexpr CGFloat RNSSearchToolbarLeadingReservedPadding = 4.0;
+static constexpr CGFloat RNSSearchToolbarMaxCompactTabControlWidth = 72.0;
+
 @implementation RNSTabsScreenViewController {
   __weak UIViewController *_searchToolbarItemsOwner;
   NSArray<UIBarButtonItem *> *_searchToolbarItemsOwnerBaseItems;
@@ -76,6 +80,10 @@
     }
 
     NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithArray:baseItems ?: @[]];
+    CGFloat leadingReservedWidth = [self searchToolbarLeadingReservedWidth];
+    if (leadingReservedWidth > 0.0) {
+      [items addObject:[UIBarButtonItem fixedSpaceItemOfWidth:leadingReservedWidth]];
+    }
     [items addObject:searchBarItem];
     [items addObjectsFromArray:[self toolbarButtonItemsFromConfigs:screenView.searchToolbarItems
                                                        imageLoader:imageLoader]];
@@ -88,6 +96,33 @@
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+- (CGFloat)searchToolbarLeadingReservedWidth API_AVAILABLE(ios(26.0))
+{
+  UITabBar *tabBar = self.tabBarController.tabBar;
+  if (tabBar == nil || CGRectIsEmpty(tabBar.bounds)) {
+    return self.tabBarController.selectedIndex == 0 ? 0.0 : RNSSearchToolbarDefaultLeadingReservedWidth;
+  }
+
+  CGFloat tabBarMidX = CGRectGetMidX(tabBar.bounds);
+  CGFloat leadingMaxX = 0.0;
+  for (UIView *subview in tabBar.subviews) {
+    CGRect frame = subview.frame;
+    CGFloat width = CGRectGetWidth(frame);
+    if (subview.hidden || subview.alpha < 0.01 || CGRectIsEmpty(frame) ||
+        width > RNSSearchToolbarMaxCompactTabControlWidth || CGRectGetMidX(frame) >= tabBarMidX) {
+      continue;
+    }
+
+    leadingMaxX = MAX(leadingMaxX, CGRectGetMaxX(frame));
+  }
+
+  if (leadingMaxX > 0.0) {
+    return leadingMaxX + RNSSearchToolbarLeadingReservedPadding;
+  }
+
+  return self.tabBarController.selectedIndex == 0 ? 0.0 : RNSSearchToolbarDefaultLeadingReservedWidth;
+}
+
 - (UIViewController *)activeSearchToolbarViewController API_AVAILABLE(ios(26.0))
 {
   UIViewController *controller = self;
