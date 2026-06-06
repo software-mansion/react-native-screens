@@ -9,6 +9,7 @@
 @implementation RNSTabsScreenViewController {
   __weak UIViewController *_searchToolbarItemsOwner;
   NSArray<UIBarButtonItem *> *_searchToolbarItemsOwnerBaseItems;
+  BOOL _searchToolbarItemsOwnerHadHiddenToolbar;
 }
 
 - (nullable RNSTabBarController *)findTabBarController
@@ -37,8 +38,11 @@
   if (@available(iOS 26.0, *)) {
     if (_searchToolbarItemsOwner != nil) {
       [_searchToolbarItemsOwner setToolbarItems:_searchToolbarItemsOwnerBaseItems animated:YES];
+      [_searchToolbarItemsOwner.navigationController setToolbarHidden:_searchToolbarItemsOwnerHadHiddenToolbar
+                                                              animated:YES];
       _searchToolbarItemsOwner = nil;
       _searchToolbarItemsOwnerBaseItems = nil;
+      _searchToolbarItemsOwnerHadHiddenToolbar = NO;
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
@@ -67,6 +71,7 @@
       [self clearSearchToolbarItems];
       _searchToolbarItemsOwner = toolbarOwner;
       _searchToolbarItemsOwnerBaseItems = toolbarOwner.toolbarItems ?: @[];
+      _searchToolbarItemsOwnerHadHiddenToolbar = toolbarOwner.navigationController.toolbarHidden;
       baseItems = _searchToolbarItemsOwnerBaseItems;
     }
 
@@ -75,6 +80,7 @@
     [items addObjectsFromArray:[self toolbarButtonItemsFromConfigs:screenView.searchToolbarItems
                                                        imageLoader:imageLoader]];
     [toolbarOwner setToolbarItems:items animated:YES];
+    [toolbarOwner.navigationController setToolbarHidden:NO animated:YES];
   }
 #else
   [self clearSearchToolbarItems];
