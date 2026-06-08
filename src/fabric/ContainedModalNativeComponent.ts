@@ -3,6 +3,4 @@ import type { ViewProps } from 'react-native';
 
 export interface NativeProps extends ViewProps {}
 
-export default codegenNativeComponent<NativeProps>('RNSContainedModal', {
-  interfaceOnly: true,
-});
+export default codegenNativeComponent<NativeProps>('RNSContainedModal', {});
