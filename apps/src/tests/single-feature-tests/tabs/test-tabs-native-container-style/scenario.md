@@ -58,8 +58,8 @@ manually.
 2. On the **Config** tab, set the `backgroundColor` picker to `blue`.
 
 - [ ] The picker displays `blue`. The native container's background immediately changes to blue.
-- [ ] **iOS18:** The blue color is visible behind both the tab content area and the tab bar area, as tabBarBackgroundColor is transparent.
-- [ ] **iOS26:** The blue color is visible behind the tab content area and through the liquid glass tab bar.
+- [ ] **iOS 18:** The blue color is visible behind both the tab content area and the tab bar area, as tabBarBackgroundColor is transparent.
+- [ ] **iOS 26:** The blue color is visible behind the tab content area and through the liquid glass tab bar.
 - [ ] **Android:** The blue color is visible in the area surrounding the focused content screen. The tab bar retains the system default background color.
 
 3. Tap the **Tab** tab in the tab bar.
