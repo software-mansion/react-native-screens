@@ -26,8 +26,14 @@ export type {
   StackHeaderConfigCommandsAndroid,
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuItemClickedEvent,
+  StackHeaderToolbarMenuItemShowAsActionAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
+  StackHeaderInlineItemIOS,
+  StackHeaderInlineCustomItemIOS,
+  StackHeaderTitleCustomItemIOS,
+  StackHeaderSpacerItemIOS,
   StackHeaderConfigCommandsIOS,
 } from './header';
 

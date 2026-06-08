@@ -266,8 +266,11 @@ export interface TabsScreenPropsIOS {
    *
    * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads) with
    * standard iOS styling and localized titles. Custom `icon` or `selectedIcon`
-   * properties will override the system icon, but the system-defined title cannot
-   * be customized.
+   * properties will override the system icon, and the system-defined title can be
+   * overridden by providing a custom `title`.
+   *
+   * @remarks
+   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display any title (system or custom).
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    *

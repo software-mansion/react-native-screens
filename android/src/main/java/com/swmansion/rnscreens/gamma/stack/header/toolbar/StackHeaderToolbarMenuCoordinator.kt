@@ -30,9 +30,6 @@ internal class StackHeaderToolbarMenuCoordinator(
             val menuItem = toolbar.menu.add(Menu.NONE, nativeId, index, null)
 
             applyOptions(menuItem, item.toOptions())
-
-            // This property will be exposed to the user in the future.
-            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         }
 
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -43,13 +40,13 @@ internal class StackHeaderToolbarMenuCoordinator(
         lastMenuItems = items
     }
 
-    fun clear() {
+    internal fun clear() {
         forwardIdMap.clear()
         reverseIdMap.clear()
         lastMenuItems = emptyList()
     }
 
-    fun updateItem(
+    internal fun updateItem(
         menu: Menu,
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
@@ -69,12 +66,14 @@ internal class StackHeaderToolbarMenuCoordinator(
     ) {
         options.title?.let { menuItem.title = it }
         options.hidden?.let { menuItem.isVisible = !it }
+        options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
     }
 
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =
         StackHeaderToolbarMenuItemOptions(
             title = title,
             hidden = hidden,
+            showAsAction = showAsAction,
         )
 
     companion object {
