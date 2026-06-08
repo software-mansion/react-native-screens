@@ -3,14 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   TabsContainer,
   useTabsNavigationContext,
+  DEFAULT_TAB_ROUTE_OPTIONS,
   type TabRouteConfig,
 } from '@apps/shared/gamma/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import { Colors } from '@apps/shared/styling';
-import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/gamma/containers/tabs';
 import { SettingsPicker } from '@apps/shared';
-import { TabsScreenAppearanceAndroid } from 'react-native-screens';
+import type { TabsScreenAppearanceAndroid } from 'react-native-screens';
 
 type LabelVisibilityMode = NonNullable<TabsScreenAppearanceAndroid['tabBarItemLabelVisibilityMode']>;
 
@@ -24,12 +24,8 @@ const LABEL_VISIBILITY_OPTIONS: LabelVisibilityMode[] = [
 function DefaultTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        Default configuration
-      </Text>
-      <Text style={styles.hint}>
-        Tab bar renders in the system default configuration.
-      </Text>
+      <Text style={styles.label}>Default configuration</Text>
+      <Text style={styles.hint}>Tab bar renders in the system default configuration.</Text>
     </View>
   );
 }
@@ -58,10 +54,7 @@ function LabelTab() {
       <Text style={styles.label}>
         Label Visibility Mode
       </Text>
-      <Text style={styles.hint}>
-        Only `tabBarItemLabelVisibilityMode` is defined.{'\n'}
-        Labels follow the toggled value.
-      </Text>
+      <Text style={styles.hint}>Only `tabBarItemLabelVisibilityMode` is defined.{'\n'} Labels follow the toggled value.</Text>
       <SettingsPicker<LabelVisibilityMode>
         label="tabBarItemLabelVisibilityMode"
         value={labelVisibility}
@@ -80,16 +73,12 @@ function RippleTab() {
       </Text>
       <Text style={styles.hint}>
         `tabBarItemLabelVisibilityMode`: 'labeled'
-        {'\n'}
-        `tabBarBackgroundColor`:{' '}
+        {'\n'}`tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.NavyDark100 }}>NavyDark100</Text>
-        {'\n'}
-        `tabBarItemRippleColor`:{' '}
+        {'\n'}`tabBarItemRippleColor`:{' '}
         <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
-        {'\n'}
-        `tabBarItemActiveIndicatorEnabled`: `false`
-        {'\n'}
-        `tabBarItemActiveIndicatorColor`:{' '}
+        {'\n'}`tabBarItemActiveIndicatorEnabled`: `false`
+        {'\n'}`tabBarItemActiveIndicatorColor`:{' '}
         <Text style={{ color: Colors.GreenLight100 }}>GreenLight100</Text>
         {'\n'}
       </Text>
@@ -103,18 +92,13 @@ function IndicatorTab() {
       <Text style={styles.label}>
         Active Indicator Enabled
       </Text>
-      <Text style={styles.hint}>
-        `tabBarItemLabelVisibilityMode`: 'labeled'
-        {'\n'}
-        `tabBarBackgroundColor`:{' '}
+      <Text style={styles.hint}>`tabBarItemLabelVisibilityMode`: 'labeled'
+        {'\n'}`tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
-        {'\n'}
-        `tabBarItemRippleColor`:{' '}
+        {'\n'}`tabBarItemRippleColor`:{' '}
         <Text style={{ color: Colors.YellowDark100 }}>YellowDark100</Text>
-        {'\n'}
-        `tabBarItemActiveIndicatorEnabled`: `true`
-        {'\n'}
-        `tabBarItemActiveIndicatorColor`:{' '}
+        {'\n'}`tabBarItemActiveIndicatorEnabled`: `true`
+        {'\n'}`tabBarItemActiveIndicatorColor`:{' '}
         <Text style={{ color: Colors.GreenLight100 }}>GreenLight100</Text>
         {'\n'}
       </Text>
@@ -181,6 +165,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
   },
 ];
+
 export function App() {
   return (
     <TabsContainer routeConfigs={ROUTE_CONFIGS} />
