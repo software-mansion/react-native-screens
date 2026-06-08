@@ -9,6 +9,17 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
+function DefaultSystemItemScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Default System Item</Text>
+      <Text style={styles.hint}>
+        This tab uses a systemItem: `bookmarks`{'\n'}with no custom title or icon override.
+      </Text>
+    </View>
+  );
+}
+
 function NoTitleScreen() {
   return (
     <View style={styles.screen}>
@@ -17,17 +28,6 @@ function NoTitleScreen() {
         This tab uses a systemItem: `favorites`.{'\n'}
         {'\n'}
         The `title` prop is set to an empty string, so no title is displayed.
-      </Text>
-    </View>
-  );
-}
-
-function DefaultSystemItemScreen() {
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.label}>Default System Item</Text>
-      <Text style={styles.hint}>
-        This tab uses a systemItem: `bookmarks`{'\n'}with no custom title or icon override.
       </Text>
     </View>
   );
@@ -65,7 +65,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'DefaultSystemItem',
     Component: DefaultSystemItemScreen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       ios: {
         systemItem: 'bookmarks',
       },
@@ -76,7 +75,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: NoTitleScreen,
     options: {
       title: '',
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       ios: {
         systemItem: 'favorites',
       },
@@ -86,7 +84,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'CustomTitleIconOverride',
     Component: CustomTitleIconOverrideScreen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Custom',
       ios: {
         systemItem: 'contacts',
@@ -102,10 +99,9 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'SearchScreen',
+    name: 'Search',
     Component: SearchScreen,
     options: {
-      ...DEFAULT_TAB_ROUTE_OPTIONS,
       ios: {
         systemItem: 'search',
       },
@@ -115,18 +111,11 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 
 export function App() {
   return (
-    <View style={styles.appContainer}>
-      <TabsContainerWithHostConfigContext
-        routeConfigs={ROUTE_CONFIGS}
-      />
-    </View>
+      <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS}/>
   );
 }
 
 const styles = StyleSheet.create({
-  appContainer: {
-    flex: 1,
-  },
   screen: {
     flex: 1,
     justifyContent: 'center',
