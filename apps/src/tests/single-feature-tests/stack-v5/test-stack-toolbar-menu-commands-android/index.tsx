@@ -1,9 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
-import {
-  createScenario,
-  ScenarioDescription,
-} from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
@@ -14,13 +11,7 @@ import {
   type StackHeaderConfigRef,
   type StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Toolbar Menu Commands',
-  key: 'test-stack-toolbar-menu-commands-android',
-  details: 'Tests toolbar menu items prop config and imperative commands.',
-  platforms: ['android'],
-};
+import { scenarioDescription } from './scenario-descriptions';
 
 type IdOption = 'item-1' | 'item-2' | 'item-3';
 type TitleOption =

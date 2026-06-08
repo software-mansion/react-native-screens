@@ -221,7 +221,6 @@ function getPositioningStyle(
   presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
-  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
 
   if (presentation !== 'formSheet') {
     return styles.container;
@@ -230,7 +229,6 @@ function getPositioningStyle(
   if (isIOS) {
     if (
       allowedDetents !== 'fitToContents' &&
-      rnMinorVersion >= 82 &&
       featureFlags.experiment.synchronousScreenUpdatesEnabled
     ) {
       return styles.container;

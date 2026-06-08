@@ -6,5 +6,5 @@ export const scenarioDescription: ScenarioDescription = {
   details: 'Test basic navigation scenarios',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
-  smokeTest: false,
+  smokeTest: true,
 };

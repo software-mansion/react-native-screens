@@ -16,6 +16,17 @@
   }
 }
 
+- (BOOL)emitOnNativeDismissPrevented
+{
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onNativeDismissPrevented({});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnNativeDismissPrevented event emission due to nullish emitter");
+    return NO;
+  }
+}
+
 #if !TARGET_OS_TV
 - (BOOL)emitOnDetentChangedWithIndex:(NSInteger)index
 {

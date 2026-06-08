@@ -1,10 +1,26 @@
 import type { FormSheetProps } from './FormSheet.types';
 
+// Predefined value for `fitToContents`. Keep in sync with native counterpart.
+const FORM_SHEET_NATIVE_FIT_TO_CONTENTS = -1.0;
 // Predefined values for `initialDetentIndex`. Keep in sync with native counterpart.
 const FORM_SHEET_LAST_DETENT = -1;
 // Predefined values for `largestUndimmedDetentIndex`. Keep in sync with native counterpart.
 const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
+
+export function resolveNativeDetents(
+  detents?: number[] | 'fitToContents',
+): number[] | undefined {
+  if (!detents) {
+    return undefined;
+  }
+
+  if (detents === 'fitToContents') {
+    return [FORM_SHEET_NATIVE_FIT_TO_CONTENTS];
+  }
+
+  return detents;
+}
 
 export function resolveInitialDetentIndex(
   initialDetentIndex: FormSheetProps['initialDetentIndex'],
