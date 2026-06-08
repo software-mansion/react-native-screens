@@ -106,7 +106,7 @@ manually.
 ### Rapid color cycling (edge case)
 
 9. From the **Config** tab, cycle the `backgroundColor` picker rapidly
-    through `blue` → `yellow` → `unset` → `blue`.
+    through `blue` → `yellow` → `purple` → `unset` → `blue`.
 
 - [ ] The container background updates with each selection.
 - [ ] No crash, no layout freeze, and no color bleed between selections.

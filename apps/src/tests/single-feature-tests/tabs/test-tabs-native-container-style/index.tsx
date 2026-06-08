@@ -12,7 +12,7 @@ import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type { ColorValue } from 'react-native';
 
-type ContainerBackgroundOption = 'unset' | 'blue' | 'yellow';
+type ContainerBackgroundOption = 'unset' | 'blue' | 'yellow' | 'purple';
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -25,6 +25,8 @@ function ConfigScreen() {
         return Colors.BlueLight100;
       case 'yellow':
         return Colors.YellowLight100;
+      case 'purple':
+        return Colors.PurpleLight100;
       case 'unset':
       default:
         return undefined;
@@ -35,6 +37,13 @@ function ConfigScreen() {
     const bgColor = hostConfig.nativeContainerStyle?.backgroundColor;
     if (bgColor === Colors.BlueLight100) return 'blue';
     if (bgColor === Colors.YellowLight100) return 'yellow';
+    if (bgColor === Colors.PurpleLight100) return 'purple';
+    if (bgColor !== undefined) {
+      console.warn(
+        `[test-tabs-native-container-style] Unrecognized nativeContainerStyle.backgroundColor: ${String(bgColor)}. ` +
+          `Picker shows 'unset' but a native color may be set. This may indicate a platform-specific color serialization issue.`
+      );
+    }
     return 'unset';
   })();
 
@@ -74,7 +83,7 @@ function ConfigScreen() {
               },
             });
           }}
-          items={['unset', 'blue', 'yellow']}
+          items={['unset', 'blue', 'yellow', 'purple']}
         />
       </View>
     </ScrollView>
@@ -124,6 +133,7 @@ export function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 18,
   },
   content: {
     padding: 16,
