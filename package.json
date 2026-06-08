@@ -234,6 +234,12 @@
         },
         "RNSFormSheetContentWrapper": {
           "className": "RNSFormSheetContentWrapperComponentView"
+        },
+        "RNSContainedModal": {
+          "className": "RNSContainedModalComponentView"
+        },
+        "RNSContainedModalProvider": {
+          "className": "RNSContainedModalProviderComponentView"
         }
       }
     }
