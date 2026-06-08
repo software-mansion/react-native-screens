@@ -4,8 +4,8 @@
 
 @implementation RNSStackHeaderItemCoordinator
 
-+ (UIBarButtonItem *)barButtonItemForItem:(id<RNSStackHeaderItemDataProviding>)item
-                  withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
++ (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
+                        withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
 {
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -15,14 +15,15 @@
                                                                 frameChangeDelegate:delegate]];
     }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    return [[UIBarButtonItem alloc] initWithCustomView:[self wrappedViewForItem:item frameChangeDelegate:delegate]];
+    return [[UIBarButtonItem alloc] initWithCustomView:[self wrappedViewForHeaderItem:item
+                                                                  frameChangeDelegate:delegate]];
   }
 
   return [[UIBarButtonItem alloc] initWithTitle:item.label style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
-+ (UIView *)wrappedViewForItem:(id<RNSStackHeaderItemDataProviding>)item
-           frameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
++ (UIView *)wrappedViewForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
+                 frameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
 {
   UIView *contentView = item.customView;
 
@@ -43,6 +44,15 @@
   ]];
 
   return wrapperView;
+}
+
++ (UIBarButtonItem *)spacerForHeaderSpacerItem:(id<RNSStackHeaderItemSpacerDataProviding>)spacer
+{
+  if (spacer.isFlexible) {
+    return [UIBarButtonItem flexibleSpaceItem];
+  }
+
+  return [UIBarButtonItem fixedSpaceItemOfWidth:spacer.width];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)

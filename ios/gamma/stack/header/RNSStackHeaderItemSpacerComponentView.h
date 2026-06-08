@@ -1,18 +1,14 @@
 #pragma once
 
-#import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSReactBaseView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
+#import "RNSStackHeaderItemSpacerDataProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHeaderItemSpacerComponentView : RNSReactBaseView
+@interface RNSStackHeaderItemSpacerComponentView : RNSReactBaseView <RNSStackHeaderItemSpacerDataProviding>
 
 @property (nonatomic, weak, nullable) id<RNSStackHeaderItemInvalidationDelegate> invalidationDelegate;
-
-@property (nonatomic, readonly) RNSHeaderItemSpacerPlacement placement;
-
-- (nonnull UIBarButtonItem *)makeBarButtonItem;
 
 @end
 

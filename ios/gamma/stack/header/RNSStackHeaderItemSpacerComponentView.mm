@@ -40,15 +40,16 @@ namespace react = facebook::react;
   return _placement;
 }
 
-#pragma mark - Bar Button Item
+#pragma mark - RNSStackHeaderItemSpacerDataProviding
 
-- (nonnull UIBarButtonItem *)makeBarButtonItem
+- (BOOL)isFlexible
 {
-  if (_isFlexible) {
-    return [UIBarButtonItem flexibleSpaceItem];
-  }
+  return _isFlexible;
+}
 
-  return [UIBarButtonItem fixedSpaceItemOfWidth:_width];
+- (CGFloat)width
+{
+  return _width;
 }
 
 #pragma mark - RCTComponentViewProtocol

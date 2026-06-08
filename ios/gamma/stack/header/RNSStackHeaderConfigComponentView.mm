@@ -243,26 +243,27 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
         case RNSHeaderItemPlacementLeading:
-          [leadingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForItem:item
-                                                              withFrameChangeDelegate:self]];
+          [leadingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForHeaderItem:item
+                                                                    withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTrailing:
-          [trailingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForItem:item
-                                                               withFrameChangeDelegate:self]];
+          [trailingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForHeaderItem:item
+                                                                     withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.customView != nil) {
-            *outTitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
+            *outTitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementSubtitle:
           if (item.customView != nil) {
-            *outSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
+            *outSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementLargeSubtitle:
           if (item.customView != nil) {
-            *outLargeSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
+            *outLargeSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item
+                                                                        frameChangeDelegate:self];
           }
           break;
       }
@@ -270,10 +271,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       auto *spacer = static_cast<RNSStackHeaderItemSpacerComponentView *>(child);
       switch (spacer.placement) {
         case RNSHeaderItemSpacerPlacementLeading:
-          [leadingItems addObject:[spacer makeBarButtonItem]];
+          [leadingItems addObject:[RNSStackHeaderItemCoordinator spacerForHeaderSpacerItem:spacer]];
           break;
         case RNSHeaderItemSpacerPlacementTrailing:
-          [trailingItems addObject:[spacer makeBarButtonItem]];
+          [trailingItems addObject:[RNSStackHeaderItemCoordinator spacerForHeaderSpacerItem:spacer]];
           break;
       }
     }
