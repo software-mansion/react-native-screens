@@ -54,7 +54,7 @@
   // Behavior data
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [RNSFormSheetDetentResolver buildSheetDetentsForFractions:behaviorProvider.detents];
+      [RNSFormSheetDetentResolver buildSheetDetentsWithBehaviorProvider:behaviorProvider];
 
   UISheetPresentationControllerDetentIdentifier initialDetentIdentifier = nil;
   if (!_initialDetentApplied) {

@@ -1,6 +1,8 @@
 #import "RNSStackNavigationController.h"
 #import "RNSLog.h"
 #import "RNSStackOperation.h"
+#import "RNSStackScreenController.h"
+#import "RNSViewFrameChangeDelegate.h"
 #import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
@@ -11,6 +13,8 @@
 - (instancetype)init
 {
   if (self = [super init]) {
+    _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
+    [_navigationBarCoordinator initializeNavigationBarOfNavigationController:self];
     [self initState];
   }
   return self;
@@ -70,6 +74,16 @@
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];
 }
+
+#pragma mark - Layout
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
+}
+
+#pragma mark - Debug
 
 - (void)dumpStackModel
 {

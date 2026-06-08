@@ -16,6 +16,18 @@ Point RNSStackHeaderConfigShadowNode::getContentOriginOffset(
   auto stateData = getStateData();
   return stateData.contentOffset;
 }
-#endif // ANDROID
+#else // ANDROID
+void RNSStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
+  YogaLayoutableShadowNode::layout(layoutContext);
+  applyFrameCorrections();
+}
 
+void RNSStackHeaderConfigShadowNode::applyFrameCorrections() {
+  ensureUnsealed();
+
+  const auto &stateData = getStateData();
+  layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
+  layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
+}
+#endif // ANDROID
 } // namespace facebook::react

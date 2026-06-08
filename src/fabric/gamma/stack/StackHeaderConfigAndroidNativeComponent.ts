@@ -15,10 +15,21 @@ type StackHeaderToolbarMenuItemClickedEvent = Readonly<{
   id: string;
 }>;
 
+type StackHeaderToolbarMenuItemShowAsActionAndroid =
+  | 'always'
+  | 'alwaysWithText'
+  | 'ifRoom'
+  | 'ifRoomWithText'
+  | 'never';
+
 export interface StackHeaderToolbarMenuItemAndroid {
   id: string;
   title?: CT.WithDefault<string, ''>;
   hidden?: CT.WithDefault<boolean, false>;
+  showAsAction?: CT.WithDefault<
+    StackHeaderToolbarMenuItemShowAsActionAndroid,
+    'never'
+  >;
 }
 
 export interface NativeProps extends ViewProps {
@@ -44,6 +55,13 @@ export interface NativeProps extends ViewProps {
   onToolbarMenuItemClicked?:
     | CT.DirectEventHandler<StackHeaderToolbarMenuItemClickedEvent>
     | undefined;
+
+  // When StackHeaderToolbarMenuItemAndroid is used as an array
+  // in toolbarMenuItems, Codegen doesn't generate an enum in Props.h
+  // which causes a build failure on iOS. By adding a property where
+  // StackHeaderToolbarMenuItemAndroid is used directly, we ensure
+  // that the enum is generated.
+  DO_NOT_USE?: StackHeaderToolbarMenuItemAndroid | undefined;
 }
 
 type ComponentType = HostComponent<NativeProps>;

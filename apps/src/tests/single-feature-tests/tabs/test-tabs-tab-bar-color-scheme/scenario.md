@@ -8,7 +8,7 @@
 
 ## E2E test
 
-No: Detox does not have access to color attributes, so it is impossible to verify if the color has changed in response to a style update.
+Incomplete: Not automated. Detox does not have access to color attributes, so it is impossible to verify if the color has changed in response to a style update.
 
 ## Prerequisites
 

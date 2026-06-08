@@ -19,15 +19,24 @@ export interface FormSheetProps {
   isOpen: boolean;
 
   /**
-   * @summary An array of fractional screen heights (ranging from `0.0` to `1.0`) that define
-   * the resting positions of the sheet.
+   * @summary Defines the resting positions of the sheet.
+   *
+   * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
+   * or the `fitToContents` string literal.
+   *
+   * - Fractional heights: The sheet will snap to these specific height proportions.
+   * - `fitToContents`: The sheet automatically calculates its height to wrap its content.
+   *   It will dynamically animate to adapt to any internal layout changes.
    *
    * On iOS, these map directly to `UISheetPresentationController` detents.
    * If an empty array is provided, it defaults to a single large detent.
    *
+   * @remarks
+   * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
+   *
    * @platform ios
    */
-  detents?: number[] | undefined;
+  detents?: number[] | 'fitToContents' | undefined;
 
   /**
    * @summary Determines whether the sheet requests a grabber at the top.
