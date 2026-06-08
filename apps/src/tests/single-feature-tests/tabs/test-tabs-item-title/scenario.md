@@ -2,7 +2,7 @@
 
 ## Details
 
-Validates the tab bar item title configuration across both platforms, verifying
+**Description:** Validates the tab bar item title configuration across both platforms, verifying
 the core options.title rendering alongside long-string truncation. It checks
 `tabBarItemTitleFontColor` behavior across multiple states, including its override
 of the host-level `tabBarTintColor` on iOS, the standard selected and normal states
