@@ -12,13 +12,15 @@ with tabBarMinimizeBehavior.
 
 ## E2E test
 
-Partial: covers most of manual scenario steps only for iPhone; iPad testing would
-require app window resizing not supported by Detox.
+Incomplete: Covers most of manual scenario steps only for iPhone.
+
 Not covered:
+
 - Text alignment verification in the bottom accessory.
 - Content verification for the last two variants.
 - Variant selection visual check (the blue border is not automated).
 - Extending the tab bar using the collapsed tab bar state.
+- Test on iPad as it require app window resizing not supported by Detox.
 
 ## Prerequisites
 

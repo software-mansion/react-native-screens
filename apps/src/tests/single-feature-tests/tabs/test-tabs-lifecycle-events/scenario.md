@@ -11,7 +11,7 @@ rapid switching.
 
 ## E2E test
 
-Yes: Partially automated. The E2E test covers steps 1–4 on both iPhone and
+Incomplete: The E2E test covers steps 1–4 on both iPhone and
 Android, verifying baseline appearance events, all three tab-switch transitions
 (with platform-specific event ordering). The re-tap (step 5) is covered only
 for Android as for iOS 26+ Detox is not able to re-tap a tab bar item.

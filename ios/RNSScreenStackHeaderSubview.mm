@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>

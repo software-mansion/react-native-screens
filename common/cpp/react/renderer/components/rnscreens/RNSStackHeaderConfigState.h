@@ -4,11 +4,11 @@
 
 #ifdef ANDROID
 #include <folly/dynamic.h>
-#include <react/renderer/core/graphicsConversions.h>
-#include <react/renderer/graphics/Float.h>
 #include <react/renderer/mapbuffer/MapBuffer.h>
 #include <react/renderer/mapbuffer/MapBufferBuilder.h>
 #endif // ANDROID
+#include <react/renderer/core/graphicsConversions.h>
+#include <react/renderer/graphics/Float.h>
 
 namespace facebook::react {
 
@@ -17,6 +17,9 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
   using Shared = std::shared_ptr<const RNSStackHeaderConfigState>;
 
   RNSStackHeaderConfigState() {}
+
+  Size frameSize{};
+  Point contentOffset{};
 
 #ifdef ANDROID
   RNSStackHeaderConfigState(
@@ -31,13 +34,13 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
                 (Float)data["contentOffsetX"].getDouble(),
                 (Float)data["contentOffsetY"].getDouble()}) {}
 
-  Size frameSize{};
-  Point contentOffset{};
-
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   }
+#else // ANDROID
+  RNSStackHeaderConfigState(Size frameSize_, Point contentOffset_)
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
 #endif // ANDROID
 };
 
