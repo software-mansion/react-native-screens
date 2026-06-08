@@ -62,6 +62,13 @@ export interface StackHeaderBackgroundSubviewAndroid {
   render: () => ReactElement;
 }
 
+export type StackHeaderToolbarMenuItemShowAsActionAndroid =
+  | 'always'
+  | 'alwaysWithText'
+  | 'ifRoom'
+  | 'ifRoomWithText'
+  | 'never';
+
 export interface StackHeaderToolbarMenuItemAndroid {
   /**
    * @summary Unique identifier of the menu item.
@@ -82,6 +89,31 @@ export interface StackHeaderToolbarMenuItemAndroid {
    * @platform android
    */
   hidden?: boolean | undefined;
+  /**
+   * @summary Specifies whether the item should be displayed as a button in the
+   * Toolbar.
+   *
+   * The following values are available:
+   * - `always` - always displays the item as a button in the Toolbar,
+   * - `alwaysWithText` - always displays the item as a button in the Toolbar,
+   *   forcing the text label to be visible even if an icon is provided,
+   * - `ifRoom` - displays the item as a button in the Toolbar only if the
+   *   system determines there is sufficient space,
+   * - `ifRoomWithText` - displays the item as a button in the Toolbar if the
+   *   system determines there is sufficient space, forcing the text label to
+   *   be visible even if an icon is provided,
+   * - `never` - never displays the item as a button in the Toolbar; it will be
+   *   placed in the overflow menu instead.
+   *
+   * @remarks
+   * Due to native limitations, the width limit for the `ifRoom` options is
+   * determined during the initial render and will not adapt to subsequent layout
+   * or orientation changes.
+   *
+   * @default never
+   * @platform android
+   */
+  showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
 }
 
 export type StackHeaderToolbarMenuItemClickedEvent = {

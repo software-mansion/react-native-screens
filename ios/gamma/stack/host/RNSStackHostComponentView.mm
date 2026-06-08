@@ -47,6 +47,7 @@ namespace react = facebook::react;
 {
   RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
   [self reactAddControllerToClosestParent:_stackNavigationController];
+  [self setupViewConstraintsForController:_stackNavigationController];
 }
 
 #pragma mark - Communication with StackScreen
@@ -143,6 +144,18 @@ namespace react = facebook::react;
     }
     return;
   }
+}
+
+- (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
+{
+  // Enable auto-layout to ensure valid size of stack controller view.
+  controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+  [NSLayoutConstraint activateConstraints:@[
+    [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+    [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+    [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+    [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  ]];
 }
 
 #pragma mark - RCTMountingTransactionObserving

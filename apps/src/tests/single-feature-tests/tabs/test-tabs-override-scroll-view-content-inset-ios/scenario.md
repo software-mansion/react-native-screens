@@ -18,7 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-Yes: Covers all manual scenario steps.
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 
