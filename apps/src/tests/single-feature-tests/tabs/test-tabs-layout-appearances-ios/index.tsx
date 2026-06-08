@@ -7,10 +7,9 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { createScenario } from '@apps/tests/shared/helpers';
-import {scenarioDescription} from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import type { TabsScreenAppearanceIOS } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
-
 
 const APPEARANCE: TabsScreenAppearanceIOS = {
   stacked: {
@@ -63,12 +62,13 @@ function InfoScreen() {
         <Text style={[styles.description, styles.greenSwatch]}>
           Green = compactInline (iPhone Pro in landscape)
         </Text>
-        <Text style={[styles.description, { marginTop: 8 }]}>
-                     In each case, the{' '}
-           <Text style={styles.bold}>selected tab title is italic</Text>, and the tab icon color uses the system default:{' '}
-           <Text style={{ color: PlatformColor('systemBlue') }}>blue</Text>.
-           {'\n\n'}
-           The unselected tab title font and icon color follow the system defaults: a normal font and gray or black colors. On iOS 18, the tab item label color is set to a darker shade of the selected tab title color. On iOS 26, it follows the system default.
+        <Text style={[styles.description]}>
+          In each case, the{' '}
+          <Text style={styles.bold}>selected tab title is italic</Text>
+          , and the tab icon color uses the system default:{' '}
+          <Text style={{ color: PlatformColor('systemBlue') }}>blue</Text>.
+          {'\n\n'}
+          The unselected tab title font and icon color follow the system defaults: a normal font and gray or black colors. On iOS 18, the tab item label color is set to a darker shade of the selected tab title color. On iOS 26, it follows the system default.
         </Text>
       </View>
 
@@ -114,17 +114,7 @@ function TabScreen({ name }: { name: string }) {
   );
 }
 
-function Tab1Screen() {
-  return <TabScreen name="Tab 1" />;
-}
-
-function Tab2Screen() {
-  return <TabScreen name="Tab 2" />;
-}
-
-function Tab3Screen() {
-  return <TabScreen name="Tab 3" />;
-}
+const createTabScreen = (name: string) => () => <TabScreen name={name} />;
 
 const SHARED_IOS_OPTIONS = {
   ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
@@ -148,7 +138,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab1',
-    Component: Tab1Screen,
+    Component: createTabScreen('Tab 1'),
     options: {
       title: 'Tab1',
       tabBarItemTestID: 'tab-item-title-style-tab1',
@@ -160,7 +150,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: Tab2Screen,
+    Component: createTabScreen('Tab 2'),
     options: {
       title: 'Tab2',
       tabBarItemTestID: 'tab-item-title-style-tab2',
@@ -172,7 +162,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: Tab3Screen,
+    Component: createTabScreen('Tab 3'),
     options: {
       title: 'Tab3',
       tabBarItemTestID: 'tab-item-title-style-tab3',
@@ -200,24 +190,25 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#111',
+    color: Colors.Black,
   },
   description: {
     fontSize: 14,
-    color: '#444',
+    color: Colors.Navy,
     lineHeight: 20,
+    marginTop: 8,
   },
   code: {
     fontFamily: 'Courier',
     fontSize: 13,
-    color: '#333',
+    color: Colors.Navy,
   },
   bold: {
     fontWeight: '700',
   },
   note: {
     fontSize: 12,
-    color: '#888',
+    color: Colors.WhiteTransparentDark,
     fontStyle: 'italic',
   },
   redSwatch: {
@@ -239,7 +230,7 @@ const styles = StyleSheet.create({
   },
   tabHint: {
     fontSize: 14,
-    color: '#555',
+    color: Colors.WhiteTransparentDark,
     textAlign: 'center',
     lineHeight: 22,
   },
