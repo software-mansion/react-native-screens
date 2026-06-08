@@ -3,6 +3,7 @@
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderData.h"
 #import "RNSStackHeaderItemComponentView.h"
+#import "RNSStackHeaderItemCoordinator.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSStackNavigationController.h"
@@ -242,24 +243,26 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
         case RNSHeaderItemPlacementLeading:
-          [leadingItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
+          [leadingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForItem:item
+                                                              withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTrailing:
-          [trailingItems addObject:[item makeBarButtonItemWithFrameChangeDelegate:self]];
+          [trailingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForItem:item
+                                                               withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
-          if (item.hasCustomView) {
-            *outTitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
+          if (item.customView != nil) {
+            *outTitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementSubtitle:
-          if (item.hasCustomView) {
-            *outSubtitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
+          if (item.customView != nil) {
+            *outSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementLargeSubtitle:
-          if (item.hasCustomView) {
-            *outLargeSubtitleView = [item makeWrappedViewWithFrameChangeDelegate:self];
+          if (item.customView != nil) {
+            *outLargeSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForItem:item frameChangeDelegate:self];
           }
           break;
       }
