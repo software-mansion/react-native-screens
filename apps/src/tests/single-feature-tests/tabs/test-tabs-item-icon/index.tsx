@@ -62,7 +62,7 @@ function OverrideTab() {
   );
 }
 
-function XcassetTab() {
+function XcassetDrawableResourceTab() {
   return (
     <View style={styles.screen}>
       {Platform.OS === 'ios' ? (
@@ -120,7 +120,7 @@ function ImageTab() {
             or `tabBarItemIconColor`.{'\n'}
             {'\n'}
             Selected: filled image in its black color (the host{' '}
-            <Text style={{ color: Colors.GreenDark100 }}>green</Text> tint is ignored).
+            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint is ignored).
             {'\n'}
             Unselected iOS18: outline icons in <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>{' '}
             color.{'\n'}
@@ -202,9 +202,11 @@ const IOS_ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'XcassetIcon',
-    Component: XcassetTab,
+    Component: XcassetDrawableResourceTab,
     options: {
-      title: 'Xcasset', ios: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Xcasset',
+      ios: {
         icon: {
           type: 'xcasset',
           name: 'custom-icon-fill',
@@ -242,8 +244,9 @@ const IOS_ROUTES: TabRouteConfig[] = [
 const ANDROID_ROUTES: TabRouteConfig[] = [
   {
     name: 'DrawableResource',
-    Component: XcassetTab,
+    Component: XcassetDrawableResourceTab,
     options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'DrawableResource',
       android: {
         icon: {

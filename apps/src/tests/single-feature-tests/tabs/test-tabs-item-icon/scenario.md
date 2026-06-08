@@ -136,7 +136,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 2. Tap the **Image** tab.
 
 - [ ] The icon swaps from the outline image to
-  the filled image. Unselected tab icon change to sym_call_missed.
+  the filled image. Unselected tab icon changes to sym_call_missed.
   Selected tab icon is **red** and unselected icon renders in **green**.
 
 3.  While **Image** tab is selected, use the Tab key on keyboard to
