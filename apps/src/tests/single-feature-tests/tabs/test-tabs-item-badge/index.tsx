@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, PlatformColor, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -14,17 +14,14 @@ function Tab1Screen() {
     <View style={styles.screen}>
       <Text style={styles.label}>Default badge appearance</Text>
       {Platform.OS === 'ios' ? (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: "1"{'\n'}{'\n'}
             `standardAppearance` and `scrollEdgeAppearance` are not defined.{'\n'}{'\n'}
             Badges render with the default iOS appearance:
             `tabBarItemBadgeBackgroundColor`{' '}
-            <Text style={{ color: 'red', fontWeight: 'bold' }}>RED</Text> with white text.
+            <Text style={{ color: PlatformColor('systemRed') , fontWeight: 'bold' }}>RED</Text> with white text.
           </Text>
-        </>
       ) : (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: ""{'\n'}
             An empty string badge value renders as a "small dot" using the color defined in `tabBarItemBadgeBackgroundColor`, or the system default if not set.{'\n'}{'\n'}
@@ -33,7 +30,6 @@ function Tab1Screen() {
             background{' '}
             <Text style={{ color: Colors.RedDark120, fontWeight: 'bold' }}>DARK RED</Text> with white text.
           </Text>
-        </>
       )}
     </View>
   );
@@ -65,7 +61,6 @@ function Tab2Screen() {
             <View style={styles.spacer} />
           </>
         ) : (
-          <>
             <Text style={styles.hint}>
               `badgeValue`: "1234567890" displayed as "999+"{'\n'}{'\n'}
               `tabBarItemBadgeBackgroundColor`:{' '}
@@ -74,7 +69,6 @@ function Tab2Screen() {
               `tabBarItemBadgeTextColor`:{' '}
               <Text style={{ color: Colors.YellowDark100, fontWeight: 'bold' }}>YELLOW</Text>
             </Text>
-          </>
         )}
       </View>
     </ScrollView>
@@ -86,7 +80,6 @@ function Tab3Screen() {
     <View style={styles.screen}>
       <Text style={styles.label}>String Badge Value</Text>
       {Platform.OS === 'ios' ? (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: "NEW!"{'\n'}{'\n'}
             selected: `tabBarItemBadgeBackgroundColor`:{' '}
@@ -96,9 +89,7 @@ function Tab3Screen() {
             <Text style={{ color: Colors.PurpleDark100, fontWeight: 'bold' }}>PURPLE</Text>
             {'\n'}{'\n'}
           </Text>
-        </>
       ) : (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: "NEW!"{'\n'}{'\n'}
             `tabBarItemBadgeBackgroundColor`:{' '}
@@ -107,7 +98,6 @@ function Tab3Screen() {
             `tabBarItemBadgeTextColor`:{' '}
             <Text style={{ color: Colors.NavyLight100, fontWeight: 'bold' }}>NAVY</Text>
           </Text>
-        </>
       )}
     </View>
   );
@@ -118,17 +108,14 @@ function Tab4Screen() {
     <View style={styles.screen}>
       <Text style={styles.label}>Transparent badge background</Text>
       {Platform.OS === 'ios' ? (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: "⚠️"{'\n'}{'\n'}
             Badge appearance is defined only for selected tab: setting background to `transparent` value.{'\n'}{'\n'}
             Unselected badges render with the default system appearance:
             badge background{' '}
-            <Text style={{ color: 'red', fontWeight: 'bold' }}>RED</Text> with white text.
+            <Text style={{ color: PlatformColor('systemRed') , fontWeight: 'bold' }}>RED</Text> with white text.
           </Text>
-        </>
       ) : (
-        <>
           <Text style={styles.hint}>
             `badgeValue`: "⚠️"{'\n'}{'\n'}
             `tabBarItemBadgeBackgroundColor`: `transparent`
@@ -136,7 +123,6 @@ function Tab4Screen() {
             `tabBarItemBadgeTextColor`:{' '}
             <Text style={{ color: Colors.RedLight100, fontWeight: 'bold' }}>RED</Text>
           </Text>
-        </>
       )}
     </View>
   );
