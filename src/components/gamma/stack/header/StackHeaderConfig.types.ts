@@ -11,6 +11,12 @@ export interface StackHeaderConfigPropsBase {
    */
   title?: string | undefined;
   /**
+   * @summary Subtitle displayed in the header. Currently unsupported on Android.
+   *
+   * @platform ios
+   */
+  subtitle?: string | undefined;
+  /**
    * @summary Specifies if the header should be hidden.
    *
    * @default false

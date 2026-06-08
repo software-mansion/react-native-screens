@@ -19,15 +19,24 @@ export interface FormSheetProps {
   isOpen: boolean;
 
   /**
-   * @summary An array of fractional screen heights (ranging from `0.0` to `1.0`) that define
-   * the resting positions of the sheet.
+   * @summary Defines the resting positions of the sheet.
+   *
+   * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
+   * or the `fitToContents` string literal.
+   *
+   * - Fractional heights: The sheet will snap to these specific height proportions.
+   * - `fitToContents`: The sheet automatically calculates its height to wrap its content.
+   *   It will dynamically animate to adapt to any internal layout changes.
    *
    * On iOS, these map directly to `UISheetPresentationController` detents.
    * If an empty array is provided, it defaults to a single large detent.
    *
+   * @remarks
+   * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
+   *
    * @platform ios
    */
-  detents?: number[] | undefined;
+  detents?: number[] | 'fitToContents' | undefined;
 
   /**
    * @summary Determines whether the sheet requests a grabber at the top.
@@ -96,6 +105,17 @@ export interface FormSheetProps {
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
+  /**
+   * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
+   *
+   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
+   * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
+   *
+   * @default false
+   * @platform ios
+   */
+  preventNativeDismiss?: boolean | undefined;
+
   // Events
   /**
    * @summary Called when the sheet is dismissed natively.
@@ -117,4 +137,15 @@ export interface FormSheetProps {
   onDetentChanged?:
     | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
     | undefined;
+
+  /**
+   * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
+   *
+   * This event is only fired if `preventNativeDismiss` is set to `true`.
+   * It is useful for triggering custom feedback, such as an alert
+   * to inform the user why the sheet cannot be closed.
+   *
+   * @platform ios
+   */
+  onNativeDismissPrevented?: (() => void) | undefined;
 }

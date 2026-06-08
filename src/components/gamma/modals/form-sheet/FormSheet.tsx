@@ -1,15 +1,18 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import FormSheetHostNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetHostNativeComponent';
+import FormSheetContentWrapperNativeComponent from '../../../../fabric/gamma/modals/form-sheet/FormSheetContentWrapperNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 import {
   resolveInitialDetentIndex,
   resolveLargestUndimmedDetentIndex,
   resolveNativeCornerRadius,
+  resolveNativeDetents,
 } from './FormSheetUtils';
 
 export function FormSheet(props: FormSheetProps) {
   const {
+    children,
     detents,
     initialDetentIndex,
     largestUndimmedDetentIndex,
@@ -18,8 +21,9 @@ export function FormSheet(props: FormSheetProps) {
   } = props;
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
+  const nativeDetents = resolveNativeDetents(detents);
 
-  const detentsCount = detents?.length ?? 0;
+  const detentsCount = nativeDetents?.length ?? 0;
 
   const resolvedInitialDetentIndex = resolveInitialDetentIndex(
     initialDetentIndex,
@@ -31,15 +35,25 @@ export function FormSheet(props: FormSheetProps) {
     detentsCount,
   );
 
+  const isFitToContents = detents === 'fitToContents';
+
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
-      detents={detents}
+      detents={nativeDetents}
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
-      {...rest}
-    />
+      {...rest}>
+      {isFitToContents ? (
+        <FormSheetContentWrapperNativeComponent
+          style={styles.absoluteWithNoBottom}>
+          {children}
+        </FormSheetContentWrapperNativeComponent>
+      ) : (
+        children
+      )}
+    </FormSheetHostNativeComponent>
   );
 }
 
@@ -54,5 +68,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+  },
+  absoluteWithNoBottom: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });

@@ -153,23 +153,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     packagingOptions {
-        // For some reason gradle only complains about the duplicated version of libreact_render libraries
-        // while there are more libraries copied in intermediates folder of the lib build directory, we exclude
-        // only the ones that make the build fail (ideally we should only include librnscreens_modules but we
-        // are only allowed to specify exclude patterns)
+        // Several RN-provided .so are copied into this library's build intermediates and can collide when
+        // the app merges native libs. We can only specify exclude (not include) patterns, so we exclude
+        // these (ideally we'd keep only librnscreens.so).
         excludes = [
                 "META-INF",
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so",
-                "**/libreactnativejni.so",
-                "**/libreact_performance_timeline.so",
-                // In 0.76 multiple react-native's libraries were merged and these are the main new artifacts we're using.
-                // Some of above lib* names could be removed after we remove support for 0.76.
-                // https://github.com/facebook/react-native/pull/43909
-                // https://github.com/facebook/react-native/pull/46059
                 "**/libfbjni.so",
+                // RN's renderer / jni / performance-timeline libs (libreact_render*.so, libreactnativejni.so,
+                // libreact_performance_timeline.so) are merged into libreactnative.so since RN 0.76
+                // (facebook/react-native#46059), so on supported RN (>= 0.82) only libreactnative.so needs excluding.
                 "**/libreactnative.so"
         ]
     }
@@ -209,10 +204,4 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation "androidx.core:core-ktx:1.17.0"
-
-    constraints {
-        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
-            because("on older React Native versions this dependency conflicts with react-native-screens")
-        }
-    }
 }

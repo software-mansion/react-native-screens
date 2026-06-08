@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Other: E2E test only makes sense on iPad to verify sidebar visibility. Currently, e2e tests are run only on iPhone devices - TBD.
+TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
 
 ## Prerequisites
 
