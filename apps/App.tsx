@@ -7,6 +7,6 @@ enableFreeze(true);
 
 export default function App() {
   return (
-    <Tests.Feature.SafeAreaView.scenarios.TestSAVRespectsWindowInsets />
+    <Tests.Integration.SafeAreaView.scenarios.TestSavTabsSafeAreaRespectsTabBar />
   );
 }
