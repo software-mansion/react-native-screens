@@ -1,11 +1,24 @@
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderItemWrapperView.h"
+#import "RNSStackHeaderMenuCoordinator.h"
 
 @implementation RNSStackHeaderContentFactory
 
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
+{
+  UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory internalBarButtonItemForHeaderItem:item
+                                                                            withFrameChangeDelegate:delegate];
+  if (item.menu != nil) {
+    [RNSStackHeaderMenuCoordinator applyMenu:item.menu toBarButtonItem:barButtonItem];
+  }
+
+  return barButtonItem;
+}
+
++ (UIBarButtonItem *)internalBarButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
+                                withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
 {
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
