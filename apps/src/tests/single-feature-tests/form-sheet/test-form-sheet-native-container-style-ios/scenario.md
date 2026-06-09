@@ -24,7 +24,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Verification: Applying Native Background Color
+### Applying Default Native Background Color
 
 2. Tap the "Open FormSheet" button.
 
@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Verification: Layout Stability
+### Layout Stability
 
 3. Tap the "Expand Content" button.
 
@@ -42,3 +42,20 @@ TBD: Planned, but will be implemented separately.
 4. Tap the "Dismiss from JS" button.
 
 - [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen.
+
+---
+
+### Dynamic Native Background Color
+
+5. In the color selection controls, tap the **"PURPLE"** option.
+
+- [ ] The PURPLE option becomes visually active.
+
+6. Tap the "Open FormSheet" button.
+
+- [ ] The FormSheet opens smoothly.
+- [ ] The background color is now purple, extending to the bottom edge of the screen just as it did with the navy color.
+
+7. Swipe down to dismiss the FormSheet.
+
+- [ ] The FormSheet dismisses smoothly.
