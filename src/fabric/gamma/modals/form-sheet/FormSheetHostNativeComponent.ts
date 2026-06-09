@@ -11,6 +11,7 @@ type DetentChangedEvent = Readonly<{
 }>;
 
 interface NativeProps extends ViewProps {
+  // General
   isOpen?: CT.WithDefault<boolean, false>;
   detents?: CT.Double[] | undefined;
   prefersGrabberVisible?: CT.WithDefault<boolean, false>;
@@ -19,6 +20,11 @@ interface NativeProps extends ViewProps {
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
+  // Events
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onNativeDismissPrevented?:
     | CT.DirectEventHandler<GenericEmptyEvent>

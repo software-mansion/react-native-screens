@@ -158,6 +158,26 @@ namespace react = facebook::react;
 }
 #endif // !TARGET_OS_TV
 
+- (void)sheetControllerWillAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillAppear];
+}
+
+- (void)sheetControllerDidAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidAppear];
+}
+
+- (void)sheetControllerWillDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)sheetControllerDidDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidDisappear];
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
