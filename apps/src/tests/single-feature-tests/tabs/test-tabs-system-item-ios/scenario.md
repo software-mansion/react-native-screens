@@ -103,7 +103,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The tab bar item reverts to the UIKit favorites icon and
   `Favorites` title.
-- iOS 26: The tab bar item correctly realigns and is no longer detached.
+- [ ] iOS 26: The tab bar item correctly realigns and is no longer detached.
 
 ---
 
@@ -113,7 +113,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The tab bar item label changes to `Custom` immediately.
 - [ ] The on-screen status updates to `title: "Custom"`.
-- [ ] The **Custom** button is highlighted dark blue.
+- [ ] The **custom** button is highlighted dark blue.
 - [ ] The favorites icon remains visible and is unchanged.
 
 8. Tap **hidden** in the title group.
@@ -171,7 +171,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ### Runtime Config tab — combined overrides
 
-14. Set systemItem to **search**, title to **Custom**, icon to
+14. Set systemItem to **search**, title to **custom**, icon to
     **heart** (all three groups in a non-default state).
 
 - [ ] The tab bar item shows the `heart` SF Symbol icon (custom
@@ -188,7 +188,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 - [ ] iOS 26: The second tab bar item remains detached.
   
 16. Tap second tab again. Change systemItem to **history** while keeping title as
-    **Custom** and icon as **heart**.
+    **custom** and icon as **heart**.
 
 - [ ] The icon remains `heart.fill`.
 - [ ] The label reads `Custom`.
@@ -196,7 +196,7 @@ iPhone Pro models (for iOS 18 excluding Max).
   `title: "Custom"`, `icon: custom 'heart'`.
 
 17. Change icon to **system** while keeping systemItem as
-    **history** and title as **Custom**.
+    **history** and title as **custom**.
 
 - [ ] The icon falls back to the UIKit system history (clock) icon
   immediately.

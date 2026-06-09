@@ -111,7 +111,9 @@ function RuntimeConfigScreen() {
         ? "'' (hidden)"
         : 'undefined (system)';
   const iconDisplay =
-    config.icon === 'system' ? 'system (from systemItem)' : `custom \`${config.icon}\``;
+    config.icon === 'system'
+      ? 'system (from systemItem)'
+      : `custom '${config.icon}'`;
 
   return (
     <ScrollView>
@@ -121,7 +123,7 @@ function RuntimeConfigScreen() {
           Configure systemItem, title and icon at runtime{'\n'}in different combinations.
           {'\n'}
           {'\n'}
-          systemItem: `{config.systemItem}`{'\n'}
+          systemItem: {`'${config.systemItem}'`}{'\n'}
           title: {titleDisplay}
           {'\n'}
           icon: {iconDisplay}
