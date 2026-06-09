@@ -10,12 +10,6 @@ platform, that the color persists when switching between tabs, and that
 restoring `unset` returns the container to the system default. The prop
 is a host-level setting: it is not per-route.
 
-Platform surfaces affected:
-- **iOS** — applied to the `UITabBarController`'s root view (behind
-  both the content area and the tab bar).
-- **Android** — applied to the `FrameLayout` that wraps the currently
-  focused screen and the `BottomNavigationView`.
-
 **OS test creation version:** iOS: 18.6 and 26.5, Android: API Level 36.
 
 ## E2E test
