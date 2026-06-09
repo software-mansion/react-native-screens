@@ -108,23 +108,17 @@
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
     UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
     if ([RNSScreenWindowTraits maskFromOrientation:currentDeviceOrientation] & orientationMask) {
-      if (!([RNSScreenWindowTraits maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
-        // if the device orientation is in the mask, but interface orientation is not, we rotate to device's orientation
-        newOrientation = currentDeviceOrientation;
-      } else {
-        if (currentDeviceOrientation != currentInterfaceOrientation) {
-          // if both device orientation and interface orientation are in the mask, but in different orientations, we
-          // rotate to device's orientation
-          newOrientation = currentDeviceOrientation;
-        }
-      }
+      // force orientation to device orientation
+      newOrientation = currentDeviceOrientation;
     } else {
       if (!([RNSScreenWindowTraits maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
         // if both device orientation and interface orientation are not in the mask, we rotate to closest available
         // rotation from mask
         newOrientation = [RNSScreenWindowTraits defaultOrientationForOrientationMask:orientationMask];
       } else {
-        // if the device orientation is not in the mask, but interface orientation is in the mask, do nothing
+        // if the device orientation is not in the mask, but interface orientation is in the mask, rotate to interface
+        // orientation
+        newOrientation = currentInterfaceOrientation;
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
