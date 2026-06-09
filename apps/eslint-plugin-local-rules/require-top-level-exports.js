@@ -36,7 +36,7 @@ module.exports = {
 };
 
 function isPascalCase(name) {
-  return /^[A-Z]/.test(name);
+  return /^[A-Z]([A-Z]|[a-z][0-9])+$/.test(name);
 }
 
 function getComponentName(stmt) {
