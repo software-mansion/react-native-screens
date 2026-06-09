@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)prefersGrabberVisible;
 - (CGFloat)preferredCornerRadius;
 - (NSInteger)largestUndimmedDetentIndex;
+- (nullable UIColor *)nativeContainerBackgroundColor;
 
 @end
 

@@ -1,6 +1,6 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -20,6 +20,7 @@ interface NativeProps extends ViewProps {
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
