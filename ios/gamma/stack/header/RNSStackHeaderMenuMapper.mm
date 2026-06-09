@@ -41,7 +41,6 @@
 
   id type = dict[@"type"];
   if ([type isEqual:@"menu"]) {
-    [RNSStackHeaderMenuMapper validateMenuKeys:dict];
     return [self menuFromDictionary:dict];
   } else if ([type isEqual:@"menuItem"]) {
     [RNSStackHeaderMenuMapper validateMenuItemKeys:dict];
@@ -66,7 +65,7 @@
 {
   for (NSString *key in dict) {
     RCTAssert(
-        [key isEqualToString:@"type"] || [key isEqualToString:@"title"], @"Invalid key \"%@\" found in menu", key);
+        [key isEqualToString:@"type"] || [key isEqualToString:@"title"], @"Invalid key \"%@\" found in menu item", key);
   }
 }
 

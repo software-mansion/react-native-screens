@@ -4,7 +4,11 @@
 
 + (void)applyMenu:(nonnull RNSStackHeaderMenuData *)data toBarButtonItem:(nonnull UIBarButtonItem *)item
 {
-  item.menu = [self buildMenuFromData:data];
+#if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
+  if (@available(tvOS 17.0, *)) {
+    item.menu = [self buildMenuFromData:data];
+  }
+#endif // !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
 }
 
 + (UIMenu *)buildMenuFromData:(RNSStackHeaderMenuData *)data
