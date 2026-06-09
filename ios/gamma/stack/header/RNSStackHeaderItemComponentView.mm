@@ -1,7 +1,10 @@
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
+#import "RNSStackHeaderMenuData.h"
+#import "RNSStackHeaderMenuMapper.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -40,6 +43,7 @@ namespace react = facebook::react;
 - (void)resetProps
 {
   _label = nil;
+  _menu = nil;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
 }
@@ -145,6 +149,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.label != newItemProps.label) {
     _label = RCTNSStringFromStringNilIfEmpty(newItemProps.label);
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.menu != newItemProps.menu) {
+    _menu = [RNSStackHeaderMenuMapper
+        menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
     needsUpdate = YES;
   }
 

@@ -13,6 +13,7 @@ type Placement =
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
   label?: string | undefined;
+  menu?: CT.UnsafeMixed;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {
