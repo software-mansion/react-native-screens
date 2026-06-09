@@ -114,8 +114,8 @@ function RuntimeConfigScreen() {
     config.icon === 'system' ? 'system (from systemItem)' : `custom \`${config.icon}\``;
 
   return (
-    <ScrollView style={styles.screen}>
-      <View >
+    <ScrollView>
+      <View style={styles.screen}>
         <Text style={styles.label}>Runtime Config</Text>
         <Text style={styles.hint}>
           Configure systemItem, title and icon at runtime{'\n'}in different combinations.
