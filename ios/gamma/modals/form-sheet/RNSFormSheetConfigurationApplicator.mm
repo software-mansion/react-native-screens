@@ -54,7 +54,7 @@
   // Behavior data
 
   NSArray<UISheetPresentationControllerDetent *> *nativeDetents =
-      [RNSFormSheetDetentResolver buildSheetDetentsForFractions:behaviorProvider.detents];
+      [RNSFormSheetDetentResolver buildSheetDetentsWithBehaviorProvider:behaviorProvider];
 
   UISheetPresentationControllerDetentIdentifier initialDetentIdentifier = nil;
   if (!_initialDetentApplied) {
@@ -90,6 +90,8 @@
     sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
   }];
 #endif // !TARGET_OS_TV
+
+  controller.view.backgroundColor = appearanceProvider.nativeContainerBackgroundColor ?: UIColor.clearColor;
 }
 
 @end

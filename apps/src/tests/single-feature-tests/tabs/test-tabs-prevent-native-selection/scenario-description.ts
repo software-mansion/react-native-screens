@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-prevent-native-selection',
   details: 'Test preventNativeSelection prop on TabsScreen',
   platforms: ['android', 'ios'],
-  e2eCoverage: 'tbd',
-  smokeTest: false,
+  e2eCoverage: 'incomplete',
+  smokeTest: true,
 };

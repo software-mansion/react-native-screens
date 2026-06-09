@@ -4,6 +4,7 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include <react/renderer/core/LayoutContext.h>
 #include "RNSStackHeaderConfigState.h"
 
 namespace facebook::react {
@@ -27,6 +28,11 @@ class JSI_EXPORT RNSStackHeaderConfigShadowNode final
 
 #ifdef ANDROID
   Point getContentOriginOffset(bool includeTransform) const override;
+#else // ANDROID
+  void layout(LayoutContext layoutContext) override;
+
+ private:
+  void applyFrameCorrections();
 #endif // ANDROID
 };
 

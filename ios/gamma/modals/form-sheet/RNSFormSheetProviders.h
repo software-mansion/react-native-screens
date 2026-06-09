@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)prefersGrabberVisible;
 - (CGFloat)preferredCornerRadius;
 - (NSInteger)largestUndimmedDetentIndex;
+- (nullable UIColor *)nativeContainerBackgroundColor;
 
 @end
 
@@ -30,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 - (NSInteger)initialDetentIndex;
 - (BOOL)prefersScrollingExpandsWhenScrolledToEdge;
+- (BOOL)preventNativeDismiss;
+- (CGFloat)reactContentsHeight;
 
 @end
 

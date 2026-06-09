@@ -16,6 +16,7 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -210,6 +211,11 @@ open class StackHeaderConfigViewManager :
                         id = item.requireNotNullString("id"),
                         title = item.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
                         hidden = item.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+                        showAsAction =
+                            item.readShowAsActionEnum(
+                                "showAsAction",
+                                StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
+                            ),
                     )
                 }
             } ?: emptyList()
@@ -226,9 +232,19 @@ open class StackHeaderConfigViewManager :
             StackHeaderToolbarMenuItemOptions(
                 title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
                 hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+                showAsAction =
+                    map.readNullableShowAsActionEnumUpdate(
+                        "showAsAction",
+                        StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
+                    ),
             ),
         )
     }
+
+    override fun setDO_NOT_USE(
+        view: StackHeaderConfig,
+        value: ReadableMap?,
+    ) = Unit
 
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
@@ -251,6 +267,14 @@ private fun ReadableMap.readBoolean(
     default: Boolean,
 ): Boolean = if (!this.hasKey(key) || this.isNull(key)) default else this.getBoolean(key)
 
+private fun ReadableMap.readShowAsActionEnum(
+    key: String,
+    default: StackHeaderToolbarMenuItemShowAsAction,
+): StackHeaderToolbarMenuItemShowAsAction {
+    val stringValue = this.getString(key) ?: return default
+    return toMenuItemShowAsActionEnum(stringValue)
+}
+
 // Helpers for view commands:
 // - not defined -> null (means "no update")
 // - null -> default (means "reset to default value")
@@ -272,4 +296,27 @@ private fun ReadableMap.readNullableBooleanUpdate(
         !this.hasKey(key) -> null
         this.isNull(key) -> default
         else -> this.getBoolean(key)
+    }
+
+private fun ReadableMap.readNullableShowAsActionEnumUpdate(
+    key: String,
+    default: StackHeaderToolbarMenuItemShowAsAction,
+): StackHeaderToolbarMenuItemShowAsAction? =
+    when {
+        !this.hasKey(key) -> null
+        this.isNull(key) -> default
+        else ->
+            this.getString(key)?.let {
+                toMenuItemShowAsActionEnum(it)
+            } ?: default
+    }
+
+private fun toMenuItemShowAsActionEnum(value: String): StackHeaderToolbarMenuItemShowAsAction =
+    when (value) {
+        "always" -> StackHeaderToolbarMenuItemShowAsAction.ALWAYS
+        "alwaysWithText" -> StackHeaderToolbarMenuItemShowAsAction.ALWAYS_WITH_TEXT
+        "ifRoom" -> StackHeaderToolbarMenuItemShowAsAction.IF_ROOM
+        "ifRoomWithText" -> StackHeaderToolbarMenuItemShowAsAction.IF_ROOM_WITH_TEXT
+        "never" -> StackHeaderToolbarMenuItemShowAsAction.NEVER
+        else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid value for StackHeaderToolbarMenuItemShowAsAction: $value.")
     }

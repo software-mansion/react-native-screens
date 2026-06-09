@@ -11,7 +11,7 @@ that there is no scroll-to-top behavior when it is disabled or absent.
 
 ## E2E test
 
-Yes: Covers all manual scenario steps.
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 

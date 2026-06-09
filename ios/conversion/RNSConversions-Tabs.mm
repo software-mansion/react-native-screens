@@ -1,5 +1,4 @@
 #import <React/RCTConversions.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 #import "RNSDefines.h"

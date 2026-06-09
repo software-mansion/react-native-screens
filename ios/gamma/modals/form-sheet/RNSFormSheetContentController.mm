@@ -9,7 +9,8 @@
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate
+@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
+                                             UIGestureRecognizerDelegate
 #if !TARGET_OS_TV
                                              ,
                                              UISheetPresentationControllerDelegate
@@ -21,6 +22,8 @@
   RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
   RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
   RNSFormSheetPresentationManager *_Nonnull _presentationManager;
+
+  UITapGestureRecognizer *_Nullable _backdropTapGestureRecognizer;
 
   BOOL _needsInitialDetentReset;
 }
@@ -60,7 +63,37 @@
   [self.delegate sheetControllerViewDidLayoutSubviews:self];
 }
 
-#pragma mark - Presentation
+- (void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];
+  [self attachBackdropTapGestureRecognizer];
+
+  [self.delegate sheetControllerWillAppear:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+
+  [self.delegate sheetControllerDidAppear:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+
+  [self.delegate sheetControllerWillDisappear:self];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [self detachBackdropTapGestureRecognizer];
+
+  [self.delegate sheetControllerDidDisappear:self];
+}
+
+#pragma mark - Presentation Setup
 
 - (void)updatePresentationIfNeeded
 {
@@ -159,6 +192,19 @@
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
+- (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
+{
+  if (_behaviorProvider.preventNativeDismiss) {
+    return NO;
+  }
+  return YES;
+}
+
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  [self.delegate sheetControllerDidPreventNativeDismiss:self];
+}
+
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   [_presentationManager handleNativeDismiss];
@@ -175,5 +221,66 @@
   [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
 }
 #endif // !TARGET_OS_TV
+
+#pragma mark - Backdrop tap handling
+
+- (void)attachBackdropTapGestureRecognizer
+{
+  UIPresentationController *presentationController = self.presentationController;
+  if (presentationController && presentationController.containerView && !_backdropTapGestureRecognizer) {
+    _backdropTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                            action:@selector(handleBackdropTap:)];
+    _backdropTapGestureRecognizer.delegate = self;
+    _backdropTapGestureRecognizer.cancelsTouchesInView = NO;
+    [presentationController.containerView addGestureRecognizer:_backdropTapGestureRecognizer];
+  }
+}
+
+- (void)detachBackdropTapGestureRecognizer
+{
+  [_backdropTapGestureRecognizer.view removeGestureRecognizer:_backdropTapGestureRecognizer];
+  _backdropTapGestureRecognizer = nil;
+}
+
+- (void)handleBackdropTap:(UITapGestureRecognizer *)gesture
+{
+  if (gesture.state == UIGestureRecognizerStateRecognized) {
+    if (_behaviorProvider.preventNativeDismiss) {
+      [self.delegate sheetControllerDidPreventNativeDismiss:self];
+    }
+  }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    // When native dismissal is not being prevented, this recognizer should not
+    // participate in handling touches to avoid interfering with UIKit.
+    if (!_behaviorProvider.preventNativeDismiss) {
+      return NO;
+    }
+
+    UIPresentationController *presentationController = self.presentationController;
+
+    // Ignore any touches that land inside the actual sheet content.
+    if (presentationController && presentationController.presentedView &&
+        [touch.view isDescendantOfView:presentationController.presentedView]) {
+      return NO;
+    }
+    return YES;
+  }
+  return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    return YES;
+  }
+  return NO;
+}
 
 @end

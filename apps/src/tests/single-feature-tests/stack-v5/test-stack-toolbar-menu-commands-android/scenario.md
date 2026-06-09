@@ -14,7 +14,7 @@ value last seen from props), and any props update rebuilds the entire
 menu — discarding all prior command-applied state across all items, not
 just the slot whose prop changed.
 
-**OS test creation version:** API 36
+**OS test creation version:** Android: API Level 36
 
 ## E2E test
 
@@ -22,7 +22,7 @@ Other — automation is not implemented yet.
 
 ## Prerequisites
 
-- Android emulator
+- Android emulator or device
 
 ## Note (Optional)
 
