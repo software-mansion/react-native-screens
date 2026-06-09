@@ -7,6 +7,7 @@ import { Colors } from "@apps/shared/styling";
 import { SafeAreaView } from "react-native-screens/experimental";
 import { SafeAreaConfigContext, SafeAreaConfigurationButtons, SafeAreaMarkers, useSafeAreaConfig, useSafeAreaInitialConfig } from "@apps/tests/shared/components/safe-area-view";
 import { Rectangle } from "@apps/shared/Rectangle";
+import { type TabsBottomAccessoryEnvironment } from "react-native-screens";
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
@@ -36,10 +37,21 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ]
 
 export function TestSavTabsSafeAreaRespectsTabBar() {
+
+  const bottomAccessoryFactory = React.useCallback((_env: TabsBottomAccessoryEnvironment) => {
+    return (
+      <View style={{ height: 100, backgroundColor: Colors.GreenDark100, justifyContent: 'center', alignItems: 'center' }}>
+        <Rectangle width={60} height={60} color={Colors.GreenLight60} />
+      </View>
+    );
+  }, []);
+
+
   return (
     <TabsContainer routeConfigs={ROUTE_CONFIGS} ios={{
       tabBarControllerMode: 'tabSidebar',
-      tabBarMinimizeBehavior: 'onScrollDown'
+      tabBarMinimizeBehavior: 'onScrollDown',
+      bottomAccessory: bottomAccessoryFactory,
     }} />
   );
 }
@@ -100,9 +112,9 @@ function TabContentsWithScrollViewInner() {
   return (
     <>
       <ScrollView>
-        {Array.from({ length: 16 }).map(() => {
+        {Array.from({ length: 16 }).map((_, index) => {
           return (
-            <View style={{ height: 100, backgroundColor: Colors.GreenLight60, marginBottom: 8 }}>
+            <View key={index.toString()} style={{ height: 100, backgroundColor: Colors.GreenLight60, marginBottom: 8 }}>
               <SafeAreaMarkers markerTextProps={{ fontSize: 24 }} isTopEnabled={false} isBottomEnabled={false} />
             </View>
           );
