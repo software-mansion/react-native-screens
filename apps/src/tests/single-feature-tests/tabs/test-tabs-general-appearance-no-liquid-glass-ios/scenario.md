@@ -34,7 +34,6 @@ detected by Detox view-hierarchy or snapshot testing.
   background color to show through the semi-transparent scrollEdgeAppearance
   background and blur layers if both appearances are set to true.
 
-
 - The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor`properties
   are explicitly configured for iOS in this scenario,
   and have no effect on Android.
