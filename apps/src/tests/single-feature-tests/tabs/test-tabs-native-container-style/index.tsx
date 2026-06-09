@@ -5,13 +5,11 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, type ColorValue } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type { ColorValue } from 'react-native';
-
 type ContainerBackgroundOption = 'unset' | 'blue' | 'yellow' | 'purple';
 
 function ConfigScreen() {
@@ -38,12 +36,6 @@ function ConfigScreen() {
     if (bgColor === Colors.BlueLight100) return 'blue';
     if (bgColor === Colors.YellowLight100) return 'yellow';
     if (bgColor === Colors.PurpleLight100) return 'purple';
-    if (bgColor !== undefined) {
-      console.warn(
-        `[test-tabs-native-container-style] Unrecognized nativeContainerStyle.backgroundColor: ${String(bgColor)}. ` +
-          `Picker shows 'unset' but a native color may be set. This may indicate a platform-specific color serialization issue.`
-      );
-    }
     return 'unset';
   })();
 
