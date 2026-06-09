@@ -15,9 +15,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSStackHeaderItemComponentView {
-  RNSHeaderItemPlacement _placement;
   BOOL _didSetHeaderItemPlacement;
-  NSString *_Nullable _label;
 
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
   RNSStackHeaderItemShadowStateProxy *_Nonnull _shadowStateProxy;
@@ -46,17 +44,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
 }
 
-- (RNSHeaderItemPlacement)placement
-{
-  return _placement;
-}
-
 #pragma mark - RNSStackHeaderItemDataProviding
-
-- (nullable NSString *)label
-{
-  return _label;
-}
 
 - (nullable UIView *)customView
 {

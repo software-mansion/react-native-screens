@@ -1,8 +1,8 @@
-#import "RNSStackHeaderItemCoordinator.h"
+#import "RNSStackHeaderContentFactory.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderItemWrapperView.h"
 
-@implementation RNSStackHeaderItemCoordinator
+@implementation RNSStackHeaderContentFactory
 
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate

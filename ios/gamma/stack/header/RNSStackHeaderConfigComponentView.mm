@@ -1,9 +1,9 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSLog.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
+#import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderData.h"
 #import "RNSStackHeaderItemComponentView.h"
-#import "RNSStackHeaderItemCoordinator.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSStackNavigationController.h"
@@ -243,27 +243,27 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
       switch (item.placement) {
         case RNSHeaderItemPlacementLeading:
-          [leadingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForHeaderItem:item
-                                                                    withFrameChangeDelegate:self]];
+          [leadingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
+                                                                   withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTrailing:
-          [trailingItems addObject:[RNSStackHeaderItemCoordinator barButtonItemForHeaderItem:item
-                                                                     withFrameChangeDelegate:self]];
+          [trailingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
+                                                                    withFrameChangeDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.customView != nil) {
-            *outTitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item frameChangeDelegate:self];
+            *outTitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementSubtitle:
           if (item.customView != nil) {
-            *outSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item frameChangeDelegate:self];
+            *outSubtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item frameChangeDelegate:self];
           }
           break;
         case RNSHeaderItemPlacementLargeSubtitle:
           if (item.customView != nil) {
-            *outLargeSubtitleView = [RNSStackHeaderItemCoordinator wrappedViewForHeaderItem:item
-                                                                        frameChangeDelegate:self];
+            *outLargeSubtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
+                                                                       frameChangeDelegate:self];
           }
           break;
       }
@@ -271,10 +271,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       auto *spacer = static_cast<RNSStackHeaderItemSpacerComponentView *>(child);
       switch (spacer.placement) {
         case RNSHeaderItemSpacerPlacementLeading:
-          [leadingItems addObject:[RNSStackHeaderItemCoordinator spacerForHeaderSpacerItem:spacer]];
+          [leadingItems addObject:[RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer]];
           break;
         case RNSHeaderItemSpacerPlacementTrailing:
-          [trailingItems addObject:[RNSStackHeaderItemCoordinator spacerForHeaderSpacerItem:spacer]];
+          [trailingItems addObject:[RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer]];
           break;
       }
     }
