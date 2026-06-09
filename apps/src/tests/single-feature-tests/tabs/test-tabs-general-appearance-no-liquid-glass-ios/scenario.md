@@ -34,7 +34,7 @@ detected by Detox view-hierarchy or snapshot testing.
   background color to show through the semi-transparent scrollEdgeAppearance
   background and blur layers if both appearances are set to true.
 
-- The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor`properties
+- The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor` properties
   are explicitly configured for iOS in this scenario,
   and have no effect on Android.
 - On iOS 26+ (Liquid Glass), all three props are inert; this scenario
@@ -54,11 +54,6 @@ detected by Detox view-hierarchy or snapshot testing.
 - The color values described as "system defaults" (such as the gray titles for
   unselected tabs in Step 3) are controlled entirely by UIKit and can change in
   future iOS versions.
-- Due to native UIKit layering on iOS, a semi-transparent scrollEdgeAppearance
-  acts as an overlay and allows the standardAppearance to show through from underneath.
-  Therefore, toggling standardAppearance to true in this specific scenario will alter
-  the overall background appearance, as the standard background color becomes visible
-  and blends with the semi-transparent top layer.
 
 ## Steps
 

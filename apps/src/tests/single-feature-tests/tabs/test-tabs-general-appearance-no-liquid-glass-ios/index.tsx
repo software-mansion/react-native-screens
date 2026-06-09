@@ -7,7 +7,7 @@ import {
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';
-import scenarioDescription from './scenario-description';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import type { TabsScreenAppearanceIOS } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';

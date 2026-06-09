@@ -1,6 +1,6 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
-const scenarioDescription: ScenarioDescription = {
+export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar General Appearance No Liquid Glass',
   key: 'test-tabs-general-appearance-no-liquid-glass-ios',
   details:
@@ -9,5 +9,3 @@ const scenarioDescription: ScenarioDescription = {
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };
-
-export default scenarioDescription;
