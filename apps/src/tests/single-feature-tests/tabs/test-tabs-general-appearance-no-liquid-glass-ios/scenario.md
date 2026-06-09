@@ -21,9 +21,19 @@ detected by Detox view-hierarchy or snapshot testing.
 
 ## Prerequisites
 
-- iOS 18 simulator or device (the tested props have no effect on iOS 26+)
+- iOS 18 simulator or device (the tested props have no effect on iOS 26+).
 
 ## Note
+
+- This scenario is designed and expected to be run through the main navigation hierarchy of the **Example app**.
+  - When run via the Example app: Setting standardAppearance to true while
+  scrollEdgeAppearance is active will not affect the tab bar;
+  the scroll edge appearance, background color, and blur effect remain unchanged,
+  which is the expected behavior.
+  - When run directly: The layout hierarchy changes, causing the standardAppearance
+  background color to show through the semi-transparent scrollEdgeAppearance
+  background and blur layers if both appearances are set to true.
+
 
 - The `tabBarBackgroundColor`, `tabBarBlurEffect`, and `tabBarShadowColor`properties
   are explicitly configured for iOS in this scenario,
@@ -55,12 +65,13 @@ detected by Detox view-hierarchy or snapshot testing.
 
 ### Baseline
 
-1. Launch the app and navigate to the
+1. Launch the app via the **Example app navigation** and navigate to the
    **Tab Bar General Appearance No Liquid Glass** screen.
 
-- [ ] Expected: **Tab1** is selected and its content is visible.
-  The tab bar shows three items: Tab1, Tab2, Tab3. Both toggles on
-  Tab1 are set to **false**. A green background is visible through the tab bar area.
+- [ ] **Tab1** is selected and its content is visible.
+- [ ] The tab bar shows three items: Tab1, Tab2, Tab3.
+- [ ] Both toggles on Tab1 are set to **false**.
+- [ ] A green background is visible through the tab bar area.
 
 ---
 
@@ -69,11 +80,10 @@ detected by Detox view-hierarchy or snapshot testing.
 2. Observe the tab bar while **Tab1** is selected and both toggles
    are **false** (default state).
 
-- [ ] Expected: No `standardAppearance` or `scrollEdgeAppearance` is
-  set. UIKit uses its default appearance - the tab bar background is transparent
-  with no custom color or shadow. The view's green background is
-  visible through the tab bar area. Titles of unselected tab bar items are
-  darker green, while the selected tab title is written in default blue.
+- [ ] No `standardAppearance` or `scrollEdgeAppearance` is set.
+- [ ] UIKit uses its default appearance - the tab bar background is transparent with no custom color or shadow.
+- [ ] The view's green background is visible through the tab bar area.
+- [ ] Titles of unselected tab bar items are darker green, while the selected tab title is written in default blue.
 
 ---
 
@@ -81,24 +91,21 @@ detected by Detox view-hierarchy or snapshot testing.
 
 3. On Tab1, enable the **standardAppearance** toggle.
 
-- [ ] Expected: `standardAppearance` is applied. Because Tab1 has no
-  `ScrollView`, the view is always at the scroll edge, so UIKit derives
-  `scrollEdgeAppearance` from `standardAppearance` with a transparent
-  background. The tab bar shows a transparent background (no dark navy)
-  and no red shadow line. The view's green background is
-  visible through the tab bar area. Titles of unselected tab bar items are
-  gray, while the selected tab title is written in the default blue color.
+- [ ] `standardAppearance` is applied. Because Tab1 has no `ScrollView`, the view
+is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
+`standardAppearance` with a transparent background.
+- [ ] The tab bar shows a transparent background (no dark navy) and no red shadow line.
+- [ ] The view's green background is visible through the tab bar area.
+- [ ] Titles of unselected tab bar items are gray, while the selected tab title is written in the default blue color.
 
 ---
 
 ### Tab1 - standardAppearance false, scrollEdgeAppearance true
 
-4. Disable **standardAppearance** and enable
-   **scrollEdgeAppearance**.
+4. Disable **standardAppearance** and enable **scrollEdgeAppearance**.
 
-- [ ] Expected: The tab bar shows a semi-transparent dark purple background with
-the default blur applied (making the background look light gray)
-featuring a bright purple shadow line.
+- [ ] The tab bar shows a semi-transparent dark purple background with a bright purple shadow line.
+- [ ] The system default blur applied (making the background look light gray).
 
 ---
 
@@ -106,14 +113,13 @@ featuring a bright purple shadow line.
 
 5. Enable **standardAppearance** (both toggles now true).
 
-- [ ] Expected: Both appearances are set. The tab bar shows a
-  semi-transparent dark purple background and a bright purple shadow line from `scrollEdgeAppearance`.
-  System default blur is applied as `tabBarBlurEffect` is not set. Background color define for `standardAppearance` is
-  visible through the blur (making the background look darker then in step 4).
+- [ ] Both appearances are set.
+- [ ] The tab bar shows a semi-transparent dark purple background and a bright purple shadow line from `scrollEdgeAppearance`.
+- [ ] System default blur is applied as `tabBarBlurEffect` is not set.
 
 6. Disable both toggles to restore default state before moving to Tab2.
 
-- [ ] Expected: The tab bar returns to the UIKit system default
+- [ ] The tab bar returns to the UIKit system default
   appearance (no custom color or shadow).
 
 ---
@@ -122,25 +128,23 @@ featuring a bright purple shadow line.
 
 7. Tap **Tab2**.
 
-- [ ] Expected: Tab2 is selected, displaying a `ScrollView` scrolled to the top
-  of the list. Both toggles are **true** by default. The tab bar background is solid
-  dark blue with a red shadow line.
-  No blur effect is applied (background color is exactly NavyDark100).
+- [ ] Tab2 is selected, displaying a `ScrollView` scrolled to the top of the list.
+- [ ] Both toggles are **true** by default.
+- [ ] The tab bar background is solid dark blue with a red shadow line.
+- [ ] No blur effect is applied (background color is exactly NavyDark100).
 
 8. Scroll all the way to the **bottom** of Tab2 until the trees image
     and end of content are visible.
 
-- [ ] Expected: The tab bar background appears as a slightly muted dark
-  navy with a subtle grayish or milky cast. At the bottom edge of the content,
-  `scrollEdgeAppearance` activates: transparent dark purple
-  background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
-  The final appearance is a blend of the  `scrollEdgeAppearance` configuration
-  mixed with the underlying `standardAppearance` color and the view's green background.
+- [ ] The tab bar background appears as a slightly muted dark navy with a subtle
+grayish or milky cast.
+- [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
+transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
+- [ ] The final appearance is a blend of the  `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
   
 9. Scroll **back to the top** of Tab2.
 
-- [ ] Expected: The background returns to solid dark blue with a red shadow line.
-No blur effect is applied.
+- [ ] The background returns to solid dark blue with a red shadow line.
 
 ---
 
@@ -148,12 +152,11 @@ No blur effect is applied.
 
 10. Disable **scrollEdgeAppearance** and scroll to the bottom edge.
 
-- [ ] Expected: `scrollEdgeAppearance` is unset. UIKit derives it from
-  `standardAppearance` with a transparent background. Scrolling to the
-  bottom edge now shows a transparent tab bar (no color fill)
-  without shadow, titles of unselected tab bar items are gray.
-  At the top of the screen and during scrolling, the tab bar still
-  has a solid dark blue background with a red shadow line.
+- [ ] `scrollEdgeAppearance` is unset.
+- [ ] Scrolling to the bottom edge now shows a transparent tab bar (no color fill)
+without shadow, titles of unselected tab bar items are gray.
+- [ ] At the top of the screen and during scrolling, the tab bar still has a
+solid dark blue background with a red shadow line.
 
 ---
 
@@ -161,34 +164,31 @@ No blur effect is applied.
 
 11. Disable **standardAppearance** (both toggles now false).
 
-- [ ] Expected: No custom appearances are set. The tab bar reverts to
-  the UIKit system default throughout all scroll positions. No custom
-  color or shadow is applied at the top, middle, or bottom of the scroll content.
-  At the bottom, the tab bar background is transparent without a shadow,
-  titles of unselected tab bar items are darker green. In all
-  other positions on the screen, the background is semi-transparent with the
-  default blur (making the background milky white) and shadow.
+- [ ] No custom appearances are set.
+- [ ] The tab bar reverts to the UIKit system default throughout all scroll positions.
+- [ ] No custom color or shadow is applied at the top, middle, or bottom of the scroll content.
+- [ ] At the bottom, the tab bar background is transparent without a shadow,
+titles of unselected tab bar items are darker green. In all other positions on
+the screen, the background is semi-transparent with the default blur (making the
+background milky white) and shadow.
 
 ---
 
 ### Tab2 - standardAppearance false, scrollEdgeAppearance true
 
-12. Disable **standardAppearance** and enable **scrollEdgeAppearance**.
-    Scroll all the way to the **bottom** of Tab2 until the trees image
-    and end of content are visible.
+12. Enable **scrollEdgeAppearance**. Scroll all the way to the **bottom** of
+Tab2 until the trees image and end of content are visible.
 
-- [ ] Expected: The tab bar background appears as a slightly muted dark
-  gray with a subtle milky cast. At the bottom edge of the content,
-  `scrollEdgeAppearance` activates: transparent dark purple
-  background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
-  At the top of the screen and during scrolling, the tab bar still
-  has semi-transparent background with the
-  default blur (making the background milky white) and shadow.
+- [ ] The tab bar background appears as a slightly muted dark navy with a subtle
+grayish or milky cast.
+- [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
+transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
+- [ ] The final appearance is a blend of the  `scrollEdgeAppearance` configuration mixed with the underlying view's green background. 
 
-13. Re-enable both toggles to restore Tab2 default state before
+13.  Re-enable both toggles to restore Tab2 default state before
     proceeding.
 
-- [ ] Expected: Both toggles are true; scrollEdgeAppearance and
+- [ ] Both toggles are true; scrollEdgeAppearance and
   standardAppearance configurations are restored.
 
 ---
@@ -197,33 +197,28 @@ No blur effect is applied.
 
 14. Tap **Tab3**.
 
-- [ ] Expected: Tab3 is selected, showing a `ScrollView` and tabBarBlurEffect
-  set to `systemDefault`.
-  The blur effect is set to UIKit's default tab bar
-  blur. Background is semi-transparent navy and shadow is red.
-  Content is visible through the blurred background.
+- [ ] Tab3 is selected, showing a `ScrollView` and tabBarBlurEffect set to `systemDefault`.
+- [ ] Background is semi-transparent navy and shadow is red.
+- [ ] Content is visible through the blurred background.
 
-15. Use the **tabBarBlurEffect** picker to select
-    `systemChromeMaterialDark`. Observe the tab bar.
+15. Use the **tabBarBlurEffect** picker to select `systemChromeMaterialDark`. Observe the tab bar.
 
-- [ ] Expected: The tab bar immediately updates. A dark chromatic blur
-  is now applied over the semi-transparent navy background. The shadow
-  remains red. Background and shadow colors are unchanged - only
-  the blur effect changes. Content is visible through the blurred
+- [ ] The tab bar immediately updates.
+- [ ] A dark chromatic blur is now applied over the semi-transparent navy background.
+- [ ] The shadow remains red. Background and shadow colors are unchanged - only
+  the blur effect changes.
+- [ ] Content is visible through the blurred
   background.
 
 16. Scroll to the **bottom edge** of the Tab3 list.
 
-- [ ] Expected: `scrollEdgeAppearance` activates: solid yellow
-  background, vivid purple shadow, blur set to `none`.
-  The yellow background renders as a flat opaque color with no blur
-  (background color is exactly YellowDark100), regardless of the picker
-  selection.
+- [ ] `scrollEdgeAppearance` activates: solid yellow background, vivid purple shadow, blur set to `none`.
+- [ ] The yellow background renders as a flat opaque color with no blur (background color is exactly YellowDark100),
+regardless of the picker selection.
 
 17. Scroll back to **middle-list** and use the picker to select `none`.
 
-- [ ] Expected: Blur is removed. The tab bar background is a flat
-  semi-transparent navy tint with red shadow and no blur.
+- [ ] Blur is removed. The tab bar background is a flat semi-transparent navy tint with red shadow and no blur.
 
 ---
 
@@ -231,5 +226,5 @@ No blur effect is applied.
 
 18. Switch rapidly between Tab1, Tab2, and Tab3 several times.
 
-- [ ] Expected: Each tab's configured appearance is applied immediately
+- [ ] Each tab's configured appearance is applied immediately
   upon selection. No crash occurs.
