@@ -287,7 +287,7 @@ internal class StackHeaderCoordinatorLayout(
         currentProvider = null
         currentDelegate = null
 
-        stackScreen.registerHeaderConfigAttachListener(null)
+        stackScreen.clearHeaderConfigAttachListener()
     }
 
     // endregion
