@@ -8,7 +8,7 @@ interface StackHeaderConfigurationObserver {
         flags: StackHeaderUpdateFlags,
     )
 
-    fun onMenuItemUpdate(
+    fun onMenuItemUpdated(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
     )

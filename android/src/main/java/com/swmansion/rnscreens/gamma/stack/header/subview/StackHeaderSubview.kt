@@ -20,7 +20,7 @@ class StackHeaderSubview(
         StackHeaderSubviewCollapseMode.OFF,
     ) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
+            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChanged()
         }
     }
         internal set
@@ -31,7 +31,7 @@ class StackHeaderSubview(
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    override fun updateContentOriginOffset(
+    fun updateContentOriginOffset(
         x: Int,
         y: Int,
     ) {

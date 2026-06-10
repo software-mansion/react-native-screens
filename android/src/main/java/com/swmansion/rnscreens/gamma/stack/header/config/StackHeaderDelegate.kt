@@ -1,11 +1,19 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
+import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
+
 interface StackHeaderDelegate {
-    fun updateHeaderFrame(
+    fun onHeaderFrameChanged(
         width: Int,
         height: Int,
         contentOffsetY: Int,
     )
 
-    fun onMenuItemClick(id: String)
+    fun onMenuItemClicked(id: String)
+
+    fun onSubviewOriginChanged(
+        type: StackHeaderSubviewType,
+        x: Int,
+        y: Int,
+    )
 }

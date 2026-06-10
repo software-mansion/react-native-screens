@@ -439,8 +439,7 @@ internal class StackHeaderApplicator(
         }
     }
 
-    private fun resolveDefaultBackButtonIcon(): Drawable? =
-        resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
+    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
 
     private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
