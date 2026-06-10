@@ -56,6 +56,8 @@ class StackHostViewManager :
 
     override fun getChildCount(parent: StackHost): Int = parent.renderedScreens.size
 
+    override fun onDropViewInstance(view: StackHost) = view.tearDown()
+
     companion object {
         const val REACT_CLASS = "RNSStackHost"
     }

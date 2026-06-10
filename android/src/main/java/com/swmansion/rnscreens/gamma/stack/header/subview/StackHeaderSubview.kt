@@ -13,6 +13,10 @@ class StackHeaderSubview(
     val reactContext: ReactContext,
 ) : ReactViewGroup(reactContext),
     StackHeaderSubviewProviding {
+    internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
+
+    // region Properties
+
     override var type: StackHeaderSubviewType = StackHeaderSubviewType.CENTER
         internal set
 
@@ -20,25 +24,35 @@ class StackHeaderSubview(
         StackHeaderSubviewCollapseMode.OFF,
     ) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChange()
+            onStackHeaderSubviewChangeListener?.get()?.onStackHeaderSubviewChanged()
         }
     }
         internal set
 
+    // endregion
+
+    // region StackHeaderSubviewProviding
+
     override val view = this
+
+    // endregion
+
+    // region Shadow state synchronization (origin)
 
     private val shadowStateProxy = ShadowStateProxy(includesFrameSize = false)
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    override fun updateContentOriginOffset(
+    fun updateContentOriginOffset(
         x: Int,
         y: Int,
     ) {
         shadowStateProxy.updateStateIfNeeded(contentOffsetX = x, contentOffsetY = y)
     }
 
-    internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null
+    // endregion
+
+    // region Layout (frame size)
 
     private var yogaWidth: Int = 0
     private var yogaHeight: Int = 0
@@ -84,4 +98,6 @@ class StackHeaderSubview(
         // Rely on parent to request the layout.
         parentAsView()?.requestLayout()
     }
+
+    // endregion
 }

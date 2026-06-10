@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
@@ -53,38 +53,60 @@ class StackScreen(
             field = value
         }
 
+    // region Shadow State synchronization
+
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    fun updateStateIfNeeded(
-        x: Int? = null,
-        y: Int? = null,
-        width: Int? = null,
-        height: Int? = null,
-    ) = shadowStateProxy.updateStateIfNeeded(
-        contentOffsetX = x,
-        contentOffsetY = y,
-        frameWidth = width,
-        frameHeight = height,
-    )
+    internal fun onContentYOriginChanged(y: Int) {
+        shadowStateProxy.updateStateIfNeeded(contentOffsetY = y)
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
+    }
+
+    // endregion
+
+    // region Header config
 
     internal var headerConfig: StackHeaderConfig? = null
         private set
 
-    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
+    private var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
+
+    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener) {
+        check(onHeaderConfigurationAttachListener?.get() == null) {
+            "[RNScreens] Attempted to register header config attach listener before previous listener was cleared."
+        }
+        onHeaderConfigurationAttachListener = WeakReference(listener)
+        headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
+    }
+
+    internal fun clearHeaderConfigAttachListener() {
+        onHeaderConfigurationAttachListener = null
+    }
 
     internal fun attachHeaderConfig(header: StackHeaderConfig) {
         headerConfig = header
-        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
+        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(header, header)
     }
 
     internal fun detachHeaderConfig(header: StackHeaderConfig) {
         if (headerConfig === header) {
             headerConfig = null
-            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
+            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(null, null)
         }
     }
+
+    // endregion
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -111,16 +133,6 @@ class StackScreen(
 
     internal fun onNativeDismissPrevented() {
         eventEmitter.emitOnNativeDismissPrevented()
-    }
-
-    override fun onLayout(
-        changed: Boolean,
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) {
-        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
     }
 
     override fun getAssociatedFragment(): Fragment? =

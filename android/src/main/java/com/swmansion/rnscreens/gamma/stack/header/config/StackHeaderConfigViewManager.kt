@@ -107,7 +107,11 @@ open class StackHeaderConfigViewManager :
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
         view.resolveToolbarMenuItemIconsIfNeeded()
-        view.notifyConfigChanged()
+    }
+
+    override fun onDropViewInstance(view: StackHeaderConfig) {
+        super.onDropViewInstance(view)
+        view.tearDown()
     }
 
     override fun setType(
