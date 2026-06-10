@@ -1538,6 +1538,25 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   _shouldNotify = YES;
 }
 
+// See RNSTabsScreenViewController: when a tab hosts a nested stack, UIKit may
+// resolve the bottom-edge content scroll view (which drives iOS 26
+// `tabBarMinimizeBehavior`) against the visible stack screen's view
+// controller rather than the tab root. UIKit's automatic detection cannot
+// reach UIScrollViews nested in a React Native screen tree, so fall back to a
+// breadth-first search. Restricted to the bottom edge so top-edge
+// (navigation bar) resolution is unaffected.
+- (UIScrollView *)contentScrollViewForEdge:(NSDirectionalRectEdge)edge
+{
+  UIScrollView *scrollView = [super contentScrollViewForEdge:edge];
+  if (scrollView != nil) {
+    return scrollView;
+  }
+  if (edge == NSDirectionalRectEdgeBottom) {
+    return [RNSScrollViewFinder findScrollViewBreadthFirstFrom:self.view];
+  }
+  return nil;
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];

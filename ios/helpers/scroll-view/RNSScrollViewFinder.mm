@@ -41,4 +41,37 @@
   return nil;
 }
 
++ (nullable UIScrollView *)findScrollViewBreadthFirstFrom:(nullable UIView *)view
+{
+  if (view == nil) {
+    return nil;
+  }
+
+  static const NSUInteger kMaxVisitedViews = 2000;
+  NSMutableArray<UIView *> *queue = [NSMutableArray arrayWithObject:view];
+  NSUInteger index = 0;
+
+  while (index < queue.count && queue.count < kMaxVisitedViews) {
+    UIView *current = queue[index++];
+
+    if ([current isKindOfClass:UIScrollView.class]) {
+      UIScrollView *scrollView = static_cast<UIScrollView *>(current);
+      // Skip horizontal-only scrollers (carousels). Unmeasured scroll views
+      // (zero contentSize) pass, since the main list may not be laid out yet
+      // when UIKit first resolves the content scroll view.
+      BOOL isHorizontalOnly = scrollView.contentSize.width > scrollView.bounds.size.width &&
+          scrollView.contentSize.height <= scrollView.bounds.size.height;
+      if (!isHorizontalOnly) {
+        return scrollView;
+      }
+      // Do not descend into a skipped horizontal scroller.
+      continue;
+    }
+
+    [queue addObjectsFromArray:current.subviews];
+  }
+
+  return nil;
+}
+
 @end
