@@ -27,10 +27,9 @@ export function findMenuElementById(
     return menu;
   }
 
-  let result;
   if (menu.type === 'menu') {
     for (const child of menu.children) {
-      result = findMenuElementById(child, menuElementId);
+      const result = findMenuElementById(child, menuElementId);
       if (result !== null) {
         return result;
       }
