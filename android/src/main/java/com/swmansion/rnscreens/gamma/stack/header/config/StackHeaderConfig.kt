@@ -33,7 +33,6 @@ class StackHeaderConfig(
     StackHeaderDelegate,
     OnStackHeaderSubviewChangeListener,
     UIManagerListener {
-
     init {
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
