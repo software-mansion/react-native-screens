@@ -8,6 +8,7 @@
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSFormSheetProviders.h"
 
+#import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -40,6 +41,7 @@ namespace react = facebook::react;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
+  UIColor *_Nullable _nativeContainerBackgroundColor;
 
   CGFloat _reactContentsHeight;
 }
@@ -74,6 +76,7 @@ namespace react = facebook::react;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
+  _nativeContainerBackgroundColor = nil;
 
   _reactContentsHeight = 0.0;
 }
@@ -157,6 +160,26 @@ namespace react = facebook::react;
   }
 }
 #endif // !TARGET_OS_TV
+
+- (void)sheetControllerWillAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillAppear];
+}
+
+- (void)sheetControllerDidAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidAppear];
+}
+
+- (void)sheetControllerWillDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)sheetControllerDidDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidDisappear];
+}
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -253,6 +276,11 @@ namespace react = facebook::react;
 
   if (oldComponentProps.largestUndimmedDetentIndex != newComponentProps.largestUndimmedDetentIndex) {
     _largestUndimmedDetentIndex = newComponentProps.largestUndimmedDetentIndex;
+    [_controller setNeedsAppearanceUpdate];
+  }
+
+  if (oldComponentProps.nativeContainerBackgroundColor != newComponentProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
     [_controller setNeedsAppearanceUpdate];
   }
 

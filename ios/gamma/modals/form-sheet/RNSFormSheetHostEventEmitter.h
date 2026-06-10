@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 #if !TARGET_OS_TV
 - (BOOL)emitOnDetentChangedWithIndex:(NSInteger)index;
 #endif // !TARGET_OS_TV
+- (BOOL)emitOnWillAppear;
+- (BOOL)emitOnDidAppear;
+- (BOOL)emitOnWillDisappear;
+- (BOOL)emitOnDidDisappear;
 
 @end
 
