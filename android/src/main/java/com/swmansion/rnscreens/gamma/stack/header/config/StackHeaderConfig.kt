@@ -4,17 +4,16 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import android.util.Log
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.helpers.IconResolution
 import com.swmansion.rnscreens.gamma.helpers.IconResolver
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
@@ -34,7 +33,6 @@ class StackHeaderConfig(
     StackHeaderDelegate,
     OnStackHeaderSubviewChangeListener,
     UIManagerListener {
-
     // region Flag accumulation
 
     private var pendingFlags = StackHeaderUpdateFlags.NONE
@@ -277,13 +275,13 @@ class StackHeaderConfig(
 
     // endregion
 
-    // region Shadow state (StackHeaderDelegate)
+    // region StackHeaderDelegate
 
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    override fun updateHeaderFrame(
+    override fun onHeaderFrameChanged(
         width: Int,
         height: Int,
         contentOffsetY: Int,
@@ -295,8 +293,23 @@ class StackHeaderConfig(
         )
     }
 
-    override fun onMenuItemClick(id: String) {
+    override fun onMenuItemClicked(id: String) {
         eventEmitter.emitOnToolbarMenuItemClicked(id)
+    }
+
+    override fun onSubviewOriginChanged(
+        type: StackHeaderSubviewType,
+        x: Int,
+        y: Int,
+    ) {
+        val subview =
+            when (type) {
+                StackHeaderSubviewType.BACKGROUND -> backgroundSubview
+                StackHeaderSubviewType.LEADING -> leadingSubview
+                StackHeaderSubviewType.CENTER -> centerSubview
+                StackHeaderSubviewType.TRAILING -> trailingSubview
+            }
+        subview?.updateContentOriginOffset(x, y)
     }
 
     // endregion
@@ -320,14 +333,14 @@ class StackHeaderConfig(
         iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
         if (iconSource == null) {
-            configObserver?.onMenuItemUpdate(id, options)
+            configObserver?.onMenuItemUpdated(id, options)
             return
         }
 
         val resolver = toolbarMenuItemIconResolvers[id]
         if (resolver == null) {
             Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
-            configObserver?.onMenuItemUpdate(id, options)
+            configObserver?.onMenuItemUpdated(id, options)
             return
         }
 
@@ -340,7 +353,7 @@ class StackHeaderConfig(
                         StackHeaderToolbarUpdate.from(result.drawable)
                     }
                 }
-            configObserver?.onMenuItemUpdate(id, options.copy(icon = icon))
+            configObserver?.onMenuItemUpdated(id, options.copy(icon = icon))
         }
     }
 
@@ -348,7 +361,7 @@ class StackHeaderConfig(
 
     // region Subview management
 
-    override fun onStackHeaderSubviewChange() {
+    override fun onStackHeaderSubviewChanged() {
         invalidate(StackHeaderUpdateFlags.SUBVIEWS)
     }
 

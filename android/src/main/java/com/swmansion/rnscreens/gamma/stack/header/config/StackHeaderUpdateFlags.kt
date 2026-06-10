@@ -1,7 +1,9 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 @JvmInline
-value class StackHeaderUpdateFlags(val raw: Int) {
+value class StackHeaderUpdateFlags(
+    val raw: Int,
+) {
     companion object {
         val NONE = StackHeaderUpdateFlags(0)
         val STRUCTURE = StackHeaderUpdateFlags(1 shl 0)
@@ -18,6 +20,8 @@ value class StackHeaderUpdateFlags(val raw: Int) {
     infix fun or(other: StackHeaderUpdateFlags) = StackHeaderUpdateFlags(raw or other.raw)
 
     fun containsAny(flags: StackHeaderUpdateFlags) = flags.raw != 0 && (raw and flags.raw) != 0
+
+    fun clearing(flags: StackHeaderUpdateFlags) = StackHeaderUpdateFlags(raw and flags.raw.inv())
 
     val isNotEmpty get() = raw != 0
 

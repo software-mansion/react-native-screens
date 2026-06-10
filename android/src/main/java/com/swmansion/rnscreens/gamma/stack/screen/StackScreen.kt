@@ -57,32 +57,31 @@ class StackScreen(
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    fun updateStateIfNeeded(
-        x: Int? = null,
-        y: Int? = null,
-        width: Int? = null,
-        height: Int? = null,
-    ) = shadowStateProxy.updateStateIfNeeded(
-        contentOffsetX = x,
-        contentOffsetY = y,
-        frameWidth = width,
-        frameHeight = height,
-    )
+    internal fun onContentYOriginChanged(y: Int) {
+        shadowStateProxy.updateStateIfNeeded(contentOffsetY = y)
+    }
 
     internal var headerConfig: StackHeaderConfig? = null
         private set
 
-    internal var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
+    private var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
+
+    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener?) {
+        onHeaderConfigurationAttachListener = listener?.let { WeakReference(it) }
+        if (listener != null) {
+            headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
+        }
+    }
 
     internal fun attachHeaderConfig(header: StackHeaderConfig) {
         headerConfig = header
-        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttach(header, header)
+        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(header, header)
     }
 
     internal fun detachHeaderConfig(header: StackHeaderConfig) {
         if (headerConfig === header) {
             headerConfig = null
-            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttach(null, null)
+            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(null, null)
         }
     }
 

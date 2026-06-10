@@ -18,7 +18,6 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderUpdateFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
-import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
@@ -57,7 +56,7 @@ internal class StackHeaderCoordinatorLayout(
                 flags: StackHeaderUpdateFlags,
             ) = processUpdate(config, flags)
 
-            override fun onMenuItemUpdate(
+            override fun onMenuItemUpdated(
                 id: String,
                 options: StackHeaderToolbarMenuItemOptions,
             ) {
@@ -70,7 +69,7 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Config attach / detach
 
-    private val onHeaderConfigAttach =
+    private val onHeaderConfigAttached =
         OnHeaderConfigurationAttachListener { provider, delegate ->
             handleHeaderConfigAttach(provider, delegate)
         }
@@ -122,7 +121,7 @@ internal class StackHeaderCoordinatorLayout(
 
         val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
 
-        delegate.updateHeaderFrame(
+        delegate.onHeaderFrameChanged(
             appBar.width,
             appBar.height,
             configOffset,
@@ -153,7 +152,8 @@ internal class StackHeaderCoordinatorLayout(
         appBar.getLocationInWindow(appBarPos)
         view.getLocationInWindow(subviewPos)
 
-        subview.updateContentOriginOffset(
+        currentDelegate?.onSubviewOriginChanged(
+            subview.type,
             x = subviewPos[0] - appBarPos[0],
             y = subviewPos[1] - appBarPos[1],
         )
@@ -174,8 +174,7 @@ internal class StackHeaderCoordinatorLayout(
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        stackScreen.onHeaderConfigurationAttachListener = WeakReference(onHeaderConfigAttach)
-        handleHeaderConfigAttach(stackScreen.headerConfig, stackScreen.headerConfig)
+        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
     }
 
     // endregion
@@ -186,52 +185,47 @@ internal class StackHeaderCoordinatorLayout(
         provider: StackHeaderConfigurationProviding,
         flags: StackHeaderUpdateFlags,
     ) {
-        if (flags.needsRebuild) {
+        var activeFlags = flags
+
+        if (activeFlags.needsRebuild) {
             resetHeader()
             if (!provider.hidden) {
                 val appBar = applicator.rebuild(this, provider)
                 appBarLayout = appBar
                 attachAppBarListeners(appBar)
-
-                applicator.applyTitle(appBar, provider)
-                applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
-                applicator.applyScrollFlags(appBar, provider)
-
-                val (fwd, rev) =
-                    applicator.rebuildToolbarMenu(
-                        appBar.toolbar,
-                        provider.toolbarMenuItems,
-                    ) { id -> currentDelegate?.onMenuItemClick(id) }
-                toolbarMenuForwardIdMap = fwd
-                toolbarMenuReverseIdMap = rev
             } else {
                 removeContentBehavior()
                 requestLayout()
             }
-            syncShadowState()
-            return
+            activeFlags =
+                StackHeaderUpdateFlags.ALL.clearing(
+                    StackHeaderUpdateFlags.STRUCTURE or StackHeaderUpdateFlags.SUBVIEWS,
+                )
         }
 
-        val appBar = appBarLayout ?: return
+        val appBar = appBarLayout
+        if (appBar != null) {
+            if (activeFlags.containsAny(StackHeaderUpdateFlags.TITLE)) {
+                applicator.applyTitle(appBar, provider)
+            }
+            if (activeFlags.containsAny(StackHeaderUpdateFlags.BACK_BUTTON)) {
+                applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
+            }
+            if (activeFlags.containsAny(StackHeaderUpdateFlags.SCROLL_FLAGS)) {
+                applicator.applyScrollFlags(appBar, provider)
+            }
+            if (activeFlags.containsAny(StackHeaderUpdateFlags.TOOLBAR_MENU)) {
+                val (fwd, rev) =
+                    applicator.rebuildToolbarMenu(
+                        appBar.toolbar,
+                        provider.toolbarMenuItems,
+                    ) { id -> currentDelegate?.onMenuItemClicked(id) }
+                toolbarMenuForwardIdMap = fwd
+                toolbarMenuReverseIdMap = rev
+            }
+        }
 
-        if (flags.containsAny(StackHeaderUpdateFlags.TITLE)) {
-            applicator.applyTitle(appBar, provider)
-        }
-        if (flags.containsAny(StackHeaderUpdateFlags.BACK_BUTTON)) {
-            applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
-        }
-        if (flags.containsAny(StackHeaderUpdateFlags.SCROLL_FLAGS)) {
-            applicator.applyScrollFlags(appBar, provider)
-        }
-        if (flags.containsAny(StackHeaderUpdateFlags.TOOLBAR_MENU)) {
-            val (fwd, rev) =
-                applicator.rebuildToolbarMenu(
-                    appBar.toolbar,
-                    provider.toolbarMenuItems,
-                ) { id -> currentDelegate?.onMenuItemClick(id) }
-            toolbarMenuForwardIdMap = fwd
-            toolbarMenuReverseIdMap = rev
-        }
+        syncShadowState()
     }
 
     // endregion
@@ -263,7 +257,7 @@ internal class StackHeaderCoordinatorLayout(
         if (params.behavior == null) {
             params.behavior =
                 StackHeaderScrollingViewBehavior { contentTop, _ ->
-                    stackScreen.updateStateIfNeeded(y = contentTop)
+                    stackScreen.onContentYOriginChanged(contentTop)
                 }
             stackScreenWrapper.layoutParams = params
             stackScreenWrapper.requestLayout()
@@ -275,7 +269,7 @@ internal class StackHeaderCoordinatorLayout(
         if (params.behavior != null) {
             params.behavior = null
             stackScreenWrapper.layoutParams = params
-            stackScreen.updateStateIfNeeded(y = 0)
+            stackScreen.onContentYOriginChanged(0)
             stackScreenWrapper.requestLayout()
         }
     }
@@ -293,12 +287,7 @@ internal class StackHeaderCoordinatorLayout(
         currentProvider = null
         currentDelegate = null
 
-        stackScreen.onHeaderConfigurationAttachListener
-            ?.get()
-            ?.takeIf { it === onHeaderConfigAttach }
-            ?.let {
-                stackScreen.onHeaderConfigurationAttachListener = null
-            }
+        stackScreen.registerHeaderConfigAttachListener(null)
     }
 
     // endregion
