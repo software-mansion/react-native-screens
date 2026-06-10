@@ -79,13 +79,13 @@ internal class StackHeaderCoordinatorLayout(
         provider: StackHeaderConfigurationProviding?,
         delegate: StackHeaderDelegate?,
     ) {
-        currentProvider?.setConfigObserver(null)
+        currentProvider?.setConfigurationObserver(null)
 
         currentProvider = provider
         currentDelegate = delegate
 
         if (provider != null) {
-            provider.setConfigObserver(configObserver)
+            provider.setConfigurationObserver(configObserver)
         } else {
             removeHeader()
         }
@@ -289,7 +289,7 @@ internal class StackHeaderCoordinatorLayout(
 
         stackScreenWrapper.removeView(stackScreen)
 
-        currentProvider?.setConfigObserver(null)
+        currentProvider?.setConfigurationObserver(null)
         currentProvider = null
         currentDelegate = null
 

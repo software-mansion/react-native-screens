@@ -26,5 +26,5 @@ interface StackHeaderConfigurationProviding {
     val toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
     val isRTL: Boolean
 
-    fun setConfigObserver(observer: StackHeaderConfigurationObserver?)
+    fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?)
 }
