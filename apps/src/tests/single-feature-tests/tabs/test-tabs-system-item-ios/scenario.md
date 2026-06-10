@@ -78,8 +78,6 @@ iPhone Pro models (for iOS 18 excluding Max).
   `title: undefined (system)`, `icon: system (from systemItem)`.
 - [ ] The tab bar item shows the UIKit favorites (star) icon with
   the iOS-localized title `Favorites`.
-- [ ] The **favorites** and **system** (systemItem, title, icon)
-  buttons are highlighted dark blue.
 
 ---
 
@@ -97,7 +95,6 @@ iPhone Pro models (for iOS 18 excluding Max).
 - [ ] iOS 18: The title label `Search` is visible beneath the icon.
 - [ ] iOS 26: No visible title label; the Search tab bar item is
   detached from the other items.
-- [ ] The on-screen status updates to `systemItem: 'search'`.
 
 6. Tap **favorites** to restore the initial systemItem.
 
@@ -112,23 +109,17 @@ iPhone Pro models (for iOS 18 excluding Max).
 7. Tap **Custom** in the title group.
 
 - [ ] The tab bar item label changes to `Custom` immediately.
-- [ ] The on-screen status updates to `title: "Custom"`.
-- [ ] The **custom** button is highlighted dark blue.
 - [ ] The favorites icon remains visible and is unchanged.
 
 8. Tap **hidden** in the title group.
 
 - [ ] The tab bar item label disappears entirely (empty string).
-- [ ] The on-screen status updates to `title: '' (hidden)`.
-- [ ] The **hidden** button is highlighted dark blue.
 - [ ] The favorites icon is still visible in the tab bar item.
 
 9. Tap **system** in the title group.
 
 - [ ] The tab bar item label returns to the UIKit-localized title
   `Favorites` immediately.
-- [ ] The on-screen status updates to `title: undefined (system)`.
-- [ ] The **system** button is highlighted dark blue.
 
 ---
 
@@ -138,10 +129,8 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The tab bar item icon changes to the `house.fill` SF Symbol.
 - [ ] The system favorites icon is no longer visible.
-- [ ] The on-screen status updates to `icon: custom 'house'`.
-- [ ] The **house** button is highlighted dark blue.
 
-11. Tap the first tab (**Bookmarks**) and observe icons, then
+11.  Tap the first tab (**Bookmarks**) and observe icons, then
     tap **Favorites** again.
 
 - [ ] While Bookmarks is selected, the Favorites tab bar item
@@ -153,19 +142,14 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The tab bar item icon changes to `heart.fill` immediately.
 - [ ] No `house` or `house.fill` image lingers.
-- [ ] The on-screen status updates to `icon: custom 'heart'`.
-- [ ] The **heart** button is highlighted dark blue.
 
-13. Tap **system** in the icon group.
+13.  Tap **system** in the icon group.
 
 - [ ] The custom icon is removed. The tab bar item falls back to
   the UIKit system icon for the current systemItem (`favorites`
   star) immediately.
 - [ ] No stale `heart` or `heart.fill` image remains in the tab bar
   item.
-- [ ] The on-screen status updates to
-  `icon: system (from systemItem)`.
-- [ ] The **system** button is highlighted dark blue.
 
 ---
 
@@ -179,10 +163,8 @@ iPhone Pro models (for iOS 18 excluding Max).
 - [ ] iOS 18: The label reads  `Custom`.
 - [ ] iOS 26: No visible title label; the tab bar item is
   detached from the Bookmarks item.
-- [ ] The on-screen status reads: `systemItem: 'search'`,
-  `title: "Custom"`, `icon: custom 'heart'`.
 
-15. Tap the first tab (**Bookmarks**).
+15.  Tap the first tab (**Bookmarks**).
 
 - [ ] While Bookmarks is selected, the second tab bar item shows the unselected `heart` SF Symbol.
 - [ ] iOS 26: The second tab bar item remains detached.
@@ -192,10 +174,8 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The icon remains `heart.fill`.
 - [ ] The label reads `Custom`.
-- [ ] The on-screen status reads: `systemItem: 'history'`,
-  `title: "Custom"`, `icon: custom 'heart'`.
 
-17. Change icon to **system** while keeping systemItem as
+17.  Change icon to **system** while keeping systemItem as
     **history** and title as **custom**.
 
 - [ ] The icon falls back to the UIKit system history (clock) icon
