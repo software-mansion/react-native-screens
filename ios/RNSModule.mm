@@ -1,5 +1,7 @@
 #import "RNSModule.h"
+#if RNS_USE_CXXBRIDGE
 #import <React/RCTBridge+Private.h>
+#endif // RNS_USE_CXXBRIDGE
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
@@ -120,7 +122,8 @@ RCT_EXPORT_MODULE()
 {
   /*
    installHostObject method is called from constantsToExport and getTurboModule.
-*/
+  */
+#if RNS_USE_CXXBRIDGE
   RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
   if (cxxBridge != nil) {
     auto jsiRuntime = (jsi::Runtime *)cxxBridge.runtime;
@@ -149,6 +152,7 @@ RCT_EXPORT_MODULE()
           runtime, RNScreens::RNScreensTurboModule::MODULE_NAME, std::move(rnScreensModuleHostObject));
     }
   }
+#endif // RNS_USE_CXXBRIDGE
 }
 
 @end
