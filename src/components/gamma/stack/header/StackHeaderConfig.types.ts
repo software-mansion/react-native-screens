@@ -1,4 +1,6 @@
+import type { StackHeaderConfigCommandsAndroid } from './StackHeaderConfig.android.types';
 import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
+import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
 export interface StackHeaderConfigPropsBase {
@@ -8,6 +10,12 @@ export interface StackHeaderConfigPropsBase {
    * @platform android, ios
    */
   title?: string | undefined;
+  /**
+   * @summary Subtitle displayed in the header. Currently unsupported on Android.
+   *
+   * @platform ios
+   */
+  subtitle?: string | undefined;
   /**
    * @summary Specifies if the header should be hidden.
    *
@@ -48,4 +56,9 @@ export interface StackHeaderConfigPropsBase {
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
   android?: StackHeaderConfigPropsAndroid | undefined;
   ios?: StackHeaderConfigPropsIOS | undefined;
+}
+
+export interface StackHeaderConfigRef {
+  android?: StackHeaderConfigCommandsAndroid;
+  ios?: StackHeaderConfigCommandsIOS;
 }

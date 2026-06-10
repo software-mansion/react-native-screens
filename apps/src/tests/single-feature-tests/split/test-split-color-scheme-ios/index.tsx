@@ -8,21 +8,13 @@ import {
   View,
   PlatformColor,
 } from 'react-native';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker } from '@apps/shared';
 import { Split } from 'react-native-screens/experimental';
 import { SplitHostColorScheme } from 'react-native-screens/components/gamma/split/SplitHost.types';
 import { SafeAreaView } from 'react-native-screens/experimental';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Split Color Scheme',
-  key: 'test-split-color-scheme',
-  details:
-    'Tests how Split handles system, React Native and prop color scheme.',
-  platforms: ['ios'],
-};
 
 export function ConfigColumn({
   reactColorScheme,

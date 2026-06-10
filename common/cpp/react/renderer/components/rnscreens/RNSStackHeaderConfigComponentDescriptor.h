@@ -5,6 +5,7 @@
 #endif // ANDROID
 
 #include <react/debug/react_native_assert.h>
+#include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSStackHeaderConfigShadowNode.h"
 
@@ -16,7 +17,6 @@ class RNSStackHeaderConfigComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-#ifdef ANDROID
     react_native_assert(
         dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
     auto &configShadowNode =
@@ -35,7 +35,6 @@ class RNSStackHeaderConfigComponentDescriptor final
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
-#endif // ANDROID
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

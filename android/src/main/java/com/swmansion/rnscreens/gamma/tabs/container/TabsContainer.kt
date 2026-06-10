@@ -109,8 +109,8 @@ class TabsContainer internal constructor(
             R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    internal val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(themedContext).apply {
+    internal val bottomNavigationView: CustomBottomNavigationView =
+        CustomBottomNavigationView(themedContext, this).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -256,6 +256,16 @@ class TabsContainer internal constructor(
         setPendingNavigationStateUpdate(null)
     }
 
+    internal fun onAfterSetSelectedItemId(
+        itemId: Int,
+        actionOrigin: TabsActionOrigin,
+    ) {
+        if (actionOrigin === TabsActionOrigin.USER) {
+            // For non-user actions these will be performed in [performContainerUpdate]
+            performPostSelectedTabUpdateActions()
+        }
+    }
+
     // endregion
 
     // region View lifecycle / insets / appearance
@@ -265,6 +275,19 @@ class TabsContainer internal constructor(
 
         super.onAttachedToWindow()
         setupFragmentManager()
+
+        // When TabsContainer is reattached to window, it might find new fragment manager (other
+        // than previous instance, e.g. in Stack v4 when screen is pushed & popped over screen with
+        // Tabs). In such case, we need to re-add currently selected tab screen fragment. As there
+        // might be another operation pending, we need to make sure that the state is restored
+        // before flushPendingUpdates is called. That's why inside restoreNavigationStateIfNeeded
+        // we're committing the transaction synchronously. This might lead to a crash if another
+        // transaction is currently being committed. If this happens to be problematic, we might need
+        // to reevaluate our approach. See #4035.
+        if (navState.isNotEmpty()) {
+            restoreNavigationStateIfNeeded()
+        }
+
         flushPendingUpdates()
 
         colorSchemeCoordinator.setup(this) { uiNightMode ->
@@ -275,6 +298,7 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
+        colorSchemeCoordinator.teardown()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -392,27 +416,62 @@ class TabsContainer internal constructor(
 
     // region Private helpers
 
+    /**
+     * This is where programmatic update flow starts.
+     * This includes any JS-triggered action (navigation state update, prop update, etc.)
+     * and native programmatic actions - tab change.
+     *
+     * This method is supposed to perform all the necessary steps, satisfying all invalidation
+     * signals in a coordinated manner.
+     *
+     * The update actions are split into three phases: pre-, selection change, and post-.
+     * Pre-selection actions are run only here, in programmatic flow. This is not a hard requirement,
+     * it is just not needed now.
+     *
+     * Post-selection actions are performed here or in parallel flow triggered on user selection.
+     *
+     * The selected tab update takes place here only for programmatic changes.
+     * User triggered changes have separate entry-point.
+     */
     private fun performContainerUpdate() {
+        performPreSelectedTabUpdateActions()
+        performSelectedTabUpdateIfNeeded()
+        performPostSelectedTabUpdateActions()
+    }
+
+    private fun performPreSelectedTabUpdateActions() {
+        updateNavigationMenuStructureIfNeeded()
+    }
+
+    private fun performPostSelectedTabUpdateActions() {
+        updateBottomNavigationViewAppearanceIfNeeded()
+    }
+
+    private fun updateNavigationMenuStructureIfNeeded() {
         if (invalidationFlags.isNavigationMenuStructureInvalidated) {
             invalidationFlags.isNavigationMenuStructureInvalidated = false
             updateNavigationMenuStructure()
         }
+    }
 
+    private fun performSelectedTabUpdateIfNeeded() {
         if (invalidationFlags.isSelectedTabInvalidated) {
             invalidationFlags.isSelectedTabInvalidated = false
-            performOperation()
+            performSelectedTabUpdate()
         }
+    }
 
+    private fun updateBottomNavigationViewAppearanceIfNeeded() {
         if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
             invalidationFlags.isNavigationMenuAppearanceInvalidated = false
-            this.updateBottomNavigationViewAppearance()
+            updateBottomNavigationViewAppearance()
             a11yCoordinator.setA11yPropertiesToAllTabItems()
         }
     }
 
-    private fun performOperation() {
+    private fun performSelectedTabUpdate() {
         if (pendingStateUpdateRequest == null) {
-            RNSLog.w(TAG, "TabsContainer::performOperation called w/o pending operation; skipping update")
+            RNSLog.w(TAG, "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update")
             return
         }
 
@@ -436,7 +495,7 @@ class TabsContainer internal constructor(
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
-            bottomNavigationView.selectedItemId = nextSelectedMenuItemId
+            bottomNavigationView.setSelectedItemIdWithActionOrigin(nextSelectedMenuItemId, stateUpdateRequest.actionOrigin)
             isInExternalOperationContext = false
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
@@ -545,6 +604,13 @@ class TabsContainer internal constructor(
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
+        if (stateChanged && !isRepeated) {
+            // If we've effectively changed the tab, we need to raise appropriate flags.
+            // This line assumes that any required e.g. appearance actions will be performed
+            // synchronously later in the flow.
+            invalidationFlags.invalidateOnSelectedTabChanged()
+        }
+
         if (stateChanged) {
             observerRegistry.emitOnNavigationStateUpdate(
                 navState,
@@ -556,6 +622,36 @@ class TabsContainer internal constructor(
 
         // Block other callbacks
         return true
+    }
+
+    /**
+     * When Tabs are reattached to window, they might find new fragment manager. In this case we
+     * need to restore navigation state. We're committing the transaction synchronously so that any
+     * following operations have valid restored state before their execution.
+     *
+     * This function is a no-op if navigation state is empty.
+     */
+    private fun restoreNavigationStateIfNeeded() {
+        if (navState.isEmpty()) {
+            return
+        }
+
+        val currentFragments =
+            requireFragmentManager.fragments
+                .filterIsInstance<TabsScreenFragment>()
+                .filter { it in tabsModel }
+                .toList()
+
+        if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
+            return
+        } else if (currentFragments.isEmpty()) {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .add(contentView.id, selectedTab)
+                .commitNowAllowingStateLoss()
+        } else {
+            error("[RNScreens] Unexpected fragment manager state.")
+        }
     }
 
     private fun applyDayNightUiMode(uiMode: Int) {
@@ -649,5 +745,9 @@ internal class TabsContainerInvalidationFlags(
         isSelectedTabInvalidated = true
         isNavigationMenuAppearanceInvalidated = true
         isNavigationMenuStructureInvalidated = true
+    }
+
+    internal fun invalidateOnSelectedTabChanged() {
+        isNavigationMenuAppearanceInvalidated = true
     }
 }

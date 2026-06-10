@@ -1,21 +1,41 @@
-import React from 'react';
+import React, {
+  ComponentRef,
+  forwardRef,
+  Ref,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { Image, StyleSheet } from 'react-native';
-import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
-import StackHeaderConfigAndroidNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
-import type { NativeProps as StackHeaderConfigAndroidNativeComponentProps } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
+import type {
+  StackHeaderConfigProps,
+  StackHeaderConfigRef,
+} from './StackHeaderConfig.types';
+import StackHeaderConfigAndroidNativeComponent, {
+  Commands as StackHeaderConfigAndroidNativeCommands,
+} from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
+import type {
+  NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
+} from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
   StackHeaderTypeAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHeaderConfig(props: StackHeaderConfigProps) {
+function StackHeaderConfig(
+  props: StackHeaderConfigProps,
+  forwardedRef: Ref<StackHeaderConfigRef>,
+) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
+
+  const ref = useHeaderConfigRef(forwardedRef);
 
   const {
     backgroundSubview,
@@ -42,6 +62,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
 
   return (
     <StackHeaderConfigAndroidNativeComponent
+      ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
       {...baseProps}
@@ -56,22 +77,22 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
         <StackHeaderSubview
           type="background"
           collapseMode={backgroundSubview.collapseMode}>
-          {backgroundSubview.Component}
+          {backgroundSubview.render()}
         </StackHeaderSubview>
       )}
       {leadingSubview && (
         <StackHeaderSubview type="leading">
-          {leadingSubview.Component}
+          {leadingSubview.render()}
         </StackHeaderSubview>
       )}
       {centerSubview && (
         <StackHeaderSubview type="center">
-          {centerSubview.Component}
+          {centerSubview.render()}
         </StackHeaderSubview>
       )}
       {trailingSubview && (
         <StackHeaderSubview type="trailing">
-          {trailingSubview.Component}
+          {trailingSubview.render()}
         </StackHeaderSubview>
       )}
     </StackHeaderConfigAndroidNativeComponent>
@@ -163,4 +184,59 @@ function resolveScrollFlags(
   };
 }
 
-export default StackHeaderConfig;
+function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
+  const ref =
+    useRef<ComponentRef<typeof StackHeaderConfigAndroidNativeComponent>>(null);
+
+  useImperativeHandle(forwardedRef, () => ({
+    android: {
+      setToolbarMenuItemOptions: (id, options) => {
+        if (!ref.current) {
+          console.warn(
+            '[RNScreens] Reference to native header config component has not been updated yet.',
+          );
+          return;
+        }
+
+        StackHeaderConfigAndroidNativeCommands.setToolbarMenuItemOptions(
+          ref.current,
+          id,
+          parseToolbarMenuItemOptionsToNativeProps(options),
+        );
+      },
+    },
+  }));
+
+  return ref;
+}
+
+// Doesn't support nested props.
+function parseToolbarMenuItemOptionsToNativeProps(
+  options: StackHeaderToolbarMenuItemOptionsAndroid,
+): NativeToolbarMenuItemOptionsAndroid[] {
+  const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
+    Object.entries(options).map(([key, value]) => {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        throw new Error(`[RNScreens] Unexpected nested object.`);
+      }
+
+      return [
+        key,
+        // We need to replace explicit `undefined` with `null`
+        // so that we're able to read that information on the native side.
+        value === undefined ? null : value,
+      ];
+    }),
+  );
+
+  // For some reason Codegen requires passing an array (we can't use plain object).
+  return [nativeOptions];
+}
+
+export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
+  StackHeaderConfig,
+);

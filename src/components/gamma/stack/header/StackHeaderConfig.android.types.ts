@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import type { ColorValue } from 'react-native';
+import type { ReactElement } from 'react';
+import type { ColorValue, NativeSyntheticEvent } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../../../types';
 
@@ -10,13 +10,12 @@ export type StackHeaderBackgroundSubviewCollapseModeAndroid =
 
 export interface StackHeaderToolbarSubviewAndroid {
   /**
-   * @summary The React component rendered in this toolbar slot.
+   * @summary Render callback for the React element placed in this toolbar slot.
    *
    * The subview is sized by React Native's layout engine but positioned by the
    * platform native layout. Each subview is placed independently — subviews do
    * not participate in a shared flex layout and cannot influence each other's
    * sizing.
-   *
    *
    * @remarks
    * Intrinsic sizing and explicit dimensions work as expected. Avoid
@@ -26,7 +25,7 @@ export interface StackHeaderToolbarSubviewAndroid {
    *
    * @platform android
    */
-  Component: NonNullable<ReactNode>;
+  render: () => ReactElement;
 }
 
 export interface StackHeaderBackgroundSubviewAndroid {
@@ -51,14 +50,97 @@ export interface StackHeaderBackgroundSubviewAndroid {
    */
   collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
   /**
-   * @summary The React component rendered as the header background.
+   * @summary Render callback for the React element used as the header
+   * background.
    *
+   * @remarks
    * The subview is stretched to match the header (`AppBarLayout`) dimensions,
    * so parent-relative sizing (e.g. `flex: 1`) works correctly.
    *
    * @platform android
    */
-  Component: NonNullable<ReactNode>;
+  render: () => ReactElement;
+}
+
+export type StackHeaderToolbarMenuItemShowAsActionAndroid =
+  | 'always'
+  | 'alwaysWithText'
+  | 'ifRoom'
+  | 'ifRoomWithText'
+  | 'never';
+
+export interface StackHeaderToolbarMenuItemAndroid {
+  /**
+   * @summary Unique identifier of the menu item.
+   *
+   * @platform android
+   */
+  id: string;
+  /**
+   * @summary Title of the menu item.
+   *
+   * @platform android
+   */
+  title?: string | undefined;
+  /**
+   * @summary Specifies if the menu item should be hidden.
+   *
+   * @default false
+   * @platform android
+   */
+  hidden?: boolean | undefined;
+  /**
+   * @summary Specifies whether the item should be displayed as a button in the
+   * Toolbar.
+   *
+   * The following values are available:
+   * - `always` - always displays the item as a button in the Toolbar,
+   * - `alwaysWithText` - always displays the item as a button in the Toolbar,
+   *   forcing the text label to be visible even if an icon is provided,
+   * - `ifRoom` - displays the item as a button in the Toolbar only if the
+   *   system determines there is sufficient space,
+   * - `ifRoomWithText` - displays the item as a button in the Toolbar if the
+   *   system determines there is sufficient space, forcing the text label to
+   *   be visible even if an icon is provided,
+   * - `never` - never displays the item as a button in the Toolbar; it will be
+   *   placed in the overflow menu instead.
+   *
+   * @remarks
+   * Due to native limitations, the width limit for the `ifRoom` options is
+   * determined during the initial render and will not adapt to subsequent layout
+   * or orientation changes.
+   *
+   * @default never
+   * @platform android
+   */
+  showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
+}
+
+export type StackHeaderToolbarMenuItemClickedEvent = {
+  /**
+   * @summary ID of the clicked menu item.
+   */
+  id: string;
+};
+
+export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+  Omit<StackHeaderToolbarMenuItemAndroid, 'id'>
+>;
+
+export interface StackHeaderConfigCommandsAndroid {
+  /**
+   * @summary Allows to change menu item configuration in runtime.
+   *
+   * @param id The ID of the menu item which will be updated.
+   * @param options Object with properties that should be changed. If property
+   *        is omitted, the current value will be preserved. If property is
+   *        explicitly set to `undefined`, the default value of the prop will be
+   *        restored.
+   */
+  setToolbarMenuItemOptions: (
+    id: string,
+    options: StackHeaderToolbarMenuItemOptionsAndroid,
+  ) => void;
 }
 
 export interface StackHeaderConfigPropsAndroid {
@@ -210,4 +292,27 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   scrollFlagSnap?: boolean | undefined;
+  /**
+   * @summary Menu items displayed in the toolbar menu.
+   *
+   * This prop serves as initial configuration of the toolbar menu items. If you
+   * want to change some property in runtime, use `setToolbarMenuItemOptions`
+   * view command.
+   *
+   * Changing this prop in runtime will result in full toolbar menu rebuild.
+   * Any prior changes applied via `setToolbarMenuItemOptions` will be lost.
+   *
+   * @platform android
+   */
+  toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
+  /**
+   * @summary Callback invoked when a toolbar menu item is clicked.
+   *
+   * @platform android
+   */
+  onToolbarMenuItemClicked?:
+    | ((
+        event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEvent>,
+      ) => void)
+    | undefined;
 }

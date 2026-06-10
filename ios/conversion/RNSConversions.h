@@ -9,20 +9,14 @@
 #import "RNSEnums.h"
 #import "RNSTabsNavigationState.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <folly/dynamic.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-#if RCT_NEW_ARCH_ENABLED
-
 // copied from FollyConvert.mm
 id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 
@@ -34,28 +28,17 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
     react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior);
-#else // RCT_NEW_ARCH_ENABLED
-API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
-    RNSTabBarMinimizeBehavior tabBarMinimizeBehavior);
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 26
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
     react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode);
-#else // RCT_NEW_ARCH_ENABLED
-API_AVAILABLE(ios(18.0))
-UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 18
 
@@ -75,20 +58,12 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 std::optional<react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
 RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
 
-#if REACT_NATIVE_VERSION_MINOR >= 82
 RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
     react::RNSTabsBottomAccessoryContentEnvironment environment);
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-#else // RCT_NEW_ARCH_ENABLED
-API_AVAILABLE(ios(26.0))
-NSString *_Nullable RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
-    UITabAccessoryEnvironment environment);
-#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
@@ -144,11 +119,11 @@ RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitS
 
 }; // namespace rnscreens::conversion
 
-#if RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#if RNS_GAMMA_ENABLED
 
 #import "RNSConversions-ScrollViewMarker.h"
 #import "RNSConversions-Stack.h"
 
-#endif // RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#endif // RNS_GAMMA_ENABLED
 
 #endif // defined(__cplusplus)

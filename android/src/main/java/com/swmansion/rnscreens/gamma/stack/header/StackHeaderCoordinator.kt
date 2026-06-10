@@ -29,6 +29,8 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewCollapseMode
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuCoordinator
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderCoordinator(
@@ -45,6 +47,11 @@ internal class StackHeaderCoordinator(
 
     private var appBarLayout: StackHeaderAppBarLayout? = null
     private var currentConfig: StackHeaderConfigProviding? = null
+
+    private val toolbarMenuCoordinator =
+        StackHeaderToolbarMenuCoordinator { id ->
+            currentConfig?.onMenuItemClick(id)
+        }
 
     // Cached values used by requiresRebuild() to detect when the header
     // hierarchy needs to be torn down and recreated.
@@ -90,7 +97,7 @@ internal class StackHeaderCoordinator(
     }
 
     private fun removeHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
-        teardown(coordinatorLayout)
+        resetHeader(coordinatorLayout)
         removeContentBehavior(coordinatorLayout)
         coordinatorLayout.requestLayout()
     }
@@ -121,7 +128,7 @@ internal class StackHeaderCoordinator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigProviding,
     ) {
-        teardown(coordinatorLayout)
+        resetHeader(coordinatorLayout)
 
         if (!config.hidden) {
             val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
@@ -150,7 +157,12 @@ internal class StackHeaderCoordinator(
         cacheRebuildTriggers(config)
     }
 
-    private fun teardown(coordinatorLayout: StackHeaderCoordinatorLayout) {
+    internal fun tearDown(coordinatorLayout: StackHeaderCoordinatorLayout) {
+        removeHeader(coordinatorLayout)
+        currentConfig = null
+    }
+
+    private fun resetHeader(coordinatorLayout: StackHeaderCoordinatorLayout) {
         detachSubviews()
         appBarLayout?.let {
             detachAppBarListeners(it)
@@ -163,6 +175,7 @@ internal class StackHeaderCoordinator(
         lastBackButtonIcon = null
         lastScrollFlags = null
         clearCachedRebuildTriggers()
+        toolbarMenuCoordinator.clear()
     }
 
     private fun cacheRebuildTriggers(config: StackHeaderConfigProviding) {
@@ -333,6 +346,14 @@ internal class StackHeaderCoordinator(
 
         applyScrollFlags(appBar, config)
         applyBackButton(appBar.toolbar, config)
+        applyToolbarMenu(appBar.toolbar, config)
+    }
+
+    private fun applyToolbarMenu(
+        toolbar: MaterialToolbar,
+        config: StackHeaderConfigProviding,
+    ) {
+        toolbarMenuCoordinator.rebuildMenuIfNeeded(toolbar, config.toolbarMenuItems)
     }
 
     private fun applyBackgroundCollapseMode(config: StackHeaderConfigProviding) {
@@ -578,6 +599,15 @@ internal class StackHeaderCoordinator(
                 toolbar.addView(child, 0, lp)
                 return
             }
+        }
+    }
+
+    internal fun handleMenuItemUpdate(
+        id: String,
+        options: StackHeaderToolbarMenuItemOptions,
+    ) {
+        appBarLayout?.toolbar?.let {
+            toolbarMenuCoordinator.updateItem(it.menu, id, options)
         }
     }
 

@@ -4,11 +4,11 @@
 
 **Description:** This test scenario focuses on the visibility management of the tab bar. It validates the tabBarHidden property, ensuring that the UI responds dynamically to state changes without layout shifts or persistence errors.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: 16.0 (Baklava).
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 
-Yes: Covers all manual scenario steps. For iOS test are covered only for iPhone, e2e is not suitable for iPad execution due to use 'UITabBar' type (on iPad new tab bar at the top is not an instance of UITabBar).
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 

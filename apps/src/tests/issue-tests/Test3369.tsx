@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Button, Text } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
-const MyModal = ({ onHide }: {onHide: () => void}) => {
+const MyModal = ({ onHide }: { onHide: () => void }) => {
   return (
     <FullWindowOverlay>
       <View

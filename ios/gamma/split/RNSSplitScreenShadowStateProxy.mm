@@ -3,7 +3,6 @@
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import <rnscreens/RNSSplitScreenShadowNode.h>
 
 namespace react = facebook::react;
@@ -45,13 +44,7 @@ namespace react = facebook::react;
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState = react::RNSSplitScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-    _state->updateState(std::move(newState)
-    // TODO: @t0maboro - remove this compilation check once TVOSExample is upgraded to RN 82+
-#if REACT_NATIVE_VERSION_MINOR >= 82
-                            ,
-                        facebook::react::EventQueue::UpdateMode::unstable_Immediate
-#endif
-    );
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
 
     _lastScheduledFrame = frame;
   }
