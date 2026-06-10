@@ -8,7 +8,7 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.common.UIManagerType
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
@@ -30,11 +30,9 @@ class StackHost(
         addView(container)
 
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
-        val uiManager =
-            checkNotNull(UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)) {
-                "[RNScreens] UIManager must not be null."
-            }
-        uiManager.addUIManagerEventListener(this)
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .addUIManagerEventListener(this)
     }
 
     override fun onAttachedToWindow() {
@@ -161,6 +159,12 @@ class StackHost(
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
     override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    internal fun tearDown() {
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .removeUIManagerEventListener(this)
+    }
 
     companion object {
         const val TAG = "StackHost"
