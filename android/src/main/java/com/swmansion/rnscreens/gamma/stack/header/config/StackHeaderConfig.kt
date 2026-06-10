@@ -33,15 +33,22 @@ class StackHeaderConfig(
     StackHeaderDelegate,
     OnStackHeaderSubviewChangeListener,
     UIManagerListener {
-    // region Flag accumulation
 
-    private var pendingFlags = StackHeaderUpdateFlags.NONE
-    private var isInsideMountTransaction = false
+    init {
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .addUIManagerEventListener(this)
+    }
+
+    // region Handling configuration changes
+
     private var configObserver: StackHeaderConfigurationObserver? = null
 
     override fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?) {
         configObserver = observer
     }
+
+    private var pendingFlags = StackHeaderUpdateFlags.NONE
 
     private fun invalidate(flags: StackHeaderUpdateFlags) {
         pendingFlags = pendingFlags or flags
@@ -56,31 +63,6 @@ class StackHeaderConfig(
         configObserver?.onConfigChanged(this, snapshot)
         pendingFlags = StackHeaderUpdateFlags.NONE
     }
-
-    // endregion
-
-    // region UIManagerListener
-
-    init {
-        UIManagerHelper
-            .getFabricUIManagerNotNull(reactContext)
-            .addUIManagerEventListener(this)
-    }
-
-    override fun willMountItems(uiManager: UIManager) {
-        isInsideMountTransaction = true
-    }
-
-    override fun didMountItems(uiManager: UIManager) {
-        isInsideMountTransaction = false
-        flushUpdates()
-    }
-
-    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-
-    override fun didDispatchMountItems(uiManager: UIManager) = Unit
-
-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
     // endregion
 
@@ -273,9 +255,50 @@ class StackHeaderConfig(
     }
         private set
 
+    override fun onStackHeaderSubviewChanged() {
+        invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
+
+    internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
+        when (headerSubview.type) {
+            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = headerSubview
+            StackHeaderSubviewType.LEADING -> leadingSubview = headerSubview
+            StackHeaderSubviewType.CENTER -> centerSubview = headerSubview
+            StackHeaderSubviewType.TRAILING -> trailingSubview = headerSubview
+        }
+        headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
+    }
+
+    internal fun removeConfigSubview(headerSubview: StackHeaderSubview) {
+        headerSubview.onStackHeaderSubviewChangeListener = null
+        when (headerSubview.type) {
+            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = null
+            StackHeaderSubviewType.LEADING -> leadingSubview = null
+            StackHeaderSubviewType.CENTER -> centerSubview = null
+            StackHeaderSubviewType.TRAILING -> trailingSubview = null
+        }
+    }
+
+    internal fun removeConfigSubviewAt(index: Int) {
+        getConfigSubviewAt(index)?.let { removeConfigSubview(it) }
+    }
+
+    internal fun removeAllConfigSubviews() {
+        backgroundSubview?.let { removeConfigSubview(it) }
+        leadingSubview?.let { removeConfigSubview(it) }
+        centerSubview?.let { removeConfigSubview(it) }
+        trailingSubview?.let { removeConfigSubview(it) }
+    }
+
+    internal val configSubviewsCount: Int
+        get() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).size
+
+    internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
+        listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+
     // endregion
 
-    // region StackHeaderDelegate
+    // region StackHeaderDelegate & Shadow state synchronization
 
     private val shadowStateProxy = ShadowStateProxy()
 
@@ -359,48 +382,24 @@ class StackHeaderConfig(
 
     // endregion
 
-    // region Subview management
+    // region UIManagerListener
 
-    override fun onStackHeaderSubviewChanged() {
-        invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    private var isInsideMountTransaction = false
+
+    override fun willMountItems(uiManager: UIManager) {
+        isInsideMountTransaction = true
     }
 
-    internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
-        when (headerSubview.type) {
-            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = headerSubview
-            StackHeaderSubviewType.LEADING -> leadingSubview = headerSubview
-            StackHeaderSubviewType.CENTER -> centerSubview = headerSubview
-            StackHeaderSubviewType.TRAILING -> trailingSubview = headerSubview
-        }
-        headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
+    override fun didMountItems(uiManager: UIManager) {
+        isInsideMountTransaction = false
+        flushUpdates()
     }
 
-    internal fun removeConfigSubview(headerSubview: StackHeaderSubview) {
-        headerSubview.onStackHeaderSubviewChangeListener = null
-        when (headerSubview.type) {
-            StackHeaderSubviewType.BACKGROUND -> backgroundSubview = null
-            StackHeaderSubviewType.LEADING -> leadingSubview = null
-            StackHeaderSubviewType.CENTER -> centerSubview = null
-            StackHeaderSubviewType.TRAILING -> trailingSubview = null
-        }
-    }
+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
 
-    internal fun removeConfigSubviewAt(index: Int) {
-        getConfigSubviewAt(index)?.let { removeConfigSubview(it) }
-    }
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
-    internal fun removeAllConfigSubviews() {
-        backgroundSubview?.let { removeConfigSubview(it) }
-        leadingSubview?.let { removeConfigSubview(it) }
-        centerSubview?.let { removeConfigSubview(it) }
-        trailingSubview?.let { removeConfigSubview(it) }
-    }
-
-    internal val configSubviewsCount: Int
-        get() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).size
-
-    internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
-        listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
     // endregion
 

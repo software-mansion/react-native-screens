@@ -293,6 +293,62 @@ internal class StackHeaderApplicator(
         }
     }
 
+    // endregion
+
+    // region Helpers
+
+    private fun computeScrollFlags(config: StackHeaderConfigurationProviding): Int {
+        var flags = 0
+        if (config.scrollFlagScroll) flags = flags or SCROLL_FLAG_SCROLL
+        if (config.scrollFlagEnterAlways) flags = flags or SCROLL_FLAG_ENTER_ALWAYS
+        if (config.scrollFlagEnterAlwaysCollapsed) flags = flags or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+        if (config.scrollFlagExitUntilCollapsed) flags = flags or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        if (config.scrollFlagSnap) flags = flags or SCROLL_FLAG_SNAP
+        return flags
+    }
+
+    private fun warnInvalidScrollFlagCombinations(config: StackHeaderConfigurationProviding) {
+        val anyDependentFlag =
+            config.scrollFlagEnterAlways ||
+                config.scrollFlagEnterAlwaysCollapsed ||
+                config.scrollFlagExitUntilCollapsed ||
+                config.scrollFlagSnap
+        if (anyDependentFlag && !config.scrollFlagScroll) {
+            Log.e(TAG, "[RNScreens] scrollFlag* requires scrollFlagScroll to take effect.")
+        }
+        if (config.scrollFlagEnterAlwaysCollapsed && !config.scrollFlagEnterAlways) {
+            Log.e(TAG, "[RNScreens] scrollFlagEnterAlwaysCollapsed requires scrollFlagEnterAlways to take effect.")
+        }
+    }
+
+    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
+
+    private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
+        coordinatorLayout: StackHeaderCoordinatorLayout,
+        config: StackHeaderConfigurationProviding,
+        appBar: StackHeaderAppBarLayout,
+    ) {
+        if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRTL) {
+            appBar.measure(
+                View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            )
+            moveDummyViewToFront(appBar.toolbar)
+        }
+    }
+
+    private fun moveDummyViewToFront(toolbar: Toolbar) {
+        for (i in 0 until toolbar.childCount) {
+            val child = toolbar.getChildAt(i)
+            if (child !is StackHeaderSubview) {
+                val lp = child.layoutParams
+                toolbar.removeViewAt(i)
+                toolbar.addView(child, 0, lp)
+                return
+            }
+        }
+    }
+
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =
         StackHeaderToolbarMenuItemOptions(
             title = title,
@@ -304,6 +360,32 @@ internal class StackHeaderApplicator(
             iconTintColorFocused = StackHeaderToolbarUpdate.from(iconTintColorFocused),
             iconTintColorDisabled = StackHeaderToolbarUpdate.from(iconTintColorDisabled),
         )
+
+    private fun resolveBackButtonTintList(config: StackHeaderConfigurationProviding): ColorStateList? {
+        val normal = config.backButtonTintColorNormal
+        val pressed = config.backButtonTintColorPressed
+        val focused = config.backButtonTintColorFocused
+
+        if (normal == null && pressed == null && focused == null) return null
+
+        val states = mutableListOf<IntArray>()
+        val colors = mutableListOf<Int>()
+
+        pressed?.let {
+            states.add(intArrayOf(android.R.attr.state_pressed))
+            colors.add(it)
+        }
+        focused?.let {
+            states.add(intArrayOf(android.R.attr.state_focused))
+            colors.add(it)
+        }
+        normal?.let {
+            states.add(intArrayOf())
+            colors.add(it)
+        }
+
+        return ColorStateList(states.toTypedArray(), colors.toIntArray())
+    }
 
     private fun getResolvedIconTintList(
         menuItem: MenuItem,
@@ -383,88 +465,6 @@ internal class StackHeaderApplicator(
         val a = getColorForState(stateSet, SENTINEL_A)
         val b = getColorForState(stateSet, SENTINEL_B)
         return if (a == b) a else null
-    }
-
-    // endregion
-
-    // region Helpers
-
-    private fun resolveBackButtonTintList(config: StackHeaderConfigurationProviding): ColorStateList? {
-        val normal = config.backButtonTintColorNormal
-        val pressed = config.backButtonTintColorPressed
-        val focused = config.backButtonTintColorFocused
-
-        if (normal == null && pressed == null && focused == null) return null
-
-        val states = mutableListOf<IntArray>()
-        val colors = mutableListOf<Int>()
-
-        pressed?.let {
-            states.add(intArrayOf(android.R.attr.state_pressed))
-            colors.add(it)
-        }
-        focused?.let {
-            states.add(intArrayOf(android.R.attr.state_focused))
-            colors.add(it)
-        }
-        normal?.let {
-            states.add(intArrayOf())
-            colors.add(it)
-        }
-
-        return ColorStateList(states.toTypedArray(), colors.toIntArray())
-    }
-
-    private fun computeScrollFlags(config: StackHeaderConfigurationProviding): Int {
-        var flags = 0
-        if (config.scrollFlagScroll) flags = flags or SCROLL_FLAG_SCROLL
-        if (config.scrollFlagEnterAlways) flags = flags or SCROLL_FLAG_ENTER_ALWAYS
-        if (config.scrollFlagEnterAlwaysCollapsed) flags = flags or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
-        if (config.scrollFlagExitUntilCollapsed) flags = flags or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-        if (config.scrollFlagSnap) flags = flags or SCROLL_FLAG_SNAP
-        return flags
-    }
-
-    private fun warnInvalidScrollFlagCombinations(config: StackHeaderConfigurationProviding) {
-        val anyDependentFlag =
-            config.scrollFlagEnterAlways ||
-                config.scrollFlagEnterAlwaysCollapsed ||
-                config.scrollFlagExitUntilCollapsed ||
-                config.scrollFlagSnap
-        if (anyDependentFlag && !config.scrollFlagScroll) {
-            Log.e(TAG, "[RNScreens] scrollFlag* requires scrollFlagScroll to take effect.")
-        }
-        if (config.scrollFlagEnterAlwaysCollapsed && !config.scrollFlagEnterAlways) {
-            Log.e(TAG, "[RNScreens] scrollFlagEnterAlwaysCollapsed requires scrollFlagEnterAlways to take effect.")
-        }
-    }
-
-    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
-
-    private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
-        coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
-        appBar: StackHeaderAppBarLayout,
-    ) {
-        if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRTL) {
-            appBar.measure(
-                View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            moveDummyViewToFront(appBar.toolbar)
-        }
-    }
-
-    private fun moveDummyViewToFront(toolbar: Toolbar) {
-        for (i in 0 until toolbar.childCount) {
-            val child = toolbar.getChildAt(i)
-            if (child !is StackHeaderSubview) {
-                val lp = child.layoutParams
-                toolbar.removeViewAt(i)
-                toolbar.addView(child, 0, lp)
-                return
-            }
-        }
     }
 
     // endregion
