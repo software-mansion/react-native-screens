@@ -41,7 +41,7 @@ class StackHeaderConfig(
     private var isInsideMountTransaction = false
     private var configObserver: StackHeaderConfigurationObserver? = null
 
-    override fun setConfigObserver(observer: StackHeaderConfigurationObserver?) {
+    override fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?) {
         configObserver = observer
     }
 
