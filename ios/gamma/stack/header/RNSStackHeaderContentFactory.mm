@@ -7,11 +7,14 @@
 
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
+                         withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)menuEventsDelegate
 {
   UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory internalBarButtonItemForHeaderItem:item
                                                                             withFrameChangeDelegate:delegate];
   if (item.menu != nil) {
-    [RNSStackHeaderMenuCoordinator applyMenu:item.menu toBarButtonItem:barButtonItem];
+    [RNSStackHeaderMenuCoordinator applyMenu:item.menu
+                             toBarButtonItem:barButtonItem
+                      withMenuEventsDelegate:menuEventsDelegate];
   }
 
   return barButtonItem;

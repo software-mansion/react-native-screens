@@ -2,12 +2,15 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSStackHeaderMenuData.h"
+#import "RNSStackHeaderMenuEventsDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderMenuCoordinator : NSObject
 
-+ (void)applyMenu:(nonnull RNSStackHeaderMenuData *)data toBarButtonItem:(nonnull UIBarButtonItem *)item;
++ (void)applyMenu:(RNSStackHeaderMenuData *)data
+           toBarButtonItem:(UIBarButtonItem *)item
+    withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate;
 
 @end
 

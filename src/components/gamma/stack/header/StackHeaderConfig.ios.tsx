@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
-import StackHeaderConfigIOSNativeComponent from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
+import StackHeaderConfigIOSNativeComponent, {
+  PressMenuItemEvent,
+} from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
-import { StyleSheet } from 'react-native';
+import { NativeSyntheticEvent, StyleSheet } from 'react-native';
 import type {
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
+import { findMenuElementByIdInItems } from './utils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -32,6 +35,23 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     largeTitleEnabled,
   } = ios ?? {};
 
+  const handleMenuPress = useCallback(
+    (event: NativeSyntheticEvent<PressMenuItemEvent>) => {
+      const items = Array.of(
+        ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
+        ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
+      );
+      const menu = findMenuElementByIdInItems(
+        items,
+        event.nativeEvent.menuElementId,
+      );
+      if (menu && menu.type === 'menuItem') {
+        menu.onPress?.();
+      }
+    },
+    [leadingItems, trailingItems],
+  );
+
   return (
     <StackHeaderConfigIOSNativeComponent
       {...restProps}
@@ -39,7 +59,8 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
-      style={styles.config}>
+      style={styles.config}
+      onPressMenuItem={handleMenuPress}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}

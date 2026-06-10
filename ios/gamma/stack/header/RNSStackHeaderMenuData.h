@@ -5,13 +5,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSStackHeaderMenuElement <NSObject>
+
+@property (nonatomic, copy, readonly) NSString *menuElementId;
+
 @end
 
 @interface RNSStackHeaderMenuItemData : NSObject <RNSStackHeaderMenuElement>
 
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 
-- (instancetype)initWithTitle:(nullable NSString *)title;
+- (instancetype)initWithId:(NSString *)menuElementId title:(nullable NSString *)title;
 
 @end
 
@@ -20,7 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 @property (nonatomic, copy, readonly) NSArray<id<RNSStackHeaderMenuElement>> *children;
 
-- (instancetype)initWithTitle:(nullable NSString *)title children:(NSArray<id<RNSStackHeaderMenuElement>> *)children;
+- (instancetype)initWithId:(NSString *)menuElementId
+                     title:(nullable NSString *)title
+                  children:(NSArray<id<RNSStackHeaderMenuElement>> *)children;
 
 @end
 
