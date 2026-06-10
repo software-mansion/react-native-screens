@@ -21,5 +21,7 @@ value class StackHeaderUpdateFlags(val raw: Int) {
 
     val isNotEmpty get() = raw != 0
 
+    val isEmpty get() = raw == 0
+
     val needsRebuild get() = containsAny(STRUCTURE or SUBVIEWS)
 }
