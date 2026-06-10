@@ -28,7 +28,7 @@ import kotlin.properties.Delegates
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
 class StackHeaderConfig(
-    val reactContext: ReactContext,
+    val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     StackHeaderConfigurationProviding,
     StackHeaderDelegate,
@@ -50,6 +50,10 @@ class StackHeaderConfig(
     }
 
     private fun flushUpdates() {
+        if (configObserver == null) {
+            return
+        }
+
         val snapshot = pendingFlags
         pendingFlags = StackHeaderUpdateFlags.NONE
         if (snapshot.isNotEmpty) {
@@ -63,7 +67,7 @@ class StackHeaderConfig(
 
     init {
         UIManagerHelper
-            .getFabricUIManagerNotNull(reactContext as ThemedReactContext)
+            .getFabricUIManagerNotNull(reactContext)
             .addUIManagerEventListener(this)
     }
 
@@ -111,22 +115,22 @@ class StackHeaderConfig(
     }
         internal set
 
-    override var backButtonTintColorNormal: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+    override var backButtonTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
         if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
     }
         internal set
 
-    override var backButtonTintColorPressed: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+    override var backButtonTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
         if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
     }
         internal set
 
-    override var backButtonTintColorFocused: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+    override var backButtonTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
         if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
     }
         internal set
 
-    override var backButtonIcon: Drawable? by Delegates.observable<Drawable?>(null) { _, old, new ->
+    override var backButtonIcon: Drawable? by Delegates.observable(null) { _, old, new ->
         if (old !== new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
     }
         internal set
@@ -161,6 +165,9 @@ class StackHeaderConfig(
             if (old != new) invalidate(StackHeaderUpdateFlags.TOOLBAR_MENU)
         }
         internal set
+
+    override val isRTL: Boolean
+        get() = layoutDirection == LayoutDirection.RTL
 
     // endregion
 
@@ -250,28 +257,25 @@ class StackHeaderConfig(
 
     // region Subviews
 
-    override var backgroundSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+    override var backgroundSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
         if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
     }
         private set
 
-    override var leadingSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+    override var leadingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
         if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
     }
         private set
 
-    override var centerSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+    override var centerSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
         if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
     }
         private set
 
-    override var trailingSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+    override var trailingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
         if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
     }
         private set
-
-    override val isRTL: Boolean
-        get() = layoutDirection == LayoutDirection.RTL
 
     // endregion
 
@@ -393,7 +397,7 @@ class StackHeaderConfig(
 
     internal fun tearDown() {
         UIManagerHelper
-            .getFabricUIManagerNotNull(reactContext as ThemedReactContext)
+            .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
         pendingFlags = StackHeaderUpdateFlags.NONE
         configObserver = null
