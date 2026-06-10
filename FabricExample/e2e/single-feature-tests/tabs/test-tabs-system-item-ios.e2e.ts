@@ -1,9 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  forceTapByLabeliOS,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
