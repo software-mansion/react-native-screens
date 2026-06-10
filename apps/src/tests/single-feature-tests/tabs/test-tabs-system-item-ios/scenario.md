@@ -18,7 +18,14 @@ smoke test.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Incomplete: Automation covers steps 1-19 but not in the full scope - see list below.
+
+Not automated:
+
+- Validating the differences between icon and selectedIcon.
+- Checking systemItem: 'search' tab bar item detached state and label hiding for iOS 26.
+- The "hidden title" option is validated, but indirectly; it should be verified manually.
+- Steps 20-23 (orientation changes).
 
 ## Prerequisites
 

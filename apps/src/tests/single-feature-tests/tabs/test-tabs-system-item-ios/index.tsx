@@ -121,29 +121,38 @@ function RuntimeConfigScreen() {
         <Text style={styles.label}>Runtime Config</Text>
         <Text style={styles.hint}>
           Configure systemItem, title and icon at runtime{'\n'}in different combinations.
-          {'\n'}
-          {'\n'}
-          systemItem: {`'${config.systemItem}'`}{'\n'}
+        </Text>
+        <Text style={styles.hint} testID="config-systemitem">
+          systemItem: {`'${config.systemItem}'`}
+        </Text>
+        <Text style={styles.hint} testID="config-title">
           title: {titleDisplay}
-          {'\n'}
+        </Text>
+        <Text style={styles.hint} testID="config-icon">
           icon: {iconDisplay}
         </Text>
 
-        <Text style={styles.groupLabel}>systemItem</Text>
+        <Text style={styles.groupLabel} testID="system-item-selector">
+          systemItem
+        </Text>
         <OptionRow
           options={SYSTEM_ITEM_OPTIONS}
           value={config.systemItem}
           onSelect={setSystemItem}
         />
 
-        <Text style={styles.groupLabel}>title</Text>
+        <Text style={styles.groupLabel} testID="title-selector">
+          title
+        </Text>
         <OptionRow
           options={TITLE_OPTIONS}
           value={config.title}
           onSelect={setTitle}
         />
 
-        <Text style={styles.groupLabel}>icon</Text>
+        <Text style={styles.groupLabel} testID="icon-selector">
+          icon
+        </Text>
         <OptionRow
           options={ICON_OPTIONS}
           value={config.icon}
@@ -155,7 +164,7 @@ function RuntimeConfigScreen() {
           icon; `system` icon falls back{'\n'}to the systemItem default (no stale image).
         </Text>
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 }
 
@@ -164,6 +173,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'StaticSystemItem',
     Component: StaticSystemItemScreen,
     options: {
+      tabBarItemTestID: 'bookmark-tab-item',
       ios: {
         systemItem: 'bookmarks',
       },
@@ -173,6 +183,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     name: 'RuntimeConfig',
     Component: RuntimeConfigScreen,
     options: {
+      tabBarItemTestID: 'custom-tab-item',
       ios: {
         systemItem: INITIAL_CONFIG.systemItem,
       },
