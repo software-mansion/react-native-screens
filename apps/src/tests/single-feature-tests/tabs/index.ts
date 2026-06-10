@@ -18,6 +18,7 @@ import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scrol
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 import TestTabsItemTitle from './test-tabs-item-title';
+import TestTabsSystemItem from './test-tabs-system-item-ios';
 
 const scenarios = {
   TestTabBottomAccessory,
@@ -38,6 +39,7 @@ const scenarios = {
   TestTabsTabBarExperimentalUserInterfaceStyle,
   TestTabsLifecycleEvents,
   TestTabsItemTitle,
+  TestTabsSystemItem,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
