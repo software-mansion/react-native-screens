@@ -53,24 +53,52 @@ class StackScreen(
             field = value
         }
 
+    // region Shadow State synchronization
+
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
     internal fun onContentYOriginChanged(y: Int) {
-        shadowStateProxy.updateStateIfNeeded(density = resources.displayMetrics.density, contentOffsetY = y)
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            contentOffsetY = y
+        )
     }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            frameWidth = r - l,
+            frameHeight = b - t
+        )
+    }
+
+    // endregion
+
+    // region Header config
 
     internal var headerConfig: StackHeaderConfig? = null
         private set
 
     private var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
 
-    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener?) {
-        onHeaderConfigurationAttachListener = listener?.let { WeakReference(it) }
-        if (listener != null) {
-            headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
+    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener) {
+        check(onHeaderConfigurationAttachListener?.get() == null) {
+            "[RNScreens] Attempted to register header config attach listener before previous listener was cleared."
         }
+        onHeaderConfigurationAttachListener = WeakReference(listener)
+        headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
+    }
+
+    internal fun clearHeaderConfigAttachListener() {
+        onHeaderConfigurationAttachListener = null
     }
 
     internal fun attachHeaderConfig(header: StackHeaderConfig) {
@@ -84,6 +112,8 @@ class StackScreen(
             onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(null, null)
         }
     }
+
+    // endregion
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -110,20 +140,6 @@ class StackScreen(
 
     internal fun onNativeDismissPrevented() {
         eventEmitter.emitOnNativeDismissPrevented()
-    }
-
-    override fun onLayout(
-        changed: Boolean,
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) {
-        shadowStateProxy.updateStateIfNeeded(
-            density = resources.displayMetrics.density,
-            frameWidth = r - l,
-            frameHeight = b - t,
-        )
     }
 
     override fun getAssociatedFragment(): Fragment? =
