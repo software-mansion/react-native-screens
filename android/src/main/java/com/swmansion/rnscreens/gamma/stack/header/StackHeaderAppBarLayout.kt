@@ -43,6 +43,7 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
+        // We need to manually manage the title to handle leading subview's positioning.
         internal var managedTitleView: AppCompatTextView? = null
 
         init {

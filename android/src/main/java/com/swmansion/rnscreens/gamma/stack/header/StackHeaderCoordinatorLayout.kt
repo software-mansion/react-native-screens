@@ -25,49 +25,10 @@ internal class StackHeaderCoordinatorLayout(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
 ) : CoordinatorLayout(context) {
-    private val wrappedContext =
-        ContextThemeWrapper(
-            context,
-            R.style.Theme_Material3_DayNight_NoActionBar,
-        )
-
-    private val applicator = StackHeaderApplicator(wrappedContext)
+    // region Config attach / detach
 
     private var currentProvider: StackHeaderConfigurationProviding? = null
     private var currentDelegate: StackHeaderDelegate? = null
-    private var appBarLayout: StackHeaderAppBarLayout? = null
-
-    private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
-    private var toolbarMenuReverseIdMap = emptyMap<Int, String>()
-
-    private val onNavigationIconClick: () -> Unit = {
-        val activity =
-            (stackScreen.context as? ReactContext)?.currentActivity
-                as? OnBackPressedDispatcherOwner
-        activity?.onBackPressedDispatcher?.onBackPressed()
-    }
-
-    // region Configuration observer
-
-    private val configObserver =
-        object : StackHeaderConfigurationObserver {
-            override fun onConfigChanged(
-                config: StackHeaderConfigurationProviding,
-                flags: StackHeaderUpdateFlags,
-            ) = processUpdate(config, flags)
-
-            override fun onMenuItemUpdated(
-                id: String,
-                options: StackHeaderToolbarMenuItemOptions,
-            ) {
-                val toolbar = appBarLayout?.toolbar ?: return
-                applicator.updateToolbarMenuItem(toolbar, toolbarMenuForwardIdMap, id, options)
-            }
-        }
-
-    // endregion
-
-    // region Config attach / detach
 
     private val onHeaderConfigAttached =
         OnHeaderConfigurationAttachListener { provider, delegate ->
@@ -92,16 +53,54 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
-    // region Shadow state synchronization
+    // region Init
+
+    internal var stackScreenWrapper: FrameLayout
+
+    init {
+        isTransitionGroup = true
+
+        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
+        addView(
+            stackScreenWrapper,
+            LayoutParams(MATCH_PARENT, MATCH_PARENT),
+        )
+
+        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
+    }
+
+    // endregion
+
+    // region Configuration observer
+
+    private val configObserver =
+        object : StackHeaderConfigurationObserver {
+            override fun onConfigChanged(
+                config: StackHeaderConfigurationProviding,
+                flags: StackHeaderUpdateFlags,
+            ) = processUpdate(config, flags)
+
+            override fun onMenuItemUpdated(
+                id: String,
+                options: StackHeaderToolbarMenuItemOptions,
+            ) {
+                val toolbar = appBarLayout?.toolbar ?: return
+                applicator.updateToolbarMenuItem(toolbar, toolbarMenuForwardIdMap, id, options)
+            }
+        }
+
+    // endregion
+
+    // region Layout callbacks
 
     private val appBarOffsetListener =
         AppBarLayout.OnOffsetChangedListener { _, _ ->
-            syncShadowState()
+            onMaybeHeaderLayoutChanged()
         }
 
     private val appBarLayoutChangeListener =
         OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            syncShadowState()
+            onMaybeHeaderLayoutChanged()
         }
 
     private fun attachAppBarListeners(appBar: StackHeaderAppBarLayout) {
@@ -114,7 +113,7 @@ internal class StackHeaderCoordinatorLayout(
         appBar.removeOnLayoutChangeListener(appBarLayoutChangeListener)
     }
 
-    private fun syncShadowState() {
+    private fun onMaybeHeaderLayoutChanged() {
         val delegate = currentDelegate ?: return
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
@@ -161,25 +160,27 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
-    // region Init
+    // region Header updates
 
-    internal var stackScreenWrapper: FrameLayout
-
-    init {
-        isTransitionGroup = true
-
-        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
-        addView(
-            stackScreenWrapper,
-            LayoutParams(MATCH_PARENT, MATCH_PARENT),
+    private val wrappedContext =
+        ContextThemeWrapper(
+            context,
+            R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
+    private val applicator = StackHeaderApplicator(wrappedContext)
+
+    private var appBarLayout: StackHeaderAppBarLayout? = null
+
+    private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
+    private var toolbarMenuReverseIdMap = emptyMap<Int, String>()
+
+    private val onNavigationIconClick: () -> Unit = {
+        val activity =
+            (stackScreen.context as? ReactContext)?.currentActivity
+                    as? OnBackPressedDispatcherOwner
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
-
-    // endregion
-
-    // region Flag-gated dispatch
 
     private fun processUpdate(
         provider: StackHeaderConfigurationProviding,
@@ -225,7 +226,7 @@ internal class StackHeaderCoordinatorLayout(
             }
         }
 
-        syncShadowState()
+        onMaybeHeaderLayoutChanged()
     }
 
     // endregion
