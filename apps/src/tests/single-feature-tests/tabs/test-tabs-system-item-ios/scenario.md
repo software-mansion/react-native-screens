@@ -8,7 +8,7 @@ the correct UIKit-provided icon and localized title with no override.
 Exercises the Runtime Config tab, which combines three independent
 toggle groups (systemItem, title, icon) applied atomically via
 `setRouteOptions`, and verifies that all combinations produce the
-correct tab bar item appearance — including that switching the icon
+correct tab bar item appearance - including that switching the icon
 back to `system` immediately removes any stale custom SF Symbol image.
 Verifies that the `search` item renders as a magnifying glass with
 iOS-version-specific layout differences. Includes an orientation
@@ -18,14 +18,17 @@ smoke test.
 
 ## E2E test
 
-Incomplete: Automation covers steps 1-19 but not in the full scope - see list below.
+Incomplete: Automation was implemented for the iOS 26 simulator and covers steps 1–19,
+but not in full scope - see the list below.
 
 Not automated:
 
 - Validating the differences between icon and selectedIcon.
-- Checking systemItem: 'search' tab bar item detached state and label hiding for iOS 26.
+- Checking systemItem: 'search' tab bar item detached state and label hiding.
 - The "hidden title" option is validated, but indirectly; it should be verified manually.
 - Steps 20-23 (orientation changes).
+- iOS 18 is not supported: UI element identifiers differ from iOS 26
+  (e.g. UITabBarButton on iOS 18 vs. _UITabButton on iOS 26), which causes tests to fail.
 
 ## Prerequisites
 
@@ -75,7 +78,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ---
 
-### Runtime Config tab — initial state
+### Runtime Config tab - initial state
 
 3. Tap the second tab in the tab bar (**Favorites**).
 
@@ -88,7 +91,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ---
 
-### Runtime Config tab — systemItem cycling
+### Runtime Config tab - systemItem cycling
 
 4. Tap **history** in the systemItem group.
 
@@ -111,7 +114,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ---
 
-### Runtime Config tab — title override cycling
+### Runtime Config tab - title override cycling
 
 7. Tap **Custom** in the title group.
 
@@ -130,7 +133,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ---
 
-### Runtime Config tab — icon override cycling
+### Runtime Config tab - icon override cycling
 
 10. Tap **house** in the icon group.
 
@@ -160,7 +163,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ---
 
-### Runtime Config tab — combined overrides
+### Runtime Config tab - combined overrides
 
 14. Set systemItem to **search**, title to **custom**, icon to
     **heart** (all three groups in a non-default state).

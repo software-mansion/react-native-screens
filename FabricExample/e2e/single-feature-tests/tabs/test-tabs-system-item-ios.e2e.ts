@@ -13,7 +13,7 @@ async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
 }
 
-describeIfiOS('Tab Bar System Item', () => {
+describeIfiOS('Tab Bar System Item (iOS 26)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-system-item-ios');
