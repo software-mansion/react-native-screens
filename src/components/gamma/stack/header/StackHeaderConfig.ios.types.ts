@@ -6,16 +6,20 @@ export interface StackHeaderBaseItemIOS {
   label?: string | undefined;
 }
 
-export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
-  type: 'item';
+export interface SupportsMenuIOS {
   menu?: StackHeaderMenu | undefined;
 }
 
-export interface StackHeaderInlineCustomItemIOS {
+export interface StackHeaderInlineItemIOS
+  extends StackHeaderBaseItemIOS,
+    SupportsMenuIOS {
+  type: 'item';
+}
+
+export interface StackHeaderInlineCustomItemIOS extends SupportsMenuIOS {
   key: string;
   type: 'item';
   render: () => ReactElement;
-  menu?: StackHeaderMenu | undefined;
 }
 
 interface StackHeaderFixedSpacerItemIOS {
