@@ -34,7 +34,6 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
         <SettingsSwitch
-          testID="safe-area-bottom-edge-switch"
           label={'safeAreaViewBottomEdgeEnabled'}
           value={safeAreaViewBottomEdgeEnabled}
           onValueChange={function (value: boolean): void {
@@ -45,7 +44,6 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
         <SettingsSwitch
-          testID="tab-bar-respects-ime-insets-switch"
           label={'tabBarRespectsIMEInsets'}
           value={hostConfig.android?.tabBarRespectsIMEInsets ?? false}
           onValueChange={function (value: boolean): void {
@@ -56,13 +54,12 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>TextInput</Text>
         <TextInput
-          testID="ime-insets-text-input"
           placeholder="Focus TextInput to show IME..."
           style={styles.textInput}
         />
       </View>
       <View style={styles.end}>
-        <Text testID="tabs-screen-bottom-text">TabsScreen bottom</Text>
+        <Text>TabsScreen bottom</Text>
       </View>
     </View>
   );
@@ -75,7 +72,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
-      tabBarItemTestID: 'ime-insets-config-tab-item',
       safeAreaConfiguration: {
         edges: {
           bottom: true,
@@ -89,7 +85,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
-      tabBarItemTestID: 'ime-insets-tab2-tab-item',
     },
   },
 ];
