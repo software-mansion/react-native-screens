@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
@@ -73,17 +73,17 @@ class StackScreen(
     internal var headerConfig: StackHeaderConfig? = null
         private set
 
-    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
+    internal var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
 
     internal fun attachHeaderConfig(header: StackHeaderConfig) {
         headerConfig = header
-        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
+        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttach(header, header)
     }
 
     internal fun detachHeaderConfig(header: StackHeaderConfig) {
         if (headerConfig === header) {
             headerConfig = null
-            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
+            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttach(null, null)
         }
     }
 

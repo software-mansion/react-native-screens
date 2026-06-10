@@ -5,7 +5,13 @@ import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import android.util.Log
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.UIManager
+import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
+import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.helpers.IconResolution
 import com.swmansion.rnscreens.gamma.helpers.IconResolver
@@ -17,49 +23,149 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import java.lang.ref.WeakReference
+import kotlin.properties.Delegates
 
+@OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
 class StackHeaderConfig(
     val reactContext: ReactContext,
 ) : ReactViewGroup(reactContext),
-    StackHeaderConfigProviding,
-    OnStackHeaderSubviewChangeListener {
-    override var type: StackHeaderType = StackHeaderType.SMALL
-        internal set
-    override var title: String = ""
-        internal set
-    override var hidden: Boolean = false
-        internal set
-    override var transparent: Boolean = false
-        internal set
-    override var backButtonHidden: Boolean = false
-        internal set
-    override var backButtonTintColorNormal: Int? = null
-        internal set
-    override var backButtonTintColorPressed: Int? = null
-        internal set
-    override var backButtonTintColorFocused: Int? = null
-        internal set
-    override var backButtonIcon: Drawable? = null
+    StackHeaderConfigurationProviding,
+    StackHeaderDelegate,
+    OnStackHeaderSubviewChangeListener,
+    UIManagerListener {
+
+    // region Flag accumulation
+
+    private var pendingFlags = StackHeaderUpdateFlags.NONE
+    private var isInsideMountTransaction = false
+    private var configObserver: StackHeaderConfigurationObserver? = null
+
+    override fun setConfigObserver(observer: StackHeaderConfigurationObserver?) {
+        configObserver = observer
+    }
+
+    private fun invalidate(flags: StackHeaderUpdateFlags) {
+        pendingFlags = pendingFlags or flags
+    }
+
+    private fun flushUpdates() {
+        val snapshot = pendingFlags
+        pendingFlags = StackHeaderUpdateFlags.NONE
+        if (snapshot.isNotEmpty) {
+            configObserver?.onConfigChanged(this, snapshot)
+        }
+    }
+
+    // endregion
+
+    // region UIManagerListener
+
+    init {
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext as ThemedReactContext)
+            .addUIManagerEventListener(this)
+    }
+
+    override fun willMountItems(uiManager: UIManager) {
+        isInsideMountTransaction = true
+    }
+
+    override fun didMountItems(uiManager: UIManager) {
+        isInsideMountTransaction = false
+        flushUpdates()
+    }
+
+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
+
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
+
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    // endregion
+
+    // region Properties
+
+    override var type: StackHeaderType by Delegates.observable(StackHeaderType.SMALL) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+    }
         internal set
 
-    override var scrollFlagScroll: Boolean = false
-        internal set
-    override var scrollFlagEnterAlways: Boolean = false
-        internal set
-    override var scrollFlagEnterAlwaysCollapsed: Boolean = false
-        internal set
-    override var scrollFlagExitUntilCollapsed: Boolean = false
-        internal set
-    override var scrollFlagSnap: Boolean = false
+    override var title: String by Delegates.observable("") { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.TITLE)
+    }
         internal set
 
-    override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig> = emptyList()
+    override var hidden: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+    }
         internal set
 
-    // Staging fields for back button icon resolution.
-    // Both props may arrive in any order within a single update batch.
-    // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
+    override var transparent: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+    }
+        internal set
+
+    override var backButtonHidden: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+    }
+        internal set
+
+    override var backButtonTintColorNormal: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+    }
+        internal set
+
+    override var backButtonTintColorPressed: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+    }
+        internal set
+
+    override var backButtonTintColorFocused: Int? by Delegates.observable<Int?>(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+    }
+        internal set
+
+    override var backButtonIcon: Drawable? by Delegates.observable<Drawable?>(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+    }
+        internal set
+
+    override var scrollFlagScroll: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+    }
+        internal set
+
+    override var scrollFlagEnterAlways: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+    }
+        internal set
+
+    override var scrollFlagEnterAlwaysCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+    }
+        internal set
+
+    override var scrollFlagExitUntilCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+    }
+        internal set
+
+    override var scrollFlagSnap: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+    }
+        internal set
+
+    override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
+        by Delegates.observable(emptyList()) { _, old, new ->
+            if (old != new) invalidate(StackHeaderUpdateFlags.TOOLBAR_MENU)
+        }
+        internal set
+
+    // endregion
+
+    // region Back button icon resolution
+
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
     private val backButtonIconResolver = IconResolver()
@@ -74,22 +180,22 @@ class StackHeaderConfig(
                 IconResolution.Unchanged -> Unit
                 is IconResolution.Resolved -> {
                     backButtonIcon = result.drawable
-                    notifyConfigChanged()
+                    if (!isInsideMountTransaction) {
+                        flushUpdates()
+                    }
                 }
             }
         }
     }
 
+    // endregion
+
+    // region Toolbar menu item icon resolution
+
     internal var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
 
     private var toolbarMenuItemIconResolvers = mapOf<String, IconResolver>()
 
-    // Last resolved icon per menu item id. Unlike every other field on this
-    // config — which mirrors a single prop — this cache deliberately merges
-    // resolved icons from BOTH sources that can set a menu item icon: the
-    // `toolbarMenuItems` prop array (resolveToolbarMenuItemIconsIfNeeded) and
-    // the imperative `setToolbarMenuItemOptions` view command
-    // (dispatchMenuItemUpdate). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
@@ -133,31 +239,47 @@ class StackHeaderConfig(
         if (item.icon != icon) {
             val newItems = currentItems.toMutableList()
             newItems[itemIndex] = item.copy(icon = icon)
-
             toolbarMenuItems = newItems
-            notifyConfigChanged()
+            if (!isInsideMountTransaction) {
+                flushUpdates()
+            }
         }
     }
 
-    override var backgroundSubview: StackHeaderSubview? = null
+    // endregion
+
+    // region Subviews
+
+    override var backgroundSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
         private set
-    override var leadingSubview: StackHeaderSubview? = null
+
+    override var leadingSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
         private set
-    override var centerSubview: StackHeaderSubview? = null
+
+    override var centerSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
         private set
-    override var trailingSubview: StackHeaderSubview? = null
+
+    override var trailingSubview: StackHeaderSubview? by Delegates.observable<StackHeaderSubview?>(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
         private set
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL
 
+    // endregion
+
+    // region Shadow state (StackHeaderDelegate)
+
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
-
-    internal lateinit var eventEmitter: StackHeaderConfigEventEmitter
-
-    private var delegate: WeakReference<StackHeaderConfigDelegate>? = null
 
     override fun updateHeaderFrame(
         width: Int,
@@ -172,69 +294,62 @@ class StackHeaderConfig(
         )
     }
 
+    override fun onMenuItemClick(id: String) {
+        eventEmitter.emitOnToolbarMenuItemClicked(id)
+    }
+
+    // endregion
+
+    // region Event emitter
+
+    internal lateinit var eventEmitter: StackHeaderConfigEventEmitter
+
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] StackHeaderConfig must have its tag set when registering event emitters" }
         eventEmitter = StackHeaderConfigEventEmitter(reactContext, id)
     }
 
-    override fun onMenuItemClick(id: String) {
-        eventEmitter.emitOnToolbarMenuItemClicked(id)
-    }
+    // endregion
 
-    override fun setDelegate(delegate: StackHeaderConfigDelegate) {
-        this.delegate = WeakReference(delegate)
-    }
+    // region Imperative menu item commands
 
-    override fun removeDelegate(delegate: StackHeaderConfigDelegate) {
-        if (this.delegate?.get() === delegate) {
-            this.delegate = null
-        }
-    }
-
-    internal fun notifyConfigChanged() {
-        delegate?.get()?.onConfigChange(this)
-    }
-
-    /**
-     * Applies a toolbar menu item view command. When the command does not touch
-     * the icon ([iconSource] is `null`) the options are delivered immediately.
-     * Otherwise, the icon is resolved first and all options — including the icon —
-     * are delivered together in a single update, so the change is applied
-     * atomically once the (possibly async) image has loaded.
-     */
     internal fun dispatchMenuItemUpdate(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
         iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
         if (iconSource == null) {
-            delegate?.get()?.onMenuItemUpdate(id, options)
+            configObserver?.onMenuItemUpdate(id, options)
             return
         }
 
         val resolver = toolbarMenuItemIconResolvers[id]
         if (resolver == null) {
             Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
-            delegate?.get()?.onMenuItemUpdate(id, options)
+            configObserver?.onMenuItemUpdate(id, options)
             return
         }
 
         resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { result ->
             val icon =
                 when (result) {
-                    IconResolution.Unchanged -> null // keep the current icon
+                    IconResolution.Unchanged -> null
                     is IconResolution.Resolved -> {
-                        // Keep the cache in sync with the prop-array path: both share this
-                        // id's resolver.
                         toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
                         StackHeaderToolbarUpdate.from(result.drawable)
                     }
                 }
-            delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = icon))
+            configObserver?.onMenuItemUpdate(id, options.copy(icon = icon))
         }
     }
 
-    override fun onStackHeaderSubviewChange() = notifyConfigChanged()
+    // endregion
+
+    // region Subview management
+
+    override fun onStackHeaderSubviewChange() {
+        invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+    }
 
     internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
         when (headerSubview.type) {
@@ -244,7 +359,6 @@ class StackHeaderConfig(
             StackHeaderSubviewType.TRAILING -> trailingSubview = headerSubview
         }
         headerSubview.onStackHeaderSubviewChangeListener = WeakReference(this)
-        notifyConfigChanged()
     }
 
     internal fun removeConfigSubview(headerSubview: StackHeaderSubview) {
@@ -255,7 +369,6 @@ class StackHeaderConfig(
             StackHeaderSubviewType.CENTER -> centerSubview = null
             StackHeaderSubviewType.TRAILING -> trailingSubview = null
         }
-        notifyConfigChanged()
     }
 
     internal fun removeConfigSubviewAt(index: Int) {
@@ -272,9 +385,22 @@ class StackHeaderConfig(
     internal val configSubviewsCount: Int
         get() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).size
 
-    // The order of the subviews MUST match the order of JS StackHeaderConfig children.
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
         listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+
+    // endregion
+
+    // region Teardown
+
+    internal fun tearDown() {
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext as ThemedReactContext)
+            .removeUIManagerEventListener(this)
+        pendingFlags = StackHeaderUpdateFlags.NONE
+        configObserver = null
+    }
+
+    // endregion
 
     companion object {
         private const val TAG = "StackHeaderConfig"
