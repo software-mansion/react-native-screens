@@ -164,7 +164,7 @@ function RuntimeConfigScreen() {
           icon; `system` icon falls back{'\n'}to the systemItem default (no stale image).
         </Text>
       </View>
-    </ScrollView >
+    </ScrollView>
   );
 }
 
