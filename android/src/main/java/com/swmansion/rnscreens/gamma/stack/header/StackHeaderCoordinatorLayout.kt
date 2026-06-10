@@ -46,27 +46,10 @@ internal class StackHeaderCoordinatorLayout(
 
         if (provider != null) {
             provider.setConfigurationObserver(configObserver)
+            processUpdate(provider, StackHeaderUpdateFlags.ALL)
         } else {
             removeHeader()
         }
-    }
-
-    // endregion
-
-    // region Init
-
-    internal var stackScreenWrapper: FrameLayout
-
-    init {
-        isTransitionGroup = true
-
-        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
-        addView(
-            stackScreenWrapper,
-            LayoutParams(MATCH_PARENT, MATCH_PARENT),
-        )
-
-        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
     }
 
     // endregion
@@ -178,7 +161,7 @@ internal class StackHeaderCoordinatorLayout(
     private val onNavigationIconClick: () -> Unit = {
         val activity =
             (stackScreen.context as? ReactContext)?.currentActivity
-                    as? OnBackPressedDispatcherOwner
+                as? OnBackPressedDispatcherOwner
         activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
@@ -273,6 +256,24 @@ internal class StackHeaderCoordinatorLayout(
             stackScreen.onContentYOriginChanged(0)
             stackScreenWrapper.requestLayout()
         }
+    }
+
+    // endregion
+
+    // region Init
+
+    internal var stackScreenWrapper: FrameLayout
+
+    init {
+        isTransitionGroup = true
+
+        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
+        addView(
+            stackScreenWrapper,
+            LayoutParams(MATCH_PARENT, MATCH_PARENT),
+        )
+
+        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
     }
 
     // endregion
