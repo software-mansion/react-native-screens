@@ -2,12 +2,13 @@ import { Image, processColor } from 'react-native';
 import {
   HeaderBarButtonItem,
   HeaderBarButtonItemWithMenu,
+  ToolbarItemFlexibleSpace,
 } from 'react-native-screens/types';
 
 const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
   index: number,
-  side: 'left' | 'right',
+  side: 'left' | 'right' | 'toolbar',
   path: string = '',
 ): HeaderBarButtonItemWithMenu['menu'] => {
   return {
@@ -50,11 +51,11 @@ const prepareMenu = (
 };
 
 export const prepareHeaderBarButtonItems = (
-  barButtonItems: HeaderBarButtonItem[],
-  side: 'left' | 'right',
+  barButtonItems: (HeaderBarButtonItem | ToolbarItemFlexibleSpace)[],
+  side: 'left' | 'right' | 'toolbar',
 ) => {
   return barButtonItems?.map((item, index) => {
-    if (item.type === 'spacing') {
+    if (item.type === 'spacing' || item.type === 'flexibleSpace') {
       return item;
     }
     let imageSource, templateSource;

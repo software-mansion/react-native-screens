@@ -12,6 +12,8 @@ type OnDetachedEvent = Readonly<{}>;
 
 type OnPressHeaderBarButtonItemEvent = Readonly<{ buttonId: string }>;
 type OnPressHeaderBarButtonMenuItemEvent = Readonly<{ menuId: string }>;
+type OnPressToolbarItemEvent = Readonly<{ buttonId: string }>;
+type OnPressToolbarMenuItemEvent = Readonly<{ menuId: string }>;
 
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 
@@ -79,6 +81,13 @@ export interface NativeProps extends ViewProps {
     | undefined;
   onPressHeaderBarButtonMenuItem?:
     | CT.DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>
+    | undefined;
+  toolbarItems?: CT.UnsafeMixed[] | undefined;
+  onPressToolbarItem?:
+    | CT.DirectEventHandler<OnPressToolbarItemEvent>
+    | undefined;
+  onPressToolbarMenuItem?:
+    | CT.DirectEventHandler<OnPressToolbarMenuItemEvent>
     | undefined;
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
 

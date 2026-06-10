@@ -278,8 +278,9 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSString *fontFamily = titleStyle[@"fontFamily"];
   NSNumber *fontSize = titleStyle[@"fontSize"];
   NSString *fontWeight = titleStyle[@"fontWeight"];
+  NSString *fontStyle = titleStyle[@"fontStyle"];
   NSMutableDictionary *attrs = [NSMutableDictionary new];
-  if (fontFamily || fontWeight) {
+  if (fontFamily || fontWeight || fontStyle) {
     NSNumber *resolvedFontSize = fontSize;
     if (!resolvedFontSize) {
 #if TARGET_OS_TV
@@ -293,7 +294,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                                           withFamily:fontFamily
                                                 size:resolvedFontSize
                                               weight:fontWeight
-                                               style:nil
+                                               style:fontStyle
                                              variant:nil
                                      scaleMultiplier:1.0];
   } else {

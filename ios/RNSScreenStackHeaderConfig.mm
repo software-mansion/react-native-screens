@@ -492,6 +492,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (shouldHide) {
     navitem.title = config.title;
 
+#if !TARGET_OS_TV
+    [vc setToolbarItems:nil animated:animated];
+    [navctr setToolbarHidden:YES animated:animated];
+#endif
+
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
     [navctr setNavigationBarHidden:YES animated:animated];
     return;
@@ -637,6 +642,15 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
                                                  withCurrentItems:navitem.rightBarButtonItems];
 
+#if !TARGET_OS_TV
+  {
+    NSArray<UIBarButtonItem *> *tbItems =
+        config.toolbarItems.count > 0 ? [config toolbarItemsFromConfigs:config.toolbarItems] : nil;
+    [vc setToolbarItems:tbItems animated:animated];
+    [navctr setToolbarHidden:(tbItems == nil || tbItems.count == 0) animated:animated];
+  }
+#endif /* !TARGET_OS_TV */
+
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
   RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
@@ -764,6 +778,48 @@ RNS_IGNORE_SUPER_CALL_END
     [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
         setSemanticContentAttribute:self.direction];
   }
+}
+
+- (NSArray<UIBarButtonItem *> *)toolbarItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+{
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count];
+  for (NSDictionary *dict in dicts) {
+    NSString *type = dict[@"type"];
+    if ([type isEqualToString:@"flexibleSpace"]) {
+      [items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                     target:nil
+                                                                     action:nil]];
+    } else if (dict[@"buttonId"] || dict[@"menu"]) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
+          action:^(NSString *buttonId) {
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressToolbarItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressToolbarItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
+          }
+          menuAction:^(NSString *menuId) {
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressToolbarMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressToolbarMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
+          }
+          imageLoader:_imageLoader];
+      [items addObject:item];
+    } else if (dict[@"spacing"]) {
+      UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                            target:nil
+                                                                            action:nil];
+      item.width = [dict[@"spacing"] doubleValue];
+      [items addObject:item];
+    }
+  }
+  return items;
 }
 
 - (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
@@ -1076,6 +1132,18 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       }
     }
     _headerRightBarButtonItems = array;
+  }
+
+  if (newScreenProps.toolbarItems != oldScreenProps.toolbarItems) {
+    const auto &vec = newScreenProps.toolbarItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _toolbarItems = array;
   }
 
   [self updateViewControllerIfNeeded];

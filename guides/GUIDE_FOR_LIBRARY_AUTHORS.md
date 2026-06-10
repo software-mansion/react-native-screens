@@ -741,6 +741,60 @@ menu?: {
   />
 ```
 
+### `toolbarItems` (iOS only)
+
+An array of objects describing native bar button items to display in the bottom toolbar managed by `UINavigationController`. The toolbar is automatically shown when this prop is set to a non-empty array and hidden when it is empty or not set.
+
+Items share the same types as `headerLeftBarButtonItems` / `headerRightBarButtonsItems` with two differences:
+
+- `badge` is **not** supported (UIKit does not render badges on toolbar items)
+- An additional `type: 'flexibleSpace'` item is available to push items apart
+
+#### Supported item types:
+
+`type: 'button'` — A tappable button with a label, icon, or both.
+
+`type: 'menu'` — A button that presents a `UIMenu` with nested actions and submenus. Supports the same menu structure as header bar button items.
+
+`type: 'flexibleSpace'` — Expands to fill available space between other items, equivalent to `UIBarButtonSystemItemFlexibleSpace`. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/systemitem/flexiblespace
+
+`type: 'spacing'` — Inserts a fixed amount of horizontal space between items.
+
+#### Example configuration:
+
+```typescript
+<Stack.Screen
+  options={{
+    toolbarItems: [
+      {
+        type: 'button',
+        label: 'Share',
+        onPress: () => Alert.alert('Share pressed'),
+      },
+      { type: 'flexibleSpace' },
+      {
+        type: 'menu',
+        label: 'Sort',
+        menu: {
+          items: [
+            {
+              type: 'action',
+              label: 'By Name',
+              onPress: () => Alert.alert('Sort by Name'),
+            },
+            {
+              type: 'action',
+              label: 'By Date',
+              onPress: () => Alert.alert('Sort by Date'),
+            },
+          ],
+        },
+      },
+    ],
+  }}
+/>
+```
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.

@@ -48,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *toolbarItems;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 NS_ASSUME_NONNULL_END

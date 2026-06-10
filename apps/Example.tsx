@@ -27,6 +27,7 @@ import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 import BarButtonItems from './src/screens/BarButtonItems';
+import Toolbar from './src/screens/Toolbar';
 
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -129,6 +130,11 @@ const SCREENS: Record<
   BarButtonItems: {
     title: 'Bar Button Items',
     component: BarButtonItems,
+    type: 'playground',
+  },
+  Toolbar: {
+    title: 'Toolbar',
+    component: Toolbar,
     type: 'playground',
   },
 };
