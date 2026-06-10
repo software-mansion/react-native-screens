@@ -50,15 +50,13 @@ class StackHeaderConfig(
     }
 
     private fun flushUpdates() {
-        if (configObserver == null) {
+        if (configObserver == null || pendingFlags.isEmpty) {
             return
         }
 
         val snapshot = pendingFlags
+        configObserver?.onConfigChanged(this, snapshot)
         pendingFlags = StackHeaderUpdateFlags.NONE
-        if (snapshot.isNotEmpty) {
-            configObserver?.onConfigChanged(this, snapshot)
-        }
     }
 
     // endregion

@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
@@ -85,10 +84,8 @@ internal class StackHeaderCoordinatorLayout(
         currentProvider = provider
         currentDelegate = delegate
 
-        provider?.setConfigObserver(configObserver)
-
         if (provider != null) {
-            processUpdate(provider, StackHeaderUpdateFlags.ALL)
+            provider.setConfigObserver(configObserver)
         } else {
             removeHeader()
         }
@@ -200,10 +197,11 @@ internal class StackHeaderCoordinatorLayout(
                 applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
                 applicator.applyScrollFlags(appBar, provider)
 
-                val (fwd, rev) = applicator.rebuildToolbarMenu(
-                    appBar.toolbar,
-                    provider.toolbarMenuItems,
-                ) { id -> currentDelegate?.onMenuItemClick(id) }
+                val (fwd, rev) =
+                    applicator.rebuildToolbarMenu(
+                        appBar.toolbar,
+                        provider.toolbarMenuItems,
+                    ) { id -> currentDelegate?.onMenuItemClick(id) }
                 toolbarMenuForwardIdMap = fwd
                 toolbarMenuReverseIdMap = rev
             } else {
@@ -216,17 +214,21 @@ internal class StackHeaderCoordinatorLayout(
 
         val appBar = appBarLayout ?: return
 
-        if (flags.containsAny(StackHeaderUpdateFlags.TITLE))
+        if (flags.containsAny(StackHeaderUpdateFlags.TITLE)) {
             applicator.applyTitle(appBar, provider)
-        if (flags.containsAny(StackHeaderUpdateFlags.BACK_BUTTON))
+        }
+        if (flags.containsAny(StackHeaderUpdateFlags.BACK_BUTTON)) {
             applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
-        if (flags.containsAny(StackHeaderUpdateFlags.SCROLL_FLAGS))
+        }
+        if (flags.containsAny(StackHeaderUpdateFlags.SCROLL_FLAGS)) {
             applicator.applyScrollFlags(appBar, provider)
+        }
         if (flags.containsAny(StackHeaderUpdateFlags.TOOLBAR_MENU)) {
-            val (fwd, rev) = applicator.rebuildToolbarMenu(
-                appBar.toolbar,
-                provider.toolbarMenuItems,
-            ) { id -> currentDelegate?.onMenuItemClick(id) }
+            val (fwd, rev) =
+                applicator.rebuildToolbarMenu(
+                    appBar.toolbar,
+                    provider.toolbarMenuItems,
+                ) { id -> currentDelegate?.onMenuItemClick(id) }
             toolbarMenuForwardIdMap = fwd
             toolbarMenuReverseIdMap = rev
         }
