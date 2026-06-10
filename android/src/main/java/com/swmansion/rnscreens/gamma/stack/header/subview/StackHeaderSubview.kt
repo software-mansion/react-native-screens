@@ -38,7 +38,7 @@ class StackHeaderSubview(
     // endregion
 
     // region Shadow state synchronization (origin)
-    
+
     private val shadowStateProxy = ShadowStateProxy(includesFrameSize = false)
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
