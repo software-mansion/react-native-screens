@@ -42,8 +42,6 @@ internal class StackHeaderApplicator(
     fun rebuild(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
-        canNavigateBack: Boolean,
-        onNavigationIconClick: () -> Unit,
     ): StackHeaderAppBarLayout {
         val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
 
@@ -146,8 +144,8 @@ internal class StackHeaderApplicator(
             layoutParams =
                 Toolbar
                     .LayoutParams(
-                        Toolbar.LayoutParams.WRAP_CONTENT,
-                        Toolbar.LayoutParams.WRAP_CONTENT,
+                        WRAP_CONTENT,
+                        WRAP_CONTENT,
                         Gravity.START,
                     ).apply {
                         marginStart = toolbar.titleMarginStart + toolbar.contentInsetStart

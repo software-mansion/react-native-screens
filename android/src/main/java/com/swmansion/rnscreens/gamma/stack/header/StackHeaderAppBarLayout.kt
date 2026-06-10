@@ -43,7 +43,7 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
-        var managedTitleView: AppCompatTextView? = null
+        internal var managedTitleView: AppCompatTextView? = null
 
         init {
             addView(toolbar)

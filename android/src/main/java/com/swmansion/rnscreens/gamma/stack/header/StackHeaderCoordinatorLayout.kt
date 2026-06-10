@@ -96,6 +96,74 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
+    // region Shadow state synchronization
+
+    private val appBarOffsetListener =
+        AppBarLayout.OnOffsetChangedListener { _, _ ->
+            syncShadowState()
+        }
+
+    private val appBarLayoutChangeListener =
+        OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            syncShadowState()
+        }
+
+    private fun attachAppBarListeners(appBar: StackHeaderAppBarLayout) {
+        appBar.addOnOffsetChangedListener(appBarOffsetListener)
+        appBar.addOnLayoutChangeListener(appBarLayoutChangeListener)
+    }
+
+    private fun detachAppBarListeners(appBar: StackHeaderAppBarLayout) {
+        appBar.removeOnOffsetChangedListener(appBarOffsetListener)
+        appBar.removeOnLayoutChangeListener(appBarLayoutChangeListener)
+    }
+
+    private fun syncShadowState() {
+        val delegate = currentDelegate ?: return
+        val provider = currentProvider ?: return
+        val appBar = appBarLayout ?: return
+
+        val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
+
+        delegate.updateHeaderFrame(
+            appBar.width,
+            appBar.height,
+            configOffset,
+        )
+
+        updateSubviewOffsets(appBar, provider)
+    }
+
+    private fun updateSubviewOffsets(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        config.leadingSubview?.let { updateSubviewOffset(it, appBar) }
+        config.centerSubview?.let { updateSubviewOffset(it, appBar) }
+        config.trailingSubview?.let { updateSubviewOffset(it, appBar) }
+        config.backgroundSubview?.let { updateSubviewOffset(it, appBar) }
+    }
+
+    private fun updateSubviewOffset(
+        subview: StackHeaderSubviewProviding,
+        appBar: StackHeaderAppBarLayout,
+    ) {
+        val view = subview.view
+        if (view.width == 0 && view.height == 0) return
+
+        val appBarPos = IntArray(2)
+        val subviewPos = IntArray(2)
+        appBar.getLocationInWindow(appBarPos)
+        view.getLocationInWindow(subviewPos)
+
+        subview.updateContentOriginOffset(
+            x = subviewPos[0] - appBarPos[0],
+            y = subviewPos[1] - appBarPos[1],
+        )
+    }
+
+    // endregion
+
     // region Init
 
     internal var stackScreenWrapper: FrameLayout
@@ -124,7 +192,7 @@ internal class StackHeaderCoordinatorLayout(
         if (flags.needsRebuild) {
             resetHeader()
             if (!provider.hidden) {
-                val appBar = applicator.rebuild(this, provider, canNavigateBack, onNavigationIconClick)
+                val appBar = applicator.rebuild(this, provider)
                 appBarLayout = appBar
                 attachAppBarListeners(appBar)
 
@@ -208,74 +276,6 @@ internal class StackHeaderCoordinatorLayout(
             stackScreen.updateStateIfNeeded(y = 0)
             stackScreenWrapper.requestLayout()
         }
-    }
-
-    // endregion
-
-    // region Shadow state synchronization
-
-    private val appBarOffsetListener =
-        AppBarLayout.OnOffsetChangedListener { _, _ ->
-            syncShadowState()
-        }
-
-    private val appBarLayoutChangeListener =
-        View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            syncShadowState()
-        }
-
-    private fun attachAppBarListeners(appBar: StackHeaderAppBarLayout) {
-        appBar.addOnOffsetChangedListener(appBarOffsetListener)
-        appBar.addOnLayoutChangeListener(appBarLayoutChangeListener)
-    }
-
-    private fun detachAppBarListeners(appBar: StackHeaderAppBarLayout) {
-        appBar.removeOnOffsetChangedListener(appBarOffsetListener)
-        appBar.removeOnLayoutChangeListener(appBarLayoutChangeListener)
-    }
-
-    private fun syncShadowState() {
-        val delegate = currentDelegate ?: return
-        val provider = currentProvider ?: return
-        val appBar = appBarLayout ?: return
-
-        val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
-
-        delegate.updateHeaderFrame(
-            appBar.width,
-            appBar.height,
-            configOffset,
-        )
-
-        updateSubviewOffsets(appBar, provider)
-    }
-
-    private fun updateSubviewOffsets(
-        appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
-    ) {
-        config.leadingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.centerSubview?.let { updateSubviewOffset(it, appBar) }
-        config.trailingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.backgroundSubview?.let { updateSubviewOffset(it, appBar) }
-    }
-
-    private fun updateSubviewOffset(
-        subview: StackHeaderSubviewProviding,
-        appBar: StackHeaderAppBarLayout,
-    ) {
-        val view = subview.view
-        if (view.width == 0 && view.height == 0) return
-
-        val appBarPos = IntArray(2)
-        val subviewPos = IntArray(2)
-        appBar.getLocationInWindow(appBarPos)
-        view.getLocationInWindow(subviewPos)
-
-        subview.updateContentOriginOffset(
-            x = subviewPos[0] - appBarPos[0],
-            y = subviewPos[1] - appBarPos[1],
-        )
     }
 
     // endregion
