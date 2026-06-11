@@ -91,6 +91,8 @@
 
                                    strongSelf->_state = RNSFormSheetPresentationStateDismissed;
                                    [strongSelf updatePresentationIfNeededWithProvider:provider controller:controller];
+
+                                   [controller.delegate sheetControllerDidDismiss:controller];
                                  }];
 }
 
