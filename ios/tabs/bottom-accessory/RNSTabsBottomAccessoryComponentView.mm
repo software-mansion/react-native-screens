@@ -49,9 +49,37 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   if (self.window != nil) {
+    // The helper & shadow proxy are torn down below whenever the accessory
+    // leaves the window (e.g. a full-screen push covering the tab bar), so
+    // they must be recreated on re-entry — previously
+    // `registerForAccessoryFrameChanges` was messaged at nil here and all
+    // trait/frame callbacks and content-view switching stayed permanently
+    // dead after the first full-screen push, freezing the accessory on
+    // whichever content copy was last visible. The content views' own
+    // `didMoveToWindow` runs after this one (window changes propagate
+    // top-down), so they re-register into the fresh helper.
+    if (@available(iOS 26, *)) {
+      if (_helper == nil) {
+        _helper = [[RNSTabsBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
+      }
+      if (_shadowStateProxy == nil) {
+        _shadowStateProxy = [[RNSTabsBottomAccessoryShadowStateProxy alloc] initWithBottomAccessoryView:self];
+      }
+    }
     [_helper registerForAccessoryFrameChanges];
   } else {
-    [self invalidate];
+    // Lighter teardown than `invalidate` — keep the Fabric `_state` alive
+    // across a detach/reattach cycle. Only React can re-deliver the state
+    // (via `updateState` on a commit), so resetting it on a mere window
+    // detach would leave the recreated shadow proxy unable to publish
+    // accessory frame updates until an unrelated commit happens to arrive.
+    // True unmount still fully invalidates via RNSTabsHostComponentView.
+    if (@available(iOS 26, *)) {
+      [_helper invalidate];
+      _helper = nil;
+      [_shadowStateProxy invalidate];
+      _shadowStateProxy = nil;
+    }
   }
 }
 

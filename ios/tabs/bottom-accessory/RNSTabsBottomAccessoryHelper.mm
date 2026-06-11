@@ -39,11 +39,6 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
 #pragma mark - Content view switching workaround
 
-- (BOOL)isContentViewSwitchingWorkaroundActive
-{
-  return _regularContentView != nil && _inlineContentView != nil;
-}
-
 - (void)setContentView:(RNSTabsBottomAccessoryContentComponentView *)contentView
         forEnvironment:(RNSTabsBottomAccessoryEnvironment)environment
 {
@@ -65,20 +60,29 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
 - (void)handleContentViewVisibilityForEnvironmentIfNeeded
 {
-  if (!self.isContentViewSwitchingWorkaroundActive) {
-    return;
-  }
+  // `hidden` is used as the sole carrier of invisibility, with alpha
+  // normalized to 1.0 on both content views:
+  // - `RCTViewComponentView.invalidateLayer` unconditionally resets
+  //   `layer.opacity` to the React props value on arbitrary commits, which
+  //   used to re-show the off-environment copy. It never touches `hidden`,
+  //   and with alpha kept at 1.0 the reset becomes a no-op by construction.
+  // - The off-environment copy is mounted absoluteFill ON TOP of the active
+  //   one (later sibling); when it regained opacity it also captured all
+  //   hit-testing, making the accessory unresponsive to taps. Hidden views
+  //   are excluded from hit-testing.
+  // Applied to whichever content views are registered (messages to nil are
+  // no-ops) — the previous both-registered early-return left a lone
+  // registered view fully visible until its sibling registered.
+  BOOL isInline =
+      self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment == UITabAccessoryEnvironmentInline;
 
-  switch (self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment) {
-    case UITabAccessoryEnvironmentInline:
-      _regularContentView.layer.opacity = 0.0;
-      _inlineContentView.layer.opacity = 1.0;
-      break;
-    default:
-      _regularContentView.layer.opacity = 1.0;
-      _inlineContentView.layer.opacity = 0.0;
-      break;
-  }
+  UIView *viewToShow = isInline ? _inlineContentView : _regularContentView;
+  UIView *viewToHide = isInline ? _regularContentView : _inlineContentView;
+
+  viewToShow.hidden = NO;
+  viewToShow.alpha = 1.0;
+  viewToHide.hidden = YES;
+  viewToHide.alpha = 1.0;
 }
 
 #pragma mark - Observing environment changes
@@ -149,6 +153,15 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
   [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:self.nativeWrapperView.frame];
+
+  // The wrapper frame changes on every regular <-> inline move, so re-evaluate
+  // content-view visibility here as well. The one-shot
+  // UITraitTabAccessoryEnvironment registration callback is occasionally
+  // missed during the minimize transition, which left the wrong copy visible
+  // inside the inline accessory (or vice versa); this KVO fires reliably on
+  // each transition (and once on registration via
+  // NSKeyValueObservingOptionInitial) and self-corrects that.
+  [self handleContentViewVisibilityForEnvironmentIfNeeded];
 }
 
 #pragma mark - Invalidation
