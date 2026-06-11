@@ -28,6 +28,10 @@ API_AVAILABLE(ios(26.0))
  */
 - (void)registerForAccessoryFrameChanges;
 /**
+ * Removes the KVO registration set up by `registerForAccessoryFrameChanges`.
+ */
+- (void)unregisterForAccessoryFrameChanges;
+/**
  * Invalidates observers, display link (if it is used); resets internal properties.
  */
 - (void)invalidate;
