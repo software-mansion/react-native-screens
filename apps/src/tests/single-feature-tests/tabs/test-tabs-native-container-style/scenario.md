@@ -29,8 +29,8 @@ manually.
   the tab bar (the full `UITabBarController` view).
 - On Android the color fills the `FrameLayout` that wraps currently focused
 screen and the `BottomNavigationView`.
-- For Android and iOS < 18, the tab bar may obscure the color unless a transparent
-or semi-transparent background is configured.
+- On Android and iOS 18 and earlier, the tab bar may obscures the color unless
+a transparent or semi-transparent background is configured.
 - On iOS 26, while the "liquid glass" tab bar partially obscures the color, it
 remains inherently visible through the material.
 
@@ -43,7 +43,8 @@ remains inherently visible through the material.
 - [ ] The **Config** tab is active. The `backgroundColor`
   picker shows `unset`.
 - [ ] The container background is the system default (no custom color visible).
-- [ ] Tab bar background is red (except iOS 26 - liquid glass).
+- [ ] Tab bar background is red.
+- [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 ---
 
@@ -54,7 +55,7 @@ remains inherently visible through the material.
 - [ ] The picker displays `blue`. The native container's background changes to blue.
 - [ ] The blue color is visible behind the tab content area.
 - [ ] The tab bar retains red color.
-- [ ] **iOS 26:** The blue color is visible also through the liquid glass tab bar.
+- [ ] **iOS 26:** The blue color is visible through the liquid glass tab bar.
 
 3. Tap the **Transparent** tab in the tab bar.
 
@@ -73,7 +74,7 @@ remains inherently visible through the material.
 
 - [ ] The yellow color is visible behind the tab content area.
 - [ ] The tab bar retains red color.
-- [ ] **iOS 26:** The yellow color is visible also through the liquid glass tab bar.
+- [ ] **iOS 26:** The yellow color is visible through the liquid glass tab bar.
 
 6. Tap the **Transparent** tab, observe the background, then return to **Config**.
 
@@ -89,7 +90,7 @@ remains inherently visible through the material.
 
 - [ ] The container background returns to the system default.
 - [ ] The tab bar retains red color.
-- [ ] **iOS 26:** The system default color is visible also through the liquid glass tab bar.
+- [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 8. Tap the **Transparent** tab and observe the background.
 

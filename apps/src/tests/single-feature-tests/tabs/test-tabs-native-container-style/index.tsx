@@ -110,6 +110,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
           tabBarBackgroundColor: Colors.RedDark100,
+          tabBarItemActiveIndicatorEnabled: false,
         },
       },
     },
@@ -124,6 +125,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
           tabBarBackgroundColor: 'transparent',
+          tabBarItemActiveIndicatorEnabled: false,
         },
       },
     },
