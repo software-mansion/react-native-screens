@@ -30,9 +30,9 @@ manually.
 - On Android the color fills the `FrameLayout` that wraps currently focused
 screen and the `BottomNavigationView`.
 - On Android and iOS 18 and earlier, the tab bar may obscures the color unless
-a transparent or semi-transparent background is configured.
+  a transparent or semi-transparent background is configured.
 - On iOS 26, while the "liquid glass" tab bar partially obscures the color, it
-remains inherently visible through the material.
+  remains inherently visible through the material.
 
 ## Steps
 
@@ -79,7 +79,7 @@ remains inherently visible through the material.
 6. Tap the **Transparent** tab, observe the background, then return to **Config**.
 
 - [ ] The container background remains yellow.
-- [ ] The tab bar is transparent, making the blue background visible behind the tabs.
+- [ ] The tab bar is transparent, making the yellow background visible behind the tabs.
 - [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 ---
