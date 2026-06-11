@@ -5,7 +5,13 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, type ColorValue } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  type ColorValue,
+} from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
@@ -16,7 +22,7 @@ function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   const getBackgroundColor = (
-    option: ContainerBackgroundOption
+    option: ContainerBackgroundOption,
   ): ColorValue | undefined => {
     switch (option) {
       case 'blue':
@@ -50,8 +56,8 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.text}>
-          {'•'} On <Text style={{ fontWeight: '600' }}>Android</Text>: Color
-          is applied to the FrameLayout that wraps the focused screen and
+          {'•'} On <Text style={{ fontWeight: '600' }}>Android</Text>: Color is
+          applied to the FrameLayout that wraps the focused screen and
           BottomNavigationView
         </Text>
       </View>
@@ -87,7 +93,7 @@ function TabScreen() {
     <View style={styles.centeredContent}>
       <Text style={styles.contentLabel}>Transparent Tab</Text>
       <Text style={styles.contentHint}>
-        Observe the container background color behind this tab content and around the tab bar.
+        Observe the container background color behind the tab content and within the tab bar area.
       </Text>
     </View>
   );
