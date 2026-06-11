@@ -18,17 +18,19 @@ smoke test.
 
 ## E2E test
 
-Incomplete: Automation was implemented for the iOS 26 simulator and covers steps 1–19,
-but not in full scope - see the list below.
+Incomplete: Automation covers steps 1–19, but not in full scope - see the
+list below. A single suite runs on both iOS versions, with version-specific
+conditions where behavior diverges: the tab bar button class name resolves
+dynamically (UITabBarButton on iOS 18 and lower vs. _UITabButton on iOS 26),
+and the search item is asserted differently because it renders differently
+(visible label on iOS 18 vs. detached/no-label on iOS 26).
 
 Not automated:
 
 - Validating the differences between icon and selectedIcon.
-- Checking systemItem: 'search' tab bar item detached state and label hiding.
+- Checking visual icon and label changes.
 - The "hidden title" option is validated, but indirectly; it should be verified manually.
 - Steps 20-23 (orientation changes).
-- iOS 18 is not supported: UI element identifiers differ from iOS 26
-  (e.g. UITabBarButton on iOS 18 vs. _UITabButton on iOS 26), which causes tests to fail.
 
 ## Prerequisites
 

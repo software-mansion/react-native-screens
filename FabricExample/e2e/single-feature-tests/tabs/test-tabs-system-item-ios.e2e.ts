@@ -1,8 +1,27 @@
+import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import { IosElementAttributes } from 'detox/detox';
+import { selectSingleFeatureTestsScreen, describeIfiOS } from '../../e2e-utils';
+import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+const {
+  getIOSVersionNumber,
+} = require('../../../../scripts/e2e/ios-devices.js');
 
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
+}
+
+async function getTabBarItemFrameX(tabLabel: string): Promise<number> {
+  const attrs = (await element(by.label(tabLabel))
+    .atIndex(0)
+    .getAttributes()) as
+    | IosElementAttributes
+    | { elements: IosElementAttributes[] };
+  const frame = 'frame' in attrs ? attrs.frame : attrs.elements[0]?.frame;
+  if (!frame) {
+    throw new Error(`Could not read frame for tab labelled "${tabLabel}"`);
+  }
+  return frame.x;
 }
 
 async function tapSystemTitleOption() {
@@ -12,13 +31,22 @@ async function tapSystemTitleOption() {
 async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
 }
+function isIOSVersionAtLeast(version: string): boolean {
+  return (
+    device.getPlatform() === 'ios' &&
+    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
+  );
+}
 
-describeIfiOS('Tab Bar System Item (iOS 26)', () => {
+const tabBarButtonType = isIOSVersionAtLeast('26.0')
+  ? '_UITabButton'
+  : 'UITabBarButton';
+
+describeIfiOS('Tab Bar System Item', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-system-item-ios');
   });
-
   describe('Static System Item tab', () => {
     it('should display the tab bar with system item titles and icons', async () => {
       await expect(element(by.type('UITabBar'))).toBeVisible();
@@ -80,6 +108,11 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(element(by.id('icon-selector'))).toBeVisible();
       await expect(element(by.text('house'))).toBeVisible();
       await expect(element(by.text('heart'))).toBeVisible();
+
+      await expect(element(by.id('custom-tab-item'))).toHaveLabel('Favorites');
+      await expect(
+        element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
+      ).toExist();
     });
   });
 
@@ -93,7 +126,9 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
         ),
       ).toExist();
 
-      await expect(element(by.label('History'))).toExist();
+      await expect(
+        element(by.label('History').and(by.type(tabBarButtonType))).atIndex(0),
+      ).toExist();
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).toExist();
@@ -103,6 +138,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
     });
 
     it('should update the tab bar item when switching to search systemItem', async () => {
+      const frameXBeforeSearch = await getTabBarItemFrameX('History');
       await tapOptionButton('search');
       await expect(
         element(
@@ -117,9 +153,24 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).not.toExist();
+
+      if (!isIOSVersionAtLeast(`26.0`)) {
+        await expect(
+          element(by.label('Search').and(by.type(tabBarButtonType))),
+        ).toBeVisible();
+      }
+
+      const frameXAfterSearch = await getTabBarItemFrameX('Search');
+
+      if (isIOSVersionAtLeast(`26.0`)) {
+        jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
+      } else {
+        jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
+      }
     });
 
     it('should update the tab bar item when switching to favorites systemItem', async () => {
+      const frameXBeforeFavorites = await getTabBarItemFrameX('Search');
       await tapOptionButton('favorites');
       await expect(
         element(
@@ -134,11 +185,19 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(
         element(by.id('magnifyingglass').and(by.label('Search'))).atIndex(0),
       ).not.toExist();
+
+      const frameXAfterFavorites = await getTabBarItemFrameX('Favorites');
+
+      if (isIOSVersionAtLeast(`26.0`)) {
+        jestExpect(frameXAfterFavorites).toBeLessThan(frameXBeforeFavorites);
+      } else {
+        jestExpect(frameXAfterFavorites).toEqual(frameXBeforeFavorites);
+      }
     });
   });
 
   describe('Runtime Config tab — title override cycling', () => {
-    it('should update the tab bar item label after tapping custom title', async () => {
+    it('should update the tab bar item label when switching to custom title', async () => {
       await expect(element(by.text("systemItem: 'favorites'"))).toBeVisible();
       await expect(element(by.text('title: undefined (system)'))).toBeVisible();
       await expect(
@@ -150,40 +209,68 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
         element(by.id('config-title').and(by.label('title: "Custom"'))),
       ).toBeVisible();
 
-      await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
-      ).toExist();
+      if (isIOSVersionAtLeast(`26.0`)) {
+        await expect(
+          element(by.label('Custom').and(by.type(tabBarButtonType))),
+        ).toExist();
+        await expect(
+          element(by.label('Favorites').and(by.type(tabBarButtonType))),
+        ).not.toExist();
+      } else {
+        await expect(
+          element(by.label('Custom').and(by.type(tabBarButtonType))).atIndex(0),
+        ).toBeVisible();
+      }
+
       await expect(
         element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
       ).toExist();
     });
 
-    it('should hide the tab bar item label after tapping hidden title', async () => {
+    it('should hide the tab bar item label when switching to hidden title', async () => {
       await tapOptionButton('hidden');
       await expect(
         element(by.id('config-title').and(by.label("title: '' (hidden)"))),
       ).toBeVisible();
+
       await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
+        element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).not.toExist();
-      await expect(
-        element(by.label('favorite').and(by.type('_UITabButton'))),
-      ).toExist();
+
+      if (isIOSVersionAtLeast(`26.0`)) {
+        await expect(
+          element(by.label('favorite').and(by.type(tabBarButtonType))),
+        ).toExist();
+      } else {
+        await expect(
+          element(by.label('').and(by.type('UITabBarButtonLabel'))),
+        ).toExist();
+      }
+
       await expect(
         element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
       ).toExist();
     });
 
-    it('should update the tab bar item label after restoring system title', async () => {
+    it('should update the tab bar item label when restoring system title', async () => {
       await tapSystemTitleOption();
       await expect(
         element(
           by.id('config-title').and(by.label('title: undefined (system)')),
         ),
       ).toBeVisible();
-      await expect(
-        element(by.label('Favorites').and(by.type('_UITabButton'))),
-      ).toExist();
+      if (isIOSVersionAtLeast(`26.0`)) {
+        await expect(
+          element(by.label('Favorites').and(by.type(tabBarButtonType))),
+        ).toExist();
+      } else {
+        await expect(
+          element(by.label('Favorites').and(by.type(tabBarButtonType))).atIndex(
+            0,
+          ),
+        ).toBeVisible();
+      }
+
       await expect(
         element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
       ).toExist();
@@ -191,7 +278,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
   });
 
   describe('Runtime Config tab — icon override cycling', () => {
-    it('should update tab bar item icon after tapping house icon', async () => {
+    it('should update tab bar item icon when switching to house icon', async () => {
       await tapOptionButton('house');
       await expect(
         element(by.id('config-icon').and(by.label("icon: custom 'house'"))),
@@ -226,7 +313,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       ).toExist();
     });
 
-    it('should update tab bar item icon after tapping heart icon', async () => {
+    it('should update tab bar item icon when switching to heart icon', async () => {
       await tapOptionButton('heart');
       await expect(
         element(by.id('config-icon').and(by.label("icon: custom 'heart'"))),
@@ -238,7 +325,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(element(by.id('house').and(by.label('home')))).not.toExist();
     });
 
-    it('should update tab bar item icon after restoring system icon', async () => {
+    it('should update tab bar item icon when restoring system icon', async () => {
       await tapSystemIconOption();
       await expect(
         element(
@@ -257,6 +344,8 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
 
   describe('Runtime Config tab — combined overrides', () => {
     it('should update tab bar item with combined selection of search systemItem + custom title + heart icon', async () => {
+      const frameXBeforeSearch = await getTabBarItemFrameX('Favorites');
+
       await tapOptionButton('search');
       await tapOptionButton('custom');
       await tapOptionButton('heart');
@@ -275,7 +364,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
 
       await expect(element(by.label('Search'))).not.toExist();
       await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
+        element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).toExist();
       await expect(
         element(by.id('heart').and(by.label('love'))).atIndex(0),
@@ -283,11 +372,23 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(
         element(by.id('magnifyingglass').and(by.label('Search'))).atIndex(0),
       ).not.toExist();
+
+      const frameXAfterSearch = await getTabBarItemFrameX('Custom');
+
+      if (isIOSVersionAtLeast(`26.0`)) {
+        jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
+      } else {
+        jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
+      }
     });
 
     it('should navigate to the Bookmarks tab and back with combined overrides active', async () => {
+      const frameXBeforeSwitch = await getTabBarItemFrameX('Custom');
+
       await element(by.label('Bookmarks')).atIndex(0).tap();
       await expect(element(by.text('Static System Item'))).toBeVisible();
+      const frameXAfterSwitch = await getTabBarItemFrameX('Custom');
+      jestExpect(frameXAfterSwitch).toEqual(frameXBeforeSwitch);
 
       await element(by.id('heart').and(by.label('love')))
         .atIndex(0)
@@ -306,7 +407,9 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       ).toBeVisible();
     });
 
-    it('should retain custom title and heart icon after switching to history systemItem', async () => {
+    it('should retain custom title and heart icon when switching to history systemItem', async () => {
+      const frameXBeforeHistory = await getTabBarItemFrameX('Custom');
+
       await tapOptionButton('history');
 
       await expect(
@@ -322,9 +425,12 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       ).toBeVisible();
 
       await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
+        element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).toExist();
-      await expect(element(by.label('History'))).not.toExist();
+
+      await expect(
+        element(by.label('History').and(by.type(tabBarButtonType))),
+      ).not.toExist();
 
       await expect(
         element(by.id('heart').and(by.label('love'))).atIndex(0),
@@ -332,9 +438,17 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).not.toExist();
+
+      const frameXAfterHistory = await getTabBarItemFrameX('Custom');
+
+      if (isIOSVersionAtLeast(`26.0`)) {
+        jestExpect(frameXAfterHistory).toBeLessThan(frameXBeforeHistory);
+      } else {
+        jestExpect(frameXAfterHistory).toEqual(frameXBeforeHistory);
+      }
     });
 
-    it('should fall back to system history icon when icon is set to system', async () => {
+    it('should fall back to system history icon when switching icon to system', async () => {
       await tapSystemIconOption();
 
       await expect(
@@ -353,7 +467,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
 
       await expect(element(by.label('History'))).not.toExist();
       await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
+        element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).toExist();
 
       await expect(
@@ -364,7 +478,7 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
       ).not.toExist();
     });
 
-    it('should hide the tab bar label when title is set to hidden', async () => {
+    it('should hide the tab bar label when switching title to hidden', async () => {
       await tapOptionButton('hidden');
 
       await expect(
@@ -381,17 +495,25 @@ describeIfiOS('Tab Bar System Item (iOS 26)', () => {
         ),
       ).toBeVisible();
 
-      await expect(element(by.label('History'))).not.toExist();
+      if (isIOSVersionAtLeast(`26.0`)) {
+        await expect(
+          element(by.label('History').and(by.type(tabBarButtonType))),
+        ).not.toExist();
+      } else {
+        await expect(
+          element(by.label('').and(by.type('UITabBarButtonLabel'))),
+        ).toExist();
+      }
 
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).toExist();
       await expect(
-        element(by.label('Custom').and(by.type('_UITabButton'))),
+        element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).not.toExist();
     });
 
-    it('should restore the system localized title when title is set to system', async () => {
+    it('should restore the system localized title when switching title to system', async () => {
       await tapSystemTitleOption();
 
       await expect(
