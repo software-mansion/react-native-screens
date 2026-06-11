@@ -13,7 +13,8 @@ the layout content relative to the tab bar to prevent keyboard overlapping.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Full: All manual steps are covered by an E2E test based on changes to the tab bar
+and text frame Y-positions,as well as their positions relative to the open keyboard.
 
 ## Prerequisites
 

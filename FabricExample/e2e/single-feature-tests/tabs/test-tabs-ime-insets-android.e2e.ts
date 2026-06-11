@@ -6,27 +6,51 @@ import {
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
-async function getTabBarItemY(): Promise<number> {
+const {
+  getCommandLineResponse,
+} = require('../../../../scripts/e2e/command-line-helpers');
+
+function readKeyboardTopAndroid(): number | null {
+  const dump = getCommandLineResponse(
+    `adb -s ${device.id} shell dumpsys window`,
+  ) as string;
+  const match = dump.match(
+    /type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\n]*\bvisible=true\b/,
+  );
+  return match ? Number(match[1]) : null;
+}
+
+async function getKeyboardTopAndroid(): Promise<number> {
+  let last: number | null = null;
+  for (let i = 0; i < 20; i++) {
+    const top = readKeyboardTopAndroid();
+    if (top !== null && top === last) return top;
+    last = top;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  throw new Error('Soft keyboard did not become visible on Android');
+}
+
+async function getTabBarItemAttrs(): Promise<AndroidElementAttributes> {
   const attrs = (await element(
     by.id('ime-insets-config-tab-item'),
   ).getAttributes()) as AndroidElementAttributes;
-  return attrs.frame.y;
+  return attrs;
 }
-async function getTextY(): Promise<number> {
+async function getTextAttrs(): Promise<AndroidElementAttributes> {
   const attrs = (await element(
     by.id('tabs-screen-bottom-text'),
   ).getAttributes()) as AndroidElementAttributes;
-  return attrs.frame.y;
-}
-
-async function navigateToScreen() {
-  await device.reloadReactNative();
-  await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-ime-insets-android');
+  return attrs;
 }
 
 describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
-  beforeEach(async () => {
-    await navigateToScreen();
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-ime-insets-android',
+    );
   });
 
   it('should display default switch states and bottom text on load', async () => {
@@ -51,14 +75,23 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: false');
 
-    const yBefore = await getTabBarItemY();
-    const yTextBefore = await getTabBarItemY();
-    await element(by.id('ime-insets-text-input')).tap();
-    const yAfter = await getTabBarItemY();
-    const yTextAfter = await getTabBarItemY();
+    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
+    const yTextBefore = (await getTextAttrs()).frame.y;
 
-    jestExpect(Math.abs(yAfter - yBefore)).toBeLessThan(5);
-    jestExpect(Math.abs(yTextAfter - yTextBefore)).toBeLessThan(5);
+    await element(by.id('ime-insets-text-input')).tap();
+
+    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
+    const yTextAfter = (await getTextAttrs()).frame.y;
+    const kbTop = await getKeyboardTopAndroid();
+
+    jestExpect(yTabAfter).toEqual(yTabBefore);
+    jestExpect(yTextAfter).toEqual(yTextBefore);
+    jestExpect(
+      yTabAfter + (await getTabBarItemAttrs()).frame.height,
+    ).toBeGreaterThan(kbTop);
+    jestExpect(
+      yTextAfter + (await getTextAttrs()).frame.height,
+    ).toBeGreaterThan(kbTop);
 
     await device.pressBack();
   });
@@ -69,18 +102,30 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: true');
 
-    const yBefore = await getTabBarItemY();
-    const yTextBefore = await getTabBarItemY();
-    await element(by.id('ime-insets-text-input')).tap();
-    const yAfter = await getTabBarItemY();
-    const yTextAfter = await getTabBarItemY();
+    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
+    const yTextBefore = (await getTextAttrs()).frame.y;
 
-    jestExpect(yAfter).toBeLessThan(yBefore);
+    await element(by.id('ime-insets-text-input')).tap();
+
+    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
+    const yTextAfter = (await getTextAttrs()).frame.y;
+    const kbTop = await getKeyboardTopAndroid();
+
+    jestExpect(yTabAfter).toBeLessThan(yTabBefore);
     jestExpect(yTextAfter).toBeLessThan(yTextBefore);
+    jestExpect(yTextAfter).toBeLessThan(yTabAfter);
+    jestExpect(
+      yTabAfter + (await getTabBarItemAttrs()).frame.height,
+    ).toBeLessThanOrEqual(kbTop);
+    jestExpect(
+      yTextAfter + (await getTextAttrs()).frame.height,
+    ).toBeLessThanOrEqual(kbTop);
 
     await device.pressBack();
-    const yRestored = await getTabBarItemY();
-    jestExpect(Math.abs(yRestored - yBefore)).toBeLessThan(5);
+
+    const yTabRestored = (await getTabBarItemAttrs()).frame.y;
+
+    jestExpect(yTabRestored).toEqual(yTabBefore);
   });
 
   it('safeAreaViewBottomEdgeEnabled: false + tabBarRespectsIMEInsets: true — tab bar still shifts above keyboard', async () => {
@@ -88,45 +133,57 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
     await expect(element(by.id('safe-area-bottom-edge-switch'))).toHaveLabel(
       'safeAreaViewBottomEdgeEnabled: false',
     );
-
-    await element(by.id('tab-bar-respects-ime-insets-switch')).tap();
     await expect(
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: true');
 
-    const yBefore = await getTabBarItemY();
-    const yText = await getTextY();
-    jestExpect(yText).toBeGreaterThan(yBefore);
+    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
+    const yTextBefore = (await getTextAttrs()).frame.y;
+
+    jestExpect(yTextBefore).toBeGreaterThan(yTabBefore);
 
     await element(by.id('ime-insets-text-input')).tap();
-    const yAfter = await getTabBarItemY();
 
-    jestExpect(yAfter).toBeLessThan(yBefore);
+    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
+    const yTextAfter = (await getTextAttrs()).frame.y;
+    const kbTop = await getKeyboardTopAndroid();
+
+    jestExpect(
+      yTabAfter + (await getTabBarItemAttrs()).frame.height,
+    ).toBeLessThanOrEqual(kbTop);
+    jestExpect(yTabAfter).toBeLessThan(yTabBefore);
+    jestExpect(yTextAfter).toEqual(yTextBefore);
 
     await device.pressBack();
   });
 
   it('both props false — tab bar stays at bottom when keyboard opens', async () => {
-    await expect(element(by.id('safe-area-bottom-edge-switch'))).toHaveLabel(
-      'safeAreaViewBottomEdgeEnabled: true',
-    );
-    await element(by.id('safe-area-bottom-edge-switch')).tap();
+    await element(by.id('tab-bar-respects-ime-insets-switch')).tap();
     await expect(element(by.id('safe-area-bottom-edge-switch'))).toHaveLabel(
       'safeAreaViewBottomEdgeEnabled: false',
     );
-
     await expect(
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: false');
 
-    const yBefore = await getTabBarItemY();
-    const yText = await getTextY();
-    jestExpect(yText).toBeGreaterThan(yBefore);
+    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
+    const yTextBefore = (await getTextAttrs()).frame.y;
+    jestExpect(yTextBefore).toBeGreaterThan(yTabBefore);
 
     await element(by.id('ime-insets-text-input')).tap();
-    const yAfter = await getTabBarItemY();
 
-    jestExpect(Math.abs(yAfter - yBefore)).toBeLessThan(5);
+    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
+    const yTextAfter = (await getTextAttrs()).frame.y;
+    const kbTop = await getKeyboardTopAndroid();
+
+    jestExpect(yTabAfter).toEqual(yTabBefore);
+    jestExpect(yTextAfter).toEqual(yTextBefore);
+    jestExpect(
+      yTabAfter + (await getTabBarItemAttrs()).frame.height,
+    ).toBeGreaterThan(kbTop);
+    jestExpect(
+      yTextAfter + (await getTextAttrs()).frame.height,
+    ).toBeGreaterThan(kbTop);
 
     await device.pressBack();
   });

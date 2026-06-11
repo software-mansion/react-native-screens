@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests prop that determines whether BottomNavigationView respects IME insets.',
   platforms: ['android'],
-  e2eCoverage: 'incomplete',
+  e2eCoverage: 'full',
   smokeTest: false,
 };
