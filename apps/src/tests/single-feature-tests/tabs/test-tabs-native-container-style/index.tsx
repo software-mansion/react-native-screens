@@ -85,7 +85,7 @@ function ConfigScreen() {
 function TabScreen() {
   return (
     <View style={styles.centeredContent}>
-      <Text style={styles.contentLabel}>Tab</Text>
+      <Text style={styles.contentLabel}>Transparent Tab</Text>
       <Text style={styles.contentHint}>
         Observe the container background color behind this tab content and around the tab bar.
       </Text>
@@ -100,14 +100,26 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
+      ios: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
+        scrollEdgeAppearance: {
+          tabBarBackgroundColor: Colors.RedDark100,
+        },
+      },
+      android: {
+        ...DEFAULT_TAB_ROUTE_OPTIONS.android,
+        standardAppearance: {
+          tabBarBackgroundColor: Colors.RedDark100,
+        },
+      },
     },
   },
   {
-    name: 'Tab',
+    name: 'Transparent',
     Component: TabScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Tab',
+      title: 'Transparent',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {

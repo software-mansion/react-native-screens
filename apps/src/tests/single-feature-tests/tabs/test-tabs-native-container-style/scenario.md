@@ -25,15 +25,14 @@ manually.
 
 ## Note
 
-- The color change applies immediately upon selecting a new value; no
-  restart is required.
 - On iOS the color fills the area behind the content screen and around
-  the tab bar (the full `UITabBarController` view). The tab bar itself
-  may partially obscure the color unless the tab bar has a transparent
-  or semi-transparent background.
-- On Android the color fills the `FrameLayout` container, which is
-  visible in the gutters around the focused screen content and behind
-  the `BottomNavigationView`.
+  the tab bar (the full `UITabBarController` view).
+- On Android the color fills the `FrameLayout` that wraps currently focused
+screen and the `BottomNavigationView`.
+- For Android and iOS < 18, the tab bar may obscure the color unless a transparent
+or semi-transparent background is configured.
+- On iOS 26, while the "liquid glass" tab bar partially obscures the color, it
+remains inherently visible through the material.
 
 ## Steps
 
@@ -42,8 +41,9 @@ manually.
 1. Launch the app and navigate to **Native Container Style**.
 
 - [ ] The **Config** tab is active. The `backgroundColor`
-  picker shows `unset`. The container background is the system default
-  (no custom color visible).
+  picker shows `unset`.
+- [ ] The container background is the system default (no custom color visible).
+- [ ] Tab bar background is red (except iOS 26 - liquid glass).
 
 ---
 
@@ -51,48 +51,49 @@ manually.
 
 2. On the **Config** tab, set the `backgroundColor` picker to `blue`.
 
-- [ ] The picker displays `blue`. The native container's background immediately changes to blue.
-- [ ] **iOS 18:** The blue color is visible behind both the tab content area and the tab bar area, as tabBarBackgroundColor is transparent.
-- [ ] **iOS 26:** The blue color is visible behind the tab content area and through the liquid glass tab bar.
-- [ ] **Android:** The blue color is visible in the area surrounding the focused content screen. The tab bar retains the system default background color.
+- [ ] The picker displays `blue`. The native container's background changes to blue.
+- [ ] The blue color is visible behind the tab content area.
+- [ ] The tab bar retains red color.
+- [ ] **iOS 26:** The blue color is visible also through the liquid glass tab bar.
 
-3. Tap the **Tab** tab in the tab bar.
+3. Tap the **Transparent** tab in the tab bar.
 
-- [ ] The **Tab** screen content is displayed (featuring the "Tab" label and
+- [ ] The **Transparent** screen content is displayed (featuring the "Transparent Tab" label and
   hint text).
 - [ ] The container background remains blue.
-- [ ] **iOS:** The appearance of the tab bar area is identical to the previous step.
-- [ ] **Android:** The tab bar is transparent, making the blue background visible behind the tabs.
+- [ ] The tab bar is transparent, making the blue background visible behind the tabs.
+- [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 4. Tap the **Config** tab to switch back.
 
 - [ ] The **Config** tab is shown again.
-- [ ] The `backgroundColor` picker still shows `blue`.
 - [ ] The blue container background persists.
 
 5. Set the `backgroundColor` picker to `yellow`.
 
-- [ ] The container background changes immediately to yellow.
-- [ ] The blue color is no longer visible.
+- [ ] The yellow color is visible behind the tab content area.
+- [ ] The tab bar retains red color.
+- [ ] **iOS 26:** The yellow color is visible also through the liquid glass tab bar.
 
-6. Tap the **Tab** tab, observe the background, then return to **Config**.
+6. Tap the **Transparent** tab, observe the background, then return to **Config**.
 
-- [ ] The yellow background is visible on the **Tab** screen and remains after switching back to **Config**.
-- [ ] The picker still shows `yellow`.
+- [ ] The container background remains yellow.
+- [ ] The tab bar is transparent, making the blue background visible behind the tabs.
+- [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 ---
 
 ### Restoring to unset
 
-7. Set the `backgroundColor` picker back to `unset`.
+7. Return to **Config** and set the `backgroundColor` picker back to `unset`.
 
 - [ ] The container background returns to the system default.
-- [ ] No custom color is visible.
-- [ ] The picker shows `unset`.
+- [ ] The tab bar retains red color.
+- [ ] **iOS 26:** The system default color is visible also through the liquid glass tab bar.
 
-8. Tap the **Tab** tab and observe the background.
+8. Tap the **Transparent** tab and observe the background.
 
-- [ ] The **Tab** screen appears with the system-default container background.
+- [ ] The **Transparent** screen appears with the system-default container background.
 - [ ] No color remnant from the previous `yellow` value is visible.
 
 ---
