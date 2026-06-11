@@ -389,10 +389,7 @@ describeIfiOS('Tab Bar System Item', () => {
       await expect(element(by.text('Static System Item'))).toBeVisible();
       const frameXAfterSwitch = await getTabBarItemFrameX('Custom');
       jestExpect(frameXAfterSwitch).toEqual(frameXBeforeSwitch);
-
-      await element(by.id('heart').and(by.label('love')))
-        .atIndex(0)
-        .tap();
+      await element(by.label('Custom')).atIndex(0).tap();
 
       await expect(
         element(
