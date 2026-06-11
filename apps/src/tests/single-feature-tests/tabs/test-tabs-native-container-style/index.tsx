@@ -111,6 +111,9 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         scrollEdgeAppearance: {
           tabBarBackgroundColor: Colors.RedDark100,
         },
+        standardAppearance: {
+          tabBarBackgroundColor: Colors.RedDark100,
+        },
       },
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
