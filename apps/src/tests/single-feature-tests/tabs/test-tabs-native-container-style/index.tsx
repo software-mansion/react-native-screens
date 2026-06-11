@@ -172,20 +172,6 @@ const styles = StyleSheet.create({
     color: Colors.LightOffNavy,
     lineHeight: 20,
   },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.LightOffNavy,
-    marginBottom: 4,
-  },
-  value: {
-    fontSize: 13,
-    color: Colors.OffNavy,
-    fontFamily: 'Menlo',
-    backgroundColor: Colors.OffWhite,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
   centeredContent: {
     flex: 1,
     justifyContent: 'center',
