@@ -29,8 +29,9 @@ manually.
   the tab bar (the full `UITabBarController` view).
 - On Android the color fills the `FrameLayout` that wraps currently focused
 screen and the `BottomNavigationView`.
-- On Android and iOS 18 and earlier, the tab bar may obscures the color unless
-  a transparent or semi-transparent background is configured.
+- On Android and iOS 18 and earlier, the tab bar may obscure the native container
+  background color unless a transparent or semi-transparent tab bar background  
+  color is configured.  
 - On iOS 26, while the "liquid glass" tab bar partially obscures the color, it
   remains inherently visible through the material.
 
@@ -43,7 +44,7 @@ screen and the `BottomNavigationView`.
 - [ ] The **Config** tab is active. The `backgroundColor`
   picker shows `unset`.
 - [ ] The container background is the system default (no custom color visible).
-- [ ] Tab bar background is red.
+- [ ] **Android/iOS 18:** Tab bar background is red.
 - [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 ---
@@ -54,7 +55,7 @@ screen and the `BottomNavigationView`.
 
 - [ ] The picker displays `blue`. The native container's background changes to blue.
 - [ ] The blue color is visible behind the tab content area.
-- [ ] The tab bar retains red color.
+- [ ] **Android/iOS 18:** The tab bar retains red color.
 - [ ] **iOS 26:** The blue color is visible through the liquid glass tab bar.
 
 3. Tap the **Transparent** tab in the tab bar.
@@ -62,7 +63,7 @@ screen and the `BottomNavigationView`.
 - [ ] The **Transparent** screen content is displayed (featuring the "Transparent Tab" label and
   hint text).
 - [ ] The container background remains blue.
-- [ ] The tab bar is transparent, making the blue background visible behind the tabs.
+- [ ] **Android/iOS 18:** The tab bar is transparent, making the blue background visible behind the tabs.
 - [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 4. Tap the **Config** tab to switch back.
@@ -73,13 +74,13 @@ screen and the `BottomNavigationView`.
 5. Set the `backgroundColor` picker to `yellow`.
 
 - [ ] The yellow color is visible behind the tab content area.
-- [ ] The tab bar retains red color.
+- [ ] **Android/iOS 18:** The tab bar retains red color.
 - [ ] **iOS 26:** The yellow color is visible through the liquid glass tab bar.
 
 6. Tap the **Transparent** tab, observe the background, then return to **Config**.
 
 - [ ] The container background remains yellow.
-- [ ] The tab bar is transparent, making the yellow background visible behind the tabs.
+- [ ] **Android/iOS 18:** The tab bar is transparent, making the yellow background visible behind the tabs.
 - [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 ---
@@ -89,7 +90,7 @@ screen and the `BottomNavigationView`.
 7. Return to **Config** and set the `backgroundColor` picker back to `unset`.
 
 - [ ] The container background returns to the system default.
-- [ ] The tab bar retains red color.
+- [ ] **Android/iOS 18:** The tab bar retains red color.
 - [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 8. Tap the **Transparent** tab and observe the background.
