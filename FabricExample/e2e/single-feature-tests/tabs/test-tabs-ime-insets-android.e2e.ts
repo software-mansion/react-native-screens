@@ -22,13 +22,32 @@ function readKeyboardTopAndroid(): number | null {
 
 async function getKeyboardTopAndroid(): Promise<number> {
   let last: number | null = null;
-  for (let i = 0; i < 20; i++) {
+  let stableCount = 0;
+  for (let i = 0; i < 40; i++) {
     const top = readKeyboardTopAndroid();
-    if (top !== null && top === last) return top;
+    if (top !== null && top === last) {
+      stableCount++;
+      if (stableCount >= 2) return top;
+    } else {
+      stableCount = 0;
+    }
     last = top;
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-  throw new Error('Soft keyboard did not become visible on Android');
+  throw new Error(
+    `Soft keyboard did not stabilize on Android (last detected top: ${last})`,
+  );
+}
+
+async function dismissKeyboardAndroid(): Promise<void> {
+  await device.pressBack();
+  for (let i = 0; i < 40; i++) {
+    if (readKeyboardTopAndroid() === null) return;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  throw new Error(
+    `Soft keyboard still visible on Android after pressBack (top: ${readKeyboardTopAndroid()})`,
+  );
 }
 
 async function getTabBarItemAttrs(): Promise<AndroidElementAttributes> {
@@ -80,9 +99,9 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
 
     await element(by.id('ime-insets-text-input')).tap();
 
+    const kbTop = await getKeyboardTopAndroid();
     const yTabAfter = (await getTabBarItemAttrs()).frame.y;
     const yTextAfter = (await getTextAttrs()).frame.y;
-    const kbTop = await getKeyboardTopAndroid();
 
     jestExpect(yTabAfter).toEqual(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);
@@ -93,7 +112,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       yTextAfter + (await getTextAttrs()).frame.height,
     ).toBeGreaterThan(kbTop);
 
-    await device.pressBack();
+    await dismissKeyboardAndroid();
   });
 
   it('tabBarRespectsIMEInsets: true — tab bar shifts above keyboard when keyboard opens', async () => {
@@ -107,9 +126,9 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
 
     await element(by.id('ime-insets-text-input')).tap();
 
+    const kbTop = await getKeyboardTopAndroid();
     const yTabAfter = (await getTabBarItemAttrs()).frame.y;
     const yTextAfter = (await getTextAttrs()).frame.y;
-    const kbTop = await getKeyboardTopAndroid();
 
     jestExpect(yTabAfter).toBeLessThan(yTabBefore);
     jestExpect(yTextAfter).toBeLessThan(yTextBefore);
@@ -121,7 +140,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       yTextAfter + (await getTextAttrs()).frame.height,
     ).toBeLessThanOrEqual(kbTop);
 
-    await device.pressBack();
+    await dismissKeyboardAndroid();
 
     const yTabRestored = (await getTabBarItemAttrs()).frame.y;
 
@@ -144,9 +163,9 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
 
     await element(by.id('ime-insets-text-input')).tap();
 
+    const kbTop = await getKeyboardTopAndroid();
     const yTabAfter = (await getTabBarItemAttrs()).frame.y;
     const yTextAfter = (await getTextAttrs()).frame.y;
-    const kbTop = await getKeyboardTopAndroid();
 
     jestExpect(
       yTabAfter + (await getTabBarItemAttrs()).frame.height,
@@ -154,7 +173,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
     jestExpect(yTabAfter).toBeLessThan(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);
 
-    await device.pressBack();
+    await dismissKeyboardAndroid();
   });
 
   it('both props false — tab bar stays at bottom when keyboard opens', async () => {
@@ -172,9 +191,9 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
 
     await element(by.id('ime-insets-text-input')).tap();
 
+    const kbTop = await getKeyboardTopAndroid();
     const yTabAfter = (await getTabBarItemAttrs()).frame.y;
     const yTextAfter = (await getTextAttrs()).frame.y;
-    const kbTop = await getKeyboardTopAndroid();
 
     jestExpect(yTabAfter).toEqual(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);
@@ -185,6 +204,6 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       yTextAfter + (await getTextAttrs()).frame.height,
     ).toBeGreaterThan(kbTop);
 
-    await device.pressBack();
+    await dismissKeyboardAndroid();
   });
 });
