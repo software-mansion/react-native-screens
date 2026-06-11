@@ -19,6 +19,7 @@ import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-ex
 import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 import TestTabsItemTitle from './test-tabs-item-title';
 import TestTabsSystemItem from './test-tabs-system-item-ios';
+import TestTabsGeneralAppearanceNoLiquidGlass from './test-tabs-general-appearance-no-liquid-glass-ios';
 
 const scenarios = {
   TestTabBottomAccessory,
@@ -40,6 +41,7 @@ const scenarios = {
   TestTabsLifecycleEvents,
   TestTabsItemTitle,
   TestTabsSystemItem,
+  TestTabsGeneralAppearanceNoLiquidGlass,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
