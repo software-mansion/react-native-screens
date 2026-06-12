@@ -27,11 +27,15 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
+  if (self.window == nil) {
+    return;
+  }
+
   if ([self.superview isKindOfClass:[RNSTabsBottomAccessoryComponentView class]]) {
     RNSTabsBottomAccessoryComponentView *accessoryView =
         static_cast<RNSTabsBottomAccessoryComponentView *>(self.superview);
     _accessoryView = accessoryView;
-    [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
+    [_accessoryView.helper setContentView:self forEnvironment:_environment];
   } else {
     [_accessoryView.helper setContentView:nil forEnvironment:_environment];
     _accessoryView = nil;
