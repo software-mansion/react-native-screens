@@ -128,14 +128,17 @@ class TabsHost(
         @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
         if (!isLayoutEnqueued && layoutCallback != null) {
             isLayoutEnqueued = true
-            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-            ReactChoreographer
-                .getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback,
-                )
+            post {
+                layoutCallback.doFrame(0)
+            }
+//            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
+//            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
+//            ReactChoreographer
+//                .getInstance()
+//                .postFrameCallback(
+//                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+//                    layoutCallback,
+//                )
         }
     }
 
