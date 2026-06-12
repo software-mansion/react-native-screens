@@ -25,4 +25,18 @@
  */
 + (nullable UIScrollView *)findContentScrollViewWithDelegatingToProvider:(nullable UIView *)view;
 
+/**
+ * Breadth-first search for the first vertically-scrollable UIScrollView
+ * descendant. Unlike the first-descendant-chain walk, this finds scroll views
+ * in real-world screen trees (styled wrapper views, headers, virtualized
+ * lists such as FlashList/LegendList, nested stack navigators), which
+ * UIKit's automatic content-scroll-view detection cannot reach.
+ * Horizontal-only scrollers (e.g. carousels) are skipped, so behaviors driven
+ * by the result (such as `tabBarMinimizeBehavior`) track vertical scrolling.
+ * The search is bounded so a pathological tree cannot stall the main thread.
+ *
+ * When `view == nil`, it returns `nil`.
+ */
++ (nullable UIScrollView *)findScrollViewBreadthFirstFrom:(nullable UIView *)view;
+
 @end

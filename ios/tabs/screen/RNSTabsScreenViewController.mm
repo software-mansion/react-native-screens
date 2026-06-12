@@ -105,6 +105,26 @@
   return false;
 }
 
+// UIKit resolves the scroll view that drives `tabBarMinimizeBehavior`
+// (iOS 26 tab-bar minimize + inline bottom accessory) by asking the selected
+// tab's view controller for its bottom-edge content scroll view. UIKit's
+// automatic detection cannot find UIScrollViews nested inside a typical
+// React Native screen tree (styled wrappers, headers, virtualized lists,
+// nested stack navigators), so minimize never engages. Fall back to a
+// breadth-first search of the currently attached content. Restricted to the
+// bottom edge so top-edge (navigation bar) resolution is unaffected.
+- (UIScrollView *)contentScrollViewForEdge:(NSDirectionalRectEdge)edge
+{
+  UIScrollView *scrollView = [super contentScrollViewForEdge:edge];
+  if (scrollView != nil) {
+    return scrollView;
+  }
+  if (edge == NSDirectionalRectEdgeBottom) {
+    return [RNSScrollViewFinder findScrollViewBreadthFirstFrom:self.view];
+  }
+  return nil;
+}
+
 #if !TARGET_OS_TV
 
 - (RNSOrientation)evaluateOrientation
