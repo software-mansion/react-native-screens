@@ -56,6 +56,7 @@ function LabelTab() {
       </Text>
       <Text style={styles.hint}>Only `tabBarItemLabelVisibilityMode` is defined.{'\n'} Labels follow the toggled value.</Text>
       <SettingsPicker<LabelVisibilityMode>
+        testID="general-appearance-android-label-visibility-picker"
         label="tabBarItemLabelVisibilityMode"
         value={labelVisibility}
         onValueChange={onLabelVisibilityChange}
@@ -112,6 +113,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: DefaultTab,
     options: {
       title: 'Default',
+      tabBarItemTestID: 'general-appearance-android-tab-default',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
       },
@@ -122,6 +124,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: LabelTab,
     options: {
       title: 'Label',
+      tabBarItemTestID: 'general-appearance-android-tab-label',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
@@ -135,6 +138,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: RippleTab,
     options: {
       title: 'Ripple',
+      tabBarItemTestID: 'general-appearance-android-tab-ripple',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
@@ -152,6 +156,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     Component: IndicatorTab,
     options: {
       title: 'Indicator',
+      tabBarItemTestID: 'general-appearance-android-tab-indicator',
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
         standardAppearance: {
