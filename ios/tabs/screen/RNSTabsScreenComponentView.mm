@@ -1,6 +1,7 @@
 #import "RNSTabsScreenComponentView.h"
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
+#import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSSafeAreaViewNotifications.h"
@@ -80,6 +81,7 @@ namespace react = facebook::react;
   _selectedIconResourceName = nil;
 
   _systemItem = RNSTabsScreenSystemItemNone;
+  _searchToolbarItems = nil;
 
   _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
@@ -338,6 +340,22 @@ RNS_IGNORE_SUPER_CALL_END
     _systemItem =
         rnscreens::conversion::RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(newComponentProps.systemItem);
     tabBarItemNeedsRecreation = YES;
+    RNSTabBarController *tabBarController = [self findTabBarController];
+    tabBarController.needsUpdateOfSearchToolbarItems = true;
+  }
+
+  if (newComponentProps.toolbarItems != oldComponentProps.toolbarItems) {
+    const auto &vec = newComponentProps.toolbarItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:NSDictionary.class]) {
+        [array addObject:dict];
+      }
+    }
+    _searchToolbarItems = array;
+    RNSTabBarController *tabBarController = [self findTabBarController];
+    tabBarController.needsUpdateOfSearchToolbarItems = true;
   }
 
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {

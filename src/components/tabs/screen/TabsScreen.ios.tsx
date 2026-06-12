@@ -3,6 +3,7 @@
 import React from 'react';
 import {
   ImageResolvedAssetSource,
+  NativeSyntheticEvent,
   StyleSheet,
   processColor,
   type ImageSourcePropType,
@@ -21,6 +22,7 @@ import type {
 } from './TabsScreen.ios.types';
 import type { TabsScreenProps } from './TabsScreen.types';
 import type { PlatformIconIOS } from '../../../types';
+import { prepareHeaderBarButtonItems } from '../../helpers/prepareHeaderBarButtonItems';
 import { useTabsScreen } from './useTabsScreen';
 
 /**
@@ -55,6 +57,30 @@ function TabsScreen(props: TabsScreenProps) {
     });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
+  const toolbarItems = React.useMemo(
+    () =>
+      ios?.toolbarItems
+        ? prepareHeaderBarButtonItems(ios.toolbarItems, 'right')
+        : undefined,
+    [ios?.toolbarItems],
+  );
+  const onPressToolbarItem = toolbarItems
+    ? (event: NativeSyntheticEvent<{ buttonId: string }>) => {
+        const pressedItem = toolbarItems.find(
+          item =>
+            item &&
+            'buttonId' in item &&
+            item.buttonId === event.nativeEvent.buttonId,
+        );
+        if (
+          pressedItem &&
+          pressedItem.type === 'button' &&
+          pressedItem.onPress
+        ) {
+          pressedItem.onPress();
+        }
+      }
+    : undefined;
 
   return (
     <TabsScreenIOSNativeComponent
@@ -75,6 +101,8 @@ function TabsScreen(props: TabsScreenProps) {
       )}
       userInterfaceStyle={ios?.experimental_userInterfaceStyle}
       systemItem={ios?.systemItem}
+      toolbarItems={toolbarItems}
+      onPressToolbarItem={onPressToolbarItem}
       overrideScrollViewContentInsetAdjustmentBehavior={
         ios?.overrideScrollViewContentInsetAdjustmentBehavior
       }>

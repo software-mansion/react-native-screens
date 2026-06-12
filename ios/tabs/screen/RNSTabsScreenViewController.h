@@ -1,5 +1,6 @@
 #pragma once
 
+#import <React/RCTImageLoader.h>
 #import <UIKit/UIKit.h>
 #import "RNSTabsScreenComponentView.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
@@ -27,6 +28,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Tell the controller that the tab screen it owns has got its react-props-orientation changed.
  */
 - (void)tabScreenOrientationHasChanged;
+
+/**
+ * Updates native toolbar items associated with this tab screen's search item.
+ */
+- (void)updateSearchToolbarItemsWithImageLoader:(nullable RCTImageLoader *)imageLoader;
+
+/**
+ * Restores toolbar items previously replaced by this tab screen.
+ */
+- (void)clearSearchToolbarItems;
 
 /**
  * Tell the controller that the tab item related to this controller has been selected again after being presented.
