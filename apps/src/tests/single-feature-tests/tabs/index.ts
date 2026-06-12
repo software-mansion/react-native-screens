@@ -15,6 +15,7 @@ import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejectio
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
 import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
+import TestTabsSynchronousInsetsAndroid from './test-tabs-synchronous-insets-android';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 import TestTabsLifecycleEvents from './test-tabs-lifecycle-events';
 import TestTabsItemTitle from './test-tabs-item-title';
@@ -38,6 +39,7 @@ const scenarios = {
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
   TestTabsSpecialEffectsScrollToTop,
+  TestTabsSynchronousInsetsAndroid,
   TestTabsTabBarExperimentalUserInterfaceStyle,
   TestTabsLifecycleEvents,
   TestTabsItemTitle,

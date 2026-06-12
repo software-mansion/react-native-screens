@@ -134,6 +134,13 @@ class TabsHostViewManager :
         }
     }
 
+    override fun setTabBarShouldApplyInsetsSynchronously(
+        view: TabsHost,
+        shouldApply: Boolean,
+    ) {
+        view.tabBarShouldApplyInsetsSynchronously = shouldApply
+    }
+
     companion object {
         const val REACT_CLASS = "RNSTabsHostAndroid"
     }

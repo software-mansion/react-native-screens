@@ -61,6 +61,7 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific props
   tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false>;
+  tabBarShouldApplyInsetsSynchronously?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostAndroid', {
