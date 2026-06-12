@@ -92,6 +92,16 @@
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+  // The window-attached `_container` is normally removed in -didMoveToSuperview
+  // (when superview becomes nil) and -prepareForRecycle. Those paths can be
+  // bypassed when the overlay's subtree removal is deferred by a
+  // react-native-reanimated layout animation on a descendant, which leaves
+  // `_container` (and its now-orphaned child) stranded on the UIWindow forever.
+  // Remove it here as a final safety net so the overlay never outlives itself.
+  if (_container != nil) {
+    [_container removeFromSuperview];
+    [_touchHandler detachFromView:_container];
+  }
 }
 
 - (void)setAccessibilityContainerViewIsModal:(BOOL)accessibilityContainerViewIsModal
