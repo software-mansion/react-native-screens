@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, processColor, StyleSheet } from 'react-native';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
@@ -23,6 +23,7 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
+import { parseIconToNativeProps } from '../../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -48,9 +49,12 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
+    toolbarMenuItems,
     ...filteredAndroidProps
   } = android ?? {};
 
+  const parsedToolbarMenuItems =
+    parseToolbarMenuItemsToNativeProps(toolbarMenuItems);
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -65,6 +69,7 @@ function StackHeaderConfig(
       ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
+      toolbarMenuItems={parsedToolbarMenuItems}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -210,12 +215,71 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
-// Doesn't support nested props.
+function parseToolbarMenuItemsToNativeProps(
+  items: StackHeaderConfigPropsAndroid['toolbarMenuItems'],
+): StackHeaderConfigAndroidNativeComponentProps['toolbarMenuItems'] {
+  return items?.map(
+    ({
+      icon,
+      iconTintColorNormal,
+      iconTintColorPressed,
+      iconTintColorFocused,
+      iconTintColorDisabled,
+      ...rest
+    }) => ({
+      ...rest,
+      ...parseIconToNativeProps(icon),
+      iconTintColorNormal: processColor(iconTintColorNormal),
+      iconTintColorPressed: processColor(iconTintColorPressed),
+      iconTintColorFocused: processColor(iconTintColorFocused),
+      iconTintColorDisabled: processColor(iconTintColorDisabled),
+    }),
+  );
+}
+
 function parseToolbarMenuItemOptionsToNativeProps(
   options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
   const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
-    Object.entries(options).map(([key, value]) => {
+    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+      const typedKey = key as keyof StackHeaderToolbarMenuItemOptionsAndroid;
+
+      switch (typedKey) {
+        case 'iconTintColorNormal':
+        case 'iconTintColorPressed':
+        case 'iconTintColorFocused':
+        case 'iconTintColorDisabled':
+          return [
+            [
+              key,
+              processColor(
+                value as StackHeaderToolbarMenuItemOptionsAndroid[typeof typedKey],
+              ) ?? null,
+            ],
+          ];
+
+        case 'icon': {
+          const iconValue =
+            value as StackHeaderToolbarMenuItemOptionsAndroid['icon'];
+
+          // Explicit `undefined` means "reset the icon". The native side treats
+          // an absent key as "no change", so to clear the icon we must send every
+          // native icon key explicitly as `null`.
+          if (iconValue === undefined) {
+            const noIcon: Pick<
+              NativeToolbarMenuItemOptionsAndroid,
+              'imageIconResource' | 'drawableIconResourceName'
+            > = {
+              imageIconResource: null,
+              drawableIconResourceName: null,
+            };
+            return Object.entries(noIcon);
+          }
+
+          return Object.entries(parseIconToNativeProps(iconValue));
+        }
+      }
+
       if (
         typeof value === 'object' &&
         value !== null &&
@@ -225,10 +289,12 @@ function parseToolbarMenuItemOptionsToNativeProps(
       }
 
       return [
-        key,
-        // We need to replace explicit `undefined` with `null`
-        // so that we're able to read that information on the native side.
-        value === undefined ? null : value,
+        [
+          key,
+          // We need to replace explicit `undefined` with `null`
+          // so that we're able to read that information on the native side.
+          value === undefined ? null : value,
+        ],
       ];
     }),
   );
