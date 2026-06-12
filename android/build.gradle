@@ -22,6 +22,7 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:8.2.1')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
+        classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
     }
 }
@@ -87,6 +88,7 @@ if (isRunningInContextOfScreensRepo()) {
 }
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -139,6 +141,7 @@ android {
     buildFeatures {
         prefab true
         buildConfig true
+        compose true
     }
     externalNativeBuild {
         cmake {
@@ -204,4 +207,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation "androidx.core:core-ktx:1.17.0"
+
+    implementation 'androidx.compose.ui:ui:1.6.1'
+    implementation 'androidx.compose.material3:material3:1.2.0'
 }

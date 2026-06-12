@@ -7,6 +7,7 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.gamma.modals.composebottomsheet.ComposeBottomSheetManager
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigViewManager
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewViewManager
@@ -59,6 +60,7 @@ class RNScreensPackage : BaseReactPackage() {
             ScrollViewMarkerViewManager(),
             StackHeaderConfigViewManager(),
             StackHeaderSubviewViewManager(),
+            ComposeBottomSheetManager(),
         )
     }
 
