@@ -23,6 +23,9 @@ internal class ScreensCoordinatorLayout(
         PointerEventsBoxNoneImpl(),
     )
 
+    internal var blockFrameworkTransitionFinalization = false
+    internal var needsTransitionFinalization = false
+
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
     private val animationListener: Animation.AnimationListener =
@@ -32,7 +35,12 @@ internal class ScreensCoordinatorLayout(
             }
 
             override fun onAnimationEnd(animation: Animation) {
+                if (blockFrameworkTransitionFinalization) {
+                    blockFrameworkTransitionFinalization = false
+                    needsTransitionFinalization = true
+                }
                 fragment.onViewAnimationEnd()
+                needsTransitionFinalization = false
             }
 
             override fun onAnimationRepeat(animation: Animation) {}
@@ -49,6 +57,16 @@ internal class ScreensCoordinatorLayout(
         // are correctly dispatched then.
         // We also add fakeAnimation to the set of animations, which sends the progress of animation
         val fakeAnimation = ScreensAnimation(fragment).apply { duration = animation.duration }
+
+        if (fragment.isRemoving) {
+            // This is a hack.
+            // We'll finalize the transition via our listener.
+            // We do it to prevent the framework from ending the transition prematurely,
+            // due to interaction between `FragmentAnim.EndViewTransitionAnimation` and
+            // `SafeAreaView` drawing blocking logic. For detailed description see:
+            // TODO LINK THE PR HERE
+            blockFrameworkTransitionFinalization = true
+        }
 
         if (animation is AnimationSet && !fragment.isRemoving) {
             animation

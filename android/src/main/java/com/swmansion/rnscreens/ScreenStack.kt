@@ -76,6 +76,13 @@ class ScreenStack(
     }
 
     override fun endViewTransition(view: View) {
+        require(view is ScreensCoordinatorLayout) {
+            "[RNScreens] Expected children of type: ${ScreensCoordinatorLayout::class.java.simpleName}"
+        }
+        if (view.blockFrameworkTransitionFinalization) {
+            return
+        }
+
         super.endViewTransition(view)
 
         disappearingTransitioningChildren.remove(view)
@@ -89,9 +96,16 @@ class ScreenStack(
         }
     }
 
-    fun onViewAppearTransitionEnd() {
+    internal fun onViewTransitionEnd(view: ScreensCoordinatorLayout) {
         if (!removalTransitionStarted) {
             dispatchOnFinishTransitioning()
+        }
+
+        if (view.needsTransitionFinalization) {
+            check(!view.blockFrameworkTransitionFinalization) {
+                "[RNScreens] Attempt to finalize transition on view that blocks the action!"
+            }
+            endViewTransition(view)
         }
     }
 
