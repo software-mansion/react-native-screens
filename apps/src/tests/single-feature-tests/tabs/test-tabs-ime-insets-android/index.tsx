@@ -39,6 +39,7 @@ export function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             setSafeAreaViewBottomEdgeEnabled(value);
           }}
+          testID="safe-area-bottom-edge-switch"
         />
       </View>
       <View style={styles.section}>
@@ -49,6 +50,7 @@ export function ConfigScreen() {
           onValueChange={function (value: boolean): void {
             updateHostConfig({ android: { tabBarRespectsIMEInsets: value } });
           }}
+          testID="tab-bar-respects-ime-insets-switch"
         />
       </View>
       <View style={styles.section}>
@@ -56,10 +58,11 @@ export function ConfigScreen() {
         <TextInput
           placeholder="Focus TextInput to show IME..."
           style={styles.textInput}
+          testID="ime-insets-text-input"
         />
       </View>
       <View style={styles.end}>
-        <Text>TabsScreen bottom</Text>
+        <Text testID="tabs-screen-bottom-text">TabsScreen bottom</Text>
       </View>
     </View>
   );
@@ -72,6 +75,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
+      tabBarItemTestID: 'ime-insets-config-tab-item',
       safeAreaConfiguration: {
         edges: {
           bottom: true,
@@ -85,6 +89,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemTestID: 'ime-insets-tab2-tab-item',
     },
   },
 ];
