@@ -2,12 +2,14 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSImageLoadingHelper.h"
 #import "RNSLog.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
+#import "RNSTabsScreenComponentView+Internal.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTImageSource.h>
@@ -103,6 +105,11 @@ RNS_IGNORE_SUPER_CALL_END
     }
   });
 }
+
+//- (nullable RNSImageSource *)createIconImageSource
+//{
+//
+//}
 
 #pragma mark - Events
 
