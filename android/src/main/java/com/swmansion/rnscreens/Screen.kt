@@ -65,6 +65,7 @@ class Screen(
     var stackPresentation = StackPresentation.PUSH
     var replaceAnimation = ReplaceAnimation.POP
     var stackAnimation = StackAnimation.DEFAULT
+    var transitionDuration: Int = TRANSITION_DURATION_UNSET
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
@@ -640,6 +641,7 @@ class Screen(
 
     companion object {
         const val TAG = "Screen"
+        const val TRANSITION_DURATION_UNSET = -1
     }
 }
 

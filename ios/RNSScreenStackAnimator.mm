@@ -5,9 +5,9 @@
 
 #pragma mark - Constants
 
-// Default duration for transitions in seconds. Note, that the transition duration coming from JS layer
-// is never null, thus it defaults to the value set in component codegen spec.
-static constexpr NSTimeInterval RNSDefaultTransitionDuration = 0.5;
+// Default duration for transitions in seconds. RNSScreen substitutes this value
+// at the prop boundary when codegen sends the -1 "unset" sentinel.
+const NSTimeInterval RNSDefaultTransitionDuration = 0.5;
 
 // Proportions for diffrent phases of more complex animations.
 // The reference duration differs from default transition duration,
@@ -61,9 +61,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     return 0.0;
   }
 
-  if (screen != nil && screen.transitionDuration != nil && [screen.transitionDuration floatValue] >= 0) {
-    float durationInSeconds = [screen.transitionDuration floatValue] / 1000.0;
-    return durationInSeconds;
+  if (screen != nil && screen.transitionDuration != nil) {
+    return [screen.transitionDuration floatValue] / 1000.0;
   }
 
   return _transitionDuration;
