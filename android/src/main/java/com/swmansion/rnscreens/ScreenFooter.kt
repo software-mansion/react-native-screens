@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EX
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.google.android.material.math.MathUtils
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
+import java.lang.ref.WeakReference
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor")
@@ -48,9 +49,13 @@ class ScreenFooter(
 
     // Main goal of this callback implementation is to handle keyboard appearance. We use it to make sure
     // that the footer respects keyboard during layout.
-    // Note `DISPATCH_MODE_STOP` is used here to avoid propagation of insets callback to footer subtree.
+    // Note `DISPATCH_MODE_CONTINUE_ON_SUBTREE` is required here: this callback is installed on the
+    // window's decor view, so `DISPATCH_MODE_STOP` would halt WindowInsetsAnimation dispatch for the
+    // entire window, silencing every other insets-animation consumer in the app (e.g. reanimated's
+    // useAnimatedKeyboard or react-native-keyboard-controller). We do not consume insets in onProgress,
+    // so continuing dispatch is safe.
     private val insetsAnimation =
-        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
             override fun onStart(
                 animation: WindowInsetsAnimationCompat,
                 bounds: WindowInsetsAnimationCompat.BoundsCompat,
@@ -91,17 +96,6 @@ class ScreenFooter(
                 isAnimationControlledByKeyboard = false
             }
         }
-
-    init {
-        val rootView =
-            checkNotNull(reactContext.currentActivity) {
-                "[RNScreens] Context detached from activity while creating ScreenFooter"
-            }.window.decorView
-
-        // Note that we do override insets animation on given view. I can see it interfering e.g.
-        // with reanimated keyboard or even other places in our code. Need to test this.
-        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetsAnimation)
-    }
 
     private fun requireScreenParent(): Screen = requireNotNull(screenParent)
 
@@ -192,11 +186,33 @@ class ScreenFooter(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         sheetBehavior?.let { registerWithSheetBehavior(it) }
+        registerInsetsAnimationCallback()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         sheetBehavior?.let { unregisterWithSheetBehavior(it) }
+        unregisterInsetsAnimationCallback()
+    }
+
+    private val decorView: View?
+        get() = reactContext.currentActivity?.window?.decorView
+
+    // Note that we do override insets animation callback on the decor view - a view we do not own.
+    // Android keeps a single callback slot per view, so we restore it to null when the footer
+    // detaches, guarded against clearing a callback installed by a more recently attached footer.
+    private fun registerInsetsAnimationCallback() {
+        val rootView = decorView ?: return
+        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetsAnimation)
+        lastRegisteredFooter = WeakReference(this)
+    }
+
+    private fun unregisterInsetsAnimationCallback() {
+        if (lastRegisteredFooter?.get() !== this) {
+            return
+        }
+        lastRegisteredFooter = null
+        decorView?.let { ViewCompat.setWindowInsetsAnimationCallback(it, null) }
     }
 
     /**
@@ -295,5 +311,9 @@ class ScreenFooter(
 
     companion object {
         const val TAG = "ScreenFooter"
+
+        // Tracks which footer's callback currently occupies the decor view's single
+        // insets-animation callback slot.
+        private var lastRegisteredFooter: WeakReference<ScreenFooter>? = null
     }
 }

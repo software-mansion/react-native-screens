@@ -215,3 +215,4 @@ export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
 export { default as Test4090 } from './Test4090';
+export { default as TestScreenFooterKeyboardInsets } from './TestScreenFooterKeyboardInsets';
