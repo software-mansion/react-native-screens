@@ -14,8 +14,11 @@ customisation is driven by `standardAppearance`.
 
 ## E2E test
 
-Incomplete: Only step 1 for iOS is automated. The E2E test asserts badge text values for all four
-tabs at baseline.
+Incomplete: Only step 1 for iOS is automated. The E2E test asserts the badge text
+values for all four tabs at baseline. A single suite can be run on both iOS
+versions with version-specific conditions: the tab bar badge view class name
+resolves dynamically (_UIBadgeView on iOS 18 and lower vs.
+_UIBarBadgeView on iOS 26).
 
 Not covered:
 

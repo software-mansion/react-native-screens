@@ -1,5 +1,20 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+const {
+  getIOSVersionNumber,
+} = require('../../../../scripts/e2e/ios-devices.js');
+
+function isIOSVersionAtLeast(version: string): boolean {
+  return (
+    device.getPlatform() === 'ios' &&
+    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
+  );
+}
+
+const tabBarBagdeViewType = isIOSVersionAtLeast('26.0')
+  ? '_UIBarBadgeView'
+  : '_UIBadgeView';
 
 describeIfiOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {
@@ -15,22 +30,22 @@ describeIfiOS('Tab Bar Item Badge', () => {
 
     await expect(
       element(
-        by.type('_UIBarBadgeView').withAncestor(by.id('tab-badge-item-1')),
+        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-1')),
       ),
     ).toHaveText('1');
     await expect(
       element(
-        by.type('_UIBarBadgeView').withAncestor(by.id('tab-badge-item-2')),
+        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-2')),
       ),
     ).toHaveText('1234567890');
     await expect(
       element(
-        by.type('_UIBarBadgeView').withAncestor(by.id('tab-badge-item-3')),
+        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-3')),
       ),
     ).toHaveText('NEW!');
     await expect(
       element(
-        by.type('_UIBarBadgeView').withAncestor(by.id('tab-badge-item-4')),
+        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-4')),
       ),
     ).toHaveText('⚠️');
   });
