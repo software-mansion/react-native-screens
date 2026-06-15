@@ -90,6 +90,12 @@
   [super viewDidDisappear:animated];
   [self detachBackdropTapGestureRecognizer];
 
+  // This covers the case when a sheet deeper in the stack is dismissed, UIKit tears down
+  // every sheet above it without calling `presentationControllerDidDismiss:` on them.
+  if ([_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
+
   [self.delegate sheetControllerDidDisappear:self];
 }
 
@@ -207,9 +213,9 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  [_presentationManager handleNativeDismiss];
-
-  [self.delegate sheetControllerDidNativeDismiss:self];
+  if ([_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
 }
 
 #if !TARGET_OS_TV
