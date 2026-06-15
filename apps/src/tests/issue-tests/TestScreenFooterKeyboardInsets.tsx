@@ -13,6 +13,7 @@ import Animated, {
 type RouteParamList = {
   Home: undefined;
   FormSheetWithFooter: undefined;
+  FormSheetNoFooter: undefined;
 };
 
 type RouteProps<RouteName extends keyof RouteParamList> = {
@@ -28,18 +29,31 @@ function Home({ navigation }: RouteProps<'Home'>) {
     transform: [{ translateY: -keyboard.height.value }],
   }));
 
+  // This bar's width tracks the reanimated keyboard height. It is pinned to the top
+  // of the screen so it stays visible above the keyboard. If reanimated is receiving
+  // WindowInsetsAnimation frames it grows with the keyboard; if the decor-view slot
+  // was stolen it stays at 0.
+  const probeStyle = useAnimatedStyle(() => ({
+    width: keyboard.height.value,
+  }));
+
   return (
     <View style={styles.container}>
+      <Animated.View style={[styles.probeBar, probeStyle]} />
       <Text style={styles.instructions}>
-        1. Focus the input — it should translate up with the keyboard.{'\n'}
-        2. Dismiss the keyboard, open the form sheet (its footer mounts),
-        close the sheet.{'\n'}
-        3. Focus the input again — before the fix the keyboard animation no
-        longer runs and never recovers for the lifetime of the process.
+        1. Focus the input — it should translate up with the keyboard and the top
+        red bar should grow.{'\n'}
+        2. Dismiss the keyboard, open a form sheet, close it.{'\n'}
+        3. Focus the input again — before the fix the bar stays at 0 and the input
+        no longer animates, and it never recovers for the lifetime of the process.
       </Text>
       <Button
-        title="Open form sheet with footer"
+        title="Open form sheet WITH footer"
         onPress={() => navigation.navigate('FormSheetWithFooter')}
+      />
+      <Button
+        title="Open form sheet WITHOUT footer"
+        onPress={() => navigation.navigate('FormSheetNoFooter')}
       />
       <Animated.View style={animatedStyle}>
         <TextInput placeholder="Focus me" style={styles.input} />
@@ -48,12 +62,16 @@ function Home({ navigation }: RouteProps<'Home'>) {
   );
 }
 
-function FormSheetWithFooter({
+function FormSheet({
   navigation,
-}: RouteProps<'FormSheetWithFooter'>) {
+}: RouteProps<'FormSheetWithFooter' | 'FormSheetNoFooter'>) {
   return (
     <View style={styles.sheetContent}>
       <Button title="Close" onPress={() => navigation.goBack()} />
+      <TextInput
+        placeholder="Focus me inside the sheet"
+        style={styles.input}
+      />
     </View>
   );
 }
@@ -73,7 +91,7 @@ function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="FormSheetWithFooter"
-          component={FormSheetWithFooter}
+          component={FormSheet}
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: [0.4],
@@ -83,6 +101,19 @@ function App() {
               backgroundColor: 'lightblue',
             },
             unstable_sheetFooter: FormSheetFooter,
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetNoFooter"
+          component={FormSheet}
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: [0.4],
+            sheetCornerRadius: 8,
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'lightyellow',
+            },
           }}
         />
       </Stack.Navigator>
@@ -96,6 +127,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 16,
     padding: 16,
+  },
+  probeBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: 12,
+    backgroundColor: 'red',
   },
   instructions: {
     fontSize: 14,
