@@ -14,11 +14,16 @@ customisation is driven by `standardAppearance`.
 
 ## E2E test
 
-Incomplete: Not automated. All observable
-outcomes are purely visual (badge color, text color, displayed string).
-Detox does not expose color or text-content attributes of native tab bar
-badge items, so automated assertion requires a screenshot-diff approach
-not yet in place.
+Incomplete: Only step 1 for iOS is automated. The E2E test asserts badge text values for all four
+tabs at baseline.
+
+Not covered:
+
+- Android - no automated coverage; all badge behavior on Android remains
+  manual-only.
+- Badge background color and badge text color (all tabs, all states) -
+  Detox does not expose color attributes of native tab bar badge views,
+  so color assertions require a screenshot-diff approach not yet in place.
 
 ## Prerequisites
 
