@@ -22,11 +22,10 @@ _UIBarBadgeView on iOS 26).
 
 Not covered:
 
-- Android - no automated coverage; all badge behavior on Android remains
-  manual-only.
-- Badge background color and badge text color (all tabs, all states) -
-  Detox does not expose color attributes of native tab bar badge views,
-  so color assertions require a screenshot-diff approach not yet in place.
+- All steps for Android, and most iOS steps except for the initial badge text validation.
+- Badge background and text colors (all tabs, all states). Detox does not expose color 
+  attributes for native tab bar badge views, meaning color validation requires a 
+  screenshot-diff approach that is not yet implemented.
 
 ## Prerequisites
 
