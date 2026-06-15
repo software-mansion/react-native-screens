@@ -192,5 +192,5 @@ floats without a colored pill.
 6. Cycle through all four tabs in order (Tab1 → Tab2 → Tab3 → Tab4),
    then in reverse (Tab4 → Tab3 → Tab2 → Tab1).
 
-- [ ]Each badge is displayed correctly on every tab switch. The colors, text
+- [ ] Each badge is displayed correctly on every tab switch. The colors, text
 values, and transparent states remain stable.
