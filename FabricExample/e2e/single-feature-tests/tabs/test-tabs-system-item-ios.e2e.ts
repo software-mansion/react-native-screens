@@ -31,6 +31,7 @@ async function tapSystemTitleOption() {
 async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
 }
+
 function isIOSVersionAtLeast(version: string): boolean {
   return (
     device.getPlatform() === 'ios' &&
