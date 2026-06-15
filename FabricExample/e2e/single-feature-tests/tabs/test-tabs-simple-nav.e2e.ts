@@ -3,7 +3,6 @@ import {
   forceTapByLabeliOS,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { Platform } from 'react-native';
 
 describe('Tabs: simple navigation', () => {
   beforeAll(async () => {
