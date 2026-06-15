@@ -70,20 +70,37 @@ describeIfAndroid(
       await selectLabelVisibilityMode('labeled');
 
       await expect(
-        element(by.id('general-appearance-android-tab-default')),
+        element(
+          by
+            .text('Default')
+            .withAncestor(by.id('general-appearance-android-tab-default')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-label')),
+        element(
+          by
+            .text('Label')
+            .withAncestor(by.id('general-appearance-android-tab-label')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-ripple')),
+        element(
+          by
+            .text('Ripple')
+            .withAncestor(by.id('general-appearance-android-tab-ripple')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-indicator')),
+        element(
+          by
+            .text('Indicator')
+            .withAncestor(by.id('general-appearance-android-tab-indicator')),
+        ),
       ).toBeVisible();
     });
 
     it('should fallback to default auto mode and persist custom label mode settings across tab switches', async () => {
+      await selectLabelVisibilityMode('labeled');
       await element(by.id('general-appearance-android-tab-default')).tap();
 
       await expect(
@@ -118,16 +135,32 @@ describeIfAndroid(
       await element(by.id('general-appearance-android-tab-label')).tap();
 
       await expect(
-        element(by.id('general-appearance-android-tab-default')),
+        element(
+          by
+            .text('Default')
+            .withAncestor(by.id('general-appearance-android-tab-default')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-label')),
+        element(
+          by
+            .text('Label')
+            .withAncestor(by.id('general-appearance-android-tab-label')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-ripple')),
+        element(
+          by
+            .text('Ripple')
+            .withAncestor(by.id('general-appearance-android-tab-ripple')),
+        ),
       ).toBeVisible();
       await expect(
-        element(by.id('general-appearance-android-tab-indicator')),
+        element(
+          by
+            .text('Indicator')
+            .withAncestor(by.id('general-appearance-android-tab-indicator')),
+        ),
       ).toBeVisible();
     });
 
