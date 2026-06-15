@@ -5,8 +5,8 @@ import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
+import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.abs
 
 abstract class FabricEnabledViewGroup(
@@ -28,16 +28,12 @@ abstract class FabricEnabledViewGroup(
         height: Int,
         headerHeight: Int,
     ) {
-        // Use the density of the display this view is attached to, not the process-global one
-        // captured from the device's main display (PixelUtil). Fabric mounts views using the
-        // per-display density, so converting back with the global density shrinks/inflates the
-        // frame pushed to the Shadow Tree whenever the app runs on a display with a different
-        // density (Samsung DeX, freeform multi-window, external monitors). Both densities are
-        // identical on single-display devices, so this is a no-op there. See #4159.
-        val density = context.resources.displayMetrics.density
-        val realWidth: Float = if (density > 0f) width / density else PixelUtil.toDIPFromPixel(width.toFloat())
-        val realHeight: Float = if (density > 0f) height / density else PixelUtil.toDIPFromPixel(height.toFloat())
-        val realHeaderHeight: Float = if (density > 0f) headerHeight / density else PixelUtil.toDIPFromPixel(headerHeight.toFloat())
+        // Convert px->dp with this view's own display density (see pxToDp): the global density
+        // mis-scales the frame pushed to the Shadow Tree on displays whose density differs from
+        // the device's main one (Samsung DeX, freeform multi-window, external monitors). See #4159.
+        val realWidth: Float = pxToDp(width.toFloat())
+        val realHeight: Float = pxToDp(height.toFloat())
+        val realHeaderHeight: Float = pxToDp(headerHeight.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
