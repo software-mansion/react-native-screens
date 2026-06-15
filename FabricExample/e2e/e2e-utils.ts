@@ -9,7 +9,7 @@ export const describeIfAndroid =
 
 export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
-    .toBeVisible()
+    .toBeVisible(40)
     .whileElement(by.id(scrollViewId))
     .scroll(600, 'down', Number.NaN, 0.85);
 }
