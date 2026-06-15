@@ -6,6 +6,7 @@ export type {
   TabSelectedEvent,
   TabSelectionRejectedEvent,
   TabSelectionRejectionReason,
+  TabSelectionPreventedEvent,
   TabsHostColorScheme,
   TabsHostDirection,
   TabsHostNativeContainerStyleProps,

@@ -12,7 +12,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();

@@ -5,8 +5,8 @@ import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
+import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.abs
 
 abstract class FabricEnabledViewGroup(
@@ -28,9 +28,12 @@ abstract class FabricEnabledViewGroup(
         height: Int,
         headerHeight: Int,
     ) {
-        val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
-        val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
-        val realHeaderHeight: Float = PixelUtil.toDIPFromPixel(headerHeight.toFloat())
+        // Convert px->dp with this view's own display density (see pxToDp): the global density
+        // mis-scales the frame pushed to the Shadow Tree on displays whose density differs from
+        // the device's main one (Samsung DeX, freeform multi-window, external monitors). See #4159.
+        val realWidth: Float = pxToDp(width.toFloat())
+        val realHeight: Float = pxToDp(height.toFloat())
+        val realHeaderHeight: Float = pxToDp(headerHeight.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
