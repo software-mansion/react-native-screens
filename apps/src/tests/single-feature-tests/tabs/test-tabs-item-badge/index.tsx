@@ -190,7 +190,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab1',
       badgeValue: Platform.OS === 'ios' ? '1' : '',
       tabBarItemTestID: 'tab-badge-item-1',
-      tabBarItemAccessibilityLabel: 'tab-badge-item-1-label',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
       },
@@ -209,7 +208,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab2',
       badgeValue: '1234567890',
       tabBarItemTestID: 'tab-badge-item-2',
-      tabBarItemAccessibilityLabel: 'tab-badge-item-2-label',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
@@ -240,7 +238,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab3',
       badgeValue: 'NEW!',
       tabBarItemTestID: 'tab-badge-item-3',
-      tabBarItemAccessibilityLabel: 'tab-badge-item-3-label',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
@@ -267,7 +264,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       title: 'Tab4',
       badgeValue: '⚠️',
       tabBarItemTestID: 'tab-badge-item-4',
-      tabBarItemAccessibilityLabel: 'tab-badge-item-4-label',
       ios: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
