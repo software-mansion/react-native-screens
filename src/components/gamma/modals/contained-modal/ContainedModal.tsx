@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ContainedModalProps } from './ContainedModal.types';
-import ContainedModalNativeComponent from '../../../../fabric/gamma/modals/contained-modal/ContainedModalProviderNativeComponent';
+import ContainedModalNativeComponent from '../../../../fabric/gamma/modals/contained-modal/ContainedModalNativeComponent';
 import { StyleSheet } from 'react-native';
 
 export function ContainedModal(props: ContainedModalProps) {
