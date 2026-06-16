@@ -1,14 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
-import android.view.Choreographer
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
-import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
@@ -48,8 +46,6 @@ class TabsHost(
     internal var rejectStaleNavigationStateUpdates: Boolean by container::rejectStaleNavigationStateUpdates
 
     internal lateinit var eventEmitter: TabsHostEventEmitter
-
-    private var isLayoutEnqueued: Boolean = false
 
     var tabBarHidden: Boolean by container::tabBarHidden
 
@@ -123,29 +119,14 @@ class TabsHost(
         container.setPendingNavigationStateUpdate(navStateRequest.copy())
     }
 
-    private val layoutCallback =
-        Choreographer.FrameCallback {
-            isLayoutEnqueued = false
-            forceSubtreeMeasureAndLayoutPass()
-        }
-
     private fun refreshLayout() {
-        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
-        if (layoutCallback != null) {
-//            isLayoutEnqueued = true
+        @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
+        if (layoutCoordinator != null) {
             if (!hasFirstLayoutWithInsets) {
                 layoutCoordinator.postLayout()
             } else {
                 layoutCoordinator.choreographerLayout()
             }
-//            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-//            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-//            ReactChoreographer
-//                .getInstance()
-//                .postFrameCallback(
-//                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-//                    layoutCallback,
-//                )
         }
     }
 
