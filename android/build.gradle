@@ -88,11 +88,19 @@ apply plugin: 'com.android.library'
 // Consuming apps may opt out with `android.builtInKotlin=false` in which case AGP does NOT
 // provide Kotlin and we MUST apply the plugin ourselves.
 // AGP < 9 had no built-in Kotlin at all, so we always apply it there.
-def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.').first().toInteger()
-def isBuiltInKotlinOptOut = project.findProperty('android.builtInKotlin')?.toString()?.trim()?.toLowerCase() == 'false'
-def isBuiltInKotlinActive = agpMajorVersion >= 9 && !isBuiltInKotlinOptOut
+def shouldEnableAgpFallback() {
+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpMajorVersion <= 8) {
+        return true
+    }
 
-if (!isBuiltInKotlinActive) {
+    def propertyVal = providers.gradleProperty("android.builtInKotlin").orNull
+    def isBuiltInKotlinEnabled = propertyVal != null ? propertyVal.toBoolean() : true
+
+    return !isBuiltInKotlinEnabled
+}
+
+if (shouldEnableAgpFallback()) {
     apply plugin: 'kotlin-android'
 }
 
@@ -178,20 +186,14 @@ android {
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         kotlin {
-            srcDirs += [
-                "src/fabric/java",
-            ]
-        }
-        java {
-            srcDirs += [
-                "src/fabric/java",
-            ]
+            directories.add("src/fabric/java")
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
-                srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
+                directories.add("${androidResDir}/base")
+                directories.add("${androidResDir}/v33")
             } else {
-                srcDirs = ["${androidResDir}/base"]
+                directories.add("${androidResDir}/base")
             }
         }
     }
