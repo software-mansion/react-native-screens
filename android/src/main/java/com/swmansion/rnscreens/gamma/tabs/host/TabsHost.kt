@@ -32,6 +32,7 @@ class TabsHost(
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
     private val layoutCoordinator: TabsHostLayoutCoordinator = TabsHostLayoutCoordinator(this)
+
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
@@ -120,6 +121,43 @@ class TabsHost(
         container.setPendingNavigationStateUpdate(navStateRequest.copy())
     }
 
+    /**
+     * Forces a measure/layout pass over our subtree after a React-driven update. Chooses between two
+     * scheduling methods depending on whether the insets were already propagated.
+     *
+     *  - [TabsHostLayoutCoordinator.postLayout] - `Handler.post`, runs on the NEXT frame. Used until the insets
+     *    are propagated. See [onPreDraw].
+     *  - [TabsHostLayoutCoordinator.choreographerLayout] — `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
+     *    queue, runs in the CURRENT frame. Used afterwards. It catches the current frame instead
+     *    of enqueueing on the next one, avoiding a delay.
+     *
+     * The FIRST layout must be deferred, due to the interaction with the Material BottomNavigationView's
+     * delayed transition:
+     *
+     * 1. Changing a tab calls `NavigationBarMenuView.updateMenuView()`
+     * 2. When the selection changed, `TransitionManager` runs `beginDelayedTransition(this, set)`. `set` is an
+     *    `AutoTransition` (Fade + ChangeBounds + TextScale).
+     * 3. `beginDelayedTransition` immediately captures `startValues` for the BottomNavigationView subtree
+     *     BEFORE performing out the layout of its items.
+     * 4. In the next step, it installs a TransitionManager `OnPreDrawListener` that, during the
+     *    upcoming `ViewTreeObserver.dispatchOnPreDraw()`, captures `endValues` and builds the animators in
+     *    `playTransition()`. Animators are created dependent on the diff between `startValues` and `endValues`:
+     *
+     *  - in `postLayout` (`Handler.post`) path our [forceSubtreeMeasureAndLayoutPass] is queued for the NEXT
+     *    frame, so it does NOT run between the `startValues` snapshot and the transition's `endValues`
+     *    capture. From the transition's point of view the subtree layout is unchanged; only
+     *    `android:fade:transitionAlpha` (and `navigation_bar_item_labels_group` visibility 8 -> 0) differ.
+     *    Result: a clean fade animator is created, NO bounds animation is performed.
+     *
+     *  - in choreographerLayout (`ReactChoreographer`) path our forced layout runs in the SAME frame,
+     *    BEFORE `dispatchOnPreDraw`, so the subtree is already laid out when the transition captures
+     *    `endValues`. Now `android:changeBounds` also differs (e.g. `navigation_bar_item_content_container`
+     *    and `navigation_bar_item_labels_group` bounds move), so ChangeBounds animators are created and the
+     *    BottomNavigationView's content tries to animate during enter transition.
+     *
+     * Once insets are applied, we switch back to the responsive in-frame scheduling for subsequent updates to
+     * allow the ChangeBounds animation to run on the subsequent tab selection changes.
+     */
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
         if (layoutCoordinator != null) {
@@ -131,8 +169,18 @@ class TabsHost(
         }
     }
 
+    /**
+     * Marks that the view tree has been laid out with window insets already applied.
+     *
+     * `onPreDraw` is a reliable signal that insets have already been propagated for this frame:
+     * `ViewRootImpl.performTraversals()` runs in the Choreographer `CALLBACK_TRAVERSAL` phase, and within a
+     * single traversal it
+     * 1. computes and dispatches window insets down the hierarchy (`dispatchApplyWindowInsets`),
+     * 2. runs measure + layout,
+     * 3. invokes `ViewTreeObserver.dispatchOnPreDraw()` - immediately before `performDraw()`. So by the time this
+     * callback fires, the insets for the frame have been applied.
+     */
     override fun onPreDraw(): Boolean {
-        // TODO NICE AND BIG COMMENT
         hasFirstLayoutWithInsets = true
         return true
     }
