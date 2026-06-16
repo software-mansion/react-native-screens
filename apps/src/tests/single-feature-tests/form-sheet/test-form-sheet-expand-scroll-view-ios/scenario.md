@@ -26,17 +26,17 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Expand when scrolled to edge** screen.
 
-- [ ] Expected: A status text indicating the current prop value ("Expands on edge scroll: ON"), a switch, and an "Open FormSheet" button are shown.
+- [ ] A status text indicating the current prop value ("Expands on edge scroll: ON"), a switch, and an "Open FormSheet" button are shown.
 
 ### Expansion enabled (Default)
 
 2. Ensure the toggle is set to `ON`. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens at the initial lower detent (0.5). The "Drag Here to Expand" header and a scrollable list of items are visible.
+- [ ] The FormSheet opens at the initial lower detent (0.5). The "Drag Here to Expand" header and a scrollable list of items are visible.
 
 3. Swipe up on the scrollable list content.
 
-- [ ] Expected: The FormSheet expands to the maximum detent (1.0). The list content does not scroll until the sheet has finished expanding to the maximum detent.
+- [ ] The FormSheet expands to the maximum detent (1.0). The list content does not scroll until the sheet has finished expanding to the maximum detent.
 
 4. Dismiss the sheet by tapping "Dismiss from JS" or swiping down on the drag indicator.
 
@@ -46,12 +46,12 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens at the initial lower detent (0.5).
+- [ ] The FormSheet opens at the initial lower detent (0.5).
 
 7. Swipe up on the scrollable list content (ensure you are starting from the very top edge of the ScrollView).
 
-- [ ] Expected: The list scrolls normally to reveal lower items. The FormSheet **does not** expand to the maximum detent and remains at 0.5. 
+- [ ] The list scrolls normally to reveal lower items. The FormSheet **does not** expand to the maximum detent and remains at 0.5. 
 
 8. Grab the "Drag Here to Expand" header area above the list and drag it up.
 
-- [ ] Expected: The FormSheet expands to the maximum detent (1.0), verifying that manual sheet expansion is still possible outside the ScrollView area.
+- [ ] The FormSheet expands to the maximum detent (1.0), verifying that manual sheet expansion is still possible outside the ScrollView area.

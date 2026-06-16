@@ -35,7 +35,7 @@ Assumption:
 
 1. Launch the app with the **Split Color Scheme** scenario injected as the root.
 
-- [ ] Expected: Pickers default to `unspecified` for RN and `inherit` for SplitHost.
+- [ ] Pickers default to `unspecified` for RN and `inherit` for SplitHost.
 
 ---
 
@@ -43,11 +43,11 @@ Assumption:
 
 2. Set system/RN to **light**, SplitHost colorScheme = `inherit`
 
-- [ ] Expected: The split view and its background appear **light**
+- [ ] The split view and its background appear **light**
 
 3. Set system/RN to **dark**, keep SplitHost colorScheme = `inherit`
 
-- [ ] Expected: The split view appears **dark** — SplitHost defers to RN/system
+- [ ] The split view appears **dark** — SplitHost defers to RN/system
 
 ---
 
@@ -55,15 +55,15 @@ Assumption:
 
 4. Set system/RN to **dark**, set SplitHost colorScheme = `light`
 
-- [ ] Expected: The split view appears **light** — SplitHost overrides dark from RN/system
+- [ ] The split view appears **light** — SplitHost overrides dark from RN/system
 
 5. Set system/RN to **light**, keep SplitHost colorScheme = `light`
 
-- [ ] Expected: The split view stays **light**
+- [ ] The split view stays **light**
 
 6. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
 
-- [ ] Expected: Split view color scheme updates immediately with each change, no crash or layout freeze
+- [ ] Split view color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 
@@ -71,15 +71,15 @@ Assumption:
 
 7. Set system/RN to **light**, set SplitHost colorScheme = `dark`
 
-- [ ] Expected: The split view appears **dark** — SplitHost overrides light from RN/system
+- [ ] The split view appears **dark** — SplitHost overrides light from RN/system
 
 8. Set system/RN to **dark**, keep SplitHost colorScheme = `dark`
 
-- [ ] Expected: The split view stays **dark**
+- [ ] The split view stays **dark**
 
 9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
-- [ ] Expected: Split view color scheme updates immediately with each change, no crash or layout freeze
+- [ ] Split view color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 
@@ -87,4 +87,4 @@ Assumption:
 
 10. Switch focus to the `TextInput` in the right column, open the keyboard (or `Cmd+K` on iOS simulator)
 
-- [ ] Expected: Keyboard appearance matches the currently active, resolved color scheme of the `SplitHost` (e.g., if SplitHost forces `dark` while the system is `light`, the keyboard must be dark). Verify for both light and dark values.
+- [ ] Keyboard appearance matches the currently active, resolved color scheme of the `SplitHost` (e.g., if SplitHost forces `dark` while the system is `light`, the keyboard must be dark). Verify for both light and dark values.

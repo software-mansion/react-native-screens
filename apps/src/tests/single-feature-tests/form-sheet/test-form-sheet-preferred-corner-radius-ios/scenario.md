@@ -27,7 +27,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
+- [ ] Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 
 ---
 
@@ -35,7 +35,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens. The top corners (iOS 18) or all corners (iOS 26) of the sheet display the standard, system-default rounded appearance.
+- [ ] The FormSheet opens. The top corners (iOS 18) or all corners (iOS 26) of the sheet display the standard, system-default rounded appearance.
 
 ---
 
@@ -43,15 +43,15 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap the "Sharp (0)" button.
 
-- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, becoming sharp.
+- [ ] The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, becoming sharp.
 
 4. Tap the "Small (10)" button.
 
-- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) update to a slightly rounded curve.
+- [ ] The top corners (iOS 18) or all corners (iOS 26) update to a slightly rounded curve.
 
 5. Tap the "Large (50)" button.
 
-- [ ] Expected: The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, displaying deeply rounded curve.
+- [ ] The top corners (iOS 18) or all corners (iOS 26) of the sheet update dynamically, displaying deeply rounded curve.
 
 ---
 
@@ -59,7 +59,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The FormSheet dismisses smoothly. Pressables on the main screen remain active.
+- [ ] The FormSheet dismisses smoothly. Pressables on the main screen remain active.
 
 ## Steps - iPad
 
@@ -67,7 +67,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
+- [ ] Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 
 ---
 
@@ -75,7 +75,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens as a centered floating panel. All four corners of the panel display the standard, system-default rounded appearance.
+- [ ] The FormSheet opens as a centered floating panel. All four corners of the panel display the standard, system-default rounded appearance.
 
 ---
 
@@ -83,15 +83,15 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap the "Sharp (0)" button.
 
-- [ ] Expected: All four corners of the sheet update dynamically, becoming sharp.
+- [ ] All four corners of the sheet update dynamically, becoming sharp.
 
 4. Tap the "Small (10)" button.
 
-- [ ] Expected: All four corners update to a slightly rounded curve.
+- [ ] All four corners update to a slightly rounded curve.
 
 5. Tap the "Large (50)" button.
 
-- [ ] Expected: All four corners of the sheet update dynamically, displaying deeply rounded curve.
+- [ ] All four corners of the sheet update dynamically, displaying deeply rounded curve.
 
 ---
 
@@ -99,4 +99,4 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The FormSheet dismisses smoothly. Pressables on the main screen remain active.
+- [ ] The FormSheet dismisses smoothly. Pressables on the main screen remain active.
