@@ -23,7 +23,7 @@ import type {
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
-import { parseIconToNativeProps } from '../../../shared';
+import { parseAndroidIconToNativeProps } from '../../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -228,7 +228,7 @@ function parseToolbarMenuItemsToNativeProps(
       ...rest
     }) => ({
       ...rest,
-      ...parseIconToNativeProps(icon),
+      ...parseAndroidIconToNativeProps(icon),
       iconTintColorNormal: processColor(iconTintColorNormal),
       iconTintColorPressed: processColor(iconTintColorPressed),
       iconTintColorFocused: processColor(iconTintColorFocused),
@@ -276,7 +276,7 @@ function parseToolbarMenuItemOptionsToNativeProps(
             return Object.entries(noIcon);
           }
 
-          return Object.entries(parseIconToNativeProps(iconValue));
+          return Object.entries(parseAndroidIconToNativeProps(iconValue));
         }
       }
 

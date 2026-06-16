@@ -18,7 +18,7 @@ import type {
 import type { TabsScreenProps } from '../screen/TabsScreen.types';
 import type { PlatformIconAndroid } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
-import { parseIconToNativeProps } from '../../shared';
+import { parseAndroidIconToNativeProps } from '../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -139,8 +139,8 @@ function parseIconsToNativeProps(
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
 } {
-  const parsedIcon = parseIconToNativeProps(icon);
-  const parsedSelectedIcon = parseIconToNativeProps(selectedIcon);
+  const parsedIcon = parseAndroidIconToNativeProps(icon);
+  const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
 
   return {
     imageIconResource: parsedIcon.imageIconResource,
