@@ -56,16 +56,18 @@
 {
   for (NSString *key in dict) {
     RCTAssert([key isEqualToString:@"type"] || [key isEqualToString:@"title"] || [key isEqualToString:@"children"],
-              @"Invalid key \"%@\" found in menu",
+              @"[RNScreens] Invalid key \"%@\" found in menu",
               key);
   }
+  RCTAssert(dict[@"children"], @"[RNScreens] missing key \"children\" in menu");
 }
 
 + (void)validateMenuItemKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert(
-        [key isEqualToString:@"type"] || [key isEqualToString:@"title"], @"Invalid key \"%@\" found in menu item", key);
+    RCTAssert([key isEqualToString:@"type"] || [key isEqualToString:@"title"],
+              @"[RNScreens] Invalid key \"%@\" found in menu item",
+              key);
   }
 }
 
