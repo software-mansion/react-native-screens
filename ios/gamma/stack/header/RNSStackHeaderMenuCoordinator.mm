@@ -41,7 +41,7 @@
                                image:nil
                           identifier:nil
                              handler:^(__kindof UIAction *_Nonnull action) {
-                               [weakDelegate didPressMenuElement:itemData.menuElementId];
+                               [weakDelegate didPressMenuItem:itemData.menuElementId];
                              }];
   }
 

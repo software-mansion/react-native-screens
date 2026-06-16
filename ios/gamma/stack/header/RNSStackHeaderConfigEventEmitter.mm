@@ -5,13 +5,13 @@
   std::shared_ptr<const react::RNSStackHeaderConfigIOSEventEmitter> _reactEventEmitter;
 }
 
-- (BOOL)emitOnPressMenuItem:(NSString *)menuElementId
+- (BOOL)emitOnMenuItemPress:(NSString *)menuElementId
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onPressMenuItem({.menuElementId = menuElementId.cString});
+    _reactEventEmitter->onMenuItemPress({.menuElementId = menuElementId.cString});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnPressMenuItem event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnMenuItemPress event emission due to nullish emitter");
     return NO;
   }
 }

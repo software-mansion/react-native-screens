@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
-  PressMenuItemEvent,
+  MenuItemPressEvent,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
@@ -35,18 +35,18 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     largeTitleEnabled,
   } = ios ?? {};
 
-  const handleMenuPress = useCallback(
-    (event: NativeSyntheticEvent<PressMenuItemEvent>) => {
+  const handleMenuItemPress = useCallback(
+    (event: NativeSyntheticEvent<MenuItemPressEvent>) => {
       const items = Array.of(
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
         ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
       );
-      const menu = findMenuElementByIdInItems(
+      const menuElement = findMenuElementByIdInItems(
         items,
         event.nativeEvent.menuElementId,
       );
-      if (menu && menu.type === 'menuItem') {
-        menu.onPress?.();
+      if (menuElement && menuElement.type === 'menuItem') {
+        menuElement.onPress?.();
       }
     },
     [leadingItems, trailingItems],
@@ -60,7 +60,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       style={styles.config}
-      onPressMenuItem={handleMenuPress}>
+      onMenuItemPress={handleMenuItemPress}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}

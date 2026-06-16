@@ -2,7 +2,7 @@ export interface StackHeaderMenuItem {
   menuElementId: string;
   type: 'menuItem';
   title?: string | undefined;
-  onPress?: () => void;
+  onPress?: () => void | undefined;
 }
 
 export interface StackHeaderMenu {

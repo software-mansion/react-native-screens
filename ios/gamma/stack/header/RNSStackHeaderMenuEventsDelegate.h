@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSStackHeaderMenuEventsDelegate <NSObject>
 
-- (void)didPressMenuElement:(NSString *)menuElementId;
+- (void)didPressMenuItem:(NSString *)menuElementId;
 
 @end
 

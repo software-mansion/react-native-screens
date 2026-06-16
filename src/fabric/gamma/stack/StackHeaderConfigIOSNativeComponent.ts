@@ -3,7 +3,7 @@
 import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
-export type PressMenuItemEvent = Readonly<{ menuElementId: string }>;
+export type MenuItemPressEvent = Readonly<{ menuElementId: string }>;
 
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
@@ -17,7 +17,7 @@ export interface NativeProps extends ViewProps {
   largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
-  onPressMenuItem?: CT.DirectEventHandler<PressMenuItemEvent> | undefined;
+  onMenuItemPress?: CT.DirectEventHandler<MenuItemPressEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfigIOS', {
