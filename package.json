@@ -239,7 +239,7 @@
         "RNSContainedModalHost": {
           "className": "RNSContainedModalHostComponentView"
         },
-        "RNSContainedModalHostProvider": {
+        "RNSContainedModalProviderHost": {
           "className": "RNSContainedModalProviderHostComponentView"
         }
       }
