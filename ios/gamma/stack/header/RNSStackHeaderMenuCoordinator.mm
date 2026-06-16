@@ -21,7 +21,7 @@
     }
   }
 
-  return [UIMenu menuWithTitle:data.title ?: @"" children:elements];
+  return [UIMenu menuWithTitle:data.title children:elements];
 }
 
 + (nullable UIMenuElement *)buildElementFromData:(id<RNSStackHeaderMenuElement>)element
@@ -32,7 +32,7 @@
 
   if ([element isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
     RNSStackHeaderMenuItemData *itemData = (RNSStackHeaderMenuItemData *)element;
-    return [UIAction actionWithTitle:itemData.title ?: @""
+    return [UIAction actionWithTitle:itemData.title
                                image:nil
                           identifier:nil
                              handler:^(__kindof UIAction *_Nonnull action){
