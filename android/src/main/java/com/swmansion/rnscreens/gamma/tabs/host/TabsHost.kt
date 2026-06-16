@@ -143,13 +143,13 @@ class TabsHost(
      *    upcoming `ViewTreeObserver.dispatchOnPreDraw()`, captures `endValues` and builds the animators in
      *    `playTransition()`. Animators are created dependent on the diff between `startValues` and `endValues`:
      *
-     *  - in `postLayout` (`Handler.post`) path our [forceSubtreeMeasureAndLayoutPass] is queued for the NEXT
+     *  - in [TabsHostLayoutCoordinator.postLayout] (`Handler.post`) path our [forceSubtreeMeasureAndLayoutPass] is queued for the NEXT
      *    frame, so it does NOT run between the `startValues` snapshot and the transition's `endValues`
      *    capture. From the transition's point of view the subtree layout is unchanged; only
      *    `android:fade:transitionAlpha` (and `navigation_bar_item_labels_group` visibility 8 -> 0) differ.
      *    Result: a clean fade animator is created, NO bounds animation is performed.
      *
-     *  - in choreographerLayout (`ReactChoreographer`) path our forced layout runs in the SAME frame,
+     *  - in [TabsHostLayoutCoordinator.choreographerLayout] (`ReactChoreographer`) path our forced layout runs in the SAME frame,
      *    BEFORE `dispatchOnPreDraw`, so the subtree is already laid out when the transition captures
      *    `endValues`. Now `android:changeBounds` also differs (e.g. `navigation_bar_item_content_container`
      *    and `navigation_bar_item_labels_group` bounds move), so ChangeBounds animators are created and the
