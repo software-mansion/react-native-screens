@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { TabsBottomAccessoryEnvironment } from 'react-native-screens';
 import {
   StackContainer,
@@ -29,12 +22,7 @@ export function AccessoryContent(environment: TabsBottomAccessoryEnvironment) {
 }
 
 export function HomeTab() {
-  const { push } = useStackNavigationContext();
-  return (
-    <View style={styles.centered}>
-      <Button title="Go to test" onPress={() => push('Test')} />
-    </View>
-  );
+  return <View style={styles.centered} />;
 }
 
 export function ExploreTab() {
