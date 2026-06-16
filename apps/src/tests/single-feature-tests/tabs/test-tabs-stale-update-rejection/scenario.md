@@ -49,7 +49,7 @@ Ensure the app's behavior strictly matches the expected results at each transiti
 
 1. Launch the app and navigate to **Stale update rejection**.
 
-- [ ] Expected: The **First** tab is selected. The content area shows
+- [ ] The **First** tab is selected. The content area shows
   `heavyRender: false` and `rejectStaleNavStateUpdates: true`.
   No toast is visible.
 
@@ -60,14 +60,14 @@ Ensure the app's behavior strictly matches the expected results at each transiti
 2. Tap the **Third** tab in the native tab bar to navigate to it. Tap
    **Toggle heavyRender** on the Third tab to enable heavy render.
 
-- [ ] Expected: The label updates to `heavyRender: true`. No toast
+- [ ] The label updates to `heavyRender: true`. No toast
   appears.
 
 3. Tap the **First** tab bar item to go back to the First tab. Tap
    **Select Third** (JS dispatches a navigation update to Third), then
    immediately tap the **Second** tab bar item.
 
-- [ ] Expected: The tab bar changes to **Second** immediately. After
+- [ ] The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
   `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.
@@ -79,23 +79,23 @@ Ensure the app's behavior strictly matches the expected results at each transiti
 4. Navigate to the **Third** tab (heavy render still enabled). Tap
    **Toggle rejectStaleNavStateUpdates** to disable it.
 
-- [ ] Expected: The label updates to `rejectStaleNavStateUpdates:
+- [ ] The label updates to `rejectStaleNavStateUpdates:
   false`. No toast fires from this action.
 
 5. Navigate back to **First**. Tap **Select Third**, then immediately
    tap **Second** in the tab bar before the heavy render ends.
 
-- [ ] Expected: No `onTabSelectionRejected` toast appears. Tab Second is selected
+- [ ] No `onTabSelectionRejected` toast appears. Tab Second is selected
   immediately but after the 3 000 ms block, the final active tab is
   **Third**.
 
 6. Tap **Toggle rejectStaleNavStateUpdates** to re-enable it.
 
-- [ ] Expected: Label updates to `rejectStaleNavStateUpdates: true`.
+- [ ] Label updates to `rejectStaleNavStateUpdates: true`.
 
 7. Repeat the actions from step 5.
 
-- [ ] Expected: The tab bar changes to **Second** immediately. After
+- [ ] The tab bar changes to **Second** immediately. After
   the heavy render on Third finishes, a toast labeled
   `onTabSelectionRejected: Third` appears. The final active tab is
   **Second**, not Third.

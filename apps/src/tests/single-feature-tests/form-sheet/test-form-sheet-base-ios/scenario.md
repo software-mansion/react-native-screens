@@ -25,7 +25,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Basic functionality** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" is shown
+- [ ] Content with the button "Open FormSheet" is shown
 
 ---
 
@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens at the initial lower detent (0.6). The "FormSheet content" text and the "Dismiss from JS" button are visible and perfectly centered both vertically and horizontally within the sheet.
+- [ ] The FormSheet opens at the initial lower detent (0.6). The "FormSheet content" text and the "Dismiss from JS" button are visible and perfectly centered both vertically and horizontally within the sheet.
 
 ---
 
@@ -41,7 +41,7 @@ TBD: Planned, but will be implemented separately.
 
 3. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] Expected: The FormSheet expands to take up the maximum available height (respecting the top inset). The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded view area.
+- [ ] The FormSheet expands to take up the maximum available height (respecting the top inset). The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded view area.
 
 ---
 
@@ -49,7 +49,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
+- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
 
 ## Steps - iPad
 
@@ -57,7 +57,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Basic functionality** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" is shown.
+- [ ] Content with the button "Open FormSheet" is shown.
 
 ---
 
@@ -65,7 +65,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens as a centered floating panel at the initial lower detent (0.6). The panel has a fixed width and is horizontally centered on screen. The "FormSheet content" text and the "Dismiss from JS" button are visible and perfectly centered within the panel.
+- [ ] The FormSheet opens as a centered floating panel at the initial lower detent (0.6). The panel has a fixed width and is horizontally centered on screen. The "FormSheet content" text and the "Dismiss from JS" button are visible and perfectly centered within the panel.
 
 ---
 
@@ -73,7 +73,7 @@ TBD: Planned, but will be implemented separately.
 
 3. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] Expected: The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded panel.
+- [ ] The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded panel.
 
 ---
 
@@ -81,4 +81,4 @@ TBD: Planned, but will be implemented separately.
 
 4. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
+- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen. Pressables on the main screen are working.
