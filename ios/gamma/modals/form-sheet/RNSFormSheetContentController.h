@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSFormSheetContentController;
 
 @protocol RNSFormSheetContentControllerDelegate <NSObject>
+- (void)sheetControllerDidDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller;
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller;
 #if !TARGET_OS_TV
@@ -16,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
     didChangeDetentIdentifier:(nullable NSString *)identifier;
 #endif // !TARGET_OS_TV
 - (void)sheetControllerDidPreventNativeDismiss:(RNSFormSheetContentController *)controller;
+// Lifecycle
+- (void)sheetControllerWillAppear:(RNSFormSheetContentController *)controller;
+- (void)sheetControllerDidAppear:(RNSFormSheetContentController *)controller;
+- (void)sheetControllerWillDisappear:(RNSFormSheetContentController *)controller;
+- (void)sheetControllerDidDisappear:(RNSFormSheetContentController *)controller;
 @end
 
 @interface RNSFormSheetContentController : UIViewController
