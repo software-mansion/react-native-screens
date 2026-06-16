@@ -22,7 +22,7 @@ async function dismissToast(message: string) {
 // separate runs with a full JS reload in between. No further effort was made
 // to fix these runtime state transitions in Detox.
 
-describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
+describe('Stale update rejection - rejectStaleNavStateUpdates:true @smoke', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -87,7 +87,7 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
   });
 });
 
-describe('Stale update rejection - rejectStaleNavStateUpdates:false', () => {
+describe('Stale update rejection - rejectStaleNavStateUpdates:false @smoke', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
