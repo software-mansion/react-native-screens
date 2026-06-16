@@ -12,10 +12,11 @@ function isIOSVersionAtLeast(version: string): boolean {
   );
 }
 
-const tabBarBagdeViewType = isIOSVersionAtLeast('26.0')
+const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
   ? '_UIBarBadgeView'
   : '_UIBadgeView';
 
+const tabBarBagdeViewType = tabBarBadgeViewType;
 describeIfiOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
