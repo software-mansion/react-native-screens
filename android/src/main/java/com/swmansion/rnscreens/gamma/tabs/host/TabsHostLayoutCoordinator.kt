@@ -9,9 +9,11 @@ class TabsHostLayoutCoordinator(
     private var hasChoreographerLayoutPending = false
 
     /**
-     * Defers the layout to the NEXT frame via `Handler.post`. Because it runs after the current frame's
-     * `dispatchOnPreDraw`, the forced layout is NOT captured into the BottomNavigationView's transition,
-     * so the animator does not produce a ChangeBounds "jump".
+     * Defers the layout to the NEXT frame via `Handler.post`. Because this puts the action at the end
+     * of the message queue, it runs after the current frame's `dispatchOnPreDraw`. Consequently, the
+     * forced layout mutations are NOT captured into the BottomNavigationView's `endValues` by the
+     * TransitionManager. This prevents the animator from producing a `ChangeBounds` and the content jump
+     * during the initial inset application.
      * See [TabsHost.refreshLayout].
      */
     internal fun postLayout() {
@@ -26,8 +28,12 @@ class TabsHostLayoutCoordinator(
     }
 
     /**
-     * Runs the layout in the CURRENT frame via `ReactChoreographer`'s `NATIVE_ANIMATED_MODULE` queue, avoiding
-     * the one-frame delay of [postLayout]. Should be used only when the insets were already applied.
+     * Runs the layout in the CURRENT frame via `ReactChoreographer`'s `NATIVE_ANIMATED_MODULE` queue.
+     * Callbacks in this queue execute early in the Choreographer frame loop (before the Android view
+     * system's TRAVERSAL phase). This guarantees that [forceSubtreeMeasureAndLayoutPass]
+     * mutates the view bounds BEFORE `TransitionManager` captures its `endValues` in `onPreDraw`.
+     * This ensures `ChangeBounds` animators are correctly created for tab switches.
+     * Should be used only after the initial window insets are successfully applied.
      * See [TabsHost.refreshLayout].
      */
     internal fun choreographerLayout() {

@@ -125,38 +125,47 @@ class TabsHost(
      * Forces a measure/layout pass over our subtree after a React-driven update. Chooses between two
      * scheduling methods depending on whether the insets were already propagated.
      *
-     *  - [TabsHostLayoutCoordinator.postLayout] - `Handler.post`, runs on the NEXT frame. Used until the insets
-     *    are propagated. See [onPreDraw].
-     *  - [TabsHostLayoutCoordinator.choreographerLayout] — `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
-     *    queue, runs in the CURRENT frame. Used afterwards. It catches the current frame instead
-     *    of enqueueing on the next one, avoiding a delay.
+     * - [TabsHostLayoutCoordinator.postLayout] - `Handler.post`, runs on the NEXT frame. Used until the insets
+     * are propagated. See [onPreDraw].
+     * - [TabsHostLayoutCoordinator.choreographerLayout] — `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
+     * queue, runs in the CURRENT frame. Used afterwards.
      *
-     * The FIRST layout must be deferred, due to the interaction with the Material BottomNavigationView's
-     * delayed transition:
+     * THE PROBLEM AND MECHANISM:
+     * The FIRST layout must be deferred due to the interaction with the Material BottomNavigationView's
+     * delayed transition mechanism. When a tab is changed, `NavigationBarMenuView.updateMenuView()` is called:
      *
-     * 1. Changing a tab calls `NavigationBarMenuView.updateMenuView()`
-     * 2. When the selection changed, `TransitionManager` runs `beginDelayedTransition(this, set)`. `set` is an
-     *    `AutoTransition` (Fade + ChangeBounds + TextScale).
-     * 3. `beginDelayedTransition` immediately captures `startValues` for the BottomNavigationView subtree
-     *     BEFORE performing out the layout of its items.
-     * 4. In the next step, it installs a TransitionManager `OnPreDrawListener` that, during the
-     *    upcoming `ViewTreeObserver.dispatchOnPreDraw()`, captures `endValues` and builds the animators in
-     *    `playTransition()`. Animators are created dependent on the diff between `startValues` and `endValues`:
+     * 1. `TransitionManager.beginDelayedTransition(this, set)` is triggered (where `set` is an `AutoTransition`
+     * combining Fade + ChangeBounds + TextScale).
+     * 2. `beginDelayedTransition` synchronously captures `startValues` for the BottomNavigationView subtree
+     * BEFORE any new layout is performed.
+     * 3. A `TransitionManager.OnPreDrawListener` is installed. During the upcoming `ViewTreeObserver.dispatchOnPreDraw()`
+     * (which happens after measure/layout), it captures `endValues` and builds animators based on the diff between
+     * `startValues` and `endValues`.
      *
-     *  - in [TabsHostLayoutCoordinator.postLayout] (`Handler.post`) path our [forceSubtreeMeasureAndLayoutPass] is queued for the NEXT
-     *    frame, so it does NOT run between the `startValues` snapshot and the transition's `endValues`
-     *    capture. From the transition's point of view the subtree layout is unchanged; only
-     *    `android:fade:transitionAlpha` (and `navigation_bar_item_labels_group` visibility 8 -> 0) differ.
-     *    Result: a clean fade animator is created, NO bounds animation is performed.
+     * THE TWO PATHS:
      *
-     *  - in [TabsHostLayoutCoordinator.choreographerLayout] (`ReactChoreographer`) path our forced layout runs in the SAME frame,
-     *    BEFORE `dispatchOnPreDraw`, so the subtree is already laid out when the transition captures
-     *    `endValues`. Now `android:changeBounds` also differs (e.g. `navigation_bar_item_content_container`
-     *    and `navigation_bar_item_labels_group` bounds move), so ChangeBounds animators are created and the
-     *    BottomNavigationView's content tries to animate during enter transition.
+     * PATH A: Layout via `Handler.post`
+     * In the [TabsHostLayoutCoordinator.postLayout] path, our [forceSubtreeMeasureAndLayoutPass] is queued in the
+     * Looper. It does NOT run between the `startValues` snapshot and the transition's `endValues` capture.
+     * - Result: From the transition's point of view, the subtree bounds are identical. Only properties like
+     * `android:fade:transitionAlpha` and visibility change.
+     * - Effect: A clean Fade animator is created. NO ChangeBounds animation is performed, preventing
+     * unwanted content jumps.
      *
-     * Once insets are applied, we switch back to the responsive in-frame scheduling for subsequent updates to
-     * allow the ChangeBounds animation to run on the subsequent tab selection changes.
+     * PATH B: Layout via ReactChoreographer
+     * In the [TabsHostLayoutCoordinator.choreographerLayout] path, our forced layout runs in the SAME frame
+     * (before `dispatchOnPreDraw`). The subtree is forcefully laid out with new dimensions BEFORE the transition
+     * captures `endValues`.
+     * - Result: `android:changeBounds:bounds` for `BottomNavigationItemView` differ significantly.
+     * This also affects inner views like `navigation_bar_item_content_container` and `navigation_bar_item_labels_group`.
+     * - Effect: ChangeBounds animators are generated and the BottomNavigationView's content animated on tab selection.
+     * The active indicator layout with non-zero layout params is deferred via `Handler.post`
+     * in [NavigationBarItemView.onSizeChanged]. When it happens during the transition from another screen of
+     * the native-stack, `ChangeBounds` suppresses layout on animator creation and prevents recalculating the layout
+     * of the active indicator until the `AutoTransition` of `BottomNavigationView` ends.
+     *
+     * Once insets are applied, we switch permanently to `ReactChoreographer` path to ensure subsequent
+     * tab selection changes trigger the full `ChangeBounds` animations.
      */
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
