@@ -75,6 +75,7 @@ class TabsHost(
     }
 
     override fun onDetachedFromWindow() {
+        viewTreeObserver.removeOnPreDrawListener(this)
         super.onDetachedFromWindow()
     }
 
