@@ -112,6 +112,7 @@ class StackHeaderConfig(
         contentOffsetY: Int,
     ) {
         shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
             frameWidth = width,
             frameHeight = height,
             contentOffsetY = contentOffsetY,

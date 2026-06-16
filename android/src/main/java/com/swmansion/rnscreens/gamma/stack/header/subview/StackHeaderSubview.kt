@@ -35,7 +35,11 @@ class StackHeaderSubview(
         x: Int,
         y: Int,
     ) {
-        shadowStateProxy.updateStateIfNeeded(contentOffsetX = x, contentOffsetY = y)
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            contentOffsetX = x,
+            contentOffsetY = y,
+        )
     }
 
     internal var onStackHeaderSubviewChangeListener: WeakReference<OnStackHeaderSubviewChangeListener>? = null

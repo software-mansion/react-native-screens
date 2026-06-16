@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.gamma.common
 
 import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
+import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.abs
 
 internal class ShadowStateProxy(
@@ -16,15 +16,18 @@ internal class ShadowStateProxy(
     private var lastContentOffsetYInDp: Float = 0f
 
     fun updateStateIfNeeded(
+        // The display density is supplied per call (not captured once) so it stays correct
+        // when the owning view moves between displays of differing density. See pxToDp / #4159.
+        density: Float,
         frameWidth: Int? = null,
         frameHeight: Int? = null,
         contentOffsetX: Int? = null,
         contentOffsetY: Int? = null,
     ) {
-        val widthInDp = frameWidth?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastFrameWidthInDp
-        val heightInDp = frameHeight?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastFrameHeightInDp
-        val offsetXInDp = contentOffsetX?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastContentOffsetXInDp
-        val offsetYInDp = contentOffsetY?.let { PixelUtil.toDIPFromPixel(it.toFloat()) } ?: lastContentOffsetYInDp
+        val widthInDp = frameWidth?.let { pxToDp(it.toFloat(), density) } ?: lastFrameWidthInDp
+        val heightInDp = frameHeight?.let { pxToDp(it.toFloat(), density) } ?: lastFrameHeightInDp
+        val offsetXInDp = contentOffsetX?.let { pxToDp(it.toFloat(), density) } ?: lastContentOffsetXInDp
+        val offsetYInDp = contentOffsetY?.let { pxToDp(it.toFloat(), density) } ?: lastContentOffsetYInDp
 
         if (
             abs(lastFrameWidthInDp - widthInDp) < DELTA &&
