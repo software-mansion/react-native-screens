@@ -32,7 +32,6 @@ function ConfigScreen() {
   return (
     <View style={[styles.container, styles.content]}>
       <View style={styles.section}>
-        <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
         <SettingsSwitch
           label={'safeAreaViewBottomEdgeEnabled'}
           value={safeAreaViewBottomEdgeEnabled}
@@ -43,7 +42,6 @@ function ConfigScreen() {
         />
       </View>
       <View style={styles.section}>
-        <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
         <SettingsSwitch
           label={'tabBarRespectsIMEInsets'}
           value={hostConfig.android?.tabBarRespectsIMEInsets ?? false}
@@ -54,7 +52,6 @@ function ConfigScreen() {
         />
       </View>
       <View style={styles.section}>
-        <Text style={styles.heading}>TextInput</Text>
         <TextInput
           placeholder="Focus TextInput to show IME..."
           style={styles.textInput}
@@ -104,12 +101,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingTop: Platform.OS === 'android' ? 60 : undefined,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    paddingTop: 70,
   },
   section: {
     marginBottom: 10,
