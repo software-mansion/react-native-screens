@@ -45,7 +45,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
     await expect(element(by.id('tabs-screen-bottom-text'))).toBeVisible();
   });
 
-  it('safeAreaViewBottomEdgeEnabled: true + tabBarRespectsIMEInsets: false —  — tab bar and text stays at bottom when keyboard opens', async () => {
+  it('safeAreaViewBottomEdgeEnabled: true + tabBarRespectsIMEInsets: false — tab bar and text stays at bottom when keyboard opens', async () => {
     await expect(
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: false');
@@ -114,7 +114,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
     await device.pressBack();
   });
 
-  it('both props false — tab bar and text stays at bottom when keyboard opens', async () => {
+  it('both props false — tab bar stays at bottom when keyboard opens', async () => {
     await element(by.id('tab-bar-respects-ime-insets-switch')).tap();
     await expect(element(by.id('safe-area-bottom-edge-switch'))).toHaveLabel(
       'safeAreaViewBottomEdgeEnabled: false',
