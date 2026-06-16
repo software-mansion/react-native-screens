@@ -1,4 +1,5 @@
 #import "RNSStackHeaderConfigEventEmitter.h"
+#import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 
 @implementation RNSStackHeaderConfigEventEmitter {
@@ -8,7 +9,7 @@
 - (BOOL)emitOnMenuItemPress:(NSString *)menuElementId
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onMenuItemPress({.menuElementId = menuElementId.cString});
+    _reactEventEmitter->onMenuItemPress({.menuElementId = RCTStringFromNSString(menuElementId)});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnMenuItemPress event emission due to nullish emitter");
