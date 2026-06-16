@@ -23,6 +23,16 @@ class CustomBottomNavigationView(
         this.actionOrigin = null
     }
 
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        super.onLayout(changed, left, top, right, bottom)
+    }
+
     override fun setSelectedItemId(itemId: Int) {
         if (this.actionOrigin == null) {
             this.actionOrigin = TabsActionOrigin.USER

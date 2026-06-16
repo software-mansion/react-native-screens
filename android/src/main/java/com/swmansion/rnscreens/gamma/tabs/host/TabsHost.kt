@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
 import android.view.Choreographer
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.UIManager
@@ -28,9 +29,12 @@ class TabsHost(
     val reactContext: ThemedReactContext,
 ) : FrameLayout(reactContext),
     TabsNavigationStateObserver,
+    ViewTreeObserver.OnPreDrawListener,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
+    private val layoutCoordinator: TabsHostLayoutCoordinator = TabsHostLayoutCoordinator(this)
+    private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
         TabsContainer(reactContext).apply {
@@ -70,6 +74,7 @@ class TabsHost(
 
     override fun onAttachedToWindow() {
         RNSLog.i(TAG, "TabsHost [$id] attached to window")
+        viewTreeObserver.addOnPreDrawListener(this)
         super.onAttachedToWindow()
     }
 
@@ -126,10 +131,12 @@ class TabsHost(
 
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
-        if (!isLayoutEnqueued && layoutCallback != null) {
-            isLayoutEnqueued = true
-            post {
-                layoutCallback.doFrame(0)
+        if (layoutCallback != null) {
+//            isLayoutEnqueued = true
+            if (!hasFirstLayoutWithInsets) {
+                layoutCoordinator.postLayout()
+            } else {
+                layoutCoordinator.choreographerLayout()
             }
 //            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
 //            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
@@ -142,12 +149,18 @@ class TabsHost(
         }
     }
 
+    override fun onPreDraw(): Boolean {
+        // TODO NICE AND BIG COMMENT
+        hasFirstLayoutWithInsets = true
+        return true
+    }
+
     override fun requestLayout() {
         super.requestLayout()
         refreshLayout()
     }
 
-    private fun forceSubtreeMeasureAndLayoutPass() {
+    internal fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
