@@ -1,13 +1,13 @@
 import React from 'react';
 import type { ContainedModalProps } from './ContainedModal.types';
-import ContainedModalNativeComponent from '../../../../fabric/gamma/modals/contained-modal/ContainedModalNativeComponent';
+import ContainedModalHostNativeComponent from '../../../../fabric/gamma/modals/contained-modal/ContainedModalHostNativeComponent';
 import { StyleSheet } from 'react-native';
 
 export function ContainedModal(props: ContainedModalProps) {
   const { style, ...rest } = props;
 
   return (
-    <ContainedModalNativeComponent {...rest} style={[style, styles.host]} />
+    <ContainedModalHostNativeComponent {...rest} style={[style, styles.host]} />
   );
 }
 
