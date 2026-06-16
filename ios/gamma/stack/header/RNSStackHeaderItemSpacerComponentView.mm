@@ -9,10 +9,7 @@
 namespace react = facebook::react;
 
 @implementation RNSStackHeaderItemSpacerComponentView {
-  RNSHeaderItemSpacerPlacement _placement;
   BOOL _didSetHeaderItemSpacerPlacement;
-  BOOL _isFlexible;
-  CGFloat _width;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -31,24 +28,6 @@ namespace react = facebook::react;
   _didSetHeaderItemSpacerPlacement = NO;
   _isFlexible = YES;
   _width = 0;
-}
-
-#pragma mark - Placement
-
-- (RNSHeaderItemSpacerPlacement)placement
-{
-  return _placement;
-}
-
-#pragma mark - Bar Button Item
-
-- (nonnull UIBarButtonItem *)makeBarButtonItem
-{
-  if (_isFlexible) {
-    return [UIBarButtonItem flexibleSpaceItem];
-  }
-
-  return [UIBarButtonItem fixedSpaceItemOfWidth:_width];
 }
 
 #pragma mark - RCTComponentViewProtocol

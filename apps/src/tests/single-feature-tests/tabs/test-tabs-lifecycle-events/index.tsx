@@ -12,7 +12,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
 
-function TabScreen() {
+export function TabScreen() {
   const { routeKey } = useTabsNavigationContext();
 
   return (
@@ -27,7 +27,7 @@ function TabScreen() {
   );
 }
 
-function AppContents() {
+export function AppContents() {
   const toast = useToast();
 
   const makeCallbacks = useCallback(

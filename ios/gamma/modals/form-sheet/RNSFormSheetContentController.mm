@@ -67,12 +67,30 @@
 {
   [super viewWillAppear:animated];
   [self attachBackdropTapGestureRecognizer];
+
+  [self.delegate sheetControllerWillAppear:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+
+  [self.delegate sheetControllerDidAppear:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+
+  [self.delegate sheetControllerWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
   [self detachBackdropTapGestureRecognizer];
+
+  [self.delegate sheetControllerDidDisappear:self];
 }
 
 #pragma mark - Presentation Setup

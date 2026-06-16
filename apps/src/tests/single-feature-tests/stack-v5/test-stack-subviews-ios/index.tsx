@@ -6,28 +6,19 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {
-  createScenario,
-  ScenarioDescription,
-} from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { Colors } from '@apps/shared/styling';
 import LongText from '@apps/shared/LongText';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Subviews (iOS)',
-  key: 'test-stack-subviews-ios',
-  details: 'Tests header config and subview customization.',
-  platforms: ['ios'],
-};
+import { scenarioDescription } from './scenario-description';
 
 const SHORT_TITLE = 'Title';
 const LONG_TITLE = 'A quick brown fox jumped over the lazy dog';
