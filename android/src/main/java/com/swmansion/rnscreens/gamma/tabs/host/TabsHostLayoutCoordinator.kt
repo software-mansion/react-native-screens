@@ -2,13 +2,15 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import com.facebook.react.modules.core.ReactChoreographer
 
-class TabsHostLayoutCoordinator(private val hostView: TabsHost) {
+class TabsHostLayoutCoordinator(
+    private val hostView: TabsHost,
+) {
     private var hasPostLayoutPending = false
     private var hasChoreographerLayoutPending = false
 
     /**
      * Defers the layout to the NEXT frame via `Handler.post`. Because it runs after the current frame's
-     * `dispatchOnPreDraw`, the forced layout is NOT captured into the BottomNavigationView's transition, 
+     * `dispatchOnPreDraw`, the forced layout is NOT captured into the BottomNavigationView's transition,
      * so the animator does not produce a ChangeBounds "jump".
      * See [TabsHost.refreshLayout].
      */
