@@ -16,7 +16,6 @@ const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
   ? '_UIBarBadgeView'
   : '_UIBadgeView';
 
-const tabBarBagdeViewType = tabBarBadgeViewType;
 describeIfiOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -31,22 +30,22 @@ describeIfiOS('Tab Bar Item Badge', () => {
 
     await expect(
       element(
-        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-1')),
+        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-1')),
       ),
     ).toHaveText('1');
     await expect(
       element(
-        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-2')),
+        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-2')),
       ),
     ).toHaveText('1234567890');
     await expect(
       element(
-        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-3')),
+        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-3')),
       ),
     ).toHaveText('NEW!');
     await expect(
       element(
-        by.type(tabBarBagdeViewType).withAncestor(by.id('tab-badge-item-4')),
+        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-4')),
       ),
     ).toHaveText('⚠️');
   });
