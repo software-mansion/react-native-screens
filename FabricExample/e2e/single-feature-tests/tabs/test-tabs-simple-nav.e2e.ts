@@ -4,7 +4,7 @@ import {
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
-describe('Tabs: simple navigation @smoke', () => {
+describe('@smoke Tabs: simple navigation', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-simple-nav');
