@@ -122,9 +122,12 @@ class TabsHost(
         container.setPendingNavigationStateUpdate(navStateRequest.copy())
     }
 
-    /**
-     * Forces a measure/layout pass over our subtree after a React-driven update. Chooses between two
-     * scheduling methods depending on whether the insets were already propagated.
+    /*
+     * Forces a measure/layout pass across this subtree, ensuring the layout reaches
+     * native views embedded deep within the React hierarchy. This guarantees the
+     * layout isn't broken by React views which have empty overrides for native layout logic.
+     * Chooses between two scheduling methods depending on whether the insets
+     * were already propagated.
      *
      * - [TabsHostLayoutCoordinator.postLayout] - `Handler.post`, runs on the NEXT frame. Used until the insets
      * are propagated. See [onPreDraw].
