@@ -129,10 +129,11 @@ class TabsHost(
      * Chooses between two scheduling methods depending on whether the insets
      * were already propagated.
      *
-     * - [TabsHostLayoutCoordinator.postLayout] - `Handler.post`, runs on the NEXT frame. Used until the insets
+     * - [TabsHostLayoutCoordinator.postLayout] — Uses `Handler.post`. Executes via the standard message
+     * queue. If a layout traversal is already scheduled or ongoing, this will execute after it. Used until the insets
      * are propagated. See [onPreDraw].
-     * - [TabsHostLayoutCoordinator.choreographerLayout] — `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
-     * queue, runs in the CURRENT frame. Used afterwards.
+     * - [TabsHostLayoutCoordinator.choreographerLayout] — Uses `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
+     * queue. Synchronizes with vsync, guaranteeing execution JUST BEFORE the upcoming traversal. Used afterwards.
      *
      * THE PROBLEM AND MECHANISM:
      * The FIRST layout must be deferred due to the interaction with the Material BottomNavigationView's
