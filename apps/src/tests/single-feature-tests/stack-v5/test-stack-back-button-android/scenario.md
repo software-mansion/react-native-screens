@@ -28,11 +28,11 @@ When support for color scheme is added, we should check if default back arrow ad
 
 1. Launch the app and navigate to the **Stack Back Button** screen.
 
-- [ ] Expected: Root screen is shown. No back button is visible in the header (root screen has no predecessor).
+- [ ] Root screen is shown. No back button is visible in the header (root screen has no predecessor).
 
 2. Tap **Push screen**.
 
-- [ ] Expected: Pushed screen is shown. A default back button (default arrow icon, default tint) is visible in the header.
+- [ ] Pushed screen is shown. A default back button (default arrow icon, default tint) is visible in the header.
 
 ---
 
@@ -40,19 +40,19 @@ When support for color scheme is added, we should check if default back arrow ad
 
 3. Set tintColor = `purple`.
 
-- [ ] Expected: Back arrow changes to purple immediately.
+- [ ] Back arrow changes to purple immediately.
 
 4. Set tintColor = `default`.
 
-- [ ] Expected: Back arrow returns to default tint.
+- [ ] Back arrow returns to default tint.
 
 5. Toggle backButtonHidden = `true`.
 
-- [ ] Expected: Back button disappears from the header.
+- [ ] Back button disappears from the header.
 
 6. Toggle backButtonHidden = `false`.
 
-- [ ] Expected: Back button reappears with default icon and default tint.
+- [ ] Back button reappears with default icon and default tint.
 
 ---
 
@@ -60,27 +60,27 @@ When support for color scheme is added, we should check if default back arrow ad
 
 7. Set icon = `imageSource`.
 
-- [ ] Expected: Back button changes to the custom image — white background with a black arrow, no tint applied.
+- [ ] Back button changes to the custom image — white background with a black arrow, no tint applied.
 
 8. Set tintColor = `red`.
 
-- [ ] Expected: The entire image is covered in red (non-transparent image is fully tinted).
+- [ ] The entire image is covered in red (non-transparent image is fully tinted).
 
 9. Set tintColor = `default`.
 
-- [ ] Expected: Custom image returns to its original appearance (white background, black arrow).
+- [ ] Custom image returns to its original appearance (white background, black arrow).
 
 10. Toggle backButtonHidden = `true`.
 
-- [ ] Expected: Back button disappears.
+- [ ] Back button disappears.
 
 11. Set tintColor = `green`.
 
-- [ ] Expected: No visible change (back button is hidden).
+- [ ] No visible change (back button is hidden).
 
 12. Toggle backButtonHidden = `false`.
 
-- [ ] Expected: Back button reappears with `imageSource` icon and green tint already applied.
+- [ ] Back button reappears with `imageSource` icon and green tint already applied.
 
 ---
 
@@ -88,23 +88,23 @@ When support for color scheme is added, we should check if default back arrow ad
 
 13. Set tintColor = `default`, set icon = `drawableResource`.
 
-- [ ] Expected: Back button changes to `sym_call_missed` drawable — white and red (its native colors).
+- [ ] Back button changes to `sym_call_missed` drawable — white and red (its native colors).
 
 14. Set tintColor = `purple`.
 
-- [ ] Expected: Drawable icon changes to purple.
+- [ ] Drawable icon changes to purple.
 
 15. Set tintColor = `default`.
 
-- [ ] Expected: Drawable icon returns to its native white and red appearance.
+- [ ] Drawable icon returns to its native white and red appearance.
 
 16. Toggle backButtonHidden = `true`.
 
-- [ ] Expected: Back button disappears.
+- [ ] Back button disappears.
 
 17. Toggle backButtonHidden = `false`.
 
-- [ ] Expected: Back button reappears with `drawableResource` icon and default tint.
+- [ ] Back button reappears with `drawableResource` icon and default tint.
 
 ---
 
@@ -112,8 +112,8 @@ When support for color scheme is added, we should check if default back arrow ad
 
 18. Go back to the root screen. Set icon = `imageSource`, tintColor = `purple`.
 
-- [ ] Expected: Root screen is shown. No back button visible (root screen).
+- [ ] Root screen is shown. No back button visible (root screen).
 
 19. Tap **Push screen**.
 
-- [ ] Expected: Pushed screen appears with the `imageSource` icon and purple tint already applied.
+- [ ] Pushed screen appears with the `imageSource` icon and purple tint already applied.

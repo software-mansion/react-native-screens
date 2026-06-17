@@ -124,7 +124,7 @@ export function App() {
   );
 }
 
-function ConfigControls() {
+export function ConfigControls() {
   const { config, updateConfig } = React.useContext(ConfigContext);
 
   return (
@@ -161,7 +161,7 @@ function useApplyHeaderConfig() {
   }, [headerConfig, setRouteOptions, routeKey]);
 }
 
-function RootScreen() {
+export function RootScreen() {
   const { push } = useStackNavigationContext();
   useApplyHeaderConfig();
 
@@ -174,7 +174,7 @@ function RootScreen() {
   );
 }
 
-function PushedScreen() {
+export function PushedScreen() {
   const { push } = useStackNavigationContext();
   useApplyHeaderConfig();
 

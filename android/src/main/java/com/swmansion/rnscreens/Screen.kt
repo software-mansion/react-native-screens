@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -517,7 +518,7 @@ class Screen(
                 HeaderHeightChangeEvent(
                     surfaceId,
                     id,
-                    PixelUtil.toDIPFromPixel(headerHeight.toFloat()).toDouble(),
+                    pxToDp(headerHeight.toFloat()).toDouble(),
                 ),
             )
     }

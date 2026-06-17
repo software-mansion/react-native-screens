@@ -20,7 +20,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactColorScheme, setReactColorScheme] =
     React.useState<ColorSchemeName>('unspecified');
@@ -71,7 +71,7 @@ function ConfigScreen() {
   );
 }
 
-function TestScreen() {
+export function TestScreen() {
   return (
     <View style={styles.containerCenter}>
       <TextInput placeholder="Type something..." />

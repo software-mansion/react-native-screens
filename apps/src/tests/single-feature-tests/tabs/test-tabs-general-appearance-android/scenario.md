@@ -3,9 +3,9 @@
 ## Details
 
 **Description:** Verifies Android tab bar appearance behaviors,
-specifically checking native system defaults, dynamic text label visibility rules,
-and the interaction between the touch-ripple animation and the persistent active
-indicator shape.
+specifically checking native system defaults, per-tab tab bar background color,
+dynamic text label visibility rules, and the interaction between the touch-ripple
+animation and the persistent active indicator shape.
 
 **OS test creation version:** Android: API Level 36.
 
@@ -19,6 +19,7 @@ validate this behavior.
 Other properties cannot be verified using Detox since it lacks access to color
 or visibility attributes on Android views. Therefore, it is not possible to
 programmatically assert whether a label is hidden or if a specific color value has been applied.
+
 
 ## Prerequisites
 
@@ -37,6 +38,8 @@ programmatically assert whether a label is hidden or if a specific color value h
   color seen only while pressing or holding a tab item. It is distinct
   from the active indicator (`tabBarItemActiveIndicatorColor`), which
   is a **persistent** pill visible behind the selected tab icon.
+- The ripple effect may sometimes fail to trigger; this is a known issue reported
+in [Issue#1530](https://github.com/software-mansion/react-native-screens-labs/issues/1530).
 
 ## Steps
 

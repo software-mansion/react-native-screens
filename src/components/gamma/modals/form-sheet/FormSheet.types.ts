@@ -1,8 +1,21 @@
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
+
+export type EmptyEventPayload = Record<string, never>;
+
+export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 
 export interface FormSheetDetentChangedEvent {
   index: number;
 }
+
+export type FormSheetNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container hosting the sheet content.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue | undefined;
+};
 
 export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
@@ -116,7 +129,58 @@ export interface FormSheetProps {
    */
   preventNativeDismiss?: boolean | undefined;
 
+  /**
+   * @summary Style applied to the native container hosting the sheet content.
+   *
+   * These properties are forwarded directly to the underlying native view.
+   *
+   * @platform ios
+   */
+  nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
+
   // Events
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet will appear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
+  onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet did appear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
+  onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet will disappear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
+  onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet did disappear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
+  onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary Called when the sheet is dismissed programmatically.
+   *
+   * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
+   *
+   * @platform ios
+   */
+  onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
   /**
    * @summary Called when the sheet is dismissed natively.
    *
@@ -125,7 +189,7 @@ export interface FormSheetProps {
    *
    * @platform ios
    */
-  onNativeDismiss?: (() => void) | undefined;
+  onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary Called when the sheet settles at a new detent.
@@ -135,7 +199,7 @@ export interface FormSheetProps {
    * @platform ios
    */
   onDetentChanged?:
-    | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
+    | FormSheetEventHandler<FormSheetDetentChangedEvent>
     | undefined;
 
   /**
@@ -147,5 +211,7 @@ export interface FormSheetProps {
    *
    * @platform ios
    */
-  onNativeDismissPrevented?: (() => void) | undefined;
+  onNativeDismissPrevented?:
+    | FormSheetEventHandler<EmptyEventPayload>
+    | undefined;
 }

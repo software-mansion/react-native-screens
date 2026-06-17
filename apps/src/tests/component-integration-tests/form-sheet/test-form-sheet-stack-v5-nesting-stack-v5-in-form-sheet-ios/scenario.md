@@ -25,7 +25,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **FormSheet with Nested Stack v5** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" is shown
+- [ ] Content with the button "Open FormSheet" is shown
 
 ---
 
@@ -33,12 +33,12 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens at the initial lower detent (0.6). The "Home Screen" text is visible and centered within the sheet. The light blue background completely covers the FormSheet content area.
+- [ ] The FormSheet opens at the initial lower detent (0.6). The "Home Screen" text is visible and centered within the sheet. The light blue background completely covers the FormSheet content area.
 
 
 3. Tap the "Push A" button to push Screen A.
 
-- [ ] Expected: The stack navigates to "Screen A". The "Screen A" text is centered. The light yellow background completely covers the FormSheet content area.
+- [ ] The stack navigates to "Screen A". The "Screen A" text is centered. The light yellow background completely covers the FormSheet content area.
 
 ---
 
@@ -46,7 +46,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] Expected: The FormSheet expands to take up the maximum available height (respecting the top inset). The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded view area.
+- [ ] The FormSheet expands to take up the maximum available height (respecting the top inset). The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded view area.
 
 ---
 
@@ -54,7 +54,7 @@ TBD: Planned, but will be implemented separately.
 
 5. Swipe down on the FormSheet to dismiss it, then tap the "Open FormSheet" button again.
 
-- [ ] Expected: The FormSheet re-opens at the initial lower detent (0.6). The stack's navigation state has been kept - the sheet immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
+- [ ] The FormSheet re-opens at the initial lower detent (0.6). The stack's navigation state has been kept - the sheet immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
 
 ---
 
@@ -62,7 +62,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap the "Pop" button (or native header back button) to pop Screen A.
 
-- [ ] Expected: The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered, and the light blue background completely covers the FormSheet content area.
+- [ ] The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered, and the light blue background completely covers the FormSheet content area.
 
 ## Steps - iPad
 
@@ -70,7 +70,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **FormSheet with Nested Stack v5** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" is shown.
+- [ ] Content with the button "Open FormSheet" is shown.
 
 ---
 
@@ -78,11 +78,11 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens as a centered floating panel at the initial lower detent (0.6). The panel has a fixed width and is horizontally centered on screen. The "Home Screen" text is visible and centered within the panel. The light blue background completely covers the FormSheet content area.
+- [ ] The FormSheet opens as a centered floating panel at the initial lower detent (0.6). The panel has a fixed width and is horizontally centered on screen. The "Home Screen" text is visible and centered within the panel. The light blue background completely covers the FormSheet content area.
 
 3. Tap the "Push A" button to push Screen A.
 
-- [ ] Expected: The stack navigates to "Screen A". The "Screen A" text is centered within the floating panel. The light yellow background completely covers the FormSheet content area.
+- [ ] The stack navigates to "Screen A". The "Screen A" text is centered within the floating panel. The light yellow background completely covers the FormSheet content area.
 
 ---
 
@@ -90,7 +90,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] Expected: The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded panel.
+- [ ] The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded panel.
 
 ---
 
@@ -98,7 +98,7 @@ TBD: Planned, but will be implemented separately.
 
 5. Swipe down on the FormSheet to dismiss it, then tap the "Open FormSheet" button again.
 
-- [ ] Expected: The FormSheet re-opens as a centered floating panel at the initial lower detent (0.6). The stack's navigation state has been kept - the panel immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
+- [ ] The FormSheet re-opens as a centered floating panel at the initial lower detent (0.6). The stack's navigation state has been kept - the panel immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
 
 ---
 
@@ -106,4 +106,4 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap the "Pop" button (or native header back button) to pop Screen A.
 
-- [ ] Expected: The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered within the panel, and the light blue background completely covers the FormSheet content area.
+- [ ] The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered within the panel, and the light blue background completely covers the FormSheet content area.
