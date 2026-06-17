@@ -3,9 +3,9 @@
 ## Details
 
 **Description:** Verifies Android tab bar appearance behaviors,
-specifically checking native system defaults, dynamic text label visibility rules,
-and the interaction between the touch-ripple animation and the persistent active
-indicator shape.
+specifically checking native system defaults, per-tab tab bar background color,
+dynamic text label visibility rules, and the interaction between the touch-ripple
+animation and the persistent active indicator shape.
 
 **OS test creation version:** Android: API Level 36.
 
