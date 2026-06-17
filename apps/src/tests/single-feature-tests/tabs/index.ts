@@ -23,6 +23,7 @@ import TestTabsGeneralAppearanceNoLiquidGlass from './test-tabs-general-appearan
 import TestTabsNativeContainerStyle from './test-tabs-native-container-style';
 import TestTabsLayoutAppearances from './test-tabs-layout-appearances-ios';
 import TestTabsItemIcon from './test-tabs-item-icon';
+import TestTabsGeneralAppearance from './test-tabs-general-appearance-android';
 
 const scenarios = {
   TestTabBottomAccessory,
@@ -48,6 +49,7 @@ const scenarios = {
   TestTabsNativeContainerStyle,
   TestTabsLayoutAppearances,
   TestTabsItemIcon,
+  TestTabsGeneralAppearance,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
