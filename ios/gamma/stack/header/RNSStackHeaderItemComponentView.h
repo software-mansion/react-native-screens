@@ -1,21 +1,20 @@
 #pragma once
 
-#import "RNSHeaderItemPlacement.h"
 #import "RNSReactBaseView.h"
+#import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHeaderItemComponentView : RNSReactBaseView
-
-@property (nonatomic, weak, nullable) id<RNSStackHeaderItemInvalidationDelegate> invalidationDelegate;
+@interface RNSStackHeaderItemComponentView : RNSReactBaseView <RNSStackHeaderItemDataProviding>
 
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
-@property (nonatomic, readonly) BOOL hasCustomView;
+@property (nonatomic, readonly, nullable) NSString *label;
+@property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
+@property (nonatomic, readonly, nullable) UIView *customView;
 
-- (nonnull UIBarButtonItem *)makeBarButtonItemWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate;
-- (nonnull UIView *)makeWrappedViewWithFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate;
+@property (nonatomic, weak, nullable) id<RNSStackHeaderItemInvalidationDelegate> invalidationDelegate;
 
 @end
 

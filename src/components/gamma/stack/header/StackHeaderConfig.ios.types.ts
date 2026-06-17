@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { StackHeaderMenu } from './ios/StackHeaderMenu.ios.types';
 
 export interface StackHeaderBaseItemIOS {
   key: string;
@@ -7,12 +8,14 @@ export interface StackHeaderBaseItemIOS {
 
 export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
   type: 'item';
+  menu?: StackHeaderMenu | undefined;
 }
 
 export interface StackHeaderInlineCustomItemIOS {
   key: string;
   type: 'item';
   render: () => ReactElement;
+  menu?: StackHeaderMenu | undefined;
 }
 
 interface StackHeaderFixedSpacerItemIOS {

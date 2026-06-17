@@ -22,7 +22,7 @@ export function App() {
   );
 }
 
-function ContentScreen() {
+export function ContentScreen() {
   return (
     <View
       style={[

@@ -20,26 +20,26 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **OnDetentChanged** screen.
 
-- [ ] Expected: A status text "Current Detent Index: 0" and an "Open FormSheet" button are shown.
+- [ ] A status text "Current Detent Index: 0" and an "Open FormSheet" button are shown.
 
 ### Track Detent Changes
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens at the smallest initial detent (0.4). The textbox inside the sheet displays `0`.
+- [ ] The FormSheet opens at the smallest initial detent (0.4). The textbox inside the sheet displays `0`.
 
 3. Grab the drag indicator and swipe up until the sheet snaps to the middle detent (0.7).
 
-- [ ] Expected: The sheet settles in the middle of the screen. The textbox inside the sheet updates to `1`.
+- [ ] The sheet settles in the middle of the screen. The textbox inside the sheet updates to `1`.
 
 4. Swipe up again to expand the sheet to the maximum detent (1.0).
 
-- [ ] Expected: The sheet expands to fill the available screen height. The textbox inside the sheet updates to `2`.
+- [ ] The sheet expands to fill the available screen height. The textbox inside the sheet updates to `2`.
 
 5. Swipe down to collapse the sheet back to the smallest detent (0.4).
 
-- [ ] Expected: The sheet shrinks back to the smallest size. The textbox inside the sheet updates back to `0`.
+- [ ] The sheet shrinks back to the smallest size. The textbox inside the sheet updates back to `0`.
 
 6. Tap the "Dismiss from JS" button or swipe the sheet all the way down to dismiss it.
 
-- [ ] Expected: The FormSheet dismisses successfully.
+- [ ] The FormSheet dismisses successfully.

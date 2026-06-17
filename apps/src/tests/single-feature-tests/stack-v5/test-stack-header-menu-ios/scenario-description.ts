@@ -1,0 +1,10 @@
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+
+export const scenarioDescription: ScenarioDescription = {
+  name: 'Stack Header Menu (iOS)',
+  key: 'test-stack-header-menu-ios',
+  details: 'Tests header item menus with nesting.',
+  platforms: ['ios'],
+  e2eCoverage: 'tbd',
+  smokeTest: false,
+};

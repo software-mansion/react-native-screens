@@ -4,6 +4,7 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 debug_logging_enabled = ENV['RNS_DEBUG_LOGGING'] == '1'
+use_cxxbridge = ENV['RNS_USE_CXXBRIDGE'] == '1'
 
 
 source_files_exts = '{h,m,mm,cpp,swift}'
@@ -21,6 +22,7 @@ if debug_logging_enabled
   rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING"
 end
 rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
+rnscreens_cpp_flags << "-DRNS_USE_CXXBRIDGE=1" if use_cxxbridge
 
 rnscreens_config  =  {
   'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" "),
