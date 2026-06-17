@@ -39,18 +39,18 @@ promote additional items.
 
 1. Launch the app and navigate to **Stack Toolbar Menu Show As Action**.
 
-- [ ] Expected: Header title reads "Show As Action Test". The toolbar
+- [ ] Header title reads "Show As Action Test". The toolbar
       shows only the overflow (⋮) icon — no items appear as direct
       action buttons. Open the overflow menu: three items are listed
       ("I1", "Item 2", "Item Number Three").
 
 2. Open the overflow menu and tap "I1".
 
-- [ ] Expected: Menu closes. "Last clicked" updates to `item-1`.
+- [ ] Menu closes. "Last clicked" updates to `item-1`.
 
 3. Open the overflow menu and tap "Item Number Three".
 
-- [ ] Expected: "Last clicked" updates to `item-3`.
+- [ ] "Last clicked" updates to `item-3`.
 
 ---
 
@@ -59,7 +59,7 @@ promote additional items.
 4. In **Menu Items — Props**, change Slot 1 `showAsAction` from
    `undefined` to `never`.
 
-- [ ] Expected: Item 1 remains in the overflow menu — identical to the
+- [ ] Item 1 remains in the overflow menu — identical to the
       default behaviour.
 
 ---
@@ -68,13 +68,13 @@ promote additional items.
 
 5. Change Slot 1 `showAsAction` to `always`.
 
-- [ ] Expected: "I1" appears directly in the toolbar as a text
+- [ ] "I1" appears directly in the toolbar as a text
       action button. The overflow menu now contains only "Item 2" and
       "Item Number Three".
 
 6. Tap the "I1" action button in the toolbar.
 
-- [ ] Expected: "Last clicked" updates to `item-1`.
+- [ ] "Last clicked" updates to `item-1`.
 
 ---
 
@@ -86,7 +86,7 @@ promote additional items.
 
 7. Change Slot 1 `showAsAction` to `alwaysWithText`.
 
-- [ ] Expected: "I1" still appears directly in the toolbar. Visually
+- [ ] "I1" still appears directly in the toolbar. Visually
       indistinguishable from `always` without an icon.
 
 ---
@@ -95,7 +95,7 @@ promote additional items.
 
 8. Change all three slots to `ifRoom` (Slot 1, Slot 2, Slot 3).
 
-- [ ] Expected: Items that fit within the available toolbar space appear
+- [ ] Items that fit within the available toolbar space appear
       as action buttons; the rest fall back to the overflow menu. Exact
       count depends on screen width.
 
@@ -108,7 +108,7 @@ promote additional items.
 
 9. Change all three slots to `ifRoomWithText`.
 
-- [ ] Expected: Behaviour matches `ifRoom` — items appear in the toolbar
+- [ ] Behaviour matches `ifRoom` — items appear in the toolbar
       when there is room, otherwise in overflow.
 
 ---
@@ -122,7 +122,7 @@ promote additional items.
 11. In **Send Command**, set target id = `item-1`,
     showAsAction = `always`. Tap **Send Command**.
 
-- [ ] Expected: "I1" immediately moves from the overflow menu to the
+- [ ] "I1" immediately moves from the overflow menu to the
       toolbar as an action button without any prop change.
 
 ---
@@ -132,7 +132,7 @@ promote additional items.
 12. Set target id = `item-1`, showAsAction = `never`. Tap
     **Send Command**.
 
-- [ ] Expected: "I1" moves back to the overflow menu.
+- [ ] "I1" moves back to the overflow menu.
 
 ---
 
@@ -141,11 +141,11 @@ promote additional items.
 13. Set target id = `item-2`, showAsAction = `always`. Tap
     **Send Command**.
 
-- [ ] Expected: "Item 2" appears as a toolbar action button.
+- [ ] "Item 2" appears as a toolbar action button.
 
 14. Set target id = `item-2`, showAsAction = `undefined`. Tap
     **Send Command**.
 
-- [ ] Expected: "Item 2" returns to the overflow menu. The
+- [ ] "Item 2" returns to the overflow menu. The
       `showAsAction` override is cleared and falls back to the regular
       default (`never`).

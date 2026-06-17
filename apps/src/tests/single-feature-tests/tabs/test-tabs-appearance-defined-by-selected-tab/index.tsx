@@ -64,7 +64,7 @@ const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
   },
 };
 
-function TabScreen() {
+export function TabScreen() {
   const navigation = useTabsNavigationContext();
   return (
     <CenteredLayoutView>

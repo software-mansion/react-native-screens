@@ -19,7 +19,7 @@ export function App() {
   );
 }
 
-function StackSetup() {
+export function StackSetup() {
   const toast = useToast();
 
   return (
@@ -69,7 +69,7 @@ function StackSetup() {
   );
 }
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
@@ -81,7 +81,7 @@ function HomeScreen() {
   );
 }
 
-function AScreen() {
+export function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
@@ -94,7 +94,7 @@ function AScreen() {
   );
 }
 
-function BScreen() {
+export function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
@@ -108,7 +108,7 @@ function BScreen() {
   );
 }
 
-function NestedStackScreen() {
+export function NestedStackScreen() {
   const toast = useToast();
 
   return (
@@ -160,7 +160,7 @@ function NestedStackScreen() {
   );
 }
 
-function NestedHomeScreen() {
+export function NestedHomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedHome" />
@@ -174,7 +174,7 @@ function NestedHomeScreen() {
   );
 }
 
-function NestedAScreen() {
+export function NestedAScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedA" />
@@ -187,7 +187,7 @@ function NestedAScreen() {
   );
 }
 
-function NestedBScreen() {
+export function NestedBScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedB" />
@@ -201,7 +201,7 @@ function NestedBScreen() {
   );
 }
 
-function RouteInformation(props: { routeName: string }) {
+export function RouteInformation(props: { routeName: string }) {
   const routeKey = useStackNavigationContext().routeKey;
 
   return (
@@ -212,7 +212,7 @@ function RouteInformation(props: { routeName: string }) {
   );
 }
 
-function TogglePreventNativeDismiss() {
+export function TogglePreventNativeDismiss() {
   const navigation = useStackNavigationContext();
 
   return (
@@ -227,7 +227,7 @@ function TogglePreventNativeDismiss() {
   );
 }
 
-function PreventNativeDismissInfo() {
+export function PreventNativeDismissInfo() {
   const navContext = useStackNavigationContext();
 
   return (

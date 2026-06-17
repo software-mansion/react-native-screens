@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetHostEventEmitter : NSObject
 
+- (BOOL)emitOnDismiss;
 - (BOOL)emitOnNativeDismiss;
 - (BOOL)emitOnNativeDismissPrevented;
 #if !TARGET_OS_TV

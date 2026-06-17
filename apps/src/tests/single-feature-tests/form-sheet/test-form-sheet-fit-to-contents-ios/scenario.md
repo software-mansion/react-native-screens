@@ -25,7 +25,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Fit to contents** screen.
 
-- [ ] Expected: Content with the button "Open FormSheet" is shown.
+- [ ] Content with the button "Open FormSheet" is shown.
 
 ---
 
@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens smoothly. Its height is matched to its internal content (on iPhone, it will have an extra empty space on the bottom which is originating from native inset application). There are no visual jumps during the initial presentation animation.
+- [ ] The FormSheet opens smoothly. Its height is matched to its internal content (on iPhone, it will have an extra empty space on the bottom which is originating from native inset application). There are no visual jumps during the initial presentation animation.
 
 ---
 
@@ -41,7 +41,7 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap the "Expand Content" button inside the FormSheet.
 
-- [ ] Expected: The extra text box appears. The native FormSheet smoothly animates and grows in height to fully accommodate the newly added content without any visual glitches.
+- [ ] The extra text box appears. The native FormSheet smoothly animates and grows in height to fully accommodate the newly added content without any visual glitches.
 
 ---
 
@@ -49,7 +49,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Tap the "Collapse Content" button.
 
-- [ ] Expected: The extra text box disappears. The native FormSheet smoothly animates and shrinks back to its original, smaller height.
+- [ ] The extra text box disappears. The native FormSheet smoothly animates and shrinks back to its original, smaller height.
 
 ---
 
@@ -57,4 +57,4 @@ TBD: Planned, but will be implemented separately.
 
 5. Tap the "Dismiss from JS" button (or swipe down completely).
 
-- [ ] Expected: The FormSheet dismisses smoothly and returns the user to the underlying main screen.
+- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen.
