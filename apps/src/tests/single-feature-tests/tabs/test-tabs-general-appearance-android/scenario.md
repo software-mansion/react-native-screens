@@ -32,6 +32,8 @@ a label is hidden or a specific color value has been applied.
   color seen only while pressing or holding a tab item. It is distinct
   from the active indicator (`tabBarItemActiveIndicatorColor`), which
   is a **persistent** pill visible behind the selected tab icon.
+- The ripple effect may sometimes fail to trigger; this is a known issue reported
+in [Issue#1530](https://github.com/software-mansion/react-native-screens-labs/issues/1530).
 
 ## Steps
 
