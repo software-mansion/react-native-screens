@@ -3,5 +3,11 @@ import ContainedModalProviderHostNativeComponent from '../../../../fabric/gamma/
 import type { ContainedModalProviderProps } from './ContainedModalProvider.types';
 
 export function ContainedModalProvider(props: ContainedModalProviderProps) {
-  return <ContainedModalProviderHostNativeComponent {...props} />;
+  const { children, style, ...rest } = props;
+
+  return (
+    <ContainedModalProviderHostNativeComponent style={style} {...rest}>
+      {children}
+    </ContainedModalProviderHostNativeComponent>
+  );
 }
