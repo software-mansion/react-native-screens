@@ -16,10 +16,11 @@ export interface ContainedModalProviderProps {
    * @summary Identifies this provider so a `ContainedModal` can target it.
    *
    * A `ContainedModal` is matched to its provider by comparing this
-   * `providerKey` against the modal's `providerKey`. The modal is presented
-   * within the bounds of the provider whose `providerKey` equals the modal's.
+   * `containerId` against the modal's `targetContainerId`. The modal is
+   * presented within the bounds of the provider whose `containerId` equals
+   * the modal's `targetContainerId`.
    *
    * @platform ios
    */
-  providerKey: string;
+  containerId: string;
 }
