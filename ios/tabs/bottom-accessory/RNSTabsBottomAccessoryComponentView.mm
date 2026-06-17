@@ -51,7 +51,7 @@ namespace react = facebook::react;
   if (self.window != nil) {
     [_helper registerForAccessoryFrameChanges];
   } else {
-    [self invalidate];
+    [_helper unregisterForAccessoryFrameChanges];
   }
 }
 
