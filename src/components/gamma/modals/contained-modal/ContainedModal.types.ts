@@ -15,11 +15,11 @@ export interface ContainedModalProps {
   /**
    * @summary Selects which `ContainedModalProvider` this modal is presented in.
    *
-   * The modal is matched to a provider by comparing this `providerKey`
-   * against the provider's `providerKey`. The modal is presented within the
-   * bounds of the provider whose `providerKey` equals this value.
+   * The modal is matched to a provider by comparing this `targetContainerId`
+   * against the provider's `containerId`. The modal is presented within the
+   * bounds of the provider whose `containerId` equals this value.
    *
    * @platform ios
    */
-  providerKey: string;
+  targetContainerId: string;
 }

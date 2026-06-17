@@ -5,7 +5,7 @@ import type { CodegenTypes as CT, ViewProps } from 'react-native';
 
 export interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
-  providerKey?: CT.WithDefault<string, ''>;
+  targetContainerId?: CT.WithDefault<string, ''>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSContainedModalHost', {
