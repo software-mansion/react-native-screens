@@ -64,7 +64,7 @@ internal class ScreensCoordinatorLayout(
             // We do it to prevent the framework from ending the transition prematurely,
             // due to interaction between `FragmentAnim.EndViewTransitionAnimation` and
             // `SafeAreaView` drawing blocking logic. For detailed description see:
-            // TODO LINK THE PR HERE
+            // https://github.com/software-mansion/react-native-screens/pull/4161
             blockFrameworkTransitionFinalization = true
         }
 
