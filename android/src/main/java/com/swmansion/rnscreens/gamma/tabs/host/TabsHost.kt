@@ -124,54 +124,14 @@ class TabsHost(
     }
 
     /*
-     * Forces a measure/layout pass across this subtree, ensuring the layout reaches
-     * native views embedded deep within the React hierarchy. This guarantees the
-     * layout isn't broken by React views which have empty overrides for native layout logic.
-     * Chooses between two scheduling methods depending on whether the insets
-     * were already propagated.
+     * Forces a measure/layout pass across this subtree, ensuring the layout reaches native views embedded deep
+     * within the React hierarchy (React views blocks layout because they have empty overrides for native layout logic).
      *
-     * - [TabsHostLayoutCoordinator.postLayoutToMessageQueue] — Uses `Handler.post`. Executes via the standard message
-     * queue. If a layout traversal is already scheduled or ongoing, this will execute after it. Used until the insets
-     * are propagated. See [onPreDraw].
-     * - [TabsHostLayoutCoordinator.postLayoutToReactChoreographer] — Uses `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
-     * queue. Synchronizes with vsync, guaranteeing execution JUST BEFORE the upcoming traversal. Used afterwards.
-     *
-     * THE PROBLEM AND MECHANISM:
-     * The FIRST layout must be deferred due to the interaction with the Material BottomNavigationView's
-     * delayed transition mechanism. When a tab is changed, `NavigationBarMenuView.updateMenuView()` is called:
-     *
-     * 1. `TransitionManager.beginDelayedTransition(this, set)` is triggered (where `set` is an `AutoTransition`
-     * combining Fade + ChangeBounds + TextScale).
-     * 2. `beginDelayedTransition` synchronously captures `startValues` for the BottomNavigationView subtree
-     * BEFORE any new layout is performed.
-     * 3. A `TransitionManager.OnPreDrawListener` is installed. During the upcoming `ViewTreeObserver.dispatchOnPreDraw()`
-     * (which happens after measure/layout), it captures `endValues` and builds animators based on the diff between
-     * `startValues` and `endValues`.
-     *
-     * THE TWO PATHS:
-     *
-     * PATH A: Layout via `Handler.post`
-     * In the [TabsHostLayoutCoordinator.postLayoutToMessageQueue] path, our [forceSubtreeMeasureAndLayoutPass] is queued in the
-     * Looper. It does NOT run between the `startValues` snapshot and the transition's `endValues` capture.
-     * - Result: From the transition's point of view, the subtree bounds are identical. Only properties like
-     * `android:fade:transitionAlpha` and visibility change.
-     * - Effect: A clean Fade animator is created. NO ChangeBounds animation is performed, preventing
-     * unwanted content jumps.
-     *
-     * PATH B: Layout via ReactChoreographer
-     * In the [TabsHostLayoutCoordinator.postLayoutToReactChoreographer] path, our forced layout runs in the SAME frame
-     * (before `dispatchOnPreDraw`). The subtree is forcefully laid out with new dimensions BEFORE the transition
-     * captures `endValues`.
-     * - Result: `android:changeBounds:bounds` for `BottomNavigationItemView` differ significantly.
-     * This also affects inner views like `navigation_bar_item_content_container` and `navigation_bar_item_labels_group`.
-     * - Effect: ChangeBounds animators are generated and the BottomNavigationView's content animated on tab selection.
-     * The active indicator layout with non-zero layout params is deferred via `Handler.post`
-     * in [NavigationBarItemView.onSizeChanged]. When it happens during the transition from another screen of
-     * the native-stack, `ChangeBounds` suppresses layout on animator creation and prevents recalculating the layout
-     * of the active indicator until the `AutoTransition` of `BottomNavigationView` ends.
-     *
-     * Once insets are applied, we switch permanently to `ReactChoreographer` path to ensure subsequent
-     * tab selection changes trigger the full `ChangeBounds` animations.
+     * Scheduling is hybrid: `Handler.post` until the view tree is first laid out with insets applied (see
+     * [onPreDraw]), then `ReactChoreographer` afterwards. This is required to avoid an inset jump on the initial
+     * mount while preserving the Material BottomNavigationView tab-switch (ChangeBounds) animation. Rationale and
+     * the full TransitionManager interaction are documented in the PR:
+     * https://github.com/software-mansion/react-native-screens/pull/4161
      */
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
@@ -187,13 +147,9 @@ class TabsHost(
     /**
      * Marks that the view tree has been laid out with window insets already applied.
      *
-     * `onPreDraw` is a reliable signal that insets have already been propagated for this frame:
-     * `ViewRootImpl.performTraversals()` runs in the Choreographer `CALLBACK_TRAVERSAL` phase, and within a
-     * single traversal it
-     * 1. computes and dispatches window insets down the hierarchy (`dispatchApplyWindowInsets`),
-     * 2. runs measure + layout,
-     * 3. invokes `ViewTreeObserver.dispatchOnPreDraw()` - immediately before `performDraw()`. So by the time this
-     * callback fires, the insets for the frame have been applied.
+     * `onPreDraw` is a reliable signal for this: within a single `ViewRootImpl.performTraversals()` insets are
+     * dispatched and layout runs before `dispatchOnPreDraw()`, so by the time this fires the frame's insets have
+     * been applied. See https://github.com/software-mansion/react-native-screens/pull/4161 for details.
      */
     override fun onPreDraw(): Boolean {
         hasFirstLayoutWithInsets = true

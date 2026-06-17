@@ -10,12 +10,12 @@ class TabsHostLayoutCoordinator(
     private var hasChoreographerLayoutPending = false
 
     /**
-     * Defers the layout to the NEXT frame via `Handler.post`. Because this puts the action at the end
-     * of the message queue, it runs after the current frame's `dispatchOnPreDraw`. Consequently, the
-     * forced layout mutations are NOT captured into the BottomNavigationView's `endValues` by the
-     * TransitionManager. This prevents the animator from producing a `ChangeBounds` and the content jump
-     * during the initial inset application.
-     * See [TabsHost.refreshLayout].
+     * Schedules the layout via `Handler.post`, executing it through the standard message queue. If a layout
+     * traversal is already scheduled or ongoing, this runs after it. Because it runs after the current
+     * traversal's `dispatchOnPreDraw`, the forced layout stays out of the TransitionManager's `endValues`,
+     * suppressing the `ChangeBounds` animator and the content jump during initial inset application. Used
+     * until insets are propagated.
+     * See [TabsHost.refreshLayout] and https://github.com/software-mansion/react-native-screens/pull/4161.
      */
     internal fun postLayoutToMessageQueue() {
         if (hasPostLayoutPending) {
@@ -29,13 +29,11 @@ class TabsHostLayoutCoordinator(
     }
 
     /**
-     * Runs the layout in the CURRENT frame via `ReactChoreographer`'s `NATIVE_ANIMATED_MODULE` queue.
-     * Callbacks in this queue execute early in the Choreographer frame loop (before the Android view
-     * system's TRAVERSAL phase). This guarantees that [forceSubtreeMeasureAndLayoutPass]
-     * mutates the view bounds BEFORE `TransitionManager` captures its `endValues` in `onPreDraw`.
-     * This ensures `ChangeBounds` animators are correctly created for tab switches.
-     * Should be used only after the initial window insets are successfully applied.
-     * See [TabsHost.refreshLayout].
+     * Schedules the layout via `ReactChoreographer`'s `NATIVE_ANIMATED_MODULE` queue, which synchronizes with
+     * vsync and guarantees execution JUST BEFORE the upcoming traversal. The forced layout therefore mutates
+     * the view bounds BEFORE `TransitionManager` captures its `endValues` in `onPreDraw`, so `ChangeBounds`
+     * animators are created for tab switches. Used after insets are propagated.
+     * See [TabsHost.refreshLayout] and https://github.com/software-mansion/react-native-screens/pull/4161.
      */
     internal fun postLayoutToReactChoreographer() {
         if (hasChoreographerLayoutPending) {
