@@ -31,7 +31,8 @@ class TabsHost(
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
-    private val layoutCoordinator: TabsHostLayoutCoordinator = TabsHostLayoutCoordinator(this)
+    private val layoutCoordinator: TabsHostLayoutCoordinator =
+        TabsHostLayoutCoordinator(this, ::forceSubtreeMeasureAndLayoutPass)
 
     private var hasFirstLayoutWithInsets: Boolean = false
 
@@ -199,7 +200,7 @@ class TabsHost(
         refreshLayout()
     }
 
-    internal fun forceSubtreeMeasureAndLayoutPass() {
+    private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),

@@ -4,6 +4,7 @@ import com.facebook.react.modules.core.ReactChoreographer
 
 class TabsHostLayoutCoordinator(
     private val hostView: TabsHost,
+    private val layoutCallback: () -> Unit,
 ) {
     private var hasPostLayoutPending = false
     private var hasChoreographerLayoutPending = false
@@ -23,7 +24,7 @@ class TabsHostLayoutCoordinator(
         hasPostLayoutPending = true
         hostView.post {
             hasPostLayoutPending = false
-            hostView.forceSubtreeMeasureAndLayoutPass()
+            layoutCallback()
         }
     }
 
@@ -43,7 +44,7 @@ class TabsHostLayoutCoordinator(
         hasChoreographerLayoutPending = true
         ReactChoreographer.getInstance().postFrameCallback(ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE) {
             hasChoreographerLayoutPending = false
-            hostView.forceSubtreeMeasureAndLayoutPass()
+            layoutCallback()
         }
     }
 }
