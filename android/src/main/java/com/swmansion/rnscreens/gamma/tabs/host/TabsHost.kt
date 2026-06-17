@@ -129,10 +129,10 @@ class TabsHost(
      * Chooses between two scheduling methods depending on whether the insets
      * were already propagated.
      *
-     * - [TabsHostLayoutCoordinator.postLayout] — Uses `Handler.post`. Executes via the standard message
+     * - [TabsHostLayoutCoordinator.postLayoutToMessageQueue] — Uses `Handler.post`. Executes via the standard message
      * queue. If a layout traversal is already scheduled or ongoing, this will execute after it. Used until the insets
      * are propagated. See [onPreDraw].
-     * - [TabsHostLayoutCoordinator.choreographerLayout] — Uses `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
+     * - [TabsHostLayoutCoordinator.postLayoutToReactChoreographer] — Uses `ReactChoreographer` `NATIVE_ANIMATED_MODULE`
      * queue. Synchronizes with vsync, guaranteeing execution JUST BEFORE the upcoming traversal. Used afterwards.
      *
      * THE PROBLEM AND MECHANISM:
@@ -150,7 +150,7 @@ class TabsHost(
      * THE TWO PATHS:
      *
      * PATH A: Layout via `Handler.post`
-     * In the [TabsHostLayoutCoordinator.postLayout] path, our [forceSubtreeMeasureAndLayoutPass] is queued in the
+     * In the [TabsHostLayoutCoordinator.postLayoutToMessageQueue] path, our [forceSubtreeMeasureAndLayoutPass] is queued in the
      * Looper. It does NOT run between the `startValues` snapshot and the transition's `endValues` capture.
      * - Result: From the transition's point of view, the subtree bounds are identical. Only properties like
      * `android:fade:transitionAlpha` and visibility change.
@@ -158,7 +158,7 @@ class TabsHost(
      * unwanted content jumps.
      *
      * PATH B: Layout via ReactChoreographer
-     * In the [TabsHostLayoutCoordinator.choreographerLayout] path, our forced layout runs in the SAME frame
+     * In the [TabsHostLayoutCoordinator.postLayoutToReactChoreographer] path, our forced layout runs in the SAME frame
      * (before `dispatchOnPreDraw`). The subtree is forcefully laid out with new dimensions BEFORE the transition
      * captures `endValues`.
      * - Result: `android:changeBounds:bounds` for `BottomNavigationItemView` differ significantly.
@@ -176,9 +176,9 @@ class TabsHost(
         @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
         if (layoutCoordinator != null) {
             if (!hasFirstLayoutWithInsets) {
-                layoutCoordinator.postLayout()
+                layoutCoordinator.postLayoutToMessageQueue()
             } else {
-                layoutCoordinator.choreographerLayout()
+                layoutCoordinator.postLayoutToReactChoreographer()
             }
         }
     }

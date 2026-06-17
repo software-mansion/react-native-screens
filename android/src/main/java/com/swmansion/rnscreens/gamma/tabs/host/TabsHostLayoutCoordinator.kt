@@ -17,7 +17,7 @@ class TabsHostLayoutCoordinator(
      * during the initial inset application.
      * See [TabsHost.refreshLayout].
      */
-    internal fun postLayout() {
+    internal fun postLayoutToMessageQueue() {
         if (hasPostLayoutPending) {
             return
         }
@@ -37,7 +37,7 @@ class TabsHostLayoutCoordinator(
      * Should be used only after the initial window insets are successfully applied.
      * See [TabsHost.refreshLayout].
      */
-    internal fun choreographerLayout() {
+    internal fun postLayoutToReactChoreographer() {
         if (hasChoreographerLayoutPending) {
             return
         }
