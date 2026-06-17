@@ -69,8 +69,6 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
       android: {
         standardAppearance: {
           tabBarItemLabelVisibilityMode: 'selected',
-          // tabBarItemTitleSmallLabelFontSize: 10,
-          // tabBarItemTitleLargeLabelFontSize: 16,
         },
       },
     },
@@ -84,8 +82,6 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
       android: {
         standardAppearance: {
           tabBarItemLabelVisibilityMode: 'selected',
-          // tabBarItemTitleSmallLabelFontSize: 10,
-          // tabBarItemTitleLargeLabelFontSize: 16,
         },
       },
     },
@@ -103,17 +99,17 @@ export default function TabsNestedInStackExample() {
         <Stack.Screen
           name="First"
           component={FirstScreen}
-          options={{ title: 'First', animationDuration: 5000 }}
+          options={{ title: 'First' }}
         />
         <Stack.Screen
           name="NestedTabs"
           component={NestedTabsScreen}
-          options={{ title: 'Nested Tabs', animationDuration: 5000 }}
+          options={{ title: 'Nested Tabs' }}
         />
         <Stack.Screen
           name="SecondScreen"
           component={SecondScreen}
-          options={{ title: 'Second screen', animationDuration: 5000 }}
+          options={{ title: 'Second screen' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
