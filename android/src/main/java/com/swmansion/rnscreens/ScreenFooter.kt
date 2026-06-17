@@ -55,17 +55,14 @@ class ScreenFooter(
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
         val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-        val navigationBarBottomInset =
-            insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
-        // **It looks like** when keyboard is presented its inset does include navigation bar
-        // bottom inset, while it is already accounted for somewhere (dunno where).
-        // That is why we subtract navigation bar bottom inset here.
-        //
-        // Situations where keyboard is not visible and navigation bar is present are handled
-        // directly in layout function by not allowing lastBottomInset to contribute value less
-        // than 0. Alternative would be write logic specific to keyboard animation direction (hide / show).
-        lastBottomInset = imeBottomInset - navigationBarBottomInset
+        // The footer is a child of the Screen, so the sheet's keyboard translationY (applied by
+        // SheetAnimationCoordinator just before this callback) already lifts the footer along with
+        // the rest of the sheet. The only extra offset the footer needs is the part of the keyboard
+        // the sheet could NOT clear by translating.
+        val sheetTranslationY = screenParent?.translationY ?: 0f
+        lastBottomInset = (imeBottomInset + sheetTranslationY).toInt()
+
         layoutFooterOnYAxis(
             lastContainerHeight,
             reactHeight,
