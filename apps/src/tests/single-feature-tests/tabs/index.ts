@@ -21,6 +21,9 @@ import TestTabsItemTitle from './test-tabs-item-title';
 import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsGeneralAppearanceNoLiquidGlass from './test-tabs-general-appearance-no-liquid-glass-ios';
 import TestTabsNativeContainerStyle from './test-tabs-native-container-style';
+import TestTabsLayoutAppearances from './test-tabs-layout-appearances-ios';
+import TestTabsItemIcon from './test-tabs-item-icon';
+import TestTabsGeneralAppearance from './test-tabs-general-appearance-android';
 import TestTabsItemBadge from './test-tabs-item-badge';
 
 const scenarios = {
@@ -45,6 +48,9 @@ const scenarios = {
   TestTabsSystemItem,
   TestTabsGeneralAppearanceNoLiquidGlass,
   TestTabsNativeContainerStyle,
+  TestTabsLayoutAppearances,
+  TestTabsItemIcon,
+  TestTabsGeneralAppearance,
   TestTabsItemBadge,
 };
 

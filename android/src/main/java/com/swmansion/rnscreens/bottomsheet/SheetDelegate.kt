@@ -440,12 +440,23 @@ class SheetDelegate(
     internal fun createSheetExitAnimator(sheetAnimationContext: SheetAnimationContext): Animator =
         screen.sheetAnimationCoordinator.createSheetExitAnimator(sheetAnimationContext)
 
-    internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) =
+    // Drive both sheet sub-behaviours from one keyboard frame: the coordinator moves the sheet body,
+    // the footer repositions itself. The footer can't get these frames via dispatch (Screen has
+    // DISPATCH_MODE_STOP), so we push them in here.
+    internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
         screen.sheetAnimationCoordinator.handleKeyboardInsetsProgress(insets)
+        screen.footer?.handleKeyboardInsetsProgress(insets)
+    }
 
-    internal fun notifyKeyboardAnimationStart() = screen.sheetAnimationCoordinator.notifyKeyboardAnimationStart()
+    internal fun notifyKeyboardAnimationStart() {
+        screen.sheetAnimationCoordinator.notifyKeyboardAnimationStart()
+        screen.footer?.notifyKeyboardAnimationStart()
+    }
 
-    internal fun notifyKeyboardAnimationEnd() = screen.sheetAnimationCoordinator.notifyKeyboardAnimationEnd()
+    internal fun notifyKeyboardAnimationEnd() {
+        screen.sheetAnimationCoordinator.notifyKeyboardAnimationEnd()
+        screen.footer?.notifyKeyboardAnimationEnd()
+    }
 
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(
