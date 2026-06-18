@@ -4,24 +4,25 @@ import android.content.Context
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class FormSheetDialogManager(
-    private val context: Context,
+    context: Context,
     private val host: FormSheetHost,
 ) {
-    private var dialog: BottomSheetDialog? = null
+    // Eagerly create the container so it's always ready for React's children
+    internal val container = FormSheetContainer(context)
 
-    fun show() {
-        if (dialog == null) {
-            dialog =
-                BottomSheetDialog(context).apply {
-                    setOnDismissListener {
-                        host.onNativeDismiss()
-                    }
-                }
+    // Eagerly create the dialog and attach the container
+    private val dialog = BottomSheetDialog(context).apply {
+        setContentView(container)
+        setOnDismissListener {
+            host.onNativeDismiss()
         }
-        dialog?.show()
     }
 
-    fun dismiss() {
-        dialog?.dismiss()
+    internal fun show() {
+        dialog.show()
+    }
+
+    internal fun dismiss() {
+        dialog.dismiss()
     }
 }
