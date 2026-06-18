@@ -3,7 +3,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestTabBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
-import TabsScreenOrientationScenario from './tabs-screen-orientation';
+import TabsScreenOrientation from './test-tabs-screen-orientation';
 import TabBarAppearanceDefinedBySelectedTabScenario from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
@@ -31,7 +31,7 @@ const scenarios = {
   TestTabsOverrideScrollViewContentInset,
   TabBarAppearanceDefinedBySelectedTabScenario,
   TestTabsTabBarHidden,
-  TabsScreenOrientationScenario,
+  TabsScreenOrientation,
   TestTabsTabBarColorScheme,
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
