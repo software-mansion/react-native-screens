@@ -14,7 +14,7 @@ export function App() {
   return <StackSetup />;
 }
 
-function StackSetup() {
+export function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -38,7 +38,7 @@ function StackSetup() {
   );
 }
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
@@ -47,7 +47,7 @@ function HomeScreen() {
   );
 }
 
-function AScreen() {
+export function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
@@ -56,7 +56,7 @@ function AScreen() {
   );
 }
 
-function BScreen() {
+export function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
@@ -65,7 +65,7 @@ function BScreen() {
   );
 }
 
-function RouteInformation(props: { routeName: string }) {
+export function RouteInformation(props: { routeName: string }) {
   const routeKey = useStackNavigationContext().routeKey;
 
   return (

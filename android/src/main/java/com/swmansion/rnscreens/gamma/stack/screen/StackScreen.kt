@@ -63,6 +63,7 @@ class StackScreen(
         width: Int? = null,
         height: Int? = null,
     ) = shadowStateProxy.updateStateIfNeeded(
+        density = resources.displayMetrics.density,
         contentOffsetX = x,
         contentOffsetY = y,
         frameWidth = width,
@@ -120,7 +121,11 @@ class StackScreen(
         r: Int,
         b: Int,
     ) {
-        shadowStateProxy.updateStateIfNeeded(frameWidth = r - l, frameHeight = b - t)
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            frameWidth = r - l,
+            frameHeight = b - t,
+        )
     }
 
     override fun getAssociatedFragment(): Fragment? =

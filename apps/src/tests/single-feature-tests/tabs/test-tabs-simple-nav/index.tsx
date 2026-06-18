@@ -10,7 +10,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
-function ContentView() {
+export function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
@@ -22,7 +22,7 @@ function ContentView() {
   );
 }
 
-function TabsNavigationButtons() {
+export function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (

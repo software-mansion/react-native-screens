@@ -11,7 +11,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-function ConfigScreen() {
+export function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
 

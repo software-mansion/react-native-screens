@@ -19,12 +19,12 @@ Full: Covers all manual scenario steps.
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
-- [ ] Expected: Screen with one Tab in tab bar should be displayed.
+- [ ] Screen with one Tab in tab bar should be displayed.
 
 2. Toggle `tabBarHidden` to `true`.
 
-- [ ] Expected: Tab bar should disappear immediately.
+- [ ] Tab bar should disappear immediately.
 
 3. Toggle back to `false`.
 
-- [ ] Expected: Tab bar should reappear.
+- [ ] Tab bar should reappear.
