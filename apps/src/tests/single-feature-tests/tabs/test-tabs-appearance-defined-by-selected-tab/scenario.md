@@ -58,7 +58,7 @@ a pattern that applies across all green, blue, yellow, and red tab elements.
   three "Select tab N" buttons.
 - [ ] Three tabs are visible in the tab bar: Tab1, Tab2, Tab3.
 - [ ] The selected Tab1 icon and title are rendered in green.
-- [ ] All tab titles follows system default styling.
+- [ ] All tab titles follow system default styling.
 - [ ] The Tab3 badge has value "123" and green background.
 - [ ] **iOS 18:** The tab bar background is dark navy.
   Unselected tab icons and titles are blue.
@@ -102,7 +102,7 @@ icons and titles are blue.
 
 ---
 
-### Stability — rapid tab switching
+### Stability — rapid tab switchingcd
 
 5. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab1 several times,
    alternating between native tab bar taps and the in-screen
@@ -177,7 +177,7 @@ icons and titles are blue.
 - [ ] Icon and title colors for normal, selected, and focused states
   match Tab1's configuration (blue normal, green selected,
   yellow focused).
-- [ ] The tab badge background change to red, value remains "123" and text
+- [ ] The tab badge background changes to red, value remains "123" and text
   is green.
 
 ---
