@@ -9,10 +9,6 @@
 
 #import "RNSTabBarController.h"
 
-#if RNS_GAMMA_ENABLED
-#import "RNSScrollViewSeeking.h"
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RCTImageLoader;
@@ -79,12 +75,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable RCTImageLoader *)reactImageLoader;
 
 @end
-
-#pragma mark RNSScrollViewSeeking
-
-#if RNS_GAMMA_ENABLED
-@interface RNSTabBarController () <RNSScrollViewSeeking>
-@end
-#endif
 
 NS_ASSUME_NONNULL_END
