@@ -21,6 +21,7 @@ jobs:
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
+      AVD_PROFILE: pixel_8
       RNS_GAMMA_ENABLED: 1
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
@@ -86,7 +87,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -94,7 +95,7 @@ jobs:
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_8
+          profile: ${{ env.AVD_PROFILE }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -110,7 +111,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_8
+          profile: ${{ env.AVD_PROFILE }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
