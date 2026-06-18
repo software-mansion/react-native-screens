@@ -11,6 +11,7 @@
 
 #import <React/RCTAssert.h>
 #import <React/RCTScrollViewComponentView.h>
+#import <React/UIView+React.h>
 
 namespace react = facebook::react;
 
@@ -78,7 +79,11 @@ namespace react = facebook::react;
     if ([superview respondsToSelector:@selector(registerDescendantScrollView:fromMarker:)]) {
       return static_cast<id<RNSScrollViewSeeking>>(superview);
     }
-    superview = superview.superview;
+    if ([superview respondsToSelector:@selector(reactSuperview)]) {
+      superview = [superview reactSuperview];
+    } else {
+      superview = superview.superview;
+    }
   }
   return nil;
 }
@@ -148,6 +153,14 @@ namespace react = facebook::react;
 {
   [super willMoveToWindow:newWindow];
   [self maybeRegisterWithSeekingAncestor];
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  if (self.window == nil) {
+    _hasAttemptedRegistration = NO;
+  }
 }
 
 #pragma mark - RNSScrollEdgeEffectProviding

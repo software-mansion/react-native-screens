@@ -16,9 +16,19 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#if RNS_GAMMA_ENABLED
+#import "RNSScrollViewMarkerComponentView.h"
+#import "RNSScrollViewSeeking.h"
+#endif
+
 namespace react = facebook::react;
 
 #pragma mark - View implementation
+
+#if RNS_GAMMA_ENABLED
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@end
+#endif
 
 @implementation RNSTabsScreenComponentView {
   RNSTabsScreenViewController *_controller;
@@ -31,6 +41,11 @@ namespace react = facebook::react;
   // Tracks that the first child was mounted before props were set.
   // The pending override will be applied once updateProps runs.
   BOOL _needsScrollViewBehaviorOverride;
+
+#if RNS_GAMMA_ENABLED
+  UIScrollView *__weak _markerContentScrollView;
+  RNSScrollViewMarkerComponentView *_scrollViewMarker;
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -100,9 +115,24 @@ RNS_IGNORE_SUPER_CALL_END
     auto strongSelf = weakSelf;
     if (strongSelf) {
       strongSelf->_controller = nil;
+#if RNS_GAMMA_ENABLED
+      strongSelf->_scrollViewMarker = nil;
+      strongSelf->_markerContentScrollView = nil;
+#endif
     }
   });
 }
+
+#pragma mark RNSScrollViewSeeking
+
+#if RNS_GAMMA_ENABLED
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  _markerContentScrollView = scrollView;
+  _scrollViewMarker = marker;
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+}
+#endif // RNS_GAMMA_ENABLED
 
 #pragma mark - Events
 
