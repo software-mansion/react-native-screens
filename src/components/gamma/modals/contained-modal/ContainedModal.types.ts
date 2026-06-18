@@ -6,7 +6,7 @@ export interface ContainedModalProps {
    * @summary Determines whether the contained modal is currently visible.
    *
    * Presentation is driven by state transitions: updating this property
-   * from `false` to `true` triggers the sheet to present, while changing
+   * from `false` to `true` triggers the modal to present, while changing
    * it from `true` to `false` triggers a programmatic dismissal.
    *
    * @platform ios
