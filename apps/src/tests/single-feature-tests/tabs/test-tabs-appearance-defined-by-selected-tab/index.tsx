@@ -51,6 +51,39 @@ const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
   },
 };
 
+const TAB2_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
+  ...DEFAULT_APPEARANCE_IOS,
+  tabBarBackgroundColor: Colors.PurpleDark100,
+  stacked: {
+    ...DEFAULT_APPEARANCE_IOS.stacked,
+    normal: {
+      ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+      tabBarItemIconColor: Colors.YellowDark100,
+      tabBarItemTitleFontColor: Colors.YellowDark40,
+    },
+    selected: {
+      ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
+      tabBarItemIconColor: Colors.RedDark100,
+      tabBarItemTitleFontColor: Colors.RedDark80,
+      tabBarItemTitleFontStyle: 'italic',
+      tabBarItemTitleFontSize: 16,
+      tabBarItemTitleFontFamily: 'Courier',
+      tabBarItemTitleFontWeight: '700',
+    },
+  },
+};
+
+const TAB3_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
+  ...DEFAULT_APPEARANCE_IOS,
+  stacked: {
+    ...DEFAULT_APPEARANCE_IOS.stacked,
+    normal: {
+      ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
+      tabBarItemBadgeBackgroundColor: Colors.RedDark100,
+    },
+  },
+};
+
 export function TabScreen() {
   const navigation = useTabsNavigationContext();
   return (
@@ -100,6 +133,7 @@ export function App() {
                 type: 'sfSymbol',
                 name: 'house.fill',
               },
+              standardAppearance: DEFAULT_APPEARANCE_IOS,
               scrollEdgeAppearance: DEFAULT_APPEARANCE_IOS,
             },
             android: {
@@ -125,27 +159,8 @@ export function App() {
                 type: 'templateSource',
                 templateSource: require('@assets/variableIcons/icon.png'),
               },
-              scrollEdgeAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                tabBarBackgroundColor: Colors.PurpleDark100,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemIconColor: Colors.YellowDark100,
-                    tabBarItemTitleFontColor: Colors.YellowDark40,
-                  },
-                  selected: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.selected,
-                    tabBarItemIconColor: Colors.RedDark100,
-                    tabBarItemTitleFontColor: Colors.RedDark80,
-                    tabBarItemTitleFontStyle: 'italic',
-                    tabBarItemTitleFontSize: 16,
-                    tabBarItemTitleFontFamily: 'Courier',
-                    tabBarItemTitleFontWeight: '700',
-                  },
-                },
-              },
+              standardAppearance: TAB2_APPEARANCE_IOS,
+              scrollEdgeAppearance: TAB2_APPEARANCE_IOS,
             },
             android: {
               icon: {
@@ -189,16 +204,8 @@ export function App() {
                 type: 'templateSource',
                 templateSource: require('@assets/variableIcons/icon_fill.png'),
               },
-              scrollEdgeAppearance: {
-                ...DEFAULT_APPEARANCE_IOS,
-                stacked: {
-                  ...DEFAULT_APPEARANCE_IOS.stacked,
-                  normal: {
-                    ...DEFAULT_APPEARANCE_IOS.stacked?.normal,
-                    tabBarItemBadgeBackgroundColor: Colors.RedDark100,
-                  },
-                },
-              },
+              standardAppearance: TAB3_APPEARANCE_IOS,
+              scrollEdgeAppearance: TAB3_APPEARANCE_IOS,
             },
             android: {
               icon: {

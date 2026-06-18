@@ -3,8 +3,7 @@
 ## Details
 
 **Description:** Verifies that each tab can independently define its own
-tab bar visual appearance via per-tab `scrollEdgeAppearance` (iOS) or
-`standardAppearance` (Android) options,
+tab bar visual appearance via per-tab options,
 and that the tab bar updates to reflect the currently selected tab's
 configured appearance whenever the active tab changes.
 
