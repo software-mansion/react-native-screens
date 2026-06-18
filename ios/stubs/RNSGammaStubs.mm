@@ -18,6 +18,12 @@
 @implementation RNSFormSheetHostComponentView
 @end
 
+@implementation RNSContainedModalHostComponentView
+@end
+
+@implementation RNSContainedModalProviderHostComponentView
+@end
+
 @implementation RNSFormSheetContentWrapperComponentView
 @end
 
