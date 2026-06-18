@@ -5,11 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
 class FormSheetHost(context: Context) : ViewGroup(context) {
 
     private val dialogManager = FormSheetDialogManager(context, this)
     private var isOpen = false
+
+    private val shadowStateProxy = ShadowStateProxy()
+
+    internal var stateWrapper by shadowStateProxy::stateWrapper
 
     internal fun setIsOpen(open: Boolean) {
         if (this.isOpen == open) return
@@ -36,30 +41,37 @@ class FormSheetHost(context: Context) : ViewGroup(context) {
     }
 
     override fun addView(child: View?, index: Int) {
-        dialogManager.container.addView(child, index)
+        dialogManager.contentView.addView(child, index)
     }
 
     override fun removeView(view: View?) {
-        dialogManager.container.removeView(view)
+        dialogManager.contentView.removeView(view)
     }
 
     override fun removeViewAt(index: Int) {
-        dialogManager.container.removeViewAt(index)
+        dialogManager.contentView.removeViewAt(index)
     }
 
     override fun removeAllViews() {
-        dialogManager.container.removeAllViews()
+        dialogManager.contentView.removeAllViews()
     }
 
     override fun getChildCount(): Int {
-        return dialogManager.container.childCount
+        return dialogManager.contentView.childCount
     }
 
     override fun getChildAt(index: Int): View? {
-        return dialogManager.container.getChildAt(index)
+        return dialogManager.contentView.getChildAt(index)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         // TODO: @t0maboro - implement before merging
     }
+
+    internal fun updateStateIfNeeded(width: Int, height: Int) =
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            frameWidth = width,
+            frameHeight = height,
+        )
 }

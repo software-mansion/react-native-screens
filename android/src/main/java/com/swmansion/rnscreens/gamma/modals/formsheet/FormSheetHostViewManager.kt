@@ -7,6 +7,8 @@ import com.facebook.react.viewmanagers.RNSFormSheetHostManagerInterface
 import com.facebook.react.viewmanagers.RNSFormSheetHostManagerDelegate
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 
 @ReactModule(name = FormSheetHostViewManager.REACT_CLASS)
@@ -60,6 +62,15 @@ class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheet
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetNativeDismissEvent),
         )
+
+    override fun updateState(
+        view: FormSheetHost,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?
+    ): Any? {
+        view.stateWrapper = stateWrapper
+        return super.updateState(view, props, stateWrapper)
+    }
 
     companion object {
         const val REACT_CLASS = "RNSFormSheetHost"

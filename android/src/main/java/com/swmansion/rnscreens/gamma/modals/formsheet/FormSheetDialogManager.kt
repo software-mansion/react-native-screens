@@ -8,7 +8,11 @@ class FormSheetDialogManager(
     private val host: FormSheetHost,
 ) {
     // Eagerly create the container so it's always ready for React's children
-    internal val container = FormSheetContainer(context)
+    private val container = FormSheetContainer(context) { width, height ->
+        host.updateStateIfNeeded(width, height)
+    }
+
+    internal val contentView get() = container.contentView
 
     // Eagerly create the dialog and attach the container
     private val dialog = BottomSheetDialog(context).apply {
