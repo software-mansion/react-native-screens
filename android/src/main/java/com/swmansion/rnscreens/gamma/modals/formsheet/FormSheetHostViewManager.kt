@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
+import android.view.View
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -21,6 +22,22 @@ class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheet
     override fun getName(): String = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext) = FormSheetHost(reactContext)
+
+    override fun addView(parent: FormSheetHost, child: View, index: Int) {
+        parent.mountReactSubviewAt(child, index)
+    }
+
+    override fun removeView(parent: FormSheetHost, child: View) {
+        parent.unmountReactSubview(child)
+    }
+
+    override fun removeViewAt(parent: FormSheetHost, index: Int) {
+        parent.unmountReactSubviewAt(index)
+    }
+
+    override fun removeAllViews(parent: FormSheetHost) {
+        parent.unmountAllReactSubviews()
+    }
 
     override fun setIsOpen(view: FormSheetHost, value: Boolean) {
         view.setIsOpen(value)

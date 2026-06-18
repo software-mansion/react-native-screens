@@ -7,8 +7,9 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
-class FormSheetHost(context: Context) : ViewGroup(context) {
-
+class FormSheetHost(
+    context: Context,
+) : ViewGroup(context) {
     private val dialogManager = FormSheetDialogManager(context, this)
     private var isOpen = false
 
@@ -36,42 +37,45 @@ class FormSheetHost(context: Context) : ViewGroup(context) {
         val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
 
         dispatcher?.dispatchEvent(
-            FormSheetNativeDismissEvent(surfaceId, id)
+            FormSheetNativeDismissEvent(surfaceId, id),
         )
     }
 
-    override fun addView(child: View?, index: Int) {
+    internal fun mountReactSubviewAt(
+        child: View,
+        index: Int,
+    ) {
         dialogManager.contentView.addView(child, index)
     }
 
-    override fun removeView(view: View?) {
-        dialogManager.contentView.removeView(view)
+    internal fun unmountReactSubview(child: View) {
+        dialogManager.contentView.removeView(child)
     }
 
-    override fun removeViewAt(index: Int) {
+    internal fun unmountReactSubviewAt(index: Int) {
         dialogManager.contentView.removeViewAt(index)
     }
 
-    override fun removeAllViews() {
+    internal fun unmountAllReactSubviews() {
         dialogManager.contentView.removeAllViews()
     }
 
-    override fun getChildCount(): Int {
-        return dialogManager.contentView.childCount
-    }
-
-    override fun getChildAt(index: Int): View? {
-        return dialogManager.contentView.getChildAt(index)
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         // TODO: @t0maboro - implement before merging
     }
 
-    internal fun updateStateIfNeeded(width: Int, height: Int) =
-        shadowStateProxy.updateStateIfNeeded(
-            density = resources.displayMetrics.density,
-            frameWidth = width,
-            frameHeight = height,
-        )
+    internal fun updateStateIfNeeded(
+        width: Int,
+        height: Int,
+    ) = shadowStateProxy.updateStateIfNeeded(
+        density = resources.displayMetrics.density,
+        frameWidth = width,
+        frameHeight = height,
+    )
 }
