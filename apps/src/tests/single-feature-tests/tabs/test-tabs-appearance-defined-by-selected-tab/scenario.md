@@ -1,10 +1,10 @@
-# Test Scenario: Tab Bar Appearance Per Selected Tab
+# Test Scenario: Tab-Specific Appearance
 
 ## Details
 
 **Description:** Verifies that each tab can independently define its own
-tab bar visual appearance via per-tab `standardAppearance` and
-`scrollEdgeAppearance` (iOS) or `standardAppearance` (Android) options,
+tab bar visual appearance via per-tab `scrollEdgeAppearance` (iOS) or
+`standardAppearance` (Android) options,
 and that the tab bar updates to reflect the currently selected tab's
 configured appearance whenever the active tab changes.
 
@@ -52,7 +52,7 @@ a pattern that applies across all green, blue, yellow, and red tab elements.
 ### Baseline
 
 1. Launch the app and navigate to the
-   **Tab Bar Appearance Per Selected Tab** screen.
+   **Tab-Specific Appearance** screen.
 
 - [ ] **Tab1** is selected; the screen shows the label "Tab1" and
   three "Select tab N" buttons.
@@ -119,7 +119,7 @@ icons and titles are blue.
 ### Baseline
 
 1. Launch the app and navigate to the
-   **Tab Bar Appearance Per Selected Tab** screen.
+   **Tab-Specific Appearance** screen.
 
 - [ ] **Tab1** is selected; the screen shows the label "Tab1" and
   three "Select tab N" buttons.
