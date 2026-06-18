@@ -7,6 +7,7 @@ import com.facebook.react.viewmanagers.RNSFormSheetHostManagerInterface
 import com.facebook.react.viewmanagers.RNSFormSheetHostManagerDelegate
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.bridge.ReadableArray
+import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 
 @ReactModule(name = FormSheetHostViewManager.REACT_CLASS)
 class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheetHostManagerInterface<FormSheetHost> {
@@ -20,7 +21,7 @@ class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheet
     override fun createViewInstance(reactContext: ThemedReactContext) = FormSheetHost(reactContext)
 
     override fun setIsOpen(view: FormSheetHost, value: Boolean) {
-        // TODO: @t0maboro - implement before merging
+        view.setIsOpen(value)
     }
 
     override fun setDetents(view: FormSheetHost, value: ReadableArray?) {
@@ -54,6 +55,11 @@ class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheet
     override fun setNativeContainerBackgroundColor(view: FormSheetHost, value: Int?) {
         // TODO: @t0maboro - implement later
     }
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(FormSheetNativeDismissEvent),
+        )
 
     companion object {
         const val REACT_CLASS = "RNSFormSheetHost"
