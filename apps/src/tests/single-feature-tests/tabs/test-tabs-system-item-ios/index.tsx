@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -14,10 +20,12 @@ function StaticSystemItemScreen() {
     <View style={styles.screen}>
       <Text style={styles.label}>Static System Item</Text>
       <Text style={styles.hint}>
-        This tab uses a systemItem: `bookmarks`{'\n'}with no custom title or icon override.
+        This tab uses a systemItem: `bookmarks`{'\n'}with no custom title or
+        icon override.
         {'\n'}
         {'\n'}
-        The system-provided icon (open book) and localized title (`Bookmarks`) are displayed.
+        The system-provided icon (open book) and localized title (`Bookmarks`)
+        are displayed.
       </Text>
     </View>
   );
@@ -39,7 +47,11 @@ const INITIAL_CONFIG: RuntimeConfig = {
   icon: 'system',
 };
 
-const SYSTEM_ITEM_OPTIONS: SystemItemOption[] = ['favorites', 'history', 'search'];
+const SYSTEM_ITEM_OPTIONS: SystemItemOption[] = [
+  'favorites',
+  'history',
+  'search',
+];
 const TITLE_OPTIONS: TitleOption[] = ['system', 'custom', 'hidden'];
 const ICON_OPTIONS: IconOption[] = ['system', 'house', 'heart'];
 
@@ -80,21 +92,25 @@ function RuntimeConfigScreen() {
     setConfig(next);
     setRouteOptions(routeKey, {
       title:
-        next.title === 'custom' ? 'Custom' : next.title === 'hidden' ? '' : undefined,
+        next.title === 'custom'
+          ? 'Custom'
+          : next.title === 'hidden'
+          ? ''
+          : undefined,
       ios: {
         systemItem: next.systemItem,
         icon:
           next.icon === 'house'
             ? { type: 'sfSymbol', name: 'house' }
             : next.icon === 'heart'
-              ? { type: 'sfSymbol', name: 'heart' }
-              : undefined,
+            ? { type: 'sfSymbol', name: 'heart' }
+            : undefined,
         selectedIcon:
           next.icon === 'house'
             ? { type: 'sfSymbol', name: 'house.fill' }
             : next.icon === 'heart'
-              ? { type: 'sfSymbol', name: 'heart.fill' }
-              : undefined,
+            ? { type: 'sfSymbol', name: 'heart.fill' }
+            : undefined,
       },
     });
   };
@@ -108,8 +124,8 @@ function RuntimeConfigScreen() {
     config.title === 'custom'
       ? '"Custom"'
       : config.title === 'hidden'
-        ? "'' (hidden)"
-        : 'undefined (system)';
+      ? "'' (hidden)"
+      : 'undefined (system)';
   const iconDisplay =
     config.icon === 'system'
       ? 'system (from systemItem)'
@@ -120,7 +136,8 @@ function RuntimeConfigScreen() {
       <View style={styles.screen}>
         <Text style={styles.label}>Runtime Config</Text>
         <Text style={styles.hint}>
-          Configure systemItem, title and icon at runtime{'\n'}in different combinations.
+          Configure systemItem, title and icon at runtime{'\n'}in different
+          combinations.
         </Text>
         <Text style={styles.hint} testID="config-systemitem">
           systemItem: {`'${config.systemItem}'`}
@@ -160,8 +177,9 @@ function RuntimeConfigScreen() {
         />
 
         <Text style={styles.instructions}>
-          Mix systemItem, title and icon freely. A custom icon{'\n'}overrides the systemItem
-          icon; `system` icon falls back{'\n'}to the systemItem default (no stale image).
+          Mix systemItem, title and icon freely. A custom icon{'\n'}overrides
+          the systemItem icon; `system` icon falls back{'\n'}to the systemItem
+          default (no stale image).
         </Text>
       </View>
     </ScrollView>
@@ -192,9 +210,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return (
-    <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />
-  );
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({

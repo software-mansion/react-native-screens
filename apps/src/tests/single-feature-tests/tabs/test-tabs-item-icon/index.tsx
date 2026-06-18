@@ -12,11 +12,8 @@ import { Colors } from '@apps/shared/styling';
 function TintTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        Template Source (Host Tint)
-      </Text>
+      <Text style={styles.label}>Template Source (Host Tint)</Text>
       <Text style={styles.hint}>
-
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
         {'\n'}
@@ -26,9 +23,8 @@ function TintTab() {
         {'\n'}
         Selected: filled template image, tinted{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
-        Unselected: Titles and icons render in the system theme color. For the last tab, the icon
-        retains the black color from its source image.
-
+        Unselected: Titles and icons render in the system theme color. For the
+        last tab, the icon retains the black color from its source image.
       </Text>
     </View>
   );
@@ -37,9 +33,7 @@ function TintTab() {
 function OverrideTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        SF Symbol (Tint Color Override)
-      </Text>
+      <Text style={styles.label}>SF Symbol (Tint Color Override)</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
@@ -51,12 +45,13 @@ function OverrideTab() {
         `selectedIcon`: SF Symbol "star.fill"{'\n'}
         {'\n'}
         Selected: filled star, tinted{' '}
-        <Text style={{ color: Colors.RedLight100 }}>RED</Text>{'\n'} title on iOS18:{' '}
+        <Text style={{ color: Colors.RedLight100 }}>RED</Text>
+        {'\n'} title on iOS18:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> on iOS26:{' '}
         <Text style={{ color: Colors.RedLight100 }}>RED</Text>
         {'\n'}
-        Unselected: Titles and icons render in the system theme color. For the last tab, the icon
-        retains the black color from its source image.
+        Unselected: Titles and icons render in the system theme color. For the
+        last tab, the icon retains the black color from its source image.
       </Text>
     </View>
   );
@@ -77,20 +72,21 @@ function XcassetDrawableResourceTab() {
             {'\n'}
             Selected: filled template image, tinted{' '}
             <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
-            Unselected: Titles and icons render in the system theme color. For the last tab, the icon
-            retains the black color from its source image.
+            Unselected: Titles and icons render in the system theme color. For
+            the last tab, the icon retains the black color from its source
+            image.
           </Text>
         </>
       ) : (
         <>
           <Text style={styles.label}>Drawable Resource</Text>
           <Text style={styles.hint}>
-
             `icon`: drawableResource sym_call_missed{'\n'}
             `selectedIcon`: drawableResource sym_call_incoming{'\n'}
             `tabBarItemIconColor` is NOT set.{'\n'}
             {'\n'}
-            Both icons (for selected and unselected tabs) displayed in the system default color.
+            Both icons (for selected and unselected tabs) displayed in the
+            system default color.
           </Text>
         </>
       )}
@@ -116,14 +112,15 @@ function ImageTab() {
             `icon`: imageSource icon.png{'\n'}
             `selectedIcon`: imageSource icon_fill.png{'\n'}
             {'\n'}
-            `imageSource` icons render in their original colors and are NOT affected by `tabBarTintColor`
-            or `tabBarItemIconColor`.{'\n'}
+            `imageSource` icons render in their original colors and are NOT
+            affected by `tabBarTintColor` or `tabBarItemIconColor`.{'\n'}
             {'\n'}
             Selected: filled image in its black color (the host{' '}
-            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint is ignored).
+            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint is
+            ignored).
             {'\n'}
-            Unselected iOS18: outline icons in <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>{' '}
-            color.{'\n'}
+            Unselected iOS18: outline icons in{' '}
+            <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text> color.{'\n'}
             Unselected iOS26: icons in system theme color.
           </>
         ) : (
@@ -140,10 +137,10 @@ function ImageTab() {
             `icon`: imageSource icon.png{'\n'}
             `selectedIcon`: imageSource icon_fill.png{'\n'}
             {'\n'}
-            Selected: filled image in {' '}
+            Selected: filled image in{' '}
             <Text style={{ color: Colors.RedDark100 }}>RED</Text> color.
             {'\n'}
-            Unselected: outline icons in {' '}
+            Unselected: outline icons in{' '}
             <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> color.
             {'\n'}
             Focused (via keyboard navigation Tab key):{'\n'}
