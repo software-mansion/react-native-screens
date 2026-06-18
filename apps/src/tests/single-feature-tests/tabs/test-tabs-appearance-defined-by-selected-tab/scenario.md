@@ -24,6 +24,7 @@ platform, making automated assertion infeasible.
 ## Prerequisites
 
 - iOS simulator or device (iOS 18 and/or iOS 26).
+- The iPhone in portrait orientation is the primary verification surface (stacked layout).
 - Android emulator or physical device.
 
 ## Note
