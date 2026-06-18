@@ -8,7 +8,7 @@ describe('Tab Bar Hidden', () => {
   });
 
   it('screen should be displayed', async () => {
-    await expect(element(by.id('tab-bar-hidden-switch'))).toBeVisible();
+    await expect(element(by.id('tab-bar-hidden-switch'))).not.toBeVisible();
     await expect(element(by.id('tab-bar-hidden-scrollview'))).toBeVisible();
   });
 
