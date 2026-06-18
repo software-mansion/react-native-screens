@@ -2,8 +2,8 @@ import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
   name: 'Tabs Screen Orientation',
-  key: 'tabs-screen-orientation',
-  platforms: ['ios', 'android'],
+  key: 'test-tabs-screen-orientation',
+  platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
