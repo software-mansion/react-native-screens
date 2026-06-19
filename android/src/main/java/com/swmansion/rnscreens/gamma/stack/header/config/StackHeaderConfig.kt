@@ -3,16 +3,19 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
+import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
-import com.swmansion.rnscreens.gamma.helpers.loadImage
+import com.swmansion.rnscreens.gamma.helpers.IconResolution
+import com.swmansion.rnscreens.gamma.helpers.IconResolver
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
@@ -55,34 +58,80 @@ class StackHeaderConfig(
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
-
-    private var lastResolvedDrawableIconResourceName: String? = null
-    private var lastResolvedImageIconUri: String? = null
+    private val backButtonIconResolver = IconResolver()
 
     internal fun resolveBackButtonIconIfNeeded() {
-        val name = backButtonDrawableIconResourceName
-        val uri = backButtonImageIconUri
-
-        if (name == lastResolvedDrawableIconResourceName && uri == lastResolvedImageIconUri) {
-            return
-        }
-
-        lastResolvedDrawableIconResourceName = name
-        lastResolvedImageIconUri = uri
-
-        if (name != null) {
-            backButtonIcon = getSystemDrawableResource(context, name)
-        } else if (uri != null) {
-            loadImage(context, uri) { drawable ->
-                if (uri == lastResolvedImageIconUri) {
-                    backButtonIcon = drawable
-                    // We need to call notifyConfigChanged because icons are loaded asynchronously
-                    // and regular update path might execute too early.
+        backButtonIconResolver.resolve(
+            reactContext,
+            backButtonDrawableIconResourceName,
+            backButtonImageIconUri,
+        ) { result ->
+            when (result) {
+                IconResolution.Unchanged -> Unit
+                is IconResolution.Resolved -> {
+                    backButtonIcon = result.drawable
                     notifyConfigChanged()
                 }
             }
-        } else {
-            backButtonIcon = null
+        }
+    }
+
+    internal var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
+
+    private var toolbarMenuItemIconResolvers = mapOf<String, IconResolver>()
+
+    // Last resolved icon per menu item id. Unlike every other field on this
+    // config — which mirrors a single prop — this cache deliberately merges
+    // resolved icons from BOTH sources that can set a menu item icon: the
+    // `toolbarMenuItems` prop array (resolveToolbarMenuItemIconsIfNeeded) and
+    // the imperative `setToolbarMenuItemOptions` view command
+    // (dispatchMenuItemUpdate). It is necessary to ensure consistency.
+    private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
+
+    internal fun resolveToolbarMenuItemIconsIfNeeded() {
+        val nextResolvers = mutableMapOf<String, IconResolver>()
+
+        toolbarMenuItemIconSourceMap.forEach { (id, source) ->
+            val resolver = toolbarMenuItemIconResolvers[id] ?: IconResolver()
+            nextResolvers[id] = resolver
+
+            resolver.resolve(
+                context = reactContext,
+                drawableIconResourceName = source.drawableIconResourceName,
+                imageIconUri = source.imageIconUri,
+            ) { result ->
+                val icon =
+                    when (result) {
+                        IconResolution.Unchanged -> toolbarMenuItemIcons[id]
+                        is IconResolution.Resolved -> {
+                            toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                            result.drawable
+                        }
+                    }
+
+                applyToolbarMenuItemIcon(id, icon)
+            }
+        }
+
+        toolbarMenuItemIconResolvers = nextResolvers
+        toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in toolbarMenuItemIconSourceMap }
+    }
+
+    private fun applyToolbarMenuItemIcon(
+        id: String,
+        icon: Drawable?,
+    ) {
+        val currentItems = toolbarMenuItems
+        val itemIndex = currentItems.indexOfFirst { it.id == id }
+        if (itemIndex == -1) return
+
+        val item = currentItems[itemIndex]
+        if (item.icon != icon) {
+            val newItems = currentItems.toMutableList()
+            newItems[itemIndex] = item.copy(icon = icon)
+
+            toolbarMenuItems = newItems
+            notifyConfigChanged()
         }
     }
 
@@ -142,11 +191,43 @@ class StackHeaderConfig(
         delegate?.get()?.onConfigChange(this)
     }
 
+    /**
+     * Applies a toolbar menu item view command. When the command does not touch
+     * the icon ([iconSource] is `null`) the options are delivered immediately.
+     * Otherwise, the icon is resolved first and all options — including the icon —
+     * are delivered together in a single update, so the change is applied
+     * atomically once the (possibly async) image has loaded.
+     */
     internal fun dispatchMenuItemUpdate(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
+        iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
-        delegate?.get()?.onMenuItemUpdate(id, options)
+        if (iconSource == null) {
+            delegate?.get()?.onMenuItemUpdate(id, options)
+            return
+        }
+
+        val resolver = toolbarMenuItemIconResolvers[id]
+        if (resolver == null) {
+            Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
+            delegate?.get()?.onMenuItemUpdate(id, options)
+            return
+        }
+
+        resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { result ->
+            val icon =
+                when (result) {
+                    IconResolution.Unchanged -> null // keep the current icon
+                    is IconResolution.Resolved -> {
+                        // Keep the cache in sync with the prop-array path: both share this
+                        // id's resolver.
+                        toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                        StackHeaderToolbarUpdate.from(result.drawable)
+                    }
+                }
+            delegate?.get()?.onMenuItemUpdate(id, options.copy(icon = icon))
+        }
     }
 
     override fun onStackHeaderSubviewChange() = notifyConfigChanged()
@@ -190,4 +271,8 @@ class StackHeaderConfig(
     // The order of the subviews MUST match the order of JS StackHeaderConfig children.
     internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
         listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+
+    companion object {
+        private const val TAG = "StackHeaderConfig"
+    }
 }
