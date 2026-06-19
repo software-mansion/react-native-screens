@@ -3,7 +3,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
-import TabBarAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
+import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
@@ -30,7 +30,7 @@ const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
   TestTabsStaleStateUpdateRejection,
-  TabBarAppearanceDefinedBySelectedTab,
+  TestTabsAppearanceDefinedBySelectedTab,
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
   TestTabsTabBarHidden,
