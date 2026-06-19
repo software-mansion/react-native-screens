@@ -22,6 +22,7 @@ function ConfigScreen() {
           automatically.
         </Text>
         <SettingsPicker<TabBarControllerMode>
+          testID="tab-bar-controller-mode"
           label="tabBarControllerMode"
           value={hostConfig.ios?.tabBarControllerMode ?? 'automatic'}
           onValueChange={value =>
