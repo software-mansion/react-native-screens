@@ -3,13 +3,11 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.Log
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.MenuItemCompat
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.gamma.stack.header.getResizedDrawable
 
 internal class StackHeaderToolbarMenuCoordinator(
     private val onItemClicked: (id: String) -> Unit,
@@ -99,40 +97,6 @@ internal class StackHeaderToolbarMenuCoordinator(
             iconTintColorFocused = StackHeaderToolbarUpdate.from(iconTintColorFocused),
             iconTintColorDisabled = StackHeaderToolbarUpdate.from(iconTintColorDisabled),
         )
-
-    /**
-     * Returns drawable resized to 24 dp height. Width is scaled proportionally to keep the aspect
-     * ratio.
-     *
-     * Icon size source: https://m3.material.io/components/app-bars/specs - App bar icon size
-     */
-    private fun getResizedDrawable(
-        toolbar: MaterialToolbar,
-        drawable: Drawable,
-    ): Drawable {
-        val targetHeightPx =
-            TypedValue
-                .applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    24f,
-                    toolbar.resources.displayMetrics,
-                ).toInt()
-
-        val intrinsicWidth = drawable.intrinsicWidth
-        val intrinsicHeight = drawable.intrinsicHeight
-
-        val targetWidthPx =
-            if (intrinsicWidth > 0 && intrinsicHeight > 0) {
-                val aspectRatio = intrinsicWidth.toFloat() / intrinsicHeight.toFloat()
-                (targetHeightPx * aspectRatio).toInt()
-            } else {
-                targetHeightPx
-            }
-
-        return drawable
-            .toBitmap(width = targetWidthPx, height = targetHeightPx)
-            .toDrawable(toolbar.resources)
-    }
 
     private fun getResolvedIconTintList(
         menuItem: MenuItem,

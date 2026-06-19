@@ -10,7 +10,9 @@ interface StackHeaderConfigProviding {
     val hidden: Boolean
     val transparent: Boolean
     val backButtonHidden: Boolean
-    val backButtonTintColor: Int?
+    val backButtonTintColorNormal: Int?
+    val backButtonTintColorPressed: Int?
+    val backButtonTintColorFocused: Int?
     val backButtonIcon: Drawable?
     val scrollFlagScroll: Boolean
     val scrollFlagEnterAlways: Boolean
