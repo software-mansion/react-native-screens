@@ -89,7 +89,7 @@
     // but when singleSelection is set somewhere in the parent *chain*, only one toggle in the whole hierarchy
     // can be turned on at any point in time, and the single selection root is notified, which doesn't need
     // to be a direct parent
-    // we don't send press event for toggle by desing
+    // we don't send press event for toggle by design
     if (effectiveType == RNSMenuItemTypeToggle) {
       // JS side should have sanitized this, but assert as a safety net.
       if (insideSingleSelection && itemData.initialToggleState) {

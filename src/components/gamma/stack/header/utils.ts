@@ -61,11 +61,16 @@ function walkMenuTreeAndValidateCallbacks(
 ): void {
   // If this menu starts a singleSelection hierarchy, mark it.
   // If already inside one, stay inside.
-  const isInsideSingleSelection = insideSingleSelection || menu.singleSelection;
+  const isInsideSingleSelection =
+    insideSingleSelection || !!menu.singleSelection;
 
   for (const child of menu.children) {
     if (child.type === 'menuItem') {
-      if (child.itemType === 'toggle') {
+      if (
+        (child.itemType === 'toggle' ||
+          (isInsideSingleSelection && child.itemType === 'inherit')) &&
+        child.onPress
+      ) {
         console.warn(
           `[RNScreens] onPress on menu item "${child.menuElementId}" will not fire ` +
             'because it is a toggle. Use onSelectionChanged on parent menu instead.',

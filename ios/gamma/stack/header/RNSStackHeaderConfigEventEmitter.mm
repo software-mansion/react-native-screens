@@ -22,10 +22,10 @@
   if (_reactEventEmitter != nullptr) {
     std::vector<std::string> stringIds;
     for (NSString *sid in selectedIds) {
-      stringIds.push_back(sid.cString);
+      stringIds.push_back(RCTStringFromNSString(sid));
     }
     _reactEventEmitter->onMenuSelectionChanged({
-        .menuElementId = menuElementId.cString,
+        .menuElementId = RCTStringFromNSString(menuElementId),
         .selectedMenuElementIds = std::move(stringIds),
     });
     return YES;
