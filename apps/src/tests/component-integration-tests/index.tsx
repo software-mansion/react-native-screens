@@ -10,12 +10,14 @@ import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import OrientationScenarioGroup from './orientation';
 import ScrollViewScenarioGroup from './scroll-view';
 import FormSheetScenarioGroup from './form-sheet';
+import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
   ScrollView: ScrollViewScenarioGroup,
   FormSheet: FormSheetScenarioGroup,
+  TabsInStackV5: TabsInStackV5ScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
