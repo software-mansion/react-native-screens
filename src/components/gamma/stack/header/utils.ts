@@ -38,3 +38,39 @@ export function findMenuElementById(
 
   return null;
 }
+
+export function validateMenuCallbacks(menu: StackHeaderMenu): void {
+  walkMenuTreeAndValidateCallbacks(menu, false);
+}
+
+function walkMenuTreeAndValidateCallbacks(
+  menu: StackHeaderMenu,
+  insideSingleSelection: boolean,
+): void {
+  // If this menu starts a singleSelection hierarchy, mark it.
+  // If already inside one, stay inside.
+  const isInsideSingleSelection = insideSingleSelection || menu.singleSelection;
+
+  for (const child of menu.children) {
+    if (child.type === 'menuItem') {
+      if (child.itemType === 'toggle') {
+        console.warn(
+          `[RNScreens] onPress on menu item "${child.menuElementId}" will not fire ` +
+            'because it is a toggle. Use onSelectionChanged on parent menu instead.',
+        );
+      }
+    }
+
+    if (child.type === 'menu') {
+      if (isInsideSingleSelection && child.onSelectionChanged) {
+        console.warn(
+          `[RNScreens] onSelectionChanged on menu "${child.menuElementId}" will not fire ` +
+            'because it is nested inside a singleSelection hierarchy. ' +
+            'Place onSelectionChanged on the topmost singleSelection menu instead.',
+        );
+      }
+
+      walkMenuTreeAndValidateCallbacks(child, isInsideSingleSelection ?? false);
+    }
+  }
+}
