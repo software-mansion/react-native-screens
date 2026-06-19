@@ -60,7 +60,7 @@ API_AVAILABLE(ios(26.0))
         forEnvironment:(RNSTabsBottomAccessoryEnvironment)environment;
 
 /**
- * If `contentView` is set for both environments, toggles `hidden` according to current tab accessory `environent`.
+ * If `contentView` is set for both environments, toggles `hidden` according to current tab accessory `environment`.
  * Otherwise, it is a no-op.
  */
 - (void)handleContentViewVisibilityForEnvironmentIfNeeded;
