@@ -12,7 +12,9 @@ import { Colors } from '@apps/shared/styling';
 import { SettingsPicker } from '@apps/shared';
 import type { TabsScreenAppearanceAndroid } from 'react-native-screens';
 
-type LabelVisibilityMode = NonNullable<TabsScreenAppearanceAndroid['tabBarItemLabelVisibilityMode']>;
+type LabelVisibilityMode = NonNullable<
+  TabsScreenAppearanceAndroid['tabBarItemLabelVisibilityMode']
+>;
 
 const LABEL_VISIBILITY_OPTIONS: LabelVisibilityMode[] = [
   'auto',
@@ -25,14 +27,17 @@ function DefaultTab() {
   return (
     <View style={styles.screen}>
       <Text style={styles.label}>Default configuration</Text>
-      <Text style={styles.hint}>Tab bar renders in the system default configuration.</Text>
+      <Text style={styles.hint}>
+        Tab bar renders in the system default configuration.
+      </Text>
     </View>
   );
 }
 
 function LabelTab() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
-  const [labelVisibility, setLabelVisibility] = useState<LabelVisibilityMode>('auto');
+  const [labelVisibility, setLabelVisibility] =
+    useState<LabelVisibilityMode>('auto');
 
   const onLabelVisibilityChange = useCallback(
     (value: LabelVisibilityMode) => {
@@ -51,10 +56,11 @@ function LabelTab() {
 
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        Label Visibility Mode
+      <Text style={styles.label}>Label Visibility Mode</Text>
+      <Text style={styles.hint}>
+        Only `tabBarItemLabelVisibilityMode` is defined.{'\n'} Labels follow the
+        toggled value.
       </Text>
-      <Text style={styles.hint}>Only `tabBarItemLabelVisibilityMode` is defined.{'\n'} Labels follow the toggled value.</Text>
       <SettingsPicker<LabelVisibilityMode>
         label="tabBarItemLabelVisibilityMode"
         value={labelVisibility}
@@ -68,9 +74,7 @@ function LabelTab() {
 function RippleTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        Ripple Effect
-      </Text>
+      <Text style={styles.label}>Ripple Effect</Text>
       <Text style={styles.hint}>
         `tabBarItemLabelVisibilityMode`: 'labeled'
         {'\n'}`tabBarBackgroundColor`:{' '}
@@ -89,10 +93,9 @@ function RippleTab() {
 function IndicatorTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>
-        Active Indicator Enabled
-      </Text>
-      <Text style={styles.hint}>`tabBarItemLabelVisibilityMode`: 'labeled'
+      <Text style={styles.label}>Active Indicator Enabled</Text>
+      <Text style={styles.hint}>
+        `tabBarItemLabelVisibilityMode`: 'labeled'
         {'\n'}`tabBarBackgroundColor`:{' '}
         <Text style={{ color: Colors.PurpleDark100 }}>PurpleDark100</Text>
         {'\n'}`tabBarItemRippleColor`:{' '}
@@ -167,9 +170,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 export function App() {
-  return (
-    <TabsContainer routeConfigs={ROUTE_CONFIGS} />
-  );
+  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
 const styles = StyleSheet.create({

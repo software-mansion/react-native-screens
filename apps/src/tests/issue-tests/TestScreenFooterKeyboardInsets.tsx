@@ -41,11 +41,12 @@ function Home({ navigation }: RouteProps<'Home'>) {
     <View style={styles.container}>
       <Animated.View style={[styles.probeBar, probeStyle]} />
       <Text style={styles.instructions}>
-        1. Focus the input — it should translate up with the keyboard and the top
-        red bar should grow.{'\n'}
+        1. Focus the input — it should translate up with the keyboard and the
+        top red bar should grow.{'\n'}
         2. Dismiss the keyboard, open a form sheet, close it.{'\n'}
-        3. Focus the input again — before the fix the bar stays at 0 and the input
-        no longer animates, and it never recovers for the lifetime of the process.
+        3. Focus the input again — before the fix the bar stays at 0 and the
+        input no longer animates, and it never recovers for the lifetime of the
+        process.
       </Text>
       <Button
         title="Open form sheet WITH footer"
@@ -68,10 +69,7 @@ function FormSheet({
   return (
     <View style={styles.sheetContent}>
       <Button title="Close" onPress={() => navigation.goBack()} />
-      <TextInput
-        placeholder="Focus me inside the sheet"
-        style={styles.input}
-      />
+      <TextInput placeholder="Focus me inside the sheet" style={styles.input} />
     </View>
   );
 }

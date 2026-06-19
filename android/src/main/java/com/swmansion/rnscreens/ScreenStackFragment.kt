@@ -148,19 +148,17 @@ class ScreenStackFragment :
 
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
+        notifyViewTransitionEnd()
+    }
 
-        // Rely on guards inside the callee to detect whether this was indeed appear transition.
-        notifyViewAppearTransitionEnd()
+    private fun notifyViewTransitionEnd() {
+        val screenStack = view?.parent
+        if (screenStack is ScreenStack) {
+            screenStack.onViewTransitionEnd(coordinatorLayout)
+        }
 
         // Rely on guards inside the callee to detect whether this was indeed removal transition.
         screen.endRemovalTransition()
-    }
-
-    private fun notifyViewAppearTransitionEnd() {
-        val screenStack = view?.parent
-        if (screenStack is ScreenStack) {
-            screenStack.onViewAppearTransitionEnd()
-        }
     }
 
     /**

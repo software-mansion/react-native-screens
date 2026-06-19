@@ -1,5 +1,11 @@
 import React from 'react';
-import { PlatformColor, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  PlatformColor,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
@@ -46,8 +52,8 @@ function InfoScreen() {
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.section}>
         <Text style={styles.description}>
-          Font color identifies the active bucket — read the tab bar label
-          color to confirm which layout mode iOS chose:
+          Font color identifies the active bucket — read the tab bar label color
+          to confirm which layout mode iOS chose:
         </Text>
       </View>
 
@@ -64,11 +70,14 @@ function InfoScreen() {
         </Text>
         <Text style={[styles.description]}>
           In each case, the{' '}
-          <Text style={styles.bold}>selected tab title is italic</Text>
-          , and the tab icon color uses the system default:{' '}
+          <Text style={styles.bold}>selected tab title is italic</Text>, and the
+          tab icon color uses the system default:{' '}
           <Text style={{ color: PlatformColor('systemBlue') }}>blue</Text>.
           {'\n\n'}
-          The unselected tab title font and icon color follow the system defaults: a normal font and gray or black colors. On iOS 18, the tab item label color is set to a darker shade of the selected tab title color. On iOS 26, it follows the system default.
+          The unselected tab title font and icon color follow the system
+          defaults: a normal font and gray or black colors. On iOS 18, the tab
+          item label color is set to a darker shade of the selected tab title
+          color. On iOS 26, it follows the system default.
         </Text>
       </View>
 
@@ -83,7 +92,8 @@ function InfoScreen() {
           <Text style={styles.bold}>iOS 26:</Text> The{' '}
           <Text style={styles.code}>inline</Text> bucket is not applied.{' '}
           <Text style={styles.code}>stacked</Text> and{' '}
-          <Text style={styles.code}>compactInline</Text> are honored. Expect that blue titles will never appear on iPhones running iOS 26.
+          <Text style={styles.code}>compactInline</Text> are honored. Expect
+          that blue titles will never appear on iPhones running iOS 26.
           {'\n\n'}
         </Text>
       </View>

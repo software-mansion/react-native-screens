@@ -5,6 +5,7 @@ import type {
   CodegenTypes as CT,
   HostComponent,
   ImageSource,
+  ProcessedColorValue,
   ViewProps,
 } from 'react-native';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
@@ -30,6 +31,12 @@ export interface StackHeaderToolbarMenuItemAndroid {
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
   >;
+  drawableIconResourceName?: string | null | undefined;
+  imageIconResource?: ImageSource | null | undefined;
+  iconTintColorNormal?: ProcessedColorValue | null | undefined;
+  iconTintColorPressed?: ProcessedColorValue | null | undefined;
+  iconTintColorFocused?: ProcessedColorValue | null | undefined;
+  iconTintColorDisabled?: ProcessedColorValue | null | undefined;
 }
 
 export interface NativeProps extends ViewProps {
@@ -41,7 +48,9 @@ export interface NativeProps extends ViewProps {
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;
 
-  backButtonTintColor?: ColorValue | undefined;
+  backButtonTintColorNormal?: ColorValue | undefined;
+  backButtonTintColorPressed?: ColorValue | undefined;
+  backButtonTintColorFocused?: ColorValue | undefined;
   backButtonDrawableIconResourceName?: string | undefined;
   backButtonImageIconResource?: ImageSource | undefined;
 

@@ -114,6 +114,68 @@ export interface StackHeaderToolbarMenuItemAndroid {
    * @platform android
    */
   showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
+  /**
+   * @summary Specifies the icon for the menu item.
+   *
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @remarks
+   * The icon will be visible only if the menu item is shown in the Toolbar.
+   *
+   * @platform android
+   */
+  icon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu item icon.
+   *
+   * @platform android
+   */
+  iconTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu item icon when item
+   * is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
+   * @platform android
+   */
+  iconTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu item icon when item
+   * is focused (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
+   * @platform android
+   */
+  iconTintColorFocused?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu item icon when item
+   * is disabled.
+   *
+   * @remarks
+   * Disabling menu item isn't currently supported.
+   *
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
+   * @platform android
+   */
+  iconTintColorDisabled?: ColorValue | undefined;
 }
 
 export type StackHeaderToolbarMenuItemClickedEvent = {
@@ -188,7 +250,7 @@ export interface StackHeaderConfigPropsAndroid {
    */
   trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
   /**
-   * @summary Tint color applied to the back button icon.
+   * @summary Tint color applied to the back button icon in its normal state.
    *
    * When `undefined`, the default tint color is used. This applies to the
    * native back arrow and `drawableResource` icons that have an associated
@@ -196,7 +258,30 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @platform android
    */
-  backButtonTintColor?: ColorValue | undefined;
+  backButtonTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorFocused?: ColorValue | undefined;
   /**
    * @summary Custom icon for the back button.
    *
