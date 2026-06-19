@@ -133,12 +133,14 @@ function resolveSimulatorTarget() {
   const envName = readSimulatorNameEnv();
   const envVersion = readIOSVersionEnv();
 
-  // Explicit selection via env var(s) wins and disables auto-detection.
+  // Explicit selection via env vars must be consistent.
   if (envName || envVersion) {
-    cachedTarget = {
-      name: envName ?? DEFAULT_APPLE_SIMULATOR_NAME,
-      os: envVersion ?? DEFAULT_IOS_VERSION,
-    };
+    if (!envName || !envVersion) {
+      throw new Error(
+        `Environment variables ${envVarKeys.simName} and ${envVarKeys.iosVersion} must be set together to avoid mismatched simulator targets.`,
+      );
+    }
+    cachedTarget = { name: envName, os: envVersion };
     return cachedTarget;
   }
 
