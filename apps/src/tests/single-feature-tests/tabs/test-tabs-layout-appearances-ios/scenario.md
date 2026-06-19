@@ -21,7 +21,7 @@ and the `normal` state is using system default: `tabBarItemTitleFontStyle: 'norm
 
 ## E2E test
 
-`incomplete`: All verifiable outcomes are visual — font style (italic vs.
+Incomplete: All verifiable outcomes are visual — font style (italic vs.
 normal) and font color of native tab bar item labels. Detox does not expose
 typographic attributes or color values of native `UITabBarItem` title labels,
 making automated assertion infeasible. Manual verification on a physical or
