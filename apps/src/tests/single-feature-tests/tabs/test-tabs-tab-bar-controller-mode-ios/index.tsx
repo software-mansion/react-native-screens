@@ -22,6 +22,7 @@ export function ConfigScreen() {
           automatically.
         </Text>
         <SettingsPicker<TabBarControllerMode>
+          testID="tab-bar-controller-mode-picker"
           label="tabBarControllerMode"
           value={hostConfig.ios?.tabBarControllerMode ?? 'automatic'}
           onValueChange={value =>
@@ -56,6 +57,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
+      tabBarItemTestID: 'Tab1Item',
     },
   },
   {
@@ -64,6 +66,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemTestID: 'Tab2Item',
     },
   },
 ];

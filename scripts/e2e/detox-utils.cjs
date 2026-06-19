@@ -12,6 +12,36 @@ const testButlerApkPath = isRunningCI
   : undefined;
 
 /**
+ * Appends a post-build step that forces `UIRequiresFullScreen = YES` into the
+ * built simulator bundle's Info.plist.
+ *
+ * This backs the dedicated `*.e2e` iOS configurations. Running full screen keeps
+ * the app at the regular-width size class (no Split View / Stage Manager), which
+ * makes iPad-only behavior deterministic — most importantly `tabBarControllerMode`'s
+ * `tabSidebar` and its landscape sidebar layout. The flag is patched into the
+ * compiled bundle rather than the Xcode project so the normal build stays
+ * multitasking-capable for the compact-width tests (More controller, tab bar
+ * minimize behavior, bottom accessory inline transition).
+ *
+ * The e2e apps build into a separate `derivedDataPath` (`ios/build-e2e`) so this
+ * mutation never contaminates the regular `ios/build` artifact.
+ *
+ * @param {string} buildCommand the xcodebuild command producing the bundle
+ * @param {{ applicationName: string, configuration: 'Debug' | 'Release', derivedDataPath: string }} options
+ * @returns {string}
+ */
+function withFullScreenInfoPlist(
+  buildCommand,
+  { applicationName, configuration, derivedDataPath },
+) {
+  const infoPlistPath = `${derivedDataPath}/Build/Products/${configuration}-iphonesimulator/${applicationName}.app/Info.plist`;
+  const patch =
+    `/usr/libexec/PlistBuddy -c "Set :UIRequiresFullScreen true" "${infoPlistPath}" ` +
+    `|| /usr/libexec/PlistBuddy -c "Add :UIRequiresFullScreen bool true" "${infoPlistPath}"`;
+  return `${buildCommand} && ( ${patch} )`;
+}
+
+/**
  * @typedef {import('../../FabricExample/node_modules/detox')} Detox
  */
 

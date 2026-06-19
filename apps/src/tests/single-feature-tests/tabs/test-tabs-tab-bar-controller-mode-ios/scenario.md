@@ -8,7 +8,23 @@
 
 ## E2E test
 
-TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
+Partially automated (iPad only). The suite
+`test-tabs-tab-bar-controller-mode-ios.e2e.ts` verifies that `tabBar` mode keeps
+the bottom `UITabBar` visible, that tab switching works in bar mode, and that
+`tabSidebar` mode replaces the bottom tab bar with a sidebar (asserted as the
+`UITabBar` no longer being visible while the active tab's content remains).
+
+Because `tabSidebar` only diverges on iPad at regular width, the suite is gated
+with `describeIfiPad` and self-skips on the default iPhone CI run. Run it with an
+iPad target, e.g.:
+
+```bash
+RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)" yarn test-e2e-ios
+```
+
+Not automated: the compact-width fallback steps (resizing to an iPhone-sized
+window) require Split View / window resizing, which Detox cannot drive, and the
+iPhone "simple check" steps (11–14).
 
 ## Prerequisites
 
