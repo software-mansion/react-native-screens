@@ -91,7 +91,6 @@
     // to be a direct parent
     // we don't send press event for toggle by design
     if (effectiveType == RNSMenuItemTypeToggle) {
-      // JS side should have sanitized this, but assert as a safety net.
       if (insideSingleSelection && itemData.initialToggleState) {
         RCTAssert(
             !*initialSingleSelectionStateClaimed,
@@ -124,6 +123,8 @@
                                   [selectedIds addObject:itemId];
                                 }
                               }
+
+                              // the state might be unchanged if user e.g. clicks on the same selected radio
                               if ([tracker toggleStateChanged]) {
                                 [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuElementIds:selectedIds];
                                 [tracker setToggleStateChanged:NO];
@@ -134,7 +135,7 @@
       return toggleAction;
     }
 
-    // it the type is not 'toggle', then it is a regular action button that triggers onPress instead
+    // it effective type is not 'toggle', then it is a regular action button that triggers onPress instead
     return [UIAction actionWithTitle:itemData.title
                                image:nil
                           identifier:nil
@@ -162,7 +163,6 @@
   for (id<RNSStackHeaderMenuElement> child in menu.children) {
     if ([child isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
       RNSStackHeaderMenuItemData *item = (RNSStackHeaderMenuItemData *)child;
-      // For direct-parent-only collection, check parent's singleSelection
       RNSMenuItemType effective = [self resolveItemType:item.itemType insideSingleSelection:menu.singleSelection];
       if (effective == RNSMenuItemTypeToggle) {
         [ids addObject:item.menuElementId];
@@ -186,7 +186,6 @@
   for (id<RNSStackHeaderMenuElement> child in menu.children) {
     if ([child isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
       RNSStackHeaderMenuItemData *item = (RNSStackHeaderMenuItemData *)child;
-      // Inside singleSelection hierarchy insideSingleSelection is always YES
       RNSMenuItemType effective = [self resolveItemType:item.itemType insideSingleSelection:insideSingleSelection];
       if (effective == RNSMenuItemTypeToggle) {
         [ids addObject:item.menuElementId];
