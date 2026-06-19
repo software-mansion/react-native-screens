@@ -7,9 +7,6 @@ import TabBarAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
-import TabsScreenOrientationScenario from './tabs-screen-orientation';
-import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
-import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets-android';
 import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
@@ -36,7 +33,6 @@ const scenarios = {
   TabBarAppearanceDefinedBySelectedTab,
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
-  TestTabsAppearanceDefinedBySelectedTab,
   TestTabsTabBarHidden,
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
