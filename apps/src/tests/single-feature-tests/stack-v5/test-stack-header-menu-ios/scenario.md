@@ -44,6 +44,6 @@ TBD
   - [ ] No toast is displayed
 10. Click on SubSubmenu with Radio, click on Radio 1-2
   - [ ] Whole menu is hidden
-  - [ ] A toast "Selected unique Radio 1-2" is displayed
+  - [ ] A toast "Selected unique "radio 1-2"" is displayed
   - [ ] When Menu 1 > Submenu with Radio is reopened, Radio 1-1 is no longer checked
   - [ ] When Menu 1 > Submenu with Radio > SubSubmenu with Radio is reopened, Radio 1-2 is checked

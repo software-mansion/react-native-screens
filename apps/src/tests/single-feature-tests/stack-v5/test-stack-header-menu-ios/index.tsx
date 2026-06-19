@@ -82,7 +82,7 @@ function buildHeaderConfig(
             title: `Submenu with Radio`,
             singleSelection: true,
             onSelectionChanged: selection =>
-              showToast(`Selected unique: ${selection}`),
+              showToast(`Selected unique "${selection}"`),
             children: [
               {
                 id: `radio-${i}-1`,
