@@ -15,7 +15,11 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
+import {
+  findMenuElementByIdInItems,
+  sanitizeMenuInitialToggleStates,
+  validateMenuCallbacks,
+} from './utils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -68,15 +72,25 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     [leadingItems, trailingItems],
   );
 
+  // Sanitize before render so native component receives correct initial toggle states.
+  // Must run before JSX return — useEffect would be too late.
+  const allMenuItems = [
+    ...(leadingItems ?? []),
+    ...(trailingItems ?? []),
+  ].filter(it => it && it.type === 'item');
+  for (const item of allMenuItems) {
+    if ('menu' in item && item.menu) {
+      sanitizeMenuInitialToggleStates(item.menu);
+    }
+  }
+
   useEffect(() => {
-    const allItems = [...(leadingItems ?? []), ...(trailingItems ?? [])].filter(
-      it => it && it.type === 'item',
-    );
-    for (const item of allItems) {
+    for (const item of allMenuItems) {
       if ('menu' in item && item.menu) {
         validateMenuCallbacks(item.menu);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leadingItems, trailingItems]);
 
   return (

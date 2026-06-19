@@ -12,27 +12,33 @@
 #if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
   if (@available(tvOS 17.0, *)) {
     item.menu = [self buildMenuFromData:data
-                 withMenuEventsDelegate:delegate
-                           stateTracker:tracker
-                    singleSelectionRoot:nil];
+                    withMenuEventsDelegate:delegate
+                              stateTracker:tracker
+                       singleSelectionRoot:nil
+        initialSingleSelectionStateClaimed:NULL];
   }
 #endif // !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
 }
 
 + (UIMenu *)buildMenuFromData:(RNSStackHeaderMenuData *)data
-       withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
-                 stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
-          singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
+                withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
+                          stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                   singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
+    initialSingleSelectionStateClaimed:(BOOL *)initialSingleSelectionStateClaimed
 {
   // Resolve singleSelection root: first menu in hierarchy with singleSelection becomes the root.
   // Once inside a singleSelection hierarchy, all descendants inherit it.
   // Only the root is set the singleSelection option - less things to check if sth goes wrong
   // and it shouldn't change the behavior
+  // There can be at most one element with initialToggleState and we're checking that with
+  // initialSingleSelectionStateClaimed
   UIMenuOptions options = 0;
   RNSStackHeaderMenuData *resolvedRoot = singleSelectionRoot;
+  BOOL newInitialSingleSelectionStateClaimed = NO;
   if (resolvedRoot == nil && data.singleSelection) {
     options |= UIMenuOptionsSingleSelection;
     resolvedRoot = data;
+    initialSingleSelectionStateClaimed = &newInitialSingleSelectionStateClaimed;
   }
 
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray arrayWithCapacity:data.children.count];
@@ -41,7 +47,8 @@
                                  withMenuEventsDelegate:delegate
                                            stateTracker:tracker
                                              parentMenu:data
-                                    singleSelectionRoot:resolvedRoot];
+                                    singleSelectionRoot:resolvedRoot
+                     initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed];
     if (element != nil) {
       [elements addObject:element];
     }
@@ -55,12 +62,14 @@
                                     stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
                                       parentMenu:(RNSStackHeaderMenuData *)parentMenu
                              singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
+              initialSingleSelectionStateClaimed:(BOOL *)initialSingleSelectionStateClaimed
 {
   if ([element isKindOfClass:[RNSStackHeaderMenuData class]]) {
     return [self buildMenuFromData:(RNSStackHeaderMenuData *)element
-            withMenuEventsDelegate:delegate
-                      stateTracker:tracker
-               singleSelectionRoot:singleSelectionRoot];
+                    withMenuEventsDelegate:delegate
+                              stateTracker:tracker
+                       singleSelectionRoot:singleSelectionRoot
+        initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed];
   }
 
   if ([element isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
@@ -82,6 +91,14 @@
     // to be a direct parent
     // we don't send press event for toggle by desing
     if (effectiveType == RNSMenuItemTypeToggle) {
+      // JS side should have sanitized this, but assert as a safety net.
+      if (insideSingleSelection && itemData.initialToggleState) {
+        RCTAssert(
+            !*initialSingleSelectionStateClaimed,
+            @"[RNScreens] Multiple items with initialToggleState=YES in singleSelection menu hierarchy starting from \"%@\".",
+            singleSelectionRoot.menuElementId);
+        *initialSingleSelectionStateClaimed = YES;
+      }
       BOOL isOn = [tracker getToggleStateForItemWithId:itemData.menuElementId initialState:itemData.initialToggleState];
 
       NSArray<NSString *> *toggleItemsIds = insideSingleSelection
