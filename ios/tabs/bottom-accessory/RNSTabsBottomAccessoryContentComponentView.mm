@@ -42,19 +42,6 @@ namespace react = facebook::react;
   }
 }
 
-// `RCTViewComponentView` uses this deprecated callback to invalidate layer when trait collection
-// `hasDifferentColorAppearanceComparedToTraitCollection`. This updates opacity which breaks our
-// content view switching workaround. To mitigate this, we update content view visibility after
-// RCTViewComponentView handles the change. We need to use the same deprecated callback as it's
-// called after callbacks registered via the new API.
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
-{
-  [super traitCollectionDidChange:previousTraitCollection];
-  if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-    [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
-  }
-}
-
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - RCTViewComponentViewProtocol
@@ -73,20 +60,6 @@ namespace react = facebook::react;
   }
 
   [super updateProps:props oldProps:oldProps];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  [super finalizeUpdates:updateMask];
-
-  // In finalize updates, `invalidateLayer` is called. It resets `view.layer.opacity`
-  // which we use to switch visible bottom accessory content view. In order to mitigate
-  // this, we update visibility after `[super finalizeUpdates:updateMask]`. Without this,
-  // both content views are visible on first render. It does not happen on subsequent
-  // renders because `updateState` is called before trait changes but there might be other
-  // cases when `finalizeUpdates` will run so to make sure that we maintain correct
-  // visibility, we call `handleContentViewVisibilityForEnvironmentIfNeeded` here.
-  [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

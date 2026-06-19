@@ -71,12 +71,12 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
   switch (self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment) {
     case UITabAccessoryEnvironmentInline:
-      _regularContentView.layer.opacity = 0.0;
-      _inlineContentView.layer.opacity = 1.0;
+      _regularContentView.hidden = YES;
+      _inlineContentView.hidden = NO;
       break;
     default:
-      _regularContentView.layer.opacity = 1.0;
-      _inlineContentView.layer.opacity = 0.0;
+      _regularContentView.hidden = NO;
+      _inlineContentView.hidden = YES;
       break;
   }
 }
