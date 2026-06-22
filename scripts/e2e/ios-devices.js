@@ -197,6 +197,22 @@ function pickPreferredSimulator(simulators) {
 }
 
 /**
+ * Lists installed OS versions for a device name (for validation errors).
+ * @param {InstalledSimulator[]} simulators
+ * @param {string} name
+ * @return {string}
+ */
+function describeAvailabilityForName(simulators, name) {
+  const versions = [
+    ...new Set(simulators.filter(sim => sim.name === name).map(sim => sim.os)),
+  ].sort((a, b) => compareIOSVersions(a, b));
+  if (versions.length > 0) {
+    return `"${name}" is installed with: ${versions.join(', ')}.`;
+  }
+  return `No installed simulator is named "${name}".`;
+}
+
+/**
  * @typedef {{ name: string, os: `iOS ${string}` }} SimulatorTarget
  */
 
@@ -232,11 +248,6 @@ function computeSimulatorTarget() {
   const envName = readSimulatorNameEnv();
   const envVersion = readIOSVersionEnv();
 
-  // 1a. Both provided - honor verbatim, no probing needed.
-  if (envName && envVersion) {
-    return { name: envName, os: envVersion };
-  }
-
   // For non-iOS configurations the returned values are unused by Detox, so we
   // avoid shelling out to `simctl` and just echo defaults/env pieces.
   if (!isIOSSimulatorConfig()) {
@@ -247,6 +258,22 @@ function computeSimulatorTarget() {
   }
 
   const simulators = listInstalledSimulators();
+
+  // 1a. Both provided - validate the exact device + OS instance exists, since
+  // Detox (via applesimutils) only matches existing simulators.
+  if (envName && envVersion) {
+    const exists = simulators.some(
+      sim => sim.name === envName && sim.os === envVersion,
+    );
+    if (!exists && simulators.length > 0) {
+      throw new Error(
+        `Requested simulator "${envName}" (${envVersion}) is not installed. ` +
+          `${describeAvailabilityForName(simulators, envName)} ` +
+          `List devices with: xcrun simctl list devices available`,
+      );
+    }
+    return { name: envName, os: envVersion };
+  }
 
   // 1b. Model only - pick its latest installed OS, else fall back to default OS.
   if (envName) {
