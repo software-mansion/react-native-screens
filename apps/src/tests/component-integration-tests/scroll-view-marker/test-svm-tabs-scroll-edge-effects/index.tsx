@@ -4,14 +4,14 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import {
   DEFAULT_TAB_ROUTE_OPTIONS,
-  TabRouteConfig,
+  type TabRouteConfig,
   TabsContainer,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
-import { ScrollEdgeEffect } from 'react-native-screens';
+import { type ScrollEdgeEffect } from 'react-native-screens';
 
 export function App() {
   return <TabsNavigation />;
