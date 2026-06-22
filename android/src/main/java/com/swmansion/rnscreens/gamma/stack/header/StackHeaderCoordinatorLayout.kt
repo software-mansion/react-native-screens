@@ -295,7 +295,7 @@ internal class StackHeaderCoordinatorLayout(
     // region Teardown
 
     internal fun tearDown() {
-        resetHeader()
+        removeHeader()
 
         stackScreenWrapper.removeView(stackScreen)
 
