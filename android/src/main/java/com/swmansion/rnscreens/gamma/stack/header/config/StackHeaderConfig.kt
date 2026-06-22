@@ -47,20 +47,18 @@ class StackHeaderConfig(
         configObserver = observer
     }
 
-    private var pendingFlags = StackHeaderUpdateFlags.NONE
+    override var invalidationFlags = StackHeaderInvalidationFlags.ALL
 
-    private fun invalidate(flags: StackHeaderUpdateFlags) {
-        pendingFlags = pendingFlags or flags
+    private fun invalidate(flags: StackHeaderInvalidationFlags) {
+        invalidationFlags = invalidationFlags or flags
     }
 
     private fun flushUpdates() {
-        if (configObserver == null || pendingFlags.isEmpty) {
+        if (configObserver == null || invalidationFlags.isEmpty) {
             return
         }
 
-        val snapshot = pendingFlags
-        configObserver?.onConfigChanged(this, snapshot)
-        pendingFlags = StackHeaderUpdateFlags.NONE
+        configObserver?.onConfigChanged(this)
     }
 
     // endregion
@@ -68,78 +66,78 @@ class StackHeaderConfig(
     // region Properties
 
     override var type: StackHeaderType by Delegates.observable(StackHeaderType.SMALL) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
     }
         internal set
 
     override var title: String by Delegates.observable("") { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.TITLE)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE)
     }
         internal set
 
     override var hidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
     }
         internal set
 
     override var transparent: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.STRUCTURE)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
     }
         internal set
 
     override var backButtonHidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
     }
         internal set
 
     override var backButtonTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
     }
         internal set
 
     override var backButtonTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
     }
         internal set
 
     override var backButtonTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
     }
         internal set
 
     override var backButtonIcon: Drawable? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderUpdateFlags.BACK_BUTTON)
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
     }
         internal set
 
     override var scrollFlagScroll: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
         internal set
 
     override var scrollFlagEnterAlways: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
         internal set
 
     override var scrollFlagEnterAlwaysCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
         internal set
 
     override var scrollFlagExitUntilCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
         internal set
 
     override var scrollFlagSnap: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderUpdateFlags.SCROLL_FLAGS)
+        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
         internal set
 
     override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
         by Delegates.observable(emptyList()) { _, old, new ->
-            if (old != new) invalidate(StackHeaderUpdateFlags.TOOLBAR_MENU)
+            if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
         }
         internal set
 
@@ -243,27 +241,27 @@ class StackHeaderConfig(
     // region Subviews
 
     override var backgroundSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
     }
         private set
 
     override var leadingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
     }
         private set
 
     override var centerSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
     }
         private set
 
     override var trailingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
     }
         private set
 
     override fun onStackHeaderSubviewChanged() {
-        invalidate(StackHeaderUpdateFlags.SUBVIEWS)
+        invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
     }
 
     internal fun addConfigSubview(headerSubview: StackHeaderSubview) {
@@ -425,7 +423,7 @@ class StackHeaderConfig(
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
-        pendingFlags = StackHeaderUpdateFlags.NONE
+        invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
     }
 

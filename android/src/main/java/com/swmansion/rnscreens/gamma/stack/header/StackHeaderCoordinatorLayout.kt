@@ -14,7 +14,7 @@ import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAt
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationObserver
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
-import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderUpdateFlags
+import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -49,7 +49,7 @@ internal class StackHeaderCoordinatorLayout(
 
         if (provider != null) {
             provider.setConfigurationObserver(configObserver)
-            processUpdate(provider, StackHeaderUpdateFlags.ALL)
+            processUpdate(provider)
         } else {
             removeHeader()
         }
@@ -61,10 +61,7 @@ internal class StackHeaderCoordinatorLayout(
 
     private val configObserver =
         object : StackHeaderConfigurationObserver {
-            override fun onConfigChanged(
-                config: StackHeaderConfigurationProviding,
-                flags: StackHeaderUpdateFlags,
-            ) = processUpdate(config, flags)
+            override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
 
             override fun onMenuItemUpdated(
                 id: String,
@@ -172,13 +169,8 @@ internal class StackHeaderCoordinatorLayout(
         activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
-    private fun processUpdate(
-        provider: StackHeaderConfigurationProviding,
-        flags: StackHeaderUpdateFlags,
-    ) {
-        var activeFlags = flags
-
-        if (activeFlags.needsRebuild) {
+    private fun processUpdate(provider: StackHeaderConfigurationProviding) {
+        if (provider.invalidationFlags.needsRebuild) {
             resetHeader()
             if (!provider.hidden) {
                 val appBar = applicator.rebuild(this, provider)
@@ -188,24 +180,41 @@ internal class StackHeaderCoordinatorLayout(
                 removeContentBehavior()
                 requestLayout()
             }
-            activeFlags =
-                StackHeaderUpdateFlags.ALL.clearing(
-                    StackHeaderUpdateFlags.STRUCTURE or StackHeaderUpdateFlags.SUBVIEWS,
+
+            // If config needs to be rebuilt, all other flags must be invalidated as well.
+            provider.invalidationFlags =
+                StackHeaderInvalidationFlags.ALL.clearing(
+                    StackHeaderInvalidationFlags.STRUCTURE or StackHeaderInvalidationFlags.SUBVIEWS,
                 )
         }
 
         val appBar = appBarLayout
         if (appBar != null) {
-            if (activeFlags.containsAny(StackHeaderUpdateFlags.TITLE)) {
+            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
                 applicator.applyTitle(appBar, provider)
+                provider.invalidationFlags =
+                    provider.invalidationFlags.clearing(
+                        StackHeaderInvalidationFlags.TITLE,
+                    )
             }
-            if (activeFlags.containsAny(StackHeaderUpdateFlags.BACK_BUTTON)) {
+
+            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
                 applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
+                provider.invalidationFlags =
+                    provider.invalidationFlags.clearing(
+                        StackHeaderInvalidationFlags.BACK_BUTTON,
+                    )
             }
-            if (activeFlags.containsAny(StackHeaderUpdateFlags.SCROLL_FLAGS)) {
+
+            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.SCROLL_FLAGS)) {
                 applicator.applyScrollFlags(appBar, provider)
+                provider.invalidationFlags =
+                    provider.invalidationFlags.clearing(
+                        StackHeaderInvalidationFlags.SCROLL_FLAGS,
+                    )
             }
-            if (activeFlags.containsAny(StackHeaderUpdateFlags.TOOLBAR_MENU)) {
+
+            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 val (fwd, rev) =
                     applicator.rebuildToolbarMenu(
                         appBar.toolbar,
@@ -213,6 +222,10 @@ internal class StackHeaderCoordinatorLayout(
                     ) { id -> currentDelegate?.onMenuItemClicked(id) }
                 toolbarMenuForwardIdMap = fwd
                 toolbarMenuReverseIdMap = rev
+                provider.invalidationFlags =
+                    provider.invalidationFlags.clearing(
+                        StackHeaderInvalidationFlags.TOOLBAR_MENU,
+                    )
             }
         }
 

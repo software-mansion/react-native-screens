@@ -62,7 +62,7 @@ class StackScreen(
     internal fun onContentYOriginChanged(y: Int) {
         shadowStateProxy.updateStateIfNeeded(
             density = resources.displayMetrics.density,
-            contentOffsetY = y
+            contentOffsetY = y,
         )
     }
 
@@ -76,7 +76,7 @@ class StackScreen(
         shadowStateProxy.updateStateIfNeeded(
             density = resources.displayMetrics.density,
             frameWidth = r - l,
-            frameHeight = b - t
+            frameHeight = b - t,
         )
     }
 
