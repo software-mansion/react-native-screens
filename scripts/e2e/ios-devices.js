@@ -211,7 +211,7 @@ let cachedTarget;
  * 1. User input (`RNS_APPLE_SIM_NAME` / `RNS_IOS_VERSION`). Either may be given
  *    on its own: a lone model picks its latest installed OS, a lone version
  *    picks the first installed device on that OS.
- * 2. An already-booted simulator.
+ * 2. An already-booted simulator (the newest version when several are booted).
  * 3. The default hardcoded device/version, when an instance of it is installed.
  * 4. The newest installed simulator (preferring iPhone models).
  *
@@ -271,22 +271,21 @@ function computeSimulatorTarget() {
     };
   }
 
-  // 2. An already-booted simulator (prefer the default when it is booted).
+  // 2. An already-booted simulator. When several are booted, use the one with
+  // the newest iOS version (preferring iPhone on a tie) - a newer booted
+  // simulator wins even over the default.
   const booted = simulators.filter(sim => sim.booted);
   if (booted.length > 0) {
-    const defaultBooted = booted.find(
-      sim =>
-        sim.name === DEFAULT_APPLE_SIMULATOR_NAME &&
-        sim.os === DEFAULT_IOS_VERSION,
-    );
-    if (defaultBooted) {
-      return { name: defaultBooted.name, os: defaultBooted.os };
+    const chosen = pickPreferredSimulator(booted);
+    const isDefault =
+      chosen.name === DEFAULT_APPLE_SIMULATOR_NAME &&
+      chosen.os === DEFAULT_IOS_VERSION;
+    if (!isDefault) {
+      console.log(
+        `Using booted simulator "${chosen.name}" (${chosen.os}).`,
+      );
     }
-    console.log(
-      `Default simulator "${DEFAULT_APPLE_SIMULATOR_NAME}" (${DEFAULT_IOS_VERSION}) is not booted. ` +
-        `Using booted simulator "${booted[0].name}" (${booted[0].os}) instead.`,
-    );
-    return { name: booted[0].name, os: booted[0].os };
+    return { name: chosen.name, os: chosen.os };
   }
 
   // 3. The default hardcoded device/version, when an instance of it actually
