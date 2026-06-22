@@ -41,7 +41,6 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
         ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
       );
-      console.log(event.nativeEvent.menuItemId);
       const menuElement = findMenuElementByIdInItems(
         items,
         event.nativeEvent.menuItemId,
