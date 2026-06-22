@@ -61,6 +61,15 @@ class StackHostViewManager :
         super.onDropViewInstance(view)
     }
 
+    /**
+     * StackScreens need to be positioned by **native** layout **initiated by** StackHost's layout
+     * from Yoga but **not by using the dimensions provided to StackScreen by Yoga directly**.
+     * Otherwise, we receive outdated layout from Yoga, e.g. after an orientation change.
+     * If we set this flag to true, we receive incorrect measure but layout won't be called. Next
+     * native layout traversal will remeasure the view and apply correct layout.
+     */
+    override fun needsCustomLayoutForChildren() = true
+
     companion object {
         const val REACT_CLASS = "RNSStackHost"
     }
