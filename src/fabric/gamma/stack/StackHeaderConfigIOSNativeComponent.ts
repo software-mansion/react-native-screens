@@ -6,8 +6,8 @@ import { codegenNativeComponent } from 'react-native';
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
 export type MenuSelectionChangedEvent = Readonly<{
-  menuElementId: string;
-  selectedMenuElementIds: string[];
+  menuId: string;
+  selectedMenuItemIds: string[];
 }>;
 
 export interface NativeProps extends ViewProps {

@@ -1,4 +1,7 @@
-import { StackHeaderMenuElementIOS } from './ios/StackHeaderMenu.ios.types';
+import {
+  StackHeaderMenuElementIOS,
+  StackHeaderMenuIOS,
+} from './ios/StackHeaderMenu.ios.types';
 import { SupportsMenuIOS } from './StackHeaderConfig.ios.types';
 
 export function findMenuElementByIdInItems(
@@ -39,7 +42,7 @@ export function findMenuElementById(
   return null;
 }
 
-export function validateMenuCallbacks(menu: StackHeaderMenu): void {
+export function validateMenuCallbacks(menu: StackHeaderMenuIOS): void {
   walkMenuTreeAndValidateCallbacks(menu, false);
 }
 
@@ -51,12 +54,14 @@ export function validateMenuCallbacks(menu: StackHeaderMenu): void {
  *
  * Must be called before the menu data reaches the native component.
  */
-export function sanitizeMenuInitialToggleStates(menu: StackHeaderMenu): void {
+export function sanitizeMenuInitialToggleStates(
+  menu: StackHeaderMenuIOS,
+): void {
   walkMenuTreeAndSanitizeInitialToggleStates(menu, false, null);
 }
 
 function walkMenuTreeAndValidateCallbacks(
-  menu: StackHeaderMenu,
+  menu: StackHeaderMenuIOS,
   insideSingleSelection: boolean,
 ): void {
   // If this menu starts a singleSelection hierarchy, mark it.
@@ -72,7 +77,7 @@ function walkMenuTreeAndValidateCallbacks(
         child.onPress
       ) {
         console.warn(
-          `[RNScreens] onPress on menu item "${child.menuElementId}" will not fire ` +
+          `[RNScreens] onPress on menu item "${child.id}" will not fire ` +
             'because it is a toggle. Use onSelectionChanged on parent menu instead.',
         );
       }
@@ -81,7 +86,7 @@ function walkMenuTreeAndValidateCallbacks(
     if (child.type === 'menu') {
       if (isInsideSingleSelection && child.onSelectionChanged) {
         console.warn(
-          `[RNScreens] onSelectionChanged on menu "${child.menuElementId}" will not fire ` +
+          `[RNScreens] onSelectionChanged on menu "${child.id}" will not fire ` +
             'because it is nested inside a singleSelection hierarchy. ' +
             'Place onSelectionChanged on the topmost singleSelection menu instead.',
         );
@@ -93,7 +98,7 @@ function walkMenuTreeAndValidateCallbacks(
 }
 
 function walkMenuTreeAndSanitizeInitialToggleStates(
-  menu: StackHeaderMenu,
+  menu: StackHeaderMenuIOS,
   insideSingleSelection: boolean,
   initialSingleSelectionStateClaimed: { claimed: boolean } | null,
 ): void {
@@ -116,7 +121,7 @@ function walkMenuTreeAndSanitizeInitialToggleStates(
           console.warn(
             `[RNScreens] Multiple items with initialToggleState: true in singleSelection ` +
               `menu. Only the first one will be honored. ` +
-              `Item "${child.menuElementId}" will be initialized as off.`,
+              `Item "${child.id}" will be initialized as off.`,
           );
           child.initialToggleState = false;
         } else {

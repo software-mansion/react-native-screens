@@ -17,7 +17,7 @@
   }
 }
 
-- (BOOL)emitOnMenuSelectionChanged:(NSString *)menuElementId selectedMenuElementIds:(NSArray<NSString *> *)selectedIds
+- (BOOL)emitOnMenuSelectionChanged:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
 {
   if (_reactEventEmitter != nullptr) {
     std::vector<std::string> stringIds;
@@ -25,8 +25,8 @@
       stringIds.push_back(RCTStringFromNSString(sid));
     }
     _reactEventEmitter->onMenuSelectionChanged({
-        .menuElementId = RCTStringFromNSString(menuElementId),
-        .selectedMenuElementIds = std::move(stringIds),
+        .menuId = RCTStringFromNSString(menuId),
+        .selectedMenuItemIds = std::move(stringIds),
     });
     return YES;
   } else {

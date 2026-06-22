@@ -8,11 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readwrite) BOOL toggleStateChanged;
 
-- (BOOL)getToggleStateForItemWithId:(NSString *)menuElementId initialState:(BOOL)initialState;
+- (BOOL)getToggleStateForItemWithId:(NSString *)menuItemId initialState:(BOOL)initialState;
 
-- (BOOL)toggleItemWithId:(NSString *)menuElementId;
+- (BOOL)toggleItemWithId:(NSString *)menuId;
 
-- (void)selectItemWithId:(NSString *)menuElementId fromIds:(NSArray<NSString *> *)allItemIdsInMenu;
+- (void)selectItemWithId:(NSString *)menuId fromIds:(NSArray<NSString *> *)allItemIdsInMenu;
 
 @end
 

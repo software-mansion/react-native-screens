@@ -50,6 +50,8 @@ function buildHeaderConfig(
       menu: {
         type: 'menu',
         id: `menu-${i}`,
+        onSelectionChanged: selection =>
+          showToast('Selected "' + selection.join('", "') + '"'),
         children: [
           {
             id: `subitem-${i}-1`,
@@ -65,13 +67,13 @@ function buildHeaderConfig(
             title: `Toggle ${i}-1`,
           },
           {
-            menuElementId: `toggle-${i}-2`,
+            id: `toggle-${i}-2`,
             type: 'menuItem',
             itemType: 'toggle',
             title: `Toggle ${i}-2`,
           },
           {
-            menuElementId: `toggle-${i}-3`,
+            id: `toggle-${i}-3`,
             type: 'menuItem',
             itemType: 'toggle',
             title: `Toggle ${i}-3`,

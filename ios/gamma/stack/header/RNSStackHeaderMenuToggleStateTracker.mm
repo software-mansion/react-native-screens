@@ -18,31 +18,31 @@
  For singleSelection menus, only one item should have initialState set to true.
  This is enforced by JS-side and validated by an RCTAssert in RNSStackHeaderMenuCoordinator during menu build.
  */
-- (BOOL)getToggleStateForItemWithId:(NSString *)menuElementId initialState:(BOOL)initialState
+- (BOOL)getToggleStateForItemWithId:(NSString *)menuId initialState:(BOOL)initialState
 {
-  NSNumber *existing = _states[menuElementId];
+  NSNumber *existing = _states[menuId];
   if (existing != nil) {
     return existing.boolValue;
   }
-  _states[menuElementId] = @(initialState);
+  _states[menuId] = @(initialState);
   return initialState;
 }
 
-- (BOOL)toggleItemWithId:(NSString *)menuElementId
+- (BOOL)toggleItemWithId:(NSString *)menuItemId
 {
-  NSNumber *existing = _states[menuElementId];
+  NSNumber *existing = _states[menuItemId];
   BOOL newValue = !(existing != nil ? existing.boolValue : NO);
-  _states[menuElementId] = @(newValue);
+  _states[menuItemId] = @(newValue);
   _toggleStateChanged = YES;
   return newValue;
 }
 
-- (void)selectItemWithId:(NSString *)menuElementId fromIds:(NSArray<NSString *> *)allItemIdsInMenu
+- (void)selectItemWithId:(NSString *)menuItemId fromIds:(NSArray<NSString *> *)allItemIdsInMenu
 {
   BOOL givenItemIsSelected = NO;
-  _toggleStateChanged = ![_states[menuElementId] boolValue];
+  _toggleStateChanged = ![_states[menuItemId] boolValue];
   for (NSString *itemId in allItemIdsInMenu) {
-    if ([itemId isEqualToString:menuElementId]) {
+    if ([itemId isEqualToString:menuItemId]) {
       _states[itemId] = @(YES);
       givenItemIsSelected = YES;
     } else {
@@ -51,7 +51,7 @@
   }
 
   RCTAssert(
-      givenItemIsSelected, @"[RNScreens] Attempt to select item \"%@\" that is not present in the list", menuElementId);
+      givenItemIsSelected, @"[RNScreens] Attempt to select item \"%@\" that is not present in the list", menuItemId);
 }
 
 @end

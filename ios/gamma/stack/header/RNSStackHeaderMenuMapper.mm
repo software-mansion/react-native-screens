@@ -67,9 +67,8 @@
 + (void)validateMenuKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] ||
-                  [key isEqualToString:@"title"] || [key isEqualToString:@"children"] ||
-                  [key isEqualToString:@"singleSelection"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
+                  [key isEqualToString:@"children"] || [key isEqualToString:@"singleSelection"],
               @"[RNScreens] Invalid key \"%@\" found in menu",
               key);
   }
@@ -80,9 +79,8 @@
 + (void)validateMenuItemKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] ||
-                  [key isEqualToString:@"title"] || [key isEqualToString:@"itemType"] ||
-                  [key isEqualToString:@"initialToggleState"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
+                  [key isEqualToString:@"itemType"] || [key isEqualToString:@"initialToggleState"],
               @"[RNScreens] Invalid key \"%@\" found in menu item",
               key);
   }

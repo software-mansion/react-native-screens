@@ -130,9 +130,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [_reactEventEmitter emitOnMenuItemPress:menuItemId];
 }
 
-- (void)didChangeSelectionForMenu:(NSString *)menuElementId selectedMenuElementIds:(NSArray<NSString *> *)selectedIds
+- (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
 {
-  [_reactEventEmitter emitOnMenuSelectionChanged:menuElementId selectedMenuElementIds:selectedIds];
+  [_reactEventEmitter emitOnMenuSelectionChanged:menuId selectedMenuItemIds:selectedIds];
   // UIKit doesn't update UIAction.state after tap — rebuild menu so tracker state is reflected
   [self submitCurrentDataIfMounted];
 }

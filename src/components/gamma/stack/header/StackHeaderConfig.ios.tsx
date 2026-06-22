@@ -59,14 +59,15 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
 
   const handleSelectionChanged = useCallback(
     (event: NativeSyntheticEvent<MenuSelectionChangedEvent>) => {
-      const { menuElementId, selectedMenuElementIds } = event.nativeEvent;
+      const { menuId, selectedMenuItemIds } = event.nativeEvent;
       const items = Array.of(
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
         ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
       );
-      const menu = findMenuElementByIdInItems(items, menuElementId);
+      const menu = findMenuElementByIdInItems(items, menuId);
       if (menu && menu.type === 'menu') {
-        menu.onSelectionChanged?.(selectedMenuElementIds as string[]);
+        console.log(menu.id);
+        menu.onSelectionChanged?.(selectedMenuItemIds as string[]);
       }
     },
     [leadingItems, trailingItems],

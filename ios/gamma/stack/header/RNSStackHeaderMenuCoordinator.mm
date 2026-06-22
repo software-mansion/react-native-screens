@@ -79,7 +79,7 @@
                                     insideSingleSelection:insideSingleSelection];
 
     RCTAssert(!(insideSingleSelection && effectiveType == RNSMenuItemTypeAction),
-              @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (menuElementId: %@)",
+              @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
               itemData.menuElementId);
 
     __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
@@ -126,7 +126,7 @@
 
                               // the state might be unchanged if user e.g. clicks on the same selected radio
                               if ([tracker toggleStateChanged]) {
-                                [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuElementIds:selectedIds];
+                                [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
                                 [tracker setToggleStateChanged:NO];
                               }
                             }];
