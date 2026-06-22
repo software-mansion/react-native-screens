@@ -22,7 +22,6 @@ class TabsScreen(
 ) : ViewGroup(reactContext),
     FragmentProviding,
     ScrollViewSeeking {
-
     private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
     private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
 
@@ -147,7 +146,7 @@ class TabsScreen(
     // ScrollViewSeeking
     override fun registerScrollView(
         marker: ScrollViewMarker,
-        scrollView: ViewGroup
+        scrollView: ViewGroup,
     ) {
         contentScrollView = WeakReference(scrollView)
     }

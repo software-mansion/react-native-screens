@@ -61,11 +61,10 @@ class TabsContainer internal constructor(
 
     private inner class SpecialEffectsHandler {
         fun handleRepeatedTabSelection(): Boolean {
-            val contentView = this@TabsContainer.contentView
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
+                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
@@ -87,19 +86,13 @@ class TabsContainer internal constructor(
          * Attempts to scroll to top if the passed view is a `ScrollView` or `NestedScrollView`
          */
         private fun trySmoothScrollToTop(maybeScrollView: ViewGroup): Boolean {
-            if (maybeScrollView is ScrollView) {
-                if (maybeScrollView.scrollY > 0) {
-                    maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
-                    return true
-                }
+            if (maybeScrollView.scrollY <= 0) return false
+            when (maybeScrollView) {
+                is ScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                is NestedScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                else -> return false
             }
-            if (maybeScrollView is NestedScrollView) {
-                if (maybeScrollView.scrollY > 0) {
-                    maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
-                    return true
-                }
-            }
-            return false
+            return true
         }
     }
 
