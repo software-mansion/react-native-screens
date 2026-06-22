@@ -160,7 +160,6 @@ internal class StackHeaderCoordinatorLayout(
     private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
-    private var toolbarMenuReverseIdMap = emptyMap<Int, String>()
 
     private val onNavigationIconClick: () -> Unit = {
         val activity =
@@ -215,13 +214,21 @@ internal class StackHeaderCoordinatorLayout(
             }
 
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
-                val (fwd, rev) =
-                    applicator.rebuildToolbarMenu(
-                        appBar.toolbar,
+                val (forwardIdMap, reverseIdMap) =
+                    applicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenuItems,
-                    ) { id -> currentDelegate?.onMenuItemClicked(id) }
-                toolbarMenuForwardIdMap = fwd
-                toolbarMenuReverseIdMap = rev
+                    )
+
+                applicator.rebuildToolbarMenu(
+                    appBar.toolbar,
+                    provider.toolbarMenuItems,
+                    forwardIdMap,
+                    reverseIdMap,
+                ) { id -> currentDelegate?.onMenuItemClicked(id) }
+
+                // We only need to keep forward map for view commands.
+                toolbarMenuForwardIdMap = forwardIdMap
+
                 provider.invalidationFlags =
                     provider.invalidationFlags.clearing(
                         StackHeaderInvalidationFlags.TOOLBAR_MENU,
@@ -243,7 +250,6 @@ internal class StackHeaderCoordinatorLayout(
         }
         appBarLayout = null
         toolbarMenuForwardIdMap = emptyMap()
-        toolbarMenuReverseIdMap = emptyMap()
     }
 
     private fun removeHeader() {

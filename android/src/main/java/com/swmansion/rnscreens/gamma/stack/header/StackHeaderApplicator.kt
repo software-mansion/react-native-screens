@@ -246,13 +246,7 @@ internal class StackHeaderApplicator(
 
     // region Toolbar menu
 
-    fun rebuildToolbarMenu(
-        toolbar: MaterialToolbar,
-        items: List<StackHeaderToolbarMenuItemConfig>,
-        onItemClicked: (id: String) -> Unit,
-    ): Pair<Map<String, Int>, Map<Int, String>> {
-        toolbar.menu.clear()
-
+    fun generateToolbarMenuItemMappings(items: List<StackHeaderToolbarMenuItemConfig>): Pair<Map<String, Int>, Map<Int, String>> {
         val forwardIdMap = mutableMapOf<String, Int>()
         val reverseIdMap = mutableMapOf<Int, String>()
 
@@ -261,7 +255,26 @@ internal class StackHeaderApplicator(
             val nativeId = index + 1
             forwardIdMap[item.id] = nativeId
             reverseIdMap[nativeId] = item.id
-            val menuItem = toolbar.menu.add(Menu.NONE, nativeId, index, null)
+        }
+
+        return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
+    }
+
+    fun rebuildToolbarMenu(
+        toolbar: MaterialToolbar,
+        items: List<StackHeaderToolbarMenuItemConfig>,
+        forwardIdMap: Map<String, Int>,
+        reverseIdMap: Map<Int, String>,
+        onItemClicked: (id: String) -> Unit,
+    ) {
+        toolbar.menu.clear()
+
+        items.forEachIndexed { index, item ->
+            val itemId = forwardIdMap[item.id]
+            require(itemId != null) {
+                "[RNScreens] Invalid forwardIdMap received. Missing item: $item."
+            }
+            val menuItem = toolbar.menu.add(Menu.NONE, itemId, index, null)
             applyMenuItemOptions(toolbar, menuItem, item.toOptions())
         }
 
@@ -269,8 +282,6 @@ internal class StackHeaderApplicator(
             reverseIdMap[menuItem.itemId]?.let(onItemClicked)
             true
         }
-
-        return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
     }
 
     fun updateToolbarMenuItem(
