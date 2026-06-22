@@ -150,6 +150,9 @@ class StackHeaderConfig(
 
     // region Back button icon resolution
 
+    // Staging fields for back button icon resolution.
+    // Both props may arrive in any order within a single update batch.
+    // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
     private val backButtonIconResolver = IconResolver()
@@ -180,6 +183,11 @@ class StackHeaderConfig(
 
     private var toolbarMenuItemIconResolvers = mapOf<String, IconResolver>()
 
+    // Last resolved icon per menu item id. Unlike every other field on this config — which
+    // mirrors a single prop — this cache deliberately merges resolved icons from BOTH sources
+    // that can set a menu item icon: the `toolbarMenuItems` prop array
+    // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `setToolbarMenuItemOptions`
+    // view command (dispatchMenuItemUpdate). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
@@ -350,6 +358,12 @@ class StackHeaderConfig(
 
     // region Imperative menu item commands
 
+    /**
+     * Applies a toolbar menu item view command. When the command does not touch the icon
+     * ([iconSource] is `null`) the options are delivered immediately. Otherwise, the icon is
+     * resolved first and all options — including the icon — are delivered together in a single
+     * update, so the change is applied atomically once the (possibly async) image has loaded.
+     */
     internal fun dispatchMenuItemUpdate(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
@@ -370,8 +384,10 @@ class StackHeaderConfig(
         resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { result ->
             val icon =
                 when (result) {
-                    IconResolution.Unchanged -> null
+                    IconResolution.Unchanged -> null // keep the current icon
                     is IconResolution.Resolved -> {
+                        // Keep the cache in sync with the prop-array path: both share this
+                        // id's resolver.
                         toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
                         StackHeaderToolbarUpdate.from(result.drawable)
                     }

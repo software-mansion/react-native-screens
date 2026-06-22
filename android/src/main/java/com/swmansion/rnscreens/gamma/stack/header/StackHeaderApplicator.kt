@@ -53,6 +53,7 @@ internal class StackHeaderApplicator(
             coordinatorLayout.setContentBehavior()
         }
 
+        // Make sure that we receive insets, necessary when changing header mode in runtime.
         appBar.requestApplyInsets()
         populateAppBar(appBar, config)
         maybeApplyRTLCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
@@ -71,6 +72,8 @@ internal class StackHeaderApplicator(
     ) {
         val toolbar = appBar.toolbar
 
+        // Toolbar measures children in insertion order. Leading and trailing go first so the
+        // title/center gets the remaining space.
         config.leadingSubview?.let {
             it.view.detachFromCurrentParent()
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
@@ -99,6 +102,8 @@ internal class StackHeaderApplicator(
                 Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
             }
         } else if (appBar is StackHeaderAppBarLayout.Small) {
+            // Small header needs a managed title view because we can't use Toolbar's native
+            // title — it would be laid out to the leading side of leading subview.
             val titleView = createManagedTitleView(toolbar)
             appBar.managedTitleView = titleView
             val index = if (config.isRTL) 0 else -1
@@ -117,9 +122,15 @@ internal class StackHeaderApplicator(
             return
         }
 
+        // Wrap in a FrameLayout so that CollapsingToolbarLayout's ViewOffsetHelper attaches to
+        // the disposable wrapper, not the reused React view. This avoids stale parallax offsets
+        // persisting across collapse mode rebuilds therefore allowing runtime changes to this
+        // property.
         backgroundSubview.view.detachFromCurrentParent()
         val wrapper =
             FrameLayout(appBar.context).apply {
+                // We're setting `fitsSystemWindows` so that the background renders behind
+                // status bar (edge-to-edge).
                 fitsSystemWindows = true
                 addView(backgroundSubview.view, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
             }
@@ -148,6 +159,9 @@ internal class StackHeaderApplicator(
                         WRAP_CONTENT,
                         Gravity.START,
                     ).apply {
+                        // TODO: there seems to be a problem with collapsing margins.
+                        //       We will expose customization either way but we should
+                        //       have consistent behavior and defaults.
                         marginStart = toolbar.titleMarginStart + toolbar.contentInsetStart
                         marginEnd = toolbar.titleMarginEnd
                         topMargin = toolbar.titleMarginTop
@@ -224,6 +238,7 @@ internal class StackHeaderApplicator(
         val params = target.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = desired
         target.layoutParams = params
+        // Snap back to expanded so the visible state matches the new flags.
         appBar.setExpanded(true, false)
     }
 
@@ -242,6 +257,7 @@ internal class StackHeaderApplicator(
         val reverseIdMap = mutableMapOf<Int, String>()
 
         items.forEachIndexed { index, item ->
+            // We use IDs > 0 because 0 is Menu.NONE.
             val nativeId = index + 1
             forwardIdMap[item.id] = nativeId
             reverseIdMap[nativeId] = item.id
@@ -328,6 +344,10 @@ internal class StackHeaderApplicator(
         config: StackHeaderConfigurationProviding,
         appBar: StackHeaderAppBarLayout,
     ) {
+        // For collapsing headers, CTL lazily adds a MATCH_PARENT dummy view to the Toolbar
+        // during the first onMeasure (ensureToolbar). We need our subviews at higher indices
+        // than the dummy view so they get positioned first in RTL layout. Forcing a measure
+        // triggers the dummy view creation.
         if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRTL) {
             appBar.measure(
                 View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
@@ -337,9 +357,19 @@ internal class StackHeaderApplicator(
         }
     }
 
+    /**
+     * CollapsingToolbarLayout adds a MATCH_PARENT dummy view to the Toolbar for title bounds
+     * tracking. In RTL, the Toolbar iterates custom views in reverse child order — so the
+     * dummy view (if last) gets processed first and consumes the entire layout cursor.
+     * Moving it to index 0 ensures our subviews are processed first.
+     *
+     * See https://github.com/material-components/material-components-android/issues/1867.
+     */
     private fun moveDummyViewToFront(toolbar: Toolbar) {
         for (i in 0 until toolbar.childCount) {
             val child = toolbar.getChildAt(i)
+            // Assumes only StackHeaderSubview children exist in Collapsing toolbar besides
+            // the CTL dummy view.
             if (child !is StackHeaderSubview) {
                 val lp = child.layoutParams
                 toolbar.removeViewAt(i)
@@ -392,6 +422,10 @@ internal class StackHeaderApplicator(
         options: StackHeaderToolbarMenuItemOptions,
     ): ColorStateList? {
         val currentTintList = MenuItemCompat.getIconTintList(menuItem)
+        // The currently-applied normal (catch-all) color, if any. Used both as the "leave
+        // unchanged" value for normal and to dedup read-back overrides: when a normal entry
+        // exists every override probe also matches it, so an override equal to the current
+        // normal is the catch-all leaking through rather than an explicit override.
         val currentNormal = currentTintList?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled))
 
         val finalNormal =
@@ -461,6 +495,15 @@ internal class StackHeaderApplicator(
         }
     }
 
+    /**
+     * Resolves the color the receiver applies to [stateSet], or `null` when no state spec
+     * matches it.
+     *
+     * `getColorForState` returns the caller-supplied fallback when nothing matches, so we
+     * probe twice with two distinct sentinels: equal results mean a real spec matched (the
+     * actual color), differing results mean the slot is absent. This is robust for any color
+     * value and keeps the read-back stateless — see [getResolvedIconTintList].
+     */
     private fun ColorStateList.resolvedColorOrNull(stateSet: IntArray): Int? {
         val a = getColorForState(stateSet, SENTINEL_A)
         val b = getColorForState(stateSet, SENTINEL_B)
@@ -472,6 +515,9 @@ internal class StackHeaderApplicator(
     companion object {
         private const val TAG = "StackHeaderApplicator"
 
+        // Two distinct sentinel fallbacks used to detect whether a ColorStateList actually
+        // defines a color for a given state. Their concrete values are irrelevant as long as
+        // they differ — see resolvedColorOrNull.
         private const val SENTINEL_A = 0x00000001
         private const val SENTINEL_B = 0x00000002
     }

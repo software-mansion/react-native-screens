@@ -30,6 +30,8 @@ internal class StackHeaderCoordinatorLayout(
     private var currentProvider: StackHeaderConfigurationProviding? = null
     private var currentDelegate: StackHeaderDelegate? = null
 
+    // This callback is used to detect when header config is attached.
+    // This allows us to configure the delegate for header config interactions.
     private val onHeaderConfigAttached =
         OnHeaderConfigurationAttachListener { provider, delegate ->
             handleHeaderConfigAttach(provider, delegate)
@@ -39,6 +41,7 @@ internal class StackHeaderCoordinatorLayout(
         provider: StackHeaderConfigurationProviding?,
         delegate: StackHeaderDelegate?,
     ) {
+        // Disconnect old config to prevent spurious updates from a detached config.
         currentProvider?.setConfigurationObserver(null)
 
         currentProvider = provider
@@ -101,6 +104,10 @@ internal class StackHeaderCoordinatorLayout(
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
 
+        // When config is transparent, the StackScreen is static so we need to offset the header
+        // config by the offset of the AppBarLayout (which is 0 or is negative). When config is
+        // opaque, the Screen always moves with the config, that's why we need to offset the
+        // header config by the negative value of AppBarLayout's height.
         val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
 
         delegate.onHeaderFrameChanged(
@@ -265,8 +272,15 @@ internal class StackHeaderCoordinatorLayout(
     internal var stackScreenWrapper: FrameLayout
 
     init {
+        // Needed when Transition API is in use to ensure that shadows do not disappear,
+        // views do not jump around the screen and whole subtree is animated as a whole.
         isTransitionGroup = true
 
+        // Due to how we're synchronizing native & Yoga layout (via contentOriginOffset on
+        // StackScreen), we can't use StackScreen directly as a child of CoordinatorLayout
+        // because SurfaceMountingManager will override Y offset (that depends on the header
+        // height) with Y=0. If we wrap StackScreen in another view, as Y is relative to
+        // parent view, value set by Yoga will be correct.
         stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
         addView(
             stackScreenWrapper,
