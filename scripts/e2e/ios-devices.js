@@ -12,11 +12,12 @@ const envVarKeys = /** @type {const} */ ({
  * @return {string | undefined} validated simulator name from env, or undefined
  */
 function readSimulatorNameEnv() {
-  const passedDevice = process.env[envVarKeys.simName];
+  const passedDevice = process.env[envVarKeys.simName]?.trim();
   if (!passedDevice) {
     return undefined;
   }
-  if (/^(iPhone|iPad)\s.+/.test(passedDevice)) {
+  // Require at least one non-whitespace character after the family prefix.
+  if (/^(iPhone|iPad)\s\S.*/.test(passedDevice)) {
     return passedDevice;
   }
   throw new Error(
@@ -28,11 +29,12 @@ function readSimulatorNameEnv() {
  * @return {`iOS ${string}` | undefined} validated iOS version from env, or undefined
  */
 function readIOSVersionEnv() {
-  const passedVersion = process.env[envVarKeys.iosVersion];
+  const passedVersion = process.env[envVarKeys.iosVersion]?.trim();
   if (!passedVersion) {
     return undefined;
   }
-  if (/^iOS\s\S+/.test(passedVersion)) {
+  // Accept only "iOS <digits>(.<digits>)*" so typos fail here, not downstream.
+  if (/^iOS\s\d+(\.\d+)*$/.test(passedVersion)) {
     return /** @type {`iOS ${string}`} */ (passedVersion);
   }
   throw new Error(
@@ -261,12 +263,22 @@ function computeSimulatorTarget() {
     const exists = simulators.some(
       sim => sim.name === envName && sim.os === envVersion,
     );
-    if (!exists && simulators.length > 0) {
-      throw new Error(
-        `Requested simulator "${envName}" (${envVersion}) is not installed. ` +
-          `${describeAvailabilityForName(simulators, envName)} ` +
-          `List devices with: xcrun simctl list devices available`,
-      );
+    if (!exists) {
+      if (simulators.length === 0) {
+        // simctl failed or no simulators are installed, so we cannot validate.
+        // Warn and proceed rather than swallowing the problem silently - Detox
+        // will surface an error if the target does not exist.
+        console.warn(
+          `Could not validate simulator "${envName}" (${envVersion}): ` +
+            `simctl returned no simulators. Proceeding anyway.`,
+        );
+      } else {
+        throw new Error(
+          `Requested simulator "${envName}" (${envVersion}) is not installed. ` +
+            `${describeAvailabilityForName(simulators, envName)} ` +
+            `List devices with: xcrun simctl list devices available`,
+        );
+      }
     }
     return { name: envName, os: envVersion };
   }
