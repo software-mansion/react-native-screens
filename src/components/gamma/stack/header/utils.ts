@@ -73,7 +73,8 @@ function walkMenuTreeAndValidateCallbacks(
     if (child.type === 'menuItem') {
       if (
         (child.itemType === 'toggle' ||
-          (isInsideSingleSelection && child.itemType === 'inherit')) &&
+          (isInsideSingleSelection &&
+            (child.itemType ?? 'inherit') === 'inherit')) &&
         child.onPress
       ) {
         console.warn(

@@ -66,8 +66,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       );
       const menu = findMenuElementByIdInItems(items, menuId);
       if (menu && menu.type === 'menu') {
-        console.log(menu.id);
-        menu.onSelectionChanged?.(selectedMenuItemIds as string[]);
+        menu.onSelectionChanged?.(selectedMenuItemIds);
       }
     },
     [leadingItems, trailingItems],
