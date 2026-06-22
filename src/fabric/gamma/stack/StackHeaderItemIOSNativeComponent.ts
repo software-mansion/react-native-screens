@@ -11,25 +11,27 @@ export type Placement =
   | 'subtitle'
   | 'largeSubtitle';
 
-export type StackHeaderMenuItem = {
+export type StackHeaderMenuItemIOS = {
   id: string;
   type: 'menuItem';
   title?: string | undefined;
 };
 
-export type StackHeaderMenu = {
+export type StackHeaderMenuIOS = {
   id: string;
   type: 'menu';
   title?: string | undefined;
-  children: StackHeaderMenuElement[];
+  children: StackHeaderMenuElementIOS[];
 };
 
-export type StackHeaderMenuElement = StackHeaderMenuItem | StackHeaderMenu;
+export type StackHeaderMenuElementIOS =
+  | StackHeaderMenuItemIOS
+  | StackHeaderMenuIOS;
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
   label?: string | undefined;
-  menu?: UnsafeMixed<StackHeaderMenu> | undefined;
+  menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {

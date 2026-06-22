@@ -1,10 +1,10 @@
-import { StackHeaderMenuElement } from './ios/StackHeaderMenu.ios.types';
+import { StackHeaderMenuElementIOS } from './ios/StackHeaderMenu.ios.types';
 import { SupportsMenuIOS } from './StackHeaderConfig.ios.types';
 
 export function findMenuElementByIdInItems(
   items: SupportsMenuIOS[],
   id: string,
-): StackHeaderMenuElement | null {
+): StackHeaderMenuElementIOS | null {
   for (const item of items) {
     if (item.menu === undefined) {
       continue;
@@ -20,9 +20,9 @@ export function findMenuElementByIdInItems(
 }
 
 export function findMenuElementById(
-  menu: StackHeaderMenuElement,
+  menu: StackHeaderMenuElementIOS,
   id: string,
-): StackHeaderMenuElement | null {
+): StackHeaderMenuElementIOS | null {
   if (menu.id === id) {
     return menu;
   }

@@ -35,6 +35,9 @@ export type {
   StackHeaderTitleCustomItemIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderConfigCommandsIOS,
+  StackHeaderMenuIOS,
+  StackHeaderMenuItemIOS,
+  StackHeaderMenuElementIOS,
 } from './header';
 
 /**

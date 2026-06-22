@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { StackHeaderMenu } from './ios/StackHeaderMenu.ios.types';
+import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 export interface StackHeaderBaseItemIOS {
   key: string;
@@ -7,7 +7,7 @@ export interface StackHeaderBaseItemIOS {
 }
 
 export interface SupportsMenuIOS {
-  menu?: StackHeaderMenu | undefined;
+  menu?: StackHeaderMenuIOS | undefined;
 }
 
 export interface StackHeaderInlineItemIOS
