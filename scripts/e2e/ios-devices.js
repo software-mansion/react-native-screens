@@ -42,9 +42,8 @@ function readIOSVersionEnv() {
 
 /**
  * Reads the active Detox configuration name from the `--configuration <name>`
- * CLI flag or the `DETOX_CONFIGURATION` env var (Detox sets the latter in the
- * worker processes it spawns). Returns undefined when neither is present, so
- * callers can fall back to scanning argv for indirect invocations.
+ * CLI flag or the `DETOX_CONFIGURATION` env var (Detox sets the latter in its
+ * worker processes), or undefined when neither is present.
  * @return {string | undefined}
  */
 function readDetoxConfigName() {
@@ -61,15 +60,15 @@ function readDetoxConfigName() {
 
 /**
  * @return {boolean} whether the active Detox configuration targets an iOS
- * simulator. When unknown we assume it does, so the iOS resolution still runs.
+ * simulator. When it can't be determined, we assume it does not and skip
+ * `simctl` probing.
  */
 function isIOSSimulatorConfig() {
   const detoxConfig = readDetoxConfigName();
   if (detoxConfig !== undefined) {
     return detoxConfig.includes('ios.sim');
   }
-  // Fall back to scanning argv for indirect invocations that don't surface the
-  // configuration name.
+  // No configuration name surfaced (indirect invocation) - scan argv instead.
   return process.argv.some(runtimeArg => runtimeArg.includes('ios.sim'));
 }
 
@@ -95,12 +94,11 @@ function runtimeIdToIOSVersion(runtimeId) {
 let cachedSimulators;
 
 /**
- * Queries `simctl` once for created, available simulator instances. Results are
- * memoized for the process lifetime.
+ * Queries `simctl` once (memoized) for created, available simulator instances.
  *
- * Note: only instances that actually exist are returned, because Detox finds
- * devices through `applesimutils`, which matches existing simulators and does
- * NOT create new ones from a device type + runtime pairing.
+ * Only existing instances are returned: Detox finds devices via `applesimutils`,
+ * which matches existing simulators and never creates new ones from a device
+ * type + runtime pairing.
  * @return {InstalledSimulator[]}
  */
 function listInstalledSimulators() {
@@ -248,8 +246,7 @@ function computeSimulatorTarget() {
   const envName = readSimulatorNameEnv();
   const envVersion = readIOSVersionEnv();
 
-  // For non-iOS configurations the returned values are unused by Detox, so we
-  // avoid shelling out to `simctl` and just echo defaults/env pieces.
+  // Non-iOS config: values are unused, so skip `simctl` and echo defaults/env.
   if (!isIOSSimulatorConfig()) {
     return {
       name: envName ?? DEFAULT_APPLE_SIMULATOR_NAME,
@@ -259,8 +256,7 @@ function computeSimulatorTarget() {
 
   const simulators = listInstalledSimulators();
 
-  // 1a. Both provided - validate the exact device + OS instance exists, since
-  // Detox (via applesimutils) only matches existing simulators.
+  // 1a. Both provided - validate the exact device + OS instance exists.
   if (envName && envVersion) {
     const exists = simulators.some(
       sim => sim.name === envName && sim.os === envVersion,
@@ -315,8 +311,7 @@ function computeSimulatorTarget() {
     return { name: chosen.name, os: chosen.os };
   }
 
-  // 3. The default hardcoded device/version, when an instance of it actually
-  // exists - `applesimutils` (used by Detox) only matches existing simulators.
+  // 3. The default hardcoded device/version, when an instance of it exists.
   const defaultInstalled = simulators.some(
     sim =>
       sim.name === DEFAULT_APPLE_SIMULATOR_NAME &&
