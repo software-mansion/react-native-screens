@@ -12,6 +12,7 @@ import {
   type StackHeaderToolbarMenuItemOptionsAndroid,
   type StackHeaderToolbarMenuItemShowAsActionAndroid,
 } from 'react-native-screens/experimental';
+import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
 
 type IdOption = 'item-1' | 'item-2' | 'item-3';
@@ -22,9 +23,13 @@ type ShowAsActionOption =
   | 'alwaysWithText'
   | 'ifRoom'
   | 'ifRoomWithText';
+type IconOption = 'undefined' | 'searchIcon';
+type CmdIconOption = 'no change' | IconOption;
 type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
 
 const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
+const ICON_OPTIONS: IconOption[] = ['undefined', 'searchIcon'];
+const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const SHOW_AS_ACTION_OPTIONS: ShowAsActionOption[] = [
   'undefined',
   'never',
@@ -41,16 +46,29 @@ const CMD_SHOW_AS_ACTION_OPTIONS: CmdShowAsActionOption[] = [
 interface SlotConfig {
   include: boolean;
   id: IdOption;
+  icon: IconOption;
   showAsAction: ShowAsActionOption;
 }
 
 type Slots = [SlotConfig, SlotConfig, SlotConfig];
 
 const DEFAULT_SLOTS: Slots = [
-  { include: true, id: 'item-1', showAsAction: 'undefined' },
-  { include: true, id: 'item-2', showAsAction: 'undefined' },
-  { include: true, id: 'item-3', showAsAction: 'undefined' },
+  { include: true, id: 'item-1', icon: 'undefined', showAsAction: 'undefined' },
+  { include: true, id: 'item-2', icon: 'undefined', showAsAction: 'undefined' },
+  { include: true, id: 'item-3', icon: 'undefined', showAsAction: 'undefined' },
 ];
+
+function resolveIcon(option: IconOption): PlatformIconAndroid | undefined {
+  switch (option) {
+    case 'searchIcon':
+      return {
+        type: 'imageSource',
+        imageSource: require('@assets/search_black.png'),
+      };
+    default:
+      return undefined;
+  }
+}
 
 function resolveShowAsAction(
   v: ShowAsActionOption,
@@ -67,9 +85,10 @@ const ITEM_TITLES: Record<IdOption, string> = {
 function buildItems(slots: Slots) {
   return slots
     .filter(s => s.include)
-    .map(({ id, showAsAction }) => ({
+    .map(({ id, icon, showAsAction }) => ({
       id,
       title: ITEM_TITLES[id],
+      icon: resolveIcon(icon),
       showAsAction: resolveShowAsAction(showAsAction),
     }));
 }
@@ -108,6 +127,7 @@ function MainScreen() {
   const [lastClicked, setLastClicked] = useState<string | null>(null);
 
   const [cmdTargetId, setCmdTargetId] = useState<IdOption>('item-1');
+  const [cmdIcon, setCmdIcon] = useState<CmdIconOption>('no change');
   const [cmdShowAsAction, setCmdShowAsAction] =
     useState<CmdShowAsActionOption>('no change');
 
@@ -147,6 +167,9 @@ function MainScreen() {
 
   const sendCommand = useCallback(() => {
     const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+      ...(cmdIcon !== 'no change' && {
+        icon: resolveIcon(cmdIcon),
+      }),
       ...(cmdShowAsAction !== 'no change' && {
         showAsAction: resolveShowAsAction(cmdShowAsAction),
       }),
@@ -155,7 +178,7 @@ function MainScreen() {
       cmdTargetId,
       options,
     );
-  }, [cmdTargetId, cmdShowAsAction]);
+  }, [cmdTargetId, cmdIcon, cmdShowAsAction]);
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -165,6 +188,12 @@ function MainScreen() {
         value={cmdTargetId}
         items={ID_OPTIONS}
         onValueChange={setCmdTargetId}
+      />
+      <SettingsPicker<CmdIconOption>
+        label="icon"
+        value={cmdIcon}
+        items={CMD_ICON_OPTIONS}
+        onValueChange={setCmdIcon}
       />
       <SettingsPicker<CmdShowAsActionOption>
         label="showAsAction"
@@ -203,6 +232,12 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             label="include"
             value={slot.include}
             onValueChange={v => updateSlot(i, { include: v })}
+          />
+          <SettingsPicker<IconOption>
+            label="icon"
+            value={slot.icon}
+            items={ICON_OPTIONS}
+            onValueChange={v => updateSlot(i, { icon: v })}
           />
           <SettingsPicker<ShowAsActionOption>
             label="showAsAction"
