@@ -3,14 +3,14 @@ import { SupportsMenuIOS } from './StackHeaderConfig.ios.types';
 
 export function findMenuElementByIdInItems(
   items: SupportsMenuIOS[],
-  menuElementId: string,
+  id: string,
 ): StackHeaderMenuElement | null {
   for (const item of items) {
     if (item.menu === undefined) {
       continue;
     }
 
-    const menu = findMenuElementById(item.menu, menuElementId);
+    const menu = findMenuElementById(item.menu, id);
     if (menu !== null) {
       return menu;
     }
@@ -21,15 +21,15 @@ export function findMenuElementByIdInItems(
 
 export function findMenuElementById(
   menu: StackHeaderMenuElement,
-  menuElementId: string,
+  id: string,
 ): StackHeaderMenuElement | null {
-  if (menu.menuElementId === menuElementId) {
+  if (menu.id === id) {
     return menu;
   }
 
   if (menu.type === 'menu') {
     for (const child of menu.children) {
-      const result = findMenuElementById(child, menuElementId);
+      const result = findMenuElementById(child, id);
       if (result !== null) {
         return result;
       }

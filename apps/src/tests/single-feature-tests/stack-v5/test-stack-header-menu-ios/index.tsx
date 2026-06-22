@@ -49,33 +49,33 @@ function buildHeaderConfig(
       }),
       menu: {
         type: 'menu',
-        menuElementId: `menu-${i}`,
+        id: `menu-${i}`,
         children: [
           {
-            menuElementId: `subitem-${i}-1`,
+            id: `subitem-${i}-1`,
             type: 'menuItem',
             title: `Item ${i}.1`,
             onPress: () => showToast(`Clicked Item ${i}.1`),
           },
           {
-            menuElementId: `subitem-${i}-2`,
+            id: `subitem-${i}-2`,
             type: 'menuItem',
             title: `Item ${i}.2`,
             onPress: () => showToast(`Clicked Item ${i}.2`),
           },
           {
-            menuElementId: `submenu-${i}`,
+            id: `submenu-${i}`,
             type: 'menu',
             title: `Submenu ${i}`,
             children: [
               {
-                menuElementId: `subsubitem-${i}-1`,
+                id: `subsubitem-${i}-1`,
                 type: 'menuItem',
                 title: `Nested ${i}.1`,
                 onPress: () => showToast(`Clicked Nested ${i}.1`),
               },
               {
-                menuElementId: `subsubitem-${i}-2`,
+                id: `subsubitem-${i}-2`,
                 type: 'menuItem',
                 title: `Nested ${i}.2`,
                 onPress: () => showToast(`Clicked Nested ${i}.2`),

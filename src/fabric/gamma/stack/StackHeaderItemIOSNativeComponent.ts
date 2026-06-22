@@ -12,13 +12,13 @@ export type Placement =
   | 'largeSubtitle';
 
 export type StackHeaderMenuItem = {
-  menuElementId: string;
+  id: string;
   type: 'menuItem';
   title?: string | undefined;
 };
 
 export type StackHeaderMenu = {
-  menuElementId: string;
+  id: string;
   type: 'menu';
   title?: string | undefined;
   children: StackHeaderMenuElement[];

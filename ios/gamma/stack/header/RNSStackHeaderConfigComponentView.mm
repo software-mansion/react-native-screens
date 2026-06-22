@@ -125,9 +125,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - RNSStackHeaderMenuEventsDelegate
 
-- (void)didPressMenuItem:(NSString *)menuElementId
+- (void)didPressMenuItem:(NSString *)menuItemId
 {
-  [_reactEventEmitter emitOnMenuItemPress:menuElementId];
+  [_reactEventEmitter emitOnMenuItemPress:menuItemId];
 }
 
 #pragma mark - RNSViewFrameChangeDelegate

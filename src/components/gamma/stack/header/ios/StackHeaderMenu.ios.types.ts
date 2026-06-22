@@ -1,12 +1,12 @@
 export interface StackHeaderMenuItem {
-  menuElementId: string;
+  id: string;
   type: 'menuItem';
   title?: string | undefined;
   onPress?: () => void | undefined;
 }
 
 export interface StackHeaderMenu {
-  menuElementId: string;
+  id: string;
   type: 'menu';
   title?: string | undefined;
   children: StackHeaderMenuElement[];

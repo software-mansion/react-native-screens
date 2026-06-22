@@ -29,7 +29,7 @@
     }
   }
 
-  return [[RNSStackHeaderMenuData alloc] initWithId:[self stringForKey:@"menuElementId" in:dict]
+  return [[RNSStackHeaderMenuData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                               title:[self stringForKey:@"title" in:dict]
                                            children:children];
 }
@@ -46,7 +46,7 @@
     return [self menuFromDictionary:dict];
   } else if ([type isEqual:@"menuItem"]) {
     [RNSStackHeaderMenuMapper validateMenuItemKeys:dict];
-    return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"menuElementId" in:dict]
+    return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                                     title:[self stringForKey:@"title" in:dict]];
   }
 
@@ -58,23 +58,23 @@
 + (void)validateMenuKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"menuElementId"] || [key isEqualToString:@"type"] ||
-                  [key isEqualToString:@"title"] || [key isEqualToString:@"children"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
+                  [key isEqualToString:@"children"],
               @"[RNScreens] Invalid key \"%@\" found in menu",
               key);
   }
   RCTAssert(dict[@"children"], @"[RNScreens] missing key \"children\" in menu");
-  RCTAssert(dict[@"menuElementId"], @"[RNScreens] missing menuElementId on one of menu elements");
+  RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
 }
 
 + (void)validateMenuItemKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"menuElementId"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"],
               @"[RNScreens] Invalid key \"%@\" found in menu item",
               key);
   }
-  RCTAssert(dict[@"menuElementId"], @"[RNScreens] missing menuElementId on one of menu elements");
+  RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
 }
 
 + (nullable NSString *)stringForKey:(NSString *)key in:(NSDictionary *)dict

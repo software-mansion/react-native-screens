@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderConfigEventEmitter : NSObject
 
-- (BOOL)emitOnMenuItemPress:(NSString *)menuElementId;
+- (BOOL)emitOnMenuItemPress:(NSString *)menuItemId;
 
 @end
 
