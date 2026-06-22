@@ -12,6 +12,10 @@ import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
 import { ScrollEdgeEffect } from 'react-native-screens';
+import {
+  StackContainer,
+  StackRouteConfig,
+} from '@apps/shared/gamma/containers/stack';
 
 export function App() {
   return <TabsNavigation />;
@@ -27,12 +31,25 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     },
   },
   {
-    name: 'Second',
-    Component: TabContents,
+    name: 'Stack',
+    Component: StackTabScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Second',
+      title: 'Stack',
     },
+  },
+];
+
+const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
+  {
+    name: 'First',
+    Component: StackContents,
+    options: {},
+  },
+  {
+    name: 'Second',
+    Component: StackContents,
+    options: {},
   },
 ];
 
@@ -42,7 +59,6 @@ export function TabContents() {
 
   return (
     <View style={[{ backgroundColor: Colors.BlueLight20 }, styles.fillParent]}>
-      <HeuristicBreakingView />
       <ScrollViewMarker
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: edgeEffectStyle }}>
@@ -56,8 +72,29 @@ export function TabContents() {
   );
 }
 
+export function StackContents() {
+  return (
+    <View style={[{ backgroundColor: Colors.BlueLight20 }, styles.fillParent]}>
+      <HeuristicBreakingView />
+      <ScrollViewMarker
+        style={styles.fillParent}
+        scrollEdgeEffects={{ top: 'hidden', bottom: 'hard' }}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.fillParent}>
+          <ScrollViewContents />
+        </ScrollView>
+      </ScrollViewMarker>
+    </View>
+  );
+}
+
 export function TabsNavigation() {
   return <TabsContainer routeConfigs={TABS_ROUTE_CONFIGS} />;
+}
+
+function StackTabScreen() {
+  return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
 export function ScrollViewContents(props: { elementCount?: number }) {
