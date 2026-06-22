@@ -1,12 +1,17 @@
-export interface StackHeaderMenuItem {
+export interface StackHeaderMenuItemIOS {
+  id: string;
   type: 'menuItem';
   title?: string | undefined;
+  onPress?: () => void | undefined;
 }
 
-export interface StackHeaderMenu {
+export interface StackHeaderMenuIOS {
+  id: string;
   type: 'menu';
   title?: string | undefined;
-  children: StackHeaderMenuElement[];
+  children: StackHeaderMenuElementIOS[];
 }
 
-export type StackHeaderMenuElement = StackHeaderMenu | StackHeaderMenuItem;
+export type StackHeaderMenuElementIOS =
+  | StackHeaderMenuIOS
+  | StackHeaderMenuItemIOS;

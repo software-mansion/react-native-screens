@@ -1,21 +1,25 @@
 import type { ReactElement } from 'react';
-import type { StackHeaderMenu } from './ios/StackHeaderMenu.ios.types';
+import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 export interface StackHeaderBaseItemIOS {
   key: string;
   label?: string | undefined;
 }
 
-export interface StackHeaderInlineItemIOS extends StackHeaderBaseItemIOS {
-  type: 'item';
-  menu?: StackHeaderMenu | undefined;
+export interface SupportsMenuIOS {
+  menu?: StackHeaderMenuIOS | undefined;
 }
 
-export interface StackHeaderInlineCustomItemIOS {
+export interface StackHeaderInlineItemIOS
+  extends StackHeaderBaseItemIOS,
+    SupportsMenuIOS {
+  type: 'item';
+}
+
+export interface StackHeaderInlineCustomItemIOS extends SupportsMenuIOS {
   key: string;
   type: 'item';
   render: () => ReactElement;
-  menu?: StackHeaderMenu | undefined;
 }
 
 interface StackHeaderFixedSpacerItemIOS {
