@@ -12,7 +12,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
 
-export function TabScreen() {
+function TabScreen() {
   const { routeKey } = useTabsNavigationContext();
 
   return (
@@ -27,7 +27,7 @@ export function TabScreen() {
   );
 }
 
-export function AppContents() {
+function AppContents() {
   const toast = useToast();
 
   const makeCallbacks = useCallback(
@@ -98,7 +98,7 @@ export function AppContents() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export function App() {
+export function TestTabsLifecycleEvents() {
   return (
     <ToastProvider>
       <AppContents />
@@ -106,7 +106,7 @@ export function App() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsLifecycleEvents, scenarioDescription);
 
 const styles = StyleSheet.create({
   tabLabel: {

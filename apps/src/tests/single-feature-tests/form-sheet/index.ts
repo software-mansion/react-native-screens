@@ -1,4 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
+
+// Scenario objects (default exports) — carry metadata, used to build the
+// scenario group consumed by the selection menu.
 import TestFormSheetBase from './test-form-sheet-base-ios';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
@@ -13,6 +16,23 @@ import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corn
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state-ios';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
 import TestFormSheetStacking from './test-form-sheet-stacking-ios';
+
+// Scenario entry-point components (named exports) — re-exported for direct
+// rendering (e.g. from App.tsx or e2e harnesses).
+export { TestFormSheetBase } from './test-form-sheet-base-ios';
+export { TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events-ios';
+export { TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
+export { TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents-ios';
+export { TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible-ios';
+export { TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index-ios';
+export { TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
+export { TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events-ios';
+export { TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style-ios';
+export { TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed-ios';
+export { TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius-ios';
+export { TestFormSheetPresentationState } from './test-form-sheet-presentation-state-ios';
+export { TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss-ios';
+export { TestFormSheetStacking } from './test-form-sheet-stacking-ios';
 
 const scenarios = {
   TestFormSheetBase,

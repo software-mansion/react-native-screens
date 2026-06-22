@@ -14,7 +14,7 @@ import { Colors } from '@apps/shared/styling';
 
 const DEFAULT_TRAILING_ITEMS_COUNT = 2;
 
-export function App() {
+export function TestStackHeaderMenuIOS() {
   return (
     <ToastProvider>
       <StackContainer
@@ -132,4 +132,4 @@ function ConfigScreen() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackHeaderMenuIOS, scenarioDescription);

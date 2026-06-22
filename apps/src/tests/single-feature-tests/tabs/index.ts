@@ -1,9 +1,11 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
+// Scenario objects (default exports) — carry metadata, used to build the
+// scenario group consumed by the selection menu.
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
-import TabBarAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
+import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
@@ -26,11 +28,40 @@ import TestTabsBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
+// Scenario entry-point components (named exports) — re-exported for direct
+// rendering (e.g. from App.tsx or e2e harnesses) without reaching into each
+// test directory.
+export { TestTabsSimpleNav } from './test-tabs-simple-nav';
+export { TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
+export { TestTabsStaleStateUpdateRejection } from './test-tabs-stale-update-rejection';
+export { TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
+export { TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
+export { TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
+export { TestTabsTabBarHidden } from './test-tabs-tab-bar-hidden';
+export { TestTabsTabBarLayoutDirection } from './test-tabs-tab-bar-layout-direction';
+export { TestTabsIMEInsets } from './test-tabs-ime-insets-android';
+export { TestTabsSpecialEffectsScrollToTop } from './test-tabs-special-effects-scroll-to-top';
+export { TestTabsLifecycleEvents } from './test-tabs-lifecycle-events';
+export { TestTabsNativeContainerStyle } from './test-tabs-native-container-style';
+export { TestTabsGeneralAppearanceNoLiquidGlass } from './test-tabs-general-appearance-no-liquid-glass-ios';
+export { TestTabsGeneralAppearance } from './test-tabs-general-appearance-android';
+export { TestTabsLayoutAppearances } from './test-tabs-layout-appearances-ios';
+export { TestTabsItemIcon } from './test-tabs-item-icon';
+export { TestTabsItemTitle } from './test-tabs-item-title';
+export { TestTabsItemBadge } from './test-tabs-item-badge';
+export { TestTabsSystemItem } from './test-tabs-system-item-ios';
+export { TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
+export { TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
+export { TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
+export { TestTabsBottomAccessory } from './test-tabs-bottom-accessory-layout-ios';
+export { TestTabsScreenOrientation } from './test-tabs-screen-orientation';
+export { TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
+
 const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
   TestTabsStaleStateUpdateRejection,
-  TabBarAppearanceDefinedBySelectedTab,
+  TestTabsAppearanceDefinedBySelectedTab,
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
   TestTabsTabBarHidden,

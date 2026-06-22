@@ -48,7 +48,7 @@ const TAB3_SCROLL_EDGE_APPEARANCE: TabsScreenAppearanceIOS = {
 
 const SCROLL_ITEM_COUNT = 5;
 
-export function Tab1Screen() {
+function Tab1Screen() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
   const [standardEnabled, setStandardEnabled] = useState(false);
   const [scrollEdgeEnabled, setScrollEdgeEnabled] = useState(false);
@@ -116,7 +116,7 @@ export function Tab1Screen() {
   );
 }
 
-export function Tab2Screen() {
+function Tab2Screen() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
   const [standardEnabled, setStandardEnabled] = useState(true);
   const [scrollEdgeEnabled, setScrollEdgeEnabled] = useState(true);
@@ -196,7 +196,7 @@ export function Tab2Screen() {
   );
 }
 
-export function Tab3Screen() {
+function Tab3Screen() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
   const [blurEffect, setBlurEffect] = useState<BlurEffect>('systemDefault');
 
@@ -306,7 +306,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsGeneralAppearanceNoLiquidGlass() {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.GreenDark80 }}>
       <TabsContainer
@@ -354,4 +354,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsGeneralAppearanceNoLiquidGlass, scenarioDescription);

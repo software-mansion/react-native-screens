@@ -6,11 +6,11 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+export function TestStackAnimationAndroid() {
   return <StackSetup />;
 }
 
-export function StackSetup() {
+function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -39,7 +39,7 @@ export function StackSetup() {
   );
 }
 
-export function HomeScreen() {
+function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
       <StackNavigationButtons
@@ -50,7 +50,7 @@ export function HomeScreen() {
   );
 }
 
-export function BlueScreen() {
+function BlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
       <StackNavigationButtons
@@ -61,7 +61,7 @@ export function BlueScreen() {
   );
 }
 
-export function RedScreen() {
+function RedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
       <StackNavigationButtons
@@ -72,7 +72,7 @@ export function RedScreen() {
   );
 }
 
-export function NestedHostScreen() {
+function NestedHostScreen() {
   return (
     <StackContainer
       routeConfigs={[
@@ -96,7 +96,7 @@ export function NestedHostScreen() {
   );
 }
 
-export function NestedHomeScreen() {
+function NestedHomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
       <StackNavigationButtons
@@ -107,7 +107,7 @@ export function NestedHomeScreen() {
   );
 }
 
-export function NestedBlueScreen() {
+function NestedBlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
       <StackNavigationButtons
@@ -118,7 +118,7 @@ export function NestedBlueScreen() {
   );
 }
 
-export function NestedRedScreen() {
+function NestedRedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
       <StackNavigationButtons
@@ -129,4 +129,4 @@ export function NestedRedScreen() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackAnimationAndroid, scenarioDescription);

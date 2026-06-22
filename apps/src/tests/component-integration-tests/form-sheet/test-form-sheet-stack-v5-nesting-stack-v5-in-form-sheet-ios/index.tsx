@@ -8,7 +8,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+export function TestFormSheetWithNestedStackV5() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -31,7 +31,7 @@ export function App() {
   );
 }
 
-export function StackSetup() {
+function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -52,7 +52,7 @@ export function StackSetup() {
   );
 }
 
-export function HomeScreen() {
+function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <Text style={styles.screenText}>Home Screen</Text>
@@ -61,7 +61,7 @@ export function HomeScreen() {
   );
 }
 
-export function AScreen() {
+function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <Text style={styles.screenText}>Screen A</Text>
@@ -96,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetWithNestedStackV5, scenarioDescription);

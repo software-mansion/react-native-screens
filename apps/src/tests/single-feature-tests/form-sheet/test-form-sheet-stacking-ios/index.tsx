@@ -5,7 +5,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import { Colors } from '@apps/shared/styling';
 
-export function App() {
+export function TestFormSheetStacking() {
   const [isFirstOpen, setIsFirstOpen] = useState(false);
   const [isSecondOpen, setIsSecondOpen] = useState(false);
   const [isThirdOpen, setIsThirdOpen] = useState(false);
@@ -134,4 +134,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetStacking, scenarioDescription);

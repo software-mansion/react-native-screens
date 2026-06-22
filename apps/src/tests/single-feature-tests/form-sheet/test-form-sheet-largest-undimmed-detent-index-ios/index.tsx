@@ -12,7 +12,7 @@ type LargestUndimmedDetentIndexProp = NonNullable<
   FormSheetProps['largestUndimmedDetentIndex']
 >;
 
-export function App() {
+export function TestFormSheetLargestUndimmedDetentIndex() {
   const [isOpen, setIsOpen] = useState(false);
   const [undimmedIndex, setUndimmedIndex] =
     useState<LargestUndimmedDetentIndexProp>('none');
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetLargestUndimmedDetentIndex, scenarioDescription);

@@ -11,7 +11,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
 
@@ -50,8 +50,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsScreenOrientation() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsScreenOrientation, scenarioDescription);

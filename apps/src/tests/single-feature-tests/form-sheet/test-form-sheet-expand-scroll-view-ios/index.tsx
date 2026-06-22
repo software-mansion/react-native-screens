@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function App() {
+export function TestFormSheetExpandScrollView() {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldExpand, setShouldExpand] = useState(true);
 
@@ -167,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetExpandScrollView, scenarioDescription);

@@ -288,13 +288,13 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
   },
 ];
 
-export const ROUTE_CONFIGS = Platform.select({
+const ROUTE_CONFIGS = Platform.select({
   ios: IOS_ROUTES,
   android: ANDROID_ROUTES,
   default: IOS_ROUTES, // fallback
 });
 
-export function App() {
+export function TestTabsItemIcon() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
@@ -324,4 +324,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsItemIcon, scenarioDescription);

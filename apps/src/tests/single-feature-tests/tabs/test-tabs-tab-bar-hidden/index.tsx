@@ -10,7 +10,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
   return (
@@ -42,8 +42,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsTabBarHidden() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarHidden, scenarioDescription);

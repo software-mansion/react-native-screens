@@ -3,6 +3,10 @@ import TestTopColumnForCollapsing from './test-top-column-for-collapsing';
 import TestCommandShowColumn from './test-command-show-column';
 import TestColorScheme from './test-split-color-scheme-ios';
 
+export { TestTopColumnForCollapsing } from './test-top-column-for-collapsing';
+export { TestCommandShowColumn } from './test-command-show-column';
+export { TestColorScheme } from './test-split-color-scheme-ios';
+
 const scenarios = {
   TestTopColumnForCollapsing,
   TestCommandShowColumn,

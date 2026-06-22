@@ -13,6 +13,14 @@ import FormSheetScenarioGroup from './form-sheet';
 import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
+// Re-export every scenario entry-point component so any test can be imported
+// directly from this domain barrel, e.g.
+//   import { TestOrientationStackInTabs } from '@apps/tests/component-integration-tests';
+export * from './orientation';
+export * from './scroll-view';
+export * from './form-sheet';
+export * from './tabs-stack-v5';
+
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
   ScrollView: ScrollViewScenarioGroup,

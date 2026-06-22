@@ -2,16 +2,23 @@ import React from 'react';
 import { enableFreeze } from 'react-native-screens';
 
 import Example from './Example';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { Tests } from './src/tests';
+
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
+// import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
+
+// import { TestTabsSimpleNav } from './src/tests/single-feature-tests';
+// import { TestOrientationStackInTabs } from './src/tests/component-integration-tests';
+// import { Test42 } from './src/tests/issue-tests';
 
 enableFreeze(true);
 
 export default function App() {
   return <Example />;
   // return (
-  //   <NavigationContainer>
-  //     <Tests.Issue.TestBottomTabs />
-  //   </NavigationContainer>
+  //   <GestureHandlerRootView style={{ flex: 1 }}>
+  //     <GestureDetectorProvider>
+  //       <TestTabsSimpleNav />
+  //     </GestureDetectorProvider>
+  //   </GestureHandlerRootView>
   // );
 }

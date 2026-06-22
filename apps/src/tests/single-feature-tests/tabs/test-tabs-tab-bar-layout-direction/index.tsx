@@ -19,7 +19,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactForceRtl, setReactForceRtl] = useState(false);
   const [reactAllowRtl, setReactAllowRtl] = useState(true);
@@ -145,7 +145,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsTabBarLayoutDirection() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -180,4 +180,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarLayoutDirection, scenarioDescription);

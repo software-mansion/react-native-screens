@@ -82,7 +82,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
-export function App() {
+export function TestStackToolbarMenuCommands() {
   return (
     <StackContainer
       routeConfigs={[
@@ -251,4 +251,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarMenuCommands, scenarioDescription);

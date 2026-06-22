@@ -13,7 +13,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function App() {
+export function TestFormSheetOnDetentChanged() {
   const [isOpen, setIsOpen] = useState(false);
   const [detentIndex, setDetentIndex] = useState<number>(0);
 
@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetOnDetentChanged, scenarioDescription);

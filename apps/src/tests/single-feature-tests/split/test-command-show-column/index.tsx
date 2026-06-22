@@ -4,7 +4,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { Split, SplitHostCommands } from 'react-native-screens/experimental';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-export function App() {
+export function TestCommandShowColumn() {
   const hostRef = React.useRef<SplitHostCommands>(null);
 
   return (
@@ -22,7 +22,7 @@ export function App() {
   );
 }
 
-export function ColumnContent(props: {
+function ColumnContent(props: {
   columnTitle: string;
   hostRef: React.RefObject<SplitHostCommands | null>;
 }) {
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestCommandShowColumn, scenarioDescription);

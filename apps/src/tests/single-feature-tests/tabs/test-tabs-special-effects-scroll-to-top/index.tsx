@@ -13,7 +13,7 @@ interface ScrollScreenProps {
   tabName: string;
 }
 
-export function ScrollScreen({ tabName }: ScrollScreenProps) {
+function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
     <SafeAreaView
       edges={{
@@ -77,11 +77,11 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsSpecialEffectsScrollToTop() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsSpecialEffectsScrollToTop, scenarioDescription);
 
 const styles = StyleSheet.create({
   config: {

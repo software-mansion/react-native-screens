@@ -16,7 +16,7 @@ import { Split } from 'react-native-screens/experimental';
 import { SplitHostColorScheme } from 'react-native-screens/components/gamma/split/SplitHost.types';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
-export function ConfigColumn({
+function ConfigColumn({
   reactColorScheme,
   setReactColorScheme,
   hostColorScheme,
@@ -75,7 +75,7 @@ export function ConfigColumn({
   );
 }
 
-export function TestColumn() {
+function TestColumn() {
   return (
     <View style={styles.containerCenter}>
       <TextInput placeholder="Type something..." />
@@ -83,7 +83,7 @@ export function TestColumn() {
   );
 }
 
-export function App() {
+export function TestColorScheme() {
   const [hostColorScheme, setHostColorScheme] =
     useState<SplitHostColorScheme>('inherit');
   const [reactColorScheme, setReactColorScheme] =
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestColorScheme, scenarioDescription);

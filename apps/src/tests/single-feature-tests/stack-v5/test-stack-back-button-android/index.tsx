@@ -100,7 +100,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps {
   };
 }
 
-export function App() {
+export function TestStackBackButton() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
   const updateConfig = useCallback(
@@ -130,7 +130,7 @@ export function App() {
   );
 }
 
-export function ConfigControls() {
+function ConfigControls() {
   const { config, updateConfig } = React.useContext(ConfigContext);
 
   return (
@@ -179,7 +179,7 @@ function useApplyHeaderConfig() {
   }, [headerConfig, setRouteOptions, routeKey]);
 }
 
-export function RootScreen() {
+function RootScreen() {
   const { push } = useStackNavigationContext();
   useApplyHeaderConfig();
 
@@ -192,7 +192,7 @@ export function RootScreen() {
   );
 }
 
-export function PushedScreen() {
+function PushedScreen() {
   const { push } = useStackNavigationContext();
   useApplyHeaderConfig();
 
@@ -221,4 +221,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackBackButton, scenarioDescription);

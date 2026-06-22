@@ -84,7 +84,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Show As Action Test';
 
-export function App() {
+export function TestStackToolbarMenuShowAsAction() {
   return (
     <StackContainer
       routeConfigs={[
@@ -242,4 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarMenuShowAsAction, scenarioDescription);

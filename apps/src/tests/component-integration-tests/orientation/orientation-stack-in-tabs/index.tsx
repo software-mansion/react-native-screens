@@ -16,7 +16,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const {
     routeKey: tabRouteKey,
     routeOptions: tabRouteOptions,
@@ -62,7 +62,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export function StackScreen() {
+function StackScreen() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
@@ -85,8 +85,8 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestOrientationStackInTabs() {
   return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestOrientationStackInTabs, scenarioDescription);

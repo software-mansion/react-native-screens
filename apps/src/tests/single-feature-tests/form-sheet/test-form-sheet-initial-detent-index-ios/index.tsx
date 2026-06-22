@@ -10,7 +10,7 @@ import { Colors } from '@apps/shared/styling';
 
 type InitialDetentProp = FormSheetProps['initialDetentIndex'];
 
-export function App() {
+export function TestFormSheetInitialDetentIndex() {
   const [isOpen, setIsOpen] = useState(false);
   const [initialIndex, setInitialIndex] = useState<InitialDetentProp>(0);
   const [dummyState, setDummyState] = useState(0);
@@ -119,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetInitialDetentIndex, scenarioDescription);

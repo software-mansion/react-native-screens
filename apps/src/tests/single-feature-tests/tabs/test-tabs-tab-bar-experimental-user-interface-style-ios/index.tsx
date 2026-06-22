@@ -14,7 +14,7 @@ import {
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
-export function HomeScreen() {
+function HomeScreen() {
   const navigation = useStackNavigationContext();
   return (
     <View style={styles.container}>
@@ -29,12 +29,12 @@ export function HomeScreen() {
   );
 }
 
-export function DarkRootScreenContent() {
+function DarkRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <DarkRootScreen onPush={() => navigation.push('darkPushed')} />;
 }
 
-export function LightRootScreenContent() {
+function LightRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <LightRootScreen onPush={() => navigation.push('lightPushed')} />;
 }
@@ -47,7 +47,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
   { name: 'lightPushed', Component: LightInterfaceStyleScreen, options: {} },
 ];
 
-export function App() {
+export function TestTabsTabBarExperimentalUserInterfaceStyle() {
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
       <StackContainer routeConfigs={ROUTE_CONFIGS} />
@@ -55,7 +55,7 @@ export function App() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarExperimentalUserInterfaceStyle, scenarioDescription);
 
 const styles = StyleSheet.create({
   container: {

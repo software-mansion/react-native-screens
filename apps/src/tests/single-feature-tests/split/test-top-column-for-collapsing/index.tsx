@@ -4,7 +4,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { Split } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
 
-export function App() {
+export function TestTopColumnForCollapsing() {
   return (
     <Split.Host topColumnForCollapsing="supplementary">
       <Split.Column>
@@ -20,7 +20,7 @@ export function App() {
   );
 }
 
-export function ColumnContent(props: { columnTitle: string }) {
+function ColumnContent(props: { columnTitle: string }) {
   return (
     <View style={styles.container}>
       <Text style={styles.columnTitle}>{props.columnTitle}</Text>
@@ -42,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTopColumnForCollapsing, scenarioDescription);

@@ -11,7 +11,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { SettingsPicker } from '@apps/shared';
 import { TabBarControllerMode } from 'react-native-screens';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -34,7 +34,7 @@ export function ConfigScreen() {
   );
 }
 
-export function TestScreen() {
+function TestScreen() {
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -68,7 +68,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsTabBarControllerMode() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarControllerMode, scenarioDescription);

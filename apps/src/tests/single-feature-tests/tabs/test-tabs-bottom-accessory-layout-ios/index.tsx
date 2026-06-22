@@ -11,7 +11,7 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/gamma/containers/tabs';
 
-export function ShortViewUL() {
+function ShortViewUL() {
   return (
     <View
       style={[
@@ -25,7 +25,7 @@ export function ShortViewUL() {
   );
 }
 
-export function ShortViewC() {
+function ShortViewC() {
   return (
     <View
       style={[
@@ -39,7 +39,7 @@ export function ShortViewC() {
   );
 }
 
-export function ShortViewLR() {
+function ShortViewLR() {
   return (
     <View
       style={[
@@ -53,7 +53,7 @@ export function ShortViewLR() {
   );
 }
 
-export function LongView() {
+function LongView() {
   return (
     <View style={styles.fullView} testID="accessory-long">
       <LongText />
@@ -61,7 +61,7 @@ export function LongView() {
   );
 }
 
-export function RGBView() {
+function RGBView() {
   return (
     <View style={styles.fullView} testID="accessory-rgb">
       <View
@@ -88,7 +88,7 @@ const ACCESSORY_VARIANTS = [
   { id: 4, Content: RGBView, testID: 'variant-rgb' },
 ];
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const [selected, setSelected] = useState(0);
   const { updateHostConfig } = useTabsHostConfig();
 
@@ -117,7 +117,7 @@ export function ConfigScreen() {
   );
 }
 
-export function ScrollDownTab() {
+function ScrollDownTab() {
   const { updateHostConfig } = useTabsHostConfig();
   const { isSelected } = useTabsNavigationContext();
 
@@ -144,7 +144,7 @@ export function ScrollDownTab() {
   );
 }
 
-export function ScrollUpTab() {
+function ScrollUpTab() {
   const { updateHostConfig } = useTabsHostConfig();
   const { isSelected } = useTabsNavigationContext();
 
@@ -210,7 +210,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+export function TestTabsBottomAccessory() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -259,4 +259,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsBottomAccessory, scenarioDescription);

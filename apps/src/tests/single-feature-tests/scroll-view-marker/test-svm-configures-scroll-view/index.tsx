@@ -8,7 +8,7 @@ import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';
 
-export function App() {
+export function TestSvmConfiguresScrollView() {
   return (
     <StackContainer
       routeConfigs={[
@@ -22,7 +22,7 @@ export function App() {
   );
 }
 
-export function ContentScreen() {
+function ContentScreen() {
   return (
     <View
       style={[
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestSvmConfiguresScrollView, scenarioDescription);
