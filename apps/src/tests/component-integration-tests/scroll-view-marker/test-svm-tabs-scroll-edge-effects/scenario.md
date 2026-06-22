@@ -1,6 +1,4 @@
-# Test Scenario: Integration: SVM in Tabs - edge effects
-
-Example: Test Scenario: colorScheme
+# Test Scenario: Integration: SVM in Tabs - scroll edge effects
 
 ## Details
 
