@@ -110,8 +110,8 @@ open class StackHeaderConfigViewManager :
     }
 
     override fun onDropViewInstance(view: StackHeaderConfig) {
-        super.onDropViewInstance(view)
         view.tearDown()
+        super.onDropViewInstance(view)
     }
 
     override fun setType(

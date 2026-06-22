@@ -171,14 +171,16 @@ internal class StackHeaderCoordinatorLayout(
     private fun processUpdate(provider: StackHeaderConfigurationProviding) {
         if (provider.invalidationFlags.needsRebuild) {
             resetHeader()
-            if (!provider.hidden) {
-                val appBar = applicator.rebuild(this, provider)
-                appBarLayout = appBar
-                attachAppBarListeners(appBar)
-            } else {
+            if (provider.hidden) {
                 removeContentBehavior()
                 requestLayout()
+                provider.invalidationFlags = StackHeaderInvalidationFlags.NONE
+                return
             }
+
+            val appBar = applicator.rebuild(this, provider)
+            appBarLayout = appBar
+            attachAppBarListeners(appBar)
 
             // If config needs to be rebuilt, all other flags must be invalidated as well.
             provider.invalidationFlags =
