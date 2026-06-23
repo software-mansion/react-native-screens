@@ -20,9 +20,9 @@
 - (BOOL)emitOnMenuSelectionChanged:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
 {
   if (_reactEventEmitter != nullptr) {
-    std::vector<std::string> stringIds;
-    for (NSString *sid in selectedIds) {
-      stringIds.push_back(RCTStringFromNSString(sid));
+    std::vector<std::string> stringIds([selectedIds count]);
+    for (int i = 0; i < [selectedIds count]; i++) {
+      stringIds[i] = RCTStringFromNSString(selectedIds[i]);
     }
     _reactEventEmitter->onMenuSelectionChanged({
         .menuId = RCTStringFromNSString(menuId),
