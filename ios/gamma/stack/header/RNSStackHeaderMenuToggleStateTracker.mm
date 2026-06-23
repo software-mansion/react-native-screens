@@ -43,10 +43,10 @@
   _toggleStateChanged = ![_states[menuItemId] boolValue];
   for (NSString *itemId in allItemIdsInMenu) {
     if ([itemId isEqualToString:menuItemId]) {
-      _states[itemId] = @(YES);
+      _states[itemId] = @YES;
       givenItemIsSelected = YES;
     } else {
-      _states[itemId] = @(NO);
+      _states[itemId] = @NO;
     }
   }
 
