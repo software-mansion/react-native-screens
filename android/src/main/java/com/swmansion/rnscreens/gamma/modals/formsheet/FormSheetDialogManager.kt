@@ -19,7 +19,7 @@ class FormSheetDialogManager(
     private val dialog =
         BottomSheetDialog(context).apply {
             setContentView(container)
-            setOnDismissListener {
+            setOnCancelListener {
                 host.onNativeDismiss()
             }
         }
