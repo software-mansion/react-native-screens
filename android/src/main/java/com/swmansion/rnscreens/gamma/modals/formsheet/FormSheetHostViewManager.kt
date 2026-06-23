@@ -129,6 +129,11 @@ class FormSheetHostViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
+    override fun onDropViewInstance(view: FormSheetHost) {
+        view.setIsOpen(false)
+        super.onDropViewInstance(view)
+    }
+
     companion object {
         const val REACT_CLASS = "RNSFormSheetHost"
     }
