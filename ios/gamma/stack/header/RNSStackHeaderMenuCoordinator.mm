@@ -123,39 +123,38 @@
   BOOL isItemToggledOn = [tracker getToggleStateForItemWithId:data.menuElementId initialState:data.initialToggleState];
   BOOL insideSingleSelection = singleSelectionRoot != nil;
 
-  NSArray<NSString *> *toggleItemsIds = insideSingleSelection
-      ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInHierarchy:singleSelectionRoot]
-      : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
-
   NSString *eventMenuId = insideSingleSelection ? singleSelectionRoot.menuElementId : parentMenu.menuElementId;
 
   __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
 
-  UIAction *toggleAction = [UIAction actionWithTitle:data.title
-                                               image:nil
-                                          identifier:nil
-                                             handler:^(__kindof UIAction *_Nonnull action) {
-                                               if (insideSingleSelection) {
-                                                 [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
-                                               } else {
-                                                 [tracker toggleItemWithId:data.menuElementId];
-                                               }
+  UIAction *toggleAction =
+      [UIAction actionWithTitle:data.title
+                          image:nil
+                     identifier:nil
+                        handler:^(__kindof UIAction *_Nonnull action) {
+                          NSArray<NSString *> *toggleItemsIds = insideSingleSelection
+                              ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInHierarchy:singleSelectionRoot]
+                              : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
+                          if (insideSingleSelection) {
+                            [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
+                          } else {
+                            [tracker toggleItemWithId:data.menuElementId];
+                          }
 
-                                               NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
-                                               for (NSString *itemId in toggleItemsIds) {
-                                                 if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
-                                                   [selectedIds addObject:itemId];
-                                                 }
-                                               }
+                          NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
+                          for (NSString *itemId in toggleItemsIds) {
+                            if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
+                              [selectedIds addObject:itemId];
+                            }
+                          }
 
-                                               // the state might be unchanged if user e.g. clicks on the same selected
-                                               // radio
-                                               if ([tracker toggleStateChanged]) {
-                                                 [weakDelegate didChangeSelectionForMenu:eventMenuId
-                                                                     selectedMenuItemIds:selectedIds];
-                                                 [tracker setToggleStateChanged:NO];
-                                               }
-                                             }];
+                          // the state might be unchanged if user e.g. clicks on the same selected
+                          // radio
+                          if ([tracker toggleStateChanged]) {
+                            [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
+                            [tracker setToggleStateChanged:NO];
+                          }
+                        }];
   toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
 
   return toggleAction;

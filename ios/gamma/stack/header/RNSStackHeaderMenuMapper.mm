@@ -50,13 +50,11 @@
   } else if ([type isEqual:@"menuItem"]) {
     [RNSStackHeaderMenuMapper validateMenuItemKeys:dict];
 
-    RNSMenuItemType itemType = [self itemTypeFromString:[self stringForKey:@"itemType" in:dict]];
-    BOOL initialToggleState = [self boolForKey:@"initialToggleState" in:dict];
-
     return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                                     title:[self stringForKey:@"title" in:dict]
-                                                 itemType:itemType
-                                       initialToggleState:initialToggleState];
+                                                 itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
+                                                                                                   in:dict]]
+                                       initialToggleState:[self boolForKey:@"initialToggleState" in:dict]];
   }
 
   return nil;
