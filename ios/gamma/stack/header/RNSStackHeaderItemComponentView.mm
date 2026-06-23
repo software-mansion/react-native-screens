@@ -157,7 +157,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.menu != newItemProps.menu) {
     _menu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
-    _menuToggleStateTracker = _menu != nil ? [[RNSStackHeaderMenuToggleStateTracker alloc] init] : nil;
+    _menuToggleStateTracker = _menu != nil ? [RNSStackHeaderMenuToggleStateTracker new] : nil;
     needsUpdate = YES;
   }
 

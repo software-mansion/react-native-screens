@@ -82,14 +82,6 @@
               @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
               itemData.menuElementId);
 
-    __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
-
-    // toggle works differently with singleSelection and without it
-    // normally, each toggle is separate and changing one triggers selection change event on direct parent
-    // but when singleSelection is set somewhere in the parent *chain*, only one toggle in the whole hierarchy
-    // can be turned on at any point in time, and the single selection root is notified, which doesn't need
-    // to be a direct parent
-    // we don't send press event for toggle by design
     if (effectiveType == RNSMenuItemTypeToggle) {
       if (insideSingleSelection && itemData.initialToggleState) {
         RCTAssert(
@@ -98,53 +90,88 @@
             singleSelectionRoot.menuElementId);
         *initialSingleSelectionStateClaimed = YES;
       }
-      BOOL isOn = [tracker getToggleStateForItemWithId:itemData.menuElementId initialState:itemData.initialToggleState];
-
-      NSArray<NSString *> *toggleItemsIds = insideSingleSelection
-          ? [self getAllToggleItemsIdsInHierarchy:singleSelectionRoot]
-          : [self getToggleItemsIdsInMenu:parentMenu];
-
-      NSString *eventMenuId = insideSingleSelection ? singleSelectionRoot.menuElementId : parentMenu.menuElementId;
-
-      UIAction *toggleAction =
-          [UIAction actionWithTitle:itemData.title
-                              image:nil
-                         identifier:nil
-                            handler:^(__kindof UIAction *_Nonnull action) {
-                              if (insideSingleSelection) {
-                                [tracker selectItemWithId:itemData.menuElementId fromIds:toggleItemsIds];
-                              } else {
-                                [tracker toggleItemWithId:itemData.menuElementId];
-                              }
-
-                              NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
-                              for (NSString *itemId in toggleItemsIds) {
-                                if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
-                                  [selectedIds addObject:itemId];
-                                }
-                              }
-
-                              // the state might be unchanged if user e.g. clicks on the same selected radio
-                              if ([tracker toggleStateChanged]) {
-                                [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
-                                [tracker setToggleStateChanged:NO];
-                              }
-                            }];
-      toggleAction.state = isOn ? UIMenuElementStateOn : UIMenuElementStateOff;
-
-      return toggleAction;
+      return [self buildToggleFromData:itemData
+                        withParentMenu:parentMenu
+                   singleSelectionRoot:singleSelectionRoot
+                    toggleStateTracker:tracker
+                    menuEventsDelegate:delegate];
     }
 
     // it effective type is not 'toggle', then it is a regular action button that triggers onPress instead
-    return [UIAction actionWithTitle:itemData.title
-                               image:nil
-                          identifier:nil
-                             handler:^(__kindof UIAction *_Nonnull action) {
-                               [weakDelegate didPressMenuItem:itemData.menuElementId];
-                             }];
+    return [self buildActionFromData:itemData withMenuEventsDelegate:delegate];
   }
 
   return nil;
+}
+
+/**
+ Builds item which can be toggled on / off.
+
+ Toggle works differently with singleSelection and without it. Normally, each toggle is separate and changing one
+ triggers selection change event on direct parent, but when singleSelection is set somewhere in the parent *chain*,
+ only one toggle in the whole hierarchy can be turned on at any point in time, and the single selection root,
+ which doesn't need to be a direct parent, is notified.
+
+ We don't send press event for toggle by design.
+ */
++ (nullable UIMenuElement *)buildToggleFromData:(RNSStackHeaderMenuItemData *)data
+                                 withParentMenu:(RNSStackHeaderMenuData *)parentMenu
+                            singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
+                             toggleStateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                             menuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
+{
+  BOOL isOn = [tracker getToggleStateForItemWithId:data.menuElementId initialState:data.initialToggleState];
+  BOOL insideSingleSelection = singleSelectionRoot != nil;
+
+  NSArray<NSString *> *toggleItemsIds = insideSingleSelection
+      ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInHierarchy:singleSelectionRoot]
+      : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
+
+  NSString *eventMenuId = insideSingleSelection ? singleSelectionRoot.menuElementId : parentMenu.menuElementId;
+
+  __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
+
+  UIAction *toggleAction = [UIAction actionWithTitle:data.title
+                                               image:nil
+                                          identifier:nil
+                                             handler:^(__kindof UIAction *_Nonnull action) {
+                                               if (insideSingleSelection) {
+                                                 [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
+                                               } else {
+                                                 [tracker toggleItemWithId:data.menuElementId];
+                                               }
+
+                                               NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
+                                               for (NSString *itemId in toggleItemsIds) {
+                                                 if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
+                                                   [selectedIds addObject:itemId];
+                                                 }
+                                               }
+
+                                               // the state might be unchanged if user e.g. clicks on the same selected
+                                               // radio
+                                               if ([tracker toggleStateChanged]) {
+                                                 [weakDelegate didChangeSelectionForMenu:eventMenuId
+                                                                     selectedMenuItemIds:selectedIds];
+                                                 [tracker setToggleStateChanged:NO];
+                                               }
+                                             }];
+  toggleAction.state = isOn ? UIMenuElementStateOn : UIMenuElementStateOff;
+
+  return toggleAction;
+}
+
++ (nullable UIMenuElement *)buildActionFromData:(RNSStackHeaderMenuItemData *)data
+                         withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
+{
+  __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
+
+  return [UIAction actionWithTitle:data.title
+                             image:nil
+                        identifier:nil
+                           handler:^(__kindof UIAction *_Nonnull action) {
+                             [weakDelegate didPressMenuItem:data.menuElementId];
+                           }];
 }
 
 #pragma mark - Helpers
