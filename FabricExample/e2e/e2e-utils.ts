@@ -11,7 +11,7 @@ export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(400, 'down', Number.NaN, 0.85);
+    .scroll(600, 'down', Number.NaN, 0.85);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
