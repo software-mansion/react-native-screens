@@ -22,6 +22,8 @@ import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsGeneralAppearanceNoLiquidGlass from './test-tabs-general-appearance-no-liquid-glass-ios';
 import TestTabsNativeContainerStyle from './test-tabs-native-container-style';
 
+export { TestTabsSimpleNav } from './test-tabs-simple-nav';
+
 const scenarios = {
   TestTabBottomAccessory,
   TestTabsOverrideScrollViewContentInset,
