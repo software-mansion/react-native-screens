@@ -61,6 +61,11 @@ class FormSheetHost(
         dialogManager.contentView.removeAllViews()
     }
 
+    override fun onDetachedFromWindow() {
+        dialogManager.dismiss()
+        super.onDetachedFromWindow()
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
