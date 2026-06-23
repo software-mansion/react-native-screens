@@ -35,6 +35,7 @@ export type {
   // iOS
   TabsScreenBlurEffect,
   TabsScreenSystemItem,
+  TabsScreenToolbarItemIOS,
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
   TabsScreenItemStateAppearanceIOS,

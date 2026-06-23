@@ -7,6 +7,7 @@
 #import "NSString+RNSUtility.h"
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSTabsHostComponentView+RNSImageLoader.h"
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsNavigationStateObserverRegistry.h"
 
@@ -97,6 +98,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
+    _needsUpdateOfSearchToolbarItems = false;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
 
     // Delegate field retains weakly, no risk of cycle.
@@ -250,6 +252,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _isHandlingExplicitSelectionUpdate = NO;
 
   [self updateTabBarAppearanceIfNeeded];
+  [self updateSearchToolbarItemsIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
 }
@@ -280,10 +283,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self progressNavigationState:screenKey withOrigin:actionOrigin];
 
   if (currSelectedViewController == nextSelectedViewController) {
+    self.needsUpdateOfSearchToolbarItems = true;
     return YES;
   }
 
   [self setSelectedViewController:nextSelectedViewController];
+  self.needsUpdateOfSearchToolbarItems = true;
   return YES;
 }
 
@@ -342,6 +347,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                                            actionOrigin:RNSTabsActionOriginUser];
     [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
   }
+  self.needsUpdateOfSearchToolbarItems = true;
+  [self updateSearchToolbarItemsIfNeeded];
 }
 
 - (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
@@ -580,6 +587,32 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                    withHostComponentView:self.tabsHostComponentView
                                     tabScreenControllers:_tabScreenControllers
                                              imageLoader:[self.tabsHostComponentView reactImageLoader]];
+}
+
+- (void)updateSearchToolbarItemsIfNeeded
+{
+  if (_needsUpdateOfSearchToolbarItems) {
+    [self updateSearchToolbarItems];
+  }
+}
+
+- (void)updateSearchToolbarItems
+{
+  _needsUpdateOfSearchToolbarItems = false;
+
+  RNSTabsScreenViewController *selectedScreenViewController = nil;
+  if (![self isSelectedViewControllerTheMoreNavigationController] &&
+      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    selectedScreenViewController = [self selectedScreenViewController];
+  }
+
+  for (RNSTabsScreenViewController *screenViewController in _tabScreenControllers) {
+    if (screenViewController != selectedScreenViewController) {
+      [screenViewController clearSearchToolbarItems];
+    }
+  }
+
+  [selectedScreenViewController updateSearchToolbarItemsWithImageLoader:[self.tabsHostComponentView reactImageLoader]];
 }
 
 - (void)updateTabBarA11yIfNeeded

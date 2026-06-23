@@ -197,6 +197,7 @@ function TabsStackComponent() {
   const [config, setConfig] = React.useState<Configuration>(
     DEFAULT_GLOBAL_CONFIGURATION,
   );
+  const [activeFilterCount, setActiveFilterCount] = useState(2);
   const { searchBarConfig } = useSearchBarConfig();
 
   const TAB_CONFIGS: TabRouteConfig[] = [
@@ -237,6 +238,24 @@ function TabsStackComponent() {
             name: 'magnifyingglass',
           },
           systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
+          toolbarItems: [
+            {
+              type: 'button',
+              icon: {
+                type: 'sfSymbol',
+                name: 'line.3.horizontal.decrease',
+              },
+              accessibilityLabel: 'Filters',
+              accessibilityHint: 'Updates active filters count',
+              badge: {
+                value: String(activeFilterCount),
+              },
+              onPress: () =>
+                setActiveFilterCount(currentFilterCount =>
+                  currentFilterCount + 1,
+                ),
+            },
+          ],
         },
       },
     },

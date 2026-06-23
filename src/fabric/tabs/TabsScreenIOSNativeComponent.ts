@@ -14,6 +14,7 @@ import { UnsafeMixed } from '../codegenUtils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
+type OnPressToolbarItemEvent = Readonly<{ buttonId: string }>;
 
 // #endregion General helpers
 
@@ -115,6 +116,9 @@ export interface NativeProps extends ViewProps {
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onPressToolbarItem?:
+    | CT.DirectEventHandler<OnPressToolbarItemEvent>
+    | undefined;
 
   // Control
   screenKey: string;
@@ -145,6 +149,7 @@ export interface NativeProps extends ViewProps {
   // Tab config
   isTitleUndefined?: CT.WithDefault<boolean, true>;
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
+  toolbarItems?: CT.UnsafeMixed[] | undefined;
 
   // Appearance
   standardAppearance?: UnsafeMixed<Appearance> | undefined;

@@ -1,6 +1,9 @@
 import type { ColorValue, TextStyle } from 'react-native';
 import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
-import type { PlatformIconIOS } from '../../../types';
+import type {
+  HeaderBarButtonItemWithAction,
+  PlatformIconIOS,
+} from '../../../types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -17,6 +20,8 @@ export type TabsScreenSystemItem =
   | 'recents'
   | 'search'
   | 'topRated';
+
+export type TabsScreenToolbarItemIOS = HeaderBarButtonItemWithAction;
 
 export interface TabsScreenAppearanceIOS {
   /**
@@ -273,6 +278,17 @@ export interface TabsScreenPropsIOS {
    * @platform ios
    */
   systemItem?: TabsScreenSystemItem | undefined;
+  /**
+   * @summary Native toolbar items displayed next to the integrated search item.
+   *
+   * On iOS 26 and later, when this screen uses `systemItem: 'search'` and the active
+   * nested screen has a search controller integrated into the toolbar, these items are
+   * appended after `UINavigationItem.searchBarPlacementBarButtonItem`.
+   *
+   * @platform ios
+   * @supported iOS 26 or higher
+   */
+  toolbarItems?: TabsScreenToolbarItemIOS[] | undefined;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
