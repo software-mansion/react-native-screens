@@ -4,7 +4,7 @@
 
 **Description:** Test common navigation flows in Stack in Tabs configuration
 
-**OS test creation version:** Android SDK 36, iOS 26.5
+**OS test creation version:** iOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -18,7 +18,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the test screen.
+1. Launch the app and navigate to the **Stack in Tabs - basic navigation scenarios** screen.
 
 - [ ] A tab navigation bar is visible with three destinations: *First*, *Second*, *Stack*.
 - [ ] *First* is selected.
@@ -43,14 +43,14 @@ TBD: Planned, but will be implemented separately.
 
 ### Nested container state preservation 
 
-1. Navigate to the *Stack* tab.
+5. Navigate to the *Stack* tab.
 
-2. Push *Second* screen.
+6. Push *Second* screen.
 
-3. Push *Third* screen.
+7. Push *Third* screen.
 
 - [ ] Both *Second* and *Third* are pushed onto the stack.
 
-4. Toggle between *First* and *Stack* tabs.
+8. Toggle between *First* and *Stack* tabs.
 
 - [ ] *Stack* tab displays nested stack with *Third* route on top.
