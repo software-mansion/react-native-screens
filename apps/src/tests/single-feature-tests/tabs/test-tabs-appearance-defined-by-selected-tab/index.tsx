@@ -84,7 +84,7 @@ const TAB3_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
   },
 };
 
-export function TabScreen() {
+function TabScreen() {
   const navigation = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
@@ -105,7 +105,7 @@ export function TabScreen() {
   );
 }
 
-export function TabsRouteInformation() {
+function TabsRouteInformation() {
   const navigation = useTabsNavigationContext();
 
   return (
@@ -115,7 +115,7 @@ export function TabsRouteInformation() {
   );
 }
 
-export function App() {
+export function TestTabsAppearanceDefinedBySelectedTab() {
   return (
     <TabsContainer
       routeConfigs={[
@@ -225,4 +225,4 @@ export function App() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsAppearanceDefinedBySelectedTab, scenarioDescription);

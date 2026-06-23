@@ -26,6 +26,8 @@ import TestTabsBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
+export { TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
+
 const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
