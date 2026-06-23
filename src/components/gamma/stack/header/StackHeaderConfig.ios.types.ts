@@ -2,50 +2,194 @@ import type { ReactElement } from 'react';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 export interface StackHeaderBaseItemIOS {
+  /**
+   * @summary A unique identifier within the screen header.
+   *
+   * @platform iOS
+   */
   key: string;
+  /**
+   * @summary A label for the item that is displayed in the header.
+   *
+   * @platform iOS
+   */
   label?: string | undefined;
 }
 
 export interface SupportsMenuIOS {
+  /**
+   * @summary Menu definition for the context menu that appears when item is tapped.
+   *
+   * @platform iOS
+   */
   menu?: StackHeaderMenuIOS | undefined;
 }
 
+/**
+ * @summary Native header item with text label.
+ *
+ * @platform iOS
+ */
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS {
+  /**
+   * @summary Marks this object as a header item definition.
+   *
+   * @platform iOS
+   */
   type: 'item';
 }
 
+/**
+ * @summary Header item with custom view.
+ *
+ * @platform iOS
+ */
 export interface StackHeaderInlineCustomItemIOS extends SupportsMenuIOS {
+  /**
+   * @summary A unique identifier within the screen header.
+   *
+   * @platform iOS
+   */
   key: string;
+  /**
+   * @summary Marks this object as a header item definition.
+   *
+   * @platform iOS
+   */
   type: 'item';
+  /**
+   * @summary A function that renders the custom view.
+   *
+   * @description
+   * The subview is sized by React Native's layout engine but positioned by the
+   * platform native layout. Each item's size is calculated independently and will
+   * not respect flex layout. Use static width and height for best results.
+   *
+   * @platform iOS
+   */
   render: () => ReactElement;
 }
 
+/**
+ * @summary A spacer item for visual separation of items.
+ *
+ * @description Separates items defined in {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems}
+ * and {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}. The fixed size spacing works
+ * for iOS 18 and below, for iOS 26 it only splits liquid glass bubble for two adjacent items.
+ *
+ * @platform iOS
+ */
 interface StackHeaderFixedSpacerItemIOS {
+  /**
+   * @summary A unique identifier within the screen header.
+   *
+   * @platform iOS
+   */
   key: string;
+  /**
+   * @summary Marks this object as a spacer definition.
+   *
+   * @platform iOS
+   */
   type: 'spacer';
+  /**
+   * @summary Marks this object as a fixed-size spacer definition.
+   *
+   * @platform iOS
+   */
   sizing: 'fixed';
+  /**
+   * @summary Specifies space width between adjacent header items.
+   *
+   * @platform iOS
+   */
   width: number;
 }
 
+/**
+ * @summary A spacer item for visual separation of items.
+ *
+ * @description Separates items defined in {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems}
+ * and {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
+ * For iOS 26 it splits liquid glass bubble for two adjacent items.
+ *
+ * @platform iOS
+ */
 interface StackHeaderFlexibleSpacerItemIOS {
+  /**
+   * @summary A unique identifier within the screen header.
+   *
+   * @platform iOS
+   */
   key: string;
+  /**
+   * @summary Marks this object as a spacer definition.
+   *
+   * @platform iOS
+   */
   type: 'spacer';
+  /**
+   * @summary Marks this object as a flexible-size spacer definition.
+   *
+   * @platform iOS
+   */
   sizing: 'flexible';
 }
 
+/**
+ * @summary A header spacer item type
+ */
 export type StackHeaderSpacerItemIOS =
   | StackHeaderFixedSpacerItemIOS
   | StackHeaderFlexibleSpacerItemIOS;
 
 export interface StackHeaderTitleCustomItemIOS {
+  /**
+   * @summary A unique identifier within the screen header.
+   *
+   * @platform iOS
+   */
   key: string;
+  /**
+   * @summary A function that renders the custom view.
+   *
+   * @description
+   * The subview is sized by React Native's layout engine but positioned by the
+   * platform native layout. Each item's size is calculated independently and will
+   * not respect flex layout. Use static width and height for best results.
+   *
+   * Note: Due to layout process limitations, text view resizing and ellipsizing will not work.
+   * For text-only elements that should ellipsize is recommended to use regular `title` instead.
+   *
+   * @platform iOS
+   */
   render: () => ReactElement;
 }
 
 export interface StackHeaderConfigPropsIOS {
+  /**
+   * @summary Custom item to display as a subtitle.
+   *
+   * @description Takes precedence over subtitle text.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 26 and higher
+   */
   subtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
+  /**
+   * @summary A list of items placed beginning from the leading edge.
+   *
+   * @description Items are placed directly to the right of back button, if present.
+   * If there is not enough space to fit all leading items at once, they are all moved to overflow menu.
+   * This differs from trailing items, which are moved one by one.
+   *
+   * Note: Custom items are not put into overflow menu, but are removed entirely.
+   *
+   * @platform iOS
+   */
   leadingItems?:
     | (
         | StackHeaderInlineItemIOS
@@ -53,7 +197,22 @@ export interface StackHeaderConfigPropsIOS {
         | StackHeaderSpacerItemIOS
       )[]
     | undefined;
+  /**
+   * @summary Custom item to display as a title.
+   *
+   * @description Takes precedence over title text.
+   *
+   * @platform iOS
+   */
   titleItem?: StackHeaderTitleCustomItemIOS | undefined;
+  /**
+   * @summary A list of items placed beginning from the trailing edge.
+   * If there is not enough space to fit some items, they are moved to the overflow menu, one by one.
+   *
+   * Note: Custom items are not put into overflow menu, but are removed entirely.
+   *
+   * @platform iOS
+   */
   trailingItems?:
     | (
         | StackHeaderInlineItemIOS
@@ -61,9 +220,41 @@ export interface StackHeaderConfigPropsIOS {
         | StackHeaderSpacerItemIOS
       )[]
     | undefined;
+  /**
+   * @summary Large title text, displayed when `largeTitleEnabled = true`.
+   *
+   * @description When ScrollView is present on the screen, large header is displayed only when
+   * fully scrolled to top, otherwise it collapses to regular header. If `largeTitle` is not defined,
+   * it fallbacks to regular title.
+   *
+   * @platform iOS
+   */
   largeTitle?: string | undefined;
+  /**
+   * @summary Tells the header to display large title. It collapses to regular header when scrolling.
+   *
+   * @platform iOS
+   */
   largeTitleEnabled?: boolean | undefined;
+  /**
+   * @summary Large subtitle text, displayed when `largeTitleEnabled = true`.
+   *
+   * @description When ScrollView is present on the screen, large header is displayed only when
+   * fully scrolled to top, otherwise it collapses to regular header. If `largeSubititle` is not defined,
+   * it fallbacks to regular subtitle.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 26 and higher
+   */
   largeSubtitle?: string | undefined;
+  /**
+   * @summary Custom item to display as a subtitle for large header. Takes precedence over largeSubtitle text.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 26 and higher
+   */
   largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
 }
 
