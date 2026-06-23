@@ -26,7 +26,9 @@ interface StackHeaderConfigurationProviding {
     val toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
     val isRTL: Boolean
 
-    var invalidationFlags: StackHeaderInvalidationFlags
+    val invalidationFlags: StackHeaderInvalidationFlags
+
+    fun clearInvalidationFlags(flags: StackHeaderInvalidationFlags)
 
     fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?)
 }

@@ -49,6 +49,10 @@ class StackHeaderConfig(
 
     override var invalidationFlags = StackHeaderInvalidationFlags.ALL
 
+    override fun clearInvalidationFlags(flags: StackHeaderInvalidationFlags) {
+        invalidationFlags = invalidationFlags.clearing(flags)
+    }
+
     private fun invalidate(flags: StackHeaderInvalidationFlags) {
         invalidationFlags = invalidationFlags or flags
     }

@@ -169,12 +169,13 @@ internal class StackHeaderCoordinatorLayout(
     }
 
     private fun processUpdate(provider: StackHeaderConfigurationProviding) {
-        if (provider.invalidationFlags.needsRebuild) {
+        val needsRebuild = provider.invalidationFlags.needsRebuild
+        if (needsRebuild) {
             resetHeader()
             if (provider.hidden) {
                 removeContentBehavior()
                 requestLayout()
-                provider.invalidationFlags = StackHeaderInvalidationFlags.NONE
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.ALL)
                 return
             }
 
@@ -183,36 +184,26 @@ internal class StackHeaderCoordinatorLayout(
             attachAppBarListeners(appBar)
 
             // If config needs to be rebuilt, all other flags must be invalidated as well.
-            provider.invalidationFlags =
-                StackHeaderInvalidationFlags.ALL.clearing(
-                    StackHeaderInvalidationFlags.STRUCTURE or StackHeaderInvalidationFlags.SUBVIEWS,
-                )
+            provider.clearInvalidationFlags(
+                StackHeaderInvalidationFlags.STRUCTURE or StackHeaderInvalidationFlags.SUBVIEWS,
+            )
         }
 
         val appBar = appBarLayout
         if (appBar != null) {
-            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
                 applicator.applyTitle(appBar, provider)
-                provider.invalidationFlags =
-                    provider.invalidationFlags.clearing(
-                        StackHeaderInvalidationFlags.TITLE,
-                    )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
             }
 
-            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
                 applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
-                provider.invalidationFlags =
-                    provider.invalidationFlags.clearing(
-                        StackHeaderInvalidationFlags.BACK_BUTTON,
-                    )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.BACK_BUTTON)
             }
 
-            if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.SCROLL_FLAGS)) {
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.SCROLL_FLAGS)) {
                 applicator.applyScrollFlags(appBar, provider)
-                provider.invalidationFlags =
-                    provider.invalidationFlags.clearing(
-                        StackHeaderInvalidationFlags.SCROLL_FLAGS,
-                    )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.SCROLL_FLAGS)
             }
 
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
@@ -231,10 +222,7 @@ internal class StackHeaderCoordinatorLayout(
                 // We only need to keep forward map for view commands.
                 toolbarMenuForwardIdMap = forwardIdMap
 
-                provider.invalidationFlags =
-                    provider.invalidationFlags.clearing(
-                        StackHeaderInvalidationFlags.TOOLBAR_MENU,
-                    )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
         }
 
