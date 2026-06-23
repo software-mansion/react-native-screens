@@ -75,14 +75,14 @@
   if ([element isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
     RNSStackHeaderMenuItemData *itemData = (RNSStackHeaderMenuItemData *)element;
     BOOL insideSingleSelection = singleSelectionRoot != nil;
-    RNSMenuItemType effectiveType = [self resolveItemType:itemData.itemType
-                                    insideSingleSelection:insideSingleSelection];
+    RNSMenuItemType effectiveItemType = [self resolveItemType:itemData.itemType
+                                        insideSingleSelection:insideSingleSelection];
 
-    RCTAssert(!(insideSingleSelection && effectiveType == RNSMenuItemTypeAction),
+    RCTAssert(!(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
               @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
               itemData.menuElementId);
 
-    if (effectiveType == RNSMenuItemTypeToggle) {
+    if (effectiveItemType == RNSMenuItemTypeToggle) {
       if (insideSingleSelection && itemData.initialToggleState) {
         RCTAssert(
             !*initialSingleSelectionStateClaimed,
@@ -120,7 +120,7 @@
                              toggleStateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
                              menuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
 {
-  BOOL isOn = [tracker getToggleStateForItemWithId:data.menuElementId initialState:data.initialToggleState];
+  BOOL isItemToggledOn = [tracker getToggleStateForItemWithId:data.menuElementId initialState:data.initialToggleState];
   BOOL insideSingleSelection = singleSelectionRoot != nil;
 
   NSArray<NSString *> *toggleItemsIds = insideSingleSelection
@@ -156,7 +156,7 @@
                                                  [tracker setToggleStateChanged:NO];
                                                }
                                              }];
-  toggleAction.state = isOn ? UIMenuElementStateOn : UIMenuElementStateOff;
+  toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
 
   return toggleAction;
 }
@@ -187,40 +187,33 @@
 + (NSArray<NSString *> *)getToggleItemsIdsInMenu:(RNSStackHeaderMenuData *)menu
 {
   NSMutableArray<NSString *> *ids = [NSMutableArray new];
-  for (id<RNSStackHeaderMenuElement> child in menu.children) {
-    if ([child isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
-      RNSStackHeaderMenuItemData *item = (RNSStackHeaderMenuItemData *)child;
-      RNSMenuItemType effective = [self resolveItemType:item.itemType insideSingleSelection:menu.singleSelection];
-      if (effective == RNSMenuItemTypeToggle) {
-        [ids addObject:item.menuElementId];
-      }
-    }
-  }
+  [self collectToggleItemsIdsFromMenu:menu intoArray:ids recursive:NO];
   return ids;
 }
 
 + (NSArray<NSString *> *)getAllToggleItemsIdsInHierarchy:(RNSStackHeaderMenuData *)menu
 {
   NSMutableArray<NSString *> *ids = [NSMutableArray new];
-  [self collectToggleItemsIdsFromMenu:menu intoArray:ids insideSingleSelection:menu.singleSelection];
+  [self collectToggleItemsIdsFromMenu:menu intoArray:ids recursive:YES];
   return ids;
 }
 
 + (void)collectToggleItemsIdsFromMenu:(RNSStackHeaderMenuData *)menu
                             intoArray:(NSMutableArray<NSString *> *)ids
-                insideSingleSelection:(bool)insideSingleSelection
+                            recursive:(bool)insideSingleSelection
 {
   for (id<RNSStackHeaderMenuElement> child in menu.children) {
     if ([child isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
       RNSStackHeaderMenuItemData *item = (RNSStackHeaderMenuItemData *)child;
-      RNSMenuItemType effective = [self resolveItemType:item.itemType insideSingleSelection:insideSingleSelection];
-      if (effective == RNSMenuItemTypeToggle) {
+      RNSMenuItemType effectiveItemType = [self resolveItemType:item.itemType
+                                          insideSingleSelection:insideSingleSelection];
+      if (effectiveItemType == RNSMenuItemTypeToggle) {
         [ids addObject:item.menuElementId];
       }
-    } else if ([child isKindOfClass:[RNSStackHeaderMenuData class]]) {
+    } else if (insideSingleSelection && [child isKindOfClass:[RNSStackHeaderMenuData class]]) {
       [self collectToggleItemsIdsFromMenu:(RNSStackHeaderMenuData *)child
                                 intoArray:ids
-                    insideSingleSelection:insideSingleSelection];
+                                recursive:insideSingleSelection];
     }
   }
 }
