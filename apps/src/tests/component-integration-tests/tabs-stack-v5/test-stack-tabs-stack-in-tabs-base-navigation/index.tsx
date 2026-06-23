@@ -10,11 +10,12 @@ import {
   StackContainer,
   type StackRouteConfig,
 } from '@apps/shared/gamma/containers/stack';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 import { TabsRouteInformation } from '@apps/tests/shared/components/tabs/TabsRouteInformation';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
+import { Colors } from '@apps/shared/styling';
 
 const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
@@ -115,10 +116,17 @@ function GenericStackScreenContents() {
   }, []);
 
   return (
-    <CenteredLayoutView style={[styles.flexContainer]}>
-      <StackRouteInformation />
-      <StackNavigationButtons routeNames={routeNames} isPopEnabled />
-    </CenteredLayoutView>
+    <View
+      style={[
+        styles.flexContainer,
+        styles.fillParent,
+        { backgroundColor: Colors.BlueLight40 },
+      ]}>
+      <CenteredLayoutView style={[styles.flexContainer]}>
+        <StackRouteInformation />
+        <StackNavigationButtons routeNames={routeNames} isPopEnabled />
+      </CenteredLayoutView>
+    </View>
   );
 }
 
