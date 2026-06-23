@@ -1,11 +1,10 @@
-# Test Scenario: Tabs in Stack - stable enter transition
+# Test Scenario: Stack in Tabs - basic navigation scenarios
 
 ## Details
 
-**Description:** Verify that pushing a `StackContainer` screen that has a
-nested `TabsContainer` plays a stable enter transition (without any visual content jumps).
+**Description:** Test common navigation flows in Stack in Tabs configuration
 
-**OS test creation version:** TBD
+**OS test creation version:** Android SDK 36, iOS 26.5
 
 ## E2E test
 
@@ -19,32 +18,39 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Tabs in Stack - stable enter
-   transition** screen.
+1. Launch the app and navigate to the test screen.
 
-- [ ] The "First stack screen" is shown on a light blue background
-      with a "Go to nested tabs" button.
-
----
-
-### Enter transition
-
-2. Tap the "Go to nested tabs" button.
-
-- [ ] The stack pushes the second screen ("Nested Tabs") with a
-      standard push animation. The nested tabs content ("Home tab" with its
-      `tab routeKey`) and the tab bar (Home / Settings) are already correctly
-      laid out as the screen slides in. There is **no** flicker, no flash of an
-      empty/white screen, no layout jump, and no momentary mis-position of the
-      tab bar or tab content during the transition.
+- [ ] A tab navigation bar is visible with three destinations: *First*, *Second*, *Stack*.
+- [ ] *First* is selected.
 
 ---
 
-### Tab switching after transition
+### Tab navigation
 
-3. Once the transition finishes, switch between the "Home" and "Settings" tabs.
+2. Navigate to the *Second* tab.
 
-- [ ] Both tabs render their content centered ("Home tab" /
-      "Settings tab") together with the corresponding `tab routeKey`. Switching
-      tab runs a slide-in animation for the active indicator and the label
-      of the selected tab.
+- [ ] Second tab is selected correctly.
+
+3. Navigate to the *Stack* tab.
+
+- [ ] *First* route there is displayed correctly.
+
+4. Toggle between *First* and *Stack* tabs.
+
+- [ ] Tabs do change "normally", there is no crash.
+
+---
+
+### Nested container state preservation 
+
+1. Navigate to the *Stack* tab.
+
+2. Push *Second* screen.
+
+3. Push *Third* screen.
+
+- [ ] Both *Second* and *Third* are pushed onto the stack.
+
+4. Toggle between *First* and *Stack* tabs.
+
+- [ ] *Stack* tab displays nested stack with *Third* route on top.
