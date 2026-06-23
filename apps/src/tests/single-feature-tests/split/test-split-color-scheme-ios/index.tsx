@@ -83,7 +83,7 @@ function TestColumn() {
   );
 }
 
-export function TestColorScheme() {
+export function TestSplitColorScheme() {
   const [hostColorScheme, setHostColorScheme] =
     useState<SplitHostColorScheme>('inherit');
   const [reactColorScheme, setReactColorScheme] =
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestColorScheme, scenarioDescription);
+export default createScenario(TestSplitColorScheme, scenarioDescription);

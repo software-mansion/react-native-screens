@@ -1,16 +1,16 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TestTopColumnForCollapsing from './test-top-column-for-collapsing';
-import TestCommandShowColumn from './test-command-show-column';
-import TestColorScheme from './test-split-color-scheme-ios';
+import TestSplitTopColumnForCollapsing from './test-top-column-for-collapsing';
+import TestSplitCommandShowColumn from './test-command-show-column';
+import TestSplitColorScheme from './test-split-color-scheme-ios';
 
-export { TestTopColumnForCollapsing } from './test-top-column-for-collapsing';
-export { TestCommandShowColumn } from './test-command-show-column';
-export { TestColorScheme } from './test-split-color-scheme-ios';
+export { TestSplitTopColumnForCollapsing } from './test-top-column-for-collapsing';
+export { TestSplitCommandShowColumn } from './test-command-show-column';
+export { TestSplitColorScheme } from './test-split-color-scheme-ios';
 
 const scenarios = {
-  TestTopColumnForCollapsing,
-  TestCommandShowColumn,
-  TestColorScheme,
+  TestSplitTopColumnForCollapsing,
+  TestSplitCommandShowColumn,
+  TestSplitColorScheme,
 };
 
 const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
