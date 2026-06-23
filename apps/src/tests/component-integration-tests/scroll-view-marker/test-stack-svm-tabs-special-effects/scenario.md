@@ -1,4 +1,4 @@
-# Test Scenario: Integration: SVM in Stack & Tabs - tabs special effects
+# Test Scenario: SVM in Stack & Tabs - tabs special effects
 
 ## Details
 
@@ -8,7 +8,7 @@ The primary goal is to verify that the tabs special effects (scroll-to-top, pop-
 nested container scenario.
 
 **OS test creation version:** 
-iOS 26.5, Android SDK 36
+iOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -16,8 +16,8 @@ TBD
 
 ## Prerequisites
 
-iOS: simulator with iOS 15+ is enough,
-Android: emulator
+- iOS: simulator with iOS 15+ is enough,
+- Android: emulator
 
 ## Note
 
@@ -28,7 +28,7 @@ This test needs to be updated after such interaction is supported.
 
 ## Steps
 
-1. Open the test.
+1. Launch the app and navigate to the **SVM in Stack & Tabs - tabs special effects** screen.
 
 - [ ] There should be two tabs: `Home` and `Stack`.
 - [ ] `Home` tab should be selected.

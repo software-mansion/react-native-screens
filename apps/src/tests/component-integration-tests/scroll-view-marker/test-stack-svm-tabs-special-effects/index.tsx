@@ -17,7 +17,7 @@ import {
   type StackRouteConfig,
 } from '@apps/shared/gamma/containers/stack';
 
-export function App() {
+export function TestStackSvmTabsSpecialEffects() {
   return <TabsNavigation />;
 }
 
@@ -53,7 +53,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export function TabContents() {
+function TabContents() {
   const edgeEffectStyle: ScrollEdgeEffect =
     useTabsNavigationContext().routeKey === 'Home' ? 'hard' : 'soft';
 
@@ -72,7 +72,7 @@ export function TabContents() {
   );
 }
 
-export function StackContents() {
+function StackContents() {
   return (
     <View style={[{ backgroundColor: Colors.BlueLight20 }, styles.fillParent]}>
       <HeuristicBreakingView />
@@ -89,7 +89,7 @@ export function StackContents() {
   );
 }
 
-export function TabsNavigation() {
+function TabsNavigation() {
   return <TabsContainer routeConfigs={TABS_ROUTE_CONFIGS} />;
 }
 
@@ -97,7 +97,7 @@ function StackTabScreen() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
-export function ScrollViewContents(props: { elementCount?: number }) {
+function ScrollViewContents(props: { elementCount?: number }) {
   const elementCount = props.elementCount ?? 48;
   return (
     <>
@@ -122,7 +122,7 @@ function HeuristicBreakingView() {
   return <View collapsable={false} style={{ width: '100%', height: 0 }}></View>;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSvmTabsSpecialEffects, scenarioDescription);
 
 const styles = StyleSheet.create({
   fillParent: {

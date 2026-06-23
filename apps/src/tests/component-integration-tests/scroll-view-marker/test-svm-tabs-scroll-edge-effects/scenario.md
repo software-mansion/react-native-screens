@@ -8,7 +8,7 @@ It allows to test both whether the scroll-edge-effect is correctly applied AND w
 updated between different tabs. 
 
 **OS test creation version:** 
-iOS 26.5, Android SDK 36
+iOS 26.5
 
 ## E2E test
 
@@ -17,7 +17,6 @@ TBD
 ## Prerequisites
 
 iOS: simulator with iOS 26+ is enough,
-Android: emulator
 
 ## Note
 
@@ -29,7 +28,7 @@ Also this allows us to test that different ScrollViewMarkers from different tab 
 
 ## Steps
 
-1. Open the test.
+1. Launch the app and navigate to the **SVM in Tabs - scroll edge effects** screen.
 
 - [ ] There should be two tabs: `Home` and `Second`.
 - [ ] `Home` tab should be selected.

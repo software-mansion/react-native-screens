@@ -8,7 +8,7 @@ const scenarios = {
 };
 
 const TestSvmScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
-  name: 'ScrollViewMarker integration cases',
+  name: 'ScrollViewMarker Integration Tests',
   details: 'Test interaction between ScrollViewMarker and various components',
   scenarios,
 };

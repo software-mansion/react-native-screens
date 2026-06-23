@@ -13,7 +13,7 @@ import { Rectangle } from '@apps/shared/Rectangle';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
 import { type ScrollEdgeEffect } from 'react-native-screens';
 
-export function App() {
+export function TestSvmTabsScrollEdgeEffects() {
   return <TabsNavigation />;
 }
 
@@ -36,7 +36,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TabContents() {
+function TabContents() {
   const edgeEffectStyle: ScrollEdgeEffect =
     useTabsNavigationContext().routeKey === 'Home' ? 'hard' : 'soft';
 
@@ -56,11 +56,11 @@ export function TabContents() {
   );
 }
 
-export function TabsNavigation() {
+function TabsNavigation() {
   return <TabsContainer routeConfigs={TABS_ROUTE_CONFIGS} />;
 }
 
-export function ScrollViewContents(props: { elementCount?: number }) {
+function ScrollViewContents(props: { elementCount?: number }) {
   const elementCount = props.elementCount ?? 48;
   return (
     <>
@@ -85,7 +85,7 @@ function HeuristicBreakingView() {
   return <View collapsable={false} style={{ width: '100%', height: 0 }}></View>;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestSvmTabsScrollEdgeEffects, scenarioDescription);
 
 const styles = StyleSheet.create({
   fillParent: {
