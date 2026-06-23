@@ -32,6 +32,14 @@ interface NativeProps extends ViewProps {
     | CT.DirectEventHandler<GenericEmptyEvent>
     | undefined;
   onDetentChanged?: CT.DirectEventHandler<DetentChangedEvent> | undefined;
+
+  // Workaround helper that triggers a synchronous event to flush a pending
+  // shadow-node state update in the current event beat. Mirrors iOS's
+  // `EventQueue::UpdateMode::unstable_Immediate`, which Android does not expose
+  // to Java/Kotlin as of now.
+  // TODO: Remove when a synchronous state update API is exposed on Android.
+  // https://github.com/facebook/react-native/pull/56311
+  onSyncFlush?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSFormSheetHost', {

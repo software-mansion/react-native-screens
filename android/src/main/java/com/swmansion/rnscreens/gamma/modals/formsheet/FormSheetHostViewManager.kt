@@ -78,6 +78,7 @@ class FormSheetHostViewManager : ViewGroupManager<FormSheetHost>(), RNSFormSheet
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetNativeDismissEvent),
+            makeEventRegistrationInfo(FormSheetSyncFlushEvent),
         )
 
     override fun updateState(

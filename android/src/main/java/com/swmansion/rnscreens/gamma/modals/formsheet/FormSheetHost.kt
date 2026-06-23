@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
@@ -73,9 +74,27 @@ class FormSheetHost(
     internal fun updateStateIfNeeded(
         width: Int,
         height: Int,
-    ) = shadowStateProxy.updateStateIfNeeded(
-        density = resources.displayMetrics.density,
-        frameWidth = width,
-        frameHeight = height,
-    )
+    ) {
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            frameWidth = width,
+            frameHeight = height,
+        )
+        flushPendingStateUpdates()
+    }
+
+    // We trigger a synchronous flush event to force the layout recalculation.
+    // However, while the calculation is synchronous, the actual UI mounting in Android isn't.
+    // The synchronous flush makes a request to the EventBeat. Because EventBeat is controlled
+    // by a frame callback on the Choreographer, if we are currently inside the
+    // traversal phase, the actual mounting callback will be executed on the next frame.
+    // To prevent drawing a stale layout, we block drawing the frame in `FormSheetContentView`.
+    private fun flushPendingStateUpdates() {
+        val reactContext = context as? ReactContext ?: return
+        val surfaceId = UIManagerHelper.getSurfaceId(this)
+
+        // TODO: @t0maboro - implement EventEmitter in followup PR
+        UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+            ?.dispatchEvent(FormSheetSyncFlushEvent(surfaceId, id))
+    }
 }
