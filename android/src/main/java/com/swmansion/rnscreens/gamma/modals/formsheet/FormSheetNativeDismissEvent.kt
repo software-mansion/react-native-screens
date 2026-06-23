@@ -7,10 +7,9 @@ import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
 class FormSheetNativeDismissEvent(
     surfaceId: Int,
-    viewId: Int
+    viewId: Int,
 ) : Event<FormSheetNativeDismissEvent>(surfaceId, viewId),
     NamingAwareEventType {
-
     override fun getEventName(): String = EVENT_NAME
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME

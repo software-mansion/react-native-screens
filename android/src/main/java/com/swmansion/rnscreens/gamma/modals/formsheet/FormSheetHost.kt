@@ -94,7 +94,8 @@ class FormSheetHost(
         val surfaceId = UIManagerHelper.getSurfaceId(this)
 
         // TODO: @t0maboro - implement EventEmitter in followup PR
-        UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+        UIManagerHelper
+            .getEventDispatcherForReactTag(reactContext, id)
             ?.dispatchEvent(FormSheetSyncFlushEvent(surfaceId, id))
     }
 }

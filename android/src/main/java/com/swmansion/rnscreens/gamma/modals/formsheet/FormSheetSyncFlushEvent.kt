@@ -15,10 +15,9 @@ import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 // https://github.com/facebook/react-native/pull/56311
 class FormSheetSyncFlushEvent(
     surfaceId: Int,
-    viewId: Int
+    viewId: Int,
 ) : Event<FormSheetSyncFlushEvent>(surfaceId, viewId),
     NamingAwareEventType {
-
     override fun getEventName(): String = EVENT_NAME
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
