@@ -15,11 +15,7 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import {
-  findMenuElementByIdInItems,
-  sanitizeMenuInitialToggleStates,
-  validateMenuCallbacks,
-} from './utils';
+import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -60,10 +56,10 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
   const handleSelectionChanged = useCallback(
     (event: NativeSyntheticEvent<MenuSelectionChangedEvent>) => {
       const { menuId, selectedMenuItemIds } = event.nativeEvent;
-      const items = Array.of(
+      const items = [
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
         ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
-      );
+      ];
       const menu = findMenuElementByIdInItems(items, menuId);
       if (menu && menu.type === 'menu') {
         menu.onSelectionChanged?.(selectedMenuItemIds);
@@ -72,17 +68,10 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     [leadingItems, trailingItems],
   );
 
-  // Sanitize before render so native component receives correct initial toggle states.
-  // Must run before JSX return — useEffect would be too late.
   const allMenuItems = [
     ...(leadingItems ?? []),
     ...(trailingItems ?? []),
   ].filter(it => it && it.type === 'item');
-  for (const item of allMenuItems) {
-    if ('menu' in item && item.menu) {
-      sanitizeMenuInitialToggleStates(item.menu);
-    }
-  }
 
   useEffect(() => {
     for (const item of allMenuItems) {
