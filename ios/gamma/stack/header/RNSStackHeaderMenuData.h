@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, RNSMenuItemType) {
-  RNSMenuItemTypeInherit = 0,
+  RNSMenuItemTypeAutomatic = 0,
   RNSMenuItemTypeAction,
   RNSMenuItemTypeToggle,
 };

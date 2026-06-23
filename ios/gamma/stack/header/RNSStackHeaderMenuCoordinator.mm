@@ -27,7 +27,6 @@
     initialSingleSelectionStateClaimed:(BOOL *)initialSingleSelectionStateClaimed
 {
   // Resolve singleSelection root: first menu in hierarchy with singleSelection becomes the root.
-  // Once inside a singleSelection hierarchy, all descendants inherit it.
   // Only the root is set the singleSelection option - less things to check if sth goes wrong
   // and it shouldn't change the behavior
   // There can be at most one element with initialToggleState and we're checking that with
@@ -177,7 +176,7 @@
 
 + (RNSMenuItemType)resolveItemType:(RNSMenuItemType)itemType insideSingleSelection:(BOOL)insideSingleSelection
 {
-  if (itemType == RNSMenuItemTypeInherit) {
+  if (itemType == RNSMenuItemTypeAutomatic) {
     return insideSingleSelection ? RNSMenuItemTypeToggle : RNSMenuItemTypeAction;
   }
   return itemType;

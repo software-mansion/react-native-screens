@@ -2,7 +2,7 @@ export interface StackHeaderMenuItemIOS {
   id: string;
   type: 'menuItem';
   title?: string | undefined;
-  itemType?: 'action' | 'toggle' | 'inherit' | undefined;
+  itemType?: 'action' | 'toggle' | 'automatic' | undefined;
   initialToggleState?: boolean | undefined;
   onPress?: () => void | undefined;
 }

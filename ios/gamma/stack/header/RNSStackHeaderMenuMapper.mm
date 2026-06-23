@@ -104,7 +104,7 @@
   } else if ([string isEqualToString:@"toggle"]) {
     return RNSMenuItemTypeToggle;
   }
-  return RNSMenuItemTypeInherit;
+  return RNSMenuItemTypeAutomatic;
 }
 
 @end
