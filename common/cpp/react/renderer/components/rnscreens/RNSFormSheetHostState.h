@@ -1,6 +1,7 @@
 #pragma once
 
 #include <jsi/jsi.h>
+#include <react/renderer/graphics/Float.h>
 #include <react/renderer/graphics/Point.h>
 #include <react/renderer/graphics/Size.h>
 #ifdef ANDROID
@@ -25,7 +26,10 @@ class JSI_EXPORT RNSFormSheetHostState final {
             Size{
                 (Float)data["frameWidth"].getDouble(),
                 (Float)data["frameHeight"].getDouble()}),
-        contentOffset(Point{0, 0}) {}
+        contentOffset(
+            Point{
+                (Float)data["contentOffsetX"].getDouble(),
+                (Float)data["contentOffsetY"].getDouble()}) {}
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
