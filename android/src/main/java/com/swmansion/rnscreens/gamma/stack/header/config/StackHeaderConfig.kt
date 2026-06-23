@@ -296,10 +296,11 @@ class StackHeaderConfig(
     }
 
     internal val configSubviewsCount: Int
-        get() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).size
+        get() = getListOfSubviews().size
 
-    internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? =
-        listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview).getOrNull(index)
+    internal fun getConfigSubviewAt(index: Int): StackHeaderSubview? = getListOfSubviews().getOrNull(index)
+
+    private fun getListOfSubviews() = listOfNotNull(backgroundSubview, leadingSubview, centerSubview, trailingSubview)
 
     // endregion
 
