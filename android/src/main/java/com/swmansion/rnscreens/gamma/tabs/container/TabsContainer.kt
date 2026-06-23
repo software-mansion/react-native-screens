@@ -533,17 +533,14 @@ class TabsContainer internal constructor(
         }
     }
 
-    private fun updateSelectedFragment(
+    private fun updateNavigationStateAndSelectedFragment(
         nextSelectedFragment: TabsScreenFragment,
         actionOrigin: TabsActionOrigin,
     ): Boolean {
         if (navState.isEmpty()) {
             check(isInExternalOperationContext && pendingStateUpdateRequest != null)
-            navState = TabsNavigationState(nextSelectedFragment.requireScreenKey, 0)
-            requireFragmentManager
-                .createTransactionWithReordering()
-                .add(contentView.id, nextSelectedFragment)
-                .commitNowAllowingStateLoss()
+            initNavigationState(nextSelectedFragment.requireScreenKey)
+            applyInitialStateToFragmentManagerSync(nextSelectedFragment)
             return true
         }
 
@@ -555,14 +552,37 @@ class TabsContainer internal constructor(
         }
 
         progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
+        applyNextSelectedFragmentToFragmentManagerSync(currentSelectedFragment, nextSelectedFragment)
+        return true
+    }
+
+    private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
         requireFragmentManager
             .createTransactionWithReordering()
             .let {
-                it.remove(currentSelectedFragment)
-                it.add(contentView.id, nextSelectedFragment)
+                tabsModel.forEach { fragment ->
+                    it.add(contentView.id, fragment)
+                    it.detach(fragment)
+                }
+                it.attach(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
+    }
 
-        return true
+    private fun applyNextSelectedFragmentToFragmentManagerSync(
+        currSelectedFragment: TabsScreenFragment,
+        nextSelectedFragment: TabsScreenFragment,
+    ) {
+        requireFragmentManager
+            .createTransactionWithReordering()
+            .let {
+                it.detach(currSelectedFragment)
+                it.attach(nextSelectedFragment)
+            }.commitNowAllowingStateLoss()
+    }
+
+    private fun initNavigationState(selectedScreenKey: String) {
+        check(navState.isEmpty()) { "[RNScreens] Navigation state is already initialized!" }
+        navState = TabsNavigationState(selectedScreenKey, 0)
     }
 
     private fun progressNavigationState(
@@ -595,11 +615,14 @@ class TabsContainer internal constructor(
 
         // If this is user action we test whether it should be prevented before we progress the state.
         if (!isRepeated && actionOrigin == TabsActionOrigin.USER && nextSelectedFragment.isPreventNativeSelectionEnabled) {
-            observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
+            observerRegistry.emitOnNavigationStateUpdatePrevented(
+                navState,
+                nextSelectedFragment.requireScreenKey,
+            )
             return false
         }
 
-        val stateChanged = updateSelectedFragment(nextSelectedFragment, actionOrigin)
+        val stateChanged = updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -642,13 +665,15 @@ class TabsContainer internal constructor(
                 .filter { it in tabsModel }
                 .toList()
 
-        if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
+        val fragmentsWithAttachedUI = currentFragments.filterNot { it.isDetached }
+
+        if (currentFragments.size == tabsModel.size &&
+            fragmentsWithAttachedUI.size == 1 &&
+            fragmentsWithAttachedUI.first() === selectedTab
+        ) {
             return
         } else if (currentFragments.isEmpty()) {
-            requireFragmentManager
-                .createTransactionWithReordering()
-                .add(contentView.id, selectedTab)
-                .commitNowAllowingStateLoss()
+            applyInitialStateToFragmentManagerSync(selectedTab)
         } else {
             error("[RNScreens] Unexpected fragment manager state.")
         }
