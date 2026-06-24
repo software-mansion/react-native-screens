@@ -18,13 +18,13 @@
  For singleSelection menus, only one item should have initialState set to true.
  This is enforced by JS-side and validated by an RCTAssert in RNSStackHeaderMenuCoordinator during menu build.
  */
-- (BOOL)getToggleStateForItemWithId:(NSString *)menuId initialState:(BOOL)initialState
+- (BOOL)getToggleStateForItemWithId:(NSString *)menuItemId initialState:(BOOL)initialState
 {
-  NSNumber *existing = _states[menuId];
+  NSNumber *existing = _states[menuItemId];
   if (existing != nil) {
     return existing.boolValue;
   }
-  _states[menuId] = @(initialState);
+  _states[menuItemId] = @(initialState);
   return initialState;
 }
 

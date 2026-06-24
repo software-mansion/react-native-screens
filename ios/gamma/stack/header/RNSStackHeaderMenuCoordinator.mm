@@ -126,34 +126,34 @@
 
   __weak id<RNSStackHeaderMenuEventsDelegate> weakDelegate = delegate;
 
-  UIAction *toggleAction =
-      [UIAction actionWithTitle:data.title
-                          image:nil
-                     identifier:nil
-                        handler:^(__kindof UIAction *_Nonnull action) {
-                          NSArray<NSString *> *toggleItemsIds = insideSingleSelection
-                              ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInHierarchy:singleSelectionRoot]
-                              : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
-                          if (insideSingleSelection) {
-                            [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
-                          } else {
-                            [tracker toggleItemWithId:data.menuElementId];
-                          }
+  UIAction *toggleAction = [UIAction
+      actionWithTitle:data.title
+                image:nil
+           identifier:nil
+              handler:^(__kindof UIAction *_Nonnull action) {
+                NSArray<NSString *> *toggleItemsIds = insideSingleSelection
+                    ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInSingleSelectionHierarchy:singleSelectionRoot]
+                    : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
+                if (insideSingleSelection) {
+                  [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
+                } else {
+                  [tracker toggleItemWithId:data.menuElementId];
+                }
 
-                          NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
-                          for (NSString *itemId in toggleItemsIds) {
-                            if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
-                              [selectedIds addObject:itemId];
-                            }
-                          }
+                NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
+                for (NSString *itemId in toggleItemsIds) {
+                  if ([tracker getToggleStateForItemWithId:itemId initialState:NO]) {
+                    [selectedIds addObject:itemId];
+                  }
+                }
 
-                          // the state might be unchanged if user e.g. clicks on the same selected
-                          // radio
-                          if ([tracker toggleStateChanged]) {
-                            [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
-                            [tracker setToggleStateChanged:NO];
-                          }
-                        }];
+                // the state might be unchanged if user e.g. clicks on the same selected
+                // radio
+                if ([tracker toggleStateChanged]) {
+                  [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
+                  [tracker setToggleStateChanged:NO];
+                }
+              }];
   toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
 
   return toggleAction;
@@ -185,20 +185,20 @@
 + (NSArray<NSString *> *)getToggleItemsIdsInMenu:(RNSStackHeaderMenuData *)menu
 {
   NSMutableArray<NSString *> *ids = [NSMutableArray new];
-  [self collectToggleItemsIdsFromMenu:menu intoArray:ids recursive:NO];
+  [self collectToggleItemsIdsFromMenu:menu intoArray:ids insideSingleSelection:NO];
   return ids;
 }
 
-+ (NSArray<NSString *> *)getAllToggleItemsIdsInHierarchy:(RNSStackHeaderMenuData *)menu
++ (NSArray<NSString *> *)getAllToggleItemsIdsInSingleSelectionHierarchy:(RNSStackHeaderMenuData *)menu
 {
   NSMutableArray<NSString *> *ids = [NSMutableArray new];
-  [self collectToggleItemsIdsFromMenu:menu intoArray:ids recursive:YES];
+  [self collectToggleItemsIdsFromMenu:menu intoArray:ids insideSingleSelection:YES];
   return ids;
 }
 
 + (void)collectToggleItemsIdsFromMenu:(RNSStackHeaderMenuData *)menu
                             intoArray:(NSMutableArray<NSString *> *)ids
-                            recursive:(bool)insideSingleSelection
+                insideSingleSelection:(bool)insideSingleSelection
 {
   for (id<RNSStackHeaderMenuElement> child in menu.children) {
     if ([child isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
@@ -211,7 +211,7 @@
     } else if (insideSingleSelection && [child isKindOfClass:[RNSStackHeaderMenuData class]]) {
       [self collectToggleItemsIdsFromMenu:(RNSStackHeaderMenuData *)child
                                 intoArray:ids
-                                recursive:insideSingleSelection];
+                    insideSingleSelection:insideSingleSelection];
     }
   }
 }
