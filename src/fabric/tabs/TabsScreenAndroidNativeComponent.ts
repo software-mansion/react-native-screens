@@ -102,6 +102,13 @@ export interface NativeProps extends ViewProps {
   imageIconResource?: ImageSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
   selectedImageIconResource?: ImageSource | undefined;
+  // 'template' (default) tints the drawable; 'original' keeps its own colors.
+  drawableIconTintingMode?: CT.WithDefault<string, 'template'>;
+  selectedDrawableIconTintingMode?: CT.WithDefault<string, 'template'>;
+  // Per-tab icon size (dp); 0/unset = default. Bar-wide indicator size (dp).
+  drawableIconSize?: CT.Float | undefined;
+  activeIndicatorWidth?: CT.Float | undefined;
+  activeIndicatorHeight?: CT.Float | undefined;
 
   // Appearance
   standardAppearance?: Appearance | undefined;

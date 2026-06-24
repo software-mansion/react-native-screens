@@ -66,6 +66,9 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       {...filteredBaseProps}
       // Android-specific
+      drawableIconSize={android?.drawableIconSize}
+      activeIndicatorWidth={android?.activeIndicatorWidth}
+      activeIndicatorHeight={android?.activeIndicatorHeight}
       standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
@@ -130,14 +133,22 @@ function mapItemStateAppearanceToNativeProp(
   };
 }
 
+function drawableTintingModeOf(
+  icon: PlatformIconAndroid | undefined,
+): 'template' | 'original' | undefined {
+  return icon?.type === 'drawableResource' ? icon.tintingMode : undefined;
+}
+
 function parseIconsToNativeProps(
   icon: PlatformIconAndroid | undefined,
   selectedIcon: PlatformIconAndroid | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
+  drawableIconTintingMode?: string | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
+  selectedDrawableIconTintingMode?: string | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -145,9 +156,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
+    drawableIconTintingMode: drawableTintingModeOf(icon),
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
+    selectedDrawableIconTintingMode: drawableTintingModeOf(selectedIcon),
   };
 }
 

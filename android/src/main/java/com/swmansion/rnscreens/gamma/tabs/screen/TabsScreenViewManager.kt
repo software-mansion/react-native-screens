@@ -134,6 +134,41 @@ class TabsScreenViewManager :
         view.selectedDrawableIconResourceName = value
     }
 
+    override fun setDrawableIconTintingMode(
+        view: TabsScreen,
+        value: String?,
+    ) {
+        view.drawableIconTintingMode = value ?: "template"
+    }
+
+    override fun setSelectedDrawableIconTintingMode(
+        view: TabsScreen,
+        value: String?,
+    ) {
+        view.selectedDrawableIconTintingMode = value ?: "template"
+    }
+
+    override fun setDrawableIconSize(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.drawableIconSize = value
+    }
+
+    override fun setActiveIndicatorWidth(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.activeIndicatorWidth = value
+    }
+
+    override fun setActiveIndicatorHeight(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.activeIndicatorHeight = value
+    }
+
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,

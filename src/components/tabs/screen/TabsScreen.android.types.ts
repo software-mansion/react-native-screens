@@ -186,4 +186,22 @@ export interface TabsScreenPropsAndroid {
    * @platform android
    */
   selectedIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Per-tab icon size in dp.
+   *
+   * The bottom bar's icon box is the largest `drawableIconSize` across all tabs;
+   * each tab's icon is inset to its own size within that box. Tabs without a value
+   * use the default 24dp.
+   *
+   * @platform android
+   */
+  drawableIconSize?: number | undefined;
+  /**
+   * @summary Active-indicator pill size in dp (bar-wide; the largest across tabs
+   * wins). If unset, it auto-scales to wrap the icon box.
+   *
+   * @platform android
+   */
+  activeIndicatorWidth?: number | undefined;
+  activeIndicatorHeight?: number | undefined;
 }

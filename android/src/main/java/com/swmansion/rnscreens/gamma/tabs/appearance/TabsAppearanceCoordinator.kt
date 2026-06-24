@@ -20,6 +20,16 @@ internal class TabsAppearanceCoordinator(
     ) {
         val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
         appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
+        // Icon box and indicator are bar-wide; take the largest value across tabs.
+        val iconBoxDp =
+            tabsScreenFragments.maxOfOrNull { it.tabsScreen.effectiveIconSizeDp }
+                ?: TabsScreen.DEFAULT_ICON_SIZE_DP
+        appearanceApplicator.applyIconBox(iconBoxDp)
+        val indicatorWidthDp =
+            tabsScreenFragments.maxOfOrNull { it.tabsScreen.activeIndicatorWidth } ?: 0f
+        val indicatorHeightDp =
+            tabsScreenFragments.maxOfOrNull { it.tabsScreen.activeIndicatorHeight } ?: 0f
+        appearanceApplicator.applyActiveIndicator(iconBoxDp, indicatorWidthDp, indicatorHeightDp)
         updateMenuItems(context, selectedTabAppearance)
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }

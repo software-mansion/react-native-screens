@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.helpers.NoTintDrawable
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.utils.RNSLog
@@ -72,15 +73,53 @@ class TabsScreen(
 
     // Icon
     var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            icon = getSystemDrawableResource(reactContext, newValue)
-        }
+        if (newValue != oldValue) rebuildIcon()
     }
 
-    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            selectedIcon = getSystemDrawableResource(reactContext, newValue)
+    var drawableIconTintingMode: String = "template"
+        set(value) {
+            if (field != value) {
+                field = value
+                rebuildIcon()
+            }
         }
+
+    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) rebuildSelectedIcon()
+    }
+
+    var selectedDrawableIconTintingMode: String = "template"
+        set(value) {
+            if (field != value) {
+                field = value
+                rebuildSelectedIcon()
+            }
+        }
+
+    // Per-tab icon size in dp; 0 means the default.
+    var drawableIconSize: Float = 0f
+
+    val effectiveIconSizeDp: Float
+        get() = if (drawableIconSize > 0f) drawableIconSize else DEFAULT_ICON_SIZE_DP
+
+    var activeIndicatorWidth: Float = 0f
+    var activeIndicatorHeight: Float = 0f
+
+    // "original" keeps the drawable's own colors; the bar can't tint a NoTintDrawable.
+    private fun resolveIcon(
+        resourceName: String?,
+        tintingMode: String,
+    ): Drawable? {
+        val drawable = getSystemDrawableResource(reactContext, resourceName) ?: return null
+        return if (tintingMode == "original") NoTintDrawable(drawable) else drawable
+    }
+
+    private fun rebuildIcon() {
+        icon = resolveIcon(drawableIconResourceName, drawableIconTintingMode)
+    }
+
+    private fun rebuildSelectedIcon() {
+        selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTintingMode)
     }
 
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
@@ -141,5 +180,8 @@ class TabsScreen(
 
     companion object {
         const val TAG = "TabsScreen"
+
+        // Material's default bottom-navigation icon size (dp).
+        internal const val DEFAULT_ICON_SIZE_DP = 24f
     }
 }
