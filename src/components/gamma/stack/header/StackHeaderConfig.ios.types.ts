@@ -26,7 +26,7 @@ export interface SupportsMenuIOS {
 }
 
 /**
- * @summary Native header item with text title.
+ * @summary Native header item with text label.
  *
  * @platform iOS
  */
