@@ -103,7 +103,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsTabBarColorScheme() {
+function TestTabsTabBarColorScheme() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 

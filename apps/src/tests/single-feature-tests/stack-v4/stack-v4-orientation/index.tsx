@@ -40,7 +40,7 @@ const Stack = createAutoConfiguredStack<StackParamList>({
   Screen1: ConfigScreen,
 });
 
-export function TestStackV4Orientation() {
+function TestStackV4Orientation() {
   return (
     <Stack.Provider>
       <Stack.Autoconfig />

@@ -28,34 +28,34 @@ import TestTabsBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
-// Scenario entry-point components (named exports) — re-exported for direct
-// rendering (e.g. from App.tsx or e2e harnesses) without reaching into each
-// test directory.
-export { TestTabsSimpleNav } from './test-tabs-simple-nav';
-export { TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
-export { TestTabsStaleStateUpdateRejection } from './test-tabs-stale-update-rejection';
-export { TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
-export { TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
-export { TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
-export { TestTabsTabBarHidden } from './test-tabs-tab-bar-hidden';
-export { TestTabsTabBarLayoutDirection } from './test-tabs-tab-bar-layout-direction';
-export { TestTabsIMEInsets } from './test-tabs-ime-insets-android';
-export { TestTabsSpecialEffectsScrollToTop } from './test-tabs-special-effects-scroll-to-top';
-export { TestTabsLifecycleEvents } from './test-tabs-lifecycle-events';
-export { TestTabsNativeContainerStyle } from './test-tabs-native-container-style';
-export { TestTabsGeneralAppearanceNoLiquidGlass } from './test-tabs-general-appearance-no-liquid-glass-ios';
-export { TestTabsGeneralAppearance } from './test-tabs-general-appearance-android';
-export { TestTabsLayoutAppearances } from './test-tabs-layout-appearances-ios';
-export { TestTabsItemIcon } from './test-tabs-item-icon';
-export { TestTabsItemTitle } from './test-tabs-item-title';
-export { TestTabsItemBadge } from './test-tabs-item-badge';
-export { TestTabsSystemItem } from './test-tabs-system-item-ios';
-export { TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
-export { TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
-export { TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
-export { TestTabsBottomAccessory } from './test-tabs-bottom-accessory-layout-ios';
-export { TestTabsScreenOrientation } from './test-tabs-screen-orientation';
-export { TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
+// Scenario entry-point components — each scenario's default export re-exported
+// under a name for direct rendering (e.g. from App.tsx or e2e harnesses)
+// without reaching into each test directory.
+export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
+export { default as TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
+export { default as TestTabsStaleStateUpdateRejection } from './test-tabs-stale-update-rejection';
+export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
+export { default as TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
+export { default as TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
+export { default as TestTabsTabBarHidden } from './test-tabs-tab-bar-hidden';
+export { default as TestTabsTabBarLayoutDirection } from './test-tabs-tab-bar-layout-direction';
+export { default as TestTabsIMEInsets } from './test-tabs-ime-insets-android';
+export { default as TestTabsSpecialEffectsScrollToTop } from './test-tabs-special-effects-scroll-to-top';
+export { default as TestTabsLifecycleEvents } from './test-tabs-lifecycle-events';
+export { default as TestTabsNativeContainerStyle } from './test-tabs-native-container-style';
+export { default as TestTabsGeneralAppearanceNoLiquidGlass } from './test-tabs-general-appearance-no-liquid-glass-ios';
+export { default as TestTabsGeneralAppearance } from './test-tabs-general-appearance-android';
+export { default as TestTabsLayoutAppearances } from './test-tabs-layout-appearances-ios';
+export { default as TestTabsItemIcon } from './test-tabs-item-icon';
+export { default as TestTabsItemTitle } from './test-tabs-item-title';
+export { default as TestTabsItemBadge } from './test-tabs-item-badge';
+export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
+export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
+export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
+export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
+export { default as TestTabsBottomAccessory } from './test-tabs-bottom-accessory-layout-ios';
+export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
+export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
 const scenarios = {
   TestTabsSimpleNav,

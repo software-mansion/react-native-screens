@@ -4,7 +4,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { Split } from 'react-native-screens/experimental';
 import { StyleSheet, Text, View } from 'react-native';
 
-export function TestSplitTopColumnForCollapsing() {
+function TestSplitTopColumnForCollapsing() {
   return (
     <Split.Host topColumnForCollapsing="supplementary">
       <Split.Column>

@@ -67,7 +67,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsTabBarMinimizeBehavior() {
+function TestTabsTabBarMinimizeBehavior() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 

@@ -84,7 +84,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Show As Action Test';
 
-export function TestStackToolbarMenuShowAsAction() {
+function TestStackToolbarMenuShowAsAction() {
   return (
     <StackContainer
       routeConfigs={[

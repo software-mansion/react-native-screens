@@ -134,7 +134,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Toolbar Menu Icon Test';
 
-export function TestStackToolbarMenuIcon() {
+function TestStackToolbarMenuIcon() {
   return (
     <StackContainer
       routeConfigs={[

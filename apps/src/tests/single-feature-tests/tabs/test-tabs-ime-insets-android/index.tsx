@@ -91,7 +91,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsIMEInsets() {
+function TestTabsIMEInsets() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 

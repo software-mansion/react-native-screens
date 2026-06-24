@@ -1,7 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestTabsInStackStableEnterTransition from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
 
-export { TestTabsInStackStableEnterTransition } from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
+export { default as TestTabsInStackStableEnterTransition } from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
 
 const scenarios = { TestTabsInStackStableEnterTransition };
 

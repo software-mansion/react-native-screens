@@ -5,7 +5,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function TestFormSheetPresentationState() {
+function TestFormSheetPresentationState() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

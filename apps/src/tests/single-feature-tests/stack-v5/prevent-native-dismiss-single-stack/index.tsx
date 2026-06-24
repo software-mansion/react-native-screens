@@ -11,7 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function TestStackPreventNativeDismissSingleStack() {
+function TestStackPreventNativeDismissSingleStack() {
   return (
     <ToastProvider>
       <StackSetup />

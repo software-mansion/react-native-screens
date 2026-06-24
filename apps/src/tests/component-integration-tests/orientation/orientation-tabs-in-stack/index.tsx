@@ -85,7 +85,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export function TestOrientationTabsInStack() {
+function TestOrientationTabsInStack() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 

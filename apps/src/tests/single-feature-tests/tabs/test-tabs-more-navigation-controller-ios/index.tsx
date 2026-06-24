@@ -76,7 +76,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsMoreNavigationController() {
+function TestTabsMoreNavigationController() {
   return (
     <ToastProvider>
       <AppContents />

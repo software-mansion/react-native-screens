@@ -145,7 +145,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsTabBarLayoutDirection() {
+function TestTabsTabBarLayoutDirection() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 

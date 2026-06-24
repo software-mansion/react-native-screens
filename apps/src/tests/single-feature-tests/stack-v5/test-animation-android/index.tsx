@@ -6,7 +6,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function TestStackAnimationAndroid() {
+function TestStackAnimationAndroid() {
   return <StackSetup />;
 }
 

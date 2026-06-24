@@ -8,7 +8,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function TestFormSheetWithNestedStackV5() {
+function TestFormSheetWithNestedStackV5() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

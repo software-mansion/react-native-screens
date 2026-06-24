@@ -5,7 +5,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function TestFormSheetDismissEvents() {
+function TestFormSheetDismissEvents() {
   const [isOpen, setIsOpen] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 

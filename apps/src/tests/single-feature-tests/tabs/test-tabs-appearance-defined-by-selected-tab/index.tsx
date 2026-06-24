@@ -95,7 +95,7 @@ function TabsRouteInformation() {
   );
 }
 
-export function TestTabsAppearanceDefinedBySelectedTab() {
+function TestTabsAppearanceDefinedBySelectedTab() {
   return (
     <TabsContainer
       routeConfigs={[

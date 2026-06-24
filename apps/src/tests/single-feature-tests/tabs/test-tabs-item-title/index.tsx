@@ -211,7 +211,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsItemTitle() {
+function TestTabsItemTitle() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}

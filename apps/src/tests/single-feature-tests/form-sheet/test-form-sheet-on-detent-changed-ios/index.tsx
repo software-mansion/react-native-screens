@@ -13,7 +13,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function TestFormSheetOnDetentChanged() {
+function TestFormSheetOnDetentChanged() {
   const [isOpen, setIsOpen] = useState(false);
   const [detentIndex, setDetentIndex] = useState<number>(0);
 

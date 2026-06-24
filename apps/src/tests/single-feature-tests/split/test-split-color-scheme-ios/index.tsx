@@ -83,7 +83,7 @@ function TestColumn() {
   );
 }
 
-export function TestSplitColorScheme() {
+function TestSplitColorScheme() {
   const [hostColorScheme, setHostColorScheme] =
     useState<SplitHostColorScheme>('inherit');
   const [reactColorScheme, setReactColorScheme] =

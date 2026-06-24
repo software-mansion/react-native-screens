@@ -12,7 +12,7 @@ type FormSheetCornerRadiusProp = NonNullable<
   FormSheetProps['preferredCornerRadius']
 >;
 
-export function TestFormSheetPreferredCornerRadius() {
+function TestFormSheetPreferredCornerRadius() {
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] =
     useState<FormSheetCornerRadiusProp>('systemDefault');

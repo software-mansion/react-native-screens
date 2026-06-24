@@ -284,7 +284,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsItemBadge() {
+function TestTabsItemBadge() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 

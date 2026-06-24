@@ -294,7 +294,7 @@ const ROUTE_CONFIGS = Platform.select({
   default: IOS_ROUTES, // fallback
 });
 
-export function TestTabsItemIcon() {
+function TestTabsItemIcon() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}

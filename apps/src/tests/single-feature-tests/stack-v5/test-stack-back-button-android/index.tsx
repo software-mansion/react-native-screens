@@ -100,7 +100,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps {
   };
 }
 
-export function TestStackBackButton() {
+function TestStackBackButton() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
   const updateConfig = useCallback(

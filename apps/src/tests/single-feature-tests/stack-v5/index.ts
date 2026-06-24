@@ -14,19 +14,19 @@ import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-and
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
 
-// Scenario entry-point components (named exports) — re-exported for direct
-// rendering (e.g. from App.tsx or e2e harnesses).
-export { TestStackPreventNativeDismissSingleStack } from './prevent-native-dismiss-single-stack';
-export { TestStackPreventNativeDismissNestedStack } from './prevent-native-dismiss-nested-stack';
-export { TestStackAnimationAndroid } from './test-animation-android';
-export { TestStackSimpleNav } from './test-stack-simple-nav';
-export { TestStackSubviewsAndroid } from './test-stack-subviews-android';
-export { TestStackSubviewsIOS } from './test-stack-subviews-ios';
-export { TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
-export { TestStackBackButton } from './test-stack-back-button-android';
-export { TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
-export { TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
-export { TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
+// Scenario entry-point components — each scenario's default export re-exported
+// under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+export { default as TestStackPreventNativeDismissSingleStack } from './prevent-native-dismiss-single-stack';
+export { default as TestStackPreventNativeDismissNestedStack } from './prevent-native-dismiss-nested-stack';
+export { default as TestStackAnimationAndroid } from './test-animation-android';
+export { default as TestStackSimpleNav } from './test-stack-simple-nav';
+export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
+export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
+export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
+export { default as TestStackBackButton } from './test-stack-back-button-android';
+export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
+export { default as TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
+export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
 
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,

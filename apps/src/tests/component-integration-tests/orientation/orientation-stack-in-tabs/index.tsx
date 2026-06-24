@@ -85,7 +85,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestOrientationStackInTabs() {
+function TestOrientationStackInTabs() {
   return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
 

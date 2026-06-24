@@ -13,7 +13,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function TestFormSheetPreventNativeDismiss() {
+function TestFormSheetPreventNativeDismiss() {
   const [isOpen, setIsOpen] = useState(false);
   const [preventDismiss, setPreventDismiss] = useState(true);
 

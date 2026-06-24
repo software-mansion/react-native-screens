@@ -169,7 +169,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsGeneralAppearance() {
+function TestTabsGeneralAppearance() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 

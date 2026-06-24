@@ -47,7 +47,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
   { name: 'lightPushed', Component: LightInterfaceStyleScreen, options: {} },
 ];
 
-export function TestTabsTabBarExperimentalUserInterfaceStyle() {
+function TestTabsTabBarExperimentalUserInterfaceStyle() {
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
       <StackContainer routeConfigs={ROUTE_CONFIGS} />

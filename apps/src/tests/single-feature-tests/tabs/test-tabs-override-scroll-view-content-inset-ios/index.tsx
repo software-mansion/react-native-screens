@@ -50,7 +50,7 @@ function DefaultTab() {
   );
 }
 
-export function TestTabsOverrideScrollViewContentInset() {
+function TestTabsOverrideScrollViewContentInset() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>

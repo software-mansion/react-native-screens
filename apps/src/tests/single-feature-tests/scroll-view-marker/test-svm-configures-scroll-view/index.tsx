@@ -8,7 +8,7 @@ import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';
 
-export function TestSvmConfiguresScrollView() {
+function TestSvmConfiguresScrollView() {
   return (
     <StackContainer
       routeConfigs={[

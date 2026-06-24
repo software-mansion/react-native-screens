@@ -183,7 +183,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   };
 }
 
-export function TestStackSubviewsAndroid() {
+function TestStackSubviewsAndroid() {
   return <StackSetup />;
 }
 

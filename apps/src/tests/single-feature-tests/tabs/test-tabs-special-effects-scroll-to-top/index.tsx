@@ -77,7 +77,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsSpecialEffectsScrollToTop() {
+function TestTabsSpecialEffectsScrollToTop() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 

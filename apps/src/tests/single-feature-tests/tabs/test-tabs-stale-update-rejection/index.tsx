@@ -131,7 +131,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsStaleStateUpdateRejection() {
+function TestTabsStaleStateUpdateRejection() {
   return (
     <ToastProvider>
       <AppContents />

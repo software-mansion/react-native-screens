@@ -50,7 +50,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsScreenOrientation() {
+function TestTabsScreenOrientation() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 

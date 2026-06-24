@@ -98,7 +98,7 @@ function AppContents() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export function TestTabsLifecycleEvents() {
+function TestTabsLifecycleEvents() {
   return (
     <ToastProvider>
       <AppContents />

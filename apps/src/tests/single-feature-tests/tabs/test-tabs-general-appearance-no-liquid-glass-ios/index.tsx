@@ -306,7 +306,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsGeneralAppearanceNoLiquidGlass() {
+function TestTabsGeneralAppearanceNoLiquidGlass() {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.GreenDark80 }}>
       <TabsContainer

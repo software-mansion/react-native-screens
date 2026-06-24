@@ -5,7 +5,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function TestFormSheetGrabberVisible() {
+function TestFormSheetGrabberVisible() {
   const [isOpen, setIsOpen] = useState(false);
   const [prefersGrabberVisible, setPrefersGrabberVisible] = useState(false);
 

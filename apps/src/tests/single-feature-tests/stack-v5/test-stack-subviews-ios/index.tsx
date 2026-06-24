@@ -129,7 +129,7 @@ const DEFAULT_CONFIG: Config = {
   pressRetentionOffset: '0',
 };
 
-export function TestStackSubviewsIOS() {
+function TestStackSubviewsIOS() {
   return <StackSetup />;
 }
 

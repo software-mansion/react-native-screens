@@ -128,7 +128,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsPreventNativeSelection() {
+function TestTabsPreventNativeSelection() {
   return (
     <ToastProvider>
       <AppContents />

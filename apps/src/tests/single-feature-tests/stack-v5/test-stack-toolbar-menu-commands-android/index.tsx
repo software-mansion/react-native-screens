@@ -82,7 +82,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
-export function TestStackToolbarMenuCommands() {
+function TestStackToolbarMenuCommands() {
   return (
     <StackContainer
       routeConfigs={[

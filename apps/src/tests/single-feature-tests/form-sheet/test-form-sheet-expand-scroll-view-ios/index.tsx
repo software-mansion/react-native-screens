@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function TestFormSheetExpandScrollView() {
+function TestFormSheetExpandScrollView() {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldExpand, setShouldExpand] = useState(true);
 

@@ -94,7 +94,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export function TestTabsInStackStableEnterTransition() {
+function TestTabsInStackStableEnterTransition() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 

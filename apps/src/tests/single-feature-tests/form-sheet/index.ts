@@ -17,22 +17,22 @@ import TestFormSheetPresentationState from './test-form-sheet-presentation-state
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
 import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
-// Scenario entry-point components (named exports) — re-exported for direct
-// rendering (e.g. from App.tsx or e2e harnesses).
-export { TestFormSheetBase } from './test-form-sheet-base-ios';
-export { TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events-ios';
-export { TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
-export { TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents-ios';
-export { TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible-ios';
-export { TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index-ios';
-export { TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
-export { TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events-ios';
-export { TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style-ios';
-export { TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed-ios';
-export { TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius-ios';
-export { TestFormSheetPresentationState } from './test-form-sheet-presentation-state-ios';
-export { TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss-ios';
-export { TestFormSheetStacking } from './test-form-sheet-stacking-ios';
+// Scenario entry-point components — each scenario's default export re-exported
+// under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+export { default as TestFormSheetBase } from './test-form-sheet-base-ios';
+export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events-ios';
+export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
+export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents-ios';
+export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible-ios';
+export { default as TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index-ios';
+export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
+export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events-ios';
+export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style-ios';
+export { default as TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed-ios';
+export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius-ios';
+export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state-ios';
+export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss-ios';
+export { default as TestFormSheetStacking } from './test-form-sheet-stacking-ios';
 
 const scenarios = {
   TestFormSheetBase,

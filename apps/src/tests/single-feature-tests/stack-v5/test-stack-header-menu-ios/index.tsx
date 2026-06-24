@@ -14,7 +14,7 @@ import { Colors } from '@apps/shared/styling';
 
 const DEFAULT_TRAILING_ITEMS_COUNT = 2;
 
-export function TestStackHeaderMenuIOS() {
+function TestStackHeaderMenuIOS() {
   return (
     <ToastProvider>
       <StackContainer

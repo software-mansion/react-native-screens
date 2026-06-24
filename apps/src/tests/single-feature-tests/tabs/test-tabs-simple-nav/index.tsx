@@ -52,7 +52,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function TestTabsSimpleNav() {
+function TestTabsSimpleNav() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 

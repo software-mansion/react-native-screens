@@ -1,7 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestSvmConfiguresScrollView from './test-svm-configures-scroll-view';
 
-export { TestSvmConfiguresScrollView } from './test-svm-configures-scroll-view';
+export { default as TestSvmConfiguresScrollView } from './test-svm-configures-scroll-view';
 
 const scenarios = { TestSvmConfiguresScrollView };
 
