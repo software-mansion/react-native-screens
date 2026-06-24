@@ -1,12 +1,9 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
-import android.util.Log
 import android.view.View
-import androidx.core.graphics.toColorInt
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -15,6 +12,12 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.parseColor
+import com.swmansion.rnscreens.gamma.helpers.readBoolean
+import com.swmansion.rnscreens.gamma.helpers.readColor
+import com.swmansion.rnscreens.gamma.helpers.readImageUri
+import com.swmansion.rnscreens.gamma.helpers.readString
+import com.swmansion.rnscreens.gamma.helpers.requireNotNullString
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
@@ -22,8 +25,6 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
-
-private const val TAG = "StackHeaderConfigViewManager"
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 open class StackHeaderConfigViewManager :
@@ -317,57 +318,12 @@ open class StackHeaderConfigViewManager :
     }
 }
 
-private fun ReadableMap.requireNotNullString(key: String): String =
-    requireNotNull(this.getString(key)) {
-        "[RNScreens] toolbarMenuItem $key property must not be null."
-    }
-
-// Helpers for regular props (null/not defined -> default)
-private fun ReadableMap.readString(
-    key: String,
-    default: String,
-): String = if (!this.hasKey(key) || this.isNull(key)) default else this.getString(key) ?: default
-
-private fun ReadableMap.readBoolean(
-    key: String,
-    default: Boolean,
-): Boolean = if (!this.hasKey(key) || this.isNull(key)) default else this.getBoolean(key)
-
 private fun ReadableMap.readShowAsActionEnum(
     key: String,
     default: StackHeaderToolbarMenuItemShowAsAction,
 ): StackHeaderToolbarMenuItemShowAsAction {
     val stringValue = this.getString(key) ?: return default
     return toMenuItemShowAsActionEnum(stringValue)
-}
-
-private fun ReadableMap.readColor(
-    key: String,
-    default: Int?,
-): Int? = if (!this.hasKey(key) || this.isNull(key)) default else parseColor(key)
-
-private fun ReadableMap.parseColor(key: String): Int? =
-    try {
-        when (getType(key)) {
-            ReadableType.Number -> getInt(key)
-            ReadableType.String -> getString(key)?.toColorInt()
-            else -> null
-        }
-    } catch (e: Exception) {
-        Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
-        null
-    }
-
-private fun ReadableMap.readImageUri(
-    key: String,
-    default: String?,
-): String? {
-    if (!this.hasKey(key) || this.getType(key) != ReadableType.Map) {
-        return default
-    }
-
-    val imageMap = getMap(key)
-    return imageMap?.getString("uri") ?: default
 }
 
 // Helpers for view commands. Each key has three states:
