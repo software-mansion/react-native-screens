@@ -43,7 +43,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _label = nil;
+  _title = nil;
   _menu = nil;
   _menuToggleStateTracker = nil;
   _placement = RNSHeaderItemPlacementTrailing;
@@ -149,8 +149,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
   _didSetHeaderItemPlacement = YES;
 
-  if (oldItemProps.label != newItemProps.label) {
-    _label = RCTNSStringFromStringNilIfEmpty(newItemProps.label);
+  if (oldItemProps.title != newItemProps.title) {
+    _title = RCTNSStringFromStringNilIfEmpty(newItemProps.title);
     needsUpdate = YES;
   }
 

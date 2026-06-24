@@ -107,7 +107,7 @@ function makeItemViewFromItem(
   placement: StackHeaderItemPlacement,
 ) {
   if ('type' in item && item.type === 'spacer') {
-    const { key, ...rest } = item;
+    const { id, ...rest } = item;
 
     if (!(placement === 'leading' || placement === 'trailing')) {
       console.warn(
@@ -118,16 +118,16 @@ function makeItemViewFromItem(
 
     return (
       <StackHeaderItemSpacer
-        key={key}
+        key={id}
         placement={placement as StackHeaderItemSpacerPlacement}
         {...rest}
       />
     );
   }
 
-  const { key, ...rest } = item;
+  const { id, ...rest } = item;
 
-  return <StackHeaderItem key={key} placement={placement} {...rest} />;
+  return <StackHeaderItem key={id} placement={placement} {...rest} />;
 }
 
 const styles = StyleSheet.create({

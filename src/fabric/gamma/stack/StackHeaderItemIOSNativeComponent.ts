@@ -30,7 +30,7 @@ export type StackHeaderMenuElementIOS =
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
-  label?: string | undefined;
+  title?: string | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 }
 
