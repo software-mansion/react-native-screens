@@ -1,7 +1,7 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
 
 const DEFAULT_APPLE_SIMULATOR_NAME = 'iPhone 17';
-const DEFAULT_IOS_VERSION = 'iOS 26.2';
+const DEFAULT_IOS_VERSION = '26.2';
 
 const envVarKeys = /** @type {const} */ ({
   simName: 'RNS_APPLE_SIM_NAME',
@@ -26,19 +26,20 @@ function readSimulatorNameEnv() {
 }
 
 /**
- * @return {`iOS ${string}` | undefined} validated iOS version from env, or undefined
+ * @return {string | undefined} validated iOS version from env, or undefined
  */
 function readIOSVersionEnv() {
   const passedVersion = process.env[envVarKeys.iosVersion]?.trim();
   if (!passedVersion) {
     return undefined;
   }
-  // Accept only "iOS <digits>(.<digits>)*" so typos fail here, not downstream.
-  if (/^iOS\s\d+(\.\d+)*$/.test(passedVersion)) {
-    return /** @type {`iOS ${string}`} */ (passedVersion);
+  // Accept only a bare "<digits>(.<digits>)*" version, so typos fail here, not
+  // downstream.
+  if (/^\d+(\.\d+)*$/.test(passedVersion)) {
+    return passedVersion;
   }
   throw new Error(
-    `Environment variable ${envVarKeys.iosVersion} should be "iOS xyz".`,
+    `Environment variable ${envVarKeys.iosVersion} should be a version like "26.2".`,
   );
 }
 
@@ -46,6 +47,11 @@ function readIOSVersionEnv() {
  * Reads the active Detox configuration name from the `--configuration <name>`
  * CLI flag or the `DETOX_CONFIGURATION` env var (Detox sets the latter in its
  * worker processes), or undefined when neither is present.
+ *
+ * Accepted values are the `configurations` keys defined in
+ * `scripts/e2e/detox-utils.cjs` (`commonDetoxConfigFactory`):
+ * `ios.sim.debug`, `ios.sim.release`, `android.att.debug`,
+ * `android.att.release`, `android.emu.debug`, `android.emu.release`.
  * @return {string | undefined}
  */
 function readDetoxConfigName() {
@@ -75,21 +81,21 @@ function isIOSSimulatorConfig() {
 }
 
 /**
- * Maps a CoreSimulator runtime identifier to a human iOS version string.
- * "com.apple.CoreSimulator.SimRuntime.iOS-26-2" -> "iOS 26.2"
+ * Maps a CoreSimulator runtime identifier to a bare iOS version string.
+ * "com.apple.CoreSimulator.SimRuntime.iOS-26-2" -> "26.2"
  * @param {string} runtimeId
- * @return {`iOS ${string}` | undefined}
+ * @return {string | undefined}
  */
 function runtimeIdToIOSVersion(runtimeId) {
   const match = /SimRuntime\.iOS-(\d+(?:-\d+)*)$/.exec(runtimeId);
   if (!match) {
     return undefined;
   }
-  return /** @type {`iOS ${string}`} */ (`iOS ${match[1].replace(/-/g, '.')}`);
+  return match[1].replace(/-/g, '.');
 }
 
 /**
- * @typedef {{ name: string, os: `iOS ${string}`, booted: boolean }} InstalledSimulator
+ * @typedef {{ name: string, os: string, booted: boolean }} InstalledSimulator
  */
 
 /** @type {InstalledSimulator[] | undefined} */
@@ -146,18 +152,15 @@ function listInstalledSimulators() {
 }
 
 /**
- * Compares two "iOS x.y[.z]" strings numerically. Returns a positive number when
- * `a` is newer than `b`.
- * @param {`iOS ${string}`} a
- * @param {`iOS ${string}`} b
+ * Compares two bare "x.y[.z]" version strings numerically. Returns a positive
+ * number when `a` is newer than `b`.
+ * @param {string} a
+ * @param {string} b
  * @return {number}
  */
 function compareIOSVersions(a, b) {
   const toParts = (/** @type {string} */ value) =>
-    value
-      .replace(/^iOS\s+/, '')
-      .split('.')
-      .map(part => Number.parseInt(part, 10) || 0);
+    value.split('.').map(part => Number.parseInt(part, 10) || 0);
   const aParts = toParts(a);
   const bParts = toParts(b);
   const length = Math.max(aParts.length, bParts.length);
@@ -213,7 +216,7 @@ function describeAvailabilityForName(simulators, name) {
 }
 
 /**
- * @typedef {{ name: string, os: `iOS ${string}` }} SimulatorTarget
+ * @typedef {{ name: string, os: string }} SimulatorTarget
  */
 
 /** @type {SimulatorTarget | undefined} */
@@ -355,18 +358,21 @@ function resolveAppleSimulatorName() {
 }
 
 /**
- * @return {`iOS ${string}`} requested version of ios, or default if not specified
+ * @return {string} bare iOS version (e.g. "26.2"), or default if not specified.
+ * Used directly as Detox's `device.os`, which `applesimutils --byOS` matches
+ * against a bare version.
  */
 function getIOSVersion() {
   return resolveSimulatorTarget().os;
 }
 
 /**
- * @return { string } iOS version number (e.g. 26.2)
+ * @return {string} iOS version number (e.g. "26.2"). Kept as a named accessor
+ * for the e2e specs that read it for version comparisons; identical to
+ * {@link getIOSVersion} now that versions are stored without the "iOS " prefix.
  */
 function getIOSVersionNumber() {
-  // getIOSVersion() always returns "iOS <version>" per the SimulatorTarget type.
-  return getIOSVersion().slice('iOS '.length);
+  return getIOSVersion();
 }
 
 module.exports = {
