@@ -29,8 +29,7 @@ import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
-// under a name for direct rendering (e.g. from App.tsx or e2e harnesses)
-// without reaching into each test directory.
+// under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
 export { default as TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
 export { default as TestTabsStaleStateUpdateRejection } from './test-tabs-stale-update-rejection';
