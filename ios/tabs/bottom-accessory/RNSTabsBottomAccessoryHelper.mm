@@ -8,6 +8,7 @@
 namespace react = facebook::react;
 
 static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAccessoryNativeWrapperViewContext;
+static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAccessoryContentViewHiddenContext;
 
 @implementation RNSTabsBottomAccessoryHelper {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
@@ -15,6 +16,11 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 
   RNSTabsBottomAccessoryContentComponentView *__weak _regularContentView;
   RNSTabsBottomAccessoryContentComponentView *__weak _inlineContentView;
+
+  RNSTabsBottomAccessoryContentComponentView *_hiddenObservedRegularContentView;
+  RNSTabsBottomAccessoryContentComponentView *_hiddenObservedInlineContentView;
+
+  BOOL _isAdjustingContentViewVisibility;
 
   id<UITraitChangeRegistration> _traitChangeRegistration;
 }
@@ -35,6 +41,9 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   _observedNativeWrapperView = nil;
   _regularContentView = nil;
   _inlineContentView = nil;
+  _hiddenObservedRegularContentView = nil;
+  _hiddenObservedInlineContentView = nil;
+  _isAdjustingContentViewVisibility = NO;
 }
 
 #pragma mark - Content view switching workaround
@@ -50,10 +59,12 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   switch (environment) {
     case RNSTabsBottomAccessoryEnvironmentRegular:
       _regularContentView = contentView;
+      [self registerForContentViewHiddenChanges:&_hiddenObservedRegularContentView forContentView:contentView];
       break;
 
     case RNSTabsBottomAccessoryEnvironmentInline:
       _inlineContentView = contentView;
+      [self registerForContentViewHiddenChanges:&_hiddenObservedInlineContentView forContentView:contentView];
       break;
 
     default:
@@ -69,6 +80,8 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
     return;
   }
 
+  _isAdjustingContentViewVisibility = YES;
+
   switch (self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment) {
     case UITabAccessoryEnvironmentInline:
       _regularContentView.hidden = YES;
@@ -79,6 +92,38 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
       _inlineContentView.hidden = YES;
       break;
   }
+
+  _isAdjustingContentViewVisibility = NO;
+}
+
+#pragma mark - Observing content view hidden changes
+
+- (void)unregisterForContentViewHiddenChanges:(RNSTabsBottomAccessoryContentComponentView *__strong *)observedView
+{
+  RNSTabsBottomAccessoryContentComponentView *currentlyObserved = *observedView;
+  if (currentlyObserved == nil) {
+    return;
+  }
+
+  [currentlyObserved removeObserver:self forKeyPath:@"hidden" context:RNSTabsBottomAccessoryContentViewHiddenContext];
+  *observedView = nil;
+}
+
+- (void)registerForContentViewHiddenChanges:(RNSTabsBottomAccessoryContentComponentView *__strong *)observedView
+                             forContentView:(nullable RNSTabsBottomAccessoryContentComponentView *)contentView
+{
+  if (*observedView == contentView) {
+    return;
+  }
+
+  // Detach from a previously observed instance first, so swapping one content view for another (without a `nil` reset
+  // in between) never strands a `hidden` observer on the old one. A no-op in the common case.
+  [self unregisterForContentViewHiddenChanges:observedView];
+  [contentView addObserver:self
+                forKeyPath:@"hidden"
+                   options:NSKeyValueObservingOptionNew
+                   context:RNSTabsBottomAccessoryContentViewHiddenContext];
+  *observedView = contentView;
 }
 
 #pragma mark - Observing environment changes
@@ -132,6 +177,10 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
 {
   if (context == RNSTabsBottomAccessoryNativeWrapperViewContext) {
     [self notifyWrapperViewFrameHasChanged];
+  } else if (context == RNSTabsBottomAccessoryContentViewHiddenContext) {
+    if (!_isAdjustingContentViewVisibility) {
+      [self handleContentViewVisibilityForEnvironmentIfNeeded];
+    }
   } else {
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
   }
@@ -158,6 +207,8 @@ static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAcce
   [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
   _traitChangeRegistration = nil;
   [self unregisterForAccessoryFrameChanges];
+  [self unregisterForContentViewHiddenChanges:&_hiddenObservedRegularContentView];
+  [self unregisterForContentViewHiddenChanges:&_hiddenObservedInlineContentView];
   _bottomAccessoryView = nil;
   _regularContentView = nil;
   _inlineContentView = nil;

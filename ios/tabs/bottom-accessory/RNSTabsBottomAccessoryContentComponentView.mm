@@ -27,16 +27,14 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  if (self.window == nil) {
-    return;
-  }
-
-  if ([self.superview isKindOfClass:[RNSTabsBottomAccessoryComponentView class]]) {
+  if (self.window != nil && [self.superview isKindOfClass:[RNSTabsBottomAccessoryComponentView class]]) {
     RNSTabsBottomAccessoryComponentView *accessoryView =
         static_cast<RNSTabsBottomAccessoryComponentView *>(self.superview);
     _accessoryView = accessoryView;
     [_accessoryView.helper setContentView:self forEnvironment:_environment];
   } else {
+    // We are leaving the accessory. Detach from the helper so it removes its `hidden` KVO observer while we are still
+    // alive. Must run on the `window == nil` path too (Fabric unmount removes from superview, then deallocates).
     [_accessoryView.helper setContentView:nil forEnvironment:_environment];
     _accessoryView = nil;
   }
