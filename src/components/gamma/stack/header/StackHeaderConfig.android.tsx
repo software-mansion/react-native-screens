@@ -22,14 +22,17 @@ import StackHeaderConfigAndroidNativeComponent, {
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  StackHeaderToolbarMenuBaseAndroid as NativeToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemClickedEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
-  StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
@@ -63,9 +66,7 @@ function StackHeaderConfig(
     ...filteredAndroidProps
   } = android ?? {};
 
-  const parsedToolbarMenuItems = parseToolbarMenuItemsToNativeProps(
-    toolbarMenu?.children,
-  );
+  const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
   const onPressMap = useToolbarMenuOnPressMap(toolbarMenu);
   const handleToolbarMenuItemClicked = useCallback(
     (
@@ -89,7 +90,7 @@ function StackHeaderConfig(
       ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
-      toolbarMenuItems={parsedToolbarMenuItems}
+      toolbarMenu={parsedToolbarMenu}
       onToolbarMenuItemClicked={handleToolbarMenuItemClicked}
       {...baseProps}
       {...filteredAndroidProps}
@@ -237,7 +238,7 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
 }
 
 function useToolbarMenuOnPressMap(
-  menu: StackHeaderToolbarMenuAndroid | undefined,
+  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
 ): Map<string, () => void> {
   return useMemo(() => {
     const map = new Map<string, () => void>();
@@ -254,34 +255,62 @@ function collectOnPressCallbacks(
   map: Map<string, () => void>,
 ) {
   for (const element of elements) {
-    if (element.onPress) {
+    if (element.type === 'menuItem' && element.onPress) {
       map.set(element.id, element.onPress);
+    }
+    if (element.type === 'menu' && element.children) {
+      collectOnPressCallbacks(element.children, map);
     }
   }
 }
 
-function parseToolbarMenuItemsToNativeProps(
-  items: StackHeaderToolbarMenuAndroid['children'],
-): StackHeaderConfigAndroidNativeComponentProps['toolbarMenuItems'] {
-  return items?.map(
-    ({
-      type: _type,
-      onPress: _onPress,
-      icon,
-      iconTintColorNormal,
-      iconTintColorPressed,
-      iconTintColorFocused,
-      iconTintColorDisabled,
-      ...rest
-    }) => ({
-      ...rest,
-      ...parseAndroidIconToNativeProps(icon),
-      iconTintColorNormal: processColor(iconTintColorNormal),
-      iconTintColorPressed: processColor(iconTintColorPressed),
-      iconTintColorFocused: processColor(iconTintColorFocused),
-      iconTintColorDisabled: processColor(iconTintColorDisabled),
-    }),
-  );
+function parseToolbarMenuToNativeProps(
+  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
+): NativeToolbarMenuBaseAndroid | undefined {
+  if (!menu?.children?.length) {
+    return undefined;
+  }
+  return {
+    children: menu.children.map(parseElementToNativeProps),
+  };
+}
+
+function parseElementToNativeProps(
+  element: StackHeaderToolbarMenuElementAndroid,
+): NativeToolbarMenuElementAndroid {
+  if (element.type === 'menu') {
+    const { type, children, ...baseProps } = element;
+    return {
+      type,
+      ...parseBaseItemToNativeProps(baseProps),
+      children: children?.map(parseElementToNativeProps),
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { type, onPress, ...baseProps } = element;
+  return {
+    type,
+    ...parseBaseItemToNativeProps(baseProps),
+  };
+}
+
+function parseBaseItemToNativeProps({
+  icon,
+  iconTintColorNormal,
+  iconTintColorPressed,
+  iconTintColorFocused,
+  iconTintColorDisabled,
+  ...rest
+}: StackHeaderToolbarMenuItemBaseAndroid) {
+  return {
+    ...rest,
+    ...parseAndroidIconToNativeProps(icon),
+    iconTintColorNormal: processColor(iconTintColorNormal),
+    iconTintColorPressed: processColor(iconTintColorPressed),
+    iconTintColorFocused: processColor(iconTintColorFocused),
+    iconTintColorDisabled: processColor(iconTintColorDisabled),
+  };
 }
 
 function parseToolbarMenuItemOptionsToNativeProps(
