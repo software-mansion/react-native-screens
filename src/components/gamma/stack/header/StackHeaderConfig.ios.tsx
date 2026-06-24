@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   MenuItemPressEvent,
-  MenuSelectionChangedEvent,
+  MenuSelectionChangeEvent,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
@@ -53,8 +53,8 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     [leadingItems, trailingItems],
   );
 
-  const handleSelectionChanged = useCallback(
-    (event: NativeSyntheticEvent<MenuSelectionChangedEvent>) => {
+  const handleSelectionChange = useCallback(
+    (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
       const { menuId, selectedMenuItemIds } = event.nativeEvent;
       const items = [
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
@@ -62,7 +62,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       ];
       const menu = findMenuElementByIdInItems(items, menuId);
       if (menu && menu.type === 'menu') {
-        menu.onSelectionChanged?.(selectedMenuItemIds);
+        menu.onSelectionChange?.(selectedMenuItemIds);
       }
     },
     [leadingItems, trailingItems],
@@ -91,7 +91,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       largeTitleEnabled={!!largeTitleEnabled}
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}
-      onMenuSelectionChanged={handleSelectionChanged}>
+      onMenuSelectionChange={handleSelectionChange}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}

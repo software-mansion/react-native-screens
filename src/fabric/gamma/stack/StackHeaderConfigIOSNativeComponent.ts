@@ -5,7 +5,7 @@ import { codegenNativeComponent } from 'react-native';
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
-export type MenuSelectionChangedEvent = Readonly<{
+export type MenuSelectionChangeEvent = Readonly<{
   menuId: string;
   selectedMenuItemIds: string[];
 }>;
@@ -23,8 +23,8 @@ export interface NativeProps extends ViewProps {
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
   onMenuItemPress?: CT.DirectEventHandler<MenuItemPressEvent> | undefined;
-  onMenuSelectionChanged?:
-    | CT.DirectEventHandler<MenuSelectionChangedEvent>
+  onMenuSelectionChange?:
+    | CT.DirectEventHandler<MenuSelectionChangeEvent>
     | undefined;
 }
 

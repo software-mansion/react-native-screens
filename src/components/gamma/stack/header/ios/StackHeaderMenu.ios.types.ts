@@ -14,7 +14,7 @@ export interface StackHeaderMenuItemIOS {
    *
    * @description
    * Used to locate the item inside a menu tree and to identify selected items
-   * in {@link StackHeaderMenuIOS.onSelectionChanged} callback.
+   * in {@link StackHeaderMenuIOS.onSelectionChange} callback.
    *
    * @platform ios
    */
@@ -41,7 +41,7 @@ export interface StackHeaderMenuItemIOS {
    * - `toggle` - a stateful item whose on/off state is tracked automatically.
    *   Toggle items do not fire `onPress`; instead, parent menu
    *   (or Single Selection Root in case of {@link StackHeaderMenuIOS.singleSelection | singleSelection})
-   *   is passed currently selected items with {@link StackHeaderMenuIOS.onSelectionChanged | onSelectionChanged}
+   *   is passed currently selected items with {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
    * - `automatic` - resolved at render time: becomes `toggle` when the item is
    *   under `singleSelection` hierarchy, `action` otherwise.
    *
@@ -69,7 +69,7 @@ export interface StackHeaderMenuItemIOS {
    * @description
    * Fires only for items whose effective type is `action`. For toggle items,
    * this callback will not fire — use
-   * {@link StackHeaderMenuIOS.onSelectionChanged | onSelectionChanged} on the
+   * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} on the
    * parent menu instead.
    *
    * @platform ios
@@ -88,7 +88,7 @@ export interface StackHeaderMenuItemIOS {
  * make the menu behave like radio group across its entire hierarchy.
  *
  * Note: The topmost menu that enables this prop becomes Single Selection Root.
- * Only the root receives {@link StackHeaderMenuIOS.onSelectionChanged | onSelectionChanged}
+ * Only the root receives {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
  * event, with exactly one item id passed to the callback. Only one item may be selected,
  * across the whole hierarchy under Single Selection Root (even when mixing items and nested menus).
  * Previously selected item is deselected automatically.
@@ -155,7 +155,7 @@ export interface StackHeaderMenuIOS {
    *
    * @platform ios
    */
-  onSelectionChanged?: (selectedMenuElementIds: string[]) => void;
+  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
 }
 
 /**

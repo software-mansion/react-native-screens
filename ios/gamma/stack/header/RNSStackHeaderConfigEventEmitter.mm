@@ -17,7 +17,7 @@
   }
 }
 
-- (BOOL)emitOnMenuSelectionChanged:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
+- (BOOL)emitOnMenuSelectionChange:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
 {
   if (_reactEventEmitter != nullptr) {
     std::vector<std::string> stringIds;
@@ -25,13 +25,13 @@
     for (NSString *sid in selectedIds) {
       stringIds.push_back(RCTStringFromNSString(sid));
     }
-    _reactEventEmitter->onMenuSelectionChanged({
+    _reactEventEmitter->onMenuSelectionChange({
         .menuId = RCTStringFromNSString(menuId),
         .selectedMenuItemIds = std::move(stringIds),
     });
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnMenuSelectionChanged event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnMenuSelectionChange event emission due to nullish emitter");
     return NO;
   }
 }

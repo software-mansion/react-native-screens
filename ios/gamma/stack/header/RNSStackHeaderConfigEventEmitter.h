@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)emitOnMenuItemPress:(NSString *)menuItemId;
 
-- (BOOL)emitOnMenuSelectionChanged:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
+- (BOOL)emitOnMenuSelectionChange:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
 
 @end
 

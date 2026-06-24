@@ -65,17 +65,17 @@ function walkMenuTreeAndValidateCallbacks(
       ) {
         console.warn(
           `[RNScreens] onPress on menu item "${child.id}" will not fire ` +
-            'because it is a toggle. Use onSelectionChanged on parent menu instead.',
+            'because it is a toggle. Use onSelectionChange on parent menu instead.',
         );
       }
     }
 
     if (child.type === 'menu') {
-      if (isInsideSingleSelection && child.onSelectionChanged) {
+      if (isInsideSingleSelection && child.onSelectionChange) {
         console.warn(
-          `[RNScreens] onSelectionChanged on menu "${child.id}" will not fire ` +
+          `[RNScreens] onSelectionChange on menu "${child.id}" will not fire ` +
             'because it is nested inside a singleSelection hierarchy. ' +
-            'Place onSelectionChanged on the topmost singleSelection menu instead.',
+            'Place onSelectionChange on the topmost singleSelection menu instead.',
         );
       }
 

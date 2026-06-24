@@ -50,7 +50,7 @@ function buildHeaderConfig(
       menu: {
         type: 'menu',
         id: `menu-${i}`,
-        onSelectionChanged: selection =>
+        onSelectionChange: selection =>
           showToast('Selected "' + selection.join('", "') + '"'),
         children: [
           {
@@ -83,7 +83,7 @@ function buildHeaderConfig(
             type: 'menu',
             title: `Submenu with Radio`,
             singleSelection: true,
-            onSelectionChanged: selection =>
+            onSelectionChange: selection =>
               showToast(`Selected unique "${selection}"`),
             children: [
               {
