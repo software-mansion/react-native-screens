@@ -4,7 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSImageLoadingHelper.h"
 
-static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config, BOOL hasSubmenus);
+static BOOL RNSMenuHasSubmenus(NSArray *items);
 
 @implementation RNSBarButtonItem {
   NSString *_buttonId;
@@ -167,6 +168,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
 {
   NSArray *items = dict[@"items"];
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
+  BOOL hasSubmenus = RNSMenuHasSubmenus(items);
   if (items.count > 0) {
     for (NSDictionary *item in items) {
       NSString *menuId = item[@"menuId"];
@@ -191,7 +193,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   return [UIMenu menuWithTitle:dict[@"title"]
                          image:image
                     identifier:nil
-                       options:RNSMakeUIMenuOptionsFromConfig(dict)
+                       options:RNSMakeUIMenuOptionsFromConfig(dict, hasSubmenus)
                       children:elements];
 }
 
@@ -364,7 +366,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
 
 @end
 
-UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
+UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config, BOOL hasSubmenus)
 {
   UIMenuOptions options = 0;
   NSNumber *singleSelection = config[@"singleSelection"];
@@ -372,7 +374,7 @@ UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
   NSNumber *displayInline = config[@"displayInline"];
   NSNumber *destructive = config[@"destructive"];
 
-  if (singleSelection != nil && [singleSelection boolValue]) {
+  if (!hasSubmenus && singleSelection != nil && [singleSelection boolValue]) {
     options |= UIMenuOptionsSingleSelection;
   }
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
@@ -389,4 +391,14 @@ UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
     options |= UIMenuOptionsDestructive;
   }
   return options;
+}
+
+BOOL RNSMenuHasSubmenus(NSArray *items)
+{
+  for (NSDictionary *item in items) {
+    if (item[@"menuId"] == nil) {
+      return YES;
+    }
+  }
+  return NO;
 }
