@@ -7,13 +7,13 @@ export interface StackHeaderBaseItemIOS {
    *
    * @platform iOS
    */
-  key: string;
+  id: string;
   /**
-   * @summary A label for the item that is displayed in the header.
+   * @summary A title for the item that is displayed in the header.
    *
    * @platform iOS
    */
-  label?: string | undefined;
+  title?: string | undefined;
 }
 
 export interface SupportsMenuIOS {
@@ -26,7 +26,7 @@ export interface SupportsMenuIOS {
 }
 
 /**
- * @summary Native header item with text label.
+ * @summary Native header item with text title.
  *
  * @platform iOS
  */
@@ -52,7 +52,7 @@ export interface StackHeaderInlineCustomItemIOS extends SupportsMenuIOS {
    *
    * @platform iOS
    */
-  key: string;
+  id: string;
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -87,7 +87,7 @@ interface StackHeaderFixedSpacerItemIOS {
    *
    * @platform iOS
    */
-  key: string;
+  id: string;
   /**
    * @summary Marks this object as a spacer definition.
    *
@@ -123,7 +123,7 @@ interface StackHeaderFlexibleSpacerItemIOS {
    *
    * @platform iOS
    */
-  key: string;
+  id: string;
   /**
    * @summary Marks this object as a spacer definition.
    *
@@ -151,7 +151,7 @@ export interface StackHeaderTitleCustomItemIOS {
    *
    * @platform iOS
    */
-  key: string;
+  id: string;
   /**
    * @summary A function that renders the custom view.
    *

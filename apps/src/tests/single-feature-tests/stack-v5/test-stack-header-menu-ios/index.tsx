@@ -39,8 +39,8 @@ function buildHeaderConfig(
   >['trailingItems'] = Array.from({ length: trailingItemsCount }).map(
     (_, i) => ({
       type: 'item',
-      key: `trailing-${i}`,
-      label: `Menu ${i}`,
+      id: `trailing-${i}`,
+      title: `Menu ${i}`,
       // every second item is custom
       ...(i % 2 === 0 && {
         render: () => (

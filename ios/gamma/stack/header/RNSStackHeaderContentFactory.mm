@@ -36,7 +36,7 @@
                                                                   frameChangeDelegate:delegate]];
   }
 
-  return [[UIBarButtonItem alloc] initWithTitle:item.label style:UIBarButtonItemStylePlain target:nil action:nil];
+  return [[UIBarButtonItem alloc] initWithTitle:item.title style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 + (UIView *)wrappedViewForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
