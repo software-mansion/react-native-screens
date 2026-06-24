@@ -72,9 +72,7 @@ class FormSheetHost(
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        // TODO: @t0maboro - implement before merging
-    }
+    ) = Unit
 
     internal fun updateStateIfNeeded(
         width: Int,
