@@ -53,25 +53,21 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     [leadingItems, trailingItems],
   );
 
-  const handleSelectionChange = useCallback(
-    (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
-      const { menuId, selectedMenuItemIds } = event.nativeEvent;
-      const items = [
-        ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
-        ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
-      ];
-      const menu = findMenuElementByIdInItems(items, menuId);
-      if (menu && menu.type === 'menu') {
-        menu.onSelectionChange?.(selectedMenuItemIds);
-      }
-    },
-    [leadingItems, trailingItems],
-  );
-
   const allMenuItems = [
     ...(leadingItems ?? []),
     ...(trailingItems ?? []),
   ].filter(it => it && it.type === 'item');
+
+  const handleSelectionChange = useCallback(
+    (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
+      const { menuId, selectedMenuItemIds } = event.nativeEvent;
+      const menu = findMenuElementByIdInItems(allMenuItems, menuId);
+      if (menu && menu.type === 'menu') {
+        menu.onSelectionChange?.(selectedMenuItemIds);
+      }
+    },
+    [allMenuItems],
+  );
 
   useEffect(() => {
     for (const item of allMenuItems) {
