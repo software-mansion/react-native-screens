@@ -2,10 +2,17 @@ import React, {
   ComponentRef,
   forwardRef,
   Ref,
+  useCallback,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from 'react';
-import { Image, processColor, StyleSheet } from 'react-native';
+import {
+  Image,
+  type NativeSyntheticEvent,
+  processColor,
+  StyleSheet,
+} from 'react-native';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
@@ -15,11 +22,14 @@ import StackHeaderConfigAndroidNativeComponent, {
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  StackHeaderToolbarMenuItemClickedEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
+  StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuElementAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
@@ -49,12 +59,22 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
-    toolbarMenuItems,
+    toolbarMenu,
     ...filteredAndroidProps
   } = android ?? {};
 
-  const parsedToolbarMenuItems =
-    parseToolbarMenuItemsToNativeProps(toolbarMenuItems);
+  const parsedToolbarMenuItems = parseToolbarMenuItemsToNativeProps(
+    toolbarMenu?.children,
+  );
+  const onPressMap = useToolbarMenuOnPressMap(toolbarMenu);
+  const handleToolbarMenuItemClicked = useCallback(
+    (
+      event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEventAndroid>,
+    ) => {
+      onPressMap.get(event.nativeEvent.id)?.();
+    },
+    [onPressMap],
+  );
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -70,6 +90,7 @@ function StackHeaderConfig(
       collapsable={false}
       style={StyleSheet.absoluteFill}
       toolbarMenuItems={parsedToolbarMenuItems}
+      onToolbarMenuItemClicked={handleToolbarMenuItemClicked}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -215,11 +236,37 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
+function useToolbarMenuOnPressMap(
+  menu: StackHeaderToolbarMenuAndroid | undefined,
+): Map<string, () => void> {
+  return useMemo(() => {
+    const map = new Map<string, () => void>();
+    if (!menu?.children) {
+      return map;
+    }
+    collectOnPressCallbacks(menu.children, map);
+    return map;
+  }, [menu]);
+}
+
+function collectOnPressCallbacks(
+  elements: StackHeaderToolbarMenuElementAndroid[],
+  map: Map<string, () => void>,
+) {
+  for (const element of elements) {
+    if (element.onPress) {
+      map.set(element.id, element.onPress);
+    }
+  }
+}
+
 function parseToolbarMenuItemsToNativeProps(
-  items: StackHeaderConfigPropsAndroid['toolbarMenuItems'],
+  items: StackHeaderToolbarMenuAndroid['children'],
 ): StackHeaderConfigAndroidNativeComponentProps['toolbarMenuItems'] {
   return items?.map(
     ({
+      type: _type,
+      onPress: _onPress,
       icon,
       iconTintColorNormal,
       iconTintColorPressed,

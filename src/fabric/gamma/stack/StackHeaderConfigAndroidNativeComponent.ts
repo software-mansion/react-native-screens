@@ -12,7 +12,7 @@ import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
-type StackHeaderToolbarMenuItemClickedEvent = Readonly<{
+export type StackHeaderToolbarMenuItemClickedEventAndroid = Readonly<{
   id: string;
 }>;
 
@@ -62,7 +62,7 @@ export interface NativeProps extends ViewProps {
 
   toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
   onToolbarMenuItemClicked?:
-    | CT.DirectEventHandler<StackHeaderToolbarMenuItemClickedEvent>
+    | CT.DirectEventHandler<StackHeaderToolbarMenuItemClickedEventAndroid>
     | undefined;
 
   // When StackHeaderToolbarMenuItemAndroid is used as an array

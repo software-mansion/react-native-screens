@@ -113,6 +113,7 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
   return slots
     .filter(s => s.include)
     .map(s => ({
+      type: 'menuItem' as const,
       id: s.id,
       title: ITEM_TITLES[s.id],
       showAsAction: s.showAsAction,
@@ -122,6 +123,16 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
       iconTintColorFocused: resolveTintColor(s.tintColorFocused),
       iconTintColorDisabled: resolveTintColor(s.tintColorDisabled),
     }));
+}
+
+function withOnPress(
+  items: ReturnType<typeof buildItems>,
+  onPress: (id: string) => void,
+) {
+  return items.map(item => ({
+    ...item,
+    onPress: () => onPress(item.id),
+  }));
 }
 
 function updateSlotAt(
@@ -144,7 +155,7 @@ export function App() {
           options: {
             headerConfig: {
               title: HEADER_TITLE,
-              android: { toolbarMenuItems: buildItems(DEFAULT_SLOTS) },
+              android: { toolbarMenu: { children: buildItems(DEFAULT_SLOTS) } },
             },
           },
         },
@@ -176,9 +187,9 @@ function MainScreen() {
       headerConfig: {
         title: HEADER_TITLE,
         android: {
-          toolbarMenuItems: buildItems(DEFAULT_SLOTS),
-          onToolbarMenuItemClicked: event =>
-            setLastClicked(event.nativeEvent.id),
+          toolbarMenu: {
+            children: withOnPress(buildItems(DEFAULT_SLOTS), setLastClicked),
+          },
         },
       },
       headerConfigRef,
@@ -192,9 +203,9 @@ function MainScreen() {
         headerConfig: {
           title: HEADER_TITLE,
           android: {
-            toolbarMenuItems: buildItems(next),
-            onToolbarMenuItemClicked: event =>
-              setLastClicked(event.nativeEvent.id),
+            toolbarMenu: {
+              children: withOnPress(buildItems(next), setLastClicked),
+            },
           },
         },
       });

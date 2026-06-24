@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { ColorValue, NativeSyntheticEvent } from 'react-native';
+import type { ColorValue } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../../../types';
 
@@ -70,6 +70,12 @@ export type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'never';
 
 export interface StackHeaderToolbarMenuItemAndroid {
+  /**
+   * @summary Marks this object as menu item definition.
+   *
+   * @platform android
+   */
+  type: 'menuItem';
   /**
    * @summary Unique identifier of the menu item.
    *
@@ -176,17 +182,28 @@ export interface StackHeaderToolbarMenuItemAndroid {
    * @platform android
    */
   iconTintColorDisabled?: ColorValue | undefined;
+  /**
+   * @summary Callback invoked when the menu item is clicked.
+   *
+   * @platform android
+   */
+  onPress?: (() => void) | undefined;
 }
 
-export type StackHeaderToolbarMenuItemClickedEvent = {
+export type StackHeaderToolbarMenuElementAndroid =
+  StackHeaderToolbarMenuItemAndroid;
+
+export interface StackHeaderToolbarMenuAndroid {
   /**
-   * @summary ID of the clicked menu item.
+   * @summary Menu elements displayed in the toolbar menu.
+   *
+   * @platform android
    */
-  id: string;
-};
+  children?: StackHeaderToolbarMenuElementAndroid[];
+}
 
 export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
-  Omit<StackHeaderToolbarMenuItemAndroid, 'id'>
+  Omit<StackHeaderToolbarMenuItemAndroid, 'id' | 'type' | 'onPress'>
 >;
 
 export interface StackHeaderConfigCommandsAndroid {
@@ -378,9 +395,9 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagSnap?: boolean | undefined;
   /**
-   * @summary Menu items displayed in the toolbar menu.
+   * @summary Toolbar menu configuration.
    *
-   * This prop serves as initial configuration of the toolbar menu items. If you
+   * This prop serves as initial configuration of the toolbar menu. If you
    * want to change some property in runtime, use `setToolbarMenuItemOptions`
    * view command.
    *
@@ -389,15 +406,5 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @platform android
    */
-  toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
-  /**
-   * @summary Callback invoked when a toolbar menu item is clicked.
-   *
-   * @platform android
-   */
-  onToolbarMenuItemClicked?:
-    | ((
-        event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEvent>,
-      ) => void)
-    | undefined;
+  toolbarMenu?: StackHeaderToolbarMenuAndroid | undefined;
 }
