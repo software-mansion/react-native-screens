@@ -160,8 +160,10 @@ export interface StackHeaderTitleCustomItemIOS {
    * platform native layout. Each item's size is calculated independently and will
    * not respect flex layout. Use static width and height for best results.
    *
-   * Note: Due to layout process limitations, text view resizing and ellipsizing will not work.
-   * For text-only elements that should ellipsize is recommended to use regular `title` instead.
+   * Note: Due to layout process limitations, text view will not resize and
+   * ellipsize to fit available space without manually setting desired view
+   * width. For text-only elements that should ellipsize it is recommended to
+   * use regular `title` instead.
    *
    * @platform iOS
    */
@@ -180,13 +182,13 @@ export interface StackHeaderConfigPropsIOS {
    */
   subtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
   /**
-   * @summary A list of items placed beginning from the leading edge.
+   * @summary A list of items placed starting from the leading edge.
    *
-   * @description Items are placed directly to the right of back button, if present.
-   * If there is not enough space to fit all leading items at once, they are all moved to overflow menu.
-   * This differs from trailing items, which are moved one by one.
+   * @description Items are placed next to the back button, if present. If there
+   * is not enough space to fit all leading items at once, they are all moved to
+   * overflow menu. This differs from trailing items, which are moved one by one.
    *
-   * Note: Custom items are not put into overflow menu, but are removed entirely.
+   * Note: Custom items are not put into the overflow menu, but are removed entirely.
    *
    * @platform iOS
    */
@@ -206,10 +208,10 @@ export interface StackHeaderConfigPropsIOS {
    */
   titleItem?: StackHeaderTitleCustomItemIOS | undefined;
   /**
-   * @summary A list of items placed beginning from the trailing edge.
+   * @summary A list of items placed starting from the trailing edge.
    * If there is not enough space to fit some items, they are moved to the overflow menu, one by one.
    *
-   * Note: Custom items are not put into overflow menu, but are removed entirely.
+   * Note: Custom items are not put into the overflow menu, but are removed entirely.
    *
    * @platform iOS
    */
@@ -225,13 +227,13 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @description When ScrollView is present on the screen, large header is displayed only when
    * fully scrolled to top, otherwise it collapses to regular header. If `largeTitle` is not defined,
-   * it fallbacks to regular title.
+   * it falls back to regular title.
    *
    * @platform iOS
    */
   largeTitle?: string | undefined;
   /**
-   * @summary Tells the header to display large title. It collapses to regular header when scrolling.
+   * @summary Specifies if the header should display the large title. It collapses to a regular header when scrolling.
    *
    * @platform iOS
    */
@@ -241,7 +243,7 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @description When ScrollView is present on the screen, large header is displayed only when
    * fully scrolled to top, otherwise it collapses to regular header. If `largeSubititle` is not defined,
-   * it fallbacks to regular subtitle.
+   * it falls back to regular subtitle.
    *
    * @platform iOS
    *
