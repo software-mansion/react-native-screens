@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   MenuItemPressEvent,
+  MenuSelectionChangeEvent,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
@@ -14,7 +15,7 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import { findMenuElementByIdInItems } from './utils';
+import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -52,6 +53,31 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     [leadingItems, trailingItems],
   );
 
+  const allMenuItems = [
+    ...(leadingItems ?? []),
+    ...(trailingItems ?? []),
+  ].filter(it => it && it.type === 'item');
+
+  const handleSelectionChange = useCallback(
+    (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
+      const { menuId, selectedMenuItemIds } = event.nativeEvent;
+      const menu = findMenuElementByIdInItems(allMenuItems, menuId);
+      if (menu && menu.type === 'menu') {
+        menu.onSelectionChange?.(selectedMenuItemIds);
+      }
+    },
+    [allMenuItems],
+  );
+
+  useEffect(() => {
+    for (const item of allMenuItems) {
+      if ('menu' in item && item.menu) {
+        validateMenuCallbacks(item.menu);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leadingItems, trailingItems]);
+
   return (
     <StackHeaderConfigIOSNativeComponent
       {...restProps}
@@ -60,7 +86,8 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       style={styles.config}
-      onMenuItemPress={handleMenuItemPress}>
+      onMenuItemPress={handleMenuItemPress}
+      onMenuSelectionChange={handleSelectionChange}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}

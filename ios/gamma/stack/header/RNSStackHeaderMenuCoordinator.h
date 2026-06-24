@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuEventsDelegate.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,7 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)applyMenu:(RNSStackHeaderMenuData *)data
            toBarButtonItem:(UIBarButtonItem *)item
-    withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate;
+    withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)delegate
+              stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker;
 
 @end
 

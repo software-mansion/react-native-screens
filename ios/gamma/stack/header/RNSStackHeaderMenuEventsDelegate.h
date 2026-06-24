@@ -8,6 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didPressMenuItem:(NSString *)menuItemId;
 
+- (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
+
 @end
 
 NS_ASSUME_NONNULL_END

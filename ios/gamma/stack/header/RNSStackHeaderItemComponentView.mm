@@ -5,6 +5,7 @@
 #import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -44,6 +45,7 @@ namespace react = facebook::react;
 {
   _label = nil;
   _menu = nil;
+  _menuToggleStateTracker = nil;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
 }
@@ -155,6 +157,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.menu != newItemProps.menu) {
     _menu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
+    _menuToggleStateTracker = _menu != nil ? [RNSStackHeaderMenuToggleStateTracker new] : nil;
     needsUpdate = YES;
   }
 

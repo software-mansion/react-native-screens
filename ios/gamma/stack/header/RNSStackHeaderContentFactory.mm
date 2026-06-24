@@ -14,7 +14,8 @@
   if (item.menu != nil) {
     [RNSStackHeaderMenuCoordinator applyMenu:item.menu
                              toBarButtonItem:barButtonItem
-                      withMenuEventsDelegate:menuEventsDelegate];
+                      withMenuEventsDelegate:menuEventsDelegate
+                                stateTracker:item.menuToggleStateTracker];
   }
 
   return barButtonItem;
