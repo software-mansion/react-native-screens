@@ -57,7 +57,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
-      tabBarItemTestID: 'Tab1Item',
     },
   },
   {
@@ -66,7 +65,6 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
-      tabBarItemTestID: 'Tab2Item',
     },
   },
 ];

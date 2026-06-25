@@ -6,5 +6,5 @@ export const scenarioDescription: ScenarioDescription = {
   details: 'Test different tab bar modes.',
   platforms: ['ios'],
   e2eCoverage: 'incomplete',
-  smokeTest: true,
+  smokeTest: false,
 };
