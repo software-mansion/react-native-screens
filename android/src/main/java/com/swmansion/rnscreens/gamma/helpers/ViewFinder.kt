@@ -4,14 +4,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.core.view.isNotEmpty
+import androidx.core.widget.NestedScrollView
 import com.swmansion.rnscreens.ScreenStack
 
 object ViewFinder {
-    fun findScrollViewInFirstDescendantChain(view: View): ScrollView? {
+    fun findScrollViewInFirstDescendantChain(view: View): ViewGroup? {
         var currentView: View? = view
 
         while (currentView != null) {
-            if (currentView is ScrollView) {
+            if (currentView is ScrollView || currentView is NestedScrollView) {
                 return currentView
             } else if (currentView is ViewGroup && currentView.isNotEmpty()) {
                 currentView = currentView.getChildAt(0)
