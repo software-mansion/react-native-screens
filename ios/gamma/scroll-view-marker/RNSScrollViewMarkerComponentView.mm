@@ -197,22 +197,22 @@ namespace react = facebook::react;
 
   if (oldComponentProps.leftScrollEdgeEffect != newComponentProps.leftScrollEdgeEffect) {
     _leftScrollEdgeEffect = RNSScrollEdgeEffectFromSVMLeftEdgeEffect(newComponentProps.leftScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.topScrollEdgeEffect != newComponentProps.topScrollEdgeEffect) {
     _topScrollEdgeEffect = RNSScrollEdgeEffectFromSVMTopEdgeEffect(newComponentProps.topScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.rightScrollEdgeEffect != newComponentProps.rightScrollEdgeEffect) {
     _rightScrollEdgeEffect = RNSScrollEdgeEffectFromSVMRightEdgeEffect(newComponentProps.rightScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.bottomScrollEdgeEffect != newComponentProps.bottomScrollEdgeEffect) {
     _bottomScrollEdgeEffect = RNSScrollEdgeEffectFromSVMBottomEdgeEffect(newComponentProps.bottomScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
