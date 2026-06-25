@@ -44,7 +44,7 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Appearance
+    // region Appearance
 
     internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -52,12 +52,17 @@ class TabsScreen(
         }
     }
 
-    // Badge
+    // endregion
+
+    // region Badge
+
     var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Accessibility
+    // endregion
+
+    // region Accessibility
     var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
@@ -66,7 +71,9 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Icon
+    // endregion
+
+    // region Icon
     var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             icon = getSystemDrawableResource(reactContext, newValue)
@@ -86,6 +93,8 @@ class TabsScreen(
     var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
+
+    // endregion
 
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
@@ -143,7 +152,7 @@ class TabsScreen(
         tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
 
-    // ScrollViewSeeking
+    // region ScrollViewSeeking
     override fun registerScrollView(
         marker: ScrollViewMarker,
         scrollView: ViewGroup,
@@ -152,6 +161,8 @@ class TabsScreen(
     }
 
     internal fun contentScrollView(): ViewGroup? = contentScrollView.get()
+
+    // endregion
 
     companion object {
         const val TAG = "TabsScreen"
