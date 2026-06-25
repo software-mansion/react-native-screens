@@ -8,8 +8,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSSplitScreenComponentView;
 @class RNSSplitHostComponentView;
-@class RNSSplitScreenController;
+
+// ObjC-facing surface of the Swift `RNSSplitScreenController`, resolved at runtime
+// via NSClassFromString. Lets the ObjC sources drive the controller without
+// importing `RNScreens-Swift.h`, so ObjC and Swift can build as separate SwiftPM
+// targets (SwiftPM has no mixed-language target).
+@protocol RNSSplitScreenControlling <NSObject>
+- (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView;
+- (BOOL)isInSplitHostSubtree;
+@end
 
 /**
  * @class RNSSplitScreenComponentView
@@ -20,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
-@property (nonatomic, strong, readonly, nonnull) RNSSplitScreenController *controller;
+@property (nonatomic, strong, readonly, nonnull) UIViewController<RNSSplitScreenControlling> *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitHostComponentView *splitHost;
 
 @end

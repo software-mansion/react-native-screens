@@ -8,7 +8,6 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSSplitScreenComponentView.h"
-#import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
@@ -22,7 +21,7 @@ static const CGFloat epsilon = 1e-6;
 
 @implementation RNSSplitHostComponentView {
   RNSSplitHostComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSSplitHostController *_Nonnull _controller;
+  UISplitViewController<RNSSplitHostControlling> *_Nonnull _controller;
   NSMutableArray<RNSSplitScreenComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
@@ -115,7 +114,16 @@ static const CGFloat epsilon = 1e-6;
   if (_controller == nil) {
     int numberOfColumns = [self getNumberOfColumns];
 
-    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self numberOfColumns:numberOfColumns];
+    // Resolved at runtime to avoid a compile-time dependency on the Swift module.
+    Class controllerClass = NSClassFromString(@"RNSSplitHostController");
+    if (controllerClass == nil) {
+      [NSException raise:NSInternalInconsistencyException
+                  format:@"[RNScreens] The RNSSplitHostController Swift class could not be resolved at runtime. "
+                         @"Make sure the gamma Swift sources are compiled and linked into the build."];
+    }
+    _controller = [(UISplitViewController<RNSSplitHostControlling> *)[controllerClass alloc]
+        initWithSplitHostComponentView:self
+                       numberOfColumns:numberOfColumns];
   }
 }
 
@@ -154,7 +162,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-- (nonnull RNSSplitHostController *)splitHostController
+- (nonnull UISplitViewController<RNSSplitHostControlling> *)splitHostController
 {
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
   return _controller;
