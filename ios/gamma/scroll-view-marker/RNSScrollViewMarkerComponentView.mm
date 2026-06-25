@@ -15,7 +15,7 @@
 
 namespace react = facebook::react;
 
-@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding, RCTMountingTransactionObserving>
+@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding>
 @end
 
 @implementation RNSScrollViewMarkerComponentView {
@@ -147,12 +147,12 @@ namespace react = facebook::react;
 
 #pragma mark - Override
 
-// TODO: This will be way too late to configure options etc.
-// Potentially we want to run in the end of transaction, before containers are updated.
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   [super willMoveToWindow:newWindow];
-  [self maybeRegisterWithSeekingAncestor];
+  if (newWindow != nil) {
+    [self maybeRegisterWithSeekingAncestor];
+  }
 }
 
 - (void)didMoveToWindow
@@ -255,14 +255,6 @@ namespace react = facebook::react;
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScrollViewMarkerComponentDescriptor>();
-}
-
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
-               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  [self maybeRegisterWithSeekingAncestor];
 }
 
 #pragma mark - Dynamic frameworks support
