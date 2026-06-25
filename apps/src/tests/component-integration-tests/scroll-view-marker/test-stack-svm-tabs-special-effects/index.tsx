@@ -59,6 +59,7 @@ function TabContents() {
 
   return (
     <View style={[{ backgroundColor: Colors.BlueLight20 }, styles.fillParent]}>
+      <HeuristicBreakingView />
       <ScrollViewMarker
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: edgeEffectStyle }}>
