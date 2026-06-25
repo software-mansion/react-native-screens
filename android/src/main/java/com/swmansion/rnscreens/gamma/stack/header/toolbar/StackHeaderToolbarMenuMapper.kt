@@ -63,21 +63,27 @@ internal object StackHeaderToolbarMenuMapper {
 
     private fun parseChildren(map: ReadableMap): List<StackHeaderToolbarMenuElementConfig> {
         val array = map.getArray("children") ?: return emptyList()
-        return (0 until array.size()).mapNotNull { i ->
-            val child = array.getMap(i) ?: return@mapNotNull null
+        return (0 until array.size()).map { i ->
+            val child =
+                requireNotNull(array.getMap(i)) {
+                    "[RNScreens] Menu children array must contain objects."
+                }
             parseElement(child)
         }
     }
 
-    private fun parseElement(map: ReadableMap): StackHeaderToolbarMenuElementConfig? =
-        when (map.readOptionalString("type")) {
+    private fun parseElement(map: ReadableMap): StackHeaderToolbarMenuElementConfig =
+        when (val type = map.readOptionalString("type")) {
             "menuItem" -> StackHeaderToolbarMenuElementConfig.MenuItem(item = parseItemConfig(map))
             "menu" ->
                 StackHeaderToolbarMenuElementConfig.Submenu(
                     item = parseItemConfig(map),
                     menu = StackHeaderToolbarMenuConfig(parseChildren(map)),
                 )
-            else -> null
+            else ->
+                throw JSApplicationIllegalArgumentException(
+                    "[RNScreens] Unknown toolbar menu element type: $type.",
+                )
         }
 
     private fun parseItemConfig(map: ReadableMap): StackHeaderToolbarMenuItemConfig =

@@ -18,14 +18,13 @@ internal data class StackHeaderToolbarMenuConfig(
         id: String,
         icon: Drawable?,
     ): List<StackHeaderToolbarMenuElementConfig> {
-        var changed = false
-        val result =
-            children.map { element ->
-                val updated = updateElementIcon(element, id, icon)
-                if (updated !== element) changed = true
-                updated
+        for ((index, element) in children.withIndex()) {
+            val updated = updateElementIcon(element, id, icon)
+            if (updated !== element) {
+                return children.toMutableList().apply { set(index, updated) }
             }
-        return if (changed) result else children
+        }
+        return children
     }
 
     private fun updateElementIcon(
@@ -34,8 +33,8 @@ internal data class StackHeaderToolbarMenuConfig(
         icon: Drawable?,
     ): StackHeaderToolbarMenuElementConfig {
         if (element.item.id == id) {
-            val newItem = element.item.copy(icon = icon)
-            if (newItem.icon !== element.item.icon) {
+            if (icon !== element.item.icon) {
+                val newItem = element.item.copy(icon = icon)
                 return when (element) {
                     is StackHeaderToolbarMenuElementConfig.MenuItem -> element.copy(item = newItem)
                     is StackHeaderToolbarMenuElementConfig.Submenu -> element.copy(item = newItem)

@@ -2,9 +2,7 @@ import React, {
   ComponentRef,
   forwardRef,
   Ref,
-  useCallback,
   useImperativeHandle,
-  useMemo,
   useRef,
 } from 'react';
 import {
@@ -67,15 +65,17 @@ function StackHeaderConfig(
   } = android ?? {};
 
   const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
-  const onPressMap = useToolbarMenuOnPressMap(toolbarMenu);
-  const handleToolbarMenuItemClicked = useCallback(
-    (
-      event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEventAndroid>,
-    ) => {
-      onPressMap.get(event.nativeEvent.id)?.();
-    },
-    [onPressMap],
-  );
+  const handleToolbarMenuItemClicked = (
+    event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEventAndroid>,
+  ) => {
+    const element = findToolbarMenuElementById(
+      toolbarMenu?.children,
+      event.nativeEvent.id,
+    );
+    if (element?.type === 'menuItem') {
+      element.onPress?.();
+    }
+  };
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -237,31 +237,25 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
-function useToolbarMenuOnPressMap(
-  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
-): Map<string, () => void> {
-  return useMemo(() => {
-    const map = new Map<string, () => void>();
-    if (!menu?.children) {
-      return map;
-    }
-    collectOnPressCallbacks(menu.children, map);
-    return map;
-  }, [menu]);
-}
-
-function collectOnPressCallbacks(
-  elements: StackHeaderToolbarMenuElementAndroid[],
-  map: Map<string, () => void>,
-) {
+function findToolbarMenuElementById(
+  elements: StackHeaderToolbarMenuElementAndroid[] | undefined,
+  id: string,
+): StackHeaderToolbarMenuElementAndroid | null {
+  if (!elements) {
+    return null;
+  }
   for (const element of elements) {
-    if (element.type === 'menuItem' && element.onPress) {
-      map.set(element.id, element.onPress);
+    if (element.id === id) {
+      return element;
     }
-    if (element.type === 'menu' && element.children) {
-      collectOnPressCallbacks(element.children, map);
+    if (element.type === 'menu') {
+      const found = findToolbarMenuElementById(element.children, id);
+      if (found) {
+        return found;
+      }
     }
   }
+  return null;
 }
 
 function parseToolbarMenuToNativeProps(

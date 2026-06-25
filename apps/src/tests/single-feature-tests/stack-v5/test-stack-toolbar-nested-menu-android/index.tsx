@@ -9,6 +9,7 @@ import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import {
   type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuElementAndroid,
   type StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
@@ -58,7 +59,9 @@ const SUBMENU1_TITLE_OPTIONS: Submenu1TitleOption[] = [
   'undefined',
 ];
 
-function resolveTitle(t: TitleOption | Submenu1TitleOption): string | undefined {
+function resolveTitle(
+  t: TitleOption | Submenu1TitleOption,
+): string | undefined {
   return t === 'undefined' ? undefined : t;
 }
 
@@ -81,15 +84,7 @@ const DEFAULT_CONFIG: MenuConfig = {
 };
 
 function buildMenu(config: MenuConfig, onPress: (id: string) => void) {
-  const children: Array<
-    | { type: 'menuItem'; id: string; title: string; onPress: () => void }
-    | {
-        type: 'menu';
-        id: string;
-        title: string | undefined;
-        children: Array<any>;
-      }
-  > = [];
+  const children: StackHeaderToolbarMenuElementAndroid[] = [];
 
   children.push({
     type: 'menuItem',
@@ -271,31 +266,23 @@ function MainScreen() {
       <SettingsSwitch
         label="include submenu-1"
         value={config.includeSubmenu1}
-        onValueChange={v =>
-          applyConfig({ ...config, includeSubmenu1: v })
-        }
+        onValueChange={v => applyConfig({ ...config, includeSubmenu1: v })}
       />
       <SettingsPicker<Submenu1TitleOption>
         label="submenu-1 title"
         value={config.submenu1Title}
         items={SUBMENU1_TITLE_OPTIONS}
-        onValueChange={v =>
-          applyConfig({ ...config, submenu1Title: v })
-        }
+        onValueChange={v => applyConfig({ ...config, submenu1Title: v })}
       />
       <SettingsSwitch
         label="add extra item to submenu-1"
         value={config.addExtraItem}
-        onValueChange={v =>
-          applyConfig({ ...config, addExtraItem: v })
-        }
+        onValueChange={v => applyConfig({ ...config, addExtraItem: v })}
       />
       <SettingsSwitch
         label="include submenu-2"
         value={config.includeSubmenu2}
-        onValueChange={v =>
-          applyConfig({ ...config, includeSubmenu2: v })
-        }
+        onValueChange={v => applyConfig({ ...config, includeSubmenu2: v })}
       />
     </ScrollView>
   );

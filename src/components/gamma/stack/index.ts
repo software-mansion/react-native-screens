@@ -25,8 +25,10 @@ export type {
   StackHeaderConfigPropsAndroid,
   StackHeaderConfigCommandsAndroid,
   StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   // iOS
