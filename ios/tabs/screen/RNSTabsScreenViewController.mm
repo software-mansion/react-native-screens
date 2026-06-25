@@ -97,12 +97,21 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
-    return [scrollView rnscreens_scrollToTop];
+    return [[self resolveContentScrollView] rnscreens_scrollToTop];
   }
 
   return false;
+}
+
+- (nullable UIScrollView *)resolveContentScrollView
+{
+  if (auto sv = [self contentScrollViewForEdge:NSDirectionalRectEdgeBottom]; sv != nil) {
+    return sv;
+  }
+  if (auto sv = [self contentScrollViewForEdge:NSDirectionalRectEdgeTop]; sv != nil) {
+    return sv;
+  }
+  return [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
 }
 
 #if !TARGET_OS_TV
