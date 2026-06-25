@@ -17,7 +17,7 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuMapper
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
-open class StackHeaderConfigViewManager :
+internal open class StackHeaderConfigViewManager :
     ViewGroupManager<StackHeaderConfig>(),
     RNSStackHeaderConfigAndroidManagerInterface<StackHeaderConfig> {
     private val delegate: ViewManagerDelegate<StackHeaderConfig>

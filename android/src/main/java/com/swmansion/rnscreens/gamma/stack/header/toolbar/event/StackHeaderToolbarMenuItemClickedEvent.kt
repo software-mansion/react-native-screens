@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
-class StackHeaderToolbarMenuItemClickedEvent(
+internal class StackHeaderToolbarMenuItemClickedEvent(
     surfaceId: Int,
     viewTag: Int,
     private val id: String,

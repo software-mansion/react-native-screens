@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
-class StackHeaderConfig(
+internal class StackHeaderConfig(
     val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     StackHeaderConfigurationProviding,

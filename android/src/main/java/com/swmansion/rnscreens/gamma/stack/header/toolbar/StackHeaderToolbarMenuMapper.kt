@@ -73,9 +73,9 @@ internal object StackHeaderToolbarMenuMapper {
         when (map.readOptionalString("type")) {
             "menuItem" -> StackHeaderToolbarMenuElementConfig.MenuItem(item = parseItemConfig(map))
             "menu" ->
-                StackHeaderToolbarMenuElementConfig.Menu(
+                StackHeaderToolbarMenuElementConfig.Submenu(
                     item = parseItemConfig(map),
-                    children = parseChildren(map),
+                    menu = StackHeaderToolbarMenuConfig(parseChildren(map)),
                 )
             else -> null
         }

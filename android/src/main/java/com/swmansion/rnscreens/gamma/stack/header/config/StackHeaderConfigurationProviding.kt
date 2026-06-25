@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 
-interface StackHeaderConfigurationProviding {
+internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
     val title: String
     val hidden: Boolean

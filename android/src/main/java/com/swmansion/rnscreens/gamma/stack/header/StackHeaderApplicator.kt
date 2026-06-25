@@ -266,8 +266,8 @@ internal class StackHeaderApplicator(
             val nativeId = nextId()
             forwardIdMap[element.item.id] = nativeId
             reverseIdMap[nativeId] = element.item.id
-            if (element is StackHeaderToolbarMenuElementConfig.Menu) {
-                assignElementIds(element.children, forwardIdMap, reverseIdMap, nextId)
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                assignElementIds(element.menu.children, forwardIdMap, reverseIdMap, nextId)
             }
         }
     }
@@ -303,10 +303,10 @@ internal class StackHeaderApplicator(
                     val menuItem = menu.add(Menu.NONE, itemId, index, null)
                     applyMenuItemOptions(toolbar, menuItem, element.item.toOptions())
                 }
-                is StackHeaderToolbarMenuElementConfig.Menu -> {
+                is StackHeaderToolbarMenuElementConfig.Submenu -> {
                     val subMenu = menu.addSubMenu(Menu.NONE, itemId, index, null)
                     applyMenuItemOptions(toolbar, subMenu.item, element.item.toOptions())
-                    addElements(toolbar, subMenu, element.children, forwardIdMap)
+                    addElements(toolbar, subMenu, element.menu.children, forwardIdMap)
                 }
             }
         }
