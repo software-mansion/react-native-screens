@@ -233,7 +233,8 @@ internal class StackContainer(
      * Might return `null` if the stack is empty.
      */
     private fun determineTopFragment(): StackScreenFragment? =
-        requireFragmentManager().fragments
+        requireFragmentManager()
+            .fragments
             .filterIsInstance<StackScreenFragment>()
             .lastOrNull()
 
