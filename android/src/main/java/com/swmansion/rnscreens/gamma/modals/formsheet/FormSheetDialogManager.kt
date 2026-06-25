@@ -5,7 +5,6 @@ import android.view.ContextThemeWrapper
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
-import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
@@ -43,7 +42,7 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
-    private val dimmingManager = DimmingViewManager(context as ReactContext?, dialog)
+    private val dimmingManager = DimmingViewManager(context, dialog)
 
     init {
         bottomSheetView?.let {

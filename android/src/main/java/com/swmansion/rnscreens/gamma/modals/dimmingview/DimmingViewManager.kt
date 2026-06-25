@@ -4,21 +4,18 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class DimmingViewManager(
-    private val reactContext: ReactContext?,
+    context: Context,
     private val dialog: BottomSheetDialog,
 ) {
-    private val dimmingView: DimmingView = createDimmingView(reactContext?.baseContext)
+    private val dimmingView: DimmingView = createDimmingView(context)
     private val maxAlpha: Float = 0.3f
 
-    private fun createDimmingView(context: Context?): DimmingView {
-        // TODO: @t0maboro - needs to be changed, we shouldn't attach dimming view to main app window
-        val safeContext = context ?: return DimmingView(reactContext as Context, maxAlpha)
-        return DimmingView(safeContext, maxAlpha).apply {
+    private fun createDimmingView(context: Context): DimmingView =
+        DimmingView(context, maxAlpha).apply {
             layoutParams =
                 CoordinatorLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -31,14 +28,12 @@ class DimmingViewManager(
                 dialog.cancel()
             }
         }
-    }
 
     internal fun onShow() {
-        // TODO: @t0maboro - needs to be changed, we shouldn't attach dimming view to main app window
-        val activityDecorView = reactContext?.currentActivity?.window?.decorView as? ViewGroup
+        val coordinator = dialog.findViewById<CoordinatorLayout>(com.google.android.material.R.id.coordinator)
 
-        if (activityDecorView != null && dimmingView.parent == null) {
-            activityDecorView.addView(dimmingView)
+        if (coordinator != null && dimmingView.parent == null) {
+            coordinator.addView(dimmingView, 0)
         }
 
         // TODO: @t0maboro - it should be placed in some FormSheetAnimator class
