@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import {
+  describeIfiOS,
   describeIfiPad,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -73,5 +74,36 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
     await expect(
       element(by.type('_UIListContentImageView')).atIndex(0),
     ).not.toExist();
+  });
+});
+
+describeIfiOS('Tabs: tabBarControllerMode (iPad)', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-tab-bar-controller-mode-ios',
+    );
+  });
+
+  it('loads on Tab1 with the picker defaulting to automatic showing tab bar without sidebar toggle', async () => {
+    await expect(element(by.id(PICKER_ID))).toBeVisible();
+    await expect(element(by.id(PICKER_ID))).toHaveLabel(
+      'tabBarControllerMode: automatic',
+    );
+    await expect(element(by.type('UITabBar'))).toBeVisible();
+    await expect(element(by.label('Toggle sidebar'))).not.toExist();
+  });
+
+  it('tabBar mode the bottom tab bar visible', async () => {
+    await setTabBarControllerMode('tabBar');
+    await expect(element(by.type('UITabBar'))).toBeVisible();
+    await expect(element(by.label('Toggle sidebar'))).not.toExist();
+  });
+
+  it('tabSidebar mode does not show side bar on iPhone', async () => {
+    await setTabBarControllerMode('tabSidebar');
+    await expect(element(by.type('UITabBar'))).toBeVisible();
+    await expect(element(by.label('Toggle sidebar'))).not.toExist();
   });
 });

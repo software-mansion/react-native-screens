@@ -13,6 +13,7 @@
     "test-e2e-ios": "detox test --configuration ios.sim.release --take-screenshots failing",
     "test-e2e-android": "detox test --configuration android.emu.release --take-screenshots failing",
     "test-e2e-ios-smoke": "detox test --configuration ios.sim.release --take-screenshots failing -- -t '@smoke'",
+    "test-e2e-ios-ipad": "RNS_APPLE_SIM_NAME=\"${RNS_APPLE_SIM_NAME:-$(node -p \"require('../scripts/e2e/ios-devices').DEFAULT_APPLE_IPAD_SIMULATOR_NAME\")}\" detox test --configuration ios.sim.release --take-screenshots failing -- -t '@ipad'",
     "test-e2e-android-smoke": "detox test --configuration android.emu.release --take-screenshots failing -- -t '@smoke'",
     "postinstall": "patch-package"
   },

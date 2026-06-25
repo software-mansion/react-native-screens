@@ -1,5 +1,6 @@
 const DEFAULT_APPLE_SIMULATOR_NAME = 'iPhone 17';
-const DEFAULT_IOS_VERSION = 'iOS 26.2';
+const DEFAULT_APPLE_IPAD_SIMULATOR_NAME = 'iPad Air 13-inch (M4)';
+const DEFAULT_IOS_VERSION = 'iOS 26.5';
 
 /**
  * @return {string}
@@ -44,6 +45,8 @@ function getIOSVersionNumber() {
 }
 
 module.exports = {
+  DEFAULT_APPLE_SIMULATOR_NAME,
+  DEFAULT_APPLE_IPAD_SIMULATOR_NAME,
   resolveAppleSimulatorName,
   getIOSVersion,
   getIOSVersionNumber,

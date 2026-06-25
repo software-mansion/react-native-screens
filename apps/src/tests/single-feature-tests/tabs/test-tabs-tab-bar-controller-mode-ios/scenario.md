@@ -8,23 +8,17 @@
 
 ## E2E test
 
-Partially automated (iPad only). The suite
-`test-tabs-tab-bar-controller-mode-ios.e2e.ts` verifies that `tabBar` mode keeps
-the bottom `UITabBar` visible, that tab switching works in bar mode, and that
-`tabSidebar` mode replaces the bottom tab bar with a sidebar (asserted as the
-`UITabBar` no longer being visible while the active tab's content remains).
+Incomplete: Partially automated: iPhone steps fully automated, iPad partialy: steps 1, 2, 4, and 7.
+For iPad e2e verifies: the initial `automatic` default state, `tabBar` mode keeping the floating tab bar
+visible without a sidebar toggle, and `tabSidebar` mode toggling the sidebar
+open/closed (via the "Toggle sidebar" button).
 
-Because `tabSidebar` only diverges on iPad at regular width, the suite is gated
-with `describeIfiPad` and self-skips on the default iPhone CI run. Run it with an
-iPad target, e.g.:
+Not automated:
 
-```bash
-RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)" yarn test-e2e-ios
-```
-
-Not automated: the compact-width fallback steps (resizing to an iPhone-sized
-window) require Split View / window resizing, which Detox cannot drive, and the
-iPhone "simple check" steps (11–14).
+- Steps 3, 5, 8 (Split View window resizing),
+- Step 6 (landscape orientation),
+- Step 9 (mode-cycling crash check),
+- Step 10 (tab switching),
 
 ## Prerequisites
 
