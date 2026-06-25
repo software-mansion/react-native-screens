@@ -16,7 +16,12 @@ internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
     fun parseMenu(value: Dynamic): StackHeaderToolbarMenuConfig {
-        val map = value.asMapOrNull() ?: return StackHeaderToolbarMenuConfig(emptyList())
+        if (value.isNull) return StackHeaderToolbarMenuConfig(emptyList())
+        val map =
+            value.asMapOrNull()
+                ?: throw JSApplicationIllegalArgumentException(
+                    "[RNScreens] toolbarMenu must be an object.",
+                )
         return StackHeaderToolbarMenuConfig(parseChildren(map))
     }
 
