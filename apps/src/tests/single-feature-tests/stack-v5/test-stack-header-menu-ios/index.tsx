@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -144,7 +144,7 @@ function ConfigScreen() {
     [trailingItemsCount, showToast],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setRouteOptions(routeKey, {
       headerConfig,
     });

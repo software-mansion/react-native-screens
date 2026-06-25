@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
@@ -257,7 +258,7 @@ function ConfigScreen() {
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(() => buildHeaderConfig(config), [config]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setRouteOptions(routeKey, {
       headerConfig,
     });
