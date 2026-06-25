@@ -2,8 +2,6 @@ package com.swmansion.rnscreens.gamma.common.container
 
 import android.view.ViewGroup
 
-typealias ContainerItemVisitor = (ContainerItem) -> Boolean
-
 interface Container {
     /**
      * A container can have multiple items, and each item can have its own
