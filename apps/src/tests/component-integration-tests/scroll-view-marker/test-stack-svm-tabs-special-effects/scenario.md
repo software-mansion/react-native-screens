@@ -33,7 +33,7 @@ This test needs to be updated after such interaction is supported.
 - [ ] There should be two tabs: `Home` and `Stack`.
 - [ ] `Home` tab should be selected.
 
-2. Scrolldown a bit.
+2. Scroll down a bit.
 
     Doesn't really matter how much you scroll - the distance should be "noticeable". 
 

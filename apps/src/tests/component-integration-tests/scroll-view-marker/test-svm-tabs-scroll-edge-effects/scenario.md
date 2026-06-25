@@ -16,7 +16,7 @@ TBD
 
 ## Prerequisites
 
-iOS: simulator with iOS 26+ is enough,
+iOS: simulator with iOS 26+ is enough
 
 ## Note
 
