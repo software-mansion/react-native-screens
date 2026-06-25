@@ -29,6 +29,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
@@ -246,41 +248,67 @@ internal class StackHeaderApplicator(
 
     // region Toolbar menu
 
-    fun generateToolbarMenuItemMappings(items: List<StackHeaderToolbarMenuItemConfig>): Pair<Map<String, Int>, Map<Int, String>> {
+    fun generateToolbarMenuItemMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
         val forwardIdMap = mutableMapOf<String, Int>()
         val reverseIdMap = mutableMapOf<Int, String>()
-
-        items.forEachIndexed { index, item ->
-            // We use IDs > 0 because 0 is Menu.NONE.
-            val nativeId = index + 1
-            forwardIdMap[item.id] = nativeId
-            reverseIdMap[nativeId] = item.id
-        }
-
+        var counter = 1
+        assignElementIds(menuConfig.children, forwardIdMap, reverseIdMap) { counter++ }
         return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
+    }
+
+    private fun assignElementIds(
+        elements: List<StackHeaderToolbarMenuElementConfig>,
+        forwardIdMap: MutableMap<String, Int>,
+        reverseIdMap: MutableMap<Int, String>,
+        nextId: () -> Int,
+    ) {
+        for (element in elements) {
+            val nativeId = nextId()
+            forwardIdMap[element.item.id] = nativeId
+            reverseIdMap[nativeId] = element.item.id
+            if (element is StackHeaderToolbarMenuElementConfig.Menu) {
+                assignElementIds(element.children, forwardIdMap, reverseIdMap, nextId)
+            }
+        }
     }
 
     fun rebuildToolbarMenu(
         toolbar: MaterialToolbar,
-        items: List<StackHeaderToolbarMenuItemConfig>,
+        menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
         reverseIdMap: Map<Int, String>,
         onItemClicked: (id: String) -> Unit,
     ) {
         toolbar.menu.clear()
-
-        items.forEachIndexed { index, item ->
-            val itemId = forwardIdMap[item.id]
-            require(itemId != null) {
-                "[RNScreens] Invalid forwardIdMap received. Missing item: $item."
-            }
-            val menuItem = toolbar.menu.add(Menu.NONE, itemId, index, null)
-            applyMenuItemOptions(toolbar, menuItem, item.toOptions())
-        }
-
+        addElements(toolbar, toolbar.menu, menuConfig.children, forwardIdMap)
         toolbar.setOnMenuItemClickListener { menuItem ->
             reverseIdMap[menuItem.itemId]?.let(onItemClicked)
             true
+        }
+    }
+
+    private fun addElements(
+        toolbar: MaterialToolbar,
+        menu: Menu,
+        elements: List<StackHeaderToolbarMenuElementConfig>,
+        forwardIdMap: Map<String, Int>,
+    ) {
+        elements.forEachIndexed { index, element ->
+            val itemId =
+                requireNotNull(forwardIdMap[element.item.id]) {
+                    "[RNScreens] Invalid forwardIdMap received. Missing item: ${element.item}."
+                }
+            when (element) {
+                is StackHeaderToolbarMenuElementConfig.MenuItem -> {
+                    val menuItem = menu.add(Menu.NONE, itemId, index, null)
+                    applyMenuItemOptions(toolbar, menuItem, element.item.toOptions())
+                }
+                is StackHeaderToolbarMenuElementConfig.Menu -> {
+                    val subMenu = menu.addSubMenu(Menu.NONE, itemId, index, null)
+                    applyMenuItemOptions(toolbar, subMenu.item, element.item.toOptions())
+                    addElements(toolbar, subMenu, element.children, forwardIdMap)
+                }
+            }
         }
     }
 
