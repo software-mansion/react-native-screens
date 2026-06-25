@@ -36,27 +36,27 @@ internal class TabsAppearanceApplicator(
     private var defaultIndicatorWidthPx: Int = -1
     private var defaultIndicatorHeightPx: Int = -1
 
-    // Explicit size wins; else auto-scale to wrap an enlarged icon box; else Material default.
-    fun applyActiveIndicator(
-        boxDp: Float,
-        maxWidthDp: Float,
-        maxHeightDp: Float,
+    // Explicit dp wins; else auto-scale to the enlarged icon box; else Material
+    // default. Reads iconBoxDp, so applyIconBox must run first.
+    private fun applyActiveIndicatorSize(
+        widthDp: Float?,
+        heightDp: Float?,
     ) {
         if (defaultIndicatorWidthPx < 0) {
             defaultIndicatorWidthPx = bottomNavigationView.itemActiveIndicatorWidth
             defaultIndicatorHeightPx = bottomNavigationView.itemActiveIndicatorHeight
         }
-        val enlarged = boxDp > TabsScreen.DEFAULT_ICON_SIZE_DP
+        val enlarged = iconBoxDp > TabsScreen.DEFAULT_ICON_SIZE_DP
         bottomNavigationView.itemActiveIndicatorWidth =
             when {
-                maxWidthDp > 0f -> PixelUtil.toPixelFromDIP(maxWidthDp).toInt()
-                enlarged -> PixelUtil.toPixelFromDIP(boxDp + 16f).toInt()
+                widthDp != null && widthDp > 0f -> PixelUtil.toPixelFromDIP(widthDp).toInt()
+                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 16f).toInt()
                 else -> defaultIndicatorWidthPx
             }
         bottomNavigationView.itemActiveIndicatorHeight =
             when {
-                maxHeightDp > 0f -> PixelUtil.toPixelFromDIP(maxHeightDp).toInt()
-                enlarged -> PixelUtil.toPixelFromDIP(boxDp + 8f).toInt()
+                heightDp != null && heightDp > 0f -> PixelUtil.toPixelFromDIP(heightDp).toInt()
+                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 8f).toInt()
                 else -> defaultIndicatorHeightPx
             }
     }
@@ -160,6 +160,11 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabBarAppearance?.tabBarItemActiveIndicatorEnabled ?: true
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
+
+        applyActiveIndicatorSize(
+            tabBarAppearance?.tabBarItemActiveIndicatorWidth,
+            tabBarAppearance?.tabBarItemActiveIndicatorHeight,
+        )
     }
 
     fun updateFontStyles(

@@ -50,6 +50,9 @@ export type Appearance = {
   // TabBarItem - Active Indicator
   tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+  // Indicator size (dp); unset = auto-scale to the icon box.
+  tabBarItemActiveIndicatorWidth?: CT.Float | undefined;
+  tabBarItemActiveIndicatorHeight?: CT.Float | undefined;
 
   // TabBarItem - Label
   tabBarItemTitleFontFamily?: string | undefined;
@@ -105,10 +108,8 @@ export interface NativeProps extends ViewProps {
   // 'template' (default) tints the drawable; 'original' keeps its own colors.
   drawableIconTintingMode?: CT.WithDefault<string, 'template'>;
   selectedDrawableIconTintingMode?: CT.WithDefault<string, 'template'>;
-  // Per-tab icon size (dp); 0/unset = default. Bar-wide indicator size (dp).
+  // Per-tab icon size (dp); 0/unset = default 24dp.
   drawableIconSize?: CT.Float | undefined;
-  activeIndicatorWidth?: CT.Float | undefined;
-  activeIndicatorHeight?: CT.Float | undefined;
 
   // Appearance
   standardAppearance?: Appearance | undefined;

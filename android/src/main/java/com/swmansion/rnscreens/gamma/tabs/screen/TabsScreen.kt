@@ -102,9 +102,6 @@ class TabsScreen(
     val effectiveIconSizeDp: Float
         get() = if (drawableIconSize > 0f) drawableIconSize else DEFAULT_ICON_SIZE_DP
 
-    var activeIndicatorWidth: Float = 0f
-    var activeIndicatorHeight: Float = 0f
-
     // "original" keeps the drawable's own colors; the bar can't tint a NoTintDrawable.
     private fun resolveIcon(
         resourceName: String?,

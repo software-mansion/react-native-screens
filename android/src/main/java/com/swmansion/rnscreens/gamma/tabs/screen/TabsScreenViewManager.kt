@@ -155,20 +155,6 @@ class TabsScreenViewManager :
         view.drawableIconSize = value
     }
 
-    override fun setActiveIndicatorWidth(
-        view: TabsScreen,
-        value: Float,
-    ) {
-        view.activeIndicatorWidth = value
-    }
-
-    override fun setActiveIndicatorHeight(
-        view: TabsScreen,
-        value: Float,
-    ) {
-        view.activeIndicatorHeight = value
-    }
-
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
@@ -216,6 +202,8 @@ class TabsScreenViewManager :
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(appearance.getMap("disabled")) else null,
             tabBarItemActiveIndicatorColor = appearance.getOptionalColor("tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.getOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
+            tabBarItemActiveIndicatorWidth = appearance.getOptionalFloat("tabBarItemActiveIndicatorWidth"),
+            tabBarItemActiveIndicatorHeight = appearance.getOptionalFloat("tabBarItemActiveIndicatorHeight"),
             tabBarItemTitleFontFamily = appearance.getOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
