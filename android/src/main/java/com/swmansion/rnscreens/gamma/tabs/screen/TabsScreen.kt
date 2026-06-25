@@ -5,7 +5,11 @@ import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.ext.refersToCompat
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ContainerItem
+import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
@@ -21,9 +25,11 @@ class TabsScreen(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding,
-    ScrollViewSeeking {
+    ScrollViewSeeking,
+    ContainerItem {
     private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
     private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
+    private var nestedContainer: WeakReference<Container> = WeakReference(null)
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
@@ -160,7 +166,35 @@ class TabsScreen(
         contentScrollView = WeakReference(scrollView)
     }
 
-    internal fun contentScrollView(): ViewGroup? = contentScrollView.get()
+    // endregion
+
+    // region ContainerItem
+
+    override fun registerNestedContainer(container: Container) {
+        nestedContainer = WeakReference(container)
+    }
+
+    override fun unregisterNestedContainer(container: Container) {
+        if (nestedContainer.refersToCompat(container)) {
+            nestedContainer.clear()
+        }
+    }
+
+    override fun resolveNestedContainer(): Container? = nestedContainer.get()
+
+    override fun findContentScrollView(): ViewGroup? {
+        // Cached one
+        contentScrollView.get()?.let { return it }
+
+        // Provided by nested container
+        resolveNestedContainer()?.resolveCurrentContentScrollView()?.let { scrollView ->
+            return scrollView
+        }
+
+        // Heuristic
+        ViewFinder.findScrollViewInFirstDescendantChain(this)?.let { return it }
+        return null
+    }
 
     // endregion
 

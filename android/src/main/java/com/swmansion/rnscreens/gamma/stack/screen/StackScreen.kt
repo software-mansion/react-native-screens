@@ -6,8 +6,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
+import com.swmansion.rnscreens.ext.refersToCompat
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ContainerItem
+import com.swmansion.rnscreens.gamma.helpers.ViewFinder
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
@@ -18,11 +24,16 @@ import kotlin.properties.Delegates
 class StackScreen(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
-    FragmentProviding {
+    FragmentProviding,
+    ScrollViewSeeking,
+    ContainerItem {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
     }
+
+    private var nestedContainer: WeakReference<Container> = WeakReference(null)
+    private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -115,6 +126,14 @@ class StackScreen(
 
     // endregion
 
+    // region ScrollViewSeeking
+
+    override fun registerScrollView(marker: ScrollViewMarker, scrollView: ViewGroup) {
+        contentScrollView = WeakReference(scrollView)
+    }
+
+    // endregion
+
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
     /**
@@ -146,4 +165,30 @@ class StackScreen(
         this.findFragmentOrNull()?.also {
             check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}" }
         }
+
+    override fun registerNestedContainer(container: Container) {
+        nestedContainer = WeakReference(container)
+    }
+
+    override fun unregisterNestedContainer(container: Container) {
+        if (nestedContainer.refersToCompat(container)) {
+            nestedContainer.clear()
+        }
+    }
+
+    override fun resolveNestedContainer(): Container? = nestedContainer.get()
+
+    override fun findContentScrollView(): ViewGroup? {
+        // Cached one
+        contentScrollView.get()?.let { return it }
+
+        // Provided by nested container
+        resolveNestedContainer()?.resolveCurrentContentScrollView()?.let { scrollView ->
+            return scrollView
+        }
+
+        // Heuristic
+        ViewFinder.findScrollViewInFirstDescendantChain(this)?.let { return it }
+        return null
+    }
 }
