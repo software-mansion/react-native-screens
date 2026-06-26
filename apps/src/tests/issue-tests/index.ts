@@ -197,6 +197,7 @@ export { default as Test4064 } from './Test4064';
 export { default as Test4090 } from './Test4090';
 export { default as Test4155 } from './Test4155';
 export { default as Test4161 } from './Test4161';
+export { default as Test4220 } from './Test4220';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -206,7 +207,6 @@ export { default as TestPreload } from './TestPreload';
 export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestHeaderTitle } from './TestHeaderTitle';
 export { default as TestHeaderHeight } from './TestHeaderHeight';
-export { default as TestNestedStackHeaderButtons } from './TestNestedStackHeaderButtons';
 export { default as TestModalNavigation } from './TestModalNavigation';
 export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
