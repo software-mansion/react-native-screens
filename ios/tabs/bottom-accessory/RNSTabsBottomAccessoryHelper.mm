@@ -14,11 +14,8 @@ static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAcce
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
   UIView *__weak _observedNativeWrapperView;
 
-  RNSTabsBottomAccessoryContentComponentView *__weak _regularContentView;
-  RNSTabsBottomAccessoryContentComponentView *__weak _inlineContentView;
-
-  RNSTabsBottomAccessoryContentComponentView *_hiddenObservedRegularContentView;
-  RNSTabsBottomAccessoryContentComponentView *_hiddenObservedInlineContentView;
+  RNSTabsBottomAccessoryContentComponentView *_regularContentView;
+  RNSTabsBottomAccessoryContentComponentView *_inlineContentView;
 
   BOOL _isAdjustingContentViewVisibility;
 
@@ -41,8 +38,6 @@ static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAcce
   _observedNativeWrapperView = nil;
   _regularContentView = nil;
   _inlineContentView = nil;
-  _hiddenObservedRegularContentView = nil;
-  _hiddenObservedInlineContentView = nil;
   _isAdjustingContentViewVisibility = NO;
 }
 
@@ -58,13 +53,11 @@ static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAcce
 {
   switch (environment) {
     case RNSTabsBottomAccessoryEnvironmentRegular:
-      _regularContentView = contentView;
-      [self registerForContentViewHiddenChanges:&_hiddenObservedRegularContentView forContentView:contentView];
+      [self replaceContentView:&_regularContentView with:contentView];
       break;
 
     case RNSTabsBottomAccessoryEnvironmentInline:
-      _inlineContentView = contentView;
-      [self registerForContentViewHiddenChanges:&_hiddenObservedInlineContentView forContentView:contentView];
+      [self replaceContentView:&_inlineContentView with:contentView];
       break;
 
     default:
@@ -109,21 +102,24 @@ static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAcce
   *observedView = nil;
 }
 
-- (void)registerForContentViewHiddenChanges:(RNSTabsBottomAccessoryContentComponentView *__strong *)observedView
-                             forContentView:(nullable RNSTabsBottomAccessoryContentComponentView *)contentView
+- (void)replaceContentView:(RNSTabsBottomAccessoryContentComponentView *__strong *)slot
+                      with:(nullable RNSTabsBottomAccessoryContentComponentView *)newView
 {
-  if (*observedView == contentView) {
+  if (*slot == newView) {
     return;
   }
 
-  // Detach from a previously observed instance first, so swapping one content view for another (without a `nil` reset
-  // in between) never strands a `hidden` observer on the old one. A no-op in the common case.
-  [self unregisterForContentViewHiddenChanges:observedView];
-  [contentView addObserver:self
-                forKeyPath:@"hidden"
-                   options:NSKeyValueObservingOptionNew
-                   context:RNSTabsBottomAccessoryContentViewHiddenContext];
-  *observedView = contentView;
+  // Detach the observer from the previous view first; this also clears the slot.
+  [self unregisterForContentViewHiddenChanges:slot];
+
+  if (newView != nil) {
+    [newView addObserver:self
+              forKeyPath:@"hidden"
+                 options:NSKeyValueObservingOptionNew
+                 context:RNSTabsBottomAccessoryContentViewHiddenContext];
+  }
+
+  *slot = newView;
 }
 
 #pragma mark - Observing environment changes
@@ -207,11 +203,9 @@ static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAcce
   [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
   _traitChangeRegistration = nil;
   [self unregisterForAccessoryFrameChanges];
-  [self unregisterForContentViewHiddenChanges:&_hiddenObservedRegularContentView];
-  [self unregisterForContentViewHiddenChanges:&_hiddenObservedInlineContentView];
+  [self unregisterForContentViewHiddenChanges:&_regularContentView];
+  [self unregisterForContentViewHiddenChanges:&_inlineContentView];
   _bottomAccessoryView = nil;
-  _regularContentView = nil;
-  _inlineContentView = nil;
 }
 
 @end
