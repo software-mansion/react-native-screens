@@ -13,6 +13,7 @@ import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
+import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android';
 import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
 import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
 
@@ -41,6 +42,7 @@ const scenarios = {
   TestStackHeaderSubviewOnPress,
   TestStackBackButton,
   TestStackToolbarMenuCommands,
+  TestStackToolbarMenuGroups,
   TestStackToolbarMenuShowAsAction,
   TestStackToolbarMenuIcon,
   TestStackToolbarNestedMenu,
