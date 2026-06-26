@@ -12,6 +12,7 @@ export interface StackHeaderToolbarSubviewAndroid {
   /**
    * @summary Render callback for the React element placed in this toolbar slot.
    *
+   * @description
    * The subview is sized by React Native's layout engine but positioned by the
    * platform native layout. Each subview is placed independently — subviews do
    * not participate in a shared flex layout and cannot influence each other's
@@ -33,6 +34,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * @summary Controls how the background subview behaves when the app bar
    * collapses.
    *
+   * @description
    * The following values are available:
    * - `off` - the subview scrolls away with the app bar,
    * - `parallax` - the subview scrolls at a slower rate, creating a parallax
@@ -93,6 +95,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * @summary Specifies whether the element should be displayed as a button in
    * the Toolbar.
    *
+   * @description
    * The following values are available:
    * - `always` - always displays the element as a button in the Toolbar,
    * - `alwaysWithText` - always displays the element as a button in the
@@ -118,6 +121,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * @summary Specifies the icon for the menu element.
    *
+   * @description
    * Supported values:
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
@@ -247,6 +251,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Specifies the type of the Material 3 app bar.
    *
+   * @description
    * The following values are available:
    * - `small` - small app bar with fixed title,
    * - `medium` - medium app bar with collapsing title,
@@ -290,6 +295,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Tint color applied to the back button icon in its normal state.
    *
+   * @description
    * When `undefined`, the default tint color is used. This applies to the
    * native back arrow and `drawableResource` icons that have an associated
    * tint. For `imageSource` icons, no tint is applied by default.
@@ -323,6 +329,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Custom icon for the back button.
    *
+   * @description
    * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
    *
    * Supported values:
@@ -344,6 +351,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @summary Whether the header reacts to nested scroll. Required for any
    * other `scrollFlag*` prop to take effect.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -362,6 +370,7 @@ export interface StackHeaderConfigPropsAndroid {
    * scroll position. Without this flag, the header only begins expanding once
    * the list has reached the top of its content. Requires `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
    *
@@ -374,6 +383,7 @@ export interface StackHeaderConfigPropsAndroid {
    * expands only after the ScrollView reaches the top of its content. Requires
    * `scrollFlagEnterAlways`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
    *
@@ -388,6 +398,7 @@ export interface StackHeaderConfigPropsAndroid {
    * (the toolbar) remains pinned at the top. Without this flag, the entire
    * header scrolls off the screen. Requires `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -408,6 +419,7 @@ export interface StackHeaderConfigPropsAndroid {
    * after a scroll gesture ends, instead of resting partway. Requires
    * `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -418,6 +430,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Toolbar menu configuration.
    *
+   * @description
    * This prop serves as initial configuration of the toolbar menu. If you
    * want to change some property in runtime, use `setToolbarMenuItemOptions`
    * view command.

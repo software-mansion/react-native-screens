@@ -27,6 +27,7 @@ export interface StackHeaderConfigPropsBase {
   /**
    * @summary Specifies if the content should be rendered behind the header.
    *
+   * @description
    * When `true`, content is rendered behind the header instead of starting
    * below it.
    *
@@ -43,6 +44,7 @@ export interface StackHeaderConfigPropsBase {
   /**
    * @summary Specifies if the back button should be hidden.
    *
+   * @description
    * This prop does not apply to the root screen of the stack for which the back
    * button is always hidden.
    *
