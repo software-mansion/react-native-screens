@@ -10,9 +10,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class DimmingViewManager(
     context: Context,
     private val dialog: BottomSheetDialog,
+    private val onCloseRequested: () -> Unit,
 ) {
     private val dimmingView: DimmingView = createDimmingView(context)
-    private val maxAlpha: Float = 0.3f
+    internal val maxAlpha: Float = 0.3f
+
+    internal val currentAlpha: Float
+        get() = dimmingView.alpha
+
+    internal fun updateAlpha(currentAlpha: Float) {
+        dimmingView.alpha = currentAlpha
+    }
 
     private fun createDimmingView(context: Context): DimmingView =
         DimmingView(context, maxAlpha).apply {
@@ -25,7 +33,7 @@ class DimmingViewManager(
             fitsSystemWindows = false
 
             setOnClickListener {
-                dialog.cancel()
+                onCloseRequested()
             }
         }
 
@@ -35,24 +43,6 @@ class DimmingViewManager(
         if (coordinator != null && dimmingView.parent == null) {
             coordinator.addView(dimmingView, 0)
         }
-
-        // TODO: @t0maboro - it should be placed in some FormSheetAnimator class
-        dimmingView.animate().cancel()
-        dimmingView
-            .animate()
-            .alpha(maxAlpha)
-            .setDuration(250)
-            .start()
-    }
-
-    internal fun onDismiss() {
-        // TODO: @t0maboro - it should be placed in some FormSheetAnimator class
-        dimmingView.animate().cancel()
-        dimmingView
-            .animate()
-            .alpha(0f)
-            .setDuration(250)
-            .start()
     }
 
     internal fun attachToBehavior(behavior: BottomSheetBehavior<*>) {
