@@ -8,7 +8,10 @@
 
 ## E2E test
 
-Full: Covers all manual scenario steps.
+iPhone/Android: All steps automated. iPad: floating tab bar visibility toggle
+(Steps 1–3) automated via `describeIfiPad`, targeting
+`_UIFloatingTabBarCollectionView`; animation smoothness and layout fidelity
+remain manual.
 
 ## Prerequisites
 
