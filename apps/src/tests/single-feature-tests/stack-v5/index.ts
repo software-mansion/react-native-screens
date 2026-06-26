@@ -11,7 +11,7 @@ import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-and
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
 import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
-import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress';
+import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
 
 const scenarios = {
   PreventNativeDismissSingleStack,

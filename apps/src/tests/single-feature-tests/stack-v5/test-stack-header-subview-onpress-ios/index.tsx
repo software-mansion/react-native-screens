@@ -38,8 +38,8 @@ function buildHeaderConfig(
   >['trailingItems'] = Array.from({ length: itemsCount }).map((_, i) => ({
     type: 'item',
     id: `item-${i}`,
-    title: `Item ${i}`,
-    onPress: () => showToast(`onPress Item ${i}`),
+    title: i % 2 == 0 ? `Item ${i}` : `Menu ${i}`,
+    ...(i % 2 == 0 && { onPress: () => showToast(`onPress Item ${i}`) }),
     menu: {
       type: 'menu',
       id: `menu-${i}`,
@@ -49,12 +49,14 @@ function buildHeaderConfig(
           type: 'menuItem',
           itemType: 'action',
           title: `Action ${i}-1`,
+          onPress: () => showToast(`Action ${i}-1`),
         },
         {
           id: `action-${i}-2`,
           type: 'menuItem',
           itemType: 'action',
           title: `Action ${i}-2`,
+          onPress: () => showToast(`Action ${i}-2`),
         },
       ],
     },
