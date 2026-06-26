@@ -43,7 +43,7 @@ class FormSheetDialogManager(
 
     init {
         bottomSheetView?.let { view ->
-            setupDimmingViewBehavior(view)
+            setupBehaviorCallbacksForDimmingView(view)
             setupOffscreenPositionBeforeFirstDraw(view)
         }
         setupDialogShowListener()
@@ -61,7 +61,7 @@ class FormSheetDialogManager(
         }
     }
 
-    private fun setupDimmingViewBehavior(view: FrameLayout) {
+    private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
         // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
         val behavior = BottomSheetBehavior.from(view)
         dimmingManager.attachToBehavior(behavior)
