@@ -21,6 +21,8 @@ export default function StackHeaderItem(props: StackHeaderItemProps) {
   return (
     <StackHeaderItemIOSNativeComponent
       {...rest}
+      // We need to tell iOS that we want the handler to be attached only when we actually require it
+      // because doing so makes the menu appear on long press instead of tap
       respondsToOnPress={!!onPress}
       onHeaderItemPress={handlePress}
       style={styles.config}>
