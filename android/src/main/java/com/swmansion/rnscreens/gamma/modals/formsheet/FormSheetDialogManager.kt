@@ -48,7 +48,7 @@ class FormSheetDialogManager(
         }
         setupDialogShowListener()
 
-        dimmingManager.setOnBackdropClickListener(host::onNativeDismiss)
+        dimmingManager.setOnBackdropClickListener(onDismissRequest)
     }
 
     internal fun show() {
