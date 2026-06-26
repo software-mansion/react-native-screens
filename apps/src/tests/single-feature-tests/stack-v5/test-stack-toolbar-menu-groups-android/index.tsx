@@ -229,17 +229,13 @@ function MainScreen() {
       headerConfig: {
         title: HEADER_TITLE,
         android: {
-          toolbarMenu: buildMenu(
-            DEFAULT_CONFIG,
-            handleItemPress,
-            handleGroupChange,
-          ),
+          toolbarMenu: buildMenu(config, handleItemPress, handleGroupChange),
           toolbarMenuGroupDividerEnabled: config.dividerEnabled,
         },
       },
       headerConfigRef,
     });
-  }, [setRouteOptions, routeKey, handleItemPress, handleGroupChange, config.dividerEnabled]);
+  }, [setRouteOptions, routeKey, handleItemPress, handleGroupChange, config]);
 
   const applyConfig = useCallback(
     (next: MenuConfig) => {
