@@ -24,6 +24,8 @@ class FormSheetSyncFlushEvent(
 
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
+    override fun canCoalesce(): Boolean = false
+
     override fun experimental_isSynchronous(): Boolean = true
 
     companion object : NamingAwareEventType {

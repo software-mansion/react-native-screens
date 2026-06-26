@@ -16,6 +16,8 @@ class FormSheetNativeDismissEvent(
 
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
+    override fun canCoalesce(): Boolean = false
+
     companion object : NamingAwareEventType {
         const val EVENT_NAME = "topNativeDismiss"
         const val EVENT_REGISTRATION_NAME = "onNativeDismiss"
