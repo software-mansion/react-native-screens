@@ -28,7 +28,7 @@ internal class FormSheetAnimationCoordinator(
         val alphaAnimator =
             ValueAnimator.ofFloat(0f, dimmingManager.maxAlpha).apply {
                 addUpdateListener { animation ->
-                    dimmingManager.updateAlpha(animation.animatedValue as Float)
+                    dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
                 }
             }
 
@@ -61,9 +61,9 @@ internal class FormSheetAnimationCoordinator(
             }
 
         val alphaAnimator =
-            ValueAnimator.ofFloat(dimmingManager.currentAlpha, 0f).apply {
+            ValueAnimator.ofFloat(dimmingManager.dimmingViewAlpha, 0f).apply {
                 addUpdateListener { animation ->
-                    dimmingManager.updateAlpha(animation.animatedValue as Float)
+                    dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
                 }
             }
 

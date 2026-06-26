@@ -13,14 +13,15 @@ class DimmingViewManager(
     private val onCloseRequested: () -> Unit,
 ) {
     private val dimmingView: DimmingView = createDimmingView(context)
+
+    // TODO: @t0maboro - consider exposing as a prop
     internal val maxAlpha: Float = 0.3f
 
-    internal val currentAlpha: Float
+    internal var dimmingViewAlpha: Float
         get() = dimmingView.alpha
-
-    internal fun updateAlpha(currentAlpha: Float) {
-        dimmingView.alpha = currentAlpha
-    }
+        set(value) {
+            dimmingView.alpha = value
+        }
 
     private fun createDimmingView(context: Context): DimmingView =
         DimmingView(context, maxAlpha).apply {
