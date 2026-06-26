@@ -37,40 +37,16 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
-    private val dimmingManager =
-        DimmingViewManager(context, dialog) {
-            host.onNativeDismiss()
-        }
+    private val dimmingManager = DimmingViewManager(context, dialog, host::onNativeDismiss)
 
-    private val animationCoordinator =
-        FormSheetAnimationCoordinator(dimmingManager) {
-            dialog.dismiss()
-        }
+    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager, dialog::dismiss)
 
     init {
         bottomSheetView?.let { view ->
-            // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
-            val behavior = BottomSheetBehavior.from(view)
-            dimmingManager.attachToBehavior(behavior)
-
-            view.viewTreeObserver.addOnPreDrawListener(
-                object : android.view.ViewTreeObserver.OnPreDrawListener {
-                    override fun onPreDraw(): Boolean {
-                        view.viewTreeObserver.removeOnPreDrawListener(this)
-                        view.translationY = view.height.toFloat()
-                        return true
-                    }
-                },
-            )
+            setupDimmingViewBehavior(view)
+            setupOffscreenPositionBeforeFirstDraw(view)
         }
-
-        dialog.setOnShowListener {
-            dimmingManager.onDialogShown()
-
-            bottomSheetView?.let {
-                animationCoordinator.runEnterAnimation(it)
-            }
-        }
+        setupDialogShowListener()
     }
 
     internal fun show() {
@@ -79,5 +55,33 @@ class FormSheetDialogManager(
 
     internal fun dismiss() {
         animationCoordinator.runExitAnimation(bottomSheetView)
+    }
+
+    private fun setupDimmingViewBehavior(view: FrameLayout) {
+        // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
+        val behavior = BottomSheetBehavior.from(view)
+        dimmingManager.attachToBehavior(behavior)
+    }
+
+    private fun setupOffscreenPositionBeforeFirstDraw(view: FrameLayout) {
+        view.viewTreeObserver.addOnPreDrawListener(
+            object : android.view.ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    view.viewTreeObserver.removeOnPreDrawListener(this)
+                    view.translationY = view.height.toFloat()
+                    return true
+                }
+            },
+        )
+    }
+
+    private fun setupDialogShowListener() {
+        dialog.setOnShowListener {
+            dimmingManager.onDialogShown()
+
+            bottomSheetView?.let { view ->
+                animationCoordinator.runEnterAnimation(view)
+            }
+        }
     }
 }
