@@ -16,13 +16,13 @@ internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
     fun parseMenu(value: Dynamic): StackHeaderToolbarMenuConfig {
-        if (value.isNull) return StackHeaderToolbarMenuConfig(emptyList())
+        if (value.isNull) return StackHeaderToolbarMenuConfig(emptyList(), emptyList())
         val map =
             value.asMapOrNull()
                 ?: throw JSApplicationIllegalArgumentException(
                     "[RNScreens] toolbarMenu must be an object.",
                 )
-        return StackHeaderToolbarMenuConfig(parseChildren(map))
+        return StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(map))
     }
 
     fun collectIconSources(value: Dynamic): Map<String, StackHeaderToolbarMenuItemIconSource> {
@@ -50,6 +50,11 @@ internal object StackHeaderToolbarMenuMapper {
             iconTintColorPressed = map.readNullableColorUpdate("iconTintColorPressed"),
             iconTintColorFocused = map.readNullableColorUpdate("iconTintColorFocused"),
             iconTintColorDisabled = map.readNullableColorUpdate("iconTintColorDisabled"),
+            checked =
+                map.readNullableBooleanUpdate(
+                    "checked",
+                    StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE,
+                ),
         )
 
     fun parseMenuItemIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
@@ -65,6 +70,24 @@ internal object StackHeaderToolbarMenuMapper {
     // endregion
 
     // region Menu tree parsing
+
+    private fun parseGroups(map: ReadableMap): List<StackHeaderToolbarMenuGroupConfig> {
+        val array = map.getArray("groups") ?: return emptyList()
+        return (0 until array.size()).map { i ->
+            val group =
+                requireNotNull(array.getMap(i)) {
+                    "[RNScreens] Menu groups array must contain objects."
+                }
+            StackHeaderToolbarMenuGroupConfig(
+                groupId = group.requireNotNullString("groupId"),
+                singleSelection =
+                    group.readBoolean(
+                        "singleSelection",
+                        StackHeaderToolbarMenuItemDefaults.SINGLE_SELECTION,
+                    ),
+            )
+        }
+    }
 
     private fun parseChildren(map: ReadableMap): List<StackHeaderToolbarMenuElementConfig> {
         val array = map.getArray("children") ?: return emptyList()
@@ -83,7 +106,7 @@ internal object StackHeaderToolbarMenuMapper {
             "menu" ->
                 StackHeaderToolbarMenuElementConfig.Submenu(
                     item = parseItemConfig(map),
-                    menu = StackHeaderToolbarMenuConfig(parseChildren(map)),
+                    menu = StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(map)),
                 )
             else ->
                 throw JSApplicationIllegalArgumentException(
@@ -102,6 +125,9 @@ internal object StackHeaderToolbarMenuMapper {
             iconTintColorPressed = map.readColor("iconTintColorPressed", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED),
             iconTintColorFocused = map.readColor("iconTintColorFocused", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED),
             iconTintColorDisabled = map.readColor("iconTintColorDisabled", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED),
+            groupId = map.readOptionalString("groupId"),
+            itemType = map.readItemTypeEnum("itemType", StackHeaderToolbarMenuItemDefaults.ITEM_TYPE),
+            initialToggleState = map.readBoolean("initialToggleState", StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE),
         )
 
     // endregion
@@ -155,6 +181,25 @@ internal object StackHeaderToolbarMenuMapper {
             else ->
                 throw JSApplicationIllegalArgumentException(
                     "[RNScreens] Invalid value for StackHeaderToolbarMenuItemShowAsAction: $value.",
+                )
+        }
+
+    private fun ReadableMap.readItemTypeEnum(
+        key: String,
+        default: StackHeaderToolbarMenuItemType,
+    ): StackHeaderToolbarMenuItemType {
+        val stringValue = this.getString(key) ?: return default
+        return toItemTypeEnum(stringValue)
+    }
+
+    private fun toItemTypeEnum(value: String): StackHeaderToolbarMenuItemType =
+        when (value) {
+            "action" -> StackHeaderToolbarMenuItemType.ACTION
+            "toggle" -> StackHeaderToolbarMenuItemType.TOGGLE
+            "automatic" -> StackHeaderToolbarMenuItemType.AUTOMATIC
+            else ->
+                throw JSApplicationIllegalArgumentException(
+                    "[RNScreens] Invalid value for StackHeaderToolbarMenuItemType: $value.",
                 )
         }
 

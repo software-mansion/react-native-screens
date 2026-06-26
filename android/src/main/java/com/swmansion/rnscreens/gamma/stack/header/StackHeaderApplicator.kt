@@ -31,8 +31,11 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
@@ -256,6 +259,26 @@ internal class StackHeaderApplicator(
         return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
     }
 
+    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
+        val forwardGroupIdMap = mutableMapOf<String, Int>()
+        val reverseGroupIdMap = mutableMapOf<Int, String>()
+        var counter = 1
+        assignGroupIds(menuConfig, forwardGroupIdMap, reverseGroupIdMap) { counter++ }
+        return Pair(forwardGroupIdMap.toMap(), reverseGroupIdMap.toMap())
+    }
+
+    fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
+        val itemGroupMap = mutableMapOf<String, String>()
+        val groupSingleSelection = mutableMapOf<String, Boolean>()
+        val groupMemberItems = mutableMapOf<String, MutableList<String>>()
+        collectGroupMetadata(menuConfig, itemGroupMap, groupSingleSelection, groupMemberItems)
+        return StackHeaderToolbarMenuGroupMetadata(
+            itemGroupMap,
+            groupSingleSelection,
+            groupMemberItems.mapValues { it.value.toList() },
+        )
+    }
+
     private fun assignElementIds(
         elements: List<StackHeaderToolbarMenuElementConfig>,
         forwardIdMap: MutableMap<String, Int>,
@@ -272,17 +295,66 @@ internal class StackHeaderApplicator(
         }
     }
 
+    private fun assignGroupIds(
+        menuConfig: StackHeaderToolbarMenuConfig,
+        forwardMap: MutableMap<String, Int>,
+        reverseMap: MutableMap<Int, String>,
+        nextId: () -> Int,
+    ) {
+        for (group in menuConfig.groups) {
+            if (group.groupId !in forwardMap) {
+                val nativeId = nextId()
+                forwardMap[group.groupId] = nativeId
+                reverseMap[nativeId] = group.groupId
+            }
+        }
+        for (element in menuConfig.children) {
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                assignGroupIds(element.menu, forwardMap, reverseMap, nextId)
+            }
+        }
+    }
+
+    private fun collectGroupMetadata(
+        config: StackHeaderToolbarMenuConfig,
+        itemGroupMap: MutableMap<String, String>,
+        groupSingleSelection: MutableMap<String, Boolean>,
+        groupMemberItems: MutableMap<String, MutableList<String>>,
+    ) {
+        for (group in config.groups) {
+            groupSingleSelection[group.groupId] = group.singleSelection
+            groupMemberItems.getOrPut(group.groupId) { mutableListOf() }
+        }
+        for (element in config.children) {
+            element.item.groupId?.let { gid ->
+                itemGroupMap[element.item.id] = gid
+                groupMemberItems.getOrPut(gid) { mutableListOf() }.add(element.item.id)
+            }
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                collectGroupMetadata(element.menu, itemGroupMap, groupSingleSelection, groupMemberItems)
+            }
+        }
+    }
+
     fun rebuildToolbarMenu(
         toolbar: MaterialToolbar,
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
         reverseIdMap: Map<Int, String>,
+        forwardGroupIdMap: Map<String, Int>,
         onItemClicked: (id: String) -> Unit,
+        onGroupSelectionChanged: (itemId: String) -> Unit,
     ) {
         toolbar.menu.clear()
-        addElements(toolbar, toolbar.menu, menuConfig.children, forwardIdMap)
+        addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap)
         toolbar.setOnMenuItemClickListener { menuItem ->
-            reverseIdMap[menuItem.itemId]?.let(onItemClicked)
+            val stringId = reverseIdMap[menuItem.itemId]
+            if (stringId != null) {
+                onItemClicked(stringId)
+                if (menuItem.isCheckable && menuItem.groupId != Menu.NONE) {
+                    onGroupSelectionChanged(stringId)
+                }
+            }
             true
         }
     }
@@ -290,25 +362,59 @@ internal class StackHeaderApplicator(
     private fun addElements(
         toolbar: MaterialToolbar,
         menu: Menu,
-        elements: List<StackHeaderToolbarMenuElementConfig>,
+        menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
+        forwardGroupIdMap: Map<String, Int>,
     ) {
-        elements.forEachIndexed { index, element ->
+        menuConfig.children.forEachIndexed { index, element ->
             val itemId =
                 requireNotNull(forwardIdMap[element.item.id]) {
                     "[RNScreens] Invalid forwardIdMap received. Missing item: ${element.item}."
                 }
+            val groupIntId =
+                element.item.groupId
+                    ?.let { forwardGroupIdMap[it] ?: Menu.NONE }
+                    ?: Menu.NONE
             when (element) {
                 is StackHeaderToolbarMenuElementConfig.MenuItem -> {
-                    val menuItem = menu.add(Menu.NONE, itemId, index, null)
+                    val menuItem = menu.add(groupIntId, itemId, index, null)
                     applyMenuItemOptions(toolbar, menuItem, element.item.toOptions())
+                    applyCheckability(menuItem, element.item)
                 }
                 is StackHeaderToolbarMenuElementConfig.Submenu -> {
-                    val subMenu = menu.addSubMenu(Menu.NONE, itemId, index, null)
+                    val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
                     applyMenuItemOptions(toolbar, subMenu.item, element.item.toOptions())
-                    addElements(toolbar, subMenu, element.menu.children, forwardIdMap)
+                    addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap)
                 }
             }
+        }
+        configureGroupCheckability(menu, menuConfig.groups, forwardGroupIdMap)
+    }
+
+    private fun configureGroupCheckability(
+        menu: Menu,
+        groups: List<StackHeaderToolbarMenuGroupConfig>,
+        forwardGroupIdMap: Map<String, Int>,
+    ) {
+        for (group in groups) {
+            val groupIntId = forwardGroupIdMap[group.groupId] ?: continue
+            menu.setGroupCheckable(groupIntId, true, group.singleSelection)
+        }
+    }
+
+    private fun applyCheckability(
+        menuItem: MenuItem,
+        itemConfig: StackHeaderToolbarMenuItemConfig,
+    ) {
+        val shouldBeCheckable =
+            when (itemConfig.itemType) {
+                StackHeaderToolbarMenuItemType.TOGGLE -> true
+                StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
+                StackHeaderToolbarMenuItemType.ACTION -> false
+            }
+        if (shouldBeCheckable) {
+            menuItem.isCheckable = true
+            menuItem.isChecked = itemConfig.initialToggleState
         }
     }
 
@@ -334,6 +440,7 @@ internal class StackHeaderApplicator(
         options.title?.let { menuItem.title = it }
         options.hidden?.let { menuItem.isVisible = !it }
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
+        options.checked?.let { menuItem.isChecked = it }
 
         options.icon?.let {
             when (it) {

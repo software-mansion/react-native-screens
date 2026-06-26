@@ -24,6 +24,7 @@ internal interface StackHeaderConfigurationProviding {
     val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
     val toolbarMenu: StackHeaderToolbarMenuConfig
+    val toolbarMenuGroupDividerEnabled: Boolean
     val isRTL: Boolean
 
     val invalidationFlags: StackHeaderInvalidationFlags

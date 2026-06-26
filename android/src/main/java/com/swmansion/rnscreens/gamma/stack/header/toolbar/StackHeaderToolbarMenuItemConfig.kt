@@ -12,4 +12,7 @@ internal data class StackHeaderToolbarMenuItemConfig(
     val iconTintColorPressed: Int?,
     val iconTintColorFocused: Int?,
     val iconTintColorDisabled: Int?,
+    val groupId: String?,
+    val itemType: StackHeaderToolbarMenuItemType,
+    val initialToggleState: Boolean,
 )

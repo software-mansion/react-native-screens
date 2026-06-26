@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
@@ -10,12 +11,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationObserver
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
@@ -69,6 +72,21 @@ internal class StackHeaderCoordinatorLayout(
             ) {
                 val toolbar = appBarLayout?.toolbar ?: return
                 applicator.updateToolbarMenuItem(toolbar, toolbarMenuForwardIdMap, id, options)
+
+                val checked = options.checked ?: return
+                val groupId = toolbarMenuGroupMetadata.itemGroupMap[id] ?: return
+                val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return
+
+                if (singleSelection && checked) {
+                    for (memberId in toolbarMenuGroupMetadata.groupMemberItems[groupId].orEmpty()) {
+                        if (memberId != id) {
+                            val intId = toolbarMenuForwardIdMap[memberId] ?: continue
+                            toolbar.menu.findItem(intId)?.isChecked = false
+                        }
+                    }
+                }
+
+                emitGroupSelectionChange(toolbar, id)
             }
         }
 
@@ -160,6 +178,7 @@ internal class StackHeaderCoordinatorLayout(
     private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
+    private var toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
 
     private val onNavigationIconClick: () -> Unit = {
         val activity =
@@ -211,16 +230,31 @@ internal class StackHeaderCoordinatorLayout(
                     applicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenu,
                     )
+                val (forwardGroupIdMap, _) =
+                    applicator.generateToolbarMenuGroupMappings(
+                        provider.toolbarMenu,
+                    )
+                val groupMetadata =
+                    applicator.computeGroupMetadata(
+                        provider.toolbarMenu,
+                    )
 
                 applicator.rebuildToolbarMenu(
                     appBar.toolbar,
                     provider.toolbarMenu,
                     forwardIdMap,
                     reverseIdMap,
-                ) { id -> currentDelegate?.onMenuItemClicked(id) }
+                    forwardGroupIdMap,
+                    onItemClicked = { id -> currentDelegate?.onMenuItemClicked(id) },
+                    onGroupSelectionChanged = { itemId -> emitGroupSelectionChange(appBar.toolbar, itemId) },
+                )
 
-                // We only need to keep forward map for view commands.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    appBar.toolbar.menu.setGroupDividerEnabled(provider.toolbarMenuGroupDividerEnabled)
+                }
+
                 toolbarMenuForwardIdMap = forwardIdMap
+                toolbarMenuGroupMetadata = groupMetadata
 
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
@@ -228,6 +262,31 @@ internal class StackHeaderCoordinatorLayout(
 
         onMaybeHeaderLayoutChanged()
     }
+
+    // endregion
+
+    // region Group selection
+
+    private fun emitGroupSelectionChange(
+        toolbar: MaterialToolbar,
+        itemId: String,
+    ) {
+        val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return
+        val selectedIds = collectSelectedIds(toolbar, groupId)
+        currentDelegate?.onGroupSelectionChanged(groupId, selectedIds)
+    }
+
+    private fun collectSelectedIds(
+        toolbar: MaterialToolbar,
+        groupId: String,
+    ): List<String> =
+        toolbarMenuGroupMetadata
+            .groupMemberItems[groupId]
+            .orEmpty()
+            .filter { memberId ->
+                val intId = toolbarMenuForwardIdMap[memberId] ?: return@filter false
+                toolbar.menu.findItem(intId)?.isChecked == true
+            }
 
     // endregion
 
@@ -240,6 +299,7 @@ internal class StackHeaderCoordinatorLayout(
         }
         appBarLayout = null
         toolbarMenuForwardIdMap = emptyMap()
+        toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
     }
 
     private fun removeHeader() {

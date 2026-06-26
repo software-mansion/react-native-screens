@@ -216,6 +216,13 @@ internal open class StackHeaderConfigViewManager :
         view.scrollFlagSnap = value
     }
 
+    override fun setToolbarMenuGroupDividerEnabled(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.toolbarMenuGroupDividerEnabled = value
+    }
+
     override fun setToolbarMenu(
         view: StackHeaderConfig,
         value: Dynamic,
