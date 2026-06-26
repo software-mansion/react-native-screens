@@ -9,9 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.gamma.common.container.Container
-import com.swmansion.rnscreens.gamma.common.container.ContainerItem
-import com.swmansion.rnscreens.gamma.common.container.registerWithParentContainerItem
-import com.swmansion.rnscreens.gamma.common.container.unregisterFromParentContainerItem
+import com.swmansion.rnscreens.gamma.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -36,7 +34,7 @@ internal class StackContainer(
      */
     private fun containerParentOrNull(): StackContainerParent? = this.parent as StackContainerParent?
 
-    private var parentContainerItem: ContainerItem? = null
+    private val parentContainerRegistry = ParentContainerItemRegistry()
 
     /**
      * Describes most up-to-date view of the stack. It might be different from
@@ -61,7 +59,7 @@ internal class StackContainer(
         RNSLog.d(TAG, "StackContainer [$id] attached to window")
         super.onAttachedToWindow()
 
-        setUpContainerHierarchy()
+        parentContainerRegistry.attach(this)
         setupFragmentManger()
 
         // Following line works with a couple of assumptions.
@@ -82,7 +80,7 @@ internal class StackContainer(
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
         fragmentManager = null
-        tearDownContainerHierarchy()
+        parentContainerRegistry.detach(this)
     }
 
     internal fun setupFragmentManger() {
@@ -293,15 +291,6 @@ internal class StackContainer(
             ?.findContentScrollView()
 
     // endregion
-
-    private fun setUpContainerHierarchy() {
-        parentContainerItem = registerWithParentContainerItem(this, this)
-    }
-
-    private fun tearDownContainerHierarchy() {
-        unregisterFromParentContainerItem(parentContainerItem, this)
-        parentContainerItem = null
-    }
 
     companion object {
         const val TAG = "StackContainer"

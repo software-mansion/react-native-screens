@@ -12,7 +12,9 @@ interface ContainerItem {
      * host at most one nested container.
      */
     fun registerNestedContainer(container: Container)
+
     fun unregisterNestedContainer(container: Container)
+
     fun resolveNestedContainer(): Container?
 
     // endregion

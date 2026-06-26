@@ -24,9 +24,7 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.gamma.common.container.Container
-import com.swmansion.rnscreens.gamma.common.container.ContainerItem
-import com.swmansion.rnscreens.gamma.common.container.registerWithParentContainerItem
-import com.swmansion.rnscreens.gamma.common.container.unregisterFromParentContainerItem
+import com.swmansion.rnscreens.gamma.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -99,7 +97,7 @@ class TabsContainer internal constructor(
     private var lastUINavState: TabsNavigationState = TabsNavigationState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
 
-    private var parentContainerItem: ContainerItem? = null
+    private val parentContainerRegistry = ParentContainerItemRegistry()
 
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
@@ -295,7 +293,7 @@ class TabsContainer internal constructor(
 
         super.onAttachedToWindow()
 
-        setUpContainerHierarchy()
+        parentContainerRegistry.attach(this)
         setupFragmentManager()
 
         // When TabsContainer is reattached to window, it might find new fragment manager (other
@@ -320,7 +318,7 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
-        tearDownContainerHierarchy()
+        parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
     }
 
@@ -773,15 +771,6 @@ class TabsContainer internal constructor(
     private fun isNavigationStateStale(request: TabsNavigationStateUpdateRequest): Boolean {
         if (navState.isEmpty() || lastUINavState.isEmpty()) return false
         return request.baseProvenance < lastUINavState.provenance
-    }
-
-    private fun setUpContainerHierarchy() {
-        parentContainerItem = registerWithParentContainerItem(this, this)
-    }
-
-    private fun tearDownContainerHierarchy() {
-        unregisterFromParentContainerItem(parentContainerItem, this)
-        parentContainerItem = null
     }
 
     // endregion

@@ -14,14 +14,18 @@ internal fun findParentContainerItem(searchStartPoint: ViewGroup): ContainerItem
     return null
 }
 
-internal fun registerWithParentContainerItem(container: Container, searchStartPoint: ViewGroup): ContainerItem? {
-    return findParentContainerItem(searchStartPoint)?.let {
+internal fun registerWithParentContainerItem(
+    container: Container,
+    searchStartPoint: ViewGroup,
+): ContainerItem? =
+    findParentContainerItem(searchStartPoint)?.let {
         it.registerNestedContainer(container)
         it
     }
-}
 
-internal fun unregisterFromParentContainerItem(parentContainerItem: ContainerItem?, childContainer: Container) {
+internal fun unregisterFromParentContainerItem(
+    parentContainerItem: ContainerItem?,
+    childContainer: Container,
+) {
     parentContainerItem?.unregisterNestedContainer(childContainer)
 }
-

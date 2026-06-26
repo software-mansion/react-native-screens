@@ -6,12 +6,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
-import com.swmansion.rnscreens.ext.refersToCompat
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 import com.swmansion.rnscreens.gamma.common.container.Container
 import com.swmansion.rnscreens.gamma.common.container.ContainerItem
-import com.swmansion.rnscreens.gamma.helpers.ViewFinder
+import com.swmansion.rnscreens.gamma.common.container.ContainerItemSupport
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
@@ -32,8 +31,7 @@ class StackScreen(
         ATTACHED,
     }
 
-    private var nestedContainer: WeakReference<Container> = WeakReference(null)
-    private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
+    private val containerItemSupport = ContainerItemSupport()
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -128,8 +126,11 @@ class StackScreen(
 
     // region ScrollViewSeeking
 
-    override fun registerScrollView(marker: ScrollViewMarker, scrollView: ViewGroup) {
-        contentScrollView = WeakReference(scrollView)
+    override fun registerScrollView(
+        marker: ScrollViewMarker,
+        scrollView: ViewGroup,
+    ) {
+        containerItemSupport.registerScrollView(scrollView)
     }
 
     // endregion
@@ -166,29 +167,11 @@ class StackScreen(
             check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}" }
         }
 
-    override fun registerNestedContainer(container: Container) {
-        nestedContainer = WeakReference(container)
-    }
+    override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
 
-    override fun unregisterNestedContainer(container: Container) {
-        if (nestedContainer.refersToCompat(container)) {
-            nestedContainer.clear()
-        }
-    }
+    override fun unregisterNestedContainer(container: Container) = containerItemSupport.unregisterNestedContainer(container)
 
-    override fun resolveNestedContainer(): Container? = nestedContainer.get()
+    override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
 
-    override fun findContentScrollView(): ViewGroup? {
-        // Cached one
-        contentScrollView.get()?.let { return it }
-
-        // Provided by nested container
-        resolveNestedContainer()?.resolveCurrentContentScrollView()?.let { scrollView ->
-            return scrollView
-        }
-
-        // Heuristic
-        ViewFinder.findScrollViewInFirstDescendantChain(this)?.let { return it }
-        return null
-    }
+    override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
 }
