@@ -23,6 +23,7 @@ import type {
   StackHeaderToolbarMenuBaseAndroid as NativeToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemPressEventAndroid,
+  StackHeaderToolbarMenuGroupSelectionChangeEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
@@ -33,6 +34,7 @@ import type {
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuGroup,
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../../shared';
 
@@ -61,6 +63,7 @@ function StackHeaderConfig(
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
     toolbarMenu,
+    toolbarMenuGroupDividerEnabled,
     ...filteredAndroidProps
   } = android ?? {};
 
@@ -76,6 +79,15 @@ function StackHeaderConfig(
       element.onPress?.();
     }
   };
+
+  const handleToolbarMenuGroupSelectionChange = (
+    event: NativeSyntheticEvent<StackHeaderToolbarMenuGroupSelectionChangeEventAndroid>,
+  ) => {
+    const { groupId, selectedIds } = event.nativeEvent;
+    const group = findToolbarMenuGroupById(toolbarMenu, groupId);
+    group?.onSelectionChange?.(selectedIds);
+  };
+
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -91,7 +103,9 @@ function StackHeaderConfig(
       collapsable={false}
       style={StyleSheet.absoluteFill}
       toolbarMenu={parsedToolbarMenu}
+      toolbarMenuGroupDividerEnabled={toolbarMenuGroupDividerEnabled}
       onToolbarMenuItemPress={handleToolbarMenuItemPress}
+      onToolbarMenuGroupSelectionChange={handleToolbarMenuGroupSelectionChange}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -237,6 +251,29 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
+function findToolbarMenuGroupById(
+  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
+  groupId: string,
+): StackHeaderToolbarMenuGroup | null {
+  if (!menu) {
+    return null;
+  }
+  for (const group of menu.groups ?? []) {
+    if (group.groupId === groupId) {
+      return group;
+    }
+  }
+  for (const element of menu.children ?? []) {
+    if (element.type === 'menu') {
+      const found = findToolbarMenuGroupById(element, groupId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
 function findToolbarMenuElementById(
   elements: StackHeaderToolbarMenuElementAndroid[] | undefined,
   id: string,
@@ -265,26 +302,44 @@ function parseToolbarMenuToNativeProps(
     return undefined;
   }
   return {
+    groups: parseGroupsToNativeProps(menu.groups),
     children: menu.children.map(parseElementToNativeProps),
   };
+}
+
+function parseGroupsToNativeProps(
+  groups: StackHeaderToolbarMenuGroup[] | undefined,
+) {
+  if (!groups?.length) {
+    return undefined;
+  }
+  return groups.map(({ groupId, singleSelection }) => ({
+    groupId,
+    singleSelection,
+  }));
 }
 
 function parseElementToNativeProps(
   element: StackHeaderToolbarMenuElementAndroid,
 ): NativeToolbarMenuElementAndroid {
   if (element.type === 'menu') {
-    const { type, children, ...baseProps } = element;
+    const { type, children, groups, ...baseProps } = element;
     return {
       type,
       ...parseBaseItemToNativeProps(baseProps),
+      groups: parseGroupsToNativeProps(groups),
       children: children?.map(parseElementToNativeProps),
     };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { type, onPress, ...baseProps } = element;
+  const { type, onPress, groupId, itemType, initialToggleState, ...baseProps } =
+    element;
   return {
     type,
+    groupId,
+    itemType,
+    initialToggleState,
     ...parseBaseItemToNativeProps(baseProps),
   };
 }
