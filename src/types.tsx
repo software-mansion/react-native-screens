@@ -845,6 +845,45 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableTopInsetApplication?: boolean | undefined;
   /**
+   * When set to `true` on the outermost stack with a **visible** header, disables left inset
+   * handling for that header and the entire subtree.
+   *
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be applied or not).
+   *
+   * @default false
+   *
+   * @platform android
+   */
+  disableLeftInsetApplication?: boolean | undefined;
+  /**
+   * When set to `true` on the outermost stack with a **visible** header, disables right inset
+   * handling for that header and the entire subtree.
+   *
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be applied or not).
+   *
+   * @default false
+   *
+   * @platform android
+   */
+  disableRightInsetApplication?: boolean | undefined;
+  /**
+   * When set to `true` on the outermost stack with a **visible** header, disables bottom inset
+   * handling for that header and the entire subtree.
+   *
+   * This prop only takes effect on the outermost visible header in the hierarchy.
+   * Setting it on an inner stack has no additional impact because a parent stack
+   * has already made the decision (whether inset should be applied or not).
+   *
+   * @default false
+   *
+   * @platform android
+   */
+  disableBottomInsetApplication?: boolean | undefined;
+  /**
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean | undefined;

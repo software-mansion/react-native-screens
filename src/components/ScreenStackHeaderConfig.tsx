@@ -26,6 +26,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
 import { useTopInsetApplication } from './contexts/TopInsetApplicationContext';
+import { useEdgeInsetApplication } from './contexts/EdgeInsetApplicationContext';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -38,6 +39,12 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     !props.hidden,
     props.disableTopInsetApplication ?? false,
   );
+  const { consumeLeftInset, consumeRightInset, consumeBottomInset } =
+    useEdgeInsetApplication(
+      props.disableLeftInsetApplication ?? false,
+      props.disableRightInsetApplication ?? false,
+      props.disableBottomInsetApplication ?? false,
+    );
 
   const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
 
@@ -130,6 +137,9 @@ export const ScreenStackHeaderConfig = React.forwardRef<
         featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled
       }
       consumeTopInset={appliesTopInset}
+      consumeLeftInset={consumeLeftInset}
+      consumeRightInset={consumeRightInset}
+      consumeBottomInset={consumeBottomInset}
       legacyTopInsetBehavior={useLegacyBehavior}
     />
   );
