@@ -34,6 +34,7 @@ class FormSheetDialogManager(
             setContentView(container)
 
             hideNativeDimmingView(window)
+            disableNativeWindowAnimation(window)
 
             setOnCancelListener {
                 onDismissRequest()
@@ -69,4 +70,6 @@ class FormSheetDialogManager(
     }
 
     private fun hideNativeDimmingView(window: Window?) = window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+
+    private fun disableNativeWindowAnimation(window: Window?) = window?.setWindowAnimations(0)
 }
