@@ -16,29 +16,26 @@ import type {
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
 
-type IdOption = 'item-1' | 'item-2' | 'item-3';
-type ShowAsActionOption =
-  | 'undefined'
-  | 'never'
-  | 'always'
-  | 'alwaysWithText'
-  | 'ifRoom'
-  | 'ifRoomWithText';
-type IconOption = 'undefined' | 'searchIcon';
-type CmdIconOption = 'no change' | IconOption;
-type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
+const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
+type IdOption = (typeof ID_OPTIONS)[number];
 
-const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
-const ICON_OPTIONS: IconOption[] = ['undefined', 'searchIcon'];
-const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
-const SHOW_AS_ACTION_OPTIONS: ShowAsActionOption[] = [
+const ICON_OPTIONS = ['undefined', 'searchIcon'] as const;
+type IconOption = (typeof ICON_OPTIONS)[number];
+
+const SHOW_AS_ACTION_OPTIONS = [
   'undefined',
   'never',
   'always',
   'alwaysWithText',
   'ifRoom',
   'ifRoomWithText',
-];
+] as const;
+type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
+
+type CmdIconOption = 'no change' | IconOption;
+type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
+
+const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const CMD_SHOW_AS_ACTION_OPTIONS: CmdShowAsActionOption[] = [
   'no change',
   ...SHOW_AS_ACTION_OPTIONS,
@@ -198,7 +195,7 @@ function MainScreen() {
       <SettingsPicker<IdOption>
         label="target id"
         value={cmdTargetId}
-        items={ID_OPTIONS}
+        items={[...ID_OPTIONS]}
         onValueChange={setCmdTargetId}
       />
       <SettingsPicker<CmdIconOption>
@@ -248,13 +245,13 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <SettingsPicker<IconOption>
             label="icon"
             value={slot.icon}
-            items={ICON_OPTIONS}
+            items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
           />
           <SettingsPicker<ShowAsActionOption>
             label="showAsAction"
             value={slot.showAsAction}
-            items={SHOW_AS_ACTION_OPTIONS}
+            items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
           />
         </React.Fragment>

@@ -14,25 +14,7 @@ import {
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
-type AllIds =
-  | 'item-top'
-  | 'submenu-1'
-  | 'sub-1-1'
-  | 'sub-1-2'
-  | 'submenu-2'
-  | 'sub-2-1'
-  | 'deep-menu'
-  | 'deep-1';
-
-type TitleOption = 'Title X' | 'undefined';
-type HiddenOption = 'true' | 'false' | 'undefined';
-
-type CmdTitleOption = TitleOption | 'no change';
-type CmdHiddenOption = HiddenOption | 'no change';
-
-type Submenu1TitleOption = 'Submenu A' | 'Changed' | 'undefined';
-
-const ALL_IDS: AllIds[] = [
+const ALL_IDS = [
   'item-top',
   'submenu-1',
   'sub-1-1',
@@ -41,7 +23,18 @@ const ALL_IDS: AllIds[] = [
   'sub-2-1',
   'deep-menu',
   'deep-1',
-];
+] as const;
+type AllIds = (typeof ALL_IDS)[number];
+
+type TitleOption = 'Title X' | 'undefined';
+type HiddenOption = 'true' | 'false' | 'undefined';
+
+type CmdTitleOption = TitleOption | 'no change';
+type CmdHiddenOption = HiddenOption | 'no change';
+
+const SUBMENU1_TITLE_OPTIONS = ['Submenu A', 'Changed', 'undefined'] as const;
+type Submenu1TitleOption = (typeof SUBMENU1_TITLE_OPTIONS)[number];
+
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
   'Title X',
@@ -51,11 +44,6 @@ const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = [
   'no change',
   'true',
   'false',
-  'undefined',
-];
-const SUBMENU1_TITLE_OPTIONS: Submenu1TitleOption[] = [
-  'Submenu A',
-  'Changed',
   'undefined',
 ];
 
@@ -248,7 +236,7 @@ function MainScreen() {
       <SettingsPicker<AllIds>
         label="target id"
         value={cmdTargetId}
-        items={ALL_IDS}
+        items={[...ALL_IDS]}
         onValueChange={setCmdTargetId}
       />
       <SettingsPicker<CmdTitleOption>
@@ -274,7 +262,7 @@ function MainScreen() {
       <SettingsPicker<Submenu1TitleOption>
         label="submenu-1 title"
         value={config.submenu1Title}
-        items={SUBMENU1_TITLE_OPTIONS}
+        items={[...SUBMENU1_TITLE_OPTIONS]}
         onValueChange={v => applyConfig({ ...config, submenu1Title: v })}
       />
       <SettingsSwitch

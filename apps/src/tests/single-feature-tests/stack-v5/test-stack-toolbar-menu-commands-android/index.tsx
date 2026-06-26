@@ -14,29 +14,25 @@ import type {
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-descriptions';
 
-type IdOption = 'item-1' | 'item-2' | 'item-3';
-type TitleOption =
-  | 'Title A'
-  | 'Title B'
-  | 'Title C'
-  | 'Long Title'
-  | 'Changed'
-  | 'undefined';
-type HiddenOption = 'true' | 'false' | 'undefined';
+const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
+type IdOption = (typeof ID_OPTIONS)[number];
 
-type CmdTitleOption = TitleOption | 'no change';
-type CmdHiddenOption = HiddenOption | 'no change';
-
-const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
-const TITLE_OPTIONS: TitleOption[] = [
+const TITLE_OPTIONS = [
   'Title A',
   'Title B',
   'Title C',
   'Long Title',
   'Changed',
   'undefined',
-];
-const HIDDEN_OPTIONS: HiddenOption[] = ['true', 'false', 'undefined'];
+] as const;
+type TitleOption = (typeof TITLE_OPTIONS)[number];
+
+const HIDDEN_OPTIONS = ['true', 'false', 'undefined'] as const;
+type HiddenOption = (typeof HIDDEN_OPTIONS)[number];
+
+type CmdTitleOption = TitleOption | 'no change';
+type CmdHiddenOption = HiddenOption | 'no change';
+
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', ...TITLE_OPTIONS];
 const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = ['no change', ...HIDDEN_OPTIONS];
 
@@ -172,7 +168,7 @@ function MainScreen() {
       <SettingsPicker<IdOption>
         label="target id"
         value={cmdTargetId}
-        items={ID_OPTIONS}
+        items={[...ID_OPTIONS]}
         onValueChange={setCmdTargetId}
       />
       <SettingsPicker<CmdTitleOption>
@@ -222,13 +218,13 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <SettingsPicker<TitleOption>
             label="title"
             value={slot.title}
-            items={TITLE_OPTIONS}
+            items={[...TITLE_OPTIONS]}
             onValueChange={v => updateSlot(i, { title: v })}
           />
           <SettingsPicker<HiddenOption>
             label="hidden"
             value={slot.hidden}
-            items={HIDDEN_OPTIONS}
+            items={[...HIDDEN_OPTIONS]}
             onValueChange={v => updateSlot(i, { hidden: v })}
           />
         </React.Fragment>
