@@ -51,23 +51,12 @@ class DimmingViewManager(
                 override fun onStateChanged(
                     bottomSheet: View,
                     newState: Int,
-                ) {
-                    // TODO: @t0maboro - it should be placed in some FormSheetAnimator/Behavior class
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        dimmingView.animate().cancel()
-                        dimmingView
-                            .animate()
-                            .alpha(0f)
-                            .setDuration(250)
-                            .start()
-                    }
-                }
+                ) = Unit
 
                 override fun onSlide(
                     bottomSheet: View,
                     slideOffset: Float,
                 ) {
-                    dimmingView.animate().cancel()
                     val fraction = if (slideOffset >= 0) 1f else 1f + slideOffset
                     dimmingView.alpha = fraction * maxAlpha
                 }
