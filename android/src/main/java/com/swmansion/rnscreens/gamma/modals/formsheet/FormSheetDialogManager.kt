@@ -2,11 +2,8 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.content.Context
 import android.view.ContextThemeWrapper
-import android.view.Window
-import android.view.WindowManager
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
@@ -30,11 +27,8 @@ class FormSheetDialogManager(
 
     // Eagerly create the dialog and attach the container
     private val dialog =
-        BottomSheetDialog(themedContext).apply {
+        FormSheetDialog(themedContext).apply {
             setContentView(container)
-
-            hideNativeDimmingView(window)
-            disableNativeWindowAnimation(window)
 
             setOnCancelListener {
                 onDismissRequest()
@@ -86,8 +80,4 @@ class FormSheetDialogManager(
     internal fun dismiss() {
         animationCoordinator.runExitAnimation(bottomSheetView)
     }
-
-    private fun hideNativeDimmingView(window: Window?) = window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-
-    private fun disableNativeWindowAnimation(window: Window?) = window?.setWindowAnimations(0)
 }
