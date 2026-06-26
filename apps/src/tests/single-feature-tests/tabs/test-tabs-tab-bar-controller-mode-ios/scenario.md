@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Incomplete: Partially automated: iPhone steps fully automated, iPad partialy: steps 1, 2, 4, and 7.
+Incomplete: iPhone steps fully automated, iPad partially: steps 1, 2, 4, and 7.
 For iPad e2e verifies: the initial `automatic` default state, `tabBar` mode keeping the floating tab bar
 visible without a sidebar toggle, and `tabSidebar` mode toggling the sidebar
 open/closed (via the "Toggle sidebar" button).
