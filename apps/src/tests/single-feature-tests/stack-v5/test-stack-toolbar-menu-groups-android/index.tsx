@@ -5,7 +5,12 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import { SettingsPicker, SettingsSwitch, ToastProvider, useToast } from '@apps/shared';
+import {
+  SettingsPicker,
+  SettingsSwitch,
+  ToastProvider,
+  useToast,
+} from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigRef,
@@ -33,7 +38,11 @@ type CmdTitleOption = 'no change' | 'Changed' | 'undefined';
 type CmdHiddenOption = 'no change' | 'true' | 'false' | 'undefined';
 
 const CMD_CHECKED_OPTIONS: CmdCheckedOption[] = ['no change', 'true', 'false'];
-const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', 'Changed', 'undefined'];
+const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
+  'no change',
+  'Changed',
+  'undefined',
+];
 const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = [
   'no change',
   'true',
@@ -175,7 +184,11 @@ export function App() {
               headerConfig: {
                 title: HEADER_TITLE,
                 android: {
-                  toolbarMenu: buildMenu(DEFAULT_CONFIG, () => {}, () => {}),
+                  toolbarMenu: buildMenu(
+                    DEFAULT_CONFIG,
+                    () => {},
+                    () => {},
+                  ),
                 },
               },
             },
@@ -260,10 +273,7 @@ function MainScreen() {
         title: cmdTitle === 'undefined' ? undefined : cmdTitle,
       }),
       ...(cmdHidden !== 'no change' && {
-        hidden:
-          cmdHidden === 'undefined'
-            ? undefined
-            : cmdHidden === 'true',
+        hidden: cmdHidden === 'undefined' ? undefined : cmdHidden === 'true',
       }),
     };
     headerConfigRef.current?.android?.setToolbarMenuItemOptions(
