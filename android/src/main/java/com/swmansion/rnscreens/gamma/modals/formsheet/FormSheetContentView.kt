@@ -33,7 +33,6 @@ class FormSheetContentView(
     private val jsTouchDispatcher = JSTouchDispatcher(this)
     private var jsPointerDispatcher: JSPointerDispatcher? = null
 
-    // TODO: @t0maboro - refactor in EventEmitter PR
     private val eventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcher(themedReactContext, UIManagerType.FABRIC)
 

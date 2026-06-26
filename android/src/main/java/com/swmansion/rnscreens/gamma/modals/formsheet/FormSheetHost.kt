@@ -26,6 +26,8 @@ class FormSheetHost(
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
+    internal lateinit var eventEmitter: FormSheetHostEventEmitter
+
     internal fun setIsOpen(open: Boolean) {
         if (this.isOpen == open) return
         this.isOpen = open
@@ -37,15 +39,8 @@ class FormSheetHost(
         }
     }
 
-    // TODO: @t0maboro - dedicated FormSheetHostEventEmitter needs to be implemented later
     internal fun onNativeDismiss() {
-        val reactContext = context as? ThemedReactContext ?: return
-        val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-        val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
-
-        dispatcher?.dispatchEvent(
-            FormSheetNativeDismissEvent(surfaceId, id),
-        )
+        eventEmitter.emitOnNativeDismissEvent()
     }
 
     internal fun mountReactSubviewAt(
@@ -89,6 +84,11 @@ class FormSheetHost(
         b: Int,
     ) = Unit
 
+    internal fun onViewManagerAddEventEmitters() {
+        check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
+        eventEmitter = FormSheetHostEventEmitter(context as ReactContext, id)
+    }
+
     internal fun updateStateIfNeeded(
         width: Int,
         height: Int,
@@ -108,12 +108,6 @@ class FormSheetHost(
     // traversal phase, the actual mounting callback will be executed on the next frame.
     // To prevent drawing a stale layout, we block drawing the frame in `FormSheetContentView`.
     private fun flushPendingStateUpdates() {
-        val reactContext = context as? ReactContext ?: return
-        val surfaceId = UIManagerHelper.getSurfaceId(this)
-
-        // TODO: @t0maboro - implement EventEmitter in followup PR
-        UIManagerHelper
-            .getEventDispatcherForReactTag(reactContext, id)
-            ?.dispatchEvent(FormSheetSyncFlushEvent(surfaceId, id))
+        eventEmitter.emitOnSyncFlushEvent()
     }
 }
