@@ -39,8 +39,6 @@ class FormSheetHost(
 
     // TODO: @t0maboro - dedicated FormSheetHostEventEmitter needs to be implemented later
     internal fun onNativeDismiss() {
-        this.isOpen = false
-
         val reactContext = context as? ThemedReactContext ?: return
         val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
         val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)

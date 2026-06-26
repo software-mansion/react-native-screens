@@ -43,13 +43,15 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
-    private val dimmingManager = DimmingViewManager(context, dialog) {
-        dismiss()
-    }
+    private val dimmingManager =
+        DimmingViewManager(context, dialog) {
+            host.onNativeDismiss()
+        }
 
-    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager) {
-        dialog.dismiss()
-    }
+    private val animationCoordinator =
+        FormSheetAnimationCoordinator(dimmingManager) {
+            dialog.dismiss()
+        }
 
     init {
         bottomSheetView?.let { view ->
@@ -57,13 +59,15 @@ class FormSheetDialogManager(
             val behavior = BottomSheetBehavior.from(view)
             dimmingManager.attachToBehavior(behavior)
 
-            view.viewTreeObserver.addOnPreDrawListener(object : android.view.ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    view.viewTreeObserver.removeOnPreDrawListener(this)
-                    view.translationY = view.height.toFloat()
-                    return true
-                }
-            })
+            view.viewTreeObserver.addOnPreDrawListener(
+                object : android.view.ViewTreeObserver.OnPreDrawListener {
+                    override fun onPreDraw(): Boolean {
+                        view.viewTreeObserver.removeOnPreDrawListener(this)
+                        view.translationY = view.height.toFloat()
+                        return true
+                    }
+                },
+            )
         }
 
         dialog.setOnShowListener {
