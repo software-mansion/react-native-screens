@@ -11,9 +11,15 @@ animation and the persistent active indicator shape.
 
 ## E2E test
 
-Incomplete: Not automated. Detox does not have access to color or visibility
-attributes on Android views, so it is not possible to programmatically assert whether
-a label is hidden or a specific color value has been applied.
+Incomplete: Covers only the tabBarItemLabelVisibilityMode verification (steps 2-7).
+Step 8, which involves cycling between modes, was omitted from having a dedicated
+test because the preceding test cases already cover tab switching and sufficiently
+validate this behavior.
+
+Other properties cannot be verified using Detox since it lacks access to color
+or visibility attributes on Android views. Therefore, it is not possible to
+programmatically assert whether a label is hidden or if a specific color value has been applied.
+
 
 ## Prerequisites
 

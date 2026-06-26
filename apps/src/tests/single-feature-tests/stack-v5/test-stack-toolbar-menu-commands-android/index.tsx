@@ -7,35 +7,32 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
+import type {
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderConfigRef,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-descriptions';
 
-type IdOption = 'item-1' | 'item-2' | 'item-3';
-type TitleOption =
-  | 'Title A'
-  | 'Title B'
-  | 'Title C'
-  | 'Long Title'
-  | 'Changed'
-  | 'undefined';
-type HiddenOption = 'true' | 'false' | 'undefined';
+const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
+type IdOption = (typeof ID_OPTIONS)[number];
 
-type CmdTitleOption = TitleOption | 'no change';
-type CmdHiddenOption = HiddenOption | 'no change';
-
-const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
-const TITLE_OPTIONS: TitleOption[] = [
+const TITLE_OPTIONS = [
   'Title A',
   'Title B',
   'Title C',
   'Long Title',
   'Changed',
   'undefined',
-];
-const HIDDEN_OPTIONS: HiddenOption[] = ['true', 'false', 'undefined'];
+] as const;
+type TitleOption = (typeof TITLE_OPTIONS)[number];
+
+const HIDDEN_OPTIONS = ['true', 'false', 'undefined'] as const;
+type HiddenOption = (typeof HIDDEN_OPTIONS)[number];
+
+type CmdTitleOption = TitleOption | 'no change';
+type CmdHiddenOption = HiddenOption | 'no change';
+
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', ...TITLE_OPTIONS];
 const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = ['no change', ...HIDDEN_OPTIONS];
 
@@ -62,14 +59,25 @@ function resolveHidden(h: HiddenOption): boolean | undefined {
   return h === 'undefined' ? undefined : h === 'true';
 }
 
-function buildItems(slots: Slots) {
+function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots
     .filter(s => s.include)
     .map(({ id, title, hidden }) => ({
+      type: 'menuItem',
       id,
       title: resolveTitle(title),
       hidden: resolveHidden(hidden),
     }));
+}
+
+function withOnPress(
+  items: ReturnType<typeof buildItems>,
+  onPress: (id: string) => void,
+) {
+  return items.map(item => ({
+    ...item,
+    onPress: () => onPress(item.id),
+  }));
 }
 
 function updateSlotAt(
@@ -92,7 +100,7 @@ export function App() {
           options: {
             headerConfig: {
               title: HEADER_TITLE,
-              android: { toolbarMenuItems: buildItems(DEFAULT_SLOTS) },
+              android: { toolbarMenu: { children: buildItems(DEFAULT_SLOTS) } },
             },
           },
         },
@@ -117,9 +125,9 @@ function MainScreen() {
       headerConfig: {
         title: HEADER_TITLE,
         android: {
-          toolbarMenuItems: buildItems(DEFAULT_SLOTS),
-          onToolbarMenuItemClicked: event =>
-            setLastClicked(event.nativeEvent.id),
+          toolbarMenu: {
+            children: withOnPress(buildItems(DEFAULT_SLOTS), setLastClicked),
+          },
         },
       },
       headerConfigRef,
@@ -133,9 +141,9 @@ function MainScreen() {
         headerConfig: {
           title: HEADER_TITLE,
           android: {
-            toolbarMenuItems: buildItems(next),
-            onToolbarMenuItemClicked: event =>
-              setLastClicked(event.nativeEvent.id),
+            toolbarMenu: {
+              children: withOnPress(buildItems(next), setLastClicked),
+            },
           },
         },
       });
@@ -160,7 +168,7 @@ function MainScreen() {
       <SettingsPicker<IdOption>
         label="target id"
         value={cmdTargetId}
-        items={ID_OPTIONS}
+        items={[...ID_OPTIONS]}
         onValueChange={setCmdTargetId}
       />
       <SettingsPicker<CmdTitleOption>
@@ -210,13 +218,13 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <SettingsPicker<TitleOption>
             label="title"
             value={slot.title}
-            items={TITLE_OPTIONS}
+            items={[...TITLE_OPTIONS]}
             onValueChange={v => updateSlot(i, { title: v })}
           />
           <SettingsPicker<HiddenOption>
             label="hidden"
             value={slot.hidden}
-            items={HIDDEN_OPTIONS}
+            items={[...HIDDEN_OPTIONS]}
             onValueChange={v => updateSlot(i, { hidden: v })}
           />
         </React.Fragment>

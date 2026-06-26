@@ -5,7 +5,7 @@ import android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM
 import android.view.MenuItem.SHOW_AS_ACTION_NEVER
 import android.view.MenuItem.SHOW_AS_ACTION_WITH_TEXT
 
-enum class StackHeaderToolbarMenuItemShowAsAction {
+internal enum class StackHeaderToolbarMenuItemShowAsAction {
     ALWAYS,
     ALWAYS_WITH_TEXT,
     IF_ROOM,
