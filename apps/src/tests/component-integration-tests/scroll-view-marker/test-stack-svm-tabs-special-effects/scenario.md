@@ -21,17 +21,19 @@ TBD
 
 ## Note
 
-Android part of the code is unimplemented yet, therefore it is expected not to work.
+Android does to support pop-to-root - it is yet unimplemented. Scroll-to-top should work.
 
 iOS implementation doesn't currently support nested container interaction yet. 
 This test needs to be updated after such interaction is supported.
 
 ## Steps
 
+### Basic case - no nesting
+
 1. Launch the app and navigate to the **SVM in Stack & Tabs - tabs special effects** screen.
 
-- [ ] There should be two tabs: `Home` and `Stack`.
-- [ ] `Home` tab should be selected.
+    - [ ] There should be two tabs: `Home` and `Stack`.
+    - [ ] `Home` tab should be selected.
 
 2. Scroll down a bit.
 
@@ -39,5 +41,21 @@ This test needs to be updated after such interaction is supported.
 
 3. Press `Home` tab item (repeated tab selection) to trigger the special effect.
 
-- [ ] *scroll-top-top* should be triggered and you should observe the scroll-view scrolling 
-to it's top.
+    - [ ] *scroll-top-top* should be triggered and you should observe the scroll-view scrolling 
+    to it's top.
+
+### Nested stack
+
+4. Change tab to `Stack`.
+
+    - [ ] The `Stack` screen should be displayed. 
+    - [ ] Scroll-view should be visible and scrolled to top.
+    
+5. Scroll down a bit.
+
+    Doesn't really matter how much you scroll - the distance should be "noticeable". 
+
+6. Press `Stack` tab item (repeated tab selection) to trigger the special effect.
+
+    - [ ] *scroll-top-top* should be triggered and you should observe the scroll-view scrolling 
+    to it's top.
