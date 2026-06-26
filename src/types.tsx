@@ -845,12 +845,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableTopInsetApplication?: boolean | undefined;
   /**
-   * When set to `true` on the outermost stack with a **visible** header, disables left inset
-   * handling for that header and the entire subtree.
+   * When set to `true`, disables left inset handling for this header and all headers in its
+   * subtree.
    *
-   * This prop only takes effect on the outermost visible header in the hierarchy.
-   * Setting it on an inner stack has no additional impact because a parent stack
-   * has already made the decision (whether inset should be applied or not).
+   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
    *
    * @default false
    *
@@ -858,12 +856,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableLeftInsetApplication?: boolean | undefined;
   /**
-   * When set to `true` on the outermost stack with a **visible** header, disables right inset
-   * handling for that header and the entire subtree.
+   * When set to `true`, disables right inset handling for this header and all headers in its
+   * subtree.
    *
-   * This prop only takes effect on the outermost visible header in the hierarchy.
-   * Setting it on an inner stack has no additional impact because a parent stack
-   * has already made the decision (whether inset should be applied or not).
+   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
    *
    * @default false
    *
@@ -871,12 +867,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableRightInsetApplication?: boolean | undefined;
   /**
-   * When set to `true` on the outermost stack with a **visible** header, disables bottom inset
-   * handling for that header and the entire subtree.
+   * When set to `true`, disables bottom inset handling for this header and all headers in its
+   * subtree.
    *
-   * This prop only takes effect on the outermost visible header in the hierarchy.
-   * Setting it on an inner stack has no additional impact because a parent stack
-   * has already made the decision (whether inset should be applied or not).
+   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
    *
    * @default false
    *

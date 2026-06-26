@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 /**
- * Carries the information whether applying of the left/right/bottom system insets has been
+ * Carries the information whether application of the left/right/bottom system insets has been
  * disabled somewhere up the stack hierarchy.
  *
  * `true` means that an ancestor header opted out from applying the inset on that edge,
