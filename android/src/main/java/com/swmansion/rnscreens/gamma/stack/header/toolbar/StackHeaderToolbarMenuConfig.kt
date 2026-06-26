@@ -2,6 +2,10 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 
 import android.graphics.drawable.Drawable
 
+// Immutable tree of data classes. Updates walk the tree recursively and use
+// reference comparison (!==) to detect actual changes — only the path from
+// the changed leaf to the root is copied; unchanged subtrees keep their
+// original instances.
 internal data class StackHeaderToolbarMenuConfig(
     val children: List<StackHeaderToolbarMenuElementConfig>,
 ) {
