@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
+import android.util.Log
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
@@ -72,21 +72,9 @@ internal class StackHeaderCoordinatorLayout(
             ) {
                 val toolbar = appBarLayout?.toolbar ?: return
                 applicator.updateToolbarMenuItem(toolbar, toolbarMenuForwardIdMap, id, options)
-
-                val checked = options.checked ?: return
-                val groupId = toolbarMenuGroupMetadata.itemGroupMap[id] ?: return
-                val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return
-
-                if (singleSelection && checked) {
-                    for (memberId in toolbarMenuGroupMetadata.groupMemberItems[groupId].orEmpty()) {
-                        if (memberId != id) {
-                            val intId = toolbarMenuForwardIdMap[memberId] ?: continue
-                            toolbar.menu.findItem(intId)?.isChecked = false
-                        }
-                    }
+                if (options.checked != null) {
+                    handleGroupItemStateChange(toolbar, id, options.checked)
                 }
-
-                emitGroupSelectionChange(toolbar, id)
             }
         }
 
@@ -239,22 +227,26 @@ internal class StackHeaderCoordinatorLayout(
                         provider.toolbarMenu,
                     )
 
+                applicator.validateRadioInitialSelection(provider.toolbarMenu)
+
+                toolbarMenuForwardIdMap = forwardIdMap
+                toolbarMenuGroupMetadata = groupMetadata
+
                 applicator.rebuildToolbarMenu(
                     appBar.toolbar,
                     provider.toolbarMenu,
                     forwardIdMap,
                     reverseIdMap,
                     forwardGroupIdMap,
-                    onItemClicked = { id -> currentDelegate?.onMenuItemClicked(id) },
-                    onGroupSelectionChanged = { itemId -> emitGroupSelectionChange(appBar.toolbar, itemId) },
+                    groupDividerEnabled = provider.toolbarMenuGroupDividerEnabled,
+                    onItemClicked = { id, menuItem ->
+                        if (menuItem.isCheckable) {
+                            handleGroupItemStateChange(appBar.toolbar, id)
+                        } else {
+                            currentDelegate?.onMenuItemClicked(id)
+                        }
+                    },
                 )
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    appBar.toolbar.menu.setGroupDividerEnabled(provider.toolbarMenuGroupDividerEnabled)
-                }
-
-                toolbarMenuForwardIdMap = forwardIdMap
-                toolbarMenuGroupMetadata = groupMetadata
 
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
@@ -267,11 +259,34 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Group selection
 
-    private fun emitGroupSelectionChange(
+    private fun handleGroupItemStateChange(
         toolbar: MaterialToolbar,
         itemId: String,
+        explicitCheckedValue: Boolean? = null,
     ) {
         val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return
+        val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return
+        val intId = toolbarMenuForwardIdMap[itemId] ?: return
+        val menuItem = toolbar.menu.findItem(intId) ?: return
+
+        if (singleSelection && explicitCheckedValue == false) {
+            Log.w(
+                TAG,
+                "[RNScreens] Cannot uncheck item '$itemId' in single-selection group '$groupId'. " +
+                    "Check a different item instead.",
+            )
+            return
+        }
+
+        val newChecked =
+            if (singleSelection) {
+                true
+            } else {
+                explicitCheckedValue ?: !menuItem.isChecked
+            }
+        if (menuItem.isChecked == newChecked) return
+        menuItem.isChecked = newChecked
+
         val selectedIds = collectSelectedIds(toolbar, groupId)
         currentDelegate?.onGroupSelectionChanged(groupId, selectedIds)
     }
@@ -376,4 +391,8 @@ internal class StackHeaderCoordinatorLayout(
     }
 
     // endregion
+
+    companion object {
+        private const val TAG = "StackHeaderCoordinatorLayout"
+    }
 }

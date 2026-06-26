@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -279,6 +280,27 @@ internal class StackHeaderApplicator(
         )
     }
 
+    fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
+        for (group in menuConfig.groups) {
+            if (!group.singleSelection) continue
+            var count = 0
+            for (element in menuConfig.children) {
+                if (element.item.groupId == group.groupId && element.item.initialToggleState) {
+                    count++
+                }
+            }
+            require(count <= 1) {
+                "[RNScreens] Radio group '${group.groupId}' has $count items with " +
+                    "initialToggleState=true. At most 1 is allowed for single-selection groups."
+            }
+        }
+        for (element in menuConfig.children) {
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                validateRadioInitialSelection(element.menu)
+            }
+        }
+    }
+
     private fun assignElementIds(
         elements: List<StackHeaderToolbarMenuElementConfig>,
         forwardIdMap: MutableMap<String, Int>,
@@ -286,6 +308,9 @@ internal class StackHeaderApplicator(
         nextId: () -> Int,
     ) {
         for (element in elements) {
+            require(element.item.id !in forwardIdMap) {
+                "[RNScreens] Duplicate toolbar menu item id: '${element.item.id}'. Item IDs must be unique across the entire menu."
+            }
             val nativeId = nextId()
             forwardIdMap[element.item.id] = nativeId
             reverseIdMap[nativeId] = element.item.id
@@ -302,11 +327,12 @@ internal class StackHeaderApplicator(
         nextId: () -> Int,
     ) {
         for (group in menuConfig.groups) {
-            if (group.groupId !in forwardMap) {
-                val nativeId = nextId()
-                forwardMap[group.groupId] = nativeId
-                reverseMap[nativeId] = group.groupId
+            require(group.groupId !in forwardMap) {
+                "[RNScreens] Duplicate toolbar menu group id: '${group.groupId}'. Group IDs must be unique across the entire menu."
             }
+            val nativeId = nextId()
+            forwardMap[group.groupId] = nativeId
+            reverseMap[nativeId] = group.groupId
         }
         for (element in menuConfig.children) {
             if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
@@ -321,12 +347,18 @@ internal class StackHeaderApplicator(
         groupSingleSelection: MutableMap<String, Boolean>,
         groupMemberItems: MutableMap<String, MutableList<String>>,
     ) {
+        val localGroupIds = config.groups.map { it.groupId }.toSet()
         for (group in config.groups) {
             groupSingleSelection[group.groupId] = group.singleSelection
             groupMemberItems.getOrPut(group.groupId) { mutableListOf() }
         }
         for (element in config.children) {
             element.item.groupId?.let { gid ->
+                require(gid in localGroupIds) {
+                    "[RNScreens] Menu item '${element.item.id}' references group '$gid' " +
+                        "which is not defined at the same menu level. " +
+                        "Groups cannot span submenus."
+                }
                 itemGroupMap[element.item.id] = gid
                 groupMemberItems.getOrPut(gid) { mutableListOf() }.add(element.item.id)
             }
@@ -342,18 +374,18 @@ internal class StackHeaderApplicator(
         forwardIdMap: Map<String, Int>,
         reverseIdMap: Map<Int, String>,
         forwardGroupIdMap: Map<String, Int>,
-        onItemClicked: (id: String) -> Unit,
-        onGroupSelectionChanged: (itemId: String) -> Unit,
+        groupDividerEnabled: Boolean,
+        onItemClicked: (id: String, menuItem: MenuItem) -> Unit,
     ) {
         toolbar.menu.clear()
         addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            toolbar.menu.setGroupDividerEnabled(groupDividerEnabled)
+        }
         toolbar.setOnMenuItemClickListener { menuItem ->
             val stringId = reverseIdMap[menuItem.itemId]
             if (stringId != null) {
-                onItemClicked(stringId)
-                if (menuItem.isCheckable && menuItem.groupId != Menu.NONE) {
-                    onGroupSelectionChanged(stringId)
-                }
+                onItemClicked(stringId, menuItem)
             }
             true
         }
@@ -408,7 +440,13 @@ internal class StackHeaderApplicator(
     ) {
         val shouldBeCheckable =
             when (itemConfig.itemType) {
-                StackHeaderToolbarMenuItemType.TOGGLE -> true
+                StackHeaderToolbarMenuItemType.TOGGLE -> {
+                    require(itemConfig.groupId != null) {
+                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=TOGGLE but no groupId. " +
+                            "Toggle items must belong to a group."
+                    }
+                    true
+                }
                 StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
                 StackHeaderToolbarMenuItemType.ACTION -> false
             }
@@ -440,7 +478,10 @@ internal class StackHeaderApplicator(
         options.title?.let { menuItem.title = it }
         options.hidden?.let { menuItem.isVisible = !it }
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
-        options.checked?.let { menuItem.isChecked = it }
+
+        // checked is intentionally not handled here. The coordinator layout manages it in
+        // handleGroupItemStateChange because toggling checked state requires group metadata
+        // (radio vs checkbox) and may emit onGroupSelectionChanged events.
 
         options.icon?.let {
             when (it) {

@@ -31,6 +31,7 @@ import type {
   StackHeaderConfigPropsAndroid,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
@@ -332,6 +333,8 @@ function parseElementToNativeProps(
     };
   }
 
+  assertNoOnPressOnToggleItem(element);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { type, onPress, groupId, itemType, initialToggleState, ...baseProps } =
     element;
@@ -342,6 +345,31 @@ function parseElementToNativeProps(
     initialToggleState,
     ...parseBaseItemToNativeProps(baseProps),
   };
+}
+
+function assertNoOnPressOnToggleItem(
+  element: StackHeaderToolbarMenuItemAndroid,
+): void {
+  if (!element.onPress) {
+    return;
+  }
+
+  const effectiveItemType = element.itemType ?? 'automatic';
+
+  if (effectiveItemType === 'toggle') {
+    throw new Error(
+      `[RNScreens] Menu item '${element.id}' has itemType='toggle' and defines onPress. ` +
+        `Toggle items do not emit press events. Use onSelectionChange on the group instead.`,
+    );
+  }
+
+  if (effectiveItemType === 'automatic' && element.groupId != null) {
+    throw new Error(
+      `[RNScreens] Menu item '${element.id}' belongs to group '${element.groupId}' ` +
+        `and defines onPress. Items in a group behave as toggles and do not emit press events. ` +
+        `Use onSelectionChange on the group instead.`,
+    );
+  }
 }
 
 function parseBaseItemToNativeProps({
