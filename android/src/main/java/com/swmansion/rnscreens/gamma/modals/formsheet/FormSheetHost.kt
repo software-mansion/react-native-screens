@@ -11,11 +11,12 @@ import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 class FormSheetHost(
     context: Context,
 ) : ViewGroup(context) {
-    private val dialogManager = FormSheetDialogManager(
-        context = context,
-        onUpdateState = ::updateStateIfNeeded,
-        onDismissRequest = ::onNativeDismiss
-    )
+    private val dialogManager =
+        FormSheetDialogManager(
+            context = context,
+            onUpdateState = ::updateStateIfNeeded,
+            onDismissRequest = ::onNativeDismiss,
+        )
     private var isOpen = false
 
     private val shadowStateProxy = ShadowStateProxy()
