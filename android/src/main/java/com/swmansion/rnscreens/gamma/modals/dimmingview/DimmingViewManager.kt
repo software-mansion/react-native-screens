@@ -38,11 +38,7 @@ class DimmingViewManager(
         }
 
     internal fun onShow() {
-        val coordinator = dialog.findViewById<CoordinatorLayout>(com.google.android.material.R.id.coordinator)
-
-        if (coordinator != null && dimmingView.parent == null) {
-            coordinator.addView(dimmingView, 0)
-        }
+        attachDimmingViewOverNativeTouchOutside()
     }
 
     internal fun attachToBehavior(behavior: BottomSheetBehavior<*>) {
@@ -62,5 +58,15 @@ class DimmingViewManager(
                 }
             },
         )
+    }
+
+    private fun attachDimmingViewOverNativeTouchOutside() {
+        val coordinator = dialog.findViewById<CoordinatorLayout>(com.google.android.material.R.id.coordinator)
+        val bottomSheetView = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+
+        if (coordinator != null && dimmingView.parent == null && bottomSheetView != null) {
+            val sheetIndex = coordinator.indexOfChild(bottomSheetView)
+            coordinator.addView(dimmingView, sheetIndex)
+        }
     }
 }
