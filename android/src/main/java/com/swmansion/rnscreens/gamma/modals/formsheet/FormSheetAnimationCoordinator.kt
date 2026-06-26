@@ -10,7 +10,6 @@ import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetAnimationCoordinator(
     private val dimmingManager: DimmingViewManager,
-    private val onDismissEnd: () -> Unit,
 ) {
     // TODO: @t0maboro - consider exposing as a prop
     val animationDuration = 250L
@@ -39,15 +38,15 @@ internal class FormSheetAnimationCoordinator(
         }
     }
 
-    internal fun runExitAnimation(view: View?) {
+    internal fun runExitAnimation(view: View?, onAnimationEnd: () -> Unit) {
         if (view == null) {
-            onDismissEnd()
+            onAnimationEnd()
             return
         }
 
         val behavior = BottomSheetBehavior.from(view)
         if (behavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-            onDismissEnd()
+            onAnimationEnd()
             return
         }
 
@@ -73,7 +72,7 @@ internal class FormSheetAnimationCoordinator(
             addListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        onDismissEnd()
+                        onAnimationEnd()
                     }
                 },
             )

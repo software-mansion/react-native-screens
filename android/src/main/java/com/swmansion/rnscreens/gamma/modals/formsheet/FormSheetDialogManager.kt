@@ -37,9 +37,9 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
-    private val dimmingManager = DimmingViewManager(context, dialog, host::onNativeDismiss)
+    private val dimmingManager = DimmingViewManager(context, dialog)
 
-    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager, dialog::dismiss)
+    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
 
     init {
         bottomSheetView?.let { view ->
@@ -47,6 +47,8 @@ class FormSheetDialogManager(
             setupOffscreenPositionBeforeFirstDraw(view)
         }
         setupDialogShowListener()
+
+        dimmingManager.setOnBackdropClickListener(host::onNativeDismiss)
     }
 
     internal fun show() {
@@ -54,7 +56,9 @@ class FormSheetDialogManager(
     }
 
     internal fun dismiss() {
-        animationCoordinator.runExitAnimation(bottomSheetView)
+        animationCoordinator.runExitAnimation(bottomSheetView) {
+            dialog.dismiss()
+        }
     }
 
     private fun setupDimmingViewBehavior(view: FrameLayout) {

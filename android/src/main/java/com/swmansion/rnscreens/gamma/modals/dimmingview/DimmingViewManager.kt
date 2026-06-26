@@ -10,7 +10,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class DimmingViewManager(
     context: Context,
     private val dialog: BottomSheetDialog,
-    private val onCloseRequested: () -> Unit,
 ) {
     // TODO: @t0maboro - consider exposing as a prop
     internal val maxAlpha: Float = 0.3f
@@ -29,11 +28,13 @@ class DimmingViewManager(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                 )
             alpha = 0f
-
-            setOnClickListener {
-                onCloseRequested()
-            }
         }
+
+    internal fun setOnBackdropClickListener(listener: () -> Unit) {
+        dimmingView.setOnClickListener {
+            listener()
+        }
+    }
 
     internal fun onDialogShown() {
         attachDimmingViewOverNativeTouchOutside()
