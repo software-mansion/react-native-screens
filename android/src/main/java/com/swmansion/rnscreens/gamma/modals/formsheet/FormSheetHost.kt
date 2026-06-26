@@ -4,13 +4,16 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PointerEvents
+import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
 class FormSheetHost(
     context: Context,
-) : ViewGroup(context) {
+) : ViewGroup(context),
+    ReactPointerEventsView {
     private val dialogManager =
         FormSheetDialogManager(
             context = context,
@@ -70,6 +73,11 @@ class FormSheetHost(
         dialogManager.dismiss()
         super.onDetachedFromWindow()
     }
+
+    // The React children are teleported into the dialog window. This host occupies space in the
+    // main window, but holds no content there. NONE makes the host subtree invisible to
+    // hit-testing so touches reach the views behind it.
+    override val pointerEvents: PointerEvents = PointerEvents.NONE
 
     override fun onLayout(
         changed: Boolean,
