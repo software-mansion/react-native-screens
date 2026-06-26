@@ -24,9 +24,12 @@ export type {
   StackHeaderBackgroundSubviewAndroid,
   StackHeaderConfigPropsAndroid,
   StackHeaderConfigCommandsAndroid,
+  StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
-  StackHeaderToolbarMenuItemClickedEvent,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   // iOS
   StackHeaderConfigPropsIOS,

@@ -8,35 +8,28 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemAndroid,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
+import type {
+  StackHeaderConfigRef,
+  StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
 
-type IdOption = 'item-1' | 'item-2' | 'item-3';
-type IconOption = 'none' | 'imageSource' | 'drawableResource';
-type TintColorOption = 'default' | 'purple' | 'red' | 'green';
-type ShowAsActionOption = 'always' | 'never' | 'ifRoom';
+const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
+type IdOption = (typeof ID_OPTIONS)[number];
+
+const ICON_OPTIONS = ['none', 'imageSource', 'drawableResource'] as const;
+type IconOption = (typeof ICON_OPTIONS)[number];
+
+const TINT_COLOR_OPTIONS = ['default', 'purple', 'red', 'green'] as const;
+type TintColorOption = (typeof TINT_COLOR_OPTIONS)[number];
+
+const SHOW_AS_ACTION_OPTIONS = ['always', 'never', 'ifRoom'] as const;
+type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
 type CmdIconOption = 'no change' | IconOption;
 type CmdTintColorOption = 'no change' | TintColorOption;
-
-const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
-const ICON_OPTIONS: IconOption[] = ['none', 'imageSource', 'drawableResource'];
-const TINT_COLOR_OPTIONS: TintColorOption[] = [
-  'default',
-  'purple',
-  'red',
-  'green',
-];
-const SHOW_AS_ACTION_OPTIONS: ShowAsActionOption[] = [
-  'always',
-  'never',
-  'ifRoom',
-];
 
 const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const CMD_TINT_COLOR_OPTIONS: CmdTintColorOption[] = [
@@ -113,6 +106,7 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
   return slots
     .filter(s => s.include)
     .map(s => ({
+      type: 'menuItem',
       id: s.id,
       title: ITEM_TITLES[s.id],
       showAsAction: s.showAsAction,
@@ -122,6 +116,16 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
       iconTintColorFocused: resolveTintColor(s.tintColorFocused),
       iconTintColorDisabled: resolveTintColor(s.tintColorDisabled),
     }));
+}
+
+function withOnPress(
+  items: ReturnType<typeof buildItems>,
+  onPress: (id: string) => void,
+) {
+  return items.map(item => ({
+    ...item,
+    onPress: () => onPress(item.id),
+  }));
 }
 
 function updateSlotAt(
@@ -144,7 +148,7 @@ export function App() {
           options: {
             headerConfig: {
               title: HEADER_TITLE,
-              android: { toolbarMenuItems: buildItems(DEFAULT_SLOTS) },
+              android: { toolbarMenu: { children: buildItems(DEFAULT_SLOTS) } },
             },
           },
         },
@@ -176,9 +180,9 @@ function MainScreen() {
       headerConfig: {
         title: HEADER_TITLE,
         android: {
-          toolbarMenuItems: buildItems(DEFAULT_SLOTS),
-          onToolbarMenuItemClicked: event =>
-            setLastClicked(event.nativeEvent.id),
+          toolbarMenu: {
+            children: withOnPress(buildItems(DEFAULT_SLOTS), setLastClicked),
+          },
         },
       },
       headerConfigRef,
@@ -192,9 +196,9 @@ function MainScreen() {
         headerConfig: {
           title: HEADER_TITLE,
           android: {
-            toolbarMenuItems: buildItems(next),
-            onToolbarMenuItemClicked: event =>
-              setLastClicked(event.nativeEvent.id),
+            toolbarMenu: {
+              children: withOnPress(buildItems(next), setLastClicked),
+            },
           },
         },
       });
@@ -239,7 +243,7 @@ function MainScreen() {
       <SettingsPicker<IdOption>
         label="target id"
         value={cmdTargetId}
-        items={ID_OPTIONS}
+        items={[...ID_OPTIONS]}
         onValueChange={setCmdTargetId}
       />
       <SettingsPicker<CmdIconOption>
@@ -307,37 +311,37 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <SettingsPicker<IconOption>
             label="icon"
             value={slot.icon}
-            items={ICON_OPTIONS}
+            items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
           />
           <SettingsPicker<ShowAsActionOption>
             label="showAsAction"
             value={slot.showAsAction}
-            items={SHOW_AS_ACTION_OPTIONS}
+            items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
           />
           <SettingsPicker<TintColorOption>
             label="tintColorNormal"
             value={slot.tintColorNormal}
-            items={TINT_COLOR_OPTIONS}
+            items={[...TINT_COLOR_OPTIONS]}
             onValueChange={v => updateSlot(i, { tintColorNormal: v })}
           />
           <SettingsPicker<TintColorOption>
             label="tintColorPressed"
             value={slot.tintColorPressed}
-            items={TINT_COLOR_OPTIONS}
+            items={[...TINT_COLOR_OPTIONS]}
             onValueChange={v => updateSlot(i, { tintColorPressed: v })}
           />
           <SettingsPicker<TintColorOption>
             label="tintColorFocused"
             value={slot.tintColorFocused}
-            items={TINT_COLOR_OPTIONS}
+            items={[...TINT_COLOR_OPTIONS]}
             onValueChange={v => updateSlot(i, { tintColorFocused: v })}
           />
           <SettingsPicker<TintColorOption>
             label="tintColorDisabled"
             value={slot.tintColorDisabled}
-            items={TINT_COLOR_OPTIONS}
+            items={[...TINT_COLOR_OPTIONS]}
             onValueChange={v => updateSlot(i, { tintColorDisabled: v })}
           />
         </React.Fragment>
