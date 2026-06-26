@@ -38,7 +38,10 @@ internal class FormSheetAnimationCoordinator(
         }
     }
 
-    internal fun runExitAnimation(view: View?, onAnimationEnd: () -> Unit) {
+    internal fun runExitAnimation(
+        view: View?,
+        onAnimationEnd: () -> Unit,
+    ) {
         if (view == null) {
             onAnimationEnd()
             return
