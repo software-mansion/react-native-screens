@@ -5,12 +5,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class FormSheetDialogManager(
     context: Context,
-    private val host: FormSheetHost,
+    private val onUpdateState: (width: Int, height: Int) -> Unit,
+    private val onDismissRequest: () -> Unit,
 ) {
     // Eagerly create the container so it's always ready for React's children
     private val container =
         FormSheetContainer(context) { width, height ->
-            host.updateStateIfNeeded(width, height)
+            onUpdateState(width, height)
         }
 
     internal val contentView get() = container.contentView
@@ -20,7 +21,7 @@ class FormSheetDialogManager(
         BottomSheetDialog(context).apply {
             setContentView(container)
             setOnCancelListener {
-                host.onNativeDismiss()
+                onDismissRequest()
             }
         }
 
