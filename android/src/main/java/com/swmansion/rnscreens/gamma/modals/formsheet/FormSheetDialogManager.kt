@@ -65,7 +65,7 @@ class FormSheetDialogManager(
         }
 
         dialog.setOnShowListener {
-            dimmingManager.onShow()
+            dimmingManager.onDialogShown()
 
             bottomSheetView?.let {
                 animationCoordinator.runEnterAnimation(it)

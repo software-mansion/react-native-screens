@@ -12,8 +12,6 @@ class DimmingViewManager(
     private val dialog: BottomSheetDialog,
     private val onCloseRequested: () -> Unit,
 ) {
-    private val dimmingView: DimmingView = createDimmingView(context)
-
     // TODO: @t0maboro - consider exposing as a prop
     internal val maxAlpha: Float = 0.3f
 
@@ -23,7 +21,7 @@ class DimmingViewManager(
             dimmingView.alpha = value
         }
 
-    private fun createDimmingView(context: Context): DimmingView =
+    private val dimmingView =
         DimmingView(context, maxAlpha).apply {
             layoutParams =
                 CoordinatorLayout.LayoutParams(
@@ -31,14 +29,13 @@ class DimmingViewManager(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                 )
             alpha = 0f
-            fitsSystemWindows = false
 
             setOnClickListener {
                 onCloseRequested()
             }
         }
 
-    internal fun onShow() {
+    internal fun onDialogShown() {
         attachDimmingViewOverNativeTouchOutside()
     }
 
