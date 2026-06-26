@@ -32,7 +32,7 @@ TBD — automation is possible and planned but not yet implemented.
     - `sub-2-1`: "Sub B.1"
     - `deep-menu`: "Deep" (submenu containing):
       - `deep-1`: "Deep.1"
-- Submenus appear as items with a disclosure indicator (arrow).
+- Submenus appear as items with a submenu indicator (caret/arrow icon).
   Tapping a submenu opens a nested menu instead of firing `onPress`.
 - `setToolbarMenuItemOptions` targets elements by `id`. It works on
   both leaf items and submenu containers at any nesting depth.
@@ -45,7 +45,7 @@ TBD — automation is possible and planned but not yet implemented.
 
 - [ ] Header title reads "Toolbar Nested Menu Test". The toolbar
       overflow menu shows three entries: "Top Item", "Submenu A"
-      (with a disclosure indicator), "Submenu B" (with a disclosure
+      (with a submenu indicator), "Submenu B" (with a submenu
       indicator).
 
 2. Tap "Submenu A" in the overflow menu.
@@ -56,7 +56,7 @@ TBD — automation is possible and planned but not yet implemented.
 3. Go back to the top-level menu. Tap "Submenu B".
 
 - [ ] A nested menu opens showing two entries: "Sub B.1" and
-      "Deep" (with a disclosure indicator).
+      "Deep" (with a submenu indicator).
 
 4. Tap "Deep" in the Submenu B menu.
 
