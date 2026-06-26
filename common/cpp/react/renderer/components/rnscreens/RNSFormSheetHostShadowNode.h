@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(ANDROID)
-
 #include <jsi/jsi.h>
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
@@ -25,5 +23,3 @@ class JSI_EXPORT RNSFormSheetHostShadowNode final
 };
 
 } // namespace facebook::react
-
-#endif // !defined(ANDROID)
