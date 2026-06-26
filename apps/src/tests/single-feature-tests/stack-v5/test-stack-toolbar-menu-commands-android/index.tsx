@@ -7,9 +7,10 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
+import type {
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderConfigRef,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-descriptions';
 
@@ -62,11 +63,11 @@ function resolveHidden(h: HiddenOption): boolean | undefined {
   return h === 'undefined' ? undefined : h === 'true';
 }
 
-function buildItems(slots: Slots) {
+function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots
     .filter(s => s.include)
     .map(({ id, title, hidden }) => ({
-      type: 'menuItem' as const,
+      type: 'menuItem',
       id,
       title: resolveTitle(title),
       hidden: resolveHidden(hidden),

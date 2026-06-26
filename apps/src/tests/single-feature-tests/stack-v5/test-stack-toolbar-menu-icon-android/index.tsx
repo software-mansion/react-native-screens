@@ -8,10 +8,10 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemAndroid,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
+import type {
+  StackHeaderConfigRef,
+  StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
@@ -113,7 +113,7 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
   return slots
     .filter(s => s.include)
     .map(s => ({
-      type: 'menuItem' as const,
+      type: 'menuItem',
       id: s.id,
       title: ITEM_TITLES[s.id],
       showAsAction: s.showAsAction,

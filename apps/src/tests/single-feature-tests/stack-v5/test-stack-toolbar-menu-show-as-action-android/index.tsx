@@ -7,10 +7,11 @@ import {
 } from '@apps/shared/gamma/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
-  type StackHeaderToolbarMenuItemShowAsActionAndroid,
+import type {
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderConfigRef,
+  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuItemShowAsActionAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
@@ -82,11 +83,11 @@ const ITEM_TITLES: Record<IdOption, string> = {
   'item-3': 'Item Number Three',
 };
 
-function buildItems(slots: Slots) {
+function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots
     .filter(s => s.include)
     .map(({ id, icon, showAsAction }) => ({
-      type: 'menuItem' as const,
+      type: 'menuItem',
       id,
       title: ITEM_TITLES[id],
       icon: resolveIcon(icon),

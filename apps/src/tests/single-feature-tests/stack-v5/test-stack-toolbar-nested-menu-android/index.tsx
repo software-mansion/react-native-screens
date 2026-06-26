@@ -83,7 +83,10 @@ const DEFAULT_CONFIG: MenuConfig = {
   includeSubmenu2: true,
 };
 
-function buildMenu(config: MenuConfig, onPress: (id: string) => void) {
+function buildMenu(
+  config: MenuConfig,
+  onPress: (id: string) => void,
+): StackHeaderToolbarMenuElementAndroid[] {
   const children: StackHeaderToolbarMenuElementAndroid[] = [];
 
   children.push({
@@ -94,15 +97,15 @@ function buildMenu(config: MenuConfig, onPress: (id: string) => void) {
   });
 
   if (config.includeSubmenu1) {
-    const sub1Children = [
+    const sub1Children: StackHeaderToolbarMenuElementAndroid[] = [
       {
-        type: 'menuItem' as const,
+        type: 'menuItem',
         id: 'sub-1-1',
         title: 'Sub A.1',
         onPress: () => onPress('sub-1-1'),
       },
       {
-        type: 'menuItem' as const,
+        type: 'menuItem',
         id: 'sub-1-2',
         title: 'Sub A.2',
         onPress: () => onPress('sub-1-2'),
@@ -110,7 +113,7 @@ function buildMenu(config: MenuConfig, onPress: (id: string) => void) {
     ];
     if (config.addExtraItem) {
       sub1Children.push({
-        type: 'menuItem' as const,
+        type: 'menuItem',
         id: 'sub-1-3',
         title: 'Sub A.3',
         onPress: () => onPress('sub-1-3'),
@@ -131,18 +134,18 @@ function buildMenu(config: MenuConfig, onPress: (id: string) => void) {
       title: 'Submenu B',
       children: [
         {
-          type: 'menuItem' as const,
+          type: 'menuItem',
           id: 'sub-2-1',
           title: 'Sub B.1',
           onPress: () => onPress('sub-2-1'),
         },
         {
-          type: 'menu' as const,
+          type: 'menu',
           id: 'deep-menu',
           title: 'Deep',
           children: [
             {
-              type: 'menuItem' as const,
+              type: 'menuItem',
               id: 'deep-1',
               title: 'Deep.1',
               onPress: () => onPress('deep-1'),
