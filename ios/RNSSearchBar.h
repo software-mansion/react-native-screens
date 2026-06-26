@@ -5,10 +5,10 @@
 #if defined(__cplusplus)
 #import <React/RCTViewComponentView.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#endif
-
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
+#endif
+
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
@@ -32,6 +32,10 @@
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSSearchBarManager : RCTViewManager
+#else
+@interface RNSSearchBarManager : NSObject
+#endif
 
 @end

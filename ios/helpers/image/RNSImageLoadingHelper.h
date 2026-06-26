@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(__cplusplus)
+
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 
@@ -26,3 +28,5 @@
             completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
 @end
+
+#endif //defined(__cplusplus)

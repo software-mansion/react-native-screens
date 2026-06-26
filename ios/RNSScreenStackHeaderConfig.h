@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTConvert.h>
+#endif // __cplusplus
 #import "RNSReactBaseView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
@@ -107,6 +109,10 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - View Manager
 
+#if defined(__cplusplus)
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
+#else
+@interface RNSScreenStackHeaderConfigManager : NSObject
+#endif // __cplusplus
 
 @end
