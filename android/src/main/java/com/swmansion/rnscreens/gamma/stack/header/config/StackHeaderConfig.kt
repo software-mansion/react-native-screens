@@ -323,7 +323,7 @@ internal class StackHeaderConfig(
     }
 
     override fun onMenuItemClicked(id: String) {
-        eventEmitter.emitOnToolbarMenuItemClicked(id)
+        eventEmitter.emitOnToolbarMenuItemPress(id)
     }
 
     override fun onSubviewOriginChanged(

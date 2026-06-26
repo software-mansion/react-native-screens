@@ -13,7 +13,7 @@ import type { UnsafeMixed } from '../../codegenUtils';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
-export type StackHeaderToolbarMenuItemClickedEventAndroid = Readonly<{
+export type StackHeaderToolbarMenuItemPressEventAndroid = Readonly<{
   id: string;
 }>;
 
@@ -80,8 +80,8 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
-  onToolbarMenuItemClicked?:
-    | CT.DirectEventHandler<StackHeaderToolbarMenuItemClickedEventAndroid>
+  onToolbarMenuItemPress?:
+    | CT.DirectEventHandler<StackHeaderToolbarMenuItemPressEventAndroid>
     | undefined;
 }
 

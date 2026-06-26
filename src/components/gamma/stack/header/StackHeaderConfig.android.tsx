@@ -22,7 +22,7 @@ import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
   StackHeaderToolbarMenuBaseAndroid as NativeToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
-  StackHeaderToolbarMenuItemClickedEventAndroid,
+  StackHeaderToolbarMenuItemPressEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
@@ -65,8 +65,8 @@ function StackHeaderConfig(
   } = android ?? {};
 
   const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
-  const handleToolbarMenuItemClicked = (
-    event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEventAndroid>,
+  const handleToolbarMenuItemPress = (
+    event: NativeSyntheticEvent<StackHeaderToolbarMenuItemPressEventAndroid>,
   ) => {
     const element = findToolbarMenuElementById(
       toolbarMenu?.children,
@@ -91,7 +91,7 @@ function StackHeaderConfig(
       collapsable={false}
       style={StyleSheet.absoluteFill}
       toolbarMenu={parsedToolbarMenu}
-      onToolbarMenuItemClicked={handleToolbarMenuItemClicked}
+      onToolbarMenuItemPress={handleToolbarMenuItemPress}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}

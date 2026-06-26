@@ -4,11 +4,11 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
-internal class StackHeaderToolbarMenuItemClickedEvent(
+internal class StackHeaderToolbarMenuItemPressEvent(
     surfaceId: Int,
     viewTag: Int,
     private val id: String,
-) : Event<StackHeaderToolbarMenuItemClickedEvent>(surfaceId, viewTag),
+) : Event<StackHeaderToolbarMenuItemPressEvent>(surfaceId, viewTag),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
@@ -19,8 +19,8 @@ internal class StackHeaderToolbarMenuItemClickedEvent(
     override fun getEventData() = Arguments.createMap().apply { putString(EK_ID, id) }
 
     companion object : NamingAwareEventType {
-        const val EVENT_NAME = "topToolbarMenuItemClicked"
-        const val EVENT_REGISTRATION_NAME = "onToolbarMenuItemClicked"
+        const val EVENT_NAME = "topToolbarMenuItemPress"
+        const val EVENT_REGISTRATION_NAME = "onToolbarMenuItemPress"
 
         private const val EK_ID = "id"
 
