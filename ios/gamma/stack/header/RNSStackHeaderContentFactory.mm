@@ -7,14 +7,16 @@
 
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
-                         withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)menuEventsDelegate
+                       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
 {
-  UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory internalBarButtonItemForHeaderItem:item
-                                                                            withFrameChangeDelegate:delegate];
+  UIBarButtonItem *barButtonItem =
+      [RNSStackHeaderContentFactory internalBarButtonItemForHeaderItem:item
+                                               withFrameChangeDelegate:delegate
+                                              withHeaderEventsDelegate:headerEventsDelegate];
   if (item.menu != nil) {
     [RNSStackHeaderMenuCoordinator applyMenu:item.menu
                              toBarButtonItem:barButtonItem
-                      withMenuEventsDelegate:menuEventsDelegate
+                    withHeaderEventsDelegate:headerEventsDelegate
                                 stateTracker:item.menuToggleStateTracker];
   }
 
@@ -23,6 +25,7 @@
 
 + (UIBarButtonItem *)internalBarButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                                 withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
+                               withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
 {
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -34,6 +37,18 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     return [[UIBarButtonItem alloc] initWithCustomView:[self wrappedViewForHeaderItem:item
                                                                   frameChangeDelegate:delegate]];
+  }
+
+  if (item.respondsToOnPress) {
+    __weak id<RNSStackHeaderEventsDelegate> weakDelegate = headerEventsDelegate;
+    NSString *itemId = item.itemId;
+    UIAction *pressAction = [UIAction actionWithTitle:item.title
+                                                image:nil
+                                           identifier:nil
+                                              handler:^(__kindof UIAction *_Nonnull action) {
+                                                [weakDelegate didPressHeaderItem:itemId];
+                                              }];
+    return [[UIBarButtonItem alloc] initWithPrimaryAction:pressAction];
   }
 
   return [[UIBarButtonItem alloc] initWithTitle:item.title style:UIBarButtonItemStylePlain target:nil action:nil];

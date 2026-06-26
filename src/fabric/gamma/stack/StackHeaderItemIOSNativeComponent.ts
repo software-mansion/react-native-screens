@@ -28,10 +28,16 @@ export type StackHeaderMenuElementIOS =
   | StackHeaderMenuItemIOS
   | StackHeaderMenuIOS;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type HeaderItemPressEvent = Readonly<{}>;
+
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
+  itemId?: string | undefined;
   title?: string | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
+  respondsToOnPress?: CT.WithDefault<boolean, false>;
+  onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {
