@@ -110,9 +110,13 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    *   will be placed in the overflow menu instead.
    *
    * @remarks
-   * Due to native limitations, the width limit for the `ifRoom` options is
-   * determined during the initial render and will not adapt to subsequent
-   * layout or orientation changes.
+   * This prop only affects top-level menu elements. Items inside
+   * submenus are always displayed in the popup and ignore this
+   * setting.
+   *
+   * Due to native limitations, the width limit for the `ifRoom`
+   * options is determined during the initial render and will not
+   * adapt to subsequent layout or orientation changes.
    *
    * @default never
    * @platform android
@@ -208,6 +212,9 @@ export interface StackHeaderToolbarMenuItemAndroid
    * multi-toggle). A group is scoped to the menu level it is defined
    * in — groups cannot span submenus.
    *
+   * Required when `itemType` is `toggle`. Cannot be set when
+   * `itemType` is `action`.
+   *
    * @platform android
    */
   groupId?: string | undefined;
@@ -231,19 +238,28 @@ export interface StackHeaderToolbarMenuItemAndroid
    * @description
    * Only meaningful when effective `itemType` is `toggle`.
    *
+   * @remarks
+   * The initial state does not trigger `onSelectionChange` on
+   * the group at mount time.
+   *
    * @default false
    * @platform android
    */
   initialToggleState?: boolean | undefined;
   /**
-   * @summary Callback invoked when the menu item is clicked.
+   * @summary Callback invoked when the menu item is pressed.
+   *
+   * @remarks
+   * Not called for items that behave as toggles (items with a
+   * `groupId` or `itemType: 'toggle'`). For those items, use
+   * `onSelectionChange` on the group instead.
    *
    * @platform android
    */
   onPress?: (() => void) | undefined;
 }
 
-export interface StackHeaderToolbarMenuGroup {
+export interface StackHeaderToolbarMenuGroupAndroid {
   /**
    * @summary Unique identifier of the group.
    *
@@ -282,7 +298,7 @@ export interface StackHeaderToolbarMenuBaseAndroid {
    *
    * @platform android
    */
-  groups?: StackHeaderToolbarMenuGroup[] | undefined;
+  groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   /**
    * @summary Menu elements displayed in the toolbar menu.
    *
@@ -296,6 +312,10 @@ export interface StackHeaderToolbarMenuAndroid
     StackHeaderToolbarMenuBaseAndroid {
   /**
    * @summary Marks this object as a submenu.
+   *
+   * @remarks
+   * Android's `MenuItem` interface claims that nesting submenus isn't supported
+   * but Material's implementation handles it correctly.
    *
    * @platform android
    */

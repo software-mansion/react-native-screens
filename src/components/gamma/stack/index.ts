@@ -27,7 +27,7 @@ export type {
   StackHeaderToolbarMenuAndroid,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
-  StackHeaderToolbarMenuGroup,
+  StackHeaderToolbarMenuGroupAndroid,
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,

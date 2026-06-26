@@ -448,7 +448,13 @@ internal class StackHeaderApplicator(
                     true
                 }
                 StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
-                StackHeaderToolbarMenuItemType.ACTION -> false
+                StackHeaderToolbarMenuItemType.ACTION -> {
+                    require(itemConfig.groupId == null) {
+                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=ACTION " +
+                            "and belongs to a group. Action items cannot belong to groups."
+                    }
+                    false
+                }
             }
         if (shouldBeCheckable) {
             menuItem.isCheckable = true

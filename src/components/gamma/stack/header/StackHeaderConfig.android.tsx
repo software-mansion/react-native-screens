@@ -35,7 +35,7 @@ import type {
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
-  StackHeaderToolbarMenuGroup,
+  StackHeaderToolbarMenuGroupAndroid,
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../../shared';
 
@@ -255,7 +255,7 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
 function findToolbarMenuGroupById(
   menu: StackHeaderToolbarMenuBaseAndroid | undefined,
   groupId: string,
-): StackHeaderToolbarMenuGroup | null {
+): StackHeaderToolbarMenuGroupAndroid | null {
   if (!menu) {
     return null;
   }
@@ -309,7 +309,7 @@ function parseToolbarMenuToNativeProps(
 }
 
 function parseGroupsToNativeProps(
-  groups: StackHeaderToolbarMenuGroup[] | undefined,
+  groups: StackHeaderToolbarMenuGroupAndroid[] | undefined,
 ) {
   if (!groups?.length) {
     return undefined;
@@ -333,6 +333,7 @@ function parseElementToNativeProps(
     };
   }
 
+  assertItemTypeGroupIdConsistency(element);
   assertNoOnPressOnToggleItem(element);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -345,6 +346,25 @@ function parseElementToNativeProps(
     initialToggleState,
     ...parseBaseItemToNativeProps(baseProps),
   };
+}
+
+function assertItemTypeGroupIdConsistency(
+  element: StackHeaderToolbarMenuItemAndroid,
+): void {
+  if (element.itemType === 'toggle' && element.groupId == null) {
+    throw new Error(
+      `[RNScreens] Menu item '${element.id}' has itemType='toggle' ` +
+        `but no groupId. Toggle items must belong to a group.`,
+    );
+  }
+
+  if (element.itemType === 'action' && element.groupId != null) {
+    throw new Error(
+      `[RNScreens] Menu item '${element.id}' has itemType='action' ` +
+        `and belongs to group '${element.groupId}'. ` +
+        `Action items cannot belong to groups.`,
+    );
+  }
 }
 
 function assertNoOnPressOnToggleItem(
