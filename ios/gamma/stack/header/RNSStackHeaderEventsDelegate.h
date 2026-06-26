@@ -4,11 +4,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol RNSStackHeaderMenuEventsDelegate <NSObject>
+@protocol RNSStackHeaderEventsDelegate <NSObject>
 
 - (void)didPressMenuItem:(NSString *)menuItemId;
 
 - (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
+
+- (void)didPressHeaderItem:(NSString *)itemId;
 
 @end
 
