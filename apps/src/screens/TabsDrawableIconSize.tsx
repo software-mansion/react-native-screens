@@ -20,7 +20,7 @@ function TabScreen() {
       </Text>
       <Text style={styles.hint}>
         Multicolor Tint: a VectorDrawable that keeps its own colors when focused
-        (`tintingMode: 'original'`) and is template(system)-tinted otherwise.
+        (`tinted: false`) and is template(system)-tinted otherwise.
       </Text>
       <Text style={styles.hint}>
         Sys (unaltered): a built-in star. Size unaltered defaults to 24dp.
@@ -75,12 +75,12 @@ const ROUTES: TabRouteConfig[] = [
         icon: {
           type: 'drawableResource',
           name: 'person_walking',
-          tintingMode: 'template',
+          tinted: true,
         },
         selectedIcon: {
           type: 'drawableResource',
           name: 'person_walking',
-          tintingMode: 'original',
+          tinted: false,
         },
         standardAppearance: INDICATOR,
       },

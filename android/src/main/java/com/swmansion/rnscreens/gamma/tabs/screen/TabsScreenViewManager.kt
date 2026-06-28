@@ -134,18 +134,18 @@ class TabsScreenViewManager :
         view.selectedDrawableIconResourceName = value
     }
 
-    override fun setDrawableIconTintingMode(
+    override fun setDrawableIconTinted(
         view: TabsScreen,
-        value: String?,
+        value: Boolean,
     ) {
-        view.drawableIconTintingMode = value ?: "template"
+        view.drawableIconTinted = value
     }
 
-    override fun setSelectedDrawableIconTintingMode(
+    override fun setSelectedDrawableIconTinted(
         view: TabsScreen,
-        value: String?,
+        value: Boolean,
     ) {
-        view.selectedDrawableIconTintingMode = value ?: "template"
+        view.selectedDrawableIconTinted = value
     }
 
     override fun setDrawableIconSize(

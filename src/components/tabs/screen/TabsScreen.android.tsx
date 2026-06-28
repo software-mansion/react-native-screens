@@ -131,10 +131,10 @@ function mapItemStateAppearanceToNativeProp(
   };
 }
 
-function drawableTintingModeOf(
+function drawableTintedOf(
   icon: PlatformIconAndroid | undefined,
-): 'template' | 'original' | undefined {
-  return icon?.type === 'drawableResource' ? icon.tintingMode : undefined;
+): boolean | undefined {
+  return icon?.type === 'drawableResource' ? icon.tinted : undefined;
 }
 
 function parseIconsToNativeProps(
@@ -143,10 +143,10 @@ function parseIconsToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
-  drawableIconTintingMode?: string | undefined;
+  drawableIconTinted?: boolean | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
-  selectedDrawableIconTintingMode?: string | undefined;
+  selectedDrawableIconTinted?: boolean | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -154,11 +154,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
-    drawableIconTintingMode: drawableTintingModeOf(icon),
+    drawableIconTinted: drawableTintedOf(icon),
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
-    selectedDrawableIconTintingMode: drawableTintingModeOf(selectedIcon),
+    selectedDrawableIconTinted: drawableTintedOf(selectedIcon),
   };
 }
 

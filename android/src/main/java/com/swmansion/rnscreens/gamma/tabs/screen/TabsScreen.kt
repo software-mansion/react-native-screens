@@ -76,7 +76,7 @@ class TabsScreen(
         if (newValue != oldValue) rebuildIcon()
     }
 
-    var drawableIconTintingMode: String = "template"
+    var drawableIconTinted: Boolean = true
         set(value) {
             if (field != value) {
                 field = value
@@ -88,7 +88,7 @@ class TabsScreen(
         if (newValue != oldValue) rebuildSelectedIcon()
     }
 
-    var selectedDrawableIconTintingMode: String = "template"
+    var selectedDrawableIconTinted: Boolean = true
         set(value) {
             if (field != value) {
                 field = value
@@ -102,21 +102,21 @@ class TabsScreen(
     val effectiveIconSizeDp: Float
         get() = if (drawableIconSize > 0f) drawableIconSize else DEFAULT_ICON_SIZE_DP
 
-    // "original" keeps the drawable's own colors; the bar can't tint a NoTintDrawable.
+    // A NoTintDrawable keeps the drawable's own colors; the bar can't tint it.
     private fun resolveIcon(
         resourceName: String?,
-        tintingMode: String,
+        tinted: Boolean,
     ): Drawable? {
         val drawable = getSystemDrawableResource(reactContext, resourceName) ?: return null
-        return if (tintingMode == "original") NoTintDrawable(drawable) else drawable
+        return if (tinted) drawable else NoTintDrawable(drawable)
     }
 
     private fun rebuildIcon() {
-        icon = resolveIcon(drawableIconResourceName, drawableIconTintingMode)
+        icon = resolveIcon(drawableIconResourceName, drawableIconTinted)
     }
 
     private fun rebuildSelectedIcon() {
-        selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTintingMode)
+        selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTinted)
     }
 
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
