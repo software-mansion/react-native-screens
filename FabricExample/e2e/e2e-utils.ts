@@ -42,6 +42,7 @@ export async function selectComponentIntegrationTestsScreen(
   scenarioGroup: string,
   screenKey: string,
 ) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
   await scrollUntilVisible(
     'root-screen-component-integration-tests',
     'root-screen-examples-scrollview',
@@ -53,18 +54,18 @@ export async function selectComponentIntegrationTestsScreen(
     .withTimeout(3000);
 
   await scrollUntilVisible(
-    `component-integration-tests-${scenarioGroup}`,
+    `component-integration-tests-${scenarioGroupId}`,
     'component-integration-tests-scrollview',
   );
 
-  await element(by.id(`component-integration-tests-${scenarioGroup}`)).tap();
-  await waitFor(element(by.id(`${scenarioGroup}-scenarios-scrollview`)))
+  await element(by.id(`component-integration-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
     .toBeVisible()
     .withTimeout(3000);
 
   await scrollUntilVisible(
     `${screenKey}`,
-    `${scenarioGroup}-scenarios-scrollview`,
+    `${scenarioGroupId}-scenarios-scrollview`,
   );
   await element(by.id(`${screenKey}`)).tap();
 }

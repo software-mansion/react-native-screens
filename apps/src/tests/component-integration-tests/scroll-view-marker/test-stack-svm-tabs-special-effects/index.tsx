@@ -105,6 +105,7 @@ function StackTabScreen() {
 }
 
 function ScrollViewContents(props: { elementCount?: number }) {
+  const tabName = useTabsNavigationContext().routeKey;
   const elementCount = props.elementCount ?? 48;
   return (
     <>
@@ -112,7 +113,7 @@ function ScrollViewContents(props: { elementCount?: number }) {
         return (
           <View key={index.toString()} style={[{ width: '100%' }]}>
             <Rectangle
-              testID={`${useTabsNavigationContext().routeKey}-item-${
+              testID={`${tabName}-item-${
                 index + 1
               }`}
               key={index.toString()}
