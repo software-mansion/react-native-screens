@@ -68,7 +68,7 @@ function TabContents() {
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: edgeEffectStyle }}>
         <ScrollView
-          testID={`home-scrollview`}
+          testID="home-scrollview"
           contentInsetAdjustmentBehavior="automatic"
           style={styles.fillParent}>
           <ScrollViewContents />
@@ -86,7 +86,7 @@ function StackContents() {
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: 'hard' }}>
         <ScrollView
-          testID={`stack-scrollview`}
+          testID="stack-scrollview"
           contentInsetAdjustmentBehavior="automatic"
           style={styles.fillParent}>
           <ScrollViewContents />
