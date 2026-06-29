@@ -227,8 +227,9 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        view.toolbarMenu = StackHeaderToolbarMenuMapper.parseMenu(value)
-        view.toolbarMenuItemIconSourceMap = StackHeaderToolbarMenuMapper.collectIconSources(value)
+        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value)
+        view.toolbarMenu = menu
+        view.toolbarMenuItemIconSourceMap = iconSources
     }
 
     override fun setToolbarMenuItemOptions(

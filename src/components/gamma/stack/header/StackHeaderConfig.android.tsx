@@ -302,6 +302,10 @@ function parseToolbarMenuToNativeProps(
   if (!menu?.children?.length) {
     return undefined;
   }
+  assertUniqueItemIds(menu.children);
+  assertUniqueGroupIds(menu);
+  assertGroupIdReferencesExist(menu);
+  assertRadioInitialSelection(menu);
   return {
     groups: parseGroupsToNativeProps(menu.groups),
     children: menu.children.map(parseElementToNativeProps),
@@ -346,6 +350,106 @@ function parseElementToNativeProps(
     initialToggleState,
     ...parseBaseItemToNativeProps(baseProps),
   };
+}
+
+function assertUniqueItemIds(
+  elements: StackHeaderToolbarMenuElementAndroid[],
+  seen: Set<string> = new Set(),
+): void {
+  for (const element of elements) {
+    if (seen.has(element.id)) {
+      throw new Error(
+        `[RNScreens] Duplicate toolbar menu item id: '${element.id}'. ` +
+          `Item IDs must be unique across the entire menu.`,
+      );
+    }
+    seen.add(element.id);
+    if (element.type === 'menu' && element.children) {
+      assertUniqueItemIds(element.children, seen);
+    }
+  }
+}
+
+function assertUniqueGroupIds(
+  menu: StackHeaderToolbarMenuBaseAndroid,
+  seen: Set<string> = new Set(),
+): void {
+  if (menu.groups) {
+    for (const group of menu.groups) {
+      if (seen.has(group.groupId)) {
+        throw new Error(
+          `[RNScreens] Duplicate toolbar menu group id: '${group.groupId}'. ` +
+            `Group IDs must be unique across the entire menu.`,
+        );
+      }
+      seen.add(group.groupId);
+    }
+  }
+  if (menu.children) {
+    for (const element of menu.children) {
+      if (element.type === 'menu') {
+        assertUniqueGroupIds(element, seen);
+      }
+    }
+  }
+}
+
+function assertGroupIdReferencesExist(
+  menu: StackHeaderToolbarMenuBaseAndroid,
+): void {
+  const localGroupIds = new Set(menu.groups?.map(g => g.groupId));
+  if (menu.children) {
+    for (const element of menu.children) {
+      if (element.type === 'menuItem' && element.groupId != null) {
+        if (!localGroupIds.has(element.groupId)) {
+          throw new Error(
+            `[RNScreens] Menu item '${element.id}' references group ` +
+              `'${element.groupId}' which is not defined at the same ` +
+              `menu level. Groups cannot span submenus.`,
+          );
+        }
+      }
+      if (element.type === 'menu') {
+        assertGroupIdReferencesExist(element);
+      }
+    }
+  }
+}
+
+function assertRadioInitialSelection(
+  menu: StackHeaderToolbarMenuBaseAndroid,
+): void {
+  if (menu.groups && menu.children) {
+    for (const group of menu.groups) {
+      if (!group.singleSelection) {
+        continue;
+      }
+      let count = 0;
+      for (const element of menu.children) {
+        if (
+          element.type === 'menuItem' &&
+          element.groupId === group.groupId &&
+          element.initialToggleState
+        ) {
+          count++;
+        }
+      }
+      if (count > 1) {
+        throw new Error(
+          `[RNScreens] Radio group '${group.groupId}' has ${count} items ` +
+            `with initialToggleState=true. At most 1 is allowed for ` +
+            `single-selection groups.`,
+        );
+      }
+    }
+  }
+  if (menu.children) {
+    for (const element of menu.children) {
+      if (element.type === 'menu') {
+        assertRadioInitialSelection(element);
+      }
+    }
+  }
 }
 
 function assertItemTypeGroupIdConsistency(

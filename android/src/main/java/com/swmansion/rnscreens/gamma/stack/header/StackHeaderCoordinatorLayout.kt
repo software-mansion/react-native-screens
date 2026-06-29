@@ -218,7 +218,7 @@ internal class StackHeaderCoordinatorLayout(
                     applicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenu,
                     )
-                val (forwardGroupIdMap, _) =
+                val forwardGroupIdMap =
                     applicator.generateToolbarMenuGroupMappings(
                         provider.toolbarMenu,
                     )

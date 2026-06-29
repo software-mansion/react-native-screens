@@ -260,12 +260,11 @@ internal class StackHeaderApplicator(
         return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
     }
 
-    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
+    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Map<String, Int> {
         val forwardGroupIdMap = mutableMapOf<String, Int>()
-        val reverseGroupIdMap = mutableMapOf<Int, String>()
         var counter = 1
-        assignGroupIds(menuConfig, forwardGroupIdMap, reverseGroupIdMap) { counter++ }
-        return Pair(forwardGroupIdMap.toMap(), reverseGroupIdMap.toMap())
+        assignGroupIds(menuConfig, forwardGroupIdMap) { counter++ }
+        return forwardGroupIdMap.toMap()
     }
 
     fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
@@ -323,20 +322,17 @@ internal class StackHeaderApplicator(
     private fun assignGroupIds(
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardMap: MutableMap<String, Int>,
-        reverseMap: MutableMap<Int, String>,
         nextId: () -> Int,
     ) {
         for (group in menuConfig.groups) {
             require(group.groupId !in forwardMap) {
                 "[RNScreens] Duplicate toolbar menu group id: '${group.groupId}'. Group IDs must be unique across the entire menu."
             }
-            val nativeId = nextId()
-            forwardMap[group.groupId] = nativeId
-            reverseMap[nativeId] = group.groupId
+            forwardMap[group.groupId] = nextId()
         }
         for (element in menuConfig.children) {
             if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                assignGroupIds(element.menu, forwardMap, reverseMap, nextId)
+                assignGroupIds(element.menu, forwardMap, nextId)
             }
         }
     }
