@@ -14,6 +14,11 @@ import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
 import SvmScenarioGroup from './scroll-view-marker';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
+export * from './orientation';
+export * from './scroll-view';
+export * from './form-sheet';
+export * from './tabs-stack-v5';
+
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
   ScrollView: ScrollViewScenarioGroup,

@@ -130,7 +130,7 @@ const DEFAULT_CONFIG: Config = {
   pressRetentionOffset: '0',
 };
 
-export function App() {
+function TestStackSubviewsIOS() {
   return <StackSetup />;
 }
 
@@ -369,4 +369,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSubviewsIOS, scenarioDescription);
