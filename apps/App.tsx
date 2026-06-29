@@ -3,9 +3,9 @@ import { enableFreeze } from 'react-native-screens';
 
 import Example from './Example';
 
-// import { TestTabsSimpleNav } from './src/tests/single-feature-tests';
-// import { TestTabsInStackStableEnterTransition } from './src/tests/component-integration-tests';
-// import { Test42 } from './src/tests/issue-tests';
+// import { TestTabsSimpleNav as Example } from './src/tests/single-feature-tests';
+// import { TestTabsInStackStableEnterTransition as Example } from './src/tests/component-integration-tests';
+// import { Test42 as Example } from './src/tests/issue-tests';
 
 enableFreeze(true);
 
@@ -27,7 +27,7 @@ export default function App() {
 // export default function App() {
 //   return (
 //     <GestureHandlerRootView style={{ flex: 1 }}>
-//       <Test1153 />
+//       <Example />
 //     </GestureHandlerRootView>
 //   );
 // }
