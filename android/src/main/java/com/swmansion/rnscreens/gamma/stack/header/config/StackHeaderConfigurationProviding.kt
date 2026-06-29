@@ -2,9 +2,9 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 
-interface StackHeaderConfigurationProviding {
+internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
     val title: String
     val hidden: Boolean
@@ -23,7 +23,7 @@ interface StackHeaderConfigurationProviding {
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
-    val toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
+    val toolbarMenu: StackHeaderToolbarMenuConfig
     val isRTL: Boolean
 
     val invalidationFlags: StackHeaderInvalidationFlags

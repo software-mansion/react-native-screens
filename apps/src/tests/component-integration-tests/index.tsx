@@ -11,6 +11,7 @@ import OrientationScenarioGroup from './orientation';
 import ScrollViewScenarioGroup from './scroll-view';
 import FormSheetScenarioGroup from './form-sheet';
 import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
+import SvmScenarioGroup from './scroll-view-marker';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
 export * from './orientation';
@@ -23,6 +24,7 @@ export const COMPONENT_SCENARIOS = {
   ScrollView: ScrollViewScenarioGroup,
   FormSheet: FormSheetScenarioGroup,
   TabsInStackV5: TabsInStackV5ScenarioGroup,
+  ScrollViewMarker: SvmScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {

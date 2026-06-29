@@ -2,7 +2,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
 // scenario group consumed by the selection menu.
-import TestFormSheetBase from './test-form-sheet-base-ios';
+import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents-ios';

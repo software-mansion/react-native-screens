@@ -10,7 +10,9 @@ export type StackHeaderItemPlacement =
 
 export type StackHeaderItemProps = {
   placement: StackHeaderItemPlacement;
-  label?: string | undefined;
+  itemId?: string | undefined;
+  title?: string | undefined;
   render?: (() => ReactElement) | undefined;
   menu?: StackHeaderMenuIOS | undefined;
+  onPress?: (() => void) | undefined;
 };

@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.header.toolbar
 
-sealed interface StackHeaderToolbarUpdate<out T> {
+internal sealed interface StackHeaderToolbarUpdate<out T> {
     object Reset : StackHeaderToolbarUpdate<Nothing>
 
     data class Set<T>(

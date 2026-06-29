@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -39,8 +39,8 @@ function buildHeaderConfig(
   >['trailingItems'] = Array.from({ length: trailingItemsCount }).map(
     (_, i) => ({
       type: 'item',
-      key: `trailing-${i}`,
-      label: `Menu ${i}`,
+      id: `trailing-${i}`,
+      title: `Menu ${i}`,
       // every second item is custom
       ...(i % 2 === 0 && {
         render: () => (
@@ -50,35 +50,64 @@ function buildHeaderConfig(
       menu: {
         type: 'menu',
         id: `menu-${i}`,
+        onSelectionChange: selection =>
+          showToast('Selected "' + selection.join('", "') + '"'),
         children: [
           {
             id: `subitem-${i}-1`,
             type: 'menuItem',
-            title: `Item ${i}.1`,
-            onPress: () => showToast(`Clicked Item ${i}.1`),
+            itemType: 'action',
+            title: `Action ${i}-1`,
+            onPress: () => showToast(`Clicked Action ${i}-1`),
           },
           {
-            id: `subitem-${i}-2`,
+            id: `toggle-${i}-1`,
             type: 'menuItem',
-            title: `Item ${i}.2`,
-            onPress: () => showToast(`Clicked Item ${i}.2`),
+            itemType: 'toggle',
+            title: `Toggle ${i}-1`,
+          },
+          {
+            id: `toggle-${i}-2`,
+            type: 'menuItem',
+            itemType: 'toggle',
+            title: `Toggle ${i}-2`,
+          },
+          {
+            id: `toggle-${i}-3`,
+            type: 'menuItem',
+            itemType: 'toggle',
+            title: `Toggle ${i}-3`,
           },
           {
             id: `submenu-${i}`,
             type: 'menu',
-            title: `Submenu ${i}`,
+            title: `Submenu with Radio`,
+            singleSelection: true,
+            onSelectionChange: selection =>
+              showToast(`Selected unique "${selection}"`),
             children: [
               {
-                id: `subsubitem-${i}-1`,
+                id: `radio-${i}-1`,
                 type: 'menuItem',
-                title: `Nested ${i}.1`,
-                onPress: () => showToast(`Clicked Nested ${i}.1`),
+                title: `Radio ${i}-1`,
+                initialToggleState: true,
               },
               {
-                id: `subsubitem-${i}-2`,
-                type: 'menuItem',
-                title: `Nested ${i}.2`,
-                onPress: () => showToast(`Clicked Nested ${i}.2`),
+                id: `subsubmenu-${i}`,
+                type: 'menu',
+                title: `SubSubMenu with Radio`,
+                children: [
+                  {
+                    id: `radio-${i}-2`,
+                    type: 'menuItem',
+                    title: `Radio ${i}-2`,
+                  },
+                  {
+                    id: `radio-${i}-3`,
+                    type: 'menuItem',
+                    title: `Radio ${i}-3`,
+                  },
+                ],
               },
             ],
           },
@@ -115,7 +144,7 @@ function ConfigScreen() {
     [trailingItemsCount, showToast],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setRouteOptions(routeKey, {
       headerConfig,
     });

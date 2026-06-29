@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 
-interface StackHeaderDelegate {
+internal interface StackHeaderDelegate {
     fun onHeaderFrameChanged(
         width: Int,
         height: Int,

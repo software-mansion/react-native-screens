@@ -6,13 +6,16 @@ import android.content.res.Configuration
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import android.widget.ScrollView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.Insets
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.size
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -58,22 +61,38 @@ class TabsContainer internal constructor(
 
     private inner class SpecialEffectsHandler {
         fun handleRepeatedTabSelection(): Boolean {
-            val contentView = this@TabsContainer.contentView
-            val selectedTabFragment = this@TabsContainer.selectedTab
-            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
+            val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
+
+            if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
             }
-            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-                val scrollView = ViewFinder.findScrollViewInFirstDescendantChain(contentView)
-                if (scrollView != null && scrollView.scrollY > 0) {
-                    scrollView.smoothScrollTo(scrollView.scrollX, 0)
-                    return true
-                }
+            if (selectedTabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+                val scrollView = resolveContentScrollViewForScreen(selectedTabScreen)
+                scrollView?.let { return trySmoothScrollToTop(it) }
             }
             return false
+        }
+
+        private fun resolveContentScrollViewForScreen(tabsScreen: TabsScreen): ViewGroup? {
+            tabsScreen.contentScrollView()?.let { return it }
+            ViewFinder.findScrollViewInFirstDescendantChain(tabsScreen)?.let { return it }
+            return null
+        }
+
+        /**
+         * Attempts to scroll to top if the passed view is a `ScrollView` or `NestedScrollView`
+         */
+        private fun trySmoothScrollToTop(maybeScrollView: ViewGroup): Boolean {
+            if (maybeScrollView.scrollY <= 0) return false
+            when (maybeScrollView) {
+                is ScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                is NestedScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                else -> return false
+            }
+            return true
         }
     }
 

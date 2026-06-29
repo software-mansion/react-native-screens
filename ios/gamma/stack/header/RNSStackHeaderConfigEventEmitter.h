@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)emitOnMenuItemPress:(NSString *)menuItemId;
 
+- (BOOL)emitOnMenuSelectionChange:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
+
 @end
 
 #pragma mark - Hidden from Swift
