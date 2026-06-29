@@ -24,13 +24,7 @@ import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
 import {
-  TopInsetApplicationContext,
-  useTopInsetApplication,
-} from './contexts/TopInsetApplicationContext';
-import {
-  LeftInsetApplicationContext,
-  RightInsetApplicationContext,
-  BottomInsetApplicationContext,
+  EdgeInsetApplicationContext,
   useEdgeInsetApplication,
 } from './contexts/EdgeInsetApplicationContext';
 
@@ -63,18 +57,9 @@ function ScreenStackItem(
   ref: React.ForwardedRef<View>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const headerTopInsetDisabled =
-    headerConfig?.disableTopInsetApplication ?? false;
-  const { nextContextValue } = useTopInsetApplication(
+  const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
-    headerTopInsetDisabled,
-  );
-
-  const {
-    nextLeftContextValue,
-    nextRightContextValue,
-    nextBottomContextValue,
-  } = useEdgeInsetApplication(
+    headerConfig?.disableTopInsetApplication ?? false,
     headerConfig?.disableLeftInsetApplication ?? false,
     headerConfig?.disableRightInsetApplication ?? false,
     headerConfig?.disableBottomInsetApplication ?? false,
@@ -143,27 +128,20 @@ function ScreenStackItem(
 
   const content = (
     <>
-      <TopInsetApplicationContext.Provider value={nextContextValue}>
-        <LeftInsetApplicationContext.Provider value={nextLeftContextValue}>
-          <RightInsetApplicationContext.Provider value={nextRightContextValue}>
-            <BottomInsetApplicationContext.Provider
-              value={nextBottomContextValue}>
-              <DebugContainer
-                contentStyle={contentStyle}
-                style={debugContainerStyle}
-                stackPresentation={stackPresentationWithDefault}>
-                {shouldUseSafeAreaView ? (
-                  <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
-                    {children}
-                  </SafeAreaView>
-                ) : (
-                  children
-                )}
-              </DebugContainer>
-            </BottomInsetApplicationContext.Provider>
-          </RightInsetApplicationContext.Provider>
-        </LeftInsetApplicationContext.Provider>
-      </TopInsetApplicationContext.Provider>
+      <EdgeInsetApplicationContext.Provider value={nextEdgeContextValue}>
+        <DebugContainer
+          contentStyle={contentStyle}
+          style={debugContainerStyle}
+          stackPresentation={stackPresentationWithDefault}>
+          {shouldUseSafeAreaView ? (
+            <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+              {children}
+            </SafeAreaView>
+          ) : (
+            children
+          )}
+        </DebugContainer>
+      </EdgeInsetApplicationContext.Provider>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
        * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`
