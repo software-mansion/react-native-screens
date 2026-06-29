@@ -29,6 +29,7 @@ class FormSheetDialogManager(
     private val dialog =
         FormSheetDialog(themedContext).apply {
             setContentView(container)
+            setCanceledOnTouchOutside(false)
 
             setOnCancelListener {
                 onDismissRequest()
