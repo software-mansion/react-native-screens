@@ -29,7 +29,12 @@
     }
   }
 
-  return [[RNSStackHeaderMenuData alloc] initWithTitle:[self stringForKey:@"title" in:dict] children:children];
+  BOOL singleSelection = [self boolForKey:@"singleSelection" in:dict];
+
+  return [[RNSStackHeaderMenuData alloc] initWithId:[self stringForKey:@"id" in:dict]
+                                              title:[self stringForKey:@"title" in:dict]
+                                    singleSelection:singleSelection
+                                           children:children];
 }
 
 + (nullable id<RNSStackHeaderMenuElement>)elementFromDictionary:(nullable id)dictionary
@@ -44,7 +49,12 @@
     return [self menuFromDictionary:dict];
   } else if ([type isEqual:@"menuItem"]) {
     [RNSStackHeaderMenuMapper validateMenuItemKeys:dict];
-    return [[RNSStackHeaderMenuItemData alloc] initWithTitle:[self stringForKey:@"title" in:dict]];
+
+    return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
+                                                    title:[self stringForKey:@"title" in:dict]
+                                                 itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
+                                                                                                   in:dict]]
+                                       initialToggleState:[self boolForKey:@"initialToggleState" in:dict]];
   }
 
   return nil;
@@ -55,26 +65,46 @@
 + (void)validateMenuKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"type"] || [key isEqualToString:@"title"] || [key isEqualToString:@"children"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
+                  [key isEqualToString:@"children"] || [key isEqualToString:@"singleSelection"],
               @"[RNScreens] Invalid key \"%@\" found in menu",
               key);
   }
   RCTAssert(dict[@"children"], @"[RNScreens] missing key \"children\" in menu");
+  RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
 }
 
 + (void)validateMenuItemKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([key isEqualToString:@"type"] || [key isEqualToString:@"title"],
+    RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
+                  [key isEqualToString:@"itemType"] || [key isEqualToString:@"initialToggleState"],
               @"[RNScreens] Invalid key \"%@\" found in menu item",
               key);
   }
+  RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
 }
 
 + (nullable NSString *)stringForKey:(NSString *)key in:(NSDictionary *)dict
 {
   id value = dict[key];
   return [value isKindOfClass:[NSString class]] ? value : nil;
+}
+
++ (BOOL)boolForKey:(NSString *)key in:(NSDictionary *)dict
+{
+  id value = dict[key];
+  return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : NO;
+}
+
++ (RNSMenuItemType)itemTypeFromString:(nullable NSString *)string
+{
+  if ([string isEqualToString:@"action"]) {
+    return RNSMenuItemTypeAction;
+  } else if ([string isEqualToString:@"toggle"]) {
+    return RNSMenuItemTypeToggle;
+  }
+  return RNSMenuItemTypeAutomatic;
 }
 
 @end

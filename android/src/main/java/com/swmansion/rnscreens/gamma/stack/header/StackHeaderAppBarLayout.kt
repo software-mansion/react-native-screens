@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
@@ -41,6 +42,9 @@ internal sealed class StackHeaderAppBarLayout(
                 elevation = 0f
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
+
+        // We need to manually manage the title to handle leading subview's positioning.
+        internal var managedTitleView: AppCompatTextView? = null
 
         init {
             addView(toolbar)

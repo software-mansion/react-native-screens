@@ -1,9 +1,10 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Basic functionality',
-  key: 'test-form-sheet-base-ios',
-  details: 'Allows to test the basic functionality of FormSheet component.',
+  name: 'Stacking FormSheets',
+  key: 'test-form-sheet-stacking-ios',
+  details:
+    'Allows testing of stacking multiple FormSheet components with different detents.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

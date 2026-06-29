@@ -1,5 +1,5 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TestFormSheetBase from './test-form-sheet-base-ios';
+import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents-ios';
@@ -12,6 +12,7 @@ import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed-io
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius-ios';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state-ios';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
+import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
 const scenarios = {
   TestFormSheetBase,
@@ -27,6 +28,7 @@ const scenarios = {
   TestFormSheetPreferredCornerRadius,
   TestFormSheetPresentationState,
   TestFormSheetPreventNativeDismiss,
+  TestFormSheetStacking,
 };
 
 const FormSheetScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

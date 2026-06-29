@@ -1,8 +1,10 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSLog.h"
+#import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderData.h"
+#import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
@@ -28,7 +30,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
             RNSStackHeaderItemSpacerComponentView.class);
 }
 
-@interface RNSStackHeaderConfigComponentView () <RNSStackHeaderItemInvalidationDelegate>
+@interface RNSStackHeaderConfigComponentView () <RNSStackHeaderItemInvalidationDelegate, RNSStackHeaderEventsDelegate>
 @end
 
 @implementation RNSStackHeaderConfigComponentView {
@@ -43,6 +45,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -52,6 +55,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _props = defaultProps;
     _children = [NSMutableArray new];
     _shadowStateProxy = [[RNSStackHeaderConfigShadowStateProxy alloc] initWithHeaderConfigView:self];
+    _reactEventEmitter = [RNSStackHeaderConfigEventEmitter new];
     [self resetProps];
   }
   return self;
@@ -111,11 +115,38 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [self submitCurrentDataIfMounted];
 }
 
-#pragma mark RNSStackHeaderItemInvalidationDelegate
+#pragma mark - RNSStackHeaderItemInvalidationDelegate
 
 - (void)headerItemDidInvalidate
 {
   [self submitCurrentDataIfMounted];
+}
+
+#pragma mark - RNSStackHeaderEventsDelegate
+
+- (void)didPressMenuItem:(NSString *)menuItemId
+{
+  [_reactEventEmitter emitOnMenuItemPress:menuItemId];
+}
+
+- (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
+{
+  [_reactEventEmitter emitOnMenuSelectionChange:menuId selectedMenuItemIds:selectedIds];
+  // UIKit doesn't update UIAction.state after tap — rebuild menu so tracker state is reflected
+  [self submitCurrentDataIfMounted];
+}
+
+- (void)didPressHeaderItem:(NSString *)itemId
+{
+  for (UIView *child in _children) {
+    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
+      RNSStackHeaderItemComponentView *item = (RNSStackHeaderItemComponentView *)child;
+      if ([item.itemId isEqualToString:itemId]) {
+        [item emitOnPress];
+        return;
+      }
+    }
+  }
 }
 
 #pragma mark - RNSViewFrameChangeDelegate
@@ -193,6 +224,13 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   return NO;
 }
 
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSStackHeaderConfigIOSEventEmitter>(eventEmitter)];
+}
+
 #pragma mark - Private
 
 - (void)submitCurrentDataIfMounted
@@ -244,11 +282,13 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       switch (item.placement) {
         case RNSHeaderItemPlacementLeading:
           [leadingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
-                                                                   withFrameChangeDelegate:self]];
+                                                                   withFrameChangeDelegate:self
+                                                                  withHeaderEventsDelegate:self]];
           break;
         case RNSHeaderItemPlacementTrailing:
           [trailingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
-                                                                    withFrameChangeDelegate:self]];
+                                                                    withFrameChangeDelegate:self
+                                                                   withHeaderEventsDelegate:self]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.customView != nil) {

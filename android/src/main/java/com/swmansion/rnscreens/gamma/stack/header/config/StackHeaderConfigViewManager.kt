@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -13,13 +14,10 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemDefaults
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemShowAsAction
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuMapper
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
-open class StackHeaderConfigViewManager :
+internal open class StackHeaderConfigViewManager :
     ViewGroupManager<StackHeaderConfig>(),
     RNSStackHeaderConfigAndroidManagerInterface<StackHeaderConfig> {
     private val delegate: ViewManagerDelegate<StackHeaderConfig>
@@ -99,7 +97,12 @@ open class StackHeaderConfigViewManager :
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
-        view.notifyConfigChanged()
+        view.resolveToolbarMenuItemIconsIfNeeded()
+    }
+
+    override fun onDropViewInstance(view: StackHeaderConfig) {
+        view.tearDown()
+        super.onDropViewInstance(view)
     }
 
     override fun setType(
@@ -143,11 +146,25 @@ open class StackHeaderConfigViewManager :
         view.backButtonHidden = value
     }
 
-    override fun setBackButtonTintColor(
+    override fun setBackButtonTintColorNormal(
         view: StackHeaderConfig,
         value: Int?,
     ) {
-        view.backButtonTintColor = value
+        view.backButtonTintColorNormal = value
+    }
+
+    override fun setBackButtonTintColorPressed(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorPressed = value
+    }
+
+    override fun setBackButtonTintColorFocused(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorFocused = value
     }
 
     override fun setBackButtonDrawableIconResourceName(
@@ -199,26 +216,12 @@ open class StackHeaderConfigViewManager :
         view.scrollFlagSnap = value
     }
 
-    override fun setToolbarMenuItems(
+    override fun setToolbarMenu(
         view: StackHeaderConfig,
-        value: ReadableArray?,
+        value: Dynamic,
     ) {
-        view.toolbarMenuItems =
-            value?.let { array ->
-                (0 until array.size()).map { i ->
-                    val item = requireNotNull(array.getMap(i))
-                    StackHeaderToolbarMenuItemConfig(
-                        id = item.requireNotNullString("id"),
-                        title = item.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
-                        hidden = item.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
-                        showAsAction =
-                            item.readShowAsActionEnum(
-                                "showAsAction",
-                                StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
-                            ),
-                    )
-                }
-            } ?: emptyList()
+        view.toolbarMenu = StackHeaderToolbarMenuMapper.parseMenu(value)
+        view.toolbarMenuItemIconSourceMap = StackHeaderToolbarMenuMapper.collectIconSources(value)
     }
 
     override fun setToolbarMenuItemOptions(
@@ -229,94 +232,12 @@ open class StackHeaderConfigViewManager :
         val map = options.getMap(0) ?: return
         view.dispatchMenuItemUpdate(
             id,
-            StackHeaderToolbarMenuItemOptions(
-                title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
-                hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
-                showAsAction =
-                    map.readNullableShowAsActionEnumUpdate(
-                        "showAsAction",
-                        StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
-                    ),
-            ),
+            StackHeaderToolbarMenuMapper.parseMenuItemOptions(map),
+            StackHeaderToolbarMenuMapper.parseMenuItemIconSource(map),
         )
     }
-
-    override fun setDO_NOT_USE(
-        view: StackHeaderConfig,
-        value: ReadableMap?,
-    ) = Unit
 
     companion object {
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }
 }
-
-private fun ReadableMap.requireNotNullString(key: String): String =
-    requireNotNull(this.getString(key)) {
-        "[RNScreens] toolbarMenuItem $key property must not be null."
-    }
-
-// Helpers for regular props (null/not defined -> default)
-private fun ReadableMap.readString(
-    key: String,
-    default: String,
-): String = if (!this.hasKey(key) || this.isNull(key)) default else this.getString(key) ?: default
-
-private fun ReadableMap.readBoolean(
-    key: String,
-    default: Boolean,
-): Boolean = if (!this.hasKey(key) || this.isNull(key)) default else this.getBoolean(key)
-
-private fun ReadableMap.readShowAsActionEnum(
-    key: String,
-    default: StackHeaderToolbarMenuItemShowAsAction,
-): StackHeaderToolbarMenuItemShowAsAction {
-    val stringValue = this.getString(key) ?: return default
-    return toMenuItemShowAsActionEnum(stringValue)
-}
-
-// Helpers for view commands:
-// - not defined -> null (means "no update")
-// - null -> default (means "reset to default value")
-private fun ReadableMap.readNullableStringUpdate(
-    key: String,
-    default: String,
-): String? =
-    when {
-        !this.hasKey(key) -> null
-        this.isNull(key) -> default
-        else -> this.getString(key) ?: default
-    }
-
-private fun ReadableMap.readNullableBooleanUpdate(
-    key: String,
-    default: Boolean,
-): Boolean? =
-    when {
-        !this.hasKey(key) -> null
-        this.isNull(key) -> default
-        else -> this.getBoolean(key)
-    }
-
-private fun ReadableMap.readNullableShowAsActionEnumUpdate(
-    key: String,
-    default: StackHeaderToolbarMenuItemShowAsAction,
-): StackHeaderToolbarMenuItemShowAsAction? =
-    when {
-        !this.hasKey(key) -> null
-        this.isNull(key) -> default
-        else ->
-            this.getString(key)?.let {
-                toMenuItemShowAsActionEnum(it)
-            } ?: default
-    }
-
-private fun toMenuItemShowAsActionEnum(value: String): StackHeaderToolbarMenuItemShowAsAction =
-    when (value) {
-        "always" -> StackHeaderToolbarMenuItemShowAsAction.ALWAYS
-        "alwaysWithText" -> StackHeaderToolbarMenuItemShowAsAction.ALWAYS_WITH_TEXT
-        "ifRoom" -> StackHeaderToolbarMenuItemShowAsAction.IF_ROOM
-        "ifRoomWithText" -> StackHeaderToolbarMenuItemShowAsAction.IF_ROOM_WITH_TEXT
-        "never" -> StackHeaderToolbarMenuItemShowAsAction.NEVER
-        else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid value for StackHeaderToolbarMenuItemShowAsAction: $value.")
-    }

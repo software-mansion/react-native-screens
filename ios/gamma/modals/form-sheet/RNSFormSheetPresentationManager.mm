@@ -74,7 +74,8 @@
     return;
   }
 
-  if (controller.presentingViewController == nil) {
+  UIViewController *presentingViewController = controller.presentingViewController;
+  if (presentingViewController == nil) {
     _state = RNSFormSheetPresentationStateDismissed;
     return;
   }
@@ -82,23 +83,29 @@
   _state = RNSFormSheetPresentationStateDismissing;
 
   __weak auto weakSelf = self;
-  [controller dismissViewControllerAnimated:YES
-                                 completion:^{
-                                   auto strongSelf = weakSelf;
-                                   if (!strongSelf) {
-                                     return;
-                                   }
+  [presentingViewController dismissViewControllerAnimated:YES
+                                               completion:^{
+                                                 auto strongSelf = weakSelf;
+                                                 if (!strongSelf) {
+                                                   return;
+                                                 }
 
-                                   strongSelf->_state = RNSFormSheetPresentationStateDismissed;
-                                   [strongSelf updatePresentationIfNeededWithProvider:provider controller:controller];
+                                                 strongSelf->_state = RNSFormSheetPresentationStateDismissed;
+                                                 [strongSelf updatePresentationIfNeededWithProvider:provider
+                                                                                         controller:controller];
 
-                                   [controller.delegate sheetControllerDidDismiss:controller];
-                                 }];
+                                                 [controller.delegate sheetControllerDidDismiss:controller];
+                                               }];
 }
 
-- (void)handleNativeDismiss
+- (BOOL)handleNativeDismiss
 {
+  if (_state == RNSFormSheetPresentationStateDismissing || _state == RNSFormSheetPresentationStateDismissed) {
+    return NO;
+  }
+
   _state = RNSFormSheetPresentationStateDismissed;
+  return YES;
 }
 
 @end
