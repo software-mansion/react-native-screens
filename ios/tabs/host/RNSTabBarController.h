@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainer.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
@@ -50,7 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Members under `#pragma mark - Internal API` are host-only (`RNSTabsHostComponentView`)
  * implementation detail and may change without notice. Do not call from third-party code.
  */
-@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving
+@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving,
+                                                     RNSContainer
 #if !TARGET_OS_TV
                                                      ,
                                                      RNSOrientationProviding
@@ -167,6 +169,18 @@ NS_ASSUME_NONNULL_BEGIN
  * Called by the host on view lifecycle end.
  */
 - (void)tearDown;
+
+/**
+ * Register this container with the nearest parent `RNSContainerItem` in the view-controller
+ * hierarchy (if any). Call when the owning host view is attached to a window.
+ */
+- (void)attachToParentContainerItem;
+
+/**
+ * Unregister this container from its parent `RNSContainerItem`. Call when the owning host view is
+ * detached from its window.
+ */
+- (void)detachFromParentContainerItem;
 
 #pragma mark Individual flush methods (internal)
 

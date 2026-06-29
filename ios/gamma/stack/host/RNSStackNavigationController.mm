@@ -1,5 +1,7 @@
 #import "RNSStackNavigationController.h"
+#import "RNSContainer.h"
 #import "RNSLog.h"
+#import "RNSParentContainerItemRegistry.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
@@ -8,6 +10,7 @@
 @implementation RNSStackNavigationController {
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
+  RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
 }
 
 - (instancetype)init
@@ -24,6 +27,50 @@
 {
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
+  _parentContainerRegistry = [RNSParentContainerItemRegistry new];
+  [self removeFromParentViewController];
+}
+
+#pragma mark - Overrides
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+}
+
+#pragma mark-- Layout
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
+}
+
+#pragma mark - RNSContainer
+
+- (nullable UIScrollView *)resolveCurrentContentScrollView
+{
+  // We assume `topViewController` corresponds to the currently presented screen.
+  UIViewController *topController = self.topViewController;
+  if (![topController isKindOfClass:RNSStackScreenController.class]) {
+    return nil;
+  }
+  return [static_cast<RNSStackScreenController *>(topController) findContentScrollView];
+}
+
+- (void)attachToParentContainerItem
+{
+  [_parentContainerRegistry attachContainer:self];
+}
+
+- (void)detachFromParentContainerItem
+{
+  [_parentContainerRegistry detachContainer:self];
 }
 
 - (BOOL)hasPendingOperations
@@ -73,14 +120,6 @@
 
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];
-}
-
-#pragma mark - Layout
-
-- (void)viewDidLayoutSubviews
-{
-  [super viewDidLayoutSubviews];
-  [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
 }
 
 #pragma mark - Debug

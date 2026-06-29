@@ -47,13 +47,19 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
-  if (self.window != nil && _stackNavigationController.parentViewController == nil) {
-    BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
-                                          toViewControllerManaging:self.reactSuperview
-                                                 withContainerView:self];
-    if (mountResult) {
-      [self setupViewConstraintsForController:_stackNavigationController];
+  if (self.window != nil) {
+    if (_stackNavigationController.parentViewController == nil) {
+      BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
+                                            toViewControllerManaging:self.reactSuperview
+                                                   withContainerView:self];
+      if (mountResult) {
+        [self setupViewConstraintsForController:_stackNavigationController];
+      }
     }
+    
+    [_stackNavigationController attachToParentContainerItem];
+  } else {
+    [_stackNavigationController detachFromParentContainerItem];
   }
 }
 
