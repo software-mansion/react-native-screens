@@ -12,7 +12,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -32,34 +32,34 @@ export function ConfigScreen() {
   return (
     <View style={[styles.container, styles.content]}>
       <View style={styles.section}>
-        <Text style={styles.heading}>Safe Area – Bottom Edge</Text>
         <SettingsSwitch
           label={'safeAreaViewBottomEdgeEnabled'}
           value={safeAreaViewBottomEdgeEnabled}
           onValueChange={function (value: boolean): void {
             setSafeAreaViewBottomEdgeEnabled(value);
           }}
+          testID="safe-area-bottom-edge-switch"
         />
       </View>
       <View style={styles.section}>
-        <Text style={styles.heading}>tabBarRespectsIMEInsets</Text>
         <SettingsSwitch
           label={'tabBarRespectsIMEInsets'}
           value={hostConfig.android?.tabBarRespectsIMEInsets ?? false}
           onValueChange={function (value: boolean): void {
             updateHostConfig({ android: { tabBarRespectsIMEInsets: value } });
           }}
+          testID="tab-bar-respects-ime-insets-switch"
         />
       </View>
       <View style={styles.section}>
-        <Text style={styles.heading}>TextInput</Text>
         <TextInput
           placeholder="Focus TextInput to show IME..."
           style={styles.textInput}
+          testID="ime-insets-text-input"
         />
       </View>
       <View style={styles.end}>
-        <Text>TabsScreen bottom</Text>
+        <Text testID="tabs-screen-bottom-text">TabsScreen bottom</Text>
       </View>
     </View>
   );
@@ -72,6 +72,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
+      tabBarItemTestID: 'ime-insets-config-tab-item',
       safeAreaConfiguration: {
         edges: {
           bottom: true,
@@ -85,11 +86,12 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
+      tabBarItemTestID: 'ime-insets-tab2-tab-item',
     },
   },
 ];
 
-export function App() {
+function TestTabsIMEInsets() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -99,12 +101,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingTop: Platform.OS === 'android' ? 60 : undefined,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    paddingTop: 70,
   },
   section: {
     marginBottom: 10,
@@ -123,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsIMEInsets, scenarioDescription);

@@ -10,13 +10,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 
 const ITEM_COUNT = 30;
 
-export function ScrollContent({
-  label,
-  testID,
-}: {
-  label: string;
-  testID: string;
-}) {
+function ScrollContent({ label, testID }: { label: string; testID: string }) {
   return (
     <ScrollView style={styles.scrollView} testID={`${testID}-scrollview`}>
       <View style={styles.header}>
@@ -33,15 +27,15 @@ export function ScrollContent({
   );
 }
 
-export function FalseTab() {
+function FalseTab() {
   return <ScrollContent label="false" testID="override-inset-false" />;
 }
 
-export function TrueTab() {
+function TrueTab() {
   return <ScrollContent label="true" testID="override-inset-true" />;
 }
 
-export function DefaultTab() {
+function DefaultTab() {
   return (
     <ScrollContent
       label="(not set, defaults to true)"
@@ -50,7 +44,7 @@ export function DefaultTab() {
   );
 }
 
-export function App() {
+function TestTabsOverrideScrollViewContentInset() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
@@ -120,4 +114,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsOverrideScrollViewContentInset,
+  scenarioDescription,
+);

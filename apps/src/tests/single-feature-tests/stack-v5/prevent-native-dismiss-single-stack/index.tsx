@@ -11,7 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+function TestStackPreventNativeDismissSingleStack() {
   return (
     <ToastProvider>
       <StackSetup />
@@ -19,7 +19,7 @@ export function App() {
   );
 }
 
-export function StackSetup() {
+function StackSetup() {
   const toast = useToast();
 
   return (
@@ -61,7 +61,7 @@ export function StackSetup() {
   );
 }
 
-export function HomeScreen() {
+function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
@@ -70,7 +70,7 @@ export function HomeScreen() {
   );
 }
 
-export function AScreen() {
+function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
@@ -80,7 +80,7 @@ export function AScreen() {
   );
 }
 
-export function BScreen() {
+function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
@@ -91,7 +91,7 @@ export function BScreen() {
   );
 }
 
-export function RouteInformation(props: { routeName: string }) {
+function RouteInformation(props: { routeName: string }) {
   const routeKey = useStackNavigationContext().routeKey;
 
   return (
@@ -102,7 +102,7 @@ export function RouteInformation(props: { routeName: string }) {
   );
 }
 
-export function TogglePreventNativeDismiss() {
+function TogglePreventNativeDismiss() {
   const navigation = useStackNavigationContext();
 
   return (
@@ -117,7 +117,7 @@ export function TogglePreventNativeDismiss() {
   );
 }
 
-export function PreventNativeDismissInfo() {
+function PreventNativeDismissInfo() {
   const navContext = useStackNavigationContext();
 
   return (
@@ -138,4 +138,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestStackPreventNativeDismissSingleStack,
+  scenarioDescription,
+);

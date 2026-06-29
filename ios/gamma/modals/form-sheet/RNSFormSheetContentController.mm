@@ -90,6 +90,17 @@
   [super viewDidDisappear:animated];
   [self detachBackdropTapGestureRecognizer];
 
+  // This covers the case when a sheet deeper in the stack is dismissed, UIKit tears down
+  // every sheet above it without calling `presentationControllerDidDismiss:` on them.
+  // Additionally, `viewDidDisappear:` can be triggered when this controller is temporarily
+  // covered by another full-screen modal presented from it, not only when it is dismissed.
+  // We need to gate this path to only run for actual dismissals when the controller no
+  // longer has a presentingViewController.
+  BOOL isStillInPresentationHierarchy = self.presentingViewController != nil;
+  if (!isStillInPresentationHierarchy && [_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
+
   [self.delegate sheetControllerDidDisappear:self];
 }
 
@@ -207,9 +218,9 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  [_presentationManager handleNativeDismiss];
-
-  [self.delegate sheetControllerDidNativeDismiss:self];
+  if ([_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
 }
 
 #if !TARGET_OS_TV

@@ -5,7 +5,12 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import {
+  Image,
+  type NativeSyntheticEvent,
+  processColor,
+  StyleSheet,
+} from 'react-native';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
@@ -15,14 +20,21 @@ import StackHeaderConfigAndroidNativeComponent, {
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  StackHeaderToolbarMenuBaseAndroid as NativeToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemPressEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
+import { parseAndroidIconToNativeProps } from '../../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -48,9 +60,22 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
+    toolbarMenu,
     ...filteredAndroidProps
   } = android ?? {};
 
+  const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
+  const handleToolbarMenuItemPress = (
+    event: NativeSyntheticEvent<StackHeaderToolbarMenuItemPressEventAndroid>,
+  ) => {
+    const element = findToolbarMenuElementById(
+      toolbarMenu?.children,
+      event.nativeEvent.id,
+    );
+    if (element?.type === 'menuItem') {
+      element.onPress?.();
+    }
+  };
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -65,6 +90,8 @@ function StackHeaderConfig(
       ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
+      toolbarMenu={parsedToolbarMenu}
+      onToolbarMenuItemPress={handleToolbarMenuItemPress}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -210,12 +237,119 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
-// Doesn't support nested props.
+function findToolbarMenuElementById(
+  elements: StackHeaderToolbarMenuElementAndroid[] | undefined,
+  id: string,
+): StackHeaderToolbarMenuElementAndroid | null {
+  if (!elements) {
+    return null;
+  }
+  for (const element of elements) {
+    if (element.id === id) {
+      return element;
+    }
+    if (element.type === 'menu') {
+      const found = findToolbarMenuElementById(element.children, id);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
+function parseToolbarMenuToNativeProps(
+  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
+): NativeToolbarMenuBaseAndroid | undefined {
+  if (!menu?.children?.length) {
+    return undefined;
+  }
+  return {
+    children: menu.children.map(parseElementToNativeProps),
+  };
+}
+
+function parseElementToNativeProps(
+  element: StackHeaderToolbarMenuElementAndroid,
+): NativeToolbarMenuElementAndroid {
+  if (element.type === 'menu') {
+    const { type, children, ...baseProps } = element;
+    return {
+      type,
+      ...parseBaseItemToNativeProps(baseProps),
+      children: children?.map(parseElementToNativeProps),
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { type, onPress, ...baseProps } = element;
+  return {
+    type,
+    ...parseBaseItemToNativeProps(baseProps),
+  };
+}
+
+function parseBaseItemToNativeProps({
+  icon,
+  iconTintColorNormal,
+  iconTintColorPressed,
+  iconTintColorFocused,
+  iconTintColorDisabled,
+  ...rest
+}: StackHeaderToolbarMenuItemBaseAndroid) {
+  return {
+    ...rest,
+    ...parseAndroidIconToNativeProps(icon),
+    iconTintColorNormal: processColor(iconTintColorNormal),
+    iconTintColorPressed: processColor(iconTintColorPressed),
+    iconTintColorFocused: processColor(iconTintColorFocused),
+    iconTintColorDisabled: processColor(iconTintColorDisabled),
+  };
+}
+
 function parseToolbarMenuItemOptionsToNativeProps(
   options: StackHeaderToolbarMenuItemOptionsAndroid,
 ): NativeToolbarMenuItemOptionsAndroid[] {
   const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
-    Object.entries(options).map(([key, value]) => {
+    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+      const typedKey = key as keyof StackHeaderToolbarMenuItemOptionsAndroid;
+
+      switch (typedKey) {
+        case 'iconTintColorNormal':
+        case 'iconTintColorPressed':
+        case 'iconTintColorFocused':
+        case 'iconTintColorDisabled':
+          return [
+            [
+              key,
+              processColor(
+                value as StackHeaderToolbarMenuItemOptionsAndroid[typeof typedKey],
+              ) ?? null,
+            ],
+          ];
+
+        case 'icon': {
+          const iconValue =
+            value as StackHeaderToolbarMenuItemOptionsAndroid['icon'];
+
+          // Explicit `undefined` means "reset the icon". The native side treats
+          // an absent key as "no change", so to clear the icon we must send every
+          // native icon key explicitly as `null`.
+          if (iconValue === undefined) {
+            const noIcon: Pick<
+              NativeToolbarMenuItemOptionsAndroid,
+              'imageIconResource' | 'drawableIconResourceName'
+            > = {
+              imageIconResource: null,
+              drawableIconResourceName: null,
+            };
+            return Object.entries(noIcon);
+          }
+
+          return Object.entries(parseAndroidIconToNativeProps(iconValue));
+        }
+      }
+
       if (
         typeof value === 'object' &&
         value !== null &&
@@ -225,10 +359,12 @@ function parseToolbarMenuItemOptionsToNativeProps(
       }
 
       return [
-        key,
-        // We need to replace explicit `undefined` with `null`
-        // so that we're able to read that information on the native side.
-        value === undefined ? null : value,
+        [
+          key,
+          // We need to replace explicit `undefined` with `null`
+          // so that we're able to read that information on the native side.
+          value === undefined ? null : value,
+        ],
       ];
     }),
   );

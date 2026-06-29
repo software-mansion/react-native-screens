@@ -16,12 +16,19 @@ function ColorTab() {
         <>
           <Text style={styles.label}>Tint Override</Text>
           <Text style={styles.hint}>
-            Host `tabBarTintColor`:{" "}
-            <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
-            This tab&apos;s `tabBarItemTitleFontColor`:{" "}
-            <Text style={{ color: Colors.RedLight100 }}>RedLight100</Text>{'\n'}
+            Host `tabBarTintColor`:{' '}
+            <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
             {'\n'}
-            When selected: title text should appear <Text style={{ color: Colors.RedLight100 }}>RED</Text>{'\n'} and icon should appear <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>. For iOS 18 and lower, the title color for unselected tabs is <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>
+            This tab&apos;s `tabBarItemTitleFontColor`:{' '}
+            <Text style={{ color: Colors.RedLight100 }}>RedLight100</Text>
+            {'\n'}
+            {'\n'}
+            When selected: title text should appear{' '}
+            <Text style={{ color: Colors.RedLight100 }}>RED</Text>
+            {'\n'} and icon should appear{' '}
+            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>. For iOS
+            18 and lower, the title color for unselected tabs is{' '}
+            <Text style={{ color: Colors.BlueDark100 }}>BLUE</Text>
           </Text>
         </>
       ) : (
@@ -58,8 +65,9 @@ function FontTab() {
         <>
           <Text style={styles.label}>Font and Position</Text>
           <Text style={styles.hint}>
-            Host `tabBarTintColor`:{" "}
-            <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>{'\n'}
+            Host `tabBarTintColor`:{' '}
+            <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
+            {'\n'}
             `tabBarItemTitleFontFamily`: &quot;Georgia&quot;{'\n'}
             `tabBarItemTitleFontSize`: &quot;18&quot;{'\n'}
             `tabBarItemTitleFontStyle`: &quot;italic&quot;{'\n'}
@@ -68,8 +76,13 @@ function FontTab() {
             vertical: -6, horizontal: 0{'\n'}
             {'\n'}
             {'\n'}
-            When selected: title text should be visibly shifted upward relative to a
-            default-positioned label in <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>{'\n'} <Text style={{ fontWeight:'700' }}>bold</Text> <Text style={{ fontStyle:'italic' }}>italic</Text> <Text style={{ fontFamily:'Georgia' }}>Georgia</Text> at <Text style={{ fontSize:18 }}>18 pt</Text>.
+            When selected: title text should be visibly shifted upward relative
+            to a default-positioned label in{' '}
+            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>
+            {'\n'} <Text style={{ fontWeight: '700' }}>bold</Text>{' '}
+            <Text style={{ fontStyle: 'italic' }}>italic</Text>{' '}
+            <Text style={{ fontFamily: 'Georgia' }}>Georgia</Text> at{' '}
+            <Text style={{ fontSize: 18 }}>18 pt</Text>.
           </Text>
         </>
       ) : (
@@ -83,9 +96,15 @@ function FontTab() {
             `tabBarItemTitleFontWeight`: &quot;700&quot;{'\n'}
             {'\n'}
             {'\n'}
-            Title should render in <Text style={{ fontWeight:'700' }}>bold</Text> <Text style={{ fontStyle:'italic' }}>italic</Text> <Text style={{ fontFamily:'monospace' }}>monospace</Text>. Unselected tabs use the <Text style={{ fontStyle:'italic' }}>italic </Text> 
-            <Text style={{ fontSize:8 }}>small label size (8sp)</Text>; the selected tab scales up to the <Text style={{ fontSize:18 }}>large label
-            size (18sp)</Text>.
+            Title should render in{' '}
+            <Text style={{ fontWeight: '700' }}>bold</Text>{' '}
+            <Text style={{ fontStyle: 'italic' }}>italic</Text>{' '}
+            <Text style={{ fontFamily: 'monospace' }}>monospace</Text>.
+            Unselected tabs use the{' '}
+            <Text style={{ fontStyle: 'italic' }}>italic </Text>
+            <Text style={{ fontSize: 8 }}>small label size (8sp)</Text>; the
+            selected tab scales up to the{' '}
+            <Text style={{ fontSize: 18 }}>large label size (18sp)</Text>.
           </Text>
         </>
       )}
@@ -101,8 +120,8 @@ function LongTitleTab() {
         Tab title: &quot;A Very Long Tab Title That Should Truncate&quot;{'\n'}
         {'\n'}
         Demonstrates that `options.title` with an overly wide string is
-        truncated by the system tab bar with an ellipsis rather than wrapping
-        or overflowing.
+        truncated by the system tab bar with an ellipsis rather than wrapping or
+        overflowing.
       </Text>
     </View>
   );
@@ -192,7 +211,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsItemTitle() {
   return (
     <TabsContainerWithHostConfigContext
       routeConfigs={ROUTE_CONFIGS}
@@ -226,4 +245,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsItemTitle, scenarioDescription);

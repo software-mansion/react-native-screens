@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
@@ -18,16 +20,10 @@ import kotlin.properties.Delegates
 class TabsScreen(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
-    FragmentProviding {
-    override fun onLayout(
-        changed: Boolean,
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) = Unit
-
+    FragmentProviding,
+    ScrollViewSeeking {
     private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
+    private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
@@ -48,7 +44,7 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Appearance
+    // region Appearance
 
     internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -56,12 +52,17 @@ class TabsScreen(
         }
     }
 
-    // Badge
+    // endregion
+
+    // region Badge
+
     var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Accessibility
+    // endregion
+
+    // region Accessibility
     var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
@@ -70,7 +71,9 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    // Icon
+    // endregion
+
+    // region Icon
     var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             icon = getSystemDrawableResource(reactContext, newValue)
@@ -91,6 +94,8 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    // endregion
+
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
@@ -109,6 +114,14 @@ class TabsScreen(
         RNSLog.d(TAG, "TabsScreen [$id] attached to window")
         super.onAttachedToWindow()
     }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) = Unit
 
     internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
         tabsScreenDelegate = WeakReference(delegate)
@@ -138,6 +151,18 @@ class TabsScreen(
     ) {
         tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
+
+    // region ScrollViewSeeking
+    override fun registerScrollView(
+        marker: ScrollViewMarker,
+        scrollView: ViewGroup,
+    ) {
+        contentScrollView = WeakReference(scrollView)
+    }
+
+    internal fun contentScrollView(): ViewGroup? = contentScrollView.get()
+
+    // endregion
 
     companion object {
         const val TAG = "TabsScreen"

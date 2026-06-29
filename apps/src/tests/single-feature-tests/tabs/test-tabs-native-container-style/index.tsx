@@ -93,7 +93,8 @@ function TabScreen() {
     <View style={styles.centeredContent}>
       <Text style={styles.contentLabel}>Transparent Tab</Text>
       <Text style={styles.contentHint}>
-        Observe the container background color behind the tab content and within the tab bar area.
+        Observe the container background color behind the tab content and within
+        the tab bar area.
       </Text>
     </View>
   );
@@ -141,7 +142,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsNativeContainerStyle() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -193,4 +194,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsNativeContainerStyle,
+  scenarioDescription,
+);

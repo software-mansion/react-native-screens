@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
 
 export type StackHeaderItemPlacement =
   | 'leading'
@@ -9,6 +10,9 @@ export type StackHeaderItemPlacement =
 
 export type StackHeaderItemProps = {
   placement: StackHeaderItemPlacement;
-  label?: string | undefined;
+  itemId?: string | undefined;
+  title?: string | undefined;
   render?: (() => ReactElement) | undefined;
+  menu?: StackHeaderMenuIOS | undefined;
+  onPress?: (() => void) | undefined;
 };

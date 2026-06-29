@@ -1,13 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
-import android.view.Choreographer
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
-import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
@@ -28,9 +27,14 @@ class TabsHost(
     val reactContext: ThemedReactContext,
 ) : FrameLayout(reactContext),
     TabsNavigationStateObserver,
+    ViewTreeObserver.OnPreDrawListener,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
+    private val layoutCoordinator: TabsHostLayoutCoordinator =
+        TabsHostLayoutCoordinator(this, ::forceSubtreeMeasureAndLayoutPass)
+
+    private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
         TabsContainer(reactContext).apply {
@@ -44,8 +48,6 @@ class TabsHost(
     internal var rejectStaleNavigationStateUpdates: Boolean by container::rejectStaleNavigationStateUpdates
 
     internal lateinit var eventEmitter: TabsHostEventEmitter
-
-    private var isLayoutEnqueued: Boolean = false
 
     var tabBarHidden: Boolean by container::tabBarHidden
 
@@ -70,10 +72,13 @@ class TabsHost(
 
     override fun onAttachedToWindow() {
         RNSLog.i(TAG, "TabsHost [$id] attached to window")
+        viewTreeObserver.addOnPreDrawListener(this)
         super.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
+        viewTreeObserver.removeOnPreDrawListener(this)
+        hasFirstLayoutWithInsets = false
         super.onDetachedFromWindow()
     }
 
@@ -118,25 +123,37 @@ class TabsHost(
         container.setPendingNavigationStateUpdate(navStateRequest.copy())
     }
 
-    private val layoutCallback =
-        Choreographer.FrameCallback {
-            isLayoutEnqueued = false
-            forceSubtreeMeasureAndLayoutPass()
-        }
-
+    /*
+     * Forces a measure/layout pass across this subtree, ensuring the layout reaches native views embedded deep
+     * within the React hierarchy (React views blocks layout because they have empty overrides for native layout logic).
+     *
+     * Scheduling is hybrid: `Handler.post` until the view tree is first laid out with insets applied (see
+     * [onPreDraw]), then `ReactChoreographer` afterwards. This is required to avoid an inset jump on the initial
+     * mount while preserving the Material BottomNavigationView tab-switch (ChangeBounds) animation. Rationale and
+     * the full TransitionManager interaction are documented in the PR:
+     * https://github.com/software-mansion/react-native-screens/pull/4161
+     */
     private fun refreshLayout() {
-        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
-        if (!isLayoutEnqueued && layoutCallback != null) {
-            isLayoutEnqueued = true
-            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-            ReactChoreographer
-                .getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback,
-                )
+        @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
+        if (layoutCoordinator != null) {
+            if (!hasFirstLayoutWithInsets) {
+                layoutCoordinator.postLayoutToMessageQueue()
+            } else {
+                layoutCoordinator.postLayoutToReactChoreographer()
+            }
         }
+    }
+
+    /**
+     * Marks that the view tree has been laid out with window insets already applied.
+     *
+     * `onPreDraw` is a reliable signal for this: within a single `ViewRootImpl.performTraversals()` insets are
+     * dispatched and layout runs before `dispatchOnPreDraw()`, so by the time this fires the frame's insets have
+     * been applied. See https://github.com/software-mansion/react-native-screens/pull/4161 for details.
+     */
+    override fun onPreDraw(): Boolean {
+        hasFirstLayoutWithInsets = true
+        return true
     }
 
     override fun requestLayout() {
