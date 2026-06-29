@@ -74,6 +74,10 @@ class FormSheetHost(
         super.onDetachedFromWindow()
     }
 
+    internal fun getReactSubviewCount(): Int = dialogManager.contentView.childCount
+
+    internal fun getReactSubviewAt(index: Int): View? = dialogManager.contentView.getChildAt(index)
+
     // The React children are teleported into the dialog window. This host occupies space in the
     // main window, but holds no content there. NONE makes the host subtree invisible to
     // hit-testing so touches reach the views behind it.
