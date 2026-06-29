@@ -109,13 +109,13 @@ function ScreenStackItem(
     stackPresentationWithDefault,
   );
 
-  // For iOS, we need to extract background color and apply it to Screen
-  // due to the safe area inset at the bottom of ScreenContentWrapper
+  // FormSheet backgrounds need to live on the outer Screen instead of the
+  // inner content wrapper so the native sheet surface can render correctly.
   let internalScreenStyle;
 
   if (
     stackPresentationWithDefault === 'formSheet' &&
-    Platform.OS === 'ios' &&
+    (Platform.OS === 'ios' || Platform.OS === 'android') &&
     contentStyle
   ) {
     const { screenStyles, contentWrapperStyles } =

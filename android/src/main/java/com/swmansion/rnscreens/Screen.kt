@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.os.Parcelable
@@ -95,6 +96,7 @@ class Screen(
     var sheetElevation: Float = 24F
     var sheetShouldOverflowTopInset = false
     var sheetDefaultResizeAnimationEnabled = true
+    var sheetBackgroundColor: Int? = null
 
     /**
      * On Fabric, the view layout is completed before window insets are applied.
@@ -586,20 +588,30 @@ class Screen(
     }
 
     internal fun onSheetCornerRadiusChange() {
-        if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
+        if (stackPresentation !== StackPresentation.FORM_SHEET) {
             return
         }
-        (background as? MaterialShapeDrawable?)?.let {
-            val resolvedCornerRadius = max(PixelUtil.toDIPFromPixel(sheetCornerRadius), 0f)
-            it.shapeAppearanceModel =
-                ShapeAppearanceModel
-                    .Builder()
-                    .apply {
-                        setTopLeftCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
-                        setTopRightCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
-                    }.build()
-        }
+
+        val shapeDrawable = resolveSheetShapeDrawable() ?: return
+        val resolvedCornerRadius = max(PixelUtil.toDIPFromPixel(sheetCornerRadius), 0f)
+        shapeDrawable.shapeAppearanceModel =
+            ShapeAppearanceModel
+                .Builder()
+                .apply {
+                    setTopLeftCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                    setTopRightCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                }.build()
     }
+
+    internal fun applySheetBackgroundColor() {
+        if (stackPresentation !== StackPresentation.FORM_SHEET) {
+            return
+        }
+
+        resolveSheetShapeDrawable()?.setTint(sheetBackgroundColor ?: Color.TRANSPARENT)
+    }
+
+    private fun resolveSheetShapeDrawable(): MaterialShapeDrawable? = background as? MaterialShapeDrawable
 
     enum class StackPresentation {
         PUSH,
