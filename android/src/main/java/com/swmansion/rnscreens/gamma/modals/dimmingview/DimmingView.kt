@@ -18,12 +18,12 @@ import com.swmansion.rnscreens.ext.equalWithRespectToEps
 @SuppressLint("ViewConstructor") // Only we instantiate this view
 internal class DimmingView(
     context: Context,
-    initialAlpha: Float = 0.6F,
+    initialAlpha: Float,
     private val pointerEventsProxy: DimmingViewPointerEventsProxy,
 ) : ViewGroup(context),
     ReactCompoundViewGroup,
     ReactPointerEventsView by pointerEventsProxy {
-    constructor(context: Context, initialAlpha: Float = 0.6F) : this(
+    constructor(context: Context, initialAlpha: Float) : this(
         context,
         initialAlpha,
         DimmingViewPointerEventsProxy(null),
