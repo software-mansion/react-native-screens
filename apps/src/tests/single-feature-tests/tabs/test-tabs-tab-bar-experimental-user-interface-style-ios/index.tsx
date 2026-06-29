@@ -55,7 +55,10 @@ function TestTabsTabBarExperimentalUserInterfaceStyle() {
   );
 }
 
-export default createScenario(TestTabsTabBarExperimentalUserInterfaceStyle, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarExperimentalUserInterfaceStyle,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   container: {

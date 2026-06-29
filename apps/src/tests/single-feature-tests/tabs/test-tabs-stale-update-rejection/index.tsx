@@ -186,4 +186,7 @@ function blockThread(ms: number) {
   while (Date.now() < end) {}
 }
 
-export default createScenario(TestTabsStaleStateUpdateRejection, scenarioDescription);
+export default createScenario(
+  TestTabsStaleStateUpdateRejection,
+  scenarioDescription,
+);

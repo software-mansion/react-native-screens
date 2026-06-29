@@ -126,4 +126,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetPreventNativeDismiss, scenarioDescription);
+export default createScenario(
+  TestFormSheetPreventNativeDismiss,
+  scenarioDescription,
+);

@@ -10,13 +10,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 
 const ITEM_COUNT = 30;
 
-function ScrollContent({
-  label,
-  testID,
-}: {
-  label: string;
-  testID: string;
-}) {
+function ScrollContent({ label, testID }: { label: string; testID: string }) {
   return (
     <ScrollView style={styles.scrollView} testID={`${testID}-scrollview`}>
       <View style={styles.header}>
@@ -120,4 +114,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsOverrideScrollViewContentInset, scenarioDescription);
+export default createScenario(
+  TestTabsOverrideScrollViewContentInset,
+  scenarioDescription,
+);

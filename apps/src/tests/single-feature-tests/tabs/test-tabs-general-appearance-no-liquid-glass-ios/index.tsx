@@ -354,4 +354,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsGeneralAppearanceNoLiquidGlass, scenarioDescription);
+export default createScenario(
+  TestTabsGeneralAppearanceNoLiquidGlass,
+  scenarioDescription,
+);

@@ -120,4 +120,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsInStackStableEnterTransition, scenarioDescription);
+export default createScenario(
+  TestTabsInStackStableEnterTransition,
+  scenarioDescription,
+);

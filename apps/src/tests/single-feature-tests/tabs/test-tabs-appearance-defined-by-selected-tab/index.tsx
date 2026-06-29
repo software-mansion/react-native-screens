@@ -259,4 +259,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
   );
 }
 
-export default createScenario(TestTabsAppearanceDefinedBySelectedTab, scenarioDescription);
+export default createScenario(
+  TestTabsAppearanceDefinedBySelectedTab,
+  scenarioDescription,
+);

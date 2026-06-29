@@ -114,4 +114,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsTabBarControllerMode, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarControllerMode,
+  scenarioDescription,
+);

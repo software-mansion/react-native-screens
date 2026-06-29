@@ -135,4 +135,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetLifecycleEvents, scenarioDescription);
+export default createScenario(
+  TestFormSheetLifecycleEvents,
+  scenarioDescription,
+);

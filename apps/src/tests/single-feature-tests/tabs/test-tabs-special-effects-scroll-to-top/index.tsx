@@ -81,7 +81,10 @@ function TestTabsSpecialEffectsScrollToTop() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export default createScenario(TestTabsSpecialEffectsScrollToTop, scenarioDescription);
+export default createScenario(
+  TestTabsSpecialEffectsScrollToTop,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   config: {

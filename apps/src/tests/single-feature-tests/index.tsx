@@ -15,7 +15,6 @@ import FormSheetScenarioGroup from './form-sheet';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
-
 export * from './tabs';
 export * from './split';
 export * from './stack-v5';

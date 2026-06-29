@@ -248,4 +248,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackPreventNativeDismissNestedStack, scenarioDescription);
+export default createScenario(
+  TestStackPreventNativeDismissNestedStack,
+  scenarioDescription,
+);

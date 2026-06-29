@@ -157,4 +157,7 @@ function AppContents() {
   );
 }
 
-export default createScenario(TestTabsPreventNativeSelection, scenarioDescription);
+export default createScenario(
+  TestTabsPreventNativeSelection,
+  scenarioDescription,
+);

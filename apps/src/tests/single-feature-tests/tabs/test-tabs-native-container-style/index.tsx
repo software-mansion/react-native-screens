@@ -194,4 +194,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsNativeContainerStyle, scenarioDescription);
+export default createScenario(
+  TestTabsNativeContainerStyle,
+  scenarioDescription,
+);

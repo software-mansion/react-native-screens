@@ -126,4 +126,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetLargestUndimmedDetentIndex, scenarioDescription);
+export default createScenario(
+  TestFormSheetLargestUndimmedDetentIndex,
+  scenarioDescription,
+);

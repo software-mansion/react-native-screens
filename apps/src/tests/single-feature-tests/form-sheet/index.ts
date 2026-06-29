@@ -19,7 +19,7 @@ import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
-export { default as TestFormSheetBase } from './test-form-sheet-base-ios';
+export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events-ios';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents-ios';

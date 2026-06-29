@@ -286,4 +286,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackToolbarMenuShowAsAction, scenarioDescription);
+export default createScenario(
+  TestStackToolbarMenuShowAsAction,
+  scenarioDescription,
+);

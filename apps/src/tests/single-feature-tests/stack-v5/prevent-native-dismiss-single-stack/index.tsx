@@ -138,4 +138,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackPreventNativeDismissSingleStack, scenarioDescription);
+export default createScenario(
+  TestStackPreventNativeDismissSingleStack,
+  scenarioDescription,
+);

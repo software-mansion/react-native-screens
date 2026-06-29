@@ -180,4 +180,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsTabBarLayoutDirection, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarLayoutDirection,
+  scenarioDescription,
+);

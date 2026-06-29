@@ -190,4 +190,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetNativeContainerStyle, scenarioDescription);
+export default createScenario(
+  TestFormSheetNativeContainerStyle,
+  scenarioDescription,
+);

@@ -92,4 +92,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetPreferredCornerRadius, scenarioDescription);
+export default createScenario(
+  TestFormSheetPreferredCornerRadius,
+  scenarioDescription,
+);

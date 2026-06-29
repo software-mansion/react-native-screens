@@ -96,4 +96,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetWithNestedStackV5, scenarioDescription);
+export default createScenario(
+  TestFormSheetWithNestedStackV5,
+  scenarioDescription,
+);

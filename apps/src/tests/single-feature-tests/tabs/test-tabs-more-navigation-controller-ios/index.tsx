@@ -118,4 +118,7 @@ function AppContents() {
   );
 }
 
-export default createScenario(TestTabsMoreNavigationController, scenarioDescription);
+export default createScenario(
+  TestTabsMoreNavigationController,
+  scenarioDescription,
+);

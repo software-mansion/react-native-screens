@@ -42,4 +42,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestSplitTopColumnForCollapsing, scenarioDescription);
+export default createScenario(
+  TestSplitTopColumnForCollapsing,
+  scenarioDescription,
+);

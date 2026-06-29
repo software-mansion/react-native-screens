@@ -167,4 +167,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestFormSheetExpandScrollView, scenarioDescription);
+export default createScenario(
+  TestFormSheetExpandScrollView,
+  scenarioDescription,
+);
