@@ -13,7 +13,7 @@ class DimmingViewManager(
     private val dialog: BottomSheetDialog,
 ) {
     // TODO: @t0maboro - consider exposing as a prop
-    internal val maxAlpha: Float = 0.3f
+    internal val maxAlpha: Float = MAX_ALPHA
 
     internal var dimmingViewAlpha: Float
         get() = dimmingView.alpha
@@ -22,13 +22,12 @@ class DimmingViewManager(
         }
 
     private val dimmingView =
-        DimmingView(context, maxAlpha).apply {
+        DimmingView(context, initialAlpha = 0f).apply {
             layoutParams =
                 CoordinatorLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT,
                 )
-            alpha = 0f
         }
 
     internal fun setOnBackdropClickListener(listener: () -> Unit) {
@@ -77,5 +76,7 @@ class DimmingViewManager(
 
     companion object {
         const val TAG = "DimmingViewManager"
+
+        private const val MAX_ALPHA = 0.3f
     }
 }

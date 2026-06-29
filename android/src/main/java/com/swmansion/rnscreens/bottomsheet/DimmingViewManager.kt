@@ -17,7 +17,7 @@ class DimmingViewManager(
     screen: Screen,
 ) {
     internal val dimmingView: DimmingView = createDimmingView(screen)
-    internal val maxAlpha: Float = MAX_ALPHA
+    internal val maxAlpha: Float = 0.3f
     private var dimmingViewCallback: BottomSheetCallback? = null
 
     /**
@@ -176,9 +176,5 @@ class DimmingViewManager(
             dimmingViewCallback = AnimateDimmingViewCallback(screen, dimmingView, maxAlpha)
         }
         return dimmingViewCallback!!
-    }
-
-    companion object {
-        private const val MAX_ALPHA = 0.3f
     }
 }
