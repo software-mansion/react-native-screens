@@ -263,6 +263,13 @@ export interface StackHeaderToolbarMenuGroupAndroid {
   /**
    * @summary Unique identifier of the group.
    *
+   * @description
+   * Groups enable selection behavior (single-selection / radio, or
+   * multi-toggle). A group is scoped to the menu level it is defined
+   * in — groups cannot span submenus.
+   *
+   * Group identifier must be unique across the entire menu tree.
+   *
    * @platform android
    */
   groupId: string;

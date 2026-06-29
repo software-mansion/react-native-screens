@@ -112,7 +112,9 @@ type ComponentType = HostComponent<NativeProps>;
 
 export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
->;
+> & {
+  checked?: boolean | undefined;
+};
 
 export interface NativeCommands {
   setToolbarMenuItemOptions: (
