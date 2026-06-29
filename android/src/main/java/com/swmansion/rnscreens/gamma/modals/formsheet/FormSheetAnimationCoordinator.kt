@@ -14,8 +14,10 @@ internal class FormSheetAnimationCoordinator(
     // TODO: @t0maboro - consider exposing as a prop
     val animationDuration = 250L
 
+    private var currentAnimatorSet: AnimatorSet? = null
+
     internal fun runEnterAnimation(view: View) {
-        view.translationY = view.height.toFloat()
+        currentAnimatorSet?.cancel()
 
         val slideAnimator =
             ValueAnimator.ofFloat(view.translationY, 0f).apply {
@@ -25,17 +27,25 @@ internal class FormSheetAnimationCoordinator(
             }
 
         val alphaAnimator =
-            ValueAnimator.ofFloat(0f, dimmingManager.maxAlpha).apply {
+            ValueAnimator.ofFloat(dimmingManager.dimmingViewAlpha, dimmingManager.maxAlpha).apply {
                 addUpdateListener { animation ->
                     dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
                 }
             }
 
-        AnimatorSet().apply {
-            playTogether(slideAnimator, alphaAnimator)
-            duration = animationDuration
-            start()
-        }
+        currentAnimatorSet =
+            AnimatorSet().apply {
+                playTogether(slideAnimator, alphaAnimator)
+                duration = animationDuration
+                addListener(
+                    object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            if (currentAnimatorSet == this@apply) currentAnimatorSet = null
+                        }
+                    },
+                )
+                start()
+            }
     }
 
     internal fun runExitAnimation(
@@ -53,7 +63,7 @@ internal class FormSheetAnimationCoordinator(
             return
         }
 
-        view.animate().cancel()
+        currentAnimatorSet?.cancel()
 
         val slideAnimator =
             ValueAnimator.ofFloat(view.translationY, view.height.toFloat()).apply {
@@ -69,17 +79,19 @@ internal class FormSheetAnimationCoordinator(
                 }
             }
 
-        AnimatorSet().apply {
-            playTogether(slideAnimator, alphaAnimator)
-            duration = animationDuration
-            addListener(
-                object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        onAnimationEnd()
-                    }
-                },
-            )
-            start()
-        }
+        currentAnimatorSet =
+            AnimatorSet().apply {
+                playTogether(slideAnimator, alphaAnimator)
+                duration = animationDuration
+                addListener(
+                    object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            if (currentAnimatorSet == this@apply) currentAnimatorSet = null
+                            onAnimationEnd()
+                        }
+                    },
+                )
+                start()
+            }
     }
 }
