@@ -17,7 +17,7 @@ function ScenarioSelect(props: {
     <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        testID={`${props.groupName}-scenarios-scrollview`}>
+        testID={`${props.groupName.replace(/\s/g, '')}-scenarios-scrollview`}>
         {Object.values(props.scenarios).map(
           ({ scenarioDescription }: Scenario) => {
             const { name, key, details, platforms, smokeTest, e2eCoverage } =

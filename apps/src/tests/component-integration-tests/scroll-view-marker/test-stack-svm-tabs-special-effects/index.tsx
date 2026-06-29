@@ -28,6 +28,8 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
+      tabBarItemTestID: 'home-tab-item',
+      tabBarItemAccessibilityLabel: 'home-tab-item-label',
     },
   },
   {
@@ -36,6 +38,8 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Stack',
+      tabBarItemTestID: 'stack-tab-item',
+      tabBarItemAccessibilityLabel: 'stack-tab-item-label',
     },
   },
 ];
@@ -64,6 +68,7 @@ function TabContents() {
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: edgeEffectStyle }}>
         <ScrollView
+          testID={`home-scrollview`}
           contentInsetAdjustmentBehavior="automatic"
           style={styles.fillParent}>
           <ScrollViewContents />
@@ -81,6 +86,7 @@ function StackContents() {
         style={styles.fillParent}
         scrollEdgeEffects={{ top: 'hidden', bottom: 'hard' }}>
         <ScrollView
+          testID={`stack-scrollview`}
           contentInsetAdjustmentBehavior="automatic"
           style={styles.fillParent}>
           <ScrollViewContents />
@@ -106,6 +112,7 @@ function ScrollViewContents(props: { elementCount?: number }) {
         return (
           <View key={index.toString()} style={[{ width: '100%' }]}>
             <Rectangle
+              testID={`${useTabsNavigationContext().routeKey}-item-${index + 1}`}
               key={index.toString()}
               color={Colors.RedDark100}
               width={'100%'}
