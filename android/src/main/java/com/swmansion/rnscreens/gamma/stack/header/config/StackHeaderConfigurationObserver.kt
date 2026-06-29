@@ -2,10 +2,10 @@ package com.swmansion.rnscreens.gamma.stack.header.config
 
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 
-interface StackHeaderConfigDelegate {
-    fun onConfigChange(config: StackHeaderConfigProviding)
+internal interface StackHeaderConfigurationObserver {
+    fun onConfigChanged(config: StackHeaderConfigurationProviding)
 
-    fun onMenuItemUpdate(
+    fun onMenuItemUpdated(
         id: String,
         options: StackHeaderToolbarMenuItemOptions,
     )

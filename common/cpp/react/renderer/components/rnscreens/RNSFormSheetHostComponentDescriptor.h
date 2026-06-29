@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(ANDROID)
-
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSFormSheetHostShadowNode.h"
@@ -39,5 +37,3 @@ class RNSFormSheetHostComponentDescriptor final
 };
 
 } // namespace facebook::react
-
-#endif // !defined(ANDROID)

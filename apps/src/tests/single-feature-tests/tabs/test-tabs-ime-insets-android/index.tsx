@@ -12,7 +12,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const { routeKey, routeOptions, setRouteOptions } =
     useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -91,7 +91,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsIMEInsets() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -120,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsIMEInsets, scenarioDescription);

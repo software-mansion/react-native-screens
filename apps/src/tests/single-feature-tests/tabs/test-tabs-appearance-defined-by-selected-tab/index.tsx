@@ -115,7 +115,7 @@ function TabsRouteInformation() {
   );
 }
 
-export function TestTabsAppearanceDefinedBySelectedTab() {
+function TestTabsAppearanceDefinedBySelectedTab() {
   return (
     <TabsContainer
       routeConfigs={[
@@ -225,4 +225,7 @@ export function TestTabsAppearanceDefinedBySelectedTab() {
   );
 }
 
-export default createScenario(TestTabsAppearanceDefinedBySelectedTab, scenarioDescription);
+export default createScenario(
+  TestTabsAppearanceDefinedBySelectedTab,
+  scenarioDescription,
+);

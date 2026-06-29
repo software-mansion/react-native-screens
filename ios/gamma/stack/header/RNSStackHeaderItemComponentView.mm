@@ -2,9 +2,11 @@
 #import "RNSConversions-Stack.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSStackHeaderItemEventEmitter.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -22,6 +24,7 @@ namespace react = facebook::react;
 
   std::shared_ptr<const react::RNSStackHeaderItemShadowNode::ConcreteState> _state;
   RNSStackHeaderItemShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSStackHeaderItemEventEmitter *_Nonnull _headerItemEventEmitter;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -31,6 +34,7 @@ namespace react = facebook::react;
     _props = defaultProps;
     [self resetProps];
     _shadowStateProxy = [[RNSStackHeaderItemShadowStateProxy alloc] initWithHeaderItemView:self];
+    _headerItemEventEmitter = [RNSStackHeaderItemEventEmitter new];
 
     // For custom items (header subviews), we rely on `intrinsicContentSize`
     // which passes correct view size from layoutMetrics to iOS
@@ -42,10 +46,18 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _label = nil;
+  _itemId = nil;
+  _title = nil;
   _menu = nil;
+  _menuToggleStateTracker = nil;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
+  _respondsToOnPress = NO;
+}
+
+- (void)emitOnPress
+{
+  [_headerItemEventEmitter emitOnPress];
 }
 
 #pragma mark - RNSStackHeaderItemDataProviding
@@ -138,6 +150,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   BOOL needsUpdate = NO;
 
+  if (oldItemProps.itemId != newItemProps.itemId) {
+    _itemId = RCTNSStringFromStringNilIfEmpty(newItemProps.itemId);
+  }
+
   if (oldItemProps.placement != newItemProps.placement) {
     if (_didSetHeaderItemPlacement) {
       RCTLogWarn(@"[RNScreens] Changing header item placement at runtime is not supported");
@@ -147,14 +163,20 @@ RNS_IGNORE_SUPER_CALL_END
   }
   _didSetHeaderItemPlacement = YES;
 
-  if (oldItemProps.label != newItemProps.label) {
-    _label = RCTNSStringFromStringNilIfEmpty(newItemProps.label);
+  if (oldItemProps.title != newItemProps.title) {
+    _title = RCTNSStringFromStringNilIfEmpty(newItemProps.title);
     needsUpdate = YES;
   }
 
   if (oldItemProps.menu != newItemProps.menu) {
     _menu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
+    _menuToggleStateTracker = _menu != nil ? [RNSStackHeaderMenuToggleStateTracker new] : nil;
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.respondsToOnPress != newItemProps.respondsToOnPress) {
+    _respondsToOnPress = newItemProps.respondsToOnPress;
     needsUpdate = YES;
   }
 
@@ -163,6 +185,13 @@ RNS_IGNORE_SUPER_CALL_END
   if (needsUpdate) {
     [_invalidationDelegate headerItemDidInvalidate];
   }
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_headerItemEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSStackHeaderItemIOSEventEmitter>(eventEmitter)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

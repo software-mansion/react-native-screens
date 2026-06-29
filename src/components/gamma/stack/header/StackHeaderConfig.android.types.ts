@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { ColorValue, NativeSyntheticEvent } from 'react-native';
+import type { ColorValue } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../../../types';
 
@@ -12,6 +12,7 @@ export interface StackHeaderToolbarSubviewAndroid {
   /**
    * @summary Render callback for the React element placed in this toolbar slot.
    *
+   * @description
    * The subview is sized by React Native's layout engine but positioned by the
    * platform native layout. Each subview is placed independently — subviews do
    * not participate in a shared flex layout and cannot influence each other's
@@ -33,6 +34,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * @summary Controls how the background subview behaves when the app bar
    * collapses.
    *
+   * @description
    * The following values are available:
    * - `off` - the subview scrolls away with the app bar,
    * - `parallax` - the subview scrolls at a slower rate, creating a parallax
@@ -69,54 +71,57 @@ export type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'ifRoomWithText'
   | 'never';
 
-export interface StackHeaderToolbarMenuItemAndroid {
+export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
-   * @summary Unique identifier of the menu item.
+   * @summary Unique identifier of the menu element.
    *
    * @platform android
    */
   id: string;
   /**
-   * @summary Title of the menu item.
+   * @summary Title of the menu element.
    *
    * @platform android
    */
   title?: string | undefined;
   /**
-   * @summary Specifies if the menu item should be hidden.
+   * @summary Specifies if the menu element should be hidden.
    *
    * @default false
    * @platform android
    */
   hidden?: boolean | undefined;
   /**
-   * @summary Specifies whether the item should be displayed as a button in the
-   * Toolbar.
+   * @summary Specifies whether the element should be displayed as a button in
+   * the Toolbar.
    *
+   * @description
    * The following values are available:
-   * - `always` - always displays the item as a button in the Toolbar,
-   * - `alwaysWithText` - always displays the item as a button in the Toolbar,
-   *   forcing the text label to be visible even if an icon is provided,
-   * - `ifRoom` - displays the item as a button in the Toolbar only if the
+   * - `always` - always displays the element as a button in the Toolbar,
+   * - `alwaysWithText` - always displays the element as a button in the
+   *   Toolbar, forcing the text label to be visible even if an icon is
+   *   provided,
+   * - `ifRoom` - displays the element as a button in the Toolbar only if the
    *   system determines there is sufficient space,
-   * - `ifRoomWithText` - displays the item as a button in the Toolbar if the
-   *   system determines there is sufficient space, forcing the text label to
-   *   be visible even if an icon is provided,
-   * - `never` - never displays the item as a button in the Toolbar; it will be
-   *   placed in the overflow menu instead.
+   * - `ifRoomWithText` - displays the element as a button in the Toolbar if
+   *   the system determines there is sufficient space, forcing the text label
+   *   to be visible even if an icon is provided,
+   * - `never` - never displays the element as a button in the Toolbar; it
+   *   will be placed in the overflow menu instead.
    *
    * @remarks
    * Due to native limitations, the width limit for the `ifRoom` options is
-   * determined during the initial render and will not adapt to subsequent layout
-   * or orientation changes.
+   * determined during the initial render and will not adapt to subsequent
+   * layout or orientation changes.
    *
    * @default never
    * @platform android
    */
   showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
   /**
-   * @summary Specifies the icon for the menu item.
+   * @summary Specifies the icon for the menu element.
    *
+   * @description
    * Supported values:
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
@@ -130,63 +135,100 @@ export interface StackHeaderToolbarMenuItemAndroid {
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
    * @remarks
-   * The icon will be visible only if the menu item is shown in the Toolbar.
+   * The icon will be visible only if the menu element is shown in the
+   * Toolbar.
    *
    * @platform android
    */
   icon?: PlatformIconAndroid | undefined;
   /**
-   * @summary Specifies the tint color to apply to the menu item icon.
+   * @summary Specifies the tint color to apply to the menu element icon.
    *
    * @platform android
    */
   iconTintColorNormal?: ColorValue | undefined;
   /**
-   * @summary Specifies the tint color to apply to the menu item icon when item
-   * is pressed.
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is pressed.
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
    *
    * @platform android
    */
   iconTintColorPressed?: ColorValue | undefined;
   /**
-   * @summary Specifies the tint color to apply to the menu item icon when item
-   * is focused (e.g. by keyboard navigation).
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is focused (e.g. by keyboard navigation).
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
    *
    * @platform android
    */
   iconTintColorFocused?: ColorValue | undefined;
   /**
-   * @summary Specifies the tint color to apply to the menu item icon when item
-   * is disabled.
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is disabled.
    *
    * @remarks
-   * Disabling menu item isn't currently supported.
+   * Disabling menu elements isn't currently supported.
    *
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
    *
    * @platform android
    */
   iconTintColorDisabled?: ColorValue | undefined;
 }
 
-export type StackHeaderToolbarMenuItemClickedEvent = {
+export interface StackHeaderToolbarMenuItemAndroid
+  extends StackHeaderToolbarMenuItemBaseAndroid {
   /**
-   * @summary ID of the clicked menu item.
+   * @summary Marks this object as a menu item.
+   *
+   * @platform android
    */
-  id: string;
-};
+  type: 'menuItem';
+  /**
+   * @summary Callback invoked when the menu item is clicked.
+   *
+   * @platform android
+   */
+  onPress?: (() => void) | undefined;
+}
+
+export interface StackHeaderToolbarMenuBaseAndroid {
+  /**
+   * @summary Menu elements displayed in the toolbar menu.
+   *
+   * @platform android
+   */
+  children?: StackHeaderToolbarMenuElementAndroid[];
+}
+
+export interface StackHeaderToolbarMenuAndroid
+  extends StackHeaderToolbarMenuItemBaseAndroid,
+    StackHeaderToolbarMenuBaseAndroid {
+  /**
+   * @summary Marks this object as a submenu.
+   *
+   * @platform android
+   */
+  type: 'menu';
+}
+
+export type StackHeaderToolbarMenuElementAndroid =
+  | StackHeaderToolbarMenuItemAndroid
+  | StackHeaderToolbarMenuAndroid;
 
 export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
-  Omit<StackHeaderToolbarMenuItemAndroid, 'id'>
+  Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
 >;
 
 export interface StackHeaderConfigCommandsAndroid {
@@ -209,6 +251,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Specifies the type of the Material 3 app bar.
    *
+   * @description
    * The following values are available:
    * - `small` - small app bar with fixed title,
    * - `medium` - medium app bar with collapsing title,
@@ -252,6 +295,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Tint color applied to the back button icon in its normal state.
    *
+   * @description
    * When `undefined`, the default tint color is used. This applies to the
    * native back arrow and `drawableResource` icons that have an associated
    * tint. For `imageSource` icons, no tint is applied by default.
@@ -285,6 +329,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * @summary Custom icon for the back button.
    *
+   * @description
    * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
    *
    * Supported values:
@@ -306,6 +351,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @summary Whether the header reacts to nested scroll. Required for any
    * other `scrollFlag*` prop to take effect.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -324,6 +370,7 @@ export interface StackHeaderConfigPropsAndroid {
    * scroll position. Without this flag, the header only begins expanding once
    * the list has reached the top of its content. Requires `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
    *
@@ -336,6 +383,7 @@ export interface StackHeaderConfigPropsAndroid {
    * expands only after the ScrollView reaches the top of its content. Requires
    * `scrollFlagEnterAlways`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default (`false` for
    * all types).
    *
@@ -350,6 +398,7 @@ export interface StackHeaderConfigPropsAndroid {
    * (the toolbar) remains pinned at the top. Without this flag, the entire
    * header scrolls off the screen. Requires `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -370,6 +419,7 @@ export interface StackHeaderConfigPropsAndroid {
    * after a scroll gesture ends, instead of resting partway. Requires
    * `scrollFlagScroll`.
    *
+   * @description
    * When `undefined`, falls back to the type-specific default:
    * - `small` -> `false`
    * - `medium` / `large` -> `true`
@@ -378,9 +428,10 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagSnap?: boolean | undefined;
   /**
-   * @summary Menu items displayed in the toolbar menu.
+   * @summary Toolbar menu configuration.
    *
-   * This prop serves as initial configuration of the toolbar menu items. If you
+   * @description
+   * This prop serves as initial configuration of the toolbar menu. If you
    * want to change some property in runtime, use `setToolbarMenuItemOptions`
    * view command.
    *
@@ -389,15 +440,5 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @platform android
    */
-  toolbarMenuItems?: StackHeaderToolbarMenuItemAndroid[] | undefined;
-  /**
-   * @summary Callback invoked when a toolbar menu item is clicked.
-   *
-   * @platform android
-   */
-  onToolbarMenuItemClicked?:
-    | ((
-        event: NativeSyntheticEvent<StackHeaderToolbarMenuItemClickedEvent>,
-      ) => void)
-    | undefined;
+  toolbarMenu?: StackHeaderToolbarMenuBaseAndroid | undefined;
 }

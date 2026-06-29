@@ -13,7 +13,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function App() {
+function TestFormSheetPreventNativeDismiss() {
   const [isOpen, setIsOpen] = useState(false);
   const [preventDismiss, setPreventDismiss] = useState(true);
 
@@ -126,4 +126,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetPreventNativeDismiss,
+  scenarioDescription,
+);

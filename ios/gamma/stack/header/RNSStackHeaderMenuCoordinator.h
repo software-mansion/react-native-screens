@@ -1,13 +1,18 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderMenuData.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderMenuCoordinator : NSObject
 
-+ (void)applyMenu:(nonnull RNSStackHeaderMenuData *)data toBarButtonItem:(nonnull UIBarButtonItem *)item;
++ (void)applyMenu:(RNSStackHeaderMenuData *)data
+             toBarButtonItem:(UIBarButtonItem *)item
+    withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker;
 
 @end
 
