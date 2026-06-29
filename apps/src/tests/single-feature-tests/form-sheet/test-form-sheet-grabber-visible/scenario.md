@@ -4,7 +4,7 @@
 
 **Description:** Verify that the `prefersGrabberVisible` prop of the `FormSheet` component correctly controls the visibility of the grabber indicator at the top of the sheet. This test covers toggling the prop both before the sheet is presented (from the underlying screen) and while the sheet is already presented (from inside the sheet).
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ TBD: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone
+- Android emulator
 
 ## Steps
 
