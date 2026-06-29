@@ -56,8 +56,6 @@ export { default as TestTabsBottomAccessory } from './test-tabs-bottom-accessory
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
 export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
-export { TestTabsSimpleNav } from './test-tabs-simple-nav';
-
 const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
