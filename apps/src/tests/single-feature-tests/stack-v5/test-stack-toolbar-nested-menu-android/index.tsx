@@ -149,7 +149,7 @@ function buildMenu(
 
 const HEADER_TITLE = 'Toolbar Nested Menu Test';
 
-export function App() {
+function TestStackToolbarNestedMenu() {
   return (
     <StackContainer
       routeConfigs={[
@@ -300,4 +300,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarNestedMenu, scenarioDescription);

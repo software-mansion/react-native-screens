@@ -172,7 +172,7 @@ function buildMenu(
 
 const HEADER_TITLE = 'Toolbar Menu Groups Test';
 
-export function App() {
+function TestStackToolbarMenuGroups() {
   return (
     <ToastProvider>
       <StackContainer
@@ -357,4 +357,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarMenuGroups, scenarioDescription);

@@ -28,8 +28,10 @@ export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackBackButton } from './test-stack-back-button-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
+export { default as TestStackToolbarMenuGroups } from './test-stack-toolbar-menu-groups-android';
 export { default as TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
 export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
+export { default as TestStackToolbarNestedMenu } from './test-stack-toolbar-nested-menu-android';
 
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
