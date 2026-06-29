@@ -151,15 +151,9 @@ open class CustomToolbar(
         val shouldHandleRightInset = config.consumeRightInset
         val shouldHandleBottomInset = config.consumeBottomInset
 
-        // Note on the difference between top and the other edges:
-        // the top inset is coordinated across nested headers via TopInsetApplicationContext
-        // (only the topmost visible header consumes it) and is additionally anchored to the
-        // decor view in applyDecorViewTopInsetIfNeeded(), so it survives consumption by a
-        // SafeAreaView in the subtree. The left/right/bottom insets have no such decor-view path
-        // and are read solely from the incoming WindowInsets, which a custom SafeAreaView may
-        // consume per-subtree. They are therefore applied per-header here, and their opt-out flags
-        // (consumeLeftInset/consumeRightInset/consumeBottomInset) only propagate the disable flag
-        // down the tree (the JS side decides which header actually applies them).
+        // The top inset is coordinated across nested headers and anchored to the decor view,
+        // while left/right/bottom are applied per-header from the incoming WindowInsets. See
+        // https://github.com/software-mansion/react-native-screens/pull/4220 for the rationale.
 
         // Each edge is controlled independently. If no edge should be handled, we reset
         // everything and bail out early.
@@ -172,21 +166,9 @@ open class CustomToolbar(
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
         // any insets twice.
-        val horizontalInsets =
-            InsetsCompat.of(
-                if (shouldHandleLeftInset) {
-                    cutoutInsets.left + systemBarInsets.left
-                } else {
-                    0
-                },
-                0,
-                if (shouldHandleRightInset) {
-                    cutoutInsets.right + systemBarInsets.right
-                } else {
-                    0
-                },
-                0,
-            )
+        val leftInset = if (shouldHandleLeftInset) cutoutInsets.left + systemBarInsets.left else 0
+        val rightInset = if (shouldHandleRightInset) cutoutInsets.right + systemBarInsets.right else 0
+        val horizontalInsets = InsetsCompat.of(leftInset, 0, rightInset, 0)
 
         // We want to handle display cutout, no matter the HeaderConfig prop values, as long as the
         // respective edge is not opted out. If there are no cutout displays, we want to apply the
