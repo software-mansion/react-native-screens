@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.gamma.common.container
 
 import android.view.ViewGroup
 
-interface ContainerItem {
+internal interface ContainerItem {
     // region Nested Container handling
 
     /**

@@ -21,7 +21,7 @@ TBD
 
 ## Note
 
-Android does to support pop-to-root - it is yet unimplemented. Scroll-to-top should work.
+Android does not yet support pop-to-root - it is unimplemented. Scroll-to-top should work.
 
 iOS implementation doesn't currently support nested container interaction yet. 
 This test needs to be updated after such interaction is supported.
@@ -41,8 +41,8 @@ This test needs to be updated after such interaction is supported.
 
 3. Press `Home` tab item (repeated tab selection) to trigger the special effect.
 
-    - [ ] *scroll-top-top* should be triggered and you should observe the scroll-view scrolling 
-    to it's top.
+    - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling 
+    to its top.
 
 ### Nested stack
 
@@ -57,5 +57,5 @@ This test needs to be updated after such interaction is supported.
 
 6. Press `Stack` tab item (repeated tab selection) to trigger the special effect.
 
-    - [ ] *scroll-top-top* should be triggered and you should observe the scroll-view scrolling 
-    to it's top.
+    - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling 
+    to its top.
