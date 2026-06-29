@@ -848,7 +848,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * When set to `true`, disables left inset handling for this header and all headers in its
    * subtree.
    *
-   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
+   * The opt-out propagates down the subtree: once an ancestor header sets this to `true`,
+   * setting it back to `false` on a descendant header does not re-enable the inset.
    *
    * @default false
    *
@@ -859,7 +860,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * When set to `true`, disables right inset handling for this header and all headers in its
    * subtree.
    *
-   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
+   * The opt-out propagates down the subtree: once an ancestor header sets this to `true`,
+   * setting it back to `false` on a descendant header does not re-enable the inset.
    *
    * @default false
    *
@@ -870,7 +872,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * When set to `true`, disables bottom inset handling for this header and all headers in its
    * subtree.
    *
-   * Once disabled by an ancestor, it cannot be re-enabled by descendants.
+   * The opt-out propagates down the subtree: once an ancestor header sets this to `true`,
+   * setting it back to `false` on a descendant header does not re-enable the inset.
    *
    * @default false
    *
