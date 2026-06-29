@@ -24,7 +24,7 @@
   return [self addChildController:childViewController toParent:parentViewController containerView:containerView];
 }
 
-+ (nullable UIViewController *)findParentViewControllerCandidateFromView:(nonnull UIView *)view
++ (nullable UIViewController *)findParentViewControllerCandidateFromView:(nullable UIView *)view
 {
   if (view == nil) {
     return nil;
