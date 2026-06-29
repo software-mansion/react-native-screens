@@ -8,6 +8,7 @@ import {
   Pressable,
   Switch,
   Platform,
+  ScrollView,
 } from 'react-native';
 import {
   ScreenStack,
@@ -46,7 +47,9 @@ export function ControlPanel({
   ];
 
   return (
-    <View style={styles.panel}>
+    <ScrollView
+      style={styles.panel}
+      contentContainerStyle={styles.panelContent}>
       <Text style={styles.text}>Details Screen</Text>
       <Text style={styles.subtext}>
         Native back button + Action button above. This header covers the Home
@@ -70,7 +73,7 @@ export function ControlPanel({
           These props only take effect on Android.
         </Text>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -171,6 +174,8 @@ const styles = StyleSheet.create({
   },
   panel: {
     flex: 1,
+  },
+  panelContent: {
     padding: 20,
   },
   text: {
