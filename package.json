@@ -5,6 +5,7 @@
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
     "check-types": "tsc --noEmit",
+    "check-ios-swift-react-leak": "sh scripts/ios/check-react-symbols-not-leaked-to-swift.sh",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,FabricExample,apps}/**/*.{js,ts,tsx}'",
