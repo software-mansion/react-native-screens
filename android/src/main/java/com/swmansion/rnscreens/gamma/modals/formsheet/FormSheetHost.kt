@@ -11,12 +11,6 @@ class FormSheetHost(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     ReactPointerEventsView {
-    private val dialogManager =
-        FormSheetDialogManager(
-            context = context,
-            onUpdateState = ::updateStateIfNeeded,
-            onDismissRequest = ::onNativeDismiss,
-        )
 
     private val shadowStateProxy = ShadowStateProxy()
 
@@ -28,6 +22,18 @@ class FormSheetHost(
 
     internal var prefersGrabberVisible = false
 
+    private val sheetContentView =
+        FormSheetContentView(context) { width, height ->
+            updateStateIfNeeded(width, height)
+        }
+
+    private val dialogManager =
+        FormSheetDialogManager(
+            context = context,
+            contentView = sheetContentView,
+            onDismissRequest = ::onNativeDismiss,
+        )
+
     internal fun onNativeDismiss() {
         eventEmitter.emitOnNativeDismissEvent()
     }
@@ -36,19 +42,19 @@ class FormSheetHost(
         child: View,
         index: Int,
     ) {
-        dialogManager.contentView.addView(child, index)
+        sheetContentView.addView(child, index)
     }
 
     internal fun unmountReactSubview(child: View) {
-        dialogManager.contentView.removeView(child)
+        sheetContentView.removeView(child)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        dialogManager.contentView.removeViewAt(index)
+        sheetContentView.removeViewAt(index)
     }
 
     internal fun unmountAllReactSubviews() {
-        dialogManager.contentView.removeAllViews()
+        sheetContentView.removeAllViews()
     }
 
     internal fun getReactSubviewCount(): Int = dialogManager.contentView.childCount
