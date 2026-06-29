@@ -112,7 +112,9 @@ function ScrollViewContents(props: { elementCount?: number }) {
         return (
           <View key={index.toString()} style={[{ width: '100%' }]}>
             <Rectangle
-              testID={`${useTabsNavigationContext().routeKey}-item-${index + 1}`}
+              testID={`${useTabsNavigationContext().routeKey}-item-${
+                index + 1
+              }`}
               key={index.toString()}
               color={Colors.RedDark100}
               width={'100%'}

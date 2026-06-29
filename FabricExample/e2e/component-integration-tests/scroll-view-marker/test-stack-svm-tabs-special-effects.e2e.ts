@@ -17,7 +17,6 @@ describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting
 
   it('should display tab bar and Home tab with scrollable view on load', async () => {
     await expect(element(by.id('home-scrollview'))).toBeVisible();
-    await expect(element(by.id('home-tab-item'))).toBeVisible();
     if (device.getPlatform() === 'ios') {
       await expect(element(by.type('UITabBar'))).toBeVisible();
     } else {

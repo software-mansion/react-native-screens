@@ -18,7 +18,7 @@ export * from './orientation';
 export * from './scroll-view';
 export * from './form-sheet';
 export * from './tabs-stack-v5';
-export * from './scroll-view-marker'
+export * from './scroll-view-marker';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
@@ -43,7 +43,11 @@ export function HomeScreen() {
           title={scenarioGroup.name}
           route={key}
           details={scenarioGroup.details}
-          testID={`component-integration-tests-${scenarioGroup.name.replace(/\s/g, '')}`} />
+          testID={`component-integration-tests-${scenarioGroup.name.replace(
+            /\s/g,
+            '',
+          )}`}
+        />
       ))}
     </ScrollView>
   );
