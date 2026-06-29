@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.modals.dimmingview
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -65,7 +66,16 @@ class DimmingViewManager(
 
         if (coordinator != null && dimmingView.parent == null && bottomSheetView != null) {
             val sheetIndex = coordinator.indexOfChild(bottomSheetView)
-            coordinator.addView(dimmingView, sheetIndex)
+            if (sheetIndex >= 0) {
+                coordinator.addView(dimmingView, sheetIndex)
+            } else {
+                Log.e(TAG, "[RNScreens] BottomSheetView not found! Falling back to bottom index.")
+                coordinator.addView(dimmingView, 0)
+            }
         }
+    }
+
+    companion object {
+        const val TAG = "DimmingViewManager"
     }
 }
