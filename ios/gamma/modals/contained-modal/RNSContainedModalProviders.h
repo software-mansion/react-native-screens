@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSContainedModalPresentationProvider <NSObject>
 
 - (BOOL)isOpen;
+- (BOOL)transparent;
 - (nullable UIView *)hostView;
 - (nullable UIWindow *)hostWindow;
 

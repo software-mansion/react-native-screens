@@ -22,4 +22,17 @@ export interface ContainedModalProps {
    * @platform ios
    */
   targetContainerId: string;
+  /**
+   * @summary Determines the presentation context of the contained modal.
+   *
+   * When `true`, the modal is presented over the current context
+   * (`UIModalPresentationOverCurrentContext`), leaving the presenting
+   * content visible underneath. When `false`, it is presented within the
+   * current context (`UIModalPresentationCurrentContext`), replacing the
+   * presenting content.
+   *
+   * @default true
+   * @platform ios
+   */
+  transparent?: boolean;
 }

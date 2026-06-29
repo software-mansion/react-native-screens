@@ -79,6 +79,9 @@
     return;
   }
 
+  controller.modalPresentationStyle =
+      provider.transparent ? UIModalPresentationOverCurrentContext : UIModalPresentationCurrentContext;
+
   _state = RNSContainedModalPresentationStatePresenting;
 
   __weak auto weakSelf = self;

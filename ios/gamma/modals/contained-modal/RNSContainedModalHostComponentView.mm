@@ -25,6 +25,7 @@ namespace react = facebook::react;
   NSString *_targetContainerId;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   BOOL _isOpen;
+  BOOL _transparent;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -50,6 +51,7 @@ namespace react = facebook::react;
 
   _isOpen = NO;
   _targetContainerId = nil;
+  _transparent = YES;
 }
 
 - (void)setupController
@@ -132,6 +134,14 @@ namespace react = facebook::react;
 
   if (oldComponentProps.targetContainerId != newComponentProps.targetContainerId) {
     _targetContainerId = RCTNSStringFromStringNilIfEmpty(newComponentProps.targetContainerId);
+  }
+
+  if (oldComponentProps.transparent != newComponentProps.transparent) {
+    _transparent = static_cast<BOOL>(newComponentProps.transparent);
+    // The presentation style is applied during the presentation update (in the
+    // presentation manager, right before the modal is presented), so we just
+    // request an update here rather than mutating the controller directly.
+    [_controller setNeedsPresentationUpdate];
   }
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {

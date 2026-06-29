@@ -16,9 +16,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    // TODO: expose these as props - the transition animation and the presentation style
-    // (UIModalPresentationOverCurrentContext vs UIModalPresentationCurrentContext should be configurable from JS).
-    self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    // TODO: expose the transition animation as a prop
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
     _updateCoordinator = [RNSContainedModalUpdateCoordinator new];

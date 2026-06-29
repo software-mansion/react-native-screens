@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL isOpen;
 @property (nonatomic, copy, readonly, nullable) NSString *targetContainerId;
+@property (nonatomic, readonly) BOOL transparent;
 
 @end
 
