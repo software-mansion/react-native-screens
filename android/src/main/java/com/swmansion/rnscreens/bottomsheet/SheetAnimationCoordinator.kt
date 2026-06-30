@@ -30,6 +30,8 @@ internal class SheetAnimationCoordinator(
     private var currentContentAnimator: ValueAnimator? = null
 
     private var lastKeyboardBottomOffset: Int = 0
+    private var lastScreenContainerBottomOffset: Int = 0
+    private val screenContainerRect = android.graphics.Rect()
 
     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetDelegate.SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
@@ -213,6 +215,7 @@ internal class SheetAnimationCoordinator(
 
     internal fun notifyKeyboardAnimationStart() {
         activeKeyboardAnimationsCount++
+        updateScreenContainerBottomOffset()
     }
 
     internal fun notifyKeyboardAnimationEnd() {
@@ -267,9 +270,18 @@ internal class SheetAnimationCoordinator(
         return minOf(offsetFromTop, keyboardHeight)
     }
 
+    private fun updateScreenContainerBottomOffset() {
+        screen.container?.let { container ->
+            if (container.isLaidOut && container.height > 0) {
+                container.getGlobalVisibleRect(screenContainerRect)
+                lastScreenContainerBottomOffset = maxOf(0, container.rootView.height - screenContainerRect.bottom)
+            }
+        }
+    }
+
     private fun updateSheetTranslationY(baseTranslationY: Float) {
-        val keyboardCorrection = lastKeyboardBottomOffset
-        val bottomOffset = computeSheetOffsetYWithIMEPresent(keyboardCorrection).toFloat()
+        val effectiveKeyboardHeight = maxOf(0, lastKeyboardBottomOffset - lastScreenContainerBottomOffset)
+        val bottomOffset = computeSheetOffsetYWithIMEPresent(effectiveKeyboardHeight).toFloat()
 
         screen.translationY = baseTranslationY - bottomOffset
     }
@@ -347,6 +359,7 @@ internal class SheetAnimationCoordinator(
             object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     isSheetAnimationInProgress = true
+                    updateScreenContainerBottomOffset()
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
