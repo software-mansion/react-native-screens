@@ -1,16 +1,15 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
 class FormSheetHost(
-    context: Context,
-) : ViewGroup(context),
+    val reactContext: ThemedReactContext,
+) : ViewGroup(reactContext),
     ReactPointerEventsView {
     private val dialogManager =
         FormSheetDialogManager(
@@ -84,7 +83,7 @@ class FormSheetHost(
 
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
-        eventEmitter = FormSheetHostEventEmitter(context as ReactContext, id)
+        eventEmitter = FormSheetHostEventEmitter(reactContext, id)
     }
 
     internal fun updateStateIfNeeded(
