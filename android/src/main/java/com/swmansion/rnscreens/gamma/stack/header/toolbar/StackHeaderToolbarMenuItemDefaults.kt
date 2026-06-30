@@ -8,7 +8,7 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
  * so the native side is the source of truth for them.
  */
 internal object StackHeaderToolbarMenuItemDefaults {
-    const val TITLE: String = ""
+    val TITLE: String? = null
     val TITLE_CONDENSED: String? = null
     val TOOLTIP_TEXT: String? = null
     const val HIDDEN: Boolean = false

@@ -500,7 +500,7 @@ internal class StackHeaderApplicator(
         menuItem: MenuItem,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
-        options.title?.let { menuItem.title = it }
+        options.title?.let { menuItem.title = it.valueOrNull() }
         options.titleCondensed?.let { menuItem.titleCondensed = it.valueOrNull() }
         options.tooltipText?.let { MenuItemCompat.setTooltipText(menuItem, it.valueOrNull()) }
         options.hidden?.let { menuItem.isVisible = !it }
@@ -595,7 +595,7 @@ internal class StackHeaderApplicator(
 
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =
         StackHeaderToolbarMenuItemOptions(
-            title = title,
+            title = StackHeaderToolbarUpdate.from(title),
             titleCondensed = StackHeaderToolbarUpdate.from(titleCondensed),
             tooltipText = StackHeaderToolbarUpdate.from(tooltipText),
             hidden = hidden,

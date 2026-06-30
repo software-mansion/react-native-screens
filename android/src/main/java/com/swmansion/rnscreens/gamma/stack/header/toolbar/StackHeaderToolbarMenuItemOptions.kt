@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
  * A `null` field means "leave the current value unchanged".
  */
 internal data class StackHeaderToolbarMenuItemOptions(
-    val title: String? = null,
+    val title: StackHeaderToolbarUpdate<String>? = null,
     val titleCondensed: StackHeaderToolbarUpdate<String>? = null,
     val tooltipText: StackHeaderToolbarUpdate<String>? = null,
     val hidden: Boolean? = null,
