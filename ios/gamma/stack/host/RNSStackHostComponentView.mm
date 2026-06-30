@@ -56,7 +56,7 @@ namespace react = facebook::react;
         [self setupViewConstraintsForController:_stackNavigationController];
       }
     }
-    
+
     [_stackNavigationController attachToParentContainerItem];
   } else {
     [_stackNavigationController detachFromParentContainerItem];
