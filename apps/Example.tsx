@@ -27,7 +27,7 @@ import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 import BarButtonItems from './src/screens/BarButtonItems';
-import TabsDrawableIconSize from './src/screens/TabsDrawableIconSize';
+import CustomNativeBottomTabsIcons from './src/screens/CustomNativeBottomTabsIcons';
 
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -69,9 +69,9 @@ const SCREENS: Record<
     component: SwipeBackAnimation,
     type: 'example',
   },
-  TabsDrawableIconSize: {
-    title: 'Tabs Drawable Icon Size',
-    component: TabsDrawableIconSize,
+  CustomNativeBottomTabsIcons: {
+    title: 'Custom Native Bottom Tabs Icons',
+    component: CustomNativeBottomTabsIcons,
     type: 'example',
   },
   StackPresentation: {

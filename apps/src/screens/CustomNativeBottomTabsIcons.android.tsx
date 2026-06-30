@@ -101,7 +101,7 @@ const ROUTES: TabRouteConfig[] = [
   },
 ];
 
-export default function TabsDrawableIconSize() {
+export default function CustomNativeBottomTabsIcons() {
   return <TabsContainer routeConfigs={ROUTES} />;
 }
 
