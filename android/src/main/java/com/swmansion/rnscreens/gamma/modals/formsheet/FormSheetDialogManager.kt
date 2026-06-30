@@ -118,14 +118,15 @@ class FormSheetDialogManager(
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
 
         if (dialogDecorHeight > 0) {
-            val availableHeight = dialogDecorHeight - topInset - bottomInset
+            val availableHeight = (dialogDecorHeight - topInset - bottomInset).coerceAtLeast(0)
 
-            if (view.layoutParams.height != availableHeight) {
-                view.layoutParams =
-                    FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        availableHeight,
-                    )
+            val layoutParams =
+                view.layoutParams
+                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, availableHeight)
+            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != availableHeight) {
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                layoutParams.height = availableHeight
+                view.layoutParams = layoutParams
             }
         }
     }
