@@ -300,6 +300,17 @@ internal class StackHeaderApplicator(
         }
     }
 
+    /**
+     * Recursively traverses menu elements and maps user-friendly string item IDs to integers
+     * expected by Android.
+     *
+     * @param elements List of menu elements.
+     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
+     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
+     * @param nextId Function that returns next ID integer. New unique integer should be returned
+     *               each time the function is called. The function is used to handle recursive
+     *               element traversal.
+     */
     private fun assignElementIds(
         elements: List<StackHeaderToolbarMenuElementConfig>,
         forwardIdMap: MutableMap<String, Int>,
@@ -319,6 +330,17 @@ internal class StackHeaderApplicator(
         }
     }
 
+    /**
+     * Recursively traverses menu elements and maps user-friendly string group IDs to integers
+     * expected by Android.
+     *
+     * @param elements List of menu elements.
+     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
+     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
+     * @param nextId Function that returns next ID integer. New unique integer should be returned
+     *               each time the function is called. The function is used to handle recursive
+     *               element traversal.
+     */
     private fun assignGroupIds(
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardMap: MutableMap<String, Int>,

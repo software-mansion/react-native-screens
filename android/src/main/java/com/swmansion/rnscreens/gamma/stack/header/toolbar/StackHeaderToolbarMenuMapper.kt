@@ -111,6 +111,7 @@ internal object StackHeaderToolbarMenuMapper {
                     item = item,
                     menu = StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(map, iconSources)),
                 )
+
             else ->
                 throw JSApplicationIllegalArgumentException(
                     "[RNScreens] Unknown toolbar menu element type: $type.",
@@ -134,13 +135,28 @@ internal object StackHeaderToolbarMenuMapper {
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
             icon = null,
-            iconTintColorNormal = map.readColor("iconTintColorNormal", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL),
-            iconTintColorPressed = map.readColor("iconTintColorPressed", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED),
-            iconTintColorFocused = map.readColor("iconTintColorFocused", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED),
-            iconTintColorDisabled = map.readColor("iconTintColorDisabled", StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED),
+            iconTintColorNormal = map.readColor(
+                "iconTintColorNormal",
+                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL
+            ),
+            iconTintColorPressed = map.readColor(
+                "iconTintColorPressed",
+                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED
+            ),
+            iconTintColorFocused = map.readColor(
+                "iconTintColorFocused",
+                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED
+            ),
+            iconTintColorDisabled = map.readColor(
+                "iconTintColorDisabled",
+                StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED
+            ),
             groupId = map.readOptionalString("groupId"),
             itemType = map.readItemTypeEnum("itemType", StackHeaderToolbarMenuItemDefaults.ITEM_TYPE),
-            initialToggleState = map.readBoolean("initialToggleState", StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE),
+            initialToggleState = map.readBoolean(
+                "initialToggleState",
+                StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE
+            ),
         )
 
     // endregion
