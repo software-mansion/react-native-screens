@@ -79,4 +79,4 @@ jobs:
         # symbols into the RNScreens Clang module consumed by Swift. See the script
         # header for the rationale and detection details.
       - name: Check React symbols are not leaked to Swift
-        run: ./scripts/ios/check-react-symbols-not-leaked-to-swift.sh
+        run: node ./scripts/ios/check-react-symbols-not-leaked-to-swift.js
