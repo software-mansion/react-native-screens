@@ -127,7 +127,9 @@ function makeItemViewFromItem(
 
   const { id, ...rest } = item;
 
-  return <StackHeaderItem key={id} placement={placement} {...rest} />;
+  return (
+    <StackHeaderItem key={id} itemId={id} placement={placement} {...rest} />
+  );
 }
 
 const styles = StyleSheet.create({

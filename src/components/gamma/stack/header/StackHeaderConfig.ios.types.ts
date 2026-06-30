@@ -39,6 +39,17 @@ export interface StackHeaderInlineItemIOS
    * @platform iOS
    */
   type: 'item';
+  /**
+   * @summary Callback invoked when the header item is pressed.
+   *
+   * @description
+   * Fires when the user taps the header item. When combined with
+   * {@link SupportsMenuIOS.menu | menu}, tapping fires `onPress` and
+   * long-pressing shows the menu.
+   *
+   * @platform iOS
+   */
+  onPress?: (() => void) | undefined;
 }
 
 /**

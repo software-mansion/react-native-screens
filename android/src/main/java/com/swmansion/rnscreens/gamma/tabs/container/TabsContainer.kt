@@ -23,6 +23,8 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -51,6 +53,7 @@ import kotlin.properties.Delegates
 class TabsContainer internal constructor(
     private val context: Context,
 ) : FrameLayout(context),
+    Container,
     ColorSchemeProviding,
     TabsScreenDelegate,
     SafeAreaProvider,
@@ -70,16 +73,10 @@ class TabsContainer internal constructor(
                 }
             }
             if (selectedTabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-                val scrollView = resolveContentScrollViewForScreen(selectedTabScreen)
+                val scrollView = selectedTabScreen.findContentScrollView()
                 scrollView?.let { return trySmoothScrollToTop(it) }
             }
             return false
-        }
-
-        private fun resolveContentScrollViewForScreen(tabsScreen: TabsScreen): ViewGroup? {
-            tabsScreen.contentScrollView()?.let { return it }
-            ViewFinder.findScrollViewInFirstDescendantChain(tabsScreen)?.let { return it }
-            return null
         }
 
         /**
@@ -99,6 +96,8 @@ class TabsContainer internal constructor(
     private var navState: TabsNavigationState = TabsNavigationState.EMPTY
     private var lastUINavState: TabsNavigationState = TabsNavigationState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
+
+    private val parentContainerRegistry = ParentContainerItemRegistry()
 
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
@@ -293,6 +292,8 @@ class TabsContainer internal constructor(
         RNSLog.d(TAG, "TabsContainer [$id] attached to window")
 
         super.onAttachedToWindow()
+
+        parentContainerRegistry.attach(this)
         setupFragmentManager()
 
         // When TabsContainer is reattached to window, it might find new fragment manager (other
@@ -317,6 +318,7 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
+        parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
     }
 
@@ -769,6 +771,15 @@ class TabsContainer internal constructor(
     private fun isNavigationStateStale(request: TabsNavigationStateUpdateRequest): Boolean {
         if (navState.isEmpty() || lastUINavState.isEmpty()) return false
         return request.baseProvenance < lastUINavState.provenance
+    }
+
+    // endregion
+
+    // region Container
+
+    override fun resolveCurrentContentScrollView(): ViewGroup? {
+        // We assume here that the selectedTab actually corresponds to whats in FragmentManager
+        return selectedTab.tabsScreen.findContentScrollView()
     }
 
     // endregion

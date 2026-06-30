@@ -17,7 +17,7 @@ import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
-class StackHeaderConfig(
+internal class StackHeaderConfig(
     val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     StackHeaderConfigurationProviding,
@@ -139,8 +139,8 @@ class StackHeaderConfig(
     }
         internal set
 
-    override var toolbarMenuItems: List<StackHeaderToolbarMenuItemConfig>
-        by Delegates.observable(emptyList()) { _, old, new ->
+    override var toolbarMenu: StackHeaderToolbarMenuConfig
+        by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList())) { _, old, new ->
             if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
         }
         internal set
@@ -187,7 +187,7 @@ class StackHeaderConfig(
 
     // Last resolved icon per menu item id. Unlike every other field on this config — which
     // mirrors a single prop — this cache deliberately merges resolved icons from BOTH sources
-    // that can set a menu item icon: the `toolbarMenuItems` prop array
+    // that can set a menu item icon: the `toolbarMenu` prop
     // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `setToolbarMenuItemOptions`
     // view command (dispatchMenuItemUpdate). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
@@ -225,15 +225,10 @@ class StackHeaderConfig(
         id: String,
         icon: Drawable?,
     ) {
-        val currentItems = toolbarMenuItems
-        val itemIndex = currentItems.indexOfFirst { it.id == id }
-        if (itemIndex == -1) return
-
-        val item = currentItems[itemIndex]
-        if (item.icon != icon) {
-            val newItems = currentItems.toMutableList()
-            newItems[itemIndex] = item.copy(icon = icon)
-            toolbarMenuItems = newItems
+        val currentMenu = toolbarMenu
+        val updated = currentMenu.updateItemIcon(id, icon)
+        if (updated !== currentMenu) {
+            toolbarMenu = updated
             if (!isInsideMountTransaction) {
                 flushUpdates()
             }
@@ -328,7 +323,7 @@ class StackHeaderConfig(
     }
 
     override fun onMenuItemClicked(id: String) {
-        eventEmitter.emitOnToolbarMenuItemClicked(id)
+        eventEmitter.emitOnToolbarMenuItemPress(id)
     }
 
     override fun onSubviewOriginChanged(

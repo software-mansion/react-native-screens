@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ContainerItem
+import com.swmansion.rnscreens.gamma.common.container.ContainerItemSupport
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
@@ -21,9 +24,10 @@ class TabsScreen(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding,
-    ScrollViewSeeking {
+    ScrollViewSeeking,
+    ContainerItem {
     private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
-    private var contentScrollView: WeakReference<ViewGroup> = WeakReference(null)
+    private val containerItemSupport = ContainerItemSupport()
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
@@ -157,10 +161,20 @@ class TabsScreen(
         marker: ScrollViewMarker,
         scrollView: ViewGroup,
     ) {
-        contentScrollView = WeakReference(scrollView)
+        containerItemSupport.registerScrollView(scrollView)
     }
 
-    internal fun contentScrollView(): ViewGroup? = contentScrollView.get()
+    // endregion
+
+    // region ContainerItem
+
+    override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
+
+    override fun unregisterNestedContainer(container: Container) = containerItemSupport.unregisterNestedContainer(container)
+
+    override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
+
+    override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
 
     // endregion
 

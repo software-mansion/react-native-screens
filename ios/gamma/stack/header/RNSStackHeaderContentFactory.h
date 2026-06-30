@@ -2,9 +2,9 @@
 
 #import <UIKit/UIKit.h>
 
+#import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
-#import "RNSStackHeaderMenuEventsDelegate.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
-                         withMenuEventsDelegate:(id<RNSStackHeaderMenuEventsDelegate>)menuEventsDelegate;
+                       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate;
 
 + (UIView *)wrappedViewForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                  frameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate;
