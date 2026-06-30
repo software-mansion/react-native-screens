@@ -62,7 +62,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Boolean,
     ) {
-        view.setIsOpen(value)
+        view.isOpen = value
     }
 
     override fun setDetents(
@@ -76,7 +76,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Boolean,
     ) {
-        // TODO: @t0maboro - implement later
+        view.prefersGrabberVisible = value
     }
 
     override fun setPreferredCornerRadius(
@@ -136,6 +136,11 @@ class FormSheetHostViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
+    override fun onAfterUpdateTransaction(view: FormSheetHost) {
+        super.onAfterUpdateTransaction(view)
+        view.onAfterUpdateTransaction()
+    }
+
     override fun addEventEmitters(
         reactContext: ThemedReactContext,
         view: FormSheetHost,
@@ -145,7 +150,7 @@ class FormSheetHostViewManager :
     }
 
     override fun onDropViewInstance(view: FormSheetHost) {
-        view.setIsOpen(false)
+        view.destroy()
         super.onDropViewInstance(view)
     }
 

@@ -15,29 +15,27 @@ class FormSheetDialogManager(
     private val onUpdateState: (width: Int, height: Int) -> Unit,
     private val onDismissRequest: () -> Unit,
 ) {
+    private var formSheetConfig = FormSheetConfig()
+
     private val themedContext =
         ContextThemeWrapper(
             context,
             com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    // Eagerly create the container so it's always ready for React's children
-    private val container =
-        FormSheetContainer(context) { width, height ->
+    internal val contentView =
+        FormSheetContentView(context) { width, height ->
             onUpdateState(width, height)
         }
 
-    internal val contentView get() = container.contentView
+    // Eagerly create the container so it's always ready for React's children
+    private val container = FormSheetContainer(themedContext, contentView)
 
     // Eagerly create the dialog and attach the container
     private val dialog =
         FormSheetDialog(themedContext).apply {
             setContentView(container)
             setCanceledOnTouchOutside(false)
-
-            setOnCancelListener {
-                onDismissRequest()
-            }
         }
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
@@ -52,19 +50,28 @@ class FormSheetDialogManager(
             setupOffscreenPositionBeforeFirstDraw(view)
         }
         setupDialogShowListener()
+        setupDialogCancelListener()
         setupWindowInsetsListener()
 
         dimmingManager.setOnBackdropClickListener(onDismissRequest)
     }
 
-    internal fun show() {
-        dialog.show()
-    }
-
-    internal fun dismiss() {
-        animationCoordinator.runExitAnimation(bottomSheetView) {
-            dialog.dismiss()
+    internal fun applyConfig(newConfig: FormSheetConfig) {
+        if (formSheetConfig.isOpen != newConfig.isOpen) {
+            if (newConfig.isOpen) {
+                dialog.show()
+            } else {
+                animationCoordinator.runExitAnimation(bottomSheetView) {
+                    dialog.dismiss()
+                }
+            }
         }
+
+        if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
+            container.setGrabberVisible(newConfig.prefersGrabberVisible)
+        }
+
+        formSheetConfig = newConfig
     }
 
     private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
@@ -92,6 +99,12 @@ class FormSheetDialogManager(
             bottomSheetView?.let { view ->
                 animationCoordinator.runEnterAnimation(view)
             }
+        }
+    }
+
+    private fun setupDialogCancelListener() {
+        dialog.setOnCancelListener {
+            onDismissRequest()
         }
     }
 
@@ -142,4 +155,14 @@ class FormSheetDialogManager(
             .getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
             ).bottom
+
+    internal fun destroy() {
+        dimmingManager.setOnBackdropClickListener {}
+
+        ViewCompat.setOnApplyWindowInsetsListener(container, null)
+
+        dialog.setOnShowListener(null)
+        dialog.setOnCancelListener(null)
+        dialog.dismiss()
+    }
 }

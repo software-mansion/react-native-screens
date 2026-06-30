@@ -17,7 +17,6 @@ class FormSheetHost(
             onUpdateState = ::updateStateIfNeeded,
             onDismissRequest = ::onNativeDismiss,
         )
-    private var isOpen = false
 
     private val shadowStateProxy = ShadowStateProxy()
 
@@ -25,16 +24,9 @@ class FormSheetHost(
 
     internal lateinit var eventEmitter: FormSheetHostEventEmitter
 
-    internal fun setIsOpen(open: Boolean) {
-        if (this.isOpen == open) return
-        this.isOpen = open
+    internal var isOpen = false
 
-        if (isOpen) {
-            dialogManager.show()
-        } else {
-            dialogManager.dismiss()
-        }
-    }
+    internal var prefersGrabberVisible = false
 
     internal fun onNativeDismiss() {
         eventEmitter.emitOnNativeDismissEvent()
@@ -59,11 +51,6 @@ class FormSheetHost(
         dialogManager.contentView.removeAllViews()
     }
 
-    override fun onDetachedFromWindow() {
-        dialogManager.dismiss()
-        super.onDetachedFromWindow()
-    }
-
     internal fun getReactSubviewCount(): Int = dialogManager.contentView.childCount
 
     internal fun getReactSubviewAt(index: Int): View? = dialogManager.contentView.getChildAt(index)
@@ -86,6 +73,15 @@ class FormSheetHost(
         eventEmitter = FormSheetHostEventEmitter(reactContext, id)
     }
 
+    internal fun onAfterUpdateTransaction() {
+        val config =
+            FormSheetConfig(
+                isOpen = this.isOpen,
+                prefersGrabberVisible = this.prefersGrabberVisible,
+            )
+        dialogManager.applyConfig(config)
+    }
+
     internal fun updateStateIfNeeded(
         width: Int,
         height: Int,
@@ -106,5 +102,9 @@ class FormSheetHost(
     // To prevent drawing a stale layout, we block drawing the frame in `FormSheetContentView`.
     private fun flushPendingStateUpdates() {
         eventEmitter.emitOnSyncFlushEvent()
+    }
+
+    internal fun destroy() {
+        dialogManager.destroy()
     }
 }

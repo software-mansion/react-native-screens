@@ -17,17 +17,24 @@ internal class FormSheetAnimationCoordinator(
     private var currentAnimatorSet: AnimatorSet? = null
 
     internal fun runEnterAnimation(view: View) {
+        val isAnimating = currentAnimatorSet?.isRunning == true
+
         currentAnimatorSet?.cancel()
 
+        val startY = if (isAnimating) view.translationY else view.height.toFloat()
+        val startAlpha = if (isAnimating) dimmingManager.dimmingViewAlpha else 0f
+
+        view.translationY = startY
+
         val slideAnimator =
-            ValueAnimator.ofFloat(view.translationY, 0f).apply {
+            ValueAnimator.ofFloat(startY, 0f).apply {
                 addUpdateListener { animation ->
                     view.translationY = animation.animatedValue as Float
                 }
             }
 
         val alphaAnimator =
-            ValueAnimator.ofFloat(dimmingManager.dimmingViewAlpha, dimmingManager.maxAlpha).apply {
+            ValueAnimator.ofFloat(startAlpha, dimmingManager.maxAlpha).apply {
                 addUpdateListener { animation ->
                     dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
                 }
@@ -63,17 +70,21 @@ internal class FormSheetAnimationCoordinator(
             return
         }
 
+        val isAnimating = currentAnimatorSet?.isRunning == true
         currentAnimatorSet?.cancel()
 
+        val startY = if (isAnimating) view.translationY else 0f
+        val startAlpha = if (isAnimating) dimmingManager.dimmingViewAlpha else dimmingManager.maxAlpha
+
         val slideAnimator =
-            ValueAnimator.ofFloat(view.translationY, view.height.toFloat()).apply {
+            ValueAnimator.ofFloat(startY, view.height.toFloat()).apply {
                 addUpdateListener { animation ->
                     view.translationY = animation.animatedValue as Float
                 }
             }
 
         val alphaAnimator =
-            ValueAnimator.ofFloat(dimmingManager.dimmingViewAlpha, 0f).apply {
+            ValueAnimator.ofFloat(startAlpha, 0f).apply {
                 addUpdateListener { animation ->
                     dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
                 }
