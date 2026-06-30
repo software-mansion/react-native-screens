@@ -38,8 +38,10 @@ TBD: E2E coverage has not been determined yet.
   This is Android platform behavior, not a library bug. Always set
   `iconTintColorNormal` alongside other state tints if you want the icon visible
   in the normal state.
-- `iconTintColorDisabled` requires a disabled item. This isn't supported yet, so
-  that prop is not exercised here.
+- `iconTintColorDisabled` is only visible when the item is `disabled`. Each slot
+  has a `disabled` switch, and the command panel has a `disabled` option, to
+  toggle it. A disabled item is greyed out and ignores taps; its icon shows
+  `iconTintColorDisabled` instead of the platform's default greyed icon.
 
 ## Steps
 
@@ -329,3 +331,38 @@ TBD: E2E coverage has not been determined yet.
 
 - [ ] Item 2 reappears with its props-configured appearance (`search_black.png`,
       no tint). The command from step 37 did not leak into the re-included slot.
+
+---
+
+### Props — disabled reveals the disabled tint
+
+39. Change Slot 1 `tintColorDisabled` to `red`, then toggle Slot 1 `disabled`
+    on.
+
+- [ ] Item 1 greys out and its icon shows the **red** disabled tint (instead of
+      the platform's default greyed icon). Items 2 and 3 stay enabled and
+      unaffected. Tapping Item 1 does nothing.
+
+40. Toggle Slot 1 `disabled` back off.
+
+- [ ] Item 1 returns to its enabled appearance with no tint. The red disabled
+      tint is no longer shown.
+
+41. Change Slot 1 `tintColorDisabled` back to `default`.
+
+- [ ] No visible change (Item 1 is enabled).
+
+---
+
+### Commands — disabled reveals the disabled tint
+
+42. Set target id = `item-2`, `tintColorDisabled` = `green`, `disabled` =
+    `true`. Tap **Send Command**.
+
+- [ ] Item 2 greys out and its icon shows the **green** disabled tint.
+
+43. Set target id = `item-2`, `disabled` = `false`, all others = `no change`.
+    Tap **Send Command**.
+
+- [ ] Item 2 returns to its enabled appearance. The disabled tint is retained
+      but not visible while the item is enabled.
