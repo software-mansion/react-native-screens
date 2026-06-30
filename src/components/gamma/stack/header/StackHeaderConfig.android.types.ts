@@ -85,6 +85,29 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    */
   title?: string | undefined;
   /**
+   * @summary Shorter title used for the menu element when it is displayed as
+   * a button in the Toolbar.
+   *
+   * @description
+   * When the element is shown in the Toolbar with a text label, this
+   * condensed title is used instead of `title`. The full `title` is still
+   * used everywhere else (the overflow menu and submenus).
+   *
+   * @platform android
+   */
+  titleCondensed?: string | undefined;
+  /**
+   * @summary Tooltip shown on long-press (or pointer hover) of the menu
+   * element when it is displayed as a button in the Toolbar.
+   *
+   * @remarks
+   * Applies only to elements shown as a button in the Toolbar; it has no
+   * effect on elements placed in the overflow menu.
+   *
+   * @platform android
+   */
+  tooltipText?: string | undefined;
+  /**
    * @summary Specifies if the menu element should be hidden.
    *
    * @default false
