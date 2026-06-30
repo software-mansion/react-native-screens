@@ -24,7 +24,7 @@ import type {
   StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemPressEventAndroid,
   StackHeaderToolbarMenuGroupSelectionChangeEventAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid as NativeToolbarMenuElementOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
@@ -34,7 +34,7 @@ import type {
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
   StackHeaderToolbarMenuGroupAndroid,
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../../shared';
@@ -232,7 +232,7 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
 
   useImperativeHandle(forwardedRef, () => ({
     android: {
-      setToolbarMenuItemOptions: (id, options) => {
+      setToolbarMenuElementOptions: (id, options) => {
         if (!ref.current) {
           console.warn(
             '[RNScreens] Reference to native header config component has not been updated yet.',
@@ -240,10 +240,10 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
           return;
         }
 
-        StackHeaderConfigAndroidNativeCommands.setToolbarMenuItemOptions(
+        StackHeaderConfigAndroidNativeCommands.setToolbarMenuElementOptions(
           ref.current,
           id,
-          parseToolbarMenuItemOptionsToNativeProps(options),
+          parseToolbarMenuElementOptionsToNativeProps(options),
         );
       },
     },
@@ -514,67 +514,69 @@ function parseBaseItemToNativeProps({
   };
 }
 
-function parseToolbarMenuItemOptionsToNativeProps(
-  options: StackHeaderToolbarMenuItemOptionsAndroid,
-): NativeToolbarMenuItemOptionsAndroid[] {
-  const nativeOptions: NativeToolbarMenuItemOptionsAndroid = Object.fromEntries(
-    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
-      const typedKey = key as keyof StackHeaderToolbarMenuItemOptionsAndroid;
+function parseToolbarMenuElementOptionsToNativeProps(
+  options: StackHeaderToolbarMenuElementOptionsAndroid,
+): NativeToolbarMenuElementOptionsAndroid[] {
+  const nativeOptions: NativeToolbarMenuElementOptionsAndroid =
+    Object.fromEntries(
+      Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+        const typedKey =
+          key as keyof StackHeaderToolbarMenuElementOptionsAndroid;
 
-      switch (typedKey) {
-        case 'iconTintColorNormal':
-        case 'iconTintColorPressed':
-        case 'iconTintColorFocused':
-        case 'iconTintColorDisabled':
-          return [
-            [
-              key,
-              processColor(
-                value as StackHeaderToolbarMenuItemOptionsAndroid[typeof typedKey],
-              ) ?? null,
-            ],
-          ];
+        switch (typedKey) {
+          case 'iconTintColorNormal':
+          case 'iconTintColorPressed':
+          case 'iconTintColorFocused':
+          case 'iconTintColorDisabled':
+            return [
+              [
+                key,
+                processColor(
+                  value as StackHeaderToolbarMenuElementOptionsAndroid[typeof typedKey],
+                ) ?? null,
+              ],
+            ];
 
-        case 'icon': {
-          const iconValue =
-            value as StackHeaderToolbarMenuItemOptionsAndroid['icon'];
+          case 'icon': {
+            const iconValue =
+              value as StackHeaderToolbarMenuElementOptionsAndroid['icon'];
 
-          // Explicit `undefined` means "reset the icon". The native side treats
-          // an absent key as "no change", so to clear the icon we must send every
-          // native icon key explicitly as `null`.
-          if (iconValue === undefined) {
-            const noIcon: Pick<
-              NativeToolbarMenuItemOptionsAndroid,
-              'imageIconResource' | 'drawableIconResourceName'
-            > = {
-              imageIconResource: null,
-              drawableIconResourceName: null,
-            };
-            return Object.entries(noIcon);
+            // Explicit `undefined` means "reset the icon". The native side treats
+            // an absent key as "no change", so to clear the icon we must send every
+            // native icon key explicitly as `null`.
+            if (iconValue === undefined) {
+              const noIcon: Pick<
+                NativeToolbarMenuElementOptionsAndroid,
+                'imageIconResource' | 'drawableIconResourceName'
+              > = {
+                imageIconResource: null,
+                drawableIconResourceName: null,
+              };
+              return Object.entries(noIcon);
+            }
+
+            return Object.entries(parseAndroidIconToNativeProps(iconValue));
           }
-
-          return Object.entries(parseAndroidIconToNativeProps(iconValue));
         }
-      }
 
-      if (
-        typeof value === 'object' &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        throw new Error(`[RNScreens] Unexpected nested object.`);
-      }
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          !Array.isArray(value)
+        ) {
+          throw new Error(`[RNScreens] Unexpected nested object.`);
+        }
 
-      return [
-        [
-          key,
-          // We need to replace explicit `undefined` with `null`
-          // so that we're able to read that information on the native side.
-          value === undefined ? null : value,
-        ],
-      ];
-    }),
-  );
+        return [
+          [
+            key,
+            // We need to replace explicit `undefined` with `null`
+            // so that we're able to read that information on the native side.
+            value === undefined ? null : value,
+          ],
+        ];
+      }),
+    );
 
   // For some reason Codegen requires passing an array (we can't use plain object).
   return [nativeOptions];
