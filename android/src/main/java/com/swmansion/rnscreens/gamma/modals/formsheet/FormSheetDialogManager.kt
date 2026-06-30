@@ -23,7 +23,7 @@ class FormSheetDialogManager(
             com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    // Eagerly create the container so it's always ready for React's children
+    // Eagerly create the container so it's always ready for the provided content view
     private val container = FormSheetContainer(themedContext, contentView)
 
     // Eagerly create the dialog and attach the container
