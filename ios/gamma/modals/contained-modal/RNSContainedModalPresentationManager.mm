@@ -126,9 +126,4 @@
                                  }];
 }
 
-- (void)handleNativeDismiss
-{
-  _state = RNSContainedModalPresentationStateDismissed;
-}
-
 @end

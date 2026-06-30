@@ -1,16 +1,13 @@
 #import "RNSContainedModalContentController.h"
-#import "RNSContainedModalConfigurationApplicator.h"
 #import "RNSContainedModalContentView.h"
 #import "RNSContainedModalPresentationManager.h"
-#import "RNSContainedModalUpdateCoordinator.h"
-#import "RNSContainedModalUpdateFlags.h"
 
 #import <React/RCTAssert.h>
 
 @implementation RNSContainedModalContentController {
-  RNSContainedModalUpdateCoordinator *_Nonnull _updateCoordinator;
-  RNSContainedModalConfigurationApplicator *_Nonnull _configurationApplicator;
   RNSContainedModalPresentationManager *_Nonnull _presentationManager;
+
+  BOOL _needsPresentationUpdate;
 }
 
 - (instancetype)init
@@ -19,8 +16,6 @@
     // TODO: expose the transition animation as a prop
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-    _updateCoordinator = [RNSContainedModalUpdateCoordinator new];
-    _configurationApplicator = [RNSContainedModalConfigurationApplicator new];
     _presentationManager = [RNSContainedModalPresentationManager new];
   }
   return self;
@@ -56,14 +51,6 @@
 
 #pragma mark - Presentation Setup
 
-- (void)updatePresentationIfNeeded
-{
-  [_updateCoordinator updateIfNeeded:RNSContainedModalUpdateFlagsPresentation
-                   performOperations:^{
-                     [self updatePresentationState];
-                   }];
-}
-
 - (void)updatePresentationState
 {
   id<RNSContainedModalPresentationProvider> presentationProvider = self.presentationProvider;
@@ -82,23 +69,17 @@
 
 - (void)setNeedsPresentationUpdate
 {
-  [_updateCoordinator setNeeds:RNSContainedModalUpdateFlagsPresentation];
-}
-
-- (void)setNeedsAppearanceUpdate
-{
-  [_updateCoordinator setNeeds:RNSContainedModalUpdateFlagsAppearance];
-}
-
-- (void)setNeedsBehaviorUpdate
-{
-  [_updateCoordinator setNeeds:RNSContainedModalUpdateFlagsBehavior];
+  _needsPresentationUpdate = YES;
 }
 
 #pragma mark - Updates
 
 - (void)flushPendingUpdates
 {
-  [self updatePresentationIfNeeded];
+  if (!_needsPresentationUpdate) {
+    return;
+  }
+  _needsPresentationUpdate = NO;
+  [self updatePresentationState];
 }
 @end

@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updatePresentationIfNeededWithProvider:(id<RNSContainedModalPresentationProvider>)provider
                                     controller:(RNSContainedModalContentController *)controller;
 
-- (void)handleNativeDismiss;
-
 @end
 
 NS_ASSUME_NONNULL_END

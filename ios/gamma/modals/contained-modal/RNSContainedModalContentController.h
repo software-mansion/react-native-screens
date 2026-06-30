@@ -24,8 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Signals
 
 - (void)setNeedsPresentationUpdate;
-- (void)setNeedsBehaviorUpdate;
-- (void)setNeedsAppearanceUpdate;
 
 #pragma mark - Updates
 
