@@ -35,6 +35,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   id: string;
   title?: CT.WithDefault<string, ''>;
   hidden?: CT.WithDefault<boolean, false>;
+  disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'

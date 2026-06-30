@@ -92,6 +92,13 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    */
   hidden?: boolean | undefined;
   /**
+   * @summary Specifies if the menu element should be disabled.
+   *
+   * @default false
+   * @platform android
+   */
+  disabled?: boolean | undefined;
+  /**
    * @summary Specifies whether the element should be displayed as a button in
    * the Toolbar.
    *
@@ -180,7 +187,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * it is disabled.
    *
    * @remarks
-   * Disabling menu elements isn't currently supported.
+   * Only visible when the element is `disabled`.
    *
    * Due to native platform limitations, if you set this prop, you must also
    * provide `iconTintColorNormal`. Otherwise, the icon will become
