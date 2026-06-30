@@ -136,6 +136,14 @@ class FormSheetHostViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: FormSheetHost,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
+
     override fun onDropViewInstance(view: FormSheetHost) {
         view.setIsOpen(false)
         super.onDropViewInstance(view)
