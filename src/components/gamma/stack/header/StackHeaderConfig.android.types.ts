@@ -228,6 +228,11 @@ export interface StackHeaderToolbarMenuItemAndroid
    * - `automatic` - the item becomes checkable if it has a `groupId`,
    *   otherwise it behaves as an action.
    *
+   * @remarks
+   * If `toggle` menu item is shown in the toolbar by setting `showAsAction`
+   * prop to value other than `never`, there is no visual indication of the item
+   * toggle state.
+   *
    * @default automatic
    * @platform android
    */
