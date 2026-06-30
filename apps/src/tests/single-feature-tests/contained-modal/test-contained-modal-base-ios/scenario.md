@@ -18,6 +18,7 @@ TBD.
 ## Note
 
 - The modal is presented from the provider whose `containerId` equals the modal's `targetContainerId`, so it is contained within that provider's bounds, not presented over the whole window.
+- This test does not set the `transparent` prop, so it uses its default (`true`). The presentation style in this test is therefore `UIModalPresentationOverCurrentContext`. (See the `Presentation style` scenario for the `transparent: false` / `UIModalPresentationCurrentContext` case.)
 - The modal's content has a transparent background, so the provider's content (the "Inside count" button) stays visible behind it.
 - Two counters exercise touch routing:
   - **"Outside count"** lives outside the provider (in the top section) and is never covered by the modal.
