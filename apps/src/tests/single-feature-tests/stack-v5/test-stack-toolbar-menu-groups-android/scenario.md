@@ -23,21 +23,6 @@ TBD — automation is possible and planned but not yet implemented.
 
 ## Note
 
-- The initial menu structure is:
-  - Colors group (multi-toggle, `groupId: 'colors'`):
-    - `red`: "Red" (checked via `initialToggleState`)
-    - `green`: "Green"
-    - `blue`: "Blue"
-  - Size group (single-selection, `groupId: 'size'`):
-    - `small`: "Small"
-    - `medium`: "Medium" (checked via `initialToggleState`)
-    - `large`: "Large"
-  - `share`: "Share" (ungrouped action item)
-  - `sub`: "More" (submenu containing):
-    - Theme group (single-selection, `groupId: 'theme'`):
-      - `light`: "Light" (checked via `initialToggleState`)
-      - `dark`: "Dark"
-    - `info`: "Info" (ungrouped action item)
 - Groups are scoped to the menu level they are defined in —
   groups cannot span submenus.
 - `setToolbarMenuItemOptions` targets elements by `id`. It works
@@ -107,7 +92,7 @@ TBD — automation is possible and planned but not yet implemented.
 
 ---
 
-### Ungrouped action item
+### Action item
 
 10. Open the overflow menu and tap "Share".
 
