@@ -378,7 +378,7 @@ internal class StackHeaderApplicator(
                         "Groups cannot span submenus."
                 }
                 itemGroupMap[element.item.id] = gid
-                groupMemberItems.getOrPut(gid) { mutableListOf() }.add(element.item.id)
+                groupMemberItems[gid]!!.add(element.item.id)
             }
             if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
                 collectGroupMetadata(element.menu, itemGroupMap, groupSingleSelection, groupMemberItems)
