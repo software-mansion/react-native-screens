@@ -187,11 +187,9 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * it is disabled.
    *
    * @remarks
-   * Only visible when the element is `disabled`.
-   *
-   * Due to native platform limitations, if you set this prop, you must also
+   * Due to native platform limitations, if you set this prop, you should also
    * provide `iconTintColorNormal`. Otherwise, the icon will become
-   * transparent.
+   * transparent when the item is not disabled.
    *
    * @platform android
    */
