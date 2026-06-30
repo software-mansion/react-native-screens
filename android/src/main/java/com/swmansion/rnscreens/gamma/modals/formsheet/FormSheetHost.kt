@@ -11,7 +11,6 @@ class FormSheetHost(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     ReactPointerEventsView {
-
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
@@ -57,9 +56,9 @@ class FormSheetHost(
         sheetContentView.removeAllViews()
     }
 
-    internal fun getReactSubviewCount(): Int = dialogManager.contentView.childCount
+    internal fun getReactSubviewCount(): Int = sheetContentView.childCount
 
-    internal fun getReactSubviewAt(index: Int): View? = dialogManager.contentView.getChildAt(index)
+    internal fun getReactSubviewAt(index: Int): View? = sheetContentView.getChildAt(index)
 
     // The React children are teleported into the dialog window. This host occupies space in the
     // main window, but holds no content there. NONE makes the host subtree invisible to
