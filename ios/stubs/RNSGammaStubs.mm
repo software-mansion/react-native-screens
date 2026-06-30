@@ -21,7 +21,7 @@
 @implementation RNSContainedModalHostComponentView
 @end
 
-@implementation RNSContainedModalProviderHostComponentView
+@implementation RNSContainedModalProviderComponentView
 @end
 
 @implementation RNSFormSheetContentWrapperComponentView

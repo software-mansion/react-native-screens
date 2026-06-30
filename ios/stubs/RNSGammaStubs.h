@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSContainedModalHostComponentView : NSObject
 @end
 
-@interface RNSContainedModalProviderHostComponentView : NSObject
+@interface RNSContainedModalProviderComponentView : NSObject
 @end
 
 @interface RNSStackHeaderConfigComponentView : NSObject
