@@ -79,8 +79,7 @@ Regardless of whether the provider is full-screen or partial:
 > silently swallows taps meant for the "Inside count" button behind it, even though
 > the modal is no longer visible.
 
-6. Note the current "Inside count" value, then tap the "Inside count" button (the one
-   that sits in the region the modal was just covering) several times. Tap "Outside
+6. Note the current "Inside count" value, then tap the "Inside count" button several times. Tap "Outside
    count" too.
 
 - [ ] Expected: Both counters increment on every tap. Taps on "Inside count" are NOT
@@ -116,4 +115,12 @@ Regardless of whether the provider is full-screen or partial:
 
 10. Tap "Close".
 
-- [ ] Expected: The modal dismisses smoothly and the screen returns to the partial-provider layout. "Inside count" is tappable again and "Outside count" keeps working.
+- [ ] Expected: The modal dismisses smoothly and the screen returns to the partial-provider layout.
+
+---
+
+### Background pressables work again after dismiss (partial provider)
+
+11. Tap the "Inside count" button (inside the bordered region the modal was just covering) several times, then tap "Outside count".
+
+- [ ] Expected: Both counters increment on every tap. "Inside count" is tappable again and "Outside count" keeps working - there is no dead/unresponsive zone left behind in the partial provider where the dismissed modal used to be.

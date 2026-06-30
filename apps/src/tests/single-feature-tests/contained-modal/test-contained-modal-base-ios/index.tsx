@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     borderWidth: 2,
     borderColor: 'transparent',
+    backgroundColor: Colors.NavyLightTransparent,
   },
   partialProvider: {
     height: 320,
@@ -101,6 +102,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: Colors.NavyLightTransparent,
   },
   providerContent: {
     padding: 16,

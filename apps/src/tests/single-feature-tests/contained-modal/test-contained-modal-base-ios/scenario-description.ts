@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Basic functionality',
   key: 'test-contained-modal-base-ios',
   details:
-    'Allows to test the basic functionality of ContainedModal component.',
+    'Allows testing the basic functionality of ContainedModal component.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
