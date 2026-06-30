@@ -123,7 +123,10 @@ function HeuristicBreakingView() {
   return <View collapsable={false} style={{ width: '100%', height: 0 }}></View>;
 }
 
-export default createScenario(TestStackSvmTabsSpecialEffects, scenarioDescription);
+export default createScenario(
+  TestStackSvmTabsSpecialEffects,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   fillParent: {

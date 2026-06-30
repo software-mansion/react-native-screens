@@ -5,7 +5,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function App() {
+function TestFormSheetLifecycleEvents() {
   const [isOpen, setIsOpen] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
@@ -135,4 +135,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetLifecycleEvents,
+  scenarioDescription,
+);

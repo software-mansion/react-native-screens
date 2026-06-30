@@ -174,7 +174,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsGeneralAppearance() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -199,4 +199,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsGeneralAppearance, scenarioDescription);

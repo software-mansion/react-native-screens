@@ -51,6 +51,13 @@ class FormSheetHostViewManager :
         parent.unmountAllReactSubviews()
     }
 
+    override fun getChildCount(parent: FormSheetHost): Int = parent.getReactSubviewCount()
+
+    override fun getChildAt(
+        parent: FormSheetHost,
+        index: Int,
+    ): View? = parent.getReactSubviewAt(index)
+
     override fun setIsOpen(
         view: FormSheetHost,
         value: Boolean,

@@ -10,6 +10,7 @@
 #import <rnscreens/RNSTabsHostComponentDescriptor.h>
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
+#import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
@@ -115,36 +116,13 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  if ([self window] != nil) {
-    [self reactAddControllerToClosestParent:_controller];
-  }
-}
-
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
-{
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-
-        // Enable auto-layout to ensure valid size of tabBarController.view.
-        // In host tree, tabBarController.view is the only child of HostComponentView.
-        controller.view.translatesAutoresizingMaskIntoConstraints = NO;
-        [NSLayoutConstraint activateConstraints:@[
-          [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
-          [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-          [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-          [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
-        ]];
-
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
+  if (self.window != nil && _controller.parentViewController == nil) {
+    BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
+                                          toViewControllerManaging:self.reactSuperview
+                                                 withContainerView:self];
+    if (mountResult) {
+      [self setupViewConstraintsForController:_controller];
     }
-    return;
   }
 }
 
@@ -425,6 +403,19 @@ namespace react = facebook::react;
       [_controller updateLayoutDirectionBelowIOS17IfNeeded];
     }
   }
+}
+
+- (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
+{
+  // Enable auto-layout to ensure valid size of tabBarController.view.
+  // In host tree, tabBarController.view is the only child of HostComponentView.
+  controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+  [NSLayoutConstraint activateConstraints:@[
+    [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+    [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+    [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+    [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  ]];
 }
 
 #pragma mark - React Image Loader

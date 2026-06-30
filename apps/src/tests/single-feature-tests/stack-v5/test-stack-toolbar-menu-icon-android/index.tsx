@@ -138,7 +138,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Toolbar Menu Icon Test';
 
-export function App() {
+function TestStackToolbarMenuIcon() {
   return (
     <StackContainer
       routeConfigs={[
@@ -376,4 +376,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarMenuIcon, scenarioDescription);
