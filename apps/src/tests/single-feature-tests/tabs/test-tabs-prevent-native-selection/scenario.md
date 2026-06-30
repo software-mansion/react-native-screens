@@ -17,12 +17,15 @@ subject to prevention.
 ## E2E test
 
 Incomplete: The E2E test covers most steps for iPhone and Android phone.
+Test on iPad covers steps 1-11 and one additional step checking that six
+tabs in sidebar are visible.
 
 Not covered:
 
 - iPad specific steps are not automated, as the resize interactions required to
 trigger the More tab (Split View / window resizing between compact and regular
-size classes) are not feasible with Detox.
+size classes) are not feasible with Detox. Also selecting tab from sidebar is not possible
+with Detox.
 - Testing repeated selection of an already active
 More tab is not currently automated (Step 19 from the scenario). When the More tab content is already active
 and displayed, Detox is unable to re-select the "More" tab bar item because it
