@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable
  */
 internal data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
+    val titleCondensed: StackHeaderToolbarUpdate<String>? = null,
+    val tooltipText: StackHeaderToolbarUpdate<String>? = null,
     val hidden: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
     val icon: StackHeaderToolbarUpdate<Drawable>?,

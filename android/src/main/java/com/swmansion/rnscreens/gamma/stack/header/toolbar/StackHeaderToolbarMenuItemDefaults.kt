@@ -9,6 +9,8 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
  */
 internal object StackHeaderToolbarMenuItemDefaults {
     const val TITLE: String = ""
+    val TITLE_CONDENSED: String? = null
+    val TOOLTIP_TEXT: String? = null
     const val HIDDEN: Boolean = false
     val SHOW_AS_ACTION: StackHeaderToolbarMenuItemShowAsAction = StackHeaderToolbarMenuItemShowAsAction.NEVER
     val ICON_TINT_COLOR_NORMAL: Int? = null
