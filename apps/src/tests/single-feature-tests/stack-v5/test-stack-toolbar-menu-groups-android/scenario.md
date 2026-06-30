@@ -2,16 +2,13 @@
 
 ## Details
 
-**Description:** This test focuses on toolbar menu groups on the
-gamma stack header for Android. It verifies multi-toggle (checkbox)
-and single-selection (radio) group behavior, `onSelectionChange`
-callbacks with correct IDs, `onPress` on ungrouped action items,
-groups scoped to nested submenus, `initialToggleState`,
-`toolbarMenuGroupDividerEnabled`, runtime props updates (group
-type change, adding/removing items, full rebuild resetting command
-state), and imperative `setToolbarMenuItemOptions` commands
-(`checked`, `title`, `hidden`) — including auto-uncheck in
-single-selection groups, no-op on `checked=false` for radio,
+**Description:** This test focuses on toolbar menu groups on the Stack v5 header
+for Android. It verifies multi-toggle (checkbox) and single-selection (radio)
+group behavior, `onSelectionChange` callbacks with correct IDs on groups of
+items, `onPress` on action items, `initialToggleState`,
+`toolbarMenuGroupDividerEnabled`, runtime props updates (group type change,
+adding/removing items, full rebuild resetting command state), and imperative
+`setToolbarMenuItemOptions` commands for setting `checked`, `title`, `hidden`,
 and hidden items preserving their selection in callbacks.
 
 **OS test creation version:** Android: API Level 36
