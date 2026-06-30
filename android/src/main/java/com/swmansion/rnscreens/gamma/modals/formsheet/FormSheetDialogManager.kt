@@ -12,7 +12,7 @@ import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
     context: Context,
-    private val onUpdateState: (width: Int, height: Int) -> Unit,
+    private val contentView: View,
     private val onDismissRequest: () -> Unit,
 ) {
     private var formSheetConfig = FormSheetConfig()
@@ -23,12 +23,7 @@ class FormSheetDialogManager(
             com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    internal val contentView =
-        FormSheetContentView(context) { width, height ->
-            onUpdateState(width, height)
-        }
-
-    // Eagerly create the container so it's always ready for React's children
+    // Eagerly create the container so it's always ready for the provided content view
     private val container = FormSheetContainer(themedContext, contentView)
 
     // Eagerly create the dialog and attach the container
