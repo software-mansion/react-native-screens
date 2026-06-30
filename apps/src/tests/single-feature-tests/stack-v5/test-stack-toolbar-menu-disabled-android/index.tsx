@@ -82,6 +82,8 @@ function buildMenu(
         title: 'Action Bar',
         showAsAction: 'always',
         icon: SEARCH_ICON,
+        iconTintColorNormal: Colors.PurpleLight100,
+        iconTintColorDisabled: Colors.PurpleLight60,
         disabled: disabled['action-bar'],
         onPress: () => onItemPress('action-bar'),
       },
