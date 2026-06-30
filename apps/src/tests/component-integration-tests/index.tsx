@@ -18,6 +18,7 @@ export * from './orientation';
 export * from './scroll-view';
 export * from './form-sheet';
 export * from './tabs-stack-v5';
+export * from './scroll-view-marker';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
