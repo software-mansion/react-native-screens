@@ -2,7 +2,6 @@ import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
   describeIfiPad,
-  isIPadTarget,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
@@ -78,9 +77,7 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   });
 });
 
-const describeIfiPhone = !isIPadTarget ? describeIfiOS : describe.skip;
-
-describeIfiPhone('Tabs: tabBarControllerMode (iPhone)', () => {
+describeIfiOS('Tabs: tabBarControllerMode (iPhone)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
