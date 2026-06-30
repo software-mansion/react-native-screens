@@ -23,7 +23,7 @@ export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events-ios';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents-ios';
-export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible-ios';
+export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible';
 export { default as TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index-ios';
 export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
 export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events-ios';
