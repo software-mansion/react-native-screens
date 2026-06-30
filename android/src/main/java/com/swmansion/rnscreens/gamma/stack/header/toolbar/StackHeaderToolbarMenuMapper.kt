@@ -71,7 +71,7 @@ internal object StackHeaderToolbarMenuMapper {
         return (0 until array.size()).map { i ->
             val group =
                 requireNotNull(array.getMap(i)) {
-                    "[RNScreens] Menu groups array must contain objects."
+                    "[RNScreens] Menu groups array must contain valid group specification objects."
                 }
             StackHeaderToolbarMenuGroupConfig(
                 groupId = group.requireNotNullString("groupId"),
@@ -92,7 +92,7 @@ internal object StackHeaderToolbarMenuMapper {
         return (0 until array.size()).map { i ->
             val child =
                 requireNotNull(array.getMap(i)) {
-                    "[RNScreens] Menu children array must contain objects."
+                    "[RNScreens] Menu children array must contain valid menu element specification objects."
                 }
             parseElement(child, iconSources)
         }
