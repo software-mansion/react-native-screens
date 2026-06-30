@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 internal data class StackHeaderToolbarMenuItemOptions(
     val title: String? = null,
     val hidden: Boolean? = null,
+    val disabled: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
     val icon: StackHeaderToolbarUpdate<Drawable>?,
     val iconTintColorNormal: StackHeaderToolbarUpdate<Int>?,
