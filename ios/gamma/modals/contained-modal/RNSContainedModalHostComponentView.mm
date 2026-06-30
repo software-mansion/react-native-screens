@@ -149,8 +149,6 @@ namespace react = facebook::react;
     [_controller setNeedsPresentationUpdate];
   }
 
-  // TODO: determine if _controller setNeedsApperance/BehaviorUpdate is necessary if _isOpen
-
   [super updateProps:props oldProps:oldProps];
 }
 
