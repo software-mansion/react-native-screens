@@ -109,7 +109,10 @@ class FormSheetDialogManager(
      * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
      * the system insets, we completely bypass these redundant layout passes.
      */
-    private fun updateNativeContainerHeight(view: View, insets: WindowInsetsCompat) {
+    private fun updateNativeContainerHeight(
+        view: View,
+        insets: WindowInsetsCompat,
+    ) {
         val topInset = getTopInset(insets)
         val bottomInset = getBottomInset(insets)
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
@@ -118,10 +121,11 @@ class FormSheetDialogManager(
             val availableHeight = dialogDecorHeight - topInset - bottomInset
 
             if (view.layoutParams.height != availableHeight) {
-                view.layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    availableHeight,
-                )
+                view.layoutParams =
+                    FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        availableHeight,
+                    )
             }
         }
     }
