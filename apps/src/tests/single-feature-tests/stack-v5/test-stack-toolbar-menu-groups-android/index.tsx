@@ -15,6 +15,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
@@ -67,31 +68,30 @@ function buildMenu(
   onItemPress: (id: string) => void,
   onGroupChange: (groupId: string, selectedIds: string[]) => void,
 ): StackHeaderToolbarMenuBaseAndroid {
-  const colorItems = [
+  const colorItems: StackHeaderToolbarMenuElementAndroid[] = [
     {
-      type: 'menuItem' as const,
+      type: 'menuItem',
       id: 'red',
       title: 'Red',
       groupId: 'colors',
       initialToggleState: true,
     },
     {
-      type: 'menuItem' as const,
+      type: 'menuItem',
       id: 'green',
       title: 'Green',
       groupId: 'colors',
     },
-    ...(config.includeBlue
-      ? [
-          {
-            type: 'menuItem' as const,
-            id: 'blue',
-            title: 'Blue',
-            groupId: 'colors',
-          },
-        ]
-      : []),
   ];
+
+  if (config.includeBlue) {
+    colorItems.push({
+      type: 'menuItem',
+      id: 'blue',
+      title: 'Blue',
+      groupId: 'colors',
+    });
+  }
 
   return {
     groups: [
