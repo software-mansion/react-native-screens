@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Full: iPhone/iPad/Android: All steps automated.
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 
