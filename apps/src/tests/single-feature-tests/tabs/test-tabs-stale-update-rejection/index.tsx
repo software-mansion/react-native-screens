@@ -13,7 +13,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 
-export function ContentView() {
+function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
 
@@ -59,7 +59,7 @@ export function ContentView() {
   );
 }
 
-export function TabsNavigationButtons() {
+function TabsNavigationButtons() {
   const { routeKey, selectTab } = useTabsNavigationContext();
 
   return (
@@ -131,7 +131,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsStaleStateUpdateRejection() {
   return (
     <ToastProvider>
       <AppContents />
@@ -139,7 +139,7 @@ export function App() {
   );
 }
 
-export function AppContents() {
+function AppContents() {
   const toast = useToast();
 
   return (
@@ -162,7 +162,7 @@ export function AppContents() {
   );
 }
 
-export function HeavyRenderHierarchy({
+function HeavyRenderHierarchy({
   enabled,
   timeMs = 5000,
 }: {
@@ -186,4 +186,7 @@ function blockThread(ms: number) {
   while (Date.now() < end) {}
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsStaleStateUpdateRejection,
+  scenarioDescription,
+);

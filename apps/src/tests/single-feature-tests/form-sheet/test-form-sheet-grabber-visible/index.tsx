@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Switch, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function App() {
+function TestFormSheetGrabberVisible() {
   const [isOpen, setIsOpen] = useState(false);
+  const [prefersGrabberVisible, setPrefersGrabberVisible] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>FormSheet Test</Text>
+      <Text style={styles.title}>FormSheet Grabber Test</Text>
+      <View style={styles.row}>
+        <Text style={styles.label}>prefersGrabberVisible</Text>
+        <Switch
+          value={prefersGrabberVisible}
+          onValueChange={setPrefersGrabberVisible}
+        />
+      </View>
       <Button
         title="Open FormSheet"
         color={Colors.primary}
@@ -19,9 +27,17 @@ export function App() {
       <FormSheet
         isOpen={isOpen}
         onNativeDismiss={() => setIsOpen(false)}
-        detents={[0.6, 1.0]}>
+        detents={[0.6, 1.0]}
+        prefersGrabberVisible={prefersGrabberVisible}>
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>FormSheet content</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>prefersGrabberVisible</Text>
+            <Switch
+              value={prefersGrabberVisible}
+              onValueChange={setPrefersGrabberVisible}
+            />
+          </View>
           <View style={styles.spacing} />
           <Button
             title="Dismiss from JS"
@@ -47,6 +63,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: Colors.text,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 12,
+  },
+  label: {
+    fontSize: 16,
+    color: Colors.text,
+  },
   sheetContent: {
     flex: 1,
     backgroundColor: Colors.background,
@@ -65,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestFormSheetGrabberVisible, scenarioDescription);

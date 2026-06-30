@@ -94,7 +94,7 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsInStackStableEnterTransition() {
   return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
 }
 
@@ -120,4 +120,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsInStackStableEnterTransition,
+  scenarioDescription,
+);

@@ -12,7 +12,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
-export function App() {
+function TestFormSheetNativeContainerStyle() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [nativeColor, setNativeColor] = useState<ColorValue>(
@@ -190,4 +190,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetNativeContainerStyle,
+  scenarioDescription,
+);

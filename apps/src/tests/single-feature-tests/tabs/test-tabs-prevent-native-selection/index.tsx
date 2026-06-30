@@ -13,7 +13,7 @@ import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../../shared/';
 import { Colors } from '@apps/shared/styling';
 
-export function ContentView() {
+function ContentView() {
   const nav = useTabsNavigationContext();
 
   const preventNativeSelection =
@@ -45,7 +45,7 @@ export function ContentView() {
   );
 }
 
-export function TabsNavigationButtons() {
+function TabsNavigationButtons() {
   const nav = useTabsNavigationContext();
 
   return (
@@ -128,7 +128,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsPreventNativeSelection() {
   return (
     <ToastProvider>
       <AppContents />
@@ -136,7 +136,7 @@ export function App() {
   );
 }
 
-export function AppContents() {
+function AppContents() {
   const toast = useToast();
 
   return (
@@ -157,4 +157,7 @@ export function AppContents() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsPreventNativeSelection,
+  scenarioDescription,
+);

@@ -5,6 +5,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSSplitScreenComponentView.h"
@@ -124,23 +125,10 @@ static const CGFloat epsilon = 1e-6;
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
   [self requestSplitHostControllerForAppearanceUpdate];
-  [self reactAddControllerToClosestParent:_controller];
-}
-
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
-{
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
-    }
-    return;
+  if (self.window != nil && _controller.parentViewController == nil) {
+    [RNSContainerHelpers addChildViewController:_controller
+                       toViewControllerManaging:self.reactSuperview
+                              withContainerView:self];
   }
 }
 

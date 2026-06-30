@@ -5,7 +5,12 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { Image, processColor, StyleSheet } from 'react-native';
+import {
+  Image,
+  type NativeSyntheticEvent,
+  processColor,
+  StyleSheet,
+} from 'react-native';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
@@ -15,11 +20,17 @@ import StackHeaderConfigAndroidNativeComponent, {
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import type {
   NativeProps as StackHeaderConfigAndroidNativeComponentProps,
+  StackHeaderToolbarMenuBaseAndroid as NativeToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid as NativeToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemPressEventAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid as NativeToolbarMenuItemOptionsAndroid,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigAndroidNativeComponent';
 import StackHeaderSubview from './android/StackHeaderSubview.android';
 import type {
   StackHeaderConfigPropsAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
 } from './StackHeaderConfig.android.types';
@@ -49,12 +60,22 @@ function StackHeaderConfig(
     scrollFlagEnterAlwaysCollapsed,
     scrollFlagExitUntilCollapsed,
     scrollFlagSnap,
-    toolbarMenuItems,
+    toolbarMenu,
     ...filteredAndroidProps
   } = android ?? {};
 
-  const parsedToolbarMenuItems =
-    parseToolbarMenuItemsToNativeProps(toolbarMenuItems);
+  const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
+  const handleToolbarMenuItemPress = (
+    event: NativeSyntheticEvent<StackHeaderToolbarMenuItemPressEventAndroid>,
+  ) => {
+    const element = findToolbarMenuElementById(
+      toolbarMenu?.children,
+      event.nativeEvent.id,
+    );
+    if (element?.type === 'menuItem') {
+      element.onPress?.();
+    }
+  };
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
@@ -69,7 +90,8 @@ function StackHeaderConfig(
       ref={ref}
       collapsable={false}
       style={StyleSheet.absoluteFill}
-      toolbarMenuItems={parsedToolbarMenuItems}
+      toolbarMenu={parsedToolbarMenu}
+      onToolbarMenuItemPress={handleToolbarMenuItemPress}
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
@@ -215,26 +237,74 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
   return ref;
 }
 
-function parseToolbarMenuItemsToNativeProps(
-  items: StackHeaderConfigPropsAndroid['toolbarMenuItems'],
-): StackHeaderConfigAndroidNativeComponentProps['toolbarMenuItems'] {
-  return items?.map(
-    ({
-      icon,
-      iconTintColorNormal,
-      iconTintColorPressed,
-      iconTintColorFocused,
-      iconTintColorDisabled,
-      ...rest
-    }) => ({
-      ...rest,
-      ...parseAndroidIconToNativeProps(icon),
-      iconTintColorNormal: processColor(iconTintColorNormal),
-      iconTintColorPressed: processColor(iconTintColorPressed),
-      iconTintColorFocused: processColor(iconTintColorFocused),
-      iconTintColorDisabled: processColor(iconTintColorDisabled),
-    }),
-  );
+function findToolbarMenuElementById(
+  elements: StackHeaderToolbarMenuElementAndroid[] | undefined,
+  id: string,
+): StackHeaderToolbarMenuElementAndroid | null {
+  if (!elements) {
+    return null;
+  }
+  for (const element of elements) {
+    if (element.id === id) {
+      return element;
+    }
+    if (element.type === 'menu') {
+      const found = findToolbarMenuElementById(element.children, id);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
+function parseToolbarMenuToNativeProps(
+  menu: StackHeaderToolbarMenuBaseAndroid | undefined,
+): NativeToolbarMenuBaseAndroid | undefined {
+  if (!menu?.children?.length) {
+    return undefined;
+  }
+  return {
+    children: menu.children.map(parseElementToNativeProps),
+  };
+}
+
+function parseElementToNativeProps(
+  element: StackHeaderToolbarMenuElementAndroid,
+): NativeToolbarMenuElementAndroid {
+  if (element.type === 'menu') {
+    const { type, children, ...baseProps } = element;
+    return {
+      type,
+      ...parseBaseItemToNativeProps(baseProps),
+      children: children?.map(parseElementToNativeProps),
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { type, onPress, ...baseProps } = element;
+  return {
+    type,
+    ...parseBaseItemToNativeProps(baseProps),
+  };
+}
+
+function parseBaseItemToNativeProps({
+  icon,
+  iconTintColorNormal,
+  iconTintColorPressed,
+  iconTintColorFocused,
+  iconTintColorDisabled,
+  ...rest
+}: StackHeaderToolbarMenuItemBaseAndroid) {
+  return {
+    ...rest,
+    ...parseAndroidIconToNativeProps(icon),
+    iconTintColorNormal: processColor(iconTintColorNormal),
+    iconTintColorPressed: processColor(iconTintColorPressed),
+    iconTintColorFocused: processColor(iconTintColorFocused),
+    iconTintColorDisabled: processColor(iconTintColorDisabled),
+  };
 }
 
 function parseToolbarMenuItemOptionsToNativeProps(

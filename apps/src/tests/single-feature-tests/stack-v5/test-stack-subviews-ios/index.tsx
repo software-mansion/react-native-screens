@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
@@ -129,7 +130,7 @@ const DEFAULT_CONFIG: Config = {
   pressRetentionOffset: '0',
 };
 
-export function App() {
+function TestStackSubviewsIOS() {
   return <StackSetup />;
 }
 
@@ -257,7 +258,7 @@ function ConfigScreen() {
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(() => buildHeaderConfig(config), [config]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setRouteOptions(routeKey, {
       headerConfig,
     });
@@ -368,4 +369,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSubviewsIOS, scenarioDescription);

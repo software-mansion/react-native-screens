@@ -1,9 +1,11 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TabsInStackStableEnterTransition from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
+import TestTabsInStackStableEnterTransition from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
 import { default as TestStackTabsStackInTabsBaseNavigation } from './test-stack-tabs-stack-in-tabs-base-navigation';
 
+export { default as TestTabsInStackStableEnterTransition } from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
+
 const scenarios = {
-  TabsInStackStableEnterTransition,
+  TestTabsInStackStableEnterTransition,
   TestStackTabsStackInTabsBaseNavigation,
 };
 

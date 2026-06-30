@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-simple-nav',
   details: 'Test basic navigation scenarios',
   platforms: ['android', 'ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: true,
 };
