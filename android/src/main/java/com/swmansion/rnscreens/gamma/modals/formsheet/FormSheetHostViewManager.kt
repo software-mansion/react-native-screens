@@ -136,7 +136,10 @@ class FormSheetHostViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
-    override fun addEventEmitters(reactContext: ThemedReactContext, view: FormSheetHost) {
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: FormSheetHost,
+    ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
     }

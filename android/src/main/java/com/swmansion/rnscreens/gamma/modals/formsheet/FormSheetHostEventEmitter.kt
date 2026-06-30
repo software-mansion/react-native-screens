@@ -7,7 +7,6 @@ internal class FormSheetHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
-
     fun emitOnNativeDismissEvent() {
         reactEventDispatcher.dispatchEvent(
             FormSheetNativeDismissEvent(surfaceId, viewTag),

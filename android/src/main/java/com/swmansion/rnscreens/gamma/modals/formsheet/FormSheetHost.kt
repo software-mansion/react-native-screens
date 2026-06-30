@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
-import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
 class FormSheetHost(
