@@ -28,7 +28,6 @@
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
-  [self removeFromParentViewController];
 }
 
 #pragma mark - Overrides
