@@ -22,7 +22,13 @@ type IdOption = (typeof ID_OPTIONS)[number];
 const ICON_OPTIONS = ['none', 'imageSource', 'drawableResource'] as const;
 type IconOption = (typeof ICON_OPTIONS)[number];
 
-const TINT_COLOR_OPTIONS = ['default', 'purple', 'red', 'green'] as const;
+const TINT_COLOR_OPTIONS = [
+  'default',
+  'purple',
+  'red',
+  'green',
+  'blue',
+] as const;
 type TintColorOption = (typeof TINT_COLOR_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = ['always', 'never', 'ifRoom'] as const;
@@ -105,6 +111,8 @@ function resolveTintColor(option: TintColorOption): ColorValue | undefined {
       return Colors.RedLight100;
     case 'green':
       return Colors.GreenLight100;
+    case 'blue':
+      return Colors.BlueLight100;
     default:
       return undefined;
   }
