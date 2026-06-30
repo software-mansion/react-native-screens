@@ -29,7 +29,6 @@ class FormSheetHost(
     internal var prefersGrabberVisible = false
 
     internal fun onNativeDismiss() {
-        this.isOpen = false
         eventEmitter.emitOnNativeDismissEvent()
     }
 
@@ -75,10 +74,11 @@ class FormSheetHost(
     }
 
     internal fun onAfterUpdateTransaction() {
-        val config = FormSheetConfig(
-            isOpen = this.isOpen,
-            prefersGrabberVisible = this.prefersGrabberVisible,
-        )
+        val config =
+            FormSheetConfig(
+                isOpen = this.isOpen,
+                prefersGrabberVisible = this.prefersGrabberVisible,
+            )
         dialogManager.applyConfig(config)
     }
 
