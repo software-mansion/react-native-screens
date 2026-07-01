@@ -246,10 +246,10 @@ function MainScreen() {
         disabled: cmdDisabled === 'true',
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [
     cmdTargetId,
     cmdIcon,

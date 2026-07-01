@@ -156,10 +156,10 @@ function MainScreen() {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdTitle, cmdHidden]);
 
   return (
