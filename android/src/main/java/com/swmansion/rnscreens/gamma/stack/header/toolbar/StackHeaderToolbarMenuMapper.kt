@@ -28,7 +28,7 @@ internal object StackHeaderToolbarMenuMapper {
 
     // endregion
 
-    // region Menu item command parsing
+    // region Menu element command parsing
 
     fun parseMenuElementOptions(map: ReadableMap): StackHeaderToolbarMenuElementOptions =
         StackHeaderToolbarMenuElementOptions(

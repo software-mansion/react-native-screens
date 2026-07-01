@@ -10,7 +10,7 @@ deeply nested submenus), that imperative `setToolbarMenuElementOptions`
 commands work on both leaf items inside submenus and on submenu
 containers themselves (including `menuTitle` changes), and that any
 props update rebuilds the entire menu tree — discarding all prior
-command-applied state at every level. 
+command-applied state at every level.
 
 **OS test creation version:** Android: API Level 36
 
