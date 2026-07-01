@@ -232,16 +232,16 @@ internal open class StackHeaderConfigViewManager :
         view.toolbarMenuItemIconSourceMap = iconSources
     }
 
-    override fun setToolbarMenuItemOptions(
+    override fun setToolbarMenuElementOptions(
         view: StackHeaderConfig,
         id: String,
         options: ReadableArray,
     ) {
         val map = options.getMap(0) ?: return
-        view.dispatchMenuItemUpdate(
+        view.dispatchMenuElementUpdate(
             id,
-            StackHeaderToolbarMenuMapper.parseMenuItemOptions(map),
-            StackHeaderToolbarMenuMapper.parseMenuItemIconSource(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
         )
     }
 

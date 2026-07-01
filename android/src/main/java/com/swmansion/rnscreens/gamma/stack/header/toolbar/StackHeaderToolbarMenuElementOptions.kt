@@ -3,11 +3,11 @@ package com.swmansion.rnscreens.gamma.stack.header.toolbar
 import android.graphics.drawable.Drawable
 
 /**
- * Partial update for a toolbar menu item.
+ * Partial update for a toolbar menu element.
  *
  * A `null` field means "leave the current value unchanged".
  */
-internal data class StackHeaderToolbarMenuItemOptions(
+internal data class StackHeaderToolbarMenuElementOptions(
     val title: StackHeaderToolbarUpdate<String>? = null,
     val titleCondensed: StackHeaderToolbarUpdate<String>? = null,
     val tooltipText: StackHeaderToolbarUpdate<String>? = null,
@@ -20,6 +20,7 @@ internal data class StackHeaderToolbarMenuItemOptions(
     val iconTintColorFocused: StackHeaderToolbarUpdate<Int>?,
     val iconTintColorDisabled: StackHeaderToolbarUpdate<Int>?,
     val checked: Boolean? = null,
+    val menuTitle: StackHeaderToolbarUpdate<String>? = null,
 ) {
     val requiresIconTintColorUpdate: Boolean
         get() =
