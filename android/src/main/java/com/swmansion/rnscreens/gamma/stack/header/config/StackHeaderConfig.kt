@@ -193,7 +193,7 @@ internal class StackHeaderConfig(
     // Last resolved icon per menu item id. Unlike every other field on this config — which
     // mirrors a single prop — this cache deliberately merges resolved icons from BOTH sources
     // that can set a menu item icon: the `toolbarMenu` prop
-    // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `setToolbarMenuElementOptions`
+    // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `updateToolbarMenuElements`
     // view command (dispatchMenuElementUpdate). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
@@ -369,12 +369,25 @@ internal class StackHeaderConfig(
     // region Imperative menu item commands
 
     /**
+     * Applies a batch of toolbar menu item view commands. Each update follows the same semantics
+     * as [dispatchMenuElementUpdate]: updates without icon changes are delivered immediately,
+     * updates with icon changes wait for (possibly async) image resolution.
+     */
+    internal fun dispatchMenuElementUpdates(
+        updates: List<Triple<String, StackHeaderToolbarMenuElementOptions, StackHeaderToolbarMenuItemIconSource?>>,
+    ) {
+        for ((id, options, iconSource) in updates) {
+            dispatchMenuElementUpdate(id, options, iconSource)
+        }
+    }
+
+    /**
      * Applies a toolbar menu item view command. When the command does not touch the icon
      * ([iconSource] is `null`) the options are delivered immediately. Otherwise, the icon is
      * resolved first and all options — including the icon — are delivered together in a single
      * update, so the change is applied atomically once the (possibly async) image has loaded.
      */
-    internal fun dispatchMenuElementUpdate(
+    private fun dispatchMenuElementUpdate(
         id: String,
         options: StackHeaderToolbarMenuElementOptions,
         iconSource: StackHeaderToolbarMenuItemIconSource?,
