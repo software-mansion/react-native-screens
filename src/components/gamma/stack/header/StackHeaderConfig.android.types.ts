@@ -81,6 +81,13 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * @summary Title of the menu element.
    *
+   * @remarks
+   * If `title` is changed for the element of type `menu` by using the
+   * `setToolbarMenuElementOptions` view command, the menu title (`menuTitle`)
+   * will also be changed to the new title (unless the new title is set to
+   * `undefined`). In order to keep the custom menu title, you should also
+   * include `menuTitle` in the view command.
+   *
    * @platform android
    */
   title?: string | undefined;
@@ -366,6 +373,12 @@ export interface StackHeaderToolbarMenuAndroid
    * @description
    * Maps to Android's `SubMenu.setHeaderTitle()`. This is distinct from
    * `title`, which controls the label shown in the parent menu's item row.
+   *
+   * @remarks
+   * If `title` is changed by using the `setToolbarMenuElementOptions` view
+   * command, the menu title will also be changed to the new title (unless the
+   * new title is set to `undefined`). In order to keep the custom menu title,
+   * you should also include `menuTitle` in the view command.
    *
    * @platform android
    */
