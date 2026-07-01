@@ -31,6 +31,7 @@ export type {
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
+  StackHeaderToolbarMenuElementUpdateAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS

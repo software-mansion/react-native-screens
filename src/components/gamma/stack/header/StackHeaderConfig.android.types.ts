@@ -83,7 +83,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    *
    * @remarks
    * If `title` is changed for the element of type `menu` by using the
-   * `setToolbarMenuElementOptions` view command, the menu title (`menuTitle`)
+   * `updateToolbarMenuElements` view command, the menu title (`menuTitle`)
    * will also be changed to the new title (unless the new title is set to
    * `undefined`). In order to keep the custom menu title, you should also
    * include `menuTitle` in the view command.
@@ -375,7 +375,7 @@ export interface StackHeaderToolbarMenuAndroid
    * `title`, which controls the label shown in the parent menu's item row.
    *
    * @remarks
-   * If `title` is changed by using the `setToolbarMenuElementOptions` view
+   * If `title` is changed by using the `updateToolbarMenuElements` view
    * command, the menu title will also be changed to the new title (unless the
    * new title is set to `undefined`). In order to keep the custom menu title,
    * you should also include `menuTitle` in the view command.
@@ -414,19 +414,43 @@ export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
   menuTitle?: string | undefined;
 };
 
+export interface StackHeaderToolbarMenuElementUpdateAndroid {
+  /**
+   * @summary The ID of the menu element to update.
+   *
+   * @platform android
+   */
+  id: string;
+  /**
+   * @summary Options to apply to the menu element.
+   *
+   * @platform android
+   */
+  options: StackHeaderToolbarMenuElementOptionsAndroid;
+}
+
 export interface StackHeaderConfigCommandsAndroid {
   /**
-   * @summary Allows to change menu element configuration in runtime.
+   * @summary Applies multiple menu element updates in a single batch.
    *
-   * @param id The ID of the menu element which will be updated.
-   * @param options Object with properties that should be changed. If property
-   *        is omitted, the current value will be preserved. If property is
-   *        explicitly set to `undefined`, the default value of the prop will be
-   *        restored.
+   * @description
+   * Accepts a single update or an array of updates. Each update targets a menu
+   * element by `id` and applies the given `options`.
+   *
+   * Updates that do not include an icon change are applied synchronously in
+   * iteration order. If an update includes an icon change (`icon` field in
+   * `options`) that requires asynchronous image loading, all options for that
+   * element (not just the icon) wait for the image to load before being
+   * applied — there is no partial application. Such updates may be applied
+   * after non-icon updates and in an unpredictable order relative to each
+   * other.
+   *
+   * @param updates A single update object or an array of updates.
    */
-  setToolbarMenuElementOptions: (
-    id: string,
-    options: StackHeaderToolbarMenuElementOptionsAndroid,
+  updateToolbarMenuElements: (
+    updates:
+      | StackHeaderToolbarMenuElementUpdateAndroid
+      | StackHeaderToolbarMenuElementUpdateAndroid[],
   ) => void;
 }
 
@@ -615,11 +639,11 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @description
    * This prop serves as initial configuration of the toolbar menu. If you
-   * want to change some property in runtime, use `setToolbarMenuElementOptions`
+   * want to change some property in runtime, use `updateToolbarMenuElements`
    * view command.
    *
    * Changing this prop in runtime will result in full toolbar menu rebuild.
-   * Any prior changes applied via `setToolbarMenuElementOptions` will be lost.
+   * Any prior changes applied via `updateToolbarMenuElements` will be lost.
    *
    * @platform android
    */
