@@ -4,7 +4,7 @@
 
 **Description:** This test focuses on the Android toolbar menu items API
 on the gamma stack header — both the `toolbarMenu` prop and the
-imperative `setToolbarMenuItemOptions(id, options)` command. It verifies
+imperative `setToolbarMenuElementOptions(id, options)` command. It verifies
 that the menu renders correctly from props on first mount, that the
 per-item `onPress` callback fires with the correct id, and that
 imperative commands behave as specified: fields absent from `options`
@@ -26,7 +26,7 @@ Other — automation is not implemented yet.
 
 ## Note (Optional)
 
-- `StackHeaderToolbarMenuItemOptionsAndroid` semantics:
+- `StackHeaderToolbarMenuElementOptionsAndroid` semantics:
   - A field missing from the options object means "preserve current
     value".
   - A field set to `undefined` (sent over the bridge as `null`) means

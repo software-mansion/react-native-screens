@@ -6,7 +6,7 @@
 support on the gamma stack header. It verifies that submenus render
 correctly as expandable groups in the overflow menu, that `onPress`
 fires with the correct id for items at every nesting level (including
-deeply nested submenus), that imperative `setToolbarMenuItemOptions`
+deeply nested submenus), that imperative `setToolbarMenuElementOptions`
 commands work on both leaf items inside submenus and on submenu
 containers themselves (including `menuTitle` changes), and that any
 props update rebuilds the entire menu tree — discarding all prior
@@ -27,7 +27,7 @@ TBD — automation is possible and planned but not yet implemented.
 - Submenus appear as items with a submenu indicator (caret/arrow
   icon). Tapping a submenu opens a nested menu instead of firing
   `onPress`.
-- `setToolbarMenuItemOptions` targets elements by `id`. It works
+- `setToolbarMenuElementOptions` targets elements by `id`. It works
   on both leaf items and submenu containers at any nesting depth.
 - `menuTitle` controls the header text shown above submenu items
   when the submenu is opened. Only `submenu-1` has `menuTitle`

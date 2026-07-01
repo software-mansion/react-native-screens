@@ -8,7 +8,7 @@ group behavior, `onSelectionChange` callbacks with correct IDs on groups of
 items, `onPress` on action items, `initialToggleState`,
 `toolbarMenuGroupDividerEnabled`, runtime props updates (group type change,
 adding/removing items, full rebuild resetting command state), and imperative
-`setToolbarMenuItemOptions` commands for setting `checked`, `title`, `hidden`,
+`setToolbarMenuElementOptions` commands for setting `checked`, `title`, `hidden`,
 and hidden items preserving their selection in callbacks.
 
 **OS test creation version:** Android: API Level 36
@@ -25,7 +25,7 @@ TBD — automation is possible and planned but not yet implemented.
 
 - Groups are scoped to the menu level they are defined in —
   groups cannot span submenus.
-- `setToolbarMenuItemOptions` targets elements by `id`. It works
+- `setToolbarMenuElementOptions` targets elements by `id`. It works
   on items at any nesting depth.
 
 ## Steps
