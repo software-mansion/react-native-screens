@@ -16,7 +16,7 @@ import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
@@ -267,7 +267,7 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdChecked !== 'no change' && { checked: cmdChecked === 'true' }),
       ...(cmdTitle !== 'no change' && {
         title: cmdTitle === 'undefined' ? undefined : cmdTitle,
@@ -276,7 +276,7 @@ function MainScreen() {
         hidden: cmdHidden === 'undefined' ? undefined : cmdHidden === 'true',
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );
