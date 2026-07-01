@@ -124,7 +124,18 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
-  const shouldUseSafeAreaView = isIOS26OrHigher;
+  // Android does not inset formSheet content for the bottom safe area the way
+  // iOS does natively, so content runs under the navigation bar. RNS already
+  // dispatches the keyboard-aware bottom inset (SheetDelegate); we just need the
+  // content to consume it via SafeAreaView. Skipped when a sheet footer is used,
+  // since the footer owns the bottom edge in that case.
+  // eslint-disable-next-line camelcase
+  const hasSheetFooter = unstable_sheetFooter != null;
+  const isAndroidFormSheet =
+    Platform.OS === 'android' &&
+    stackPresentationWithDefault === 'formSheet' &&
+    !hasSheetFooter;
+  const shouldUseSafeAreaView = isIOS26OrHigher || isAndroidFormSheet;
 
   const content = (
     <>
@@ -134,7 +145,12 @@ function ScreenStackItem(
           style={debugContainerStyle}
           stackPresentation={stackPresentationWithDefault}>
           {shouldUseSafeAreaView ? (
-            <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            <SafeAreaView
+              edges={
+                isAndroidFormSheet
+                  ? { bottom: true }
+                  : getSafeAreaEdges(headerConfig)
+              }>
               {children}
             </SafeAreaView>
           ) : (
