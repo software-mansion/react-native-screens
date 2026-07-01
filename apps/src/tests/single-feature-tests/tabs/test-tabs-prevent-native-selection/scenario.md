@@ -17,8 +17,7 @@ subject to prevention.
 ## E2E test
 
 Incomplete: The E2E test covers most steps for iPhone and Android phone.
-Test on iPad covers steps 1-11 and one additional step checking that six
-tabs in sidebar are visible.
+The iPad E2E test covers steps 1-11 and additionally verifies that all six tabs exist in the sidebar.
 
 Not covered:
 
