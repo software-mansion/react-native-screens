@@ -148,6 +148,18 @@ open class ScreenViewManager :
             }
     }
 
+    override fun setTransitionDuration(
+        view: Screen,
+        value: Int,
+    ) {
+        if (value < 0 && value != Screen.TRANSITION_DURATION_UNSET) {
+            throw JSApplicationIllegalArgumentException(
+                "Invalid transitionDuration $value, must be non-negative or ${Screen.TRANSITION_DURATION_UNSET} (unset)",
+            )
+        }
+        view.transitionDuration = value
+    }
+
     override fun setGestureEnabled(
         view: Screen,
         gestureEnabled: Boolean,
@@ -261,11 +273,6 @@ open class ScreenViewManager :
     override fun setFullScreenSwipeShadowEnabled(
         view: Screen?,
         value: Boolean,
-    ) = Unit
-
-    override fun setTransitionDuration(
-        view: Screen?,
-        value: Int,
     ) = Unit
 
     override fun setHideKeyboardOnSwipe(
