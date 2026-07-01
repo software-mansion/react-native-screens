@@ -7,6 +7,12 @@ export const describeIfiOS =
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
+export const isIPadTarget =
+  device.getPlatform() === 'ios' &&
+  /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
+
+export const describeIfiPad = isIPadTarget ? describe : describe.skip;
+
 export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
