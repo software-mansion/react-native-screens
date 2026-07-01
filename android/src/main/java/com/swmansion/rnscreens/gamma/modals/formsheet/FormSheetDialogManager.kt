@@ -17,6 +17,8 @@ class FormSheetDialogManager(
 ) {
     private var formSheetConfig = FormSheetConfig()
 
+    private var rawDetents: List<Double> = emptyList()
+
     private val themedContext =
         ContextThemeWrapper(
             context,
@@ -64,6 +66,11 @@ class FormSheetDialogManager(
 
         if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
+        }
+
+        if (formSheetConfig.detents != newConfig.detents) {
+            // TODO(@t0maboro): resolve into FormSheetDetents and hand off to the behavior controller.
+            rawDetents = newConfig.detents
         }
 
         formSheetConfig = newConfig

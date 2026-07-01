@@ -69,7 +69,10 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: ReadableArray?,
     ) {
-        // TODO: @t0maboro - implement later
+        view.detents =
+            value?.let { array ->
+                List(array.size()) { index -> array.getDouble(index) }
+            } ?: emptyList()
     }
 
     override fun setPrefersGrabberVisible(
