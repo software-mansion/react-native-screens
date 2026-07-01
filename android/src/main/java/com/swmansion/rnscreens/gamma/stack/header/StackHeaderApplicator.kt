@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.header
 
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -31,8 +32,11 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
@@ -256,6 +260,57 @@ internal class StackHeaderApplicator(
         return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
     }
 
+    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Map<String, Int> {
+        val forwardGroupIdMap = mutableMapOf<String, Int>()
+        var counter = 1
+        assignGroupIds(menuConfig, forwardGroupIdMap) { counter++ }
+        return forwardGroupIdMap.toMap()
+    }
+
+    fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
+        val itemGroupMap = mutableMapOf<String, String>()
+        val groupSingleSelection = mutableMapOf<String, Boolean>()
+        val groupMemberItems = mutableMapOf<String, MutableList<String>>()
+        collectGroupMetadata(menuConfig, itemGroupMap, groupSingleSelection, groupMemberItems)
+        return StackHeaderToolbarMenuGroupMetadata(
+            itemGroupMap,
+            groupSingleSelection,
+            groupMemberItems.mapValues { it.value.toList() },
+        )
+    }
+
+    fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
+        for (group in menuConfig.groups) {
+            if (!group.singleSelection) continue
+            var count = 0
+            for (element in menuConfig.children) {
+                if (element.item.groupId == group.groupId && element.item.initialToggleState) {
+                    count++
+                }
+            }
+            require(count <= 1) {
+                "[RNScreens] Radio group '${group.groupId}' has $count items with " +
+                    "initialToggleState=true. At most 1 is allowed for single-selection groups."
+            }
+        }
+        for (element in menuConfig.children) {
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                validateRadioInitialSelection(element.menu)
+            }
+        }
+    }
+
+    /**
+     * Recursively traverses menu elements and maps user-friendly string item IDs to integers
+     * expected by Android.
+     *
+     * @param elements List of menu elements.
+     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
+     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
+     * @param nextId Function that returns next ID integer. New unique integer should be returned
+     *               each time the function is called. The function is used to handle recursive
+     *               element traversal.
+     */
     private fun assignElementIds(
         elements: List<StackHeaderToolbarMenuElementConfig>,
         forwardIdMap: MutableMap<String, Int>,
@@ -263,6 +318,9 @@ internal class StackHeaderApplicator(
         nextId: () -> Int,
     ) {
         for (element in elements) {
+            require(element.item.id !in forwardIdMap) {
+                "[RNScreens] Duplicate toolbar menu item id: '${element.item.id}'. Item IDs must be unique across the entire menu."
+            }
             val nativeId = nextId()
             forwardIdMap[element.item.id] = nativeId
             reverseIdMap[nativeId] = element.item.id
@@ -272,17 +330,81 @@ internal class StackHeaderApplicator(
         }
     }
 
+    /**
+     * Recursively traverses menu elements and maps user-friendly string group IDs to integers
+     * expected by Android.
+     *
+     * @param elements List of menu elements.
+     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
+     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
+     * @param nextId Function that returns next ID integer. New unique integer should be returned
+     *               each time the function is called. The function is used to handle recursive
+     *               element traversal.
+     */
+    private fun assignGroupIds(
+        menuConfig: StackHeaderToolbarMenuConfig,
+        forwardMap: MutableMap<String, Int>,
+        nextId: () -> Int,
+    ) {
+        for (group in menuConfig.groups) {
+            require(group.groupId !in forwardMap) {
+                "[RNScreens] Duplicate toolbar menu group id: '${group.groupId}'. Group IDs must be unique across the entire menu."
+            }
+            forwardMap[group.groupId] = nextId()
+        }
+        for (element in menuConfig.children) {
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                assignGroupIds(element.menu, forwardMap, nextId)
+            }
+        }
+    }
+
+    private fun collectGroupMetadata(
+        config: StackHeaderToolbarMenuConfig,
+        itemGroupMap: MutableMap<String, String>,
+        groupSingleSelection: MutableMap<String, Boolean>,
+        groupMemberItems: MutableMap<String, MutableList<String>>,
+    ) {
+        val localGroupIds = config.groups.map { it.groupId }.toSet()
+        for (group in config.groups) {
+            groupSingleSelection[group.groupId] = group.singleSelection
+            groupMemberItems.getOrPut(group.groupId) { mutableListOf() }
+        }
+        for (element in config.children) {
+            element.item.groupId?.let { gid ->
+                require(gid in localGroupIds) {
+                    "[RNScreens] Menu item '${element.item.id}' references group '$gid' " +
+                        "which is not defined at the same menu level. " +
+                        "Groups cannot span submenus."
+                }
+                itemGroupMap[element.item.id] = gid
+                groupMemberItems[gid]!!.add(element.item.id)
+            }
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                collectGroupMetadata(element.menu, itemGroupMap, groupSingleSelection, groupMemberItems)
+            }
+        }
+    }
+
     fun rebuildToolbarMenu(
         toolbar: MaterialToolbar,
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
         reverseIdMap: Map<Int, String>,
-        onItemClicked: (id: String) -> Unit,
+        forwardGroupIdMap: Map<String, Int>,
+        groupDividerEnabled: Boolean,
+        onItemClicked: (id: String, menuItem: MenuItem) -> Unit,
     ) {
         toolbar.menu.clear()
-        addElements(toolbar, toolbar.menu, menuConfig.children, forwardIdMap)
+        addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            toolbar.menu.setGroupDividerEnabled(groupDividerEnabled)
+        }
         toolbar.setOnMenuItemClickListener { menuItem ->
-            reverseIdMap[menuItem.itemId]?.let(onItemClicked)
+            val stringId = reverseIdMap[menuItem.itemId]
+            if (stringId != null) {
+                onItemClicked(stringId, menuItem)
+            }
             true
         }
     }
@@ -290,25 +412,71 @@ internal class StackHeaderApplicator(
     private fun addElements(
         toolbar: MaterialToolbar,
         menu: Menu,
-        elements: List<StackHeaderToolbarMenuElementConfig>,
+        menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
+        forwardGroupIdMap: Map<String, Int>,
     ) {
-        elements.forEachIndexed { index, element ->
+        menuConfig.children.forEachIndexed { index, element ->
             val itemId =
                 requireNotNull(forwardIdMap[element.item.id]) {
                     "[RNScreens] Invalid forwardIdMap received. Missing item: ${element.item}."
                 }
+            val groupIntId =
+                element.item.groupId
+                    ?.let { forwardGroupIdMap[it] ?: Menu.NONE }
+                    ?: Menu.NONE
             when (element) {
                 is StackHeaderToolbarMenuElementConfig.MenuItem -> {
-                    val menuItem = menu.add(Menu.NONE, itemId, index, null)
+                    val menuItem = menu.add(groupIntId, itemId, index, null)
                     applyMenuItemOptions(toolbar, menuItem, element.item.toOptions())
+                    applyCheckability(menuItem, element.item)
                 }
                 is StackHeaderToolbarMenuElementConfig.Submenu -> {
-                    val subMenu = menu.addSubMenu(Menu.NONE, itemId, index, null)
+                    val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
                     applyMenuItemOptions(toolbar, subMenu.item, element.item.toOptions())
-                    addElements(toolbar, subMenu, element.menu.children, forwardIdMap)
+                    addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap)
                 }
             }
+        }
+        configureGroupCheckability(menu, menuConfig.groups, forwardGroupIdMap)
+    }
+
+    private fun configureGroupCheckability(
+        menu: Menu,
+        groups: List<StackHeaderToolbarMenuGroupConfig>,
+        forwardGroupIdMap: Map<String, Int>,
+    ) {
+        for (group in groups) {
+            val groupIntId = forwardGroupIdMap[group.groupId] ?: continue
+            menu.setGroupCheckable(groupIntId, true, group.singleSelection)
+        }
+    }
+
+    private fun applyCheckability(
+        menuItem: MenuItem,
+        itemConfig: StackHeaderToolbarMenuItemConfig,
+    ) {
+        val shouldBeCheckable =
+            when (itemConfig.itemType) {
+                StackHeaderToolbarMenuItemType.TOGGLE -> {
+                    require(itemConfig.groupId != null) {
+                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=TOGGLE but no groupId. " +
+                            "Toggle items must belong to a group."
+                    }
+                    true
+                }
+                StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
+                StackHeaderToolbarMenuItemType.ACTION -> {
+                    require(itemConfig.groupId == null) {
+                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=ACTION " +
+                            "and belongs to a group. Action items cannot belong to groups."
+                    }
+                    false
+                }
+            }
+        if (shouldBeCheckable) {
+            menuItem.isCheckable = true
+            menuItem.isChecked = itemConfig.initialToggleState
         }
     }
 
@@ -334,6 +502,10 @@ internal class StackHeaderApplicator(
         options.title?.let { menuItem.title = it }
         options.hidden?.let { menuItem.isVisible = !it }
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
+
+        // checked is intentionally not handled here. The coordinator layout manages it in
+        // handleGroupItemStateChange because toggling checked state requires group metadata
+        // (radio vs checkbox) and may emit onGroupSelectionChanged events.
 
         options.icon?.let {
             when (it) {

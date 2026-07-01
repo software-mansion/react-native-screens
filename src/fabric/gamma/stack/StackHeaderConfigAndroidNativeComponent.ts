@@ -17,12 +17,19 @@ export type StackHeaderToolbarMenuItemPressEventAndroid = Readonly<{
   id: string;
 }>;
 
+export type StackHeaderToolbarMenuGroupSelectionChangeEventAndroid = Readonly<{
+  groupId: string;
+  selectedIds: string[];
+}>;
+
 type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'always'
   | 'alwaysWithText'
   | 'ifRoom'
   | 'ifRoomWithText'
   | 'never';
+
+type StackHeaderToolbarMenuItemTypeAndroid = 'action' | 'toggle' | 'automatic';
 
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   id: string;
@@ -43,9 +50,21 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
 type StackHeaderToolbarMenuItemAndroid =
   StackHeaderToolbarMenuItemBaseAndroid & {
     type: 'menuItem';
+    groupId?: string | undefined;
+    itemType?: CT.WithDefault<
+      StackHeaderToolbarMenuItemTypeAndroid,
+      'automatic'
+    >;
+    initialToggleState?: CT.WithDefault<boolean, false>;
   };
 
+type StackHeaderToolbarMenuGroupAndroid = {
+  groupId: string;
+  singleSelection?: CT.WithDefault<boolean, false>;
+};
+
 export type StackHeaderToolbarMenuBaseAndroid = {
+  groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   children?: StackHeaderToolbarMenuElementAndroid[] | undefined;
 };
 
@@ -80,8 +99,12 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
+  toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;
   onToolbarMenuItemPress?:
     | CT.DirectEventHandler<StackHeaderToolbarMenuItemPressEventAndroid>
+    | undefined;
+  onToolbarMenuGroupSelectionChange?:
+    | CT.DirectEventHandler<StackHeaderToolbarMenuGroupSelectionChangeEventAndroid>
     | undefined;
 }
 
@@ -89,7 +112,9 @@ type ComponentType = HostComponent<NativeProps>;
 
 export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
->;
+> & {
+  checked?: boolean | undefined;
+};
 
 export interface NativeCommands {
   setToolbarMenuItemOptions: (

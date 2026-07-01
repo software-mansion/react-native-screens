@@ -110,9 +110,13 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    *   will be placed in the overflow menu instead.
    *
    * @remarks
-   * Due to native limitations, the width limit for the `ifRoom` options is
-   * determined during the initial render and will not adapt to subsequent
-   * layout or orientation changes.
+   * This prop only affects top-level menu elements. Items inside
+   * submenus are always displayed in the popup and ignore this
+   * setting.
+   *
+   * Due to native limitations, the width limit for the `ifRoom`
+   * options is determined during the initial render and will not
+   * adapt to subsequent layout or orientation changes.
    *
    * @default never
    * @platform android
@@ -187,6 +191,11 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   iconTintColorDisabled?: ColorValue | undefined;
 }
 
+export type StackHeaderToolbarMenuItemTypeAndroid =
+  | 'action'
+  | 'toggle'
+  | 'automatic';
+
 export interface StackHeaderToolbarMenuItemAndroid
   extends StackHeaderToolbarMenuItemBaseAndroid {
   /**
@@ -196,14 +205,112 @@ export interface StackHeaderToolbarMenuItemAndroid
    */
   type: 'menuItem';
   /**
-   * @summary Callback invoked when the menu item is clicked.
+   * @summary Assigns this item to a group.
+   *
+   * @description
+   * Groups enable selection behavior (single-selection / radio, or
+   * multi-toggle). A group is scoped to the menu level it is defined
+   * in — groups cannot span submenus.
+   *
+   * Required when `itemType` is `toggle`. Cannot be set when
+   * `itemType` is `action`.
+   *
+   * @platform android
+   */
+  groupId?: string | undefined;
+  /**
+   * @summary Controls how the item behaves when clicked.
+   *
+   * @description
+   * The following values are available:
+   * - `action` - the item fires `onPress` without any toggle state,
+   * - `toggle` - the item is checkable; requires `groupId`,
+   * - `automatic` - the item becomes checkable if it has a `groupId`,
+   *   otherwise it behaves as an action.
+   *
+   * @remarks
+   * If `toggle` menu item is shown in the toolbar by setting `showAsAction`
+   * prop to value other than `never`, there is no visual indication of the item
+   * toggle state.
+   *
+   * @default automatic
+   * @platform android
+   */
+  itemType?: StackHeaderToolbarMenuItemTypeAndroid | undefined;
+  /**
+   * @summary Initial checked state for toggle items.
+   *
+   * @description
+   * Only meaningful when effective `itemType` is `toggle`.
+   *
+   * @remarks
+   * The initial state does not trigger `onSelectionChange` on
+   * the group at mount time.
+   *
+   * @default false
+   * @platform android
+   */
+  initialToggleState?: boolean | undefined;
+  /**
+   * @summary Callback invoked when the menu item is pressed.
+   *
+   * @remarks
+   * Not called for items that behave as toggles (items with a
+   * `groupId` or `itemType: 'toggle'`). For those items, use
+   * `onSelectionChange` on the group instead.
    *
    * @platform android
    */
   onPress?: (() => void) | undefined;
 }
 
+export interface StackHeaderToolbarMenuGroupAndroid {
+  /**
+   * @summary Unique identifier of the group.
+   *
+   * @description
+   * Groups enable selection behavior (single-selection / radio, or
+   * multi-toggle). A group is scoped to the menu level it is defined
+   * in — groups cannot span submenus.
+   *
+   * Group identifier must be unique across the entire menu tree.
+   *
+   * @platform android
+   */
+  groupId: string;
+  /**
+   * @summary Determines the type of selection in the group.
+   *
+   * @description
+   * When `true`, only one item in the group can be selected
+   * at a time (radio behavior). When `false`, items toggle
+   * independently (checkbox behavior).
+   *
+   * @default false
+   * @platform android
+   */
+  singleSelection?: boolean | undefined;
+  /**
+   * @summary Callback invoked when the selection within the group
+   * changes. Receives the list of currently selected item IDs.
+   *
+   * @platform android
+   */
+  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
+}
+
 export interface StackHeaderToolbarMenuBaseAndroid {
+  /**
+   * @summary Group definitions for items in this menu level.
+   *
+   * @description
+   * Groups enable selection behavior (single or multi-toggle) for
+   * items that share the same `groupId`. A group is scoped to the
+   * menu level it is defined in — groups cannot span submenus.
+   *
+   * @platform android
+   */
+  groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   /**
    * @summary Menu elements displayed in the toolbar menu.
    *
@@ -218,6 +325,10 @@ export interface StackHeaderToolbarMenuAndroid
   /**
    * @summary Marks this object as a submenu.
    *
+   * @remarks
+   * Android's `MenuItem` interface claims that nesting submenus isn't supported
+   * but Material's implementation handles it correctly.
+   *
    * @platform android
    */
   type: 'menu';
@@ -229,7 +340,18 @@ export type StackHeaderToolbarMenuElementAndroid =
 
 export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
->;
+> & {
+  /**
+   * @summary Sets the checked state of the menu item.
+   *
+   * @description
+   * In single-selection groups, setting `checked: true`
+   * automatically unchecks other group members.
+   *
+   * @platform android
+   */
+  checked?: boolean | undefined;
+};
 
 export interface StackHeaderConfigCommandsAndroid {
   /**
@@ -441,4 +563,16 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   toolbarMenu?: StackHeaderToolbarMenuBaseAndroid | undefined;
+  /**
+   * @summary Enables visual dividers between menu groups.
+   *
+   * @remarks
+   * Requires API 28 (Android 9). On earlier versions, the value of this prop is
+   * ignored.
+   *
+   * @default false
+   * @platform android
+   * @supported API 28 or higher
+   */
+  toolbarMenuGroupDividerEnabled?: boolean | undefined;
 }

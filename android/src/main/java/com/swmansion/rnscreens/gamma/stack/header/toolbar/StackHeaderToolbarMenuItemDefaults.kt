@@ -17,4 +17,7 @@ internal object StackHeaderToolbarMenuItemDefaults {
     val ICON_TINT_COLOR_DISABLED: Int? = null
     val DRAWABLE_ICON_RESOURCE_NAME: String? = null
     val IMAGE_ICON_URI: String? = null
+    val ITEM_TYPE: StackHeaderToolbarMenuItemType = StackHeaderToolbarMenuItemType.AUTOMATIC
+    const val INITIAL_TOGGLE_STATE: Boolean = false
+    const val SINGLE_SELECTION: Boolean = false
 }

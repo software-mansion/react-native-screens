@@ -140,9 +140,14 @@ internal class StackHeaderConfig(
         internal set
 
     override var toolbarMenu: StackHeaderToolbarMenuConfig
-        by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList())) { _, old, new ->
+        by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList(), emptyList())) { _, old, new ->
             if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
         }
+        internal set
+
+    override var toolbarMenuGroupDividerEnabled: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
+    }
         internal set
 
     override val isRTL: Boolean
@@ -324,6 +329,13 @@ internal class StackHeaderConfig(
 
     override fun onMenuItemClicked(id: String) {
         eventEmitter.emitOnToolbarMenuItemPress(id)
+    }
+
+    override fun onGroupSelectionChanged(
+        groupId: String,
+        selectedIds: List<String>,
+    ) {
+        eventEmitter.emitOnToolbarMenuGroupSelectionChange(groupId, selectedIds)
     }
 
     override fun onSubviewOriginChanged(

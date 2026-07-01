@@ -16,6 +16,7 @@ internal data class StackHeaderToolbarMenuItemOptions(
     val iconTintColorPressed: StackHeaderToolbarUpdate<Int>?,
     val iconTintColorFocused: StackHeaderToolbarUpdate<Int>?,
     val iconTintColorDisabled: StackHeaderToolbarUpdate<Int>?,
+    val checked: Boolean? = null,
 ) {
     val requiresIconTintColorUpdate: Boolean
         get() =

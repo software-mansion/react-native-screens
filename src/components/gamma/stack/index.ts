@@ -27,10 +27,12 @@ export type {
   StackHeaderToolbarMenuAndroid,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuGroupAndroid,
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuItemOptionsAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
+  StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
   StackHeaderInlineItemIOS,
