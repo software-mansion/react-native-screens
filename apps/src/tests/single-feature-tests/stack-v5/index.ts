@@ -13,6 +13,7 @@ import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
 import TestStackToolbarMenuDisabled from './test-stack-toolbar-menu-disabled-android';
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
+import TestStackToolbarMenuTitle from './test-stack-toolbar-menu-title-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
 import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android';
 import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
@@ -32,6 +33,7 @@ export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-me
 export { default as TestStackToolbarMenuDisabled } from './test-stack-toolbar-menu-disabled-android';
 export { default as TestStackToolbarMenuGroups } from './test-stack-toolbar-menu-groups-android';
 export { default as TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
+export { default as TestStackToolbarMenuTitle } from './test-stack-toolbar-menu-title-android';
 export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
 export { default as TestStackToolbarNestedMenu } from './test-stack-toolbar-nested-menu-android';
 
@@ -49,6 +51,7 @@ const scenarios = {
   TestStackToolbarMenuDisabled,
   TestStackToolbarMenuGroups,
   TestStackToolbarMenuShowAsAction,
+  TestStackToolbarMenuTitle,
   TestStackToolbarMenuIcon,
   TestStackToolbarNestedMenu,
 };

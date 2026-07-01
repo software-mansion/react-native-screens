@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.valueOrNull
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderApplicator(
@@ -499,7 +500,9 @@ internal class StackHeaderApplicator(
         menuItem: MenuItem,
         options: StackHeaderToolbarMenuItemOptions,
     ) {
-        options.title?.let { menuItem.title = it }
+        options.title?.let { menuItem.title = it.valueOrNull() }
+        options.titleCondensed?.let { menuItem.titleCondensed = it.valueOrNull() }
+        options.tooltipText?.let { MenuItemCompat.setTooltipText(menuItem, it.valueOrNull()) }
         options.hidden?.let { menuItem.isVisible = !it }
         options.disabled?.let { menuItem.isEnabled = !it }
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
@@ -593,7 +596,9 @@ internal class StackHeaderApplicator(
 
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =
         StackHeaderToolbarMenuItemOptions(
-            title = title,
+            title = StackHeaderToolbarUpdate.from(title),
+            titleCondensed = StackHeaderToolbarUpdate.from(titleCondensed),
+            tooltipText = StackHeaderToolbarUpdate.from(tooltipText),
             hidden = hidden,
             disabled = disabled,
             showAsAction = showAsAction,

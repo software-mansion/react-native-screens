@@ -9,7 +9,6 @@ import com.swmansion.rnscreens.gamma.helpers.readBoolean
 import com.swmansion.rnscreens.gamma.helpers.readColor
 import com.swmansion.rnscreens.gamma.helpers.readImageUri
 import com.swmansion.rnscreens.gamma.helpers.readOptionalString
-import com.swmansion.rnscreens.gamma.helpers.readString
 import com.swmansion.rnscreens.gamma.helpers.requireNotNullString
 
 internal object StackHeaderToolbarMenuMapper {
@@ -33,7 +32,9 @@ internal object StackHeaderToolbarMenuMapper {
 
     fun parseMenuItemOptions(map: ReadableMap): StackHeaderToolbarMenuItemOptions =
         StackHeaderToolbarMenuItemOptions(
-            title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+            title = map.readNullableStringUpdate("title"),
+            titleCondensed = map.readNullableStringUpdate("titleCondensed"),
+            tooltipText = map.readNullableStringUpdate("tooltipText"),
             hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readNullableBooleanUpdate("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction =
@@ -132,7 +133,11 @@ internal object StackHeaderToolbarMenuMapper {
     private fun parseItemConfig(map: ReadableMap): StackHeaderToolbarMenuItemConfig =
         StackHeaderToolbarMenuItemConfig(
             id = map.requireNotNullString("id"),
-            title = map.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
+            title = map.readOptionalString("title") ?: StackHeaderToolbarMenuItemDefaults.TITLE,
+            titleCondensed =
+                map.readOptionalString("titleCondensed") ?: StackHeaderToolbarMenuItemDefaults.TITLE_CONDENSED,
+            tooltipText =
+                map.readOptionalString("tooltipText") ?: StackHeaderToolbarMenuItemDefaults.TOOLTIP_TEXT,
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readBoolean("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
@@ -221,16 +226,13 @@ internal object StackHeaderToolbarMenuMapper {
     //
     // A plain `T?` return can encode this only when the field's default is non-null,
     // so `null` unambiguously means "no change". Fields whose default is null (the
-    // tint colors) must return `StackHeaderToolbarUpdate<T>?` instead, to tell "no
-    // change" (null) apart from "reset" (Reset).
-    private fun ReadableMap.readNullableStringUpdate(
-        key: String,
-        default: String,
-    ): String? =
+    // string fields and tint colors) must return `StackHeaderToolbarUpdate<T>?`
+    // instead, to tell "no change" (null) apart from "reset" (Reset).
+    private fun ReadableMap.readNullableStringUpdate(key: String): StackHeaderToolbarUpdate<String>? =
         when {
             !this.hasKey(key) -> null
-            this.isNull(key) -> default
-            else -> this.getString(key) ?: default
+            this.isNull(key) -> StackHeaderToolbarUpdate.Reset
+            else -> StackHeaderToolbarUpdate.from(this.getString(key))
         }
 
     private fun ReadableMap.readNullableBooleanUpdate(

@@ -33,7 +33,9 @@ type StackHeaderToolbarMenuItemTypeAndroid = 'action' | 'toggle' | 'automatic';
 
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   id: string;
-  title?: CT.WithDefault<string, ''>;
+  title?: string | undefined;
+  titleCondensed?: string | undefined;
+  tooltipText?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
