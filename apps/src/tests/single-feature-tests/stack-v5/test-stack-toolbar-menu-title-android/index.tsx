@@ -5,7 +5,7 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderToolbarMenuElementAndroid,
