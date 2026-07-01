@@ -17,6 +17,11 @@ export type StackHeaderToolbarMenuItemPressEventAndroid = Readonly<{
   id: string;
 }>;
 
+export type StackHeaderToolbarMenuGroupSelectionChangeEventAndroid = Readonly<{
+  groupId: string;
+  selectedIds: string[];
+}>;
+
 type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'always'
   | 'alwaysWithText'
@@ -24,10 +29,15 @@ type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'ifRoomWithText'
   | 'never';
 
+type StackHeaderToolbarMenuItemTypeAndroid = 'action' | 'toggle' | 'automatic';
+
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   id: string;
-  title?: CT.WithDefault<string, ''>;
+  title?: string | undefined;
+  titleCondensed?: string | undefined;
+  tooltipText?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
+  disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
@@ -43,15 +53,28 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
 type StackHeaderToolbarMenuItemAndroid =
   StackHeaderToolbarMenuItemBaseAndroid & {
     type: 'menuItem';
+    groupId?: string | undefined;
+    itemType?: CT.WithDefault<
+      StackHeaderToolbarMenuItemTypeAndroid,
+      'automatic'
+    >;
+    initialToggleState?: CT.WithDefault<boolean, false>;
   };
 
+type StackHeaderToolbarMenuGroupAndroid = {
+  groupId: string;
+  singleSelection?: CT.WithDefault<boolean, false>;
+};
+
 export type StackHeaderToolbarMenuBaseAndroid = {
+  groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   children?: StackHeaderToolbarMenuElementAndroid[] | undefined;
 };
 
 type StackHeaderToolbarMenuAndroid = StackHeaderToolbarMenuItemBaseAndroid &
   StackHeaderToolbarMenuBaseAndroid & {
     type: 'menu';
+    menuTitle?: string | undefined;
   };
 
 export type StackHeaderToolbarMenuElementAndroid =
@@ -80,29 +103,36 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
+  toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;
   onToolbarMenuItemPress?:
     | CT.DirectEventHandler<StackHeaderToolbarMenuItemPressEventAndroid>
+    | undefined;
+  onToolbarMenuGroupSelectionChange?:
+    | CT.DirectEventHandler<StackHeaderToolbarMenuGroupSelectionChangeEventAndroid>
     | undefined;
 }
 
 type ComponentType = HostComponent<NativeProps>;
 
-export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
->;
+> & {
+  checked?: boolean | undefined;
+  menuTitle?: string | undefined;
+};
 
 export interface NativeCommands {
-  setToolbarMenuItemOptions: (
+  setToolbarMenuElementOptions: (
     viewRef: React.ComponentRef<ComponentType>,
     id: string,
     // We use the array here only due to codegen limitation. We're using only
     // the first index of the array.
-    options: StackHeaderToolbarMenuItemOptionsAndroid[],
+    options: StackHeaderToolbarMenuElementOptionsAndroid[],
   ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['setToolbarMenuItemOptions'],
+  supportedCommands: ['setToolbarMenuElementOptions'],
 });
 
 export default codegenNativeComponent<NativeProps>(

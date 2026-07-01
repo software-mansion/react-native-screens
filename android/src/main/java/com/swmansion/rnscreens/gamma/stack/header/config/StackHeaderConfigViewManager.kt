@@ -216,24 +216,32 @@ internal open class StackHeaderConfigViewManager :
         view.scrollFlagSnap = value
     }
 
+    override fun setToolbarMenuGroupDividerEnabled(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.toolbarMenuGroupDividerEnabled = value
+    }
+
     override fun setToolbarMenu(
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        view.toolbarMenu = StackHeaderToolbarMenuMapper.parseMenu(value)
-        view.toolbarMenuItemIconSourceMap = StackHeaderToolbarMenuMapper.collectIconSources(value)
+        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value)
+        view.toolbarMenu = menu
+        view.toolbarMenuItemIconSourceMap = iconSources
     }
 
-    override fun setToolbarMenuItemOptions(
+    override fun setToolbarMenuElementOptions(
         view: StackHeaderConfig,
         id: String,
         options: ReadableArray,
     ) {
         val map = options.getMap(0) ?: return
-        view.dispatchMenuItemUpdate(
+        view.dispatchMenuElementUpdate(
             id,
-            StackHeaderToolbarMenuMapper.parseMenuItemOptions(map),
-            StackHeaderToolbarMenuMapper.parseMenuItemIconSource(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
         )
     }
 

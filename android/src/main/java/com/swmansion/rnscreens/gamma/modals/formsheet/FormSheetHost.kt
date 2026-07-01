@@ -1,80 +1,64 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
 
 class FormSheetHost(
-    context: Context,
-) : ViewGroup(context),
+    val reactContext: ThemedReactContext,
+) : ViewGroup(reactContext),
     ReactPointerEventsView {
-    private val dialogManager =
-        FormSheetDialogManager(
-            context = context,
-            onUpdateState = ::updateStateIfNeeded,
-            onDismissRequest = ::onNativeDismiss,
-        )
-    private var isOpen = false
-
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    internal fun setIsOpen(open: Boolean) {
-        if (this.isOpen == open) return
-        this.isOpen = open
+    internal lateinit var eventEmitter: FormSheetHostEventEmitter
 
-        if (isOpen) {
-            dialogManager.show()
-        } else {
-            dialogManager.dismiss()
+    internal var isOpen = false
+
+    internal var prefersGrabberVisible = false
+
+    private val sheetContentView =
+        FormSheetContentView(context) { width, height ->
+            updateStateIfNeeded(width, height)
         }
-    }
 
-    // TODO: @t0maboro - dedicated FormSheetHostEventEmitter needs to be implemented later
-    internal fun onNativeDismiss() {
-        val reactContext = context as? ThemedReactContext ?: return
-        val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-        val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
-
-        dispatcher?.dispatchEvent(
-            FormSheetNativeDismissEvent(surfaceId, id),
+    private val dialogManager =
+        FormSheetDialogManager(
+            context = context,
+            contentView = sheetContentView,
+            onDismissRequest = ::onNativeDismiss,
         )
+
+    internal fun onNativeDismiss() {
+        eventEmitter.emitOnNativeDismissEvent()
     }
 
     internal fun mountReactSubviewAt(
         child: View,
         index: Int,
     ) {
-        dialogManager.contentView.addView(child, index)
+        sheetContentView.addView(child, index)
     }
 
     internal fun unmountReactSubview(child: View) {
-        dialogManager.contentView.removeView(child)
+        sheetContentView.removeView(child)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        dialogManager.contentView.removeViewAt(index)
+        sheetContentView.removeViewAt(index)
     }
 
     internal fun unmountAllReactSubviews() {
-        dialogManager.contentView.removeAllViews()
+        sheetContentView.removeAllViews()
     }
 
-    override fun onDetachedFromWindow() {
-        dialogManager.dismiss()
-        super.onDetachedFromWindow()
-    }
+    internal fun getReactSubviewCount(): Int = sheetContentView.childCount
 
-    internal fun getReactSubviewCount(): Int = dialogManager.contentView.childCount
-
-    internal fun getReactSubviewAt(index: Int): View? = dialogManager.contentView.getChildAt(index)
+    internal fun getReactSubviewAt(index: Int): View? = sheetContentView.getChildAt(index)
 
     // The React children are teleported into the dialog window. This host occupies space in the
     // main window, but holds no content there. NONE makes the host subtree invisible to
@@ -88,6 +72,20 @@ class FormSheetHost(
         r: Int,
         b: Int,
     ) = Unit
+
+    internal fun onViewManagerAddEventEmitters() {
+        check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
+        eventEmitter = FormSheetHostEventEmitter(reactContext, id)
+    }
+
+    internal fun onAfterUpdateTransaction() {
+        val config =
+            FormSheetConfig(
+                isOpen = this.isOpen,
+                prefersGrabberVisible = this.prefersGrabberVisible,
+            )
+        dialogManager.applyConfig(config)
+    }
 
     internal fun updateStateIfNeeded(
         width: Int,
@@ -108,12 +106,10 @@ class FormSheetHost(
     // traversal phase, the actual mounting callback will be executed on the next frame.
     // To prevent drawing a stale layout, we block drawing the frame in `FormSheetContentView`.
     private fun flushPendingStateUpdates() {
-        val reactContext = context as? ReactContext ?: return
-        val surfaceId = UIManagerHelper.getSurfaceId(this)
+        eventEmitter.emitOnSyncFlushEvent()
+    }
 
-        // TODO: @t0maboro - implement EventEmitter in followup PR
-        UIManagerHelper
-            .getEventDispatcherForReactTag(reactContext, id)
-            ?.dispatchEvent(FormSheetSyncFlushEvent(surfaceId, id))
+    internal fun destroy() {
+        dialogManager.destroy()
     }
 }

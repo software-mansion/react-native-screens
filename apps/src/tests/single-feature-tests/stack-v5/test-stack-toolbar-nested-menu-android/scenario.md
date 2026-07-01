@@ -6,10 +6,11 @@
 support on the gamma stack header. It verifies that submenus render
 correctly as expandable groups in the overflow menu, that `onPress`
 fires with the correct id for items at every nesting level (including
-deeply nested submenus), that imperative `setToolbarMenuItemOptions`
+deeply nested submenus), that imperative `setToolbarMenuElementOptions`
 commands work on both leaf items inside submenus and on submenu
-containers themselves, and that any props update rebuilds the entire
-menu tree — discarding all prior command-applied state at every level.
+containers themselves (including `menuTitle` changes), and that any
+props update rebuilds the entire menu tree — discarding all prior
+command-applied state at every level.
 
 **OS test creation version:** Android: API Level 36
 
@@ -23,19 +24,17 @@ TBD — automation is possible and planned but not yet implemented.
 
 ## Note
 
-- The initial menu structure is:
-  - `item-top`: "Top Item" (regular menu item)
-  - `submenu-1`: "Submenu A" (submenu containing):
-    - `sub-1-1`: "Sub A.1"
-    - `sub-1-2`: "Sub A.2"
-  - `submenu-2`: "Submenu B" (submenu containing):
-    - `sub-2-1`: "Sub B.1"
-    - `deep-menu`: "Deep" (submenu containing):
-      - `deep-1`: "Deep.1"
-- Submenus appear as items with a submenu indicator (caret/arrow icon).
-  Tapping a submenu opens a nested menu instead of firing `onPress`.
-- `setToolbarMenuItemOptions` targets elements by `id`. It works on
-  both leaf items and submenu containers at any nesting depth.
+- Submenus appear as items with a submenu indicator (caret/arrow
+  icon). Tapping a submenu opens a nested menu instead of firing
+  `onPress`.
+- `setToolbarMenuElementOptions` targets elements by `id`. It works
+  on both leaf items and submenu containers at any nesting depth.
+- `menuTitle` controls the header text shown above submenu items
+  when the submenu is opened. Only `submenu-1` has `menuTitle`
+  set by default ("Header A"). `submenu-2` and `deep-menu` have
+  no `menuTitle`, so their submenu headers fall back to `title`.
+  When both `menuTitle` and `title` are undefined, no submenu
+  header is shown.
 
 ## Steps
 
@@ -50,17 +49,21 @@ TBD — automation is possible and planned but not yet implemented.
 
 2. Tap "Submenu A" in the overflow menu.
 
-- [ ] A nested menu opens showing two items: "Sub A.1" and
-      "Sub A.2".
+- [ ] A nested menu opens with a submenu header reading
+      "Header A". It shows two items: "Sub A.1" and "Sub A.2".
 
 3. Go back to the top-level menu. Tap "Submenu B".
 
-- [ ] A nested menu opens showing two entries: "Sub B.1" and
-      "Deep" (with a submenu indicator).
+- [ ] A nested menu opens with a submenu header reading
+      "Submenu B" (fallback from title — no menuTitle set). It
+      shows two entries: "Sub B.1" and "Deep" (with a submenu
+      indicator).
 
 4. Tap "Deep" in the Submenu B menu.
 
-- [ ] A nested menu opens showing one item: "Deep.1".
+- [ ] A nested menu opens with a submenu header reading "Deep"
+      (fallback from title — no menuTitle set). It shows one
+      item: "Deep.1".
 
 ---
 
@@ -142,75 +145,140 @@ TBD — automation is possible and planned but not yet implemented.
 
 ---
 
+### Imperative command — change menuTitle
+
+17. Set target id = `submenu-1`, menuTitle = `Header X`,
+    title = `no change`, hidden = `no change`.
+    Tap **Send Command**.
+
+- [ ] Open the submenu (still labeled "Title X" from step 14):
+      the submenu header now reads "Header X".
+
+18. Set target id = `submenu-1`, menuTitle = `undefined`,
+    title = `no change`, hidden = `no change`.
+    Tap **Send Command**.
+
+- [ ] Open the submenu: the submenu header falls back to the
+      title value and reads "Title X".
+
+19. Set target id = `submenu-1`, title = `undefined`,
+    menuTitle = `undefined`, hidden = `no change`.
+    Tap **Send Command**.
+
+- [ ] Open the submenu: no submenu header is shown at all (both
+      menuTitle and title are undefined). The submenu entry in
+      the overflow menu also has no title.
+
+---
+
 ### Props update drops all command state
 
-17. In **Menu Structure — Props**, toggle the "add extra item to
+20. In **Menu Structure — Props**, toggle the "add extra item to
     submenu-1" switch ON.
 
-- [ ] Open "Submenu A" (which reverts to its prop-configured title
-      "Submenu A" because the props update rebuilt the menu). It now
-      shows three items: "Sub A.1" (reverted from "Title X"),
-      "Sub A.2", and "Sub A.3". All command state is gone.
+- [ ] Open "Submenu A" (which reverts to its prop-configured
+      title "Submenu A" because the props update rebuilt the
+      menu). The submenu header reads "Header A" (restored from
+      props). It now shows three items: "Sub A.1" (reverted from
+      "Title X"), "Sub A.2", and "Sub A.3". All command state is
+      gone.
 
 ---
 
 ### Props update — structural changes
 
-18. Toggle the "add extra item to submenu-1" switch OFF.
+21. Toggle the "add extra item to submenu-1" switch OFF.
 
 - [ ] Open "Submenu A": "Sub A.3" disappears. Two items remain:
       "Sub A.1" and "Sub A.2".
 
-19. Change the "submenu-1 title" picker to `Changed`.
+22. Change the "submenu-1 title" picker to `Changed`.
 
 - [ ] The submenu now reads "Changed" in the overflow menu. Its
       children are unchanged.
 
-20. Change the "submenu-1 title" picker back to `Submenu A`.
+23. Change the "submenu-1 title" picker back to `Submenu A`.
 
 - [ ] The submenu reads "Submenu A" again.
 
-21. Toggle the "include submenu-1" switch OFF.
+24. Change the "submenu-1 menuTitle" picker to `Changed Header`.
+
+- [ ] Open "Submenu A": the submenu header reads
+      "Changed Header". Children unchanged.
+
+25. Change the "submenu-1 menuTitle" picker back to `Header A`.
+
+- [ ] Open "Submenu A": the submenu header reads "Header A"
+      again.
+
+26. Change the "submenu-1 menuTitle" picker to `undefined`.
+
+- [ ] Open "Submenu A": the submenu header falls back to the
+      title and reads "Submenu A".
+
+27. Change the "submenu-1 title" picker to `undefined`
+    (menuTitle is still undefined from the previous step).
+
+- [ ] Open the submenu: no submenu header is shown. The submenu
+      entry in the overflow menu also has no title.
+
+28. Change the "submenu-1 title" picker back to `Submenu A`,
+    then change "submenu-1 menuTitle" back to `Header A`.
+
+- [ ] The submenu reads "Submenu A" in the overflow menu and the
+      submenu header reads "Header A" when opened.
+
+29. Toggle the "include submenu-1" switch OFF.
 
 - [ ] "Submenu A" disappears from the overflow menu. Only
       "Top Item" and "Submenu B" remain.
 
-22. Toggle the "include submenu-1" switch ON.
+30. Toggle the "include submenu-1" switch ON.
 
 - [ ] "Submenu A" reappears with its default children ("Sub A.1"
       and "Sub A.2").
 
-23. Toggle the "include submenu-2" switch OFF.
+31. Toggle the "include submenu-2" switch OFF.
 
 - [ ] "Submenu B" disappears. Only "Top Item" and "Submenu A"
       remain.
 
-24. Toggle the "include submenu-2" switch ON.
+32. Toggle the "include submenu-2" switch ON.
 
-- [ ] "Submenu B" reappears with "Sub B.1" and "Deep" (containing
-      "Deep.1").
+- [ ] "Submenu B" reappears with "Sub B.1" and "Deep"
+      (containing "Deep.1").
 
 ---
 
 ### Deeply nested submenu — commands at depth
 
-25. Set target id = `deep-1`, title = `Title X`,
-    hidden = `no change`. Tap **Send Command**.
+33. Set target id = `deep-1`, title = `Title X`,
+    hidden/menuTitle = `no change`. Tap **Send Command**.
 
 - [ ] Open Submenu B > Deep: the item now reads "Title X".
 
-26. Tap "Title X".
+34. Tap "Title X".
 
 - [ ] "Last clicked" updates to `deep-1`.
 
-27. Set target id = `deep-menu`, title = `Title X`,
-    hidden = `no change`. Tap **Send Command**.
+35. Set target id = `deep-menu`, title = `Title X`,
+    hidden/menuTitle = `no change`. Tap **Send Command**.
 
 - [ ] Open Submenu B: the nested submenu now reads "Title X"
       instead of "Deep".
 
-28. In **Menu Structure — Props**, toggle "include submenu-2" OFF
+36. Set target id = `deep-menu`, menuTitle = `Header X`,
+    title = `no change`, hidden = `no change`.
+    Tap **Send Command**.
+
+- [ ] Open Submenu B > "Title X" (from step 35): the submenu
+      header reads "Header X" instead of "Title X" (the title
+      fallback).
+
+37. In **Menu Structure — Props**, toggle "include submenu-2" OFF
     and back ON.
 
-- [ ] Open Submenu B: "Deep" is restored (props rebuild). Open
-      Deep: "Deep.1" is restored.
+- [ ] Open Submenu B: its submenu header reads "Submenu B"
+      (title fallback — props rebuild). Open Deep: its submenu
+      header reads "Deep" (title fallback — props rebuild).
+      "Deep.1" is restored.

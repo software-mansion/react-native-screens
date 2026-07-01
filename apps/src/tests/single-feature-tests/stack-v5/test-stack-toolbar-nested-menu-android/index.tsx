@@ -10,7 +10,7 @@ import { Colors } from '@apps/shared/styling';
 import {
   type StackHeaderConfigRef,
   type StackHeaderToolbarMenuElementAndroid,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
@@ -32,8 +32,18 @@ type HiddenOption = 'true' | 'false' | 'undefined';
 type CmdTitleOption = TitleOption | 'no change';
 type CmdHiddenOption = HiddenOption | 'no change';
 
+type MenuTitleOption = 'Header X' | 'undefined';
+type CmdMenuTitleOption = MenuTitleOption | 'no change';
+
 const SUBMENU1_TITLE_OPTIONS = ['Submenu A', 'Changed', 'undefined'] as const;
 type Submenu1TitleOption = (typeof SUBMENU1_TITLE_OPTIONS)[number];
+
+const SUBMENU1_MENU_TITLE_OPTIONS = [
+  'Header A',
+  'Changed Header',
+  'undefined',
+] as const;
+type Submenu1MenuTitleOption = (typeof SUBMENU1_MENU_TITLE_OPTIONS)[number];
 
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
@@ -44,6 +54,11 @@ const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = [
   'no change',
   'true',
   'false',
+  'undefined',
+];
+const CMD_MENU_TITLE_OPTIONS: CmdMenuTitleOption[] = [
+  'no change',
+  'Header X',
   'undefined',
 ];
 
@@ -57,9 +72,16 @@ function resolveHidden(h: HiddenOption): boolean | undefined {
   return h === 'undefined' ? undefined : h === 'true';
 }
 
+function resolveMenuTitle(
+  t: MenuTitleOption | Submenu1MenuTitleOption,
+): string | undefined {
+  return t === 'undefined' ? undefined : t;
+}
+
 interface MenuConfig {
   includeSubmenu1: boolean;
   submenu1Title: Submenu1TitleOption;
+  submenu1MenuTitle: Submenu1MenuTitleOption;
   addExtraItem: boolean;
   includeSubmenu2: boolean;
 }
@@ -67,6 +89,7 @@ interface MenuConfig {
 const DEFAULT_CONFIG: MenuConfig = {
   includeSubmenu1: true,
   submenu1Title: 'Submenu A',
+  submenu1MenuTitle: 'Header A',
   addExtraItem: false,
   includeSubmenu2: true,
 };
@@ -111,6 +134,7 @@ function buildMenu(
       type: 'menu',
       id: 'submenu-1',
       title: resolveTitle(config.submenu1Title),
+      menuTitle: resolveMenuTitle(config.submenu1MenuTitle),
       children: sub1Children,
     });
   }
@@ -149,7 +173,7 @@ function buildMenu(
 
 const HEADER_TITLE = 'Toolbar Nested Menu Test';
 
-export function App() {
+function TestStackToolbarNestedMenu() {
   return (
     <StackContainer
       routeConfigs={[
@@ -179,6 +203,8 @@ function MainScreen() {
   const [cmdTargetId, setCmdTargetId] = useState<AllIds>('item-top');
   const [cmdTitle, setCmdTitle] = useState<CmdTitleOption>('no change');
   const [cmdHidden, setCmdHidden] = useState<CmdHiddenOption>('no change');
+  const [cmdMenuTitle, setCmdMenuTitle] =
+    useState<CmdMenuTitleOption>('no change');
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
@@ -215,17 +241,20 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && {
         hidden: resolveHidden(cmdHidden),
       }),
+      ...(cmdMenuTitle !== 'no change' && {
+        menuTitle: resolveMenuTitle(cmdMenuTitle),
+      }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );
-  }, [cmdTargetId, cmdTitle, cmdHidden]);
+  }, [cmdTargetId, cmdTitle, cmdHidden, cmdMenuTitle]);
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -251,6 +280,12 @@ function MainScreen() {
         items={CMD_HIDDEN_OPTIONS}
         onValueChange={setCmdHidden}
       />
+      <SettingsPicker<CmdMenuTitleOption>
+        label="menuTitle"
+        value={cmdMenuTitle}
+        items={CMD_MENU_TITLE_OPTIONS}
+        onValueChange={setCmdMenuTitle}
+      />
       <Button title="Send Command" onPress={sendCommand} />
 
       <Text style={styles.heading}>Menu Structure — Props</Text>
@@ -264,6 +299,12 @@ function MainScreen() {
         value={config.submenu1Title}
         items={[...SUBMENU1_TITLE_OPTIONS]}
         onValueChange={v => applyConfig({ ...config, submenu1Title: v })}
+      />
+      <SettingsPicker<Submenu1MenuTitleOption>
+        label="submenu-1 menuTitle"
+        value={config.submenu1MenuTitle}
+        items={[...SUBMENU1_MENU_TITLE_OPTIONS]}
+        onValueChange={v => applyConfig({ ...config, submenu1MenuTitle: v })}
       />
       <SettingsSwitch
         label="add extra item to submenu-1"
@@ -300,4 +341,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackToolbarNestedMenu, scenarioDescription);

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 // the changed leaf to the root is copied; unchanged subtrees keep their
 // original instances.
 internal data class StackHeaderToolbarMenuConfig(
+    val groups: List<StackHeaderToolbarMenuGroupConfig>,
     val children: List<StackHeaderToolbarMenuElementConfig>,
 ) {
     internal fun updateItemIcon(

@@ -10,7 +10,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderConfigRef,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
@@ -175,7 +175,7 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdIcon !== 'no change' && {
         icon: resolveIcon(cmdIcon),
       }),
@@ -183,7 +183,7 @@ function MainScreen() {
         showAsAction: resolveShowAsAction(cmdShowAsAction),
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );
