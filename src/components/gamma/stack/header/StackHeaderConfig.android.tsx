@@ -586,7 +586,6 @@ function parseToolbarMenuElementOptionsToNativeProps(
       }),
     );
 
-  // For some reason Codegen requires passing an array (we can't use plain object).
   return nativeOptions;
 }
 
