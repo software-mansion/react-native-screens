@@ -27,6 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSFormSheetHostComponentView : NSObject
 @end
 
+@interface RNSContainedModalHostComponentView : NSObject
+@end
+
+@interface RNSContainedModalProviderComponentView : NSObject
+@end
+
 @interface RNSStackHeaderConfigComponentView : NSObject
 @end
 
