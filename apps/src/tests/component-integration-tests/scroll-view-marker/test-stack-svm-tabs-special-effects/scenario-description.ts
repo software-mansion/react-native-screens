@@ -7,6 +7,6 @@ export const scenarioDescription: ScenarioDescription = {
     'Test whether special effects (on tab repetition) are performed correctly in nested container scenario ' +
     '(stack in tabs)',
   platforms: ['ios', 'android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };
