@@ -42,18 +42,22 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
     ).toBeVisible();
   });
 
-  it('tabBar mode the floating tab bar', async () => {
+  it('tabBar mode shows the floating tab bar', async () => {
     await setTabBarControllerMode('tabBar');
     await expect(
       element(by.type('_UIFloatingTabBarCollectionView')),
     ).toBeVisible();
     await expect(element(by.label('Toggle sidebar'))).not.toExist();
     await expect(
-      element(by.type('_UIListContentImageView')).atIndex(0),
+      element(
+        by
+          .type('_UIListContentImageView')
+          .withAncestor(by.type('_UITabSidebarCollectionView')),
+      ),
     ).not.toExist();
   });
 
-  it('tabSidebar mode enable sidebar option in the tab bar', async () => {
+  it('tabSidebar mode enables the sidebar option in the tab bar', async () => {
     await setTabBarControllerMode('tabSidebar');
     await expect(
       element(by.label('Toggle sidebar').and(by.type('UIButton'))),
@@ -64,7 +68,11 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
     ).not.toBeVisible();
     await expect(element(by.type('_UITabSidebarCollectionView'))).toExist();
     await expect(
-      element(by.type('_UIListContentImageView')).atIndex(0),
+      element(
+        by
+          .type('_UIListContentImageView')
+          .withAncestor(by.type('_UITabSidebarCollectionView')),
+      ),
     ).toExist();
     await element(by.type('RCTRootComponentView')).atIndex(0).tap();
     await expect(
@@ -72,7 +80,11 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
     ).toBeVisible();
     await expect(element(by.type('_UITabSidebarCollectionView'))).not.toExist();
     await expect(
-      element(by.type('_UIListContentImageView')).atIndex(0),
+      element(
+        by
+          .type('_UIListContentImageView')
+          .withAncestor(by.type('_UITabSidebarCollectionView')),
+      ),
     ).not.toExist();
   });
 });
