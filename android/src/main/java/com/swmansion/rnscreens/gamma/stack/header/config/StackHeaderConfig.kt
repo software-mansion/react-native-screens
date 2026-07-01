@@ -18,8 +18,8 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewCh
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -193,8 +193,8 @@ internal class StackHeaderConfig(
     // Last resolved icon per menu item id. Unlike every other field on this config — which
     // mirrors a single prop — this cache deliberately merges resolved icons from BOTH sources
     // that can set a menu item icon: the `toolbarMenu` prop
-    // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `setToolbarMenuItemOptions`
-    // view command (dispatchMenuItemUpdate). It is necessary to ensure consistency.
+    // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `setToolbarMenuElementOptions`
+    // view command (dispatchMenuElementUpdate). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
@@ -374,20 +374,20 @@ internal class StackHeaderConfig(
      * resolved first and all options — including the icon — are delivered together in a single
      * update, so the change is applied atomically once the (possibly async) image has loaded.
      */
-    internal fun dispatchMenuItemUpdate(
+    internal fun dispatchMenuElementUpdate(
         id: String,
-        options: StackHeaderToolbarMenuItemOptions,
+        options: StackHeaderToolbarMenuElementOptions,
         iconSource: StackHeaderToolbarMenuItemIconSource?,
     ) {
         if (iconSource == null) {
-            configObserver?.onMenuItemUpdated(id, options)
+            configObserver?.onMenuElementUpdated(id, options)
             return
         }
 
         val resolver = toolbarMenuItemIconResolvers[id]
         if (resolver == null) {
-            Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu item $id.")
-            configObserver?.onMenuItemUpdated(id, options)
+            Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu element $id.")
+            configObserver?.onMenuElementUpdated(id, options)
             return
         }
 
@@ -402,7 +402,7 @@ internal class StackHeaderConfig(
                         StackHeaderToolbarUpdate.from(result.drawable)
                     }
                 }
-            configObserver?.onMenuItemUpdated(id, options.copy(icon = icon))
+            configObserver?.onMenuElementUpdated(id, options.copy(icon = icon))
         }
     }
 

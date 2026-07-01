@@ -4,7 +4,7 @@
 
 **Description:** Tests the `icon` and state-aware `iconTintColor*` props on
 Android toolbar menu items. Covers both the props flow (via `toolbarMenu`
-prop) and the imperative command flow (via `setToolbarMenuItemOptions`). The
+prop) and the imperative command flow (via `setToolbarMenuElementOptions`). The
 props flow rebuilds all items from scratch on every update and discards all
 prior command state on all items simultaneously. The command flow merges changes
 onto individual items: absent fields preserve the current value; fields set to

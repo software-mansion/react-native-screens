@@ -36,7 +36,7 @@ TBD — automation is possible and planned but not yet implemented.
   hidden in **portrait**. An item with text but **no icon** always shows
   its text.
 - Changing any **Props** control rebuilds the whole menu and discards any
-  prior `setToolbarMenuItemOptions` state.
+  prior `setToolbarMenuElementOptions` state.
 
 ## Steps
 

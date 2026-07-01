@@ -81,6 +81,13 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * @summary Title of the menu element.
    *
+   * @remarks
+   * If `title` is changed for the element of type `menu` by using the
+   * `setToolbarMenuElementOptions` view command, the menu title (`menuTitle`)
+   * will also be changed to the new title (unless the new title is set to
+   * `undefined`). In order to keep the custom menu title, you should also
+   * include `menuTitle` in the view command.
+   *
    * @platform android
    */
   title?: string | undefined;
@@ -360,13 +367,29 @@ export interface StackHeaderToolbarMenuAndroid
    * @platform android
    */
   type: 'menu';
+  /**
+   * @summary Header title displayed at the top of the submenu popup.
+   *
+   * @description
+   * Maps to Android's `SubMenu.setHeaderTitle()`. This is distinct from
+   * `title`, which controls the label shown in the parent menu's item row.
+   *
+   * @remarks
+   * If `title` is changed by using the `setToolbarMenuElementOptions` view
+   * command, the menu title will also be changed to the new title (unless the
+   * new title is set to `undefined`). In order to keep the custom menu title,
+   * you should also include `menuTitle` in the view command.
+   *
+   * @platform android
+   */
+  menuTitle?: string | undefined;
 }
 
 export type StackHeaderToolbarMenuElementAndroid =
   | StackHeaderToolbarMenuItemAndroid
   | StackHeaderToolbarMenuAndroid;
 
-export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
 > & {
   /**
@@ -379,21 +402,31 @@ export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
    * @platform android
    */
   checked?: boolean | undefined;
+  /**
+   * @summary Sets the header title of a submenu popup.
+   *
+   * @description
+   * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
+   * menu item.
+   *
+   * @platform android
+   */
+  menuTitle?: string | undefined;
 };
 
 export interface StackHeaderConfigCommandsAndroid {
   /**
-   * @summary Allows to change menu item configuration in runtime.
+   * @summary Allows to change menu element configuration in runtime.
    *
-   * @param id The ID of the menu item which will be updated.
+   * @param id The ID of the menu element which will be updated.
    * @param options Object with properties that should be changed. If property
    *        is omitted, the current value will be preserved. If property is
    *        explicitly set to `undefined`, the default value of the prop will be
    *        restored.
    */
-  setToolbarMenuItemOptions: (
+  setToolbarMenuElementOptions: (
     id: string,
-    options: StackHeaderToolbarMenuItemOptionsAndroid,
+    options: StackHeaderToolbarMenuElementOptionsAndroid,
   ) => void;
 }
 
@@ -582,11 +615,11 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @description
    * This prop serves as initial configuration of the toolbar menu. If you
-   * want to change some property in runtime, use `setToolbarMenuItemOptions`
+   * want to change some property in runtime, use `setToolbarMenuElementOptions`
    * view command.
    *
    * Changing this prop in runtime will result in full toolbar menu rebuild.
-   * Any prior changes applied via `setToolbarMenuItemOptions` will be lost.
+   * Any prior changes applied via `setToolbarMenuElementOptions` will be lost.
    *
    * @platform android
    */
