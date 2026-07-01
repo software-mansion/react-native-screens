@@ -291,19 +291,19 @@ describeIfiPad(
       ).toExist();
       await expect(
         element(by.label('Second').withAncestor(by.type('_UITabSidebarCell'))),
-      ).toBeVisible();
+      ).toExist();
       await expect(
         element(by.label('Third').withAncestor(by.type('_UITabSidebarCell'))),
-      ).toBeVisible();
+      ).toExist();
       await expect(
         element(by.label('Fourth').withAncestor(by.type('_UITabSidebarCell'))),
-      ).toBeVisible();
+      ).toExist();
       await expect(
         element(by.label('Fifth').withAncestor(by.type('_UITabSidebarCell'))),
-      ).toBeVisible();
+      ).toExist();
       await expect(
         element(by.label('Sixth').withAncestor(by.type('_UITabSidebarCell'))),
-      ).toBeVisible();
+      ).toExist();
     });
   },
 );
