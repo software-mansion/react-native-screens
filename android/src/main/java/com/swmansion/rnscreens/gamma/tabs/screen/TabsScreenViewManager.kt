@@ -134,6 +134,27 @@ class TabsScreenViewManager :
         view.selectedDrawableIconResourceName = value
     }
 
+    override fun setDrawableIconTinted(
+        view: TabsScreen,
+        value: Boolean,
+    ) {
+        view.drawableIconTinted = value
+    }
+
+    override fun setSelectedDrawableIconTinted(
+        view: TabsScreen,
+        value: Boolean,
+    ) {
+        view.selectedDrawableIconTinted = value
+    }
+
+    override fun setDrawableIconSize(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.drawableIconSize = value
+    }
+
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
@@ -181,6 +202,8 @@ class TabsScreenViewManager :
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(appearance.getMap("disabled")) else null,
             tabBarItemActiveIndicatorColor = appearance.readOptionalColor("tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.readOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
+            tabBarItemActiveIndicatorWidth = appearance.readOptionalFloat("tabBarItemActiveIndicatorWidth"),
+            tabBarItemActiveIndicatorHeight = appearance.readOptionalFloat("tabBarItemActiveIndicatorHeight"),
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),

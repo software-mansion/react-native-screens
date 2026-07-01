@@ -100,6 +100,14 @@ export interface TabsScreenAppearanceAndroid {
    */
   tabBarItemActiveIndicatorEnabled?: boolean | undefined;
   /**
+   * @summary Active-indicator pill size in dp. If unset, it auto-scales to wrap
+   * the icon box when icons are enlarged via `drawableIconSize`.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorWidth?: number | undefined;
+  tabBarItemActiveIndicatorHeight?: number | undefined;
+  /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
    * @platform android
@@ -186,4 +194,14 @@ export interface TabsScreenPropsAndroid {
    * @platform android
    */
   selectedIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Per-tab icon size in dp.
+   *
+   * The bottom bar's icon box is the largest `drawableIconSize` across all tabs;
+   * each tab's icon is inset to its own size within that box. Tabs without a value
+   * use the default 24dp.
+   *
+   * @platform android
+   */
+  drawableIconSize?: number | undefined;
 }

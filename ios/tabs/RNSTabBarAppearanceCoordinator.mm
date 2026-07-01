@@ -62,7 +62,9 @@
   if (screenView.iconType == RNSTabsIconTypeSfSymbol || screenView.iconType == RNSTabsIconTypeXcasset) {
     if (screenView.iconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
+        // Fall back to a custom symbol from the app's asset catalog.
+        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName]
+            ?: [UIImage imageNamed:screenView.iconResourceName];
       } else {
         tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
       }
@@ -77,7 +79,8 @@
 
     if (screenView.selectedIconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName]
+            ?: [UIImage imageNamed:screenView.selectedIconResourceName];
       } else {
         tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
       }

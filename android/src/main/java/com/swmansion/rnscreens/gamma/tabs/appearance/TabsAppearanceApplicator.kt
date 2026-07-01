@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.StateListDrawable
 import android.util.TypedValue
 import android.view.MenuItem
@@ -22,6 +24,55 @@ import com.swmansion.rnscreens.utils.resolveColorAttr
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
+    // Largest effective per-tab icon size (dp); Material allows only one size for all items.
+    private var iconBoxDp: Float = TabsScreen.DEFAULT_ICON_SIZE_DP
+
+    fun applyIconBox(boxDp: Float) {
+        iconBoxDp = boxDp
+        bottomNavigationView.itemIconSize = PixelUtil.toPixelFromDIP(boxDp).toInt()
+    }
+
+    // Material defaults, captured before we override them so unset bars restore exactly.
+    private var defaultIndicatorWidthPx: Int = -1
+    private var defaultIndicatorHeightPx: Int = -1
+
+    // Explicit dp wins; else auto-scale to the enlarged icon box; else Material
+    // default. Reads iconBoxDp, so applyIconBox must run first.
+    private fun applyActiveIndicatorSize(
+        widthDp: Float?,
+        heightDp: Float?,
+    ) {
+        if (defaultIndicatorWidthPx < 0) {
+            defaultIndicatorWidthPx = bottomNavigationView.itemActiveIndicatorWidth
+            defaultIndicatorHeightPx = bottomNavigationView.itemActiveIndicatorHeight
+        }
+        val enlarged = iconBoxDp > TabsScreen.DEFAULT_ICON_SIZE_DP
+        bottomNavigationView.itemActiveIndicatorWidth =
+            when {
+                widthDp != null && widthDp > 0f -> PixelUtil.toPixelFromDIP(widthDp).toInt()
+                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 16f).toInt()
+                else -> defaultIndicatorWidthPx
+            }
+        bottomNavigationView.itemActiveIndicatorHeight =
+            when {
+                heightDp != null && heightDp > 0f -> PixelUtil.toPixelFromDIP(heightDp).toInt()
+                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 8f).toInt()
+                else -> defaultIndicatorHeightPx
+            }
+    }
+
+    // Inset the icon so it renders at effectiveDp, centered within iconBoxDp.
+    private fun sizeIcon(
+        icon: Drawable?,
+        effectiveDp: Float,
+    ): Drawable? {
+        if (icon == null || effectiveDp >= iconBoxDp) return icon
+        val larger = maxOf(icon.intrinsicWidth, icon.intrinsicHeight)
+        if (larger <= 0) return icon
+        val insetPx = (larger * (iconBoxDp - effectiveDp) / (2f * effectiveDp)).toInt()
+        return if (insetPx > 0) InsetDrawable(icon, insetPx) else icon
+    }
+
     private val states =
         arrayOf(
             intArrayOf(-android.R.attr.state_enabled), // disabled
@@ -109,6 +160,11 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabBarAppearance?.tabBarItemActiveIndicatorEnabled ?: true
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
+
+        applyActiveIndicatorSize(
+            tabBarAppearance?.tabBarItemActiveIndicatorWidth,
+            tabBarAppearance?.tabBarItemActiveIndicatorHeight,
+        )
     }
 
     fun updateFontStyles(
@@ -189,8 +245,10 @@ internal class TabsAppearanceApplicator(
                 tabsScreen.icon
             }
 
-        if (menuItem.icon != targetIcon) {
-            menuItem.icon = targetIcon
+        val sizedIcon = sizeIcon(targetIcon, tabsScreen.effectiveIconSizeDp)
+
+        if (menuItem.icon != sizedIcon) {
+            menuItem.icon = sizedIcon
         }
     }
 
