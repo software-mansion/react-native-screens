@@ -121,9 +121,20 @@ function isDirectory(p) {
   }
 }
 
-// Recursively find `*/SwiftExplicitPrecompiledModules/*/RNScreens-*.pcm`.
+// Recursively find every `RNScreens-*.pcm`. The precompiled module can land in
+// different directories depending on the toolchain / build mode:
+//   * `SwiftExplicitPrecompiledModules/` - Swift's explicit-module build
+//   * `ExplicitPrecompiledModules/`       - Clang's explicit-module build
+//                                           (what Xcode 26 emits from the CLI)
+//   * `ModuleCache.noindex/`              - implicit module cache
+// We accept all of them and let the caller decide which are relevant.
 function findPcms(root) {
   const pcmName = new RegExp(`^${MODULE_NAME}-.*\\.pcm$`);
+  const dirMatchers = [
+    'SwiftExplicitPrecompiledModules',
+    'ExplicitPrecompiledModules',
+    'ModuleCache.noindex',
+  ].map((name) => `${path.sep}${name}${path.sep}`);
   const results = [];
 
   const walk = (dir) => {
@@ -137,12 +148,10 @@ function findPcms(root) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(full);
-      } else if (
-        entry.isFile() &&
-        pcmName.test(entry.name) &&
-        full.includes(`${path.sep}SwiftExplicitPrecompiledModules${path.sep}`)
-      ) {
-        results.push(full);
+      } else if (entry.isFile() && pcmName.test(entry.name)) {
+        if (dirMatchers.some((needle) => full.includes(needle))) {
+          results.push(full);
+        }
       }
     }
   };
