@@ -65,10 +65,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: Colors.White,
-  },
   container: {
     flex: 1,
     alignItems: 'center',
