@@ -6,6 +6,7 @@ internal data class StackHeaderToolbarMenuItemConfig(
     val id: String,
     val title: String,
     val hidden: Boolean,
+    val disabled: Boolean,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction,
     val icon: Drawable?,
     val iconTintColorNormal: Int?,

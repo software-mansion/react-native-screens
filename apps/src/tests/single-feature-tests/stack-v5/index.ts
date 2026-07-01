@@ -11,6 +11,7 @@ import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
+import TestStackToolbarMenuDisabled from './test-stack-toolbar-menu-disabled-android';
 import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
 import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android';
@@ -28,6 +29,7 @@ export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackBackButton } from './test-stack-back-button-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
+export { default as TestStackToolbarMenuDisabled } from './test-stack-toolbar-menu-disabled-android';
 export { default as TestStackToolbarMenuGroups } from './test-stack-toolbar-menu-groups-android';
 export { default as TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
 export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
@@ -44,6 +46,7 @@ const scenarios = {
   TestStackHeaderSubviewOnPress,
   TestStackBackButton,
   TestStackToolbarMenuCommands,
+  TestStackToolbarMenuDisabled,
   TestStackToolbarMenuGroups,
   TestStackToolbarMenuShowAsAction,
   TestStackToolbarMenuIcon,

@@ -35,6 +35,7 @@ internal object StackHeaderToolbarMenuMapper {
         StackHeaderToolbarMenuItemOptions(
             title = map.readNullableStringUpdate("title", StackHeaderToolbarMenuItemDefaults.TITLE),
             hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+            disabled = map.readNullableBooleanUpdate("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction =
                 map.readNullableShowAsActionEnumUpdate(
                     "showAsAction",
@@ -133,6 +134,7 @@ internal object StackHeaderToolbarMenuMapper {
             id = map.requireNotNullString("id"),
             title = map.readString("title", StackHeaderToolbarMenuItemDefaults.TITLE),
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
+            disabled = map.readBoolean("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
             icon = null,
             iconTintColorNormal =
