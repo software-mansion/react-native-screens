@@ -4,8 +4,11 @@ import android.graphics.drawable.Drawable
 
 internal data class StackHeaderToolbarMenuItemConfig(
     val id: String,
-    val title: String,
+    val title: String?,
+    val titleCondensed: String?,
+    val tooltipText: String?,
     val hidden: Boolean,
+    val disabled: Boolean,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction,
     val icon: Drawable?,
     val iconTintColorNormal: Int?,

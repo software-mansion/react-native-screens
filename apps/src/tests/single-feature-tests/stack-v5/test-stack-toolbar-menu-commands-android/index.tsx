@@ -10,7 +10,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderConfigRef,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-descriptions';
 
@@ -152,11 +152,11 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );

@@ -13,6 +13,7 @@
     "test-e2e-ios": "detox test --configuration ios.sim.release --take-screenshots failing",
     "test-e2e-android": "detox test --configuration android.emu.release --take-screenshots failing",
     "test-e2e-ios-smoke": "detox test --configuration ios.sim.release --take-screenshots failing -- -t '@smoke'",
+    "test-e2e-ios-ipad": "../scripts/e2e/test-e2e-ios-ipad.sh",
     "test-e2e-android-smoke": "detox test --configuration android.emu.release --take-screenshots failing -- -t '@smoke'",
     "postinstall": "patch-package"
   },

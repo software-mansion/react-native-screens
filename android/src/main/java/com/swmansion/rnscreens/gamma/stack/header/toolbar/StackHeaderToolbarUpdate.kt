@@ -16,3 +16,9 @@ internal sealed interface StackHeaderToolbarUpdate<out T> {
             }
     }
 }
+
+internal fun <T> StackHeaderToolbarUpdate<T>.valueOrNull(): T? =
+    when (this) {
+        StackHeaderToolbarUpdate.Reset -> null
+        is StackHeaderToolbarUpdate.Set -> value
+    }

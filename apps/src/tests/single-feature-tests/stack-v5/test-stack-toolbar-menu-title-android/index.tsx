@@ -5,7 +5,7 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderToolbarMenuElementAndroid,
@@ -32,28 +32,69 @@ const SHOW_AS_ACTION_OPTIONS = [
 ] as const;
 type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
-type CmdIconOption = 'no change' | IconOption;
-type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
+const TITLE_CONDENSED_OPTIONS = ['undefined', 'Cond', 'Short'] as const;
+type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
 
-const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
-const CMD_SHOW_AS_ACTION_OPTIONS: CmdShowAsActionOption[] = [
+const TOOLTIP_OPTIONS = ['undefined', 'Tooltip text', 'Hi!'] as const;
+type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
+
+// Title is fixed per id so the condensed/tooltip fallbacks are easy to spot.
+const ITEM_TITLES: Record<IdOption, string> = {
+  'item-1': 'First Item',
+  'item-2': 'Second Item Title',
+  'item-3': 'Third Item Long Title',
+};
+
+type CmdTitleOption = 'no change' | 'Cmd Title' | 'undefined';
+type CmdCondensedOption = 'no change' | TitleCondensedOption;
+type CmdTooltipOption = 'no change' | TooltipOption;
+
+const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
-  ...SHOW_AS_ACTION_OPTIONS,
+  'Cmd Title',
+  'undefined',
+];
+const CMD_CONDENSED_OPTIONS: CmdCondensedOption[] = [
+  'no change',
+  ...TITLE_CONDENSED_OPTIONS,
+];
+const CMD_TOOLTIP_OPTIONS: CmdTooltipOption[] = [
+  'no change',
+  ...TOOLTIP_OPTIONS,
 ];
 
 interface SlotConfig {
-  include: boolean;
   id: IdOption;
   icon: IconOption;
   showAsAction: ShowAsActionOption;
+  titleCondensed: TitleCondensedOption;
+  tooltipText: TooltipOption;
 }
 
 type Slots = [SlotConfig, SlotConfig, SlotConfig];
 
 const DEFAULT_SLOTS: Slots = [
-  { include: true, id: 'item-1', icon: 'undefined', showAsAction: 'undefined' },
-  { include: true, id: 'item-2', icon: 'undefined', showAsAction: 'undefined' },
-  { include: true, id: 'item-3', icon: 'undefined', showAsAction: 'undefined' },
+  {
+    id: 'item-1',
+    icon: 'searchIcon',
+    showAsAction: 'alwaysWithText',
+    titleCondensed: 'Cond',
+    tooltipText: 'Tooltip text',
+  },
+  {
+    id: 'item-2',
+    icon: 'searchIcon',
+    showAsAction: 'always',
+    titleCondensed: 'undefined',
+    tooltipText: 'undefined',
+  },
+  {
+    id: 'item-3',
+    icon: 'undefined',
+    showAsAction: 'never',
+    titleCondensed: 'Short',
+    tooltipText: 'undefined',
+  },
 ];
 
 function resolveIcon(option: IconOption): PlatformIconAndroid | undefined {
@@ -74,22 +115,22 @@ function resolveShowAsAction(
   return v === 'undefined' ? undefined : v;
 }
 
-const ITEM_TITLES: Record<IdOption, string> = {
-  'item-1': 'I1',
-  'item-2': 'Item 2',
-  'item-3': 'Item Number Three',
-};
+function resolveOptionalString(v: string): string | undefined {
+  return v === 'undefined' ? undefined : v;
+}
 
 function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
-  return slots
-    .filter(s => s.include)
-    .map(({ id, icon, showAsAction }) => ({
+  return slots.map(
+    ({ id, icon, showAsAction, titleCondensed, tooltipText }) => ({
       type: 'menuItem',
       id,
       title: ITEM_TITLES[id],
+      titleCondensed: resolveOptionalString(titleCondensed),
+      tooltipText: resolveOptionalString(tooltipText),
       icon: resolveIcon(icon),
       showAsAction: resolveShowAsAction(showAsAction),
-    }));
+    }),
+  );
 }
 
 function withOnPress(
@@ -110,9 +151,9 @@ function updateSlotAt(
   return slots.map((s, i) => (i === index ? { ...s, ...patch } : s)) as Slots;
 }
 
-const HEADER_TITLE = 'Show As Action Test';
+const HEADER_TITLE = 'Title / Condensed / Tooltip';
 
-function TestStackToolbarMenuShowAsAction() {
+function TestStackToolbarMenuTitle() {
   return (
     <StackContainer
       routeConfigs={[
@@ -136,9 +177,10 @@ function MainScreen() {
   const [lastClicked, setLastClicked] = useState<string | null>(null);
 
   const [cmdTargetId, setCmdTargetId] = useState<IdOption>('item-1');
-  const [cmdIcon, setCmdIcon] = useState<CmdIconOption>('no change');
-  const [cmdShowAsAction, setCmdShowAsAction] =
-    useState<CmdShowAsActionOption>('no change');
+  const [cmdTitle, setCmdTitle] = useState<CmdTitleOption>('no change');
+  const [cmdCondensed, setCmdCondensed] =
+    useState<CmdCondensedOption>('no change');
+  const [cmdTooltip, setCmdTooltip] = useState<CmdTooltipOption>('no change');
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
@@ -176,18 +218,21 @@ function MainScreen() {
 
   const sendCommand = useCallback(() => {
     const options: StackHeaderToolbarMenuElementOptionsAndroid = {
-      ...(cmdIcon !== 'no change' && {
-        icon: resolveIcon(cmdIcon),
+      ...(cmdTitle !== 'no change' && {
+        title: cmdTitle === 'undefined' ? undefined : cmdTitle,
       }),
-      ...(cmdShowAsAction !== 'no change' && {
-        showAsAction: resolveShowAsAction(cmdShowAsAction),
+      ...(cmdCondensed !== 'no change' && {
+        titleCondensed: resolveOptionalString(cmdCondensed),
+      }),
+      ...(cmdTooltip !== 'no change' && {
+        tooltipText: resolveOptionalString(cmdTooltip),
       }),
     };
     headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );
-  }, [cmdTargetId, cmdIcon, cmdShowAsAction]);
+  }, [cmdTargetId, cmdTitle, cmdCondensed, cmdTooltip]);
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -198,17 +243,23 @@ function MainScreen() {
         items={[...ID_OPTIONS]}
         onValueChange={setCmdTargetId}
       />
-      <SettingsPicker<CmdIconOption>
-        label="icon"
-        value={cmdIcon}
-        items={CMD_ICON_OPTIONS}
-        onValueChange={setCmdIcon}
+      <SettingsPicker<CmdTitleOption>
+        label="title"
+        value={cmdTitle}
+        items={CMD_TITLE_OPTIONS}
+        onValueChange={setCmdTitle}
       />
-      <SettingsPicker<CmdShowAsActionOption>
-        label="showAsAction"
-        value={cmdShowAsAction}
-        items={CMD_SHOW_AS_ACTION_OPTIONS}
-        onValueChange={setCmdShowAsAction}
+      <SettingsPicker<CmdCondensedOption>
+        label="titleCondensed"
+        value={cmdCondensed}
+        items={CMD_CONDENSED_OPTIONS}
+        onValueChange={setCmdCondensed}
+      />
+      <SettingsPicker<CmdTooltipOption>
+        label="tooltipText"
+        value={cmdTooltip}
+        items={CMD_TOOLTIP_OPTIONS}
+        onValueChange={setCmdTooltip}
       />
       <Button title="Send Command" onPress={sendCommand} />
 
@@ -235,13 +286,8 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
       {slots.map((slot, i) => (
         <React.Fragment key={i}>
           <Text style={styles.slotLabel}>
-            Slot {i + 1} (item-{i + 1})
+            Slot {i + 1} ({slot.id}) — title "{ITEM_TITLES[slot.id]}"
           </Text>
-          <SettingsSwitch
-            label="include"
-            value={slot.include}
-            onValueChange={v => updateSlot(i, { include: v })}
-          />
           <SettingsPicker<IconOption>
             label="icon"
             value={slot.icon}
@@ -253,6 +299,18 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             value={slot.showAsAction}
             items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
+          />
+          <SettingsPicker<TitleCondensedOption>
+            label="titleCondensed"
+            value={slot.titleCondensed}
+            items={[...TITLE_CONDENSED_OPTIONS]}
+            onValueChange={v => updateSlot(i, { titleCondensed: v })}
+          />
+          <SettingsPicker<TooltipOption>
+            label="tooltipText"
+            value={slot.tooltipText}
+            items={[...TOOLTIP_OPTIONS]}
+            onValueChange={v => updateSlot(i, { tooltipText: v })}
           />
         </React.Fragment>
       ))}
@@ -286,7 +344,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(
-  TestStackToolbarMenuShowAsAction,
-  scenarioDescription,
-);
+export default createScenario(TestStackToolbarMenuTitle, scenarioDescription);

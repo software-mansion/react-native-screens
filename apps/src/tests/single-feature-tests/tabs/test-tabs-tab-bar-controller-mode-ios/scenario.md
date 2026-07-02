@@ -8,7 +8,17 @@
 
 ## E2E test
 
-TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
+Incomplete: iPhone steps fully automated, iPad partially: steps 1, 2, 4, and 7.
+For iPad e2e verifies: the initial `automatic` default state, `tabBar` mode keeping the floating tab bar
+visible without a sidebar toggle, and `tabSidebar` mode toggling the sidebar
+open/closed (via the "Toggle sidebar" button).
+
+Not automated:
+
+- Steps 3, 5, 8 (Split View window resizing),
+- Step 6 (landscape orientation),
+- Step 9 (mode-cycling crash check),
+- Step 10 (tab switching),
 
 ## Prerequisites
 

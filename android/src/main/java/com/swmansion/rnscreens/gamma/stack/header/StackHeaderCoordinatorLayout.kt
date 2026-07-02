@@ -18,8 +18,8 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemOptions
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
 @SuppressLint("ViewConstructor")
@@ -66,12 +66,12 @@ internal class StackHeaderCoordinatorLayout(
         object : StackHeaderConfigurationObserver {
             override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
 
-            override fun onMenuItemUpdated(
+            override fun onMenuElementUpdated(
                 id: String,
-                options: StackHeaderToolbarMenuItemOptions,
+                options: StackHeaderToolbarMenuElementOptions,
             ) {
                 val toolbar = appBarLayout?.toolbar ?: return
-                applicator.updateToolbarMenuItem(toolbar, toolbarMenuForwardIdMap, id, options)
+                applicator.updateToolbarMenuElement(toolbar, toolbarMenuForwardIdMap, id, options)
                 if (options.checked != null) {
                     handleGroupItemStateChange(toolbar, id, options.checked)
                 }

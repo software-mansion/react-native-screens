@@ -7,6 +7,14 @@ export const describeIfiOS =
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
+/**
+ * Detox targets a single simulator per run, selected via the
+ * `RNS_APPLE_SIM_NAME` env var (see scripts/e2e/ios-devices.js), which
+ * defaults to an iPhone. There is no runtime UIUserInterfaceIdiom query
+ * exposed to Detox, so we infer the idiom from the requested simulator name.
+ * This lets iPad-only suites self-skip on the default iPhone CI run; they
+ * execute only when invoked with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
+ */
 export const isIPadTarget =
   device.getPlatform() === 'ios' &&
   /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
@@ -42,6 +50,38 @@ export async function selectIssueTestScreen(screenName: string) {
 
   await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
   await element(by.id(`issue-tests-${screenName}`)).tap();
+}
+
+export async function selectComponentIntegrationTestsScreen(
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
+  await scrollUntilVisible(
+    'root-screen-component-integration-tests',
+    'root-screen-examples-scrollview',
+  );
+  await element(by.id('root-screen-component-integration-tests')).tap();
+
+  await waitFor(element(by.id('component-integration-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `component-integration-tests-${scenarioGroupId}`,
+    'component-integration-tests-scrollview',
+  );
+
+  await element(by.id(`component-integration-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `${screenKey}`,
+    `${scenarioGroupId}-scenarios-scrollview`,
+  );
+  await element(by.id(`${screenKey}`)).tap();
 }
 
 export async function selectSingleFeatureTestsScreen(
@@ -132,4 +172,12 @@ export async function forceTapByLabeliOS(testLabel: string) {
     x: x + width / 2,
     y: y + height / 2,
   });
+}
+
+export async function forceSelectTabByLabel(label: string) {
+  if (device.getPlatform() === 'ios') {
+    await forceTapByLabeliOS(label);
+  } else {
+    await element(by.label(label)).tap();
+  }
 }

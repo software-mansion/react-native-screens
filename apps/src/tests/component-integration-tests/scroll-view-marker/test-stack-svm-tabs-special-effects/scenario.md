@@ -12,7 +12,7 @@ iOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
-TBD
+Full: All manual test steps covered.
 
 ## Prerequisites
 

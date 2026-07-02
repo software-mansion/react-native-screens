@@ -11,7 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuItemAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-descriptions';
@@ -22,7 +22,13 @@ type IdOption = (typeof ID_OPTIONS)[number];
 const ICON_OPTIONS = ['none', 'imageSource', 'drawableResource'] as const;
 type IconOption = (typeof ICON_OPTIONS)[number];
 
-const TINT_COLOR_OPTIONS = ['default', 'purple', 'red', 'green'] as const;
+const TINT_COLOR_OPTIONS = [
+  'default',
+  'purple',
+  'red',
+  'green',
+  'blue',
+] as const;
 type TintColorOption = (typeof TINT_COLOR_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = ['always', 'never', 'ifRoom'] as const;
@@ -30,11 +36,17 @@ type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
 type CmdIconOption = 'no change' | IconOption;
 type CmdTintColorOption = 'no change' | TintColorOption;
+type CmdDisabledOption = 'no change' | 'true' | 'false';
 
 const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const CMD_TINT_COLOR_OPTIONS: CmdTintColorOption[] = [
   'no change',
   ...TINT_COLOR_OPTIONS,
+];
+const CMD_DISABLED_OPTIONS: CmdDisabledOption[] = [
+  'no change',
+  'true',
+  'false',
 ];
 
 interface SlotConfig {
@@ -46,6 +58,7 @@ interface SlotConfig {
   tintColorPressed: TintColorOption;
   tintColorFocused: TintColorOption;
   tintColorDisabled: TintColorOption;
+  disabled: boolean;
 }
 
 type Slots = [SlotConfig, SlotConfig, SlotConfig];
@@ -58,6 +71,7 @@ const SLOT_DEFAULTS: Omit<SlotConfig, 'id'> = {
   tintColorPressed: 'default',
   tintColorFocused: 'default',
   tintColorDisabled: 'default',
+  disabled: false,
 };
 
 const DEFAULT_SLOTS: Slots = [
@@ -97,6 +111,8 @@ function resolveTintColor(option: TintColorOption): ColorValue | undefined {
       return Colors.RedLight100;
     case 'green':
       return Colors.GreenLight100;
+    case 'blue':
+      return Colors.BlueLight100;
     default:
       return undefined;
   }
@@ -115,6 +131,7 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
       iconTintColorPressed: resolveTintColor(s.tintColorPressed),
       iconTintColorFocused: resolveTintColor(s.tintColorFocused),
       iconTintColorDisabled: resolveTintColor(s.tintColorDisabled),
+      disabled: s.disabled,
     }));
 }
 
@@ -171,6 +188,8 @@ function MainScreen() {
     useState<CmdTintColorOption>('no change');
   const [cmdTintColorDisabled, setCmdTintColorDisabled] =
     useState<CmdTintColorOption>('no change');
+  const [cmdDisabled, setCmdDisabled] =
+    useState<CmdDisabledOption>('no change');
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
@@ -207,7 +226,7 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdIcon !== 'no change' && {
         icon: cmdIcon === 'none' ? undefined : resolveIcon(cmdIcon),
       }),
@@ -223,8 +242,11 @@ function MainScreen() {
       ...(cmdTintColorDisabled !== 'no change' && {
         iconTintColorDisabled: resolveTintColor(cmdTintColorDisabled),
       }),
+      ...(cmdDisabled !== 'no change' && {
+        disabled: cmdDisabled === 'true',
+      }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );
@@ -235,6 +257,7 @@ function MainScreen() {
     cmdTintColorPressed,
     cmdTintColorFocused,
     cmdTintColorDisabled,
+    cmdDisabled,
   ]);
 
   return (
@@ -275,6 +298,12 @@ function MainScreen() {
         value={cmdTintColorDisabled}
         items={CMD_TINT_COLOR_OPTIONS}
         onValueChange={setCmdTintColorDisabled}
+      />
+      <SettingsPicker<CmdDisabledOption>
+        label="disabled"
+        value={cmdDisabled}
+        items={CMD_DISABLED_OPTIONS}
+        onValueChange={setCmdDisabled}
       />
       <Button title="Send Command" onPress={sendCommand} />
 
@@ -343,6 +372,11 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             value={slot.tintColorDisabled}
             items={[...TINT_COLOR_OPTIONS]}
             onValueChange={v => updateSlot(i, { tintColorDisabled: v })}
+          />
+          <SettingsSwitch
+            label="disabled"
+            value={slot.disabled}
+            onValueChange={v => updateSlot(i, { disabled: v })}
           />
         </React.Fragment>
       ))}

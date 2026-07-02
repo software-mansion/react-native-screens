@@ -33,8 +33,11 @@ type StackHeaderToolbarMenuItemTypeAndroid = 'action' | 'toggle' | 'automatic';
 
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   id: string;
-  title?: CT.WithDefault<string, ''>;
+  title?: string | undefined;
+  titleCondensed?: string | undefined;
+  tooltipText?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
+  disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
     StackHeaderToolbarMenuItemShowAsActionAndroid,
     'never'
@@ -71,6 +74,7 @@ export type StackHeaderToolbarMenuBaseAndroid = {
 type StackHeaderToolbarMenuAndroid = StackHeaderToolbarMenuItemBaseAndroid &
   StackHeaderToolbarMenuBaseAndroid & {
     type: 'menu';
+    menuTitle?: string | undefined;
   };
 
 export type StackHeaderToolbarMenuElementAndroid =
@@ -110,24 +114,25 @@ export interface NativeProps extends ViewProps {
 
 type ComponentType = HostComponent<NativeProps>;
 
-export type StackHeaderToolbarMenuItemOptionsAndroid = Partial<
+export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
   Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
 > & {
   checked?: boolean | undefined;
+  menuTitle?: string | undefined;
 };
 
 export interface NativeCommands {
-  setToolbarMenuItemOptions: (
+  setToolbarMenuElementOptions: (
     viewRef: React.ComponentRef<ComponentType>,
     id: string,
     // We use the array here only due to codegen limitation. We're using only
     // the first index of the array.
-    options: StackHeaderToolbarMenuItemOptionsAndroid[],
+    options: StackHeaderToolbarMenuElementOptionsAndroid[],
   ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['setToolbarMenuItemOptions'],
+  supportedCommands: ['setToolbarMenuElementOptions'],
 });
 
 export default codegenNativeComponent<NativeProps>(
