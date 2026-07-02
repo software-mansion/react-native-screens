@@ -36,6 +36,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   title?: string | undefined;
   titleCondensed?: string | undefined;
   tooltipText?: string | undefined;
+  accessibilityLabel?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
