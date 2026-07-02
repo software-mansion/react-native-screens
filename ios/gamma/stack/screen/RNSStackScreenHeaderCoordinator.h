@@ -21,11 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)applyConfigProperties;
 
-- (void)rebuildItemWithId:(NSString *)itemId;
+- (void)rebuildItemWithId:(nullable NSString *)itemId;
 
-- (void)reapplyMenuForItemWithId:(NSString *)itemId;
+- (void)reapplyMenuForItemWithId:(nullable NSString *)itemId;
 
-- (void)resetTrackerForItemWithId:(NSString *)itemId;
+- (void)resetTrackerForItemWithId:(nullable NSString *)itemId;
 
 - (void)clearHeaderConfiguration;
 
