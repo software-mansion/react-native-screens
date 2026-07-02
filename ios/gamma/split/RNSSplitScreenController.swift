@@ -6,8 +6,8 @@ import UIKit
 ///
 /// Associated with a RNSSplitScreenComponentView, it handles layout synchronization with the
 /// Shadow Tree, emits React lifecycle events, and interacts with the SplitHost hierarchy.
-@objc
-public class RNSSplitScreenController: UIViewController {
+@objc(RNSSplitScreenController)
+public class RNSSplitScreenController: UIViewController, RNSSplitScreenControlling {
   let splitScreenComponentView: RNSSplitScreenComponentView
 
   private var shadowStateProxy: RNSSplitScreenShadowStateProxy {
@@ -42,7 +42,7 @@ public class RNSSplitScreenController: UIViewController {
     }
 
     if let splitHost = self.splitScreenComponentView.splitHost {
-      return splitHost.splitHostController
+      return splitHost.splitHostController as? RNSSplitHostController
     }
 
     return nil

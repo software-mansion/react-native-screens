@@ -5,19 +5,17 @@
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 
-#import "Swift-Bridging.h"
-
 namespace react = facebook::react;
 
 @implementation RNSSplitScreenComponentView {
   RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSSplitScreenController *_Nullable _controller;
+  UIViewController<RNSSplitScreenControlling> *_Nullable _controller;
   RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
 }
 
-- (RNSSplitScreenController *)controller
+- (UIViewController<RNSSplitScreenControlling> *)controller
 {
   RCTAssert(
       _controller != nil,
@@ -48,7 +46,15 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
+  // Resolved at runtime to avoid a compile-time dependency on the Swift module.
+  Class controllerClass = NSClassFromString(@"RNSSplitScreenController");
+  if (controllerClass == nil) {
+    [NSException raise:NSInternalInconsistencyException
+                format:@"[RNScreens] The RNSSplitScreenController Swift class could not be resolved at runtime. "
+                       @"Make sure the gamma Swift sources are compiled and linked into the build."];
+  }
+  _controller = [(UIViewController<RNSSplitScreenControlling> *)[controllerClass alloc]
+      initWithSplitScreenComponentView:self];
   _controller.view = self;
 }
 

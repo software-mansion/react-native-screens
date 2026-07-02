@@ -6,9 +6,9 @@ import UIKit
 ///
 /// Manages a collection of RNSSplitScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
-@objc
+@objc(RNSSplitHostController)
 public class RNSSplitHostController: UISplitViewController, ReactMountingTransactionObserving,
-  RNSOrientationProvidingSwift
+  RNSOrientationProvidingSwift, RNSSplitHostControlling
 {
   private var needsChildViewControllersUpdate = false
 
@@ -44,7 +44,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   /// @param splitHostComponentView The view managed by this controller.
   /// @param numberOfColumns Expected number of visible columns.
   ///
-  @objc public init(
+  @objc public required init(
     splitHostComponentView: RNSSplitHostComponentView,
     numberOfColumns: Int
   ) {
