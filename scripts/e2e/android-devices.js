@@ -135,24 +135,31 @@ function detectBootedEmulatorAvdName() {
     );
     return undefined;
   }
+}
 
 function getAvailableEmulatorNames() {
+  let outputText;
   try {
-    const outputText = getCommandLineResponse('emulator -list-avds');
-    const avdList = outputText
-      .trim()
-      .split('\n')
-      .map(name => name.trim())
-      .filter(Boolean);
-    if (avdList.length === 0) {
-      throw new Error('No installed AVDs detected on the device');
-    }
-
-    return avdList;
+    outputText = getCommandLineResponse('emulator -list-avds');
   } catch (error) {
-    const errorMessage = `Failed to find any Android emulator. Set "${envVarKeys.avdName}" env variable pointing to one. Cause:\n${error}`;
-    throw new Error(errorMessage);
+    // The command itself failed - naming an AVD directly skips this lookup.
+    throw new Error(
+      `Failed to list Android emulators. Set "${envVarKeys.avdName}" env variable pointing to one, or make sure the Android SDK "emulator" tool is on your PATH. Cause:\n${error}`,
+    );
   }
+  const avdList = outputText
+    .trim()
+    .split('\n')
+    .map(name => name.trim())
+    .filter(Boolean);
+  if (avdList.length === 0) {
+    // No AVDs exist, so RNS_AVD_NAME cannot point to one - the user must create
+    // an emulator first.
+    throw new Error(
+      'No installed AVDs detected. Create an emulator in Android Studio before running the tests.',
+    );
+  }
+  return avdList;
 }
 
 /**
