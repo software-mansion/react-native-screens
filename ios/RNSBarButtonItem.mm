@@ -14,6 +14,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
 - (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
                         action:(RNSBarButtonItemAction)action
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
+                menuPresented:(RNSBarButtonMenuPresentedCallback)menuPresented
                    imageLoader:(RCTImageLoader *)imageLoader
 {
   self = [super init];
@@ -115,7 +116,31 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (@available(tvOS 17.0, *)) {
     NSDictionary *menu = dict[@"menu"];
     if (menu) {
-      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction imageLoader:imageLoader];
+      UIMenu *builtMenu = [[self class] initUIMenuWithDict:menu menuAction:menuAction imageLoader:imageLoader];
+
+#if !TARGET_OS_TV
+      if (menuPresented && builtMenu) {
+        if (@available(iOS 15.0, *)) {
+          NSArray<UIMenuElement *> *children = builtMenu.children;
+          UIDeferredMenuElement *sentinel =
+              [UIDeferredMenuElement elementWithUncachedProvider:^(void (^completion)(NSArray<UIMenuElement *> *)) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                  if (menuPresented) {
+                    menuPresented();
+                  }
+                  completion(children);
+                });
+              }];
+          builtMenu = [UIMenu menuWithTitle:builtMenu.title
+                                      image:builtMenu.image
+                                 identifier:builtMenu.identifier
+                                    options:builtMenu.options
+                                   children:@[sentinel]];
+        }
+      }
+#endif // !TARGET_OS_TV
+
+      self.menu = builtMenu;
     }
   }
 #endif
