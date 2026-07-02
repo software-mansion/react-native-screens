@@ -42,6 +42,7 @@ internal object StackHeaderToolbarMenuMapper {
             title = map.readNullableStringUpdate("title"),
             titleCondensed = map.readNullableStringUpdate("titleCondensed"),
             tooltipText = map.readNullableStringUpdate("tooltipText"),
+            accessibilityLabel = map.readNullableStringUpdate("accessibilityLabel"),
             hidden = map.readNullableBooleanUpdate("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readNullableBooleanUpdate("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction =
@@ -152,6 +153,8 @@ internal object StackHeaderToolbarMenuMapper {
                 map.readOptionalString("titleCondensed") ?: StackHeaderToolbarMenuItemDefaults.TITLE_CONDENSED,
             tooltipText =
                 map.readOptionalString("tooltipText") ?: StackHeaderToolbarMenuItemDefaults.TOOLTIP_TEXT,
+            accessibilityLabel =
+                map.readOptionalString("accessibilityLabel") ?: StackHeaderToolbarMenuItemDefaults.ACCESSIBILITY_LABEL,
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readBoolean("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
