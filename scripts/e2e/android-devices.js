@@ -127,8 +127,14 @@ function detectBootedEmulatorAvdName() {
       }" or "${envVarKeys.adbSerial}" to select a specific one.`,
     );
   }
-  return resolveAvdNameFromDeviceId(bootedEmulatorIds[0]);
-}
+  try {
+    return resolveAvdNameFromDeviceId(bootedEmulatorIds[0]);
+  } catch (error) {
+    console.warn(
+      `Failed to derive AVD name from booted emulator "${bootedEmulatorIds[0]}"; falling back to other resolution strategies. Cause:\n${error}`,
+    );
+    return undefined;
+  }
 
 function getAvailableEmulatorNames() {
   try {
