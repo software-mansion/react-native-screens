@@ -250,10 +250,10 @@ function MainScreen() {
         menuTitle: resolveMenuTitle(cmdMenuTitle),
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdTitle, cmdHidden, cmdMenuTitle]);
 
   return (
