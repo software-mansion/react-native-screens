@@ -104,10 +104,25 @@ class FormSheetDialogManager(
                 override fun onPreDraw(): Boolean {
                     view.viewTreeObserver.removeOnPreDrawListener(this)
                     view.translationY = view.height.toFloat()
+                    disableMaterialInsetsAnimationCallback(view)
                     return true
                 }
             },
         )
+    }
+
+    /**
+     * BottomSheetBehavior registers an internal `WindowInsetsAnimationCallback` on the
+     * sheet view during its first `onLayoutChild`. That callback drives `translationY` to follow
+     * animated inset changes, what interferes with our slide-in custom animation.
+     *
+     * We manage insets ourselves by seeing a fixed height for FormSheetContainer, so we can
+     * clear the Material's callback to remove the conflict entirely.
+     *
+     * This method must run after the first layout pass.
+     */
+    private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
+        ViewCompat.setWindowInsetsAnimationCallback(view, null)
     }
 
     private fun setupDialogShowListener() {
