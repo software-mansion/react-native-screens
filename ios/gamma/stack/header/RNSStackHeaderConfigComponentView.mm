@@ -118,11 +118,21 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 - (void)headerItemDidInvalidateWithId:(NSString *)itemId
 {
+  if (itemId == nil) {
+    RNSLog(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
+    [[self headerCoordinator] rebuild];
+    return;
+  }
   [[self headerCoordinator] rebuildItemWithId:itemId];
 }
 
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId
 {
+  if (itemId == nil) {
+    RNSLog(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
+    [[self headerCoordinator] rebuild];
+    return;
+  }
   RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
   [coordinator resetTrackerForItemWithId:itemId];
   [coordinator reapplyMenuForItemWithId:itemId];
