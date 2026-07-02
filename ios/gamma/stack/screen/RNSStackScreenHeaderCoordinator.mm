@@ -1,6 +1,7 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import "RCTAssert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -140,6 +141,8 @@
         NSUInteger index = [_leadingBarButtonItems indexOfObject:oldBarButtonItem];
         if (index != NSNotFound) {
           _leadingBarButtonItems[index] = newBarButtonItem;
+        } else {
+          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -153,6 +156,8 @@
         NSUInteger index = [_trailingBarButtonItems indexOfObject:oldBarButtonItem];
         if (index != NSNotFound) {
           _trailingBarButtonItems[index] = newBarButtonItem;
+        } else {
+          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
