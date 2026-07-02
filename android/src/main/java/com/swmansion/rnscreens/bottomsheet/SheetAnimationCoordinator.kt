@@ -33,6 +33,8 @@ internal class SheetAnimationCoordinator(
     private var lastScreenContainerBottomOffset: Int = 0
     private val screenContainerRect = android.graphics.Rect()
 
+    private var lastBottomSystemBarInset: Int = 0
+
     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetDelegate.SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
 
@@ -224,6 +226,7 @@ internal class SheetAnimationCoordinator(
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+        lastBottomSystemBarInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
         // Prioritize enter/exit animations over direct keyboard inset reactions.
         // We store the latest keyboard offset in `lastKeyboardBottomOffset`
         // so that it can always be respected when applying translations in `updateSheetTranslationY`.
@@ -280,10 +283,27 @@ internal class SheetAnimationCoordinator(
     }
 
     private fun updateSheetTranslationY(baseTranslationY: Float) {
-        val effectiveKeyboardHeight = maxOf(0, lastKeyboardBottomOffset - lastScreenContainerBottomOffset)
-        val bottomOffset = computeSheetOffsetYWithIMEPresent(effectiveKeyboardHeight).toFloat()
+        screen.translationY = baseTranslationY - calculateKeyboardShiftHidingBottomInset()
+    }
 
-        screen.translationY = baseTranslationY - bottomOffset
+    private fun calculateKeyboardShiftHidingBottomInset(): Float {
+        // Calculate how much of the keyboard physically intersects with our container.
+        val keyboardHeightInContainerBounds = maxOf(0, lastKeyboardBottomOffset - lastScreenContainerBottomOffset)
+
+        if (keyboardHeightInContainerBounds <= 0) {
+            return 0f
+        }
+
+        // Determine the maximum upward shift needed to keep the content above the keyboard.
+        val maxAllowedUpwardShift = computeSheetOffsetYWithIMEPresent(keyboardHeightInContainerBounds).toFloat()
+
+        // Determine how much of the navigation bar is located within our container's bounds.
+        val navigationBarHeightWithinContainer = maxOf(0, lastBottomSystemBarInset - lastScreenContainerBottomOffset)
+
+        // By subtracting the nav bar height from our shift, we let that empty padding slide behind
+        // the keyboard. This keeps the sheet's actual content flush against the keyboard's top edge
+        // without requiring size updates.
+        return maxOf(0f, maxAllowedUpwardShift - navigationBarHeightWithinContainer.toFloat())
     }
 
     private fun createSheetSlideInAnimator(): ValueAnimator {
