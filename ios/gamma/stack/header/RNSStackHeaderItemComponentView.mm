@@ -178,10 +178,17 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateProps:props oldProps:oldProps];
 
   if (needsUpdate) {
-    // rebuild the whole item
+    // rebuilds the item; needs to rebuilds the menu, but keeps its state
     [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
-  } else if (menuDidChange) {
-    // only update the menu without rebuilding the item
+  }
+
+  if (menuDidChange) {
+    // there are 3 distinct cases for rebuilding the menu
+    // 1. only menu changed -- no item rebuilding, menu state reset
+    // 2. some different prop changed -- item rebuilds, but menu should keep its state
+    // 3. both menu and some other prop changed -- both item and menu rebuilds + menu state should be reset
+    // If we don't have separate if-s, we won't cover all cases,
+    // but unfortunately we're rebuilding the menu twice for 3. case.
     [_invalidationDelegate headerItemMenuDidChangeWithId:_itemId];
   }
 }
