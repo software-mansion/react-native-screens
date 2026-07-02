@@ -18,6 +18,7 @@ import TestStackToolbarMenuTitle from './test-stack-toolbar-menu-title-android';
 import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
 import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android';
 import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
+import TestStackToolbarMenuA11y from './test-stack-toolbar-menu-a11y-android';
 import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
 import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
@@ -41,6 +42,7 @@ export { default as TestStackToolbarMenuTitle } from './test-stack-toolbar-menu-
 export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
 export { default as TestStackToolbarNestedMenu } from './test-stack-toolbar-nested-menu-android';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
+export { default as TestStackToolbarMenuA11y } from './test-stack-toolbar-menu-a11y-android';
 
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
@@ -62,6 +64,7 @@ const scenarios = {
   TestStackToolbarMenuTitle,
   TestStackToolbarMenuIcon,
   TestStackToolbarNestedMenu,
+  TestStackToolbarMenuA11y,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
