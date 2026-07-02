@@ -1,7 +1,8 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
 
 const DEFAULT_APPLE_SIMULATOR_NAME = 'iPhone 17';
-const DEFAULT_IOS_VERSION = '26.2';
+const DEFAULT_APPLE_IPAD_SIMULATOR_NAME = 'iPad Pro 13-inch (M4)';
+const DEFAULT_IOS_VERSION = '26.5';
 
 const envVarKeys = /** @type {const} */ ({
   simName: 'RNS_APPLE_SIM_NAME',
@@ -376,6 +377,8 @@ function getIOSVersionNumber() {
 }
 
 module.exports = {
+  DEFAULT_APPLE_SIMULATOR_NAME,
+  DEFAULT_APPLE_IPAD_SIMULATOR_NAME,
   resolveAppleSimulatorName,
   getIOSVersion,
   getIOSVersionNumber,
