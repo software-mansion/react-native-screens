@@ -16,6 +16,14 @@ typedef void (^OnLayoutCallback)(CGRect frame);
 
 @property (nonatomic, copy, nullable) OnLayoutCallback onLayout;
 
+/**
+ * Pins the footer to the bottom edge of its parent RNSScreenView, lifting it
+ * above the keyboard when one overlaps the sheet. Idempotent - safe to call
+ * from any layout pass (layout metrics updates, parent layoutSubviews,
+ * keyboard frame changes).
+ */
+- (void)updateFooterPosition;
+
 @end
 
 @interface RNSScreenFooterManager : RCTViewManager

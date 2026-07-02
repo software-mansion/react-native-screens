@@ -701,6 +701,26 @@ RNS_IGNORE_SUPER_CALL_END
   return nil;
 }
 
+- (nullable RNSScreenFooter *)findSheetFooter
+{
+  for (UIView *view in self.reactSubviews) {
+    if ([view isKindOfClass:RNSScreenFooter.class]) {
+      return (RNSScreenFooter *)view;
+    }
+  }
+
+  return nil;
+}
+
+// Keeps the sheet footer pinned to the bottom edge while UIKit resizes the
+// screen view (detent changes, interactive detent drags, keyboard-driven
+// sheet moves).
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  [[self findSheetFooter] updateFooterPosition];
+}
+
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
 - (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {

@@ -447,17 +447,21 @@ function Home() {
 }
 ```
 
-### `unstable_sheetFooter` (Android only)
+### `unstable_sheetFooter`
 
 Footer component that can be used alongside form sheet stack presentation style.
 
 This option is provided, because due to implementation details it might be problematic
 to implement such layout with JS-only code.
 
+The footer overlays the sheet content and is pinned to the bottom edge of the sheet,
+moving above the keyboard when one appears. Reserve space for it (if needed) by padding
+the sheet's scroll content.
+
 Please note that this prop is marked as unstable and might be subject of breaking changes,
 even removal.
 
-Currently supported on Android only.
+Supported on Android and iOS.
 
 ### `contentStyle`
 

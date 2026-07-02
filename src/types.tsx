@@ -626,7 +626,7 @@ export interface ScreenProps extends ViewProps {
    * including removal, in particular when we find solution that will make implementing it with JS
    * straightforward.
    *
-   * @platform android
+   * @platform android, ios
    */
   unstable_sheetFooter?: (() => React.ReactNode) | undefined;
 }

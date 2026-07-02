@@ -54,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @class RNSScreenStackHeaderConfig;
+@class RNSScreenFooter;
 
 @interface RNSScreenView : RNSReactBaseView <RNSScreenContentWrapperDelegate,
                                              RNSScrollViewBehaviorOverriding,
@@ -159,6 +160,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
  */
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
+
+/**
+ * Looks for a sheet footer (`unstable_sheetFooter`) in instance's `reactSubviews` and returns it.
+ * If not present returns `nil`.
+ */
+- (RNSScreenFooter *_Nullable)findSheetFooter;
 
 /**
  * Returns `YES` if the wrapper has been registered and it should not attempt to register on screen views higher in the
