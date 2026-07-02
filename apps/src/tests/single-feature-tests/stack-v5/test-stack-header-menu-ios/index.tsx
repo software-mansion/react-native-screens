@@ -64,6 +64,7 @@ function buildHeaderConfig(
             id: `toggle-${i}-1`,
             type: 'menuItem',
             itemType: 'toggle',
+            initialToggleState: true,
             title: `Toggle ${i}-1`,
           },
           {
