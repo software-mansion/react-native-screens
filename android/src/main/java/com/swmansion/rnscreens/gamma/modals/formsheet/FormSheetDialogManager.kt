@@ -182,10 +182,6 @@ class FormSheetDialogManager(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
             ).bottom
 
-    companion object {
-        private const val LARGE_DETENT = 1.0
-    }
-
     internal fun destroy() {
         dimmingManager.setOnBackdropClickListener {}
 
@@ -194,5 +190,9 @@ class FormSheetDialogManager(
         dialog.setOnShowListener(null)
         dialog.setOnCancelListener(null)
         dialog.dismiss()
+    }
+
+    companion object {
+        private const val LARGE_DETENT = 1.0
     }
 }

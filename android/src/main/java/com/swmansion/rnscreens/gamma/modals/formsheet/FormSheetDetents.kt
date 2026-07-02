@@ -15,8 +15,8 @@ internal class FormSheetDetents(
             }
         }
 
-        require(detents == detents.sorted()) {
-            "[RNScreens] Detents must be sorted in ascending order."
+        require(detents == detents.distinct().sorted()) {
+            "[RNScreens] Detents must be sorted in strictly ascending order."
         }
     }
 
@@ -50,8 +50,8 @@ internal class FormSheetDetents(
     private fun largestDetentTopOffset(containerHeight: Int): Int = containerHeight - maxAllowedHeight(containerHeight)
 
     /**
-     * Material's BottomSheetDialog dynamically applies padding when its content overlaps 
-     * system insets. To prevent recalculating the size, we pre-calculate a static height 
+     * Material's BottomSheetDialog dynamically applies padding when its content overlaps
+     * system insets. To prevent recalculating the size, we pre-calculate a static height
      * inside safe area bounds.
      */
     internal fun sheetContainerHeight(
@@ -59,7 +59,7 @@ internal class FormSheetDetents(
         topInset: Int,
         bottomInset: Int,
     ): Int {
-        // Bottom inset is always fully subtracted because the sheet is in its dedicated window and its 
+        // Bottom inset is always fully subtracted because the sheet is in its dedicated window and its
         // anchored to the bottom.
         // Top inset is subtracted only by the amount the sheet actually overlaps it.
         val topOverlap = (topInset - largestDetentTopOffset(containerHeight)).coerceAtLeast(0)
