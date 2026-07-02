@@ -19,7 +19,7 @@ class FormSheetDialogManager(
 
     private var resolvedDetents: FormSheetDetents? = null
 
-    private var hasPendingDetentsChange = false
+    private var shouldReconfigureDetents = false
 
     private var lastTopInset = 0
     private var lastBottomInset = 0
@@ -78,7 +78,18 @@ class FormSheetDialogManager(
 
         if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
             resolvedDetents = resolveDetents(newConfig.detents)
-            hasPendingDetentsChange = true
+            shouldReconfigureDetents = true
+        }
+
+        // TODO: @t0maboro
+        // - a dedicated presentation manager should be introduced as on iOS,
+        // - invalidation flags logic should be implemented following other components convention
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        if (isOpening) {
+            shouldReconfigureDetents = true
+        }
+
+        if (shouldReconfigureDetents) {
             updateNativeContainerHeight()
         }
 
@@ -165,9 +176,9 @@ class FormSheetDialogManager(
                 behaviorController?.updateSheetBehavior(
                     detents = detents,
                     sheetAvailableSpace = dialogDecorHeight,
-                    applyInitialState = hasPendingDetentsChange,
+                    applyInitialState = shouldReconfigureDetents,
                 )
-                hasPendingDetentsChange = false
+                shouldReconfigureDetents = false
             }
 
             val sheetContainerHeight =
