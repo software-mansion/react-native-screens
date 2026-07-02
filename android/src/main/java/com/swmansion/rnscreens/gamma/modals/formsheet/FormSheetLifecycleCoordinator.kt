@@ -1,8 +1,6 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.widget.FrameLayout
-import androidx.core.view.ViewCompat
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
