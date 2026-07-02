@@ -17,7 +17,10 @@ class FormSheetDialogManager(
 ) {
     private var formSheetConfig = FormSheetConfig()
 
-    private var rawDetents: List<Double> = emptyList()
+    private var resolvedDetents: FormSheetDetents? = null
+
+    private var lastTopInset = 0
+    private var lastBottomInset = 0
 
     private val themedContext =
         ContextThemeWrapper(
@@ -36,6 +39,9 @@ class FormSheetDialogManager(
         }
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+
+    private val behaviorController =
+        bottomSheetView?.let { FormSheetBehaviorController(it) }
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
@@ -68,12 +74,21 @@ class FormSheetDialogManager(
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
-        if (formSheetConfig.detents != newConfig.detents) {
-            // TODO(@t0maboro): resolve into FormSheetDetents and hand off to the behavior controller.
-            rawDetents = newConfig.detents
+        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
+            val detents = resolveDetents(newConfig.detents)
+            resolvedDetents = detents
+            behaviorController?.updateSheetDetents(detents)
+            updateNativeContainerHeight()
         }
 
         formSheetConfig = newConfig
+    }
+
+    private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
+        if (rawDetents.isEmpty()) {
+            return FormSheetDetents(listOf(LARGE_DETENT))
+        }
+        return FormSheetDetents(rawDetents)
     }
 
     private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
@@ -111,8 +126,10 @@ class FormSheetDialogManager(
     }
 
     private fun setupWindowInsetsListener() {
-        ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
-            updateNativeContainerHeight(view, insets)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { _, insets ->
+            lastTopInset = getTopInset(insets)
+            lastBottomInset = getBottomInset(insets)
+            updateNativeContainerHeight()
             insets
         }
     }
@@ -124,24 +141,23 @@ class FormSheetDialogManager(
      * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
      * the system insets, we completely bypass these redundant layout passes.
      */
-    private fun updateNativeContainerHeight(
-        view: View,
-        insets: WindowInsetsCompat,
-    ) {
-        val topInset = getTopInset(insets)
-        val bottomInset = getBottomInset(insets)
+    private fun updateNativeContainerHeight() {
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
 
         if (dialogDecorHeight > 0) {
-            val availableHeight = (dialogDecorHeight - topInset - bottomInset).coerceAtLeast(0)
+            behaviorController?.updateSheetAvailableSpace(dialogDecorHeight)
+
+            val sheetContainerHeight =
+                resolvedDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
+                    ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
 
             val layoutParams =
-                view.layoutParams
-                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, availableHeight)
-            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != availableHeight) {
+                container.layoutParams
+                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sheetContainerHeight)
+            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != sheetContainerHeight) {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                layoutParams.height = availableHeight
-                view.layoutParams = layoutParams
+                layoutParams.height = sheetContainerHeight
+                container.layoutParams = layoutParams
             }
         }
     }
@@ -157,6 +173,10 @@ class FormSheetDialogManager(
             .getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
             ).bottom
+
+    companion object {
+        private const val LARGE_DETENT = 1.0
+    }
 
     internal fun destroy() {
         dimmingManager.setOnBackdropClickListener {}

@@ -46,6 +46,26 @@ internal class FormSheetDetents(
         return ((1 - at(2)) * containerHeight).toInt() + topInset
     }
 
+    // Distance from the top of the window to the top of the largest detent's surface.
+    private fun largestDetentTopOffset(containerHeight: Int): Int = containerHeight - maxAllowedHeight(containerHeight)
+
+    /**
+     * Material's BottomSheetDialog dynamically applies padding when its content overlaps 
+     * system insets. To prevent recalculating the size, we pre-calculate a static height 
+     * inside safe area bounds.
+     */
+    internal fun sheetContainerHeight(
+        containerHeight: Int,
+        topInset: Int,
+        bottomInset: Int,
+    ): Int {
+        // Bottom inset is always fully subtracted because the sheet is in its dedicated window and its 
+        // anchored to the bottom.
+        // Top inset is subtracted only by the amount the sheet actually overlaps it.
+        val topOverlap = (topInset - largestDetentTopOffset(containerHeight)).coerceAtLeast(0)
+        return (maxAllowedHeight(containerHeight) - topOverlap - bottomInset).coerceAtLeast(0)
+    }
+
     companion object {
         const val MAX_DETENTS = 3
     }
