@@ -110,8 +110,9 @@ function detectBootedEmulatorAvdName() {
       return false;
     });
   } catch (error) {
-    // `getDeviceIds` throws when no devices are attached at all. Treat that as
-    // "nothing booted" and let resolution fall through to the next candidate.
+    console.warn(
+      `Failed to detect booted emulator from "adb devices"; falling back to other resolution strategies. Cause:\n${error}`,
+    );
     return undefined;
   }
   if (bootedEmulatorIds.length === 0) {
