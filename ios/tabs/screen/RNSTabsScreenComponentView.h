@@ -92,4 +92,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Content scroll view
+
+@interface RNSTabsScreenComponentView ()
+
+/**
+ * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
+ * none has been registered. Queried by the owning controller (`RNSContainerItem`).
+ */
+- (nullable UIScrollView *)cachedContentScrollView;
+
+@end
+
 NS_ASSUME_NONNULL_END
