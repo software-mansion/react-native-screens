@@ -59,7 +59,7 @@ internal class FormSheetDetents(
         topInset: Int,
         bottomInset: Int,
     ): Int {
-        // Bottom inset is always fully subtracted because the sheet is in its dedicated window and its
+        // Bottom inset is always fully subtracted because the sheet is in its dedicated window and it's
         // anchored to the bottom.
         // Top inset is subtracted only by the amount the sheet actually overlaps it.
         val topOverlap = (topInset - largestDetentTopOffset(containerHeight)).coerceAtLeast(0)

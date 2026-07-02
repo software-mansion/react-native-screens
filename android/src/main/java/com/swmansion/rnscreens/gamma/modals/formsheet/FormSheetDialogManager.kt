@@ -96,12 +96,22 @@ class FormSheetDialogManager(
         formSheetConfig = newConfig
     }
 
-    private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
-        if (rawDetents.isEmpty()) {
-            return FormSheetDetents(listOf(LARGE_DETENT))
-        }
-        return FormSheetDetents(rawDetents)
+private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
+    if (rawDetents.isEmpty()) {
+        return FormSheetDetents(listOf(LARGE_DETENT))
     }
+
+    return try {
+        FormSheetDetents(rawDetents)
+    } catch (e: IllegalArgumentException) {
+        android.util.Log.e(
+            "[RNScreens]",
+            "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
+            e,
+        )
+        FormSheetDetents(listOf(LARGE_DETENT))
+    }
+}
 
     private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
         // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
@@ -127,7 +137,7 @@ class FormSheetDialogManager(
      * sheet view during its first `onLayoutChild`. That callback drives `translationY` to follow
      * animated inset changes, what interferes with our slide-in custom animation.
      *
-     * We manage insets ourselves by seeing a fixed height for FormSheetContainer, so we can
+     * We manage insets ourselves by setting a fixed height for FormSheetContainer, so we can
      * clear the Material's callback to remove the conflict entirely.
      *
      * This method must run after the first layout pass.
