@@ -183,6 +183,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   if (parent != nil) {
     [self updateLayoutDirectionBelowIOS17IfNeeded];
+    [self attachToParentContainerItem];
+  } else {
+    [self detachFromParentContainerItem];
   }
 }
 

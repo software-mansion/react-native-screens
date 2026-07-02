@@ -60,6 +60,19 @@
   [_parentContainerRegistry detachContainer:self];
 }
 
+#pragma mark - View controller containment
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+
+  if (parent != nil) {
+    [self attachToParentContainerItem];
+  } else {
+    [self detachFromParentContainerItem];
+  }
+}
+
 - (BOOL)hasPendingOperations
 {
   return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;

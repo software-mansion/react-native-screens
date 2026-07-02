@@ -170,18 +170,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)tearDown;
 
-/**
- * Register this container with the nearest parent `RNSContainerItem` in the view-controller
- * hierarchy (if any). Call when the owning host view is attached to a window.
- */
-- (void)attachToParentContainerItem;
-
-/**
- * Unregister this container from its parent `RNSContainerItem`. Call when the owning host view is
- * detached from its window.
- */
-- (void)detachFromParentContainerItem;
-
 #pragma mark Individual flush methods (internal)
 
 /**

@@ -116,19 +116,13 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  if (self.window != nil) {
-    if (_controller.parentViewController == nil) {
-      BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
-                                            toViewControllerManaging:self.reactSuperview
-                                                   withContainerView:self];
-      if (mountResult) {
-        [self setupViewConstraintsForController:_controller];
-      }
+  if (self.window != nil && _controller.parentViewController == nil) {
+    BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
+                                          toViewControllerManaging:self.reactSuperview
+                                                 withContainerView:self];
+    if (mountResult) {
+      [self setupViewConstraintsForController:_controller];
     }
-
-    [_controller attachToParentContainerItem];
-  } else {
-    [_controller detachFromParentContainerItem];
   }
 }
 
