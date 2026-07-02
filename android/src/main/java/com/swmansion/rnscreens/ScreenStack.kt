@@ -283,6 +283,12 @@ class ScreenStack(
                 screenWrappers
                     .asSequence()
                     .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
+                    // Skip fragments that are still attached, otherwise the transaction throws
+                    // "Fragment already added" - e.g. when visibleBottom's fragment got detached
+                    // while fragments above it stayed attached. Dismissed wrappers are exempt:
+                    // their removal is queued earlier in this transaction, so adding them back
+                    // is the legal remove + add re-attach path.
+                    .filter { !it.fragment.isAdded || dismissedWrappers.contains(it) }
                     .forEach { wrapper ->
                         // TODO: It should be enough to dispatch this on commit action once.
                         transaction.add(id, wrapper.fragment).runOnCommit {
