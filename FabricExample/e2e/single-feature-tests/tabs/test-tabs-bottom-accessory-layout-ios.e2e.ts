@@ -4,6 +4,8 @@ import {
   describeIfiOS,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
+  describeIfiPad,
+  getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
 
@@ -12,8 +14,22 @@ const bottomAccessoryElement = (testID: string) =>
     by.id(testID).withAncestor(by.type('RNSTabsBottomAccessoryComponentView')),
   ).atIndex(0);
 
-async function expectBottomAccessoryVisible(testID: string) {
-  await expect(bottomAccessoryElement(testID)).toBeVisible();
+const getBottomAccessoryAttributes = () =>
+  getElementAttributes({
+    by: 'type',
+    value: 'RNSTabsBottomAccessoryComponentView',
+    index: 0,
+  }) as Promise<IosElementAttributes>;
+
+const getExtendedTabBarAttributes = async () =>
+  getElementAttributes({
+    by: 'type',
+    value: 'UITabBar',
+    index: 0,
+  }) as Promise<IosElementAttributes>;
+
+async function expectBottomAccessoryExist(testID: string) {
+  await expect(bottomAccessoryElement(testID)).toExist();
 }
 
 async function expectBottomAccessoryText(testID: string, text: string) {
@@ -40,6 +56,20 @@ function expectBottomAccessoryInline(
   jestExpect(inlineAccessory.frame.y).toBeGreaterThanOrEqual(tabBar.frame.y);
 }
 
+function expectBottomAccessoryAtTheBottom(
+  bottomAccessory: IosElementAttributes,
+  scrollView: IosElementAttributes,
+) {
+  // The accessory sits above the scroll view's bottom edge by the 20pt padding
+  // set on the scroll view's style in the test screen.
+  const SCROLL_VIEW_BOTTOM_PADDING = 20;
+  jestExpect(
+    bottomAccessory.frame.y +
+      bottomAccessory.frame.height +
+      SCROLL_VIEW_BOTTOM_PADDING,
+  ).toEqual(scrollView.frame.height);
+}
+
 async function scrollScrollViewToItem(
   scrollViewId: string,
   itemId: string,
@@ -51,15 +81,78 @@ async function scrollScrollViewToItem(
     .scroll(150, direction, NaN, 0.3);
 }
 
-describeIfiOS('Tabs bottomAccessory (iOS)', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-    await selectSingleFeatureTestsScreen(
-      'Tabs',
-      'test-tabs-bottom-accessory-layout-ios',
-    );
-  });
+type VariantCase = {
+  title: string;
+  variantId?: string; // card to tap; omitted for the initial-load case
+  accessories: { testID: string; text?: string }[];
+};
 
+const VARIANT_CASES: VariantCase[] = [
+  {
+    title: 'should show the Upper Left accessory variant on initial load',
+    accessories: [{ testID: 'accessory-upper-left', text: 'Upper Left' }],
+  },
+  {
+    title: 'should update the accessory when Center variant card is tapped',
+    variantId: 'variant-center',
+    accessories: [{ testID: 'accessory-center', text: 'Center' }],
+  },
+  {
+    title:
+      'should update the accessory when Lower Right variant card is tapped',
+    variantId: 'variant-lower-right',
+    accessories: [{ testID: 'accessory-lower-right', text: 'Lower Right' }],
+  },
+  {
+    title: 'should update the accessory when Long variant card is tapped',
+    variantId: 'variant-long',
+    accessories: [{ testID: 'accessory-long' }],
+  },
+  {
+    title: 'should update the accessory when RGB variant card is tapped',
+    variantId: 'variant-rgb',
+    accessories: [
+      { testID: 'rgb-strip-0' },
+      { testID: 'rgb-strip-1' },
+      { testID: 'rgb-strip-2' },
+    ],
+  },
+];
+
+async function runVariantSwitch({ variantId, accessories }: VariantCase) {
+  if (variantId) {
+    await element(by.id(variantId)).tap();
+  }
+  for (const { testID, text } of accessories) {
+    await expectBottomAccessoryExist(testID);
+    if (text) {
+      await expectBottomAccessoryText(testID, text);
+    }
+  }
+}
+
+/**
+ * Registers the shared variant-switch tests inside the calling describe block.
+ * `titleSuffix` differentiates the iPad titles; `afterSwitch` runs any
+ * platform-specific assertion once the variant is applied.
+ */
+function registerVariantTests(
+  titleSuffix = '',
+  afterSwitch?: () => Promise<void> | void,
+) {
+  for (const variantCase of VARIANT_CASES) {
+    it(`${variantCase.title}${titleSuffix}`, async () => {
+      await runVariantSwitch(variantCase);
+      await afterSwitch?.();
+    });
+  }
+}
+
+/**
+ * Registers the shared initial-load test inside the calling describe block.
+ * Asserts the Config tab renders every variant card plus the initial accessory.
+ */
+function registerInitialLoadTest() {
   it('should display the Config tab content and initial accessory on load', async () => {
     await expect(element(by.id('config-scrollview'))).toBeVisible();
     await expect(element(by.id('variant-upper-left'))).toBeVisible();
@@ -71,35 +164,20 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       element(by.type('RNSTabsBottomAccessoryComponentView')),
     ).toBeVisible();
   });
+}
 
-  it('should show the Upper Left accessory variant on initial load', async () => {
-    await expectBottomAccessoryVisible('accessory-upper-left');
-    await expectBottomAccessoryText('accessory-upper-left', 'Upper Left');
+describeIfiOS('Tabs bottomAccessory (iOS)', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-bottom-accessory-layout-ios',
+    );
   });
 
-  it('should update the accessory when Center variant card is tapped', async () => {
-    await element(by.id('variant-center')).tap();
-    await expectBottomAccessoryVisible('accessory-center');
-    await expectBottomAccessoryText('accessory-center', 'Center');
-  });
+  registerInitialLoadTest();
 
-  it('should update the accessory when Lower Right variant card is tapped', async () => {
-    await element(by.id('variant-lower-right')).tap();
-    await expectBottomAccessoryVisible('accessory-lower-right');
-    await expectBottomAccessoryText('accessory-lower-right', 'Lower Right');
-  });
-
-  it('should update the accessory when Long variant card is tapped', async () => {
-    await element(by.id('variant-long')).tap();
-    await expectBottomAccessoryVisible('accessory-long');
-  });
-
-  it('should update the accessory when RGB variant card is tapped', async () => {
-    await element(by.id('variant-rgb')).tap();
-    await expectBottomAccessoryVisible('rgb-strip-0');
-    await expectBottomAccessoryVisible('rgb-strip-1');
-    await expectBottomAccessoryVisible('rgb-strip-2');
-  });
+  registerVariantTests();
 
   // ---------------------------------------------------------------------------
   // Accessory persistence across tab switches
@@ -107,17 +185,17 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
 
   it('should preserve the accessory when switching to the ScrollDown tab and back', async () => {
     await element(by.id('variant-center')).tap();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
   });
 
@@ -131,30 +209,17 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expect(element(by.id('scroll-down-item-1'))).toBeVisible();
 
-    const extendedBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
-
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
+    expectBottomAccessoryExtended(
+      await getBottomAccessoryAttributes(),
+      await getExtendedTabBarAttributes(),
+    );
   });
 
   it('should display the bottom accessory inline when scrolling down on ScrollDown tab', async () => {
-    const extendedBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
+    const extendedBottomAccessory = await getBottomAccessoryAttributes();
     const extendedAccessoryWidth = extendedBottomAccessory.frame.width;
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
 
     await scrollScrollViewToItem(
       'scroll-down-scrollview',
@@ -162,35 +227,22 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       'down',
     );
 
-    const inlineBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
-
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryInline(
-      inlineBottomAccessory,
+      await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      extendedTabBar,
+      await getExtendedTabBarAttributes(),
     );
   });
 
   it('should display the bottom accessory above the tab bar when scrolling up on ScrollDown tab', async () => {
     await element(by.id('scroll-down-scrollview')).scrollTo('top');
 
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
-
-    const restoredBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
-
-    expectBottomAccessoryExtended(restoredBottomAccessory, extendedTabBar);
+    expectBottomAccessoryExtended(
+      await getBottomAccessoryAttributes(),
+      await getExtendedTabBarAttributes(),
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -202,30 +254,17 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
 
     await expect(element(by.id('scroll-up-scrollview'))).toBeVisible();
 
-    const extendedBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
-
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
+    expectBottomAccessoryExtended(
+      await getBottomAccessoryAttributes(),
+      await getExtendedTabBarAttributes(),
+    );
   });
 
   it('should display the bottom accessory inline when scrolling up on ScrollUp tab', async () => {
-    const extendedBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
+    const extendedBottomAccessory = await getBottomAccessoryAttributes();
     const extendedAccessoryWidth = extendedBottomAccessory.frame.width;
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
 
     await scrollScrollViewToItem(
       'scroll-up-scrollview',
@@ -233,18 +272,12 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       'up',
     );
 
-    const inlineBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
-
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryInline(
-      inlineBottomAccessory,
+      await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      extendedTabBar,
+      await getExtendedTabBarAttributes(),
     );
   });
 
@@ -256,16 +289,38 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       'down',
     );
 
-    const extendedTabBar = (await element(
-      by.type('UITabBar'),
-    ).getAttributes()) as IosElementAttributes;
+    expectBottomAccessoryExtended(
+      await getBottomAccessoryAttributes(),
+      await getExtendedTabBarAttributes(),
+    );
+  });
+});
 
-    const restoredBottomAccessory = (await element(
-      by.type('RNSTabsBottomAccessoryComponentView'),
-    )
-      .atIndex(0)
-      .getAttributes()) as IosElementAttributes;
+describeIfiPad('@ipad Tabs bottomAccessory (iPad)', () => {
+  // The Config scroll view is the same across every test in this block, so read
+  // its frame once and reuse it.
+  let configScrollView: IosElementAttributes;
 
-    expectBottomAccessoryExtended(restoredBottomAccessory, extendedTabBar);
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-bottom-accessory-layout-ios',
+    );
+    await expect(element(by.id('config-scrollview'))).toBeVisible();
+    configScrollView = (await getElementAttributes({
+      by: 'id',
+      value: 'config-scrollview',
+      index: 0,
+    })) as IosElementAttributes;
+  });
+
+  registerInitialLoadTest();
+
+  registerVariantTests(' and stays anchored to the bottom', async () => {
+    expectBottomAccessoryAtTheBottom(
+      await getBottomAccessoryAttributes(),
+      configScrollView,
+    );
   });
 });
