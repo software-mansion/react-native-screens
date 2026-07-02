@@ -14,10 +14,9 @@
 - (void)attachContainer:(UIViewController<RNSContainer> *)container
 {
   id<RNSContainerItem> parentItem = [self findParentContainerItemFrom:container];
-  if (parentItem == nil) {
-    return;
+  if (parentItem != nil) {
+    [parentItem registerNestedContainer:container];
   }
-  [parentItem registerNestedContainer:container];
   _parentItem = parentItem;
 }
 
