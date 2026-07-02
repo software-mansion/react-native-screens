@@ -2,10 +2,12 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.core.view.WindowCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 internal class FormSheetDialog(
@@ -18,6 +20,27 @@ internal class FormSheetDialog(
         disableNativeWindowAnimation(window)
 
         setupBottomSheetHeight()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        forceEdgeToEdge()
+    }
+
+    /**
+     * Material's [BottomSheetDialog] only draws edge-to-edge when its theme opts in via the
+     * `enableEdgeToEdge` attribute AND the navigation bar is translucent (see
+     * `BottomSheetDialog#onAttachedToWindow`).
+     *
+     * We force edge-to-edge on every API level so the custom dimming view covers the whole screen.
+     * The sheet content is sized manually against the system insets, so drawing behind the bars is safe here.
+     */
+    private fun forceEdgeToEdge() {
+        val window = window ?: return
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        findViewById<View>(com.google.android.material.R.id.container)?.fitsSystemWindows = false
+        findViewById<View>(com.google.android.material.R.id.coordinator)?.fitsSystemWindows = false
     }
 
     private fun hideNativeDimmingView(window: Window?) = window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
