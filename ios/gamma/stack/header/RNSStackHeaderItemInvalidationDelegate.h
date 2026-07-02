@@ -6,7 +6,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSStackHeaderItemInvalidationDelegate <NSObject>
 
-- (void)headerItemDidInvalidate;
+- (void)headerItemDidInvalidateWithId:(NSString *)itemId;
+
+- (void)headerItemMenuDidChangeWithId:(NSString *)itemId;
+
+- (void)headerItemSpacerDidInvalidate;
 
 @end
 

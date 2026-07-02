@@ -1,7 +1,6 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
-#import "RNSStackHeaderData.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -4,7 +4,6 @@
 
 #import "RNSHeaderItemPlacement.h"
 #import "RNSStackHeaderMenuData.h"
-#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
-
-@property (nonatomic, readonly) RNSStackHeaderMenuToggleStateTracker *menuToggleStateTracker;
 
 @end
 
