@@ -115,6 +115,22 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    */
   tooltipText?: string | undefined;
   /**
+   * @summary Sets the accessibility label (content description) for the menu
+   * element.
+   *
+   * @remarks
+   * When `undefined`, Android uses the `title` for the accessibility label when
+   * the item is placed in the toolbar. There is no default accessibility label
+   * for items inside overflow menu/submenus.
+   *
+   * Due to native platform limitations, it's not possible to provide `testID`
+   * for menu items inside overflow menu/submenus. If possible, use
+   * `accessibilityLabel` instead.
+   *
+   * @platform android
+   */
+  accessibilityLabel?: string | undefined;
+  /**
    * @summary Specifies if the menu element should be hidden.
    *
    * @default false
