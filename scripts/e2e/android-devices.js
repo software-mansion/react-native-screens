@@ -44,11 +44,27 @@ function resolveAttachedAndroidDeviceSerial() {
   return connectedPhysicalDevices[0];
 }
 
+/**
+ * Resolves the AVD name Detox should target for an `android.emu.*` run.
+ *
+ * Resolution order (descending priority), mirroring the iOS simulator resolver:
+ * 1. User input - `RNS_DEVICE_SERIAL` (its AVD name is derived from the serial)
+ *    or `RNS_AVD_NAME` (used verbatim).
+ * 2. An already-booted emulator (its AVD name is derived from the serial). When
+ *    several are booted, the first one reported by `adb devices` is used.
+ * 3. The default CI emulator (`e2e_emulator`), only when running in CI.
+ * 4. The first AVD reported by `emulator -list-avds`.
+ *
+ * @returns {string} AVD name, or 'INACTIVE CONFIG' when the active config is not
+ * an emulator one.
+ */
 function detectAndroidEmulatorName() {
   const isEmulatorConfig = process.argv.some(runtimeArg =>
     runtimeArg.includes('android.emu'),
   );
   if (!isEmulatorConfig) return 'INACTIVE CONFIG';
+
+  // 1. User input.
   if (passedAdbSerial) {
     return resolveAvdNameFromDeviceId(passedAdbSerial);
   }
@@ -56,11 +72,61 @@ function detectAndroidEmulatorName() {
   if (passedAvdName) {
     return passedAvdName;
   }
+
+  // 2. An already-booted emulator - adapt to whatever is running locally.
+  const bootedAvdName = detectBootedEmulatorAvdName();
+  if (bootedAvdName) {
+    return bootedAvdName;
+  }
+
+  // 3. The default CI emulator (booted by the CI runner, so step 2 normally
+  // wins in CI; this is a safety net when the AVD name cannot be derived).
   if (isRunningCI) {
     return DEFAULT_CI_AVD_NAME;
   }
-  // non-zero length is guaranteed.
+
+  // 4. The first available AVD. Non-zero length is guaranteed.
   return getAvailableEmulatorNames()[0];
+}
+
+/**
+ * @returns {string | undefined} AVD name of a currently booted emulator, or
+ * undefined when none is running (or the device list cannot be read).
+ */
+function detectBootedEmulatorAvdName() {
+  let bootedEmulatorIds;
+  try {
+    bootedEmulatorIds = getDeviceIds(deviceIdAndState => {
+      const [deviceId, state] = deviceIdAndState;
+      if (!deviceId.startsWith('emulator')) {
+        return false;
+      }
+      if (state === 'device') {
+        return true;
+      }
+      console.warn(
+        `Emulator "${deviceId}" has state "${state}", but state "device" is expected. This emulator will be ignored.`,
+      );
+      return false;
+    });
+  } catch (error) {
+    // `getDeviceIds` throws when no devices are attached at all. Treat that as
+    // "nothing booted" and let resolution fall through to the next candidate.
+    return undefined;
+  }
+  if (bootedEmulatorIds.length === 0) {
+    return undefined;
+  }
+  if (bootedEmulatorIds.length > 1) {
+    console.warn(
+      `Multiple booted emulators detected: ${bootedEmulatorIds.join(
+        ', ',
+      )}. Using "${bootedEmulatorIds[0]}". Set "${
+        envVarKeys.avdName
+      }" or "${envVarKeys.adbSerial}" to select a specific one.`,
+    );
+  }
+  return resolveAvdNameFromDeviceId(bootedEmulatorIds[0]);
 }
 
 function getAvailableEmulatorNames() {
