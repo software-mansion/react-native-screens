@@ -1,8 +1,21 @@
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
+
+export type EmptyEventPayload = Record<string, never>;
+
+export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 
 export interface FormSheetDetentChangedEvent {
   index: number;
 }
+
+export type FormSheetNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container hosting the sheet content.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue | undefined;
+};
 
 export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
@@ -19,15 +32,24 @@ export interface FormSheetProps {
   isOpen: boolean;
 
   /**
-   * @summary An array of fractional screen heights (ranging from `0.0` to `1.0`) that define
-   * the resting positions of the sheet.
+   * @summary Defines the resting positions of the sheet.
+   *
+   * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
+   * or the `fitToContents` string literal.
+   *
+   * - Fractional heights: The sheet will snap to these specific height proportions.
+   * - `fitToContents`: The sheet automatically calculates its height to wrap its content.
+   *   It will dynamically animate to adapt to any internal layout changes.
    *
    * On iOS, these map directly to `UISheetPresentationController` detents.
    * If an empty array is provided, it defaults to a single large detent.
    *
+   * @remarks
+   * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
+   *
    * @platform ios
    */
-  detents?: number[] | undefined;
+  detents?: number[] | 'fitToContents' | undefined;
 
   /**
    * @summary Determines whether the sheet requests a grabber at the top.
@@ -96,7 +118,69 @@ export interface FormSheetProps {
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
+  /**
+   * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
+   *
+   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
+   * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
+   *
+   * @default false
+   * @platform ios
+   */
+  preventNativeDismiss?: boolean | undefined;
+
+  /**
+   * @summary Style applied to the native container hosting the sheet content.
+   *
+   * These properties are forwarded directly to the underlying native view.
+   *
+   * @platform ios
+   */
+  nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
+
   // Events
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet will appear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
+  onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet did appear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
+  onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet will disappear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
+  onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary A callback that gets invoked when the FormSheet did disappear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
+  onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
+  /**
+   * @summary Called when the sheet is dismissed programmatically.
+   *
+   * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
+   *
+   * @platform ios
+   */
+  onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+
   /**
    * @summary Called when the sheet is dismissed natively.
    *
@@ -105,7 +189,7 @@ export interface FormSheetProps {
    *
    * @platform ios
    */
-  onNativeDismiss?: (() => void) | undefined;
+  onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary Called when the sheet settles at a new detent.
@@ -115,6 +199,19 @@ export interface FormSheetProps {
    * @platform ios
    */
   onDetentChanged?:
-    | ((e: NativeSyntheticEvent<FormSheetDetentChangedEvent>) => void)
+    | FormSheetEventHandler<FormSheetDetentChangedEvent>
+    | undefined;
+
+  /**
+   * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
+   *
+   * This event is only fired if `preventNativeDismiss` is set to `true`.
+   * It is useful for triggering custom feedback, such as an alert
+   * to inform the user why the sheet cannot be closed.
+   *
+   * @platform ios
+   */
+  onNativeDismissPrevented?:
+    | FormSheetEventHandler<EmptyEventPayload>
     | undefined;
 }

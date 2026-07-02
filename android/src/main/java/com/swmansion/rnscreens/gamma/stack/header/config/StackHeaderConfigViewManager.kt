@@ -1,7 +1,9 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -12,9 +14,10 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuMapper
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
-open class StackHeaderConfigViewManager :
+internal open class StackHeaderConfigViewManager :
     ViewGroupManager<StackHeaderConfig>(),
     RNSStackHeaderConfigAndroidManagerInterface<StackHeaderConfig> {
     private val delegate: ViewManagerDelegate<StackHeaderConfig>
@@ -26,6 +29,14 @@ open class StackHeaderConfigViewManager :
     override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackHeaderConfig(reactContext)
+
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: StackHeaderConfig,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
 
     override fun getDelegate(): ViewManagerDelegate<StackHeaderConfig> = delegate
 
@@ -86,7 +97,12 @@ open class StackHeaderConfigViewManager :
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
-        view.notifyConfigChanged()
+        view.resolveToolbarMenuItemIconsIfNeeded()
+    }
+
+    override fun onDropViewInstance(view: StackHeaderConfig) {
+        view.tearDown()
+        super.onDropViewInstance(view)
     }
 
     override fun setType(
@@ -130,11 +146,25 @@ open class StackHeaderConfigViewManager :
         view.backButtonHidden = value
     }
 
-    override fun setBackButtonTintColor(
+    override fun setBackButtonTintColorNormal(
         view: StackHeaderConfig,
         value: Int?,
     ) {
-        view.backButtonTintColor = value
+        view.backButtonTintColorNormal = value
+    }
+
+    override fun setBackButtonTintColorPressed(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorPressed = value
+    }
+
+    override fun setBackButtonTintColorFocused(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backButtonTintColorFocused = value
     }
 
     override fun setBackButtonDrawableIconResourceName(
@@ -184,6 +214,35 @@ open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.scrollFlagSnap = value
+    }
+
+    override fun setToolbarMenuGroupDividerEnabled(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.toolbarMenuGroupDividerEnabled = value
+    }
+
+    override fun setToolbarMenu(
+        view: StackHeaderConfig,
+        value: Dynamic,
+    ) {
+        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value)
+        view.toolbarMenu = menu
+        view.toolbarMenuItemIconSourceMap = iconSources
+    }
+
+    override fun setToolbarMenuElementOptions(
+        view: StackHeaderConfig,
+        id: String,
+        options: ReadableArray,
+    ) {
+        val map = options.getMap(0) ?: return
+        view.dispatchMenuElementUpdate(
+            id,
+            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
+        )
     }
 
     companion object {

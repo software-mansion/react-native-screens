@@ -14,7 +14,9 @@ function ContentView() {
   const { routeKey } = useTabsNavigationContext();
   return (
     <CenteredLayoutView>
-      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+      <Text
+        style={{ fontWeight: 'bold', textAlign: 'center' }}
+        testID="route-key-label">
         {routeKey}
       </Text>
       <TabsNavigationButtons />
@@ -27,9 +29,21 @@ function TabsNavigationButtons() {
 
   return (
     <View>
-      <Button title="Select First" onPress={() => nav.selectTab('First')} />
-      <Button title="Select Second" onPress={() => nav.selectTab('Second')} />
-      <Button title="Select Third" onPress={() => nav.selectTab('Third')} />
+      <Button
+        title="Select First"
+        onPress={() => nav.selectTab('First')}
+        testID="select-first-button"
+      />
+      <Button
+        title="Select Second"
+        onPress={() => nav.selectTab('Second')}
+        testID="select-second-button"
+      />
+      <Button
+        title="Select Third"
+        onPress={() => nav.selectTab('Third')}
+        testID="select-third-button"
+      />
     </View>
   );
 }
@@ -38,22 +52,35 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'First',
+      tabBarItemTestID: 'tab-bar-item-first',
+      tabBarItemAccessibilityLabel: 'FirstTab',
+    },
   },
   {
     name: 'Second',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Second',
+      tabBarItemTestID: 'tab-bar-item-second',
+    },
   },
   {
     name: 'Third',
     Component: ContentView,
-    options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Third',
+      tabBarItemTestID: 'tab-bar-item-third',
+    },
   },
 ];
 
-export function App() {
+function TestTabsSimpleNav() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsSimpleNav, scenarioDescription);

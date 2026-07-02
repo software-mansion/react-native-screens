@@ -11,7 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+function TestStackPreventNativeDismissSingleStack() {
   return (
     <ToastProvider>
       <StackSetup />
@@ -138,4 +138,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestStackPreventNativeDismissSingleStack,
+  scenarioDescription,
+);

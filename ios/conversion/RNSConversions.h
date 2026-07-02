@@ -9,20 +9,14 @@
 #import "RNSEnums.h"
 #import "RNSTabsNavigationState.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <folly/dynamic.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-#if RCT_NEW_ARCH_ENABLED
-
 // copied from FollyConvert.mm
 id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 
@@ -125,11 +119,11 @@ RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitS
 
 }; // namespace rnscreens::conversion
 
-#if RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#if RNS_GAMMA_ENABLED
 
 #import "RNSConversions-ScrollViewMarker.h"
 #import "RNSConversions-Stack.h"
 
-#endif // RCT_NEW_ARCH_ENABLED && RNS_GAMMA_ENABLED
+#endif // RNS_GAMMA_ENABLED
 
 #endif // defined(__cplusplus)

@@ -16,14 +16,33 @@ export type {
 export type {
   StackHeaderConfigPropsBase,
   StackHeaderConfigProps,
+  StackHeaderConfigRef,
   // Android
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
   StackHeaderToolbarSubviewAndroid,
   StackHeaderBackgroundSubviewAndroid,
   StackHeaderConfigPropsAndroid,
+  StackHeaderConfigCommandsAndroid,
+  StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuGroupAndroid,
+  StackHeaderToolbarMenuItemAndroid,
+  StackHeaderToolbarMenuItemBaseAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
+  StackHeaderToolbarMenuItemShowAsActionAndroid,
+  StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
+  StackHeaderInlineItemIOS,
+  StackHeaderInlineCustomItemIOS,
+  StackHeaderTitleCustomItemIOS,
+  StackHeaderSpacerItemIOS,
+  StackHeaderConfigCommandsIOS,
+  StackHeaderMenuIOS,
+  StackHeaderMenuItemIOS,
+  StackHeaderMenuElementIOS,
 } from './header';
 
 /**

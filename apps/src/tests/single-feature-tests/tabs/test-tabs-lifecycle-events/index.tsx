@@ -20,7 +20,9 @@ function TabScreen() {
       <Text style={styles.tabLabel} testID={`tabLabel-${routeKey}`}>
         {routeKey}
       </Text>
-      <Text style={styles.tabHint}>Switch tabs to trigger lifecycle events</Text>
+      <Text style={styles.tabHint}>
+        Switch tabs to trigger lifecycle events
+      </Text>
     </CenteredLayoutView>
   );
 }
@@ -96,7 +98,7 @@ function AppContents() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export function App() {
+function TestTabsLifecycleEvents() {
   return (
     <ToastProvider>
       <AppContents />
@@ -104,7 +106,7 @@ export function App() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsLifecycleEvents, scenarioDescription);
 
 const styles = StyleSheet.create({
   tabLabel: {

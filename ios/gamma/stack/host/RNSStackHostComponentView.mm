@@ -10,6 +10,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 
+#import "RNSContainerHelpers.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
@@ -46,7 +47,14 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
-  [self reactAddControllerToClosestParent:_stackNavigationController];
+  if (self.window != nil && _stackNavigationController.parentViewController == nil) {
+    BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
+                                          toViewControllerManaging:self.reactSuperview
+                                                 withContainerView:self];
+    if (mountResult) {
+      [self setupViewConstraintsForController:_stackNavigationController];
+    }
+  }
 }
 
 #pragma mark - Communication with StackScreen
@@ -127,22 +135,16 @@ namespace react = facebook::react;
   }
 }
 
-- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
+- (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
 {
-  RCTAssert(controller != nil, @"[RNScreens] Attempt to move to a nullish controller");
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
-    }
-    return;
-  }
+  // Enable auto-layout to ensure valid size of stack controller view.
+  controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+  [NSLayoutConstraint activateConstraints:@[
+    [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+    [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+    [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+    [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  ]];
 }
 
 #pragma mark - RCTMountingTransactionObserving

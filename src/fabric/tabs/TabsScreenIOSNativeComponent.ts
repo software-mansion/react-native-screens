@@ -8,7 +8,7 @@ import type {
   ViewProps,
 } from 'react-native';
 
-import { UnsafeMixed } from './codegenUtils';
+import { UnsafeMixed } from '../codegenUtils';
 
 // #region General helpers
 

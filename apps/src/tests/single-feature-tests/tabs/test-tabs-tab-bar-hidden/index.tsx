@@ -42,8 +42,8 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsTabBarHidden() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarHidden, scenarioDescription);

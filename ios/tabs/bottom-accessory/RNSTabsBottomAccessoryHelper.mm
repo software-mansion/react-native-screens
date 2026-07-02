@@ -4,7 +4,6 @@
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTAssert.h>
-#import <cxxreact/ReactNativeVersion.h>
 
 namespace react = facebook::react;
 

@@ -1,3 +1,6 @@
-export type { FormSheetProps } from './FormSheet.types';
+export type {
+  FormSheetProps,
+  FormSheetNativeContainerStyleProps,
+} from './FormSheet.types';
 
 export { FormSheet } from './FormSheet';

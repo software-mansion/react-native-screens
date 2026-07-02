@@ -24,9 +24,9 @@ import { SafeAreaView } from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
 import { isIOS26OrHigher } from './helpers/PlatformUtils';
 import {
-  TopInsetApplicationContext,
-  useTopInsetApplication,
-} from './contexts/TopInsetApplicationContext';
+  EdgeInsetApplicationContext,
+  useEdgeInsetApplication,
+} from './contexts/EdgeInsetApplicationContext';
 
 type Props = Omit<
   ScreenProps,
@@ -57,11 +57,12 @@ function ScreenStackItem(
   ref: React.ForwardedRef<View>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const headerTopInsetDisabled =
-    headerConfig?.disableTopInsetApplication ?? false;
-  const { nextContextValue } = useTopInsetApplication(
+  const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
-    headerTopInsetDisabled,
+    headerConfig?.disableTopInsetApplication ?? false,
+    headerConfig?.disableLeftInsetApplication ?? false,
+    headerConfig?.disableRightInsetApplication ?? false,
+    headerConfig?.disableBottomInsetApplication ?? false,
   );
 
   const currentScreenRef = React.useRef<View | null>(null);
@@ -127,7 +128,7 @@ function ScreenStackItem(
 
   const content = (
     <>
-      <TopInsetApplicationContext.Provider value={nextContextValue}>
+      <EdgeInsetApplicationContext.Provider value={nextEdgeContextValue}>
         <DebugContainer
           contentStyle={contentStyle}
           style={debugContainerStyle}
@@ -140,7 +141,7 @@ function ScreenStackItem(
             children
           )}
         </DebugContainer>
-      </TopInsetApplicationContext.Provider>
+      </EdgeInsetApplicationContext.Provider>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
        * We don't render it conditionally based on visibility to make it possible to dynamically render a custom `header`
@@ -221,7 +222,6 @@ function getPositioningStyle(
   presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
-  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
 
   if (presentation !== 'formSheet') {
     return styles.container;
@@ -230,7 +230,6 @@ function getPositioningStyle(
   if (isIOS) {
     if (
       allowedDetents !== 'fitToContents' &&
-      rnMinorVersion >= 82 &&
       featureFlags.experiment.synchronousScreenUpdatesEnabled
     ) {
       return styles.container;

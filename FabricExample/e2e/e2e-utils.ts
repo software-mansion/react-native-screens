@@ -38,6 +38,38 @@ export async function selectIssueTestScreen(screenName: string) {
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
 
+export async function selectComponentIntegrationTestsScreen(
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
+  await scrollUntilVisible(
+    'root-screen-component-integration-tests',
+    'root-screen-examples-scrollview',
+  );
+  await element(by.id('root-screen-component-integration-tests')).tap();
+
+  await waitFor(element(by.id('component-integration-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `component-integration-tests-${scenarioGroupId}`,
+    'component-integration-tests-scrollview',
+  );
+
+  await element(by.id(`component-integration-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `${screenKey}`,
+    `${scenarioGroupId}-scenarios-scrollview`,
+  );
+  await element(by.id(`${screenKey}`)).tap();
+}
+
 export async function selectSingleFeatureTestsScreen(
   scenarioGroup: string,
   screenKey: string,
@@ -93,4 +125,12 @@ export async function forceTapByLabeliOS(testLabel: string) {
     x: x + width / 2,
     y: y + height / 2,
   });
+}
+
+export async function forceSelectTabByLabel(label: string) {
+  if (device.getPlatform() === 'ios') {
+    await forceTapByLabeliOS(label);
+  } else {
+    await element(by.label(label)).tap();
+  }
 }

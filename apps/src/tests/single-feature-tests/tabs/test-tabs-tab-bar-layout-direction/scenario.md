@@ -25,15 +25,13 @@ Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
 
 ## E2E test
 
-Other: Covers first two manual scenarios for LTR/RTL configurations:
+Full: Covers all scenarios for LTR/RTL configurations:
 
 - iOS: The system RTL direction is set by app configuration setting
   `AppleTextDirection`, `NSForceRightToLeftWritingDirection` and `I18NIsRTL`
   to `YES` during the app launch sequence.
 - Android: Via React Native - RTL direction must be triggered using the
   `forceRTL` toggle located within the Layout Direction screen.
-
-E2E tests for iOS specific scenarios have to be implemented.
 
 Scenarios where RTL is enabled at the device level by setting a system-wide
 RTL language are NOT covered by E2E tests.
@@ -79,7 +77,7 @@ localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
 
 1. Launch the app and navigate to the **Layout Direction** scenario.
 
-- [ ] Expected: Tab1 and Tab2 are shown in LTR order. Tab1 is the leftmost
+- [ ] Tab1 and Tab2 are shown in LTR order. Tab1 is the leftmost
   item. Controls default to `forceRTL = false`, `allowRTL = true`, and
   `TabsHost direction = ltr`. The `I18nManager.isRTL == false` label
   is shown.
@@ -89,25 +87,25 @@ localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
 ### System LTR / RN LTR
 
 > Setup: System language is LTR (e.g. English). RN: `forceRTL = false` (default).
-> `I18nManager.isRTL == false`.
+> `I18nManager.isRTL == false` and `TabsHost direction = ltr`.
 
 2. Set `TabsHost direction = inherit`.
 
-- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
+- [ ] Tab bar is in LTR order. Tab1 is the leftmost item.
 
 3. Set `TabsHost direction = ltr`.
 
-- [ ] Expected: Tab bar remains in LTR order. Tab1 is the leftmost item.
+- [ ] Tab bar remains in LTR order. Tab1 is the leftmost item.
 
 4. Set `TabsHost direction = rtl`.
 
-- [ ] Expected: Tab bar switches to RTL order. Tab2 becomes the leftmost
+- [ ] Tab bar switches to RTL order. Tab2 becomes the leftmost
   item.
 
 5. Cycle `TabsHost direction` through
    `inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
 
-- [ ] Expected: Tab bar direction updates immediately with each change with
+- [ ] Tab bar direction updates immediately with each change with
   the result described as expected above.
 
 ---
@@ -119,22 +117,22 @@ localization file, e.g. an empty `ar.lproj/InfoPlist.strings`).
 
 6. Set `TabsHost direction = inherit`.
 
-- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
+- [ ] Tab bar is in RTL order. Tab2 is the leftmost item.
 
 7. Set `TabsHost direction = ltr`.
 
-- [ ] Expected: Tab bar displays in LTR order on both platforms. Tab1 is
+- [ ] Tab bar displays in LTR order on both platforms. Tab1 is
   the leftmost item.
 
 8. Set `TabsHost direction = rtl`.
 
-- [ ] Expected: Tab bar displays in RTL order on both platforms. Tab2 is
+- [ ] Tab bar displays in RTL order on both platforms. Tab2 is
   the leftmost item.
 
 9. Cycle `TabsHost direction` through
    `inherit` → `ltr` → `rtl` → `ltr` → `inherit` rapidly.
 
-- [ ] Expected: Tab bar direction updates immediately with each change with
+- [ ] Tab bar direction updates immediately with each change with
 result described as expected above.
 
 ---
@@ -146,22 +144,22 @@ result described as expected above.
 
 10. Set `TabsHost direction = inherit`.
 
-- [ ] Expected: Tab bar is in RTL order. Tab2 is the leftmost item.
+- [ ] Tab bar is in RTL order. Tab2 is the leftmost item.
 
 11. Set `TabsHost direction = ltr`.
 
-- [ ] Expected: Tab bar displays in LTR order. Tab1 is
+- [ ] Tab bar displays in LTR order. Tab1 is
   the leftmost item.
 
 12. Set `TabsHost direction = rtl`.
 
-- [ ] Expected: Tab bar displays in RTL order. Tab2 is
+- [ ] Tab bar displays in RTL order. Tab2 is
   the leftmost item.
 
 13. Cycle `TabsHost direction` through
    `inherit` → `ltr` → `rtl` → `ltr` → `inherit` rapidly.
 
-- [ ] Expected: Tab bar direction updates immediately with each change with
+- [ ] Tab bar direction updates immediately with each change with
 result described as expected above.
 
 ---
@@ -173,20 +171,20 @@ result described as expected above.
 
 14. Set `TabsHost direction = inherit`.
 
-- [ ] Expected: Tab bar is in LTR order. Tab1 is the leftmost item.
+- [ ] Tab bar is in LTR order. Tab1 is the leftmost item.
 
 15. Set `TabsHost direction = ltr`.
 
-- [ ] Expected: Tab bar displays in LTR order. Tab1 is
+- [ ] Tab bar displays in LTR order. Tab1 is
   the leftmost item.
 
 16. Set `TabsHost direction = rtl`.
 
-- [ ] Expected: Tab bar displays in RTL order. Tab2 is
+- [ ] Tab bar displays in RTL order. Tab2 is
   the leftmost item.
 
 17. Cycle `TabsHost direction` through
 `inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
 
-- [ ] Expected: Tab bar direction updates immediately with each change with
+- [ ] Tab bar direction updates immediately with each change with
 result described as expected above.

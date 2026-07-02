@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
-describe('Tabs: preventNativeSelection', () => {
+describe('@smoke Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

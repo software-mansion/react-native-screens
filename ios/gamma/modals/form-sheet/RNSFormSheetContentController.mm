@@ -1,14 +1,16 @@
 #import "RNSFormSheetContentController.h"
-#import "RNSFormSheetAppearanceApplicator.h"
-#import "RNSFormSheetAppearanceCoordinator.h"
-#import "RNSFormSheetAppearanceUpdateFlags.h"
+#import "RNSFormSheetConfigurationApplicator.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetPresentationManager.h"
+#import "RNSFormSheetUpdateCoordinator.h"
+#import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate
+@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
+                                             UIGestureRecognizerDelegate
 #if !TARGET_OS_TV
                                              ,
                                              UISheetPresentationControllerDelegate
@@ -17,8 +19,11 @@
 @end
 
 @implementation RNSFormSheetContentController {
-  RNSFormSheetAppearanceCoordinator *_Nonnull _appearanceCoordinator;
-  RNSFormSheetAppearanceApplicator *_Nonnull _appearanceApplicator;
+  RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
+  RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
+  RNSFormSheetPresentationManager *_Nonnull _presentationManager;
+
+  UITapGestureRecognizer *_Nullable _backdropTapGestureRecognizer;
 
   BOOL _needsInitialDetentReset;
 }
@@ -28,8 +33,9 @@
   if (self = [super init]) {
     self.modalPresentationStyle = UIModalPresentationFormSheet;
 
-    _appearanceCoordinator = [RNSFormSheetAppearanceCoordinator new];
-    _appearanceApplicator = [RNSFormSheetAppearanceApplicator new];
+    _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
+    _configurationApplicator = [RNSFormSheetConfigurationApplicator new];
+    _presentationManager = [RNSFormSheetPresentationManager new];
 
     _needsInitialDetentReset = NO;
   }
@@ -57,7 +63,56 @@
   [self.delegate sheetControllerViewDidLayoutSubviews:self];
 }
 
-#pragma mark - Presentation
+- (void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];
+  [self attachBackdropTapGestureRecognizer];
+
+  [self.delegate sheetControllerWillAppear:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+
+  [self.delegate sheetControllerDidAppear:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+
+  [self.delegate sheetControllerWillDisappear:self];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [self detachBackdropTapGestureRecognizer];
+
+  // This covers the case when a sheet deeper in the stack is dismissed, UIKit tears down
+  // every sheet above it without calling `presentationControllerDidDismiss:` on them.
+  // Additionally, `viewDidDisappear:` can be triggered when this controller is temporarily
+  // covered by another full-screen modal presented from it, not only when it is dismissed.
+  // We need to gate this path to only run for actual dismissals when the controller no
+  // longer has a presentingViewController.
+  BOOL isStillInPresentationHierarchy = self.presentingViewController != nil;
+  if (!isStillInPresentationHierarchy && [_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
+
+  [self.delegate sheetControllerDidDisappear:self];
+}
+
+#pragma mark - Presentation Setup
+
+- (void)updatePresentationIfNeeded
+{
+  [_updateCoordinator updateIfNeeded:RNSFormSheetUpdateFlagsPresentation
+                   performOperations:^{
+                     [self updatePresentationState];
+                   }];
+}
 
 - (void)updatePresentationState
 {
@@ -70,14 +125,7 @@
     return;
   }
 
-  if (presentationProvider.isOpen) {
-    UIWindow *window = presentationProvider.hostWindow;
-    if (window != nil) {
-      [self presentFromWindowIfNeeded:window];
-    }
-  } else {
-    [self dismissIfNeeded];
-  }
+  [_presentationManager updatePresentationIfNeededWithProvider:presentationProvider controller:self];
 }
 
 - (void)prepareForPresentation
@@ -88,50 +136,25 @@
 #if !TARGET_OS_TV
   self.sheetPresentationController.delegate = self;
 #endif // !TARGET_OS_TV
+
+  // Since UIKit has recreated sheetPresentationController, any configuration that could be applied
+  // during the Dismissed or Dismissing state was lost.
+  // We must force a full configuration update for this new instance.
+  [self setNeedsAppearanceUpdate];
+  [self setNeedsBehaviorUpdate];
+  [self setNeedsInitialDetentReset];
+  [self updateConfigurationIfNeeded];
 }
 
-// TODO: @t0maboro - This presentation logic is currently quite primitive.
-// We are not entirely safe from rapid conflicting updates, and there are edge cases
-// where the presentation state might become desynchronized. Addressing this robustly
-// might require an approach similar to the tabs implementation using state provenance,
-// which will be handled separately.
-// Followup ticket: https://github.com/software-mansion/react-native-screens-labs/issues/1420
-- (void)presentFromWindowIfNeeded:(nonnull UIWindow *)window
-{
-  if (self.presentingViewController != nil) {
-    return;
-  }
+#pragma mark - Sheet Configuration
 
-  UIViewController *presentationSourceViewController =
-      [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
-  if (presentationSourceViewController == nil) {
-    RCTLogError(
-        @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
-    return;
-  }
-
-  [self prepareForPresentation];
-  [presentationSourceViewController presentViewController:self animated:YES completion:nil];
-}
-
-- (void)dismissIfNeeded
-{
-  if (self.presentingViewController == nil) {
-    return;
-  }
-  [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-#pragma mark - Appearance
-
-- (void)updateAppearanceIfNeeded
+- (void)updateConfigurationIfNeeded
 {
   id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
   id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
 
   RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
-
-  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating appearance.");
+  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
 
   if (appearanceProvider == nil || behaviorProvider == nil) {
     return;
@@ -139,31 +162,30 @@
 
   if (_needsInitialDetentReset) {
     _needsInitialDetentReset = NO;
-    [_appearanceApplicator resetInitialDetent];
+    [_configurationApplicator resetInitialDetent];
   }
 
-  [_appearanceApplicator updateAppearanceIfNeededWithAppearanceProvider:appearanceProvider
-                                                       behaviorProvider:behaviorProvider
-                                                             controller:self
-                                                            coordinator:_appearanceCoordinator];
-
-  // TODO: @t0maboro - decouple presentation logic from AppearanceCoordinator
-  [_appearanceCoordinator updateIfNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation
-                      performOperations:^{
-                        [self updatePresentationState];
-                      }];
+  [_configurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
+                                                            behaviorProvider:behaviorProvider
+                                                                  controller:self
+                                                                 coordinator:_updateCoordinator];
 }
 
 #pragma mark - Signals
 
 - (void)setNeedsPresentationUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsPresentation];
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsPresentation];
 }
 
 - (void)setNeedsAppearanceUpdate
 {
-  [_appearanceCoordinator setNeeds:RNSFormSheetAppearanceUpdateFlagsConfiguration];
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsAppearance];
+}
+
+- (void)setNeedsBehaviorUpdate
+{
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsBehavior];
 }
 
 - (void)setNeedsInitialDetentReset
@@ -175,14 +197,30 @@
 
 - (void)flushPendingUpdates
 {
-  [self updateAppearanceIfNeeded];
+  [self updateConfigurationIfNeeded];
+  [self updatePresentationIfNeeded];
 }
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
+- (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
+{
+  if (_behaviorProvider.preventNativeDismiss) {
+    return NO;
+  }
+  return YES;
+}
+
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  [self.delegate sheetControllerDidPreventNativeDismiss:self];
+}
+
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-  [self.delegate sheetControllerDidNativeDismiss:self];
+  if ([_presentationManager handleNativeDismiss]) {
+    [self.delegate sheetControllerDidNativeDismiss:self];
+  }
 }
 
 #if !TARGET_OS_TV
@@ -194,5 +232,66 @@
   [self.delegate sheetController:self didChangeDetentIdentifier:sheetPresentationController.selectedDetentIdentifier];
 }
 #endif // !TARGET_OS_TV
+
+#pragma mark - Backdrop tap handling
+
+- (void)attachBackdropTapGestureRecognizer
+{
+  UIPresentationController *presentationController = self.presentationController;
+  if (presentationController && presentationController.containerView && !_backdropTapGestureRecognizer) {
+    _backdropTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                            action:@selector(handleBackdropTap:)];
+    _backdropTapGestureRecognizer.delegate = self;
+    _backdropTapGestureRecognizer.cancelsTouchesInView = NO;
+    [presentationController.containerView addGestureRecognizer:_backdropTapGestureRecognizer];
+  }
+}
+
+- (void)detachBackdropTapGestureRecognizer
+{
+  [_backdropTapGestureRecognizer.view removeGestureRecognizer:_backdropTapGestureRecognizer];
+  _backdropTapGestureRecognizer = nil;
+}
+
+- (void)handleBackdropTap:(UITapGestureRecognizer *)gesture
+{
+  if (gesture.state == UIGestureRecognizerStateRecognized) {
+    if (_behaviorProvider.preventNativeDismiss) {
+      [self.delegate sheetControllerDidPreventNativeDismiss:self];
+    }
+  }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    // When native dismissal is not being prevented, this recognizer should not
+    // participate in handling touches to avoid interfering with UIKit.
+    if (!_behaviorProvider.preventNativeDismiss) {
+      return NO;
+    }
+
+    UIPresentationController *presentationController = self.presentationController;
+
+    // Ignore any touches that land inside the actual sheet content.
+    if (presentationController && presentationController.presentedView &&
+        [touch.view isDescendantOfView:presentationController.presentedView]) {
+      return NO;
+    }
+    return YES;
+  }
+  return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if (gestureRecognizer == _backdropTapGestureRecognizer) {
+    return YES;
+  }
+  return NO;
+}
 
 @end

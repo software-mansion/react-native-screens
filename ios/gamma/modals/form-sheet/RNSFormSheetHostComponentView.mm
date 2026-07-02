@@ -1,11 +1,14 @@
 #import "RNSFormSheetHostComponentView.h"
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetContentWrapperComponentView.h"
+#import "RNSFormSheetContentWrapperDelegate.h"
 #import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetHostEventEmitter.h"
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSFormSheetProviders.h"
 
+#import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -16,6 +19,7 @@ namespace react = facebook::react;
 
 @interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
                                              RNSFormSheetContentControllerDelegate,
+                                             RNSFormSheetContentWrapperDelegate,
                                              RNSFormSheetPresentationProvider,
                                              RNSFormSheetAppearanceProvider,
                                              RNSFormSheetBehaviorProvider>
@@ -36,6 +40,10 @@ namespace react = facebook::react;
   NSInteger _largestUndimmedDetentIndex;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
+  BOOL _preventNativeDismiss;
+  UIColor *_Nullable _nativeContainerBackgroundColor;
+
+  CGFloat _reactContentsHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -67,6 +75,10 @@ namespace react = facebook::react;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
+  _preventNativeDismiss = NO;
+  _nativeContainerBackgroundColor = nil;
+
+  _reactContentsHeight = 0.0;
 }
 
 - (void)setupController
@@ -103,12 +115,38 @@ namespace react = facebook::react;
   return _detents;
 }
 
+- (CGFloat)reactContentsHeight
+{
+  return _reactContentsHeight;
+}
+
+#pragma mark - RNSFormSheetContentWrapperDelegate
+
+- (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
+    didChangeReactContentsHeight:(CGFloat)reactContentsHeight
+{
+  if (_reactContentsHeight != reactContentsHeight) {
+    _reactContentsHeight = reactContentsHeight;
+    [_controller setNeedsBehaviorUpdate];
+  }
+}
+
 #pragma mark - RNSFormSheetContentControllerDelegate
+
+- (void)sheetControllerDidDismiss:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDismiss];
+}
 
 - (void)sheetControllerDidNativeDismiss:(RNSFormSheetContentController *)controller
 {
   _isOpen = NO;
   [_reactEventEmitter emitOnNativeDismiss];
+}
+
+- (void)sheetControllerDidPreventNativeDismiss:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnNativeDismissPrevented];
 }
 
 - (void)sheetControllerViewDidLayoutSubviews:(RNSFormSheetContentController *)controller
@@ -127,6 +165,26 @@ namespace react = facebook::react;
   }
 }
 #endif // !TARGET_OS_TV
+
+- (void)sheetControllerWillAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillAppear];
+}
+
+- (void)sheetControllerDidAppear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidAppear];
+}
+
+- (void)sheetControllerWillDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)sheetControllerDidDisappear:(RNSFormSheetContentController *)controller
+{
+  [_reactEventEmitter emitOnDidDisappear];
+}
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -156,10 +214,20 @@ namespace react = facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+
+  // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
+  // RNSFormSheetHostComponentView.
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = self;
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if ([childComponentView isKindOfClass:[RNSFormSheetContentWrapperComponentView class]]) {
+    ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
+  }
+
   [_controller.contentView removeReactSubview:childComponentView];
 }
 
@@ -177,6 +245,7 @@ namespace react = facebook::react;
       // ALWAYS refresh the sheet configuration when reopening,
       // because UIKit destroys the presentationController after the modal is dismissed.
       [_controller setNeedsAppearanceUpdate];
+      [_controller setNeedsBehaviorUpdate];
       // Reset the initial-detent applied flag when reopening so the
       // configured initialDetentIndex can be applied again.
       [_controller setNeedsInitialDetentReset];
@@ -185,7 +254,19 @@ namespace react = facebook::react;
 
   if (oldComponentProps.detents != newComponentProps.detents) {
     _detents = newComponentProps.detents;
-    [_controller setNeedsAppearanceUpdate];
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
+      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
+    _prefersScrollingExpandsWhenScrolledToEdge =
+        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
+    _preventNativeDismiss = static_cast<BOOL>(newComponentProps.preventNativeDismiss);
+    [_controller setNeedsBehaviorUpdate];
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {
@@ -203,15 +284,13 @@ namespace react = facebook::react;
     [_controller setNeedsAppearanceUpdate];
   }
 
-  if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
-    _initialDetentIndex = newComponentProps.initialDetentIndex;
+  if (oldComponentProps.nativeContainerBackgroundColor != newComponentProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+    [_controller setNeedsAppearanceUpdate];
   }
 
-  if (oldComponentProps.prefersScrollingExpandsWhenScrolledToEdge !=
-      newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
-    _prefersScrollingExpandsWhenScrolledToEdge =
-        static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
-    [_controller setNeedsAppearanceUpdate];
+  if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
+    _initialDetentIndex = newComponentProps.initialDetentIndex;
   }
 
   [super updateProps:props oldProps:oldProps];

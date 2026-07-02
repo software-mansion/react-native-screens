@@ -183,7 +183,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   };
 }
 
-export function App() {
+function TestStackSubviewsAndroid() {
   return <StackSetup />;
 }
 
@@ -378,4 +378,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSubviewsAndroid, scenarioDescription);

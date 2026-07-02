@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet, type FormSheetProps } from 'react-native-screens/experimental';
+import {
+  FormSheet,
+  type FormSheetProps,
+} from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
 
 type InitialDetentProp = FormSheetProps['initialDetentIndex'];
 
-export function App() {
+function TestFormSheetInitialDetentIndex() {
   const [isOpen, setIsOpen] = useState(false);
   const [initialIndex, setInitialIndex] = useState<InitialDetentProp>(0);
   const [dummyState, setDummyState] = useState(0);
@@ -116,4 +119,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetInitialDetentIndex,
+  scenarioDescription,
+);

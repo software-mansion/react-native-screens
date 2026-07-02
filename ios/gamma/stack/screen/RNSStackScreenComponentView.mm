@@ -8,8 +8,11 @@
 #import <rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
+#import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 
 #import "Swift-Bridging.h"
 
@@ -105,6 +108,14 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+    [_controller.headerCoordinator clearHeaderConfiguration];
+  }
+  [super unmountChildComponentView:childComponentView index:index];
+}
+
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   if (_hasUpdatedActivityMode) {
@@ -129,8 +140,6 @@ namespace react = facebook::react;
 
 + (BOOL)shouldBeRecycled
 {
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
   return NO;
 }
 

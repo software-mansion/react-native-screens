@@ -56,6 +56,11 @@ internal class StackScreenFragment(
     }
 
     override fun onDestroyView() {
+        val coordinatorLayout = view
+        check(coordinatorLayout is StackHeaderCoordinatorLayout) {
+            "[RNScreens] Unexpected fragment view type: $view"
+        }
+        coordinatorLayout.tearDown()
         super.onDestroyView()
         screenLifecycleEventEmitter = null
     }

@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Yes: Covers all manual scenario steps. For iOS test are covered only for iPhone, e2e is not suitable for iPad execution due to use 'UITabBar' type (on iPad new tab bar at the top is not an instance of UITabBar).
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 
@@ -19,12 +19,12 @@ Yes: Covers all manual scenario steps. For iOS test are covered only for iPhone,
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
-- [ ] Expected: Screen with one Tab in tab bar should be displayed.
+- [ ] Screen with one Tab in tab bar should be displayed.
 
 2. Toggle `tabBarHidden` to `true`.
 
-- [ ] Expected: Tab bar should disappear immediately.
+- [ ] Tab bar should disappear immediately.
 
 3. Toggle back to `false`.
 
-- [ ] Expected: Tab bar should reappear.
+- [ ] Tab bar should reappear.

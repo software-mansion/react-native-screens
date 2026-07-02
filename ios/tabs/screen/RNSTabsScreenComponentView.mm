@@ -16,9 +16,19 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#if RNS_GAMMA_ENABLED
+#import "RNSScrollViewMarkerComponentView.h"
+#import "RNSScrollViewSeeking.h"
+#endif
+
 namespace react = facebook::react;
 
 #pragma mark - View implementation
+
+#if RNS_GAMMA_ENABLED
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@end
+#endif
 
 @implementation RNSTabsScreenComponentView {
   RNSTabsScreenViewController *_controller;
@@ -103,6 +113,15 @@ RNS_IGNORE_SUPER_CALL_END
     }
   });
 }
+
+#pragma mark RNSScrollViewSeeking
+
+#if RNS_GAMMA_ENABLED
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+}
+#endif // RNS_GAMMA_ENABLED
 
 #pragma mark - Events
 

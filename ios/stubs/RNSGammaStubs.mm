@@ -17,3 +17,15 @@
 
 @implementation RNSFormSheetHostComponentView
 @end
+
+@implementation RNSFormSheetContentWrapperComponentView
+@end
+
+@implementation RNSStackHeaderConfigComponentView
+@end
+
+@implementation RNSStackHeaderItemComponentView
+@end
+
+@implementation RNSStackHeaderItemSpacerComponentView
+@end

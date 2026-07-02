@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  Image,
   ImageResolvedAssetSource,
   StyleSheet,
   processColor,
@@ -19,6 +18,7 @@ import type {
 import type { TabsScreenProps } from '../screen/TabsScreen.types';
 import type { PlatformIconAndroid } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
+import { parseAndroidIconToNativeProps } from '../../shared';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -139,8 +139,8 @@ function parseIconsToNativeProps(
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
 } {
-  const parsedIcon = parseIconToNativeProps(icon);
-  const parsedSelectedIcon = parseIconToNativeProps(selectedIcon);
+  const parsedIcon = parseAndroidIconToNativeProps(icon);
+  const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
 
   return {
     imageIconResource: parsedIcon.imageIconResource,
@@ -149,41 +149,6 @@ function parseIconsToNativeProps(
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
   };
-}
-
-function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
-  imageIconResource?: ImageResolvedAssetSource | undefined;
-  drawableIconResourceName?: string | undefined;
-} {
-  if (!icon) {
-    return {};
-  }
-
-  let parsedIconResource;
-  if (icon.type === 'imageSource') {
-    parsedIconResource = Image.resolveAssetSource(icon.imageSource);
-    if (!parsedIconResource) {
-      console.error(
-        '[RNScreens] failed to resolve an asset for bottom tab icon',
-      );
-    }
-
-    return {
-      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
-      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
-      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
-      // double as a value.
-      imageIconResource: parsedIconResource || undefined,
-    };
-  } else if (icon.type === 'drawableResource') {
-    return {
-      drawableIconResourceName: icon.name,
-    };
-  } else {
-    throw new Error(
-      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
-    );
-  }
 }
 
 export default TabsScreen;

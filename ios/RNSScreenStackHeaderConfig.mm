@@ -8,7 +8,6 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -1120,26 +1119,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 }
 
 @implementation RNSScreenStackHeaderConfigManager
-
-@end
-
-@implementation RCTConvert (RNSScreenStackHeader)
-
-RCT_ENUM_CONVERTER(UISemanticContentAttribute,
-                   (@{
-                     @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
-                     @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
-                   }),
-                   UISemanticContentAttributeUnspecified,
-                   integerValue)
-
-RCT_ENUM_CONVERTER(UINavigationItemBackButtonDisplayMode,
-                   (@{
-                     @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
-                     @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
-                     @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
-                   }),
-                   UINavigationItemBackButtonDisplayModeDefault,
-                   integerValue)
 
 @end

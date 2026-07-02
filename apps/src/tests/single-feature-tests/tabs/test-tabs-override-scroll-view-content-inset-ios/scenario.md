@@ -18,7 +18,7 @@ The test verifies that the three tabs — **False**, **True**, and
 
 ## E2E test
 
-Yes: Covers all manual scenario steps.
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ Yes: Covers all manual scenario steps.
 1. Launch the app and navigate to the
    **Override Scroll View Content Inset** screen.
 
-- [ ] Expected: Three tabs are displayed in the tab bar: **False**,
+- [ ] Three tabs are displayed in the tab bar: **False**,
   **True**, and **Default**. The **False** tab is selected and shows
   a scrollable list of 30 items.
 
@@ -52,13 +52,13 @@ Yes: Covers all manual scenario steps.
 
 2. Confirm the **False** tab is active and scroll the list to the bottom.
 
-- [ ] Expected: The last item in the list is partially or fully
+- [ ] The last item in the list is partially or fully
   obscured behind the tab bar, confirming that no bottom inset is
   applied.
 
 3. Scroll the list to the top.
 
-- [ ] Expected: The text label
+- [ ] The text label
   `overrideScrollViewContentInsetAdjustmentBehavior: false` at
   the top of the scroll content is partially or fully obscured
   behind the navigation bar, because
@@ -72,17 +72,17 @@ Yes: Covers all manual scenario steps.
 
 4. Tap the **True** tab.
 
-- [ ] Expected: The **True** tab becomes active and shows a
+- [ ] The **True** tab becomes active and shows a
   scrollable list of 30 items.
 
 5. Scroll the list to the bottom.
 
-- [ ] Expected: The last item is fully visible and is not obscured by
+- [ ] The last item is fully visible and is not obscured by
   the tab bar. The scroll view respects the bottom inset.
 
 6. Scroll the list to the top.
 
-- [ ] Expected: The text label
+- [ ] The text label
   `overrideScrollViewContentInsetAdjustmentBehavior: true`
   at the top of the scroll content is fully visible below the
   navigation bar and not obscured behind it. The scroll view
@@ -95,17 +95,17 @@ Yes: Covers all manual scenario steps.
 
 7. Tap the **Default** tab.
 
-- [ ] Expected: The **Default** tab becomes active and shows a
+- [ ] The **Default** tab becomes active and shows a
   scrollable list of 30 items.
 
 8. Scroll the list to the bottom.
 
-- [ ] Expected: The last item is fully visible and not obscured by
+- [ ] The last item is fully visible and not obscured by
   the tab bar — identical behavior to the **True** tab.
 
 9. Scroll the list to the top.
 
-- [ ] Expected: The text label
+- [ ] The text label
   `overrideScrollViewContentInsetAdjustmentBehavior:
   (not set, defaults to true)` at the top of the scroll content
   is fully visible below the navigation bar and not obscured
@@ -118,7 +118,7 @@ Yes: Covers all manual scenario steps.
 10. Switch between the **True** tab and the **Default** tab several
     times while keeping each list scrolled to the top.
 
-- [ ] Expected: Both tabs show the text label
+- [ ] Both tabs show the text label
   `overrideScrollViewContentInsetAdjustmentBehavior:` with value `true`
   or `(not set, defaults to true)` at the top of the scroll content
   is fully visible below the navigation bar and not obscured
@@ -128,6 +128,6 @@ Yes: Covers all manual scenario steps.
 11. Switch to the **False** tab and scroll to the top, then
     immediately switch to the **True** tab.
 
-- [ ] Expected: The **True** tab correctly shows the text label
+- [ ] The **True** tab correctly shows the text label
   inset from the navigation bar. No crash or blank screen occurs
   during the switch.

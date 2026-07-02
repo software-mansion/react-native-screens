@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -309,19 +308,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;
 }
-
-@implementation RCTConvert (RNSScreenStackHeaderSubview)
-
-RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType,
-                   (@{
-                     @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-                     @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-                     @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-                     @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-                     @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-                     @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-                   }),
-                   RNSScreenStackHeaderSubviewTypeTitle,
-                   integerValue)
-
-@end

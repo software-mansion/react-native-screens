@@ -146,35 +146,42 @@ open class CustomToolbar(
         val systemBarInsets =
             resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
 
-        // This seems to work fine in all tested configurations, because cutout & system bars overlap
-        // only in portrait mode & top inset is controlled separately, therefore we don't count
-        // any insets twice.
-        val horizontalInsets =
-            InsetsCompat.of(
-                cutoutInsets.left + systemBarInsets.left,
-                0,
-                cutoutInsets.right + systemBarInsets.right,
-                0,
-            )
-
         val shouldHandleTopInset = if (config.legacyTopInsetBehavior) true else config.consumeTopInset
+        val shouldHandleLeftInset = config.consumeLeftInset
+        val shouldHandleRightInset = config.consumeRightInset
+        val shouldHandleBottomInset = config.consumeBottomInset
 
-        if (!shouldHandleTopInset) {
+        // The top inset is coordinated across nested headers and anchored to the decor view,
+        // while left/right/bottom are applied per-header from the incoming WindowInsets. See
+        // https://github.com/software-mansion/react-native-screens/pull/4220 for the rationale.
+
+        // Each edge is controlled independently. If no edge should be handled, we reset
+        // everything and bail out early.
+        if (!shouldHandleTopInset && !shouldHandleLeftInset && !shouldHandleRightInset && !shouldHandleBottomInset) {
             resetInsetsState()
             clearPaddingIfNeeded()
             return unhandledInsets
         }
 
-        // We want to handle display cutout always, no matter the HeaderConfig prop values.
-        // If there are no cutout displays, we want to apply the additional padding to
-        // respect the status bar.
-        val verticalInsets =
-            InsetsCompat.of(
-                0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
-                0,
-                max(cutoutInsets.bottom, 0),
-            )
+        // This seems to work fine in all tested configurations, because cutout & system bars overlap
+        // only in portrait mode & top inset is controlled separately, therefore we don't count
+        // any insets twice.
+        val leftInset = if (shouldHandleLeftInset) cutoutInsets.left + systemBarInsets.left else 0
+        val rightInset = if (shouldHandleRightInset) cutoutInsets.right + systemBarInsets.right else 0
+        val horizontalInsets = InsetsCompat.of(leftInset, 0, rightInset, 0)
+
+        // We want to handle display cutout, no matter the HeaderConfig prop values, as long as the
+        // respective edge is not opted out. If there are no cutout displays, we want to apply the
+        // additional top padding to respect the status bar. Top and bottom are controlled
+        // independently so that disabling one does not silently drop the other.
+        val topInset =
+            if (shouldHandleTopInset) {
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0)
+            } else {
+                0
+            }
+        val bottomInset = if (shouldHandleBottomInset) cutoutInsets.bottom else 0
+        val verticalInsets = InsetsCompat.of(0, topInset, 0, bottomInset)
 
         val newInsets = InsetsCompat.add(horizontalInsets, verticalInsets)
 

@@ -16,20 +16,31 @@ export function LightRootScreen({ onPush }: { onPush: () => void }) {
   return <RootScreen style="light" onPush={onPush} />;
 }
 
-export function RootScreen({ style, onPush }: { style: InterfaceStyle; onPush: () => void }) {
+export function RootScreen({
+  style,
+  onPush,
+}: {
+  style: InterfaceStyle;
+  onPush: () => void;
+}) {
   const isDark = style === 'dark';
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ padding: 40, backgroundColor: isDark ? 'black' : 'white' }}>
+      <ScrollView
+        style={{ padding: 40, backgroundColor: isDark ? 'black' : 'white' }}>
         <View>
-          <Text style={styles.sectionHeader}>experimental_userInterfaceStyle</Text>
+          <Text style={styles.sectionHeader}>
+            experimental_userInterfaceStyle
+          </Text>
           {isDark ? (
             <Text style={styles.description}>
-              Enable system light mode and observe the tab bar and back button on the pushed screen.
+              Enable system light mode and observe the tab bar and back button
+              on the pushed screen.
             </Text>
           ) : (
             <ThemedText>
-              Enable system dark mode and observe the tab bar and back button on the pushed screen.
+              Enable system dark mode and observe the tab bar and back button on
+              the pushed screen.
             </ThemedText>
           )}
           <Button title={`Push screen with style: ${style}`} onPress={onPush} />

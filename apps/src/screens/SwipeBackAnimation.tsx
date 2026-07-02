@@ -29,7 +29,9 @@ interface ScreenBProps {
 }
 
 const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => {
-  const [gestureType, setGestureType] = React.useState<NonNullable<NativeStackNavigationOptions['gestureType']>>('twoDimensionalSwipe');
+  const [gestureType, setGestureType] = React.useState<
+    NonNullable<NativeStackNavigationOptions['gestureType']>
+  >('twoDimensionalSwipe');
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -39,25 +41,28 @@ const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => {
 
   return (
     <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
-        <SettingsPicker<NonNullable<NativeStackNavigationOptions['gestureType']>>
-          label="Stack animation"
-          value={gestureType}
-          onValueChange={setGestureType}
-          items={[
-            "swipeRight",
-            "swipeLeft",
-            "swipeUp",
-            "swipeDown",
-            "verticalSwipe",
-            "horizontalSwipe",
-            "twoDimensionalSwipe",
-          ]}
-        />
-      <Button title="Go ScreenC" onPress={() => navigation.navigate('ScreenC')} />
+      <SettingsPicker<NonNullable<NativeStackNavigationOptions['gestureType']>>
+        label="Stack animation"
+        value={gestureType}
+        onValueChange={setGestureType}
+        items={[
+          'swipeRight',
+          'swipeLeft',
+          'swipeUp',
+          'swipeDown',
+          'verticalSwipe',
+          'horizontalSwipe',
+          'twoDimensionalSwipe',
+        ]}
+      />
+      <Button
+        title="Go ScreenC"
+        onPress={() => navigation.navigate('ScreenC')}
+      />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
-}
+};
 
 interface ScreenCProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenC'>;
@@ -78,10 +83,7 @@ const App = (): React.JSX.Element => (
       animation: 'none',
     }}>
     <Stack.Screen name="ScreenA" component={MainScreen} />
-    <Stack.Screen
-      name="ScreenB"
-      component={ScreenB}
-    />
+    <Stack.Screen name="ScreenB" component={ScreenB} />
     <Stack.Screen name="ScreenC" component={ScreenC} />
   </Stack.Navigator>
 );

@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Other: Planned, but will be implemented separately.
+TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
@@ -22,15 +22,15 @@ Other: Planned, but will be implemented separately.
 2. Ensure "Selected Initial Detent: 0" is displayed.
 3. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens and snaps immediately to the lowest detent (0.3 detent).
+- [ ] The FormSheet opens and snaps immediately to the lowest detent (0.3 detent).
 
 ### Re-render Validation
 
 4. While the sheet is open at the 0.3 detent, drag it up to the middle detent (0.6).
 5. Tap the "Force Re-render" button inside the sheet.
 
-- [ ] Expected: The button's counter updates (confirming a React render cycle occurred).
-- [ ] Expected: The sheet remains at the 0.6 detent.
+- [ ] The button's counter updates (confirming a React render cycle occurred).
+- [ ] The sheet remains at the 0.6 detent.
 
 6. Dismiss the sheet by swiping down or tapping "Dismiss from JS".
 
@@ -41,7 +41,7 @@ Other: Planned, but will be implemented separately.
 7. On the main screen, tap "Set Initial to 1 (0.6)".
 8. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens directly at the middle detent (0.6 detent).
+- [ ] The FormSheet opens directly at the middle detent (0.6 detent).
 
 9. Dismiss the sheet.
 
@@ -52,6 +52,6 @@ Other: Planned, but will be implemented separately.
 10. On the main screen, tap "Set Initial to 'last' (1.0)".
 11. Tap the "Open FormSheet" button.
 
-- [ ] Expected: The FormSheet opens and snaps directly to the maximum height (1.0 detent).
+- [ ] The FormSheet opens and snaps directly to the maximum height (1.0 detent).
 
 12. Dismiss the sheet.

@@ -13,16 +13,17 @@ interface ScrollScreenProps {
   tabName: string;
 }
 
-export function ScrollScreen({ tabName }: ScrollScreenProps) {
+function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
     <SafeAreaView
       edges={{
         bottom: Platform.OS === 'android',
         top: Platform.OS === 'android',
-      }}
-    >
+      }}>
       <ScrollView testID={`${tabName}-scrollview`}>
-        <Text style={styles.hint}>Scroll Screen — scroll down or re-tap the tab.</Text>
+        <Text style={styles.hint}>
+          Scroll Screen — scroll down or re-tap the tab.
+        </Text>
         {Array.from({ length: 50 }, (_, i) => (
           <Text key={i} testID={`${tabName}-item-${i + 1}`} style={styles.item}>
             Item {i + 1}
@@ -59,7 +60,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       tabBarItemAccessibilityLabel: 'tab2-tab-item-label',
       specialEffects: {
         repeatedTabSelection: {
-          scrollToTop: false
+          scrollToTop: false,
         },
       },
     },
@@ -76,11 +77,14 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsSpecialEffectsScrollToTop() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsSpecialEffectsScrollToTop,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   config: {

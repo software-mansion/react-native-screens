@@ -10,7 +10,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+function TestStackSimpleNav() {
   return <StackSetup />;
 }
 
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSimpleNav, scenarioDescription);

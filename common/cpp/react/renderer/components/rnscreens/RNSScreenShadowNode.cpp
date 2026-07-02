@@ -101,7 +101,10 @@ void RNSScreenShadowNode::appendChild(
           *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
               headerConfigChild->getProps());
 
-      const auto headerHeight = headerProps.hidden
+      // Translucent headers do not reserve vertical space, so applying the
+      // estimated header correction can expose the previous screen at the
+      // bottom during the first Fabric layout.
+      const auto headerHeight = (headerProps.hidden || headerProps.translucent)
           ? 0.f
           : findHeaderHeight(
                 headerProps.titleFontSize, headerProps.title.empty())

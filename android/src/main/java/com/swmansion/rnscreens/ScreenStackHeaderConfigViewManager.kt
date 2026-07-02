@@ -89,6 +89,27 @@ class ScreenStackHeaderConfigViewManager :
         config.consumeTopInset = consumeTopInset
     }
 
+    override fun setConsumeLeftInset(
+        config: ScreenStackHeaderConfig,
+        consumeLeftInset: Boolean,
+    ) {
+        config.consumeLeftInset = consumeLeftInset
+    }
+
+    override fun setConsumeRightInset(
+        config: ScreenStackHeaderConfig,
+        consumeRightInset: Boolean,
+    ) {
+        config.consumeRightInset = consumeRightInset
+    }
+
+    override fun setConsumeBottomInset(
+        config: ScreenStackHeaderConfig,
+        consumeBottomInset: Boolean,
+    ) {
+        config.consumeBottomInset = consumeBottomInset
+    }
+
     override fun setLegacyTopInsetBehavior(
         config: ScreenStackHeaderConfig,
         legacyTopInsetBehavior: Boolean,
