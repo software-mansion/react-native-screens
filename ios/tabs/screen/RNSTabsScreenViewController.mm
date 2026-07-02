@@ -108,15 +108,10 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    return [[self resolveContentScrollView] rnscreens_scrollToTop];
+    return [[self findContentScrollView] rnscreens_scrollToTop];
   }
 
   return false;
-}
-
-- (nullable UIScrollView *)resolveContentScrollView
-{
-  return [self findContentScrollView];
 }
 
 #pragma mark - RNSContainerItem
