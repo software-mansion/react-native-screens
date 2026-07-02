@@ -8,47 +8,31 @@ internal class FormSheetBehaviorController(
 ) {
     private val behavior = BottomSheetBehavior.from(sheetView)
 
-    private var detents: FormSheetDetents? = null
-    private var sheetAvailableSpace: Int = 0
-    private var shouldApplyInitialState = false
-
-    internal fun updateSheetDetents(detents: FormSheetDetents) {
-        this.detents = detents
-        shouldApplyInitialState = true
-        reconfigureSheetBehavior()
-    }
-
     /**
-     * @param maxHeight - the full window height that detent fractions are measured against.
+     * @param detents - parsed detents configuration.
+     * @param sheetAvailableSpace - the full window height that detent fractions are measured against.
      * Using the full height lets a BottomSheet with large detent configured to slide
      * behind the status bar, where Material pads insets for us.
+     * @param applyInitialState - whether to force the sheet to snap to its default starting position
+     * Should be set to `true` when the detents configuration changes.
      */
-    internal fun updateSheetAvailableSpace(maxHeight: Int) {
-        if (maxHeight <= 0 || maxHeight == sheetAvailableSpace) {
-            return
-        }
-        sheetAvailableSpace = maxHeight
-        reconfigureSheetBehavior()
-    }
-
-    private fun reconfigureSheetBehavior() {
-        val detents = detents ?: return
+    internal fun updateSheetBehavior(
+        detents: FormSheetDetents,
+        sheetAvailableSpace: Int,
+        applyInitialState: Boolean = false,
+    ) {
         if (sheetAvailableSpace <= 0) {
             return
         }
 
-        val applyInitialState = shouldApplyInitialState
-
         when (detents.count) {
-            1 -> configureSingleDetent(detents, applyInitialState)
-            2 -> configureTwoDetents(detents, applyInitialState)
-            3 -> configureThreeDetents(detents, applyInitialState)
+            1 -> configureSingleDetent(detents, sheetAvailableSpace, applyInitialState)
+            2 -> configureTwoDetents(detents, sheetAvailableSpace, applyInitialState)
+            3 -> configureThreeDetents(detents, sheetAvailableSpace, applyInitialState)
             else -> throw IllegalStateException(
                 "[RNScreens] Unsupported detent count ${detents.count}.",
             )
         }
-
-        shouldApplyInitialState = false
 
         // Metrics were mutated on an already-measured sheet; force a fresh layout
         // pass so the behavior re-settles to the new detent instead of keeping its
@@ -58,6 +42,7 @@ internal class FormSheetBehaviorController(
 
     private fun configureSingleDetent(
         detents: FormSheetDetents,
+        sheetAvailableSpace: Int,
         applyInitialState: Boolean,
     ) = behavior.apply {
         skipCollapsed = true
@@ -70,6 +55,7 @@ internal class FormSheetBehaviorController(
 
     private fun configureTwoDetents(
         detents: FormSheetDetents,
+        sheetAvailableSpace: Int,
         applyInitialState: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
@@ -84,6 +70,7 @@ internal class FormSheetBehaviorController(
 
     private fun configureThreeDetents(
         detents: FormSheetDetents,
+        sheetAvailableSpace: Int,
         applyInitialState: Boolean,
     ) = behavior.apply {
         skipCollapsed = false

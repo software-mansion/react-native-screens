@@ -19,6 +19,8 @@ class FormSheetDialogManager(
 
     private var resolvedDetents: FormSheetDetents? = null
 
+    private var hasPendingDetentsChange = false
+
     private var lastTopInset = 0
     private var lastBottomInset = 0
 
@@ -75,9 +77,8 @@ class FormSheetDialogManager(
         }
 
         if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
-            val detents = resolveDetents(newConfig.detents)
-            resolvedDetents = detents
-            behaviorController?.updateSheetDetents(detents)
+            resolvedDetents = resolveDetents(newConfig.detents)
+            hasPendingDetentsChange = true
             updateNativeContainerHeight()
         }
 
@@ -145,7 +146,14 @@ class FormSheetDialogManager(
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
 
         if (dialogDecorHeight > 0) {
-            behaviorController?.updateSheetAvailableSpace(dialogDecorHeight)
+            resolvedDetents?.let { detents ->
+                behaviorController?.updateSheetBehavior(
+                    detents = detents,
+                    sheetAvailableSpace = dialogDecorHeight,
+                    applyInitialState = hasPendingDetentsChange,
+                )
+                hasPendingDetentsChange = false
+            }
 
             val sheetContainerHeight =
                 resolvedDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
