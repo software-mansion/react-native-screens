@@ -183,11 +183,11 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   };
 }
 
-export function App() {
+function TestStackSubviewsAndroid() {
   return <StackSetup />;
 }
 
-export function StackSetup() {
+function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -201,7 +201,7 @@ export function StackSetup() {
   );
 }
 
-export function ConfigScreen() {
+function ConfigScreen() {
   const navigation = useStackNavigationContext();
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
@@ -378,4 +378,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSubviewsAndroid, scenarioDescription);

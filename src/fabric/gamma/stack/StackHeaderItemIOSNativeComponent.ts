@@ -11,23 +11,33 @@ export type Placement =
   | 'subtitle'
   | 'largeSubtitle';
 
-export type StackHeaderMenuItem = {
+export type StackHeaderMenuItemIOS = {
+  id: string;
   type: 'menuItem';
   title?: string | undefined;
 };
 
-export type StackHeaderMenu = {
+export type StackHeaderMenuIOS = {
+  id: string;
   type: 'menu';
   title?: string | undefined;
-  children: StackHeaderMenuElement[];
+  children: StackHeaderMenuElementIOS[];
 };
 
-export type StackHeaderMenuElement = StackHeaderMenuItem | StackHeaderMenu;
+export type StackHeaderMenuElementIOS =
+  | StackHeaderMenuItemIOS
+  | StackHeaderMenuIOS;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type HeaderItemPressEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
-  label?: string | undefined;
-  menu?: UnsafeMixed<StackHeaderMenu> | undefined;
+  itemId?: string | undefined;
+  title?: string | undefined;
+  menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
+  respondsToOnPress?: CT.WithDefault<boolean, false>;
+  onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {

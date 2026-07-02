@@ -10,11 +10,11 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+function TestStackSimpleNav() {
   return <StackSetup />;
 }
 
-export function StackSetup() {
+function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -38,7 +38,7 @@ export function StackSetup() {
   );
 }
 
-export function HomeScreen() {
+function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
@@ -47,7 +47,7 @@ export function HomeScreen() {
   );
 }
 
-export function AScreen() {
+function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
@@ -56,7 +56,7 @@ export function AScreen() {
   );
 }
 
-export function BScreen() {
+function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
@@ -65,7 +65,7 @@ export function BScreen() {
   );
 }
 
-export function RouteInformation(props: { routeName: string }) {
+function RouteInformation(props: { routeName: string }) {
   const routeKey = useStackNavigationContext().routeKey;
 
   return (
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackSimpleNav, scenarioDescription);

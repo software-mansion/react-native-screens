@@ -23,7 +23,7 @@ private const val TAG = "ImageLoader"
 internal fun loadImage(
     context: Context,
     uri: String,
-    onLoaded: (Drawable) -> Unit,
+    onLoaded: (Drawable?) -> Unit,
 ) {
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
@@ -39,7 +39,7 @@ internal fun loadImage(
 private fun loadImageInternal(
     context: Context,
     uri: Uri,
-    onLoaded: (Drawable) -> Unit,
+    onLoaded: (Drawable?) -> Unit,
 ) {
     val imageRequest =
         ImageRequestBuilder
@@ -56,8 +56,12 @@ private fun loadImageInternal(
 
                 if (closeableImage is CloseableStaticBitmap) {
                     val bitmap = closeableImage.underlyingBitmap
-                    val drawable = bitmap.toDrawable(context.resources)
-                    onLoaded(drawable)
+                    if (bitmap != null) {
+                        val drawable = bitmap.toDrawable(context.resources)
+                        onLoaded(drawable)
+                    } else {
+                        onLoaded(null)
+                    }
                 }
 
                 imageReference.close()

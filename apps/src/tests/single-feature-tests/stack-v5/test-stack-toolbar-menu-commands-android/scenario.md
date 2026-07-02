@@ -3,10 +3,10 @@
 ## Details
 
 **Description:** This test focuses on the Android toolbar menu items API
-on the gamma stack header — both the `toolbarMenuItems` prop and the
-imperative `setToolbarMenuItemOptions(id, options)` command. It verifies
+on the gamma stack header — both the `toolbarMenu` prop and the
+imperative `setToolbarMenuElementOptions(id, options)` command. It verifies
 that the menu renders correctly from props on first mount, that the
-`onToolbarMenuItemClicked` event fires with the correct id, and that
+per-item `onPress` callback fires with the correct id, and that
 imperative commands behave as specified: fields absent from `options`
 preserve their current value, fields set to `undefined` (encoded as
 `null` over the bridge) reset to the prop's regular default (not to the
@@ -26,7 +26,7 @@ Other — automation is not implemented yet.
 
 ## Note (Optional)
 
-- `StackHeaderToolbarMenuItemOptionsAndroid` semantics:
+- `StackHeaderToolbarMenuElementOptionsAndroid` semantics:
   - A field missing from the options object means "preserve current
     value".
   - A field set to `undefined` (sent over the bridge as `null`) means
@@ -36,7 +36,7 @@ Other — automation is not implemented yet.
   currently in the menu (slot excluded via `include: false`, or unknown
   id) must not crash and must not leak state into other items.
 - A props update on any single slot rebuilds the entire
-  `toolbarMenuItems` array, so all command-applied overrides on every
+  `toolbarMenu` children array, so all command-applied overrides on every
   item are dropped at the same time.
 
 ## Steps

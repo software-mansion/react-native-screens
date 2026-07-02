@@ -43,6 +43,24 @@ class ScreenStackHeaderConfig(
         }
     }
 
+    var consumeLeftInset by Delegates.observable(true) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
+        }
+    }
+
+    var consumeRightInset by Delegates.observable(true) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
+        }
+    }
+
+    var consumeBottomInset by Delegates.observable(true) { _, oldValue, newValue ->
+        if (oldValue != newValue && isAttachedToWindow) {
+            toolbar.requestApplyInsets()
+        }
+    }
+
     var legacyTopInsetBehavior by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue && isAttachedToWindow) {
             toolbar.requestApplyInsets()

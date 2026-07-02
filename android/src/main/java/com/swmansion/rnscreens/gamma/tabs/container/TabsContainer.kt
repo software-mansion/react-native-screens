@@ -6,13 +6,16 @@ import android.content.res.Configuration
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import android.widget.ScrollView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.Insets
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.size
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -20,6 +23,8 @@ import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -48,6 +53,7 @@ import kotlin.properties.Delegates
 class TabsContainer internal constructor(
     private val context: Context,
 ) : FrameLayout(context),
+    Container,
     ColorSchemeProviding,
     TabsScreenDelegate,
     SafeAreaProvider,
@@ -58,28 +64,40 @@ class TabsContainer internal constructor(
 
     private inner class SpecialEffectsHandler {
         fun handleRepeatedTabSelection(): Boolean {
-            val contentView = this@TabsContainer.contentView
-            val selectedTabFragment = this@TabsContainer.selectedTab
-            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
+            val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
+
+            if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
             }
-            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-                val scrollView = ViewFinder.findScrollViewInFirstDescendantChain(contentView)
-                if (scrollView != null && scrollView.scrollY > 0) {
-                    scrollView.smoothScrollTo(scrollView.scrollX, 0)
-                    return true
-                }
+            if (selectedTabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+                val scrollView = selectedTabScreen.findContentScrollView()
+                scrollView?.let { return trySmoothScrollToTop(it) }
             }
             return false
+        }
+
+        /**
+         * Attempts to scroll to top if the passed view is a `ScrollView` or `NestedScrollView`
+         */
+        private fun trySmoothScrollToTop(maybeScrollView: ViewGroup): Boolean {
+            if (maybeScrollView.scrollY <= 0) return false
+            when (maybeScrollView) {
+                is ScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                is NestedScrollView -> maybeScrollView.smoothScrollTo(maybeScrollView.scrollX, 0)
+                else -> return false
+            }
+            return true
         }
     }
 
     private var navState: TabsNavigationState = TabsNavigationState.EMPTY
     private var lastUINavState: TabsNavigationState = TabsNavigationState.EMPTY
     private val tabsModel: MutableList<TabsScreenFragment> = arrayListOf()
+
+    private val parentContainerRegistry = ParentContainerItemRegistry()
 
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
@@ -274,6 +292,8 @@ class TabsContainer internal constructor(
         RNSLog.d(TAG, "TabsContainer [$id] attached to window")
 
         super.onAttachedToWindow()
+
+        parentContainerRegistry.attach(this)
         setupFragmentManager()
 
         // When TabsContainer is reattached to window, it might find new fragment manager (other
@@ -298,6 +318,7 @@ class TabsContainer internal constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         teardownFragmentManager()
+        parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
     }
 
@@ -533,17 +554,14 @@ class TabsContainer internal constructor(
         }
     }
 
-    private fun updateSelectedFragment(
+    private fun updateNavigationStateAndSelectedFragment(
         nextSelectedFragment: TabsScreenFragment,
         actionOrigin: TabsActionOrigin,
     ): Boolean {
         if (navState.isEmpty()) {
             check(isInExternalOperationContext && pendingStateUpdateRequest != null)
-            navState = TabsNavigationState(nextSelectedFragment.requireScreenKey, 0)
-            requireFragmentManager
-                .createTransactionWithReordering()
-                .add(contentView.id, nextSelectedFragment)
-                .commitNowAllowingStateLoss()
+            initNavigationState(nextSelectedFragment.requireScreenKey)
+            applyInitialStateToFragmentManagerSync(nextSelectedFragment)
             return true
         }
 
@@ -555,14 +573,37 @@ class TabsContainer internal constructor(
         }
 
         progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
+        applyNextSelectedFragmentToFragmentManagerSync(currentSelectedFragment, nextSelectedFragment)
+        return true
+    }
+
+    private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
         requireFragmentManager
             .createTransactionWithReordering()
             .let {
-                it.remove(currentSelectedFragment)
-                it.add(contentView.id, nextSelectedFragment)
+                tabsModel.forEach { fragment ->
+                    it.add(contentView.id, fragment)
+                    it.detach(fragment)
+                }
+                it.attach(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
+    }
 
-        return true
+    private fun applyNextSelectedFragmentToFragmentManagerSync(
+        currSelectedFragment: TabsScreenFragment,
+        nextSelectedFragment: TabsScreenFragment,
+    ) {
+        requireFragmentManager
+            .createTransactionWithReordering()
+            .let {
+                it.detach(currSelectedFragment)
+                it.attach(nextSelectedFragment)
+            }.commitNowAllowingStateLoss()
+    }
+
+    private fun initNavigationState(selectedScreenKey: String) {
+        check(navState.isEmpty()) { "[RNScreens] Navigation state is already initialized!" }
+        navState = TabsNavigationState(selectedScreenKey, 0)
     }
 
     private fun progressNavigationState(
@@ -595,11 +636,14 @@ class TabsContainer internal constructor(
 
         // If this is user action we test whether it should be prevented before we progress the state.
         if (!isRepeated && actionOrigin == TabsActionOrigin.USER && nextSelectedFragment.isPreventNativeSelectionEnabled) {
-            observerRegistry.emitOnNavigationStateUpdatePrevented(navState, nextSelectedFragment.requireScreenKey)
+            observerRegistry.emitOnNavigationStateUpdatePrevented(
+                navState,
+                nextSelectedFragment.requireScreenKey,
+            )
             return false
         }
 
-        val stateChanged = updateSelectedFragment(nextSelectedFragment, actionOrigin)
+        val stateChanged = updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -642,13 +686,15 @@ class TabsContainer internal constructor(
                 .filter { it in tabsModel }
                 .toList()
 
-        if (currentFragments.size == 1 && currentFragments[0] === selectedTab) {
+        val fragmentsWithAttachedUI = currentFragments.filterNot { it.isDetached }
+
+        if (currentFragments.size == tabsModel.size &&
+            fragmentsWithAttachedUI.size == 1 &&
+            fragmentsWithAttachedUI.first() === selectedTab
+        ) {
             return
         } else if (currentFragments.isEmpty()) {
-            requireFragmentManager
-                .createTransactionWithReordering()
-                .add(contentView.id, selectedTab)
-                .commitNowAllowingStateLoss()
+            applyInitialStateToFragmentManagerSync(selectedTab)
         } else {
             error("[RNScreens] Unexpected fragment manager state.")
         }
@@ -725,6 +771,15 @@ class TabsContainer internal constructor(
     private fun isNavigationStateStale(request: TabsNavigationStateUpdateRequest): Boolean {
         if (navState.isEmpty() || lastUINavState.isEmpty()) return false
         return request.baseProvenance < lastUINavState.provenance
+    }
+
+    // endregion
+
+    // region Container
+
+    override fun resolveCurrentContentScrollView(): ViewGroup? {
+        // We assume here that the selectedTab actually corresponds to whats in FragmentManager
+        return selectedTab.tabsScreen.findContentScrollView()
     }
 
     // endregion

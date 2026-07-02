@@ -24,10 +24,15 @@ export type {
   StackHeaderBackgroundSubviewAndroid,
   StackHeaderConfigPropsAndroid,
   StackHeaderConfigCommandsAndroid,
+  StackHeaderToolbarMenuAndroid,
+  StackHeaderToolbarMenuBaseAndroid,
+  StackHeaderToolbarMenuElementAndroid,
+  StackHeaderToolbarMenuGroupAndroid,
   StackHeaderToolbarMenuItemAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid,
-  StackHeaderToolbarMenuItemClickedEvent,
+  StackHeaderToolbarMenuItemBaseAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
+  StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderConfigPropsIOS,
   StackHeaderInlineItemIOS,
@@ -35,6 +40,9 @@ export type {
   StackHeaderTitleCustomItemIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderConfigCommandsIOS,
+  StackHeaderMenuIOS,
+  StackHeaderMenuItemIOS,
+  StackHeaderMenuElementIOS,
 } from './header';
 
 /**

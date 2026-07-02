@@ -8,7 +8,12 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigAttachListener
+import com.swmansion.rnscreens.gamma.common.container.Container
+import com.swmansion.rnscreens.gamma.common.container.ContainerItem
+import com.swmansion.rnscreens.gamma.common.container.ContainerItemSupport
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
+import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
+import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
@@ -18,11 +23,15 @@ import kotlin.properties.Delegates
 class StackScreen(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
-    FragmentProviding {
+    FragmentProviding,
+    ScrollViewSeeking,
+    ContainerItem {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
     }
+
+    private val containerItemSupport = ContainerItemSupport()
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
@@ -53,39 +62,78 @@ class StackScreen(
             field = value
         }
 
+    // region Shadow State synchronization
+
     private val shadowStateProxy = ShadowStateProxy()
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    fun updateStateIfNeeded(
-        x: Int? = null,
-        y: Int? = null,
-        width: Int? = null,
-        height: Int? = null,
-    ) = shadowStateProxy.updateStateIfNeeded(
-        density = resources.displayMetrics.density,
-        contentOffsetX = x,
-        contentOffsetY = y,
-        frameWidth = width,
-        frameHeight = height,
-    )
+    internal fun onContentYOriginChanged(y: Int) {
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            contentOffsetY = y,
+        )
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        shadowStateProxy.updateStateIfNeeded(
+            density = resources.displayMetrics.density,
+            frameWidth = r - l,
+            frameHeight = b - t,
+        )
+    }
+
+    // endregion
+
+    // region Header config
 
     internal var headerConfig: StackHeaderConfig? = null
         private set
 
-    internal var onHeaderConfigAttachListener: WeakReference<OnHeaderConfigAttachListener>? = null
+    private var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
+
+    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener) {
+        check(onHeaderConfigurationAttachListener?.get() == null) {
+            "[RNScreens] Attempted to register header config attach listener before previous listener was cleared."
+        }
+        onHeaderConfigurationAttachListener = WeakReference(listener)
+        headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
+    }
+
+    internal fun clearHeaderConfigAttachListener() {
+        onHeaderConfigurationAttachListener = null
+    }
 
     internal fun attachHeaderConfig(header: StackHeaderConfig) {
         headerConfig = header
-        onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(header)
+        onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(header, header)
     }
 
     internal fun detachHeaderConfig(header: StackHeaderConfig) {
         if (headerConfig === header) {
             headerConfig = null
-            onHeaderConfigAttachListener?.get()?.onHeaderConfigAttach(null)
+            onHeaderConfigurationAttachListener?.get()?.onHeaderConfigAttached(null, null)
         }
     }
+
+    // endregion
+
+    // region ScrollViewSeeking
+
+    override fun registerScrollView(
+        marker: ScrollViewMarker,
+        scrollView: ViewGroup,
+    ) {
+        containerItemSupport.registerScrollView(scrollView)
+    }
+
+    // endregion
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
@@ -114,22 +162,16 @@ class StackScreen(
         eventEmitter.emitOnNativeDismissPrevented()
     }
 
-    override fun onLayout(
-        changed: Boolean,
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) {
-        shadowStateProxy.updateStateIfNeeded(
-            density = resources.displayMetrics.density,
-            frameWidth = r - l,
-            frameHeight = b - t,
-        )
-    }
-
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {
             check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}" }
         }
+
+    override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
+
+    override fun unregisterNestedContainer(container: Container) = containerItemSupport.unregisterNestedContainer(container)
+
+    override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
+
+    override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
 }
