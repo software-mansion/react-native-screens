@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.content.Context
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -96,22 +97,22 @@ class FormSheetDialogManager(
         formSheetConfig = newConfig
     }
 
-private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
-    if (rawDetents.isEmpty()) {
-        return FormSheetDetents(listOf(LARGE_DETENT))
-    }
+    private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
+        if (rawDetents.isEmpty()) {
+            return FormSheetDetents(listOf(LARGE_DETENT))
+        }
 
-    return try {
-        FormSheetDetents(rawDetents)
-    } catch (e: IllegalArgumentException) {
-        android.util.Log.e(
-            "[RNScreens]",
-            "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
-            e,
-        )
-        FormSheetDetents(listOf(LARGE_DETENT))
+        return try {
+            FormSheetDetents(rawDetents)
+        } catch (e: IllegalArgumentException) {
+            Log.e(
+                "[RNScreens]",
+                "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
+                e,
+            )
+            FormSheetDetents(listOf(LARGE_DETENT))
+        }
     }
-}
 
     private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
         // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
