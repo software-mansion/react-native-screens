@@ -30,18 +30,6 @@
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 }
 
-#pragma mark - Overrides
-
-- (void)willMoveToParentViewController:(UIViewController *)parent
-{
-  [super willMoveToParentViewController:parent];
-}
-
-- (void)didMoveToParentViewController:(UIViewController *)parent
-{
-  [super didMoveToParentViewController:parent];
-}
-
 #pragma mark-- Layout
 
 - (void)viewDidLayoutSubviews

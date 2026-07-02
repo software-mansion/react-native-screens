@@ -177,11 +177,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #pragma mark - UIKit callbacks
 
-- (void)willMoveToParentViewController:(UIViewController *)parent
-{
-  [super willMoveToParentViewController:parent];
-}
-
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
   [super didMoveToParentViewController:parent];
