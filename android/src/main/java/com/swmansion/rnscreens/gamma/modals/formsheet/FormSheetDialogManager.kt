@@ -17,8 +17,6 @@ class FormSheetDialogManager(
 
     private var resolvedDetents: FormSheetDetents? = null
 
-    private var shouldReconfigureDetents = false
-
     private val themedContext =
         ContextThemeWrapper(
             context,
