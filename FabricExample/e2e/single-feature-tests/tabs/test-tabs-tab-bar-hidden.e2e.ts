@@ -1,5 +1,8 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiPad,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 
 describe('Tab Bar Hidden', () => {
   beforeAll(async () => {
@@ -50,5 +53,52 @@ describe('Tab Bar Hidden', () => {
     } else {
       await expect(element(by.id('tab-bar-item-1-id'))).toBeVisible();
     }
+  });
+});
+
+describeIfiPad('@ipad Tabs: tabBarHidden (iPad)', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-tab-bar-hidden');
+  });
+
+  it('screen should be displayed', async () => {
+    await expect(element(by.id('tab-bar-hidden-switch'))).toBeVisible();
+    await expect(element(by.id('tab-bar-hidden-scrollview'))).toBeVisible();
+  });
+
+  it('tab bar should be visible by default after loading screen', async () => {
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: false',
+    );
+    await expect(
+      element(by.type('_UIFloatingTabBarCollectionView')),
+    ).toBeVisible();
+  });
+
+  it('tab bar should be hidden after changing tabBarHidden value to true', async () => {
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: false',
+    );
+    await element(by.id('tab-bar-hidden-switch')).tap();
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: true',
+    );
+    await expect(
+      element(by.type('_UIFloatingTabBarCollectionView')),
+    ).not.toBeVisible();
+  });
+
+  it('tab bar should reappear after changing tabBarHidden value to false', async () => {
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: true',
+    );
+    await element(by.id('tab-bar-hidden-switch')).tap();
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: false',
+    );
+    await expect(
+      element(by.type('_UIFloatingTabBarCollectionView')),
+    ).toBeVisible();
   });
 });
