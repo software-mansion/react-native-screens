@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
