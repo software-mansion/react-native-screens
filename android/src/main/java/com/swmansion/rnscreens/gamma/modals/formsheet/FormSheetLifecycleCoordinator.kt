@@ -1,29 +1,26 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetLifecycleCoordinator(
     private val dialog: BottomSheetDialog,
-    private val bottomSheetView: FrameLayout?,
     private val dimmingManager: DimmingViewManager,
-    private val animationCoordinator: FormSheetAnimationCoordinator,
-    private val onDismissRequest: () -> Unit,
+    private val onShow: () -> Unit,
+    private val onDismiss: () -> Unit,
 ) {
     internal fun setup() {
         dialog.setOnShowListener {
-            dimmingManager.onDialogShown()
-            bottomSheetView?.let { view ->
-                animationCoordinator.runEnterAnimation(view)
-            }
+            onShow()
         }
 
         dialog.setOnCancelListener {
-            onDismissRequest()
+            onDismiss()
         }
 
-        dimmingManager.setOnBackdropClickListener { onDismissRequest() }
+        dimmingManager.setOnBackdropClickListener {
+            onDismiss()
+        }
     }
 
     internal fun destroy() {

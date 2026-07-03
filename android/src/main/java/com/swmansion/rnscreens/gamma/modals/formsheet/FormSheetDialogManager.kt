@@ -53,10 +53,14 @@ class FormSheetDialogManager(
     private val lifecycleCoordinator =
         FormSheetLifecycleCoordinator(
             dialog = dialog,
-            bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            animationCoordinator = animationCoordinator,
-            onDismissRequest = onDismissRequest,
+            onShow = {
+                dimmingManager.onDialogShown()
+                bottomSheetView?.let { view ->
+                    animationCoordinator.runEnterAnimation(view)
+                }
+            },
+            onDismiss = onDismissRequest,
         )
 
     init {
