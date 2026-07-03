@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 internal class FormSheetPresentationManager(
     private val performPresent: (onComplete: () -> Unit) -> Unit,
     private val performDismiss: (onComplete: () -> Unit) -> Unit,
-    private val onNativeDismissComplete: () -> Unit,
+    private val onNativeDismiss: () -> Unit,
 ) {
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
@@ -56,9 +56,8 @@ internal class FormSheetPresentationManager(
             return false
         }
 
-        state = FormSheetPresentationState.DISMISSED
-        targetIsOpen = false
-        onNativeDismissComplete()
+        onNativeDismiss()
+        updatePresentationState(isOpen = false)
         return true
     }
 }

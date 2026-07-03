@@ -75,7 +75,7 @@ class FormSheetDialogManager(
                     onComplete()
                 }
             },
-            onNativeDismissComplete = onDismissRequest,
+            onNativeDismiss = onDismissRequest,
         )
 
     private val lifecycleCoordinator =
