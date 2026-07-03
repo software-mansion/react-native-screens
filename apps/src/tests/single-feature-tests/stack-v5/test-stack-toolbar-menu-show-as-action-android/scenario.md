@@ -7,7 +7,7 @@ toolbar menu items. It verifies that items placed in the action bar
 vs overflow menu behave correctly for all five values: `never`,
 `always`, `alwaysWithText`, `ifRoom`, `ifRoomWithText`. It also
 verifies that the default (omitted prop) is equivalent to `never`,
-and that runtime updates via `setToolbarMenuItemOptions` — including
+and that runtime updates via `setToolbarMenuElementOptions` — including
 resetting to the default with `undefined` — take effect immediately.
 The test exercises the interaction between `showAsAction` and the
 `icon` prop, since the `WITH_TEXT` modifier only has a visible

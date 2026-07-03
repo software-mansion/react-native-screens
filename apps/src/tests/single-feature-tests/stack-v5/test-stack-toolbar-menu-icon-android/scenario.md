@@ -3,8 +3,8 @@
 ## Details
 
 **Description:** Tests the `icon` and state-aware `iconTintColor*` props on
-Android toolbar menu items. Covers both the props flow (via `toolbarMenuItems`
-prop) and the imperative command flow (via `setToolbarMenuItemOptions`). The
+Android toolbar menu items. Covers both the props flow (via `toolbarMenu`
+prop) and the imperative command flow (via `setToolbarMenuElementOptions`). The
 props flow rebuilds all items from scratch on every update and discards all
 prior command state on all items simultaneously. The command flow merges changes
 onto individual items: absent fields preserve the current value; fields set to
@@ -38,8 +38,6 @@ TBD: E2E coverage has not been determined yet.
   This is Android platform behavior, not a library bug. Always set
   `iconTintColorNormal` alongside other state tints if you want the icon visible
   in the normal state.
-- `iconTintColorDisabled` requires a disabled item. This isn't supported yet, so
-  that prop is not exercised here.
 
 ## Steps
 
@@ -86,18 +84,28 @@ TBD: E2E coverage has not been determined yet.
 
 ---
 
-### Props — multiple state tints (Normal + Pressed + Focused)
+### Props — multiple state tints (Normal + Pressed + Focused + Disabled)
 
 8. Change Slot 2 `tintColorNormal` to `purple`, then `tintColorPressed` to
-   `green`, then `tintColorFocused` to `red`.
+   `green`, then `tintColorFocused` to `red`, then `tintColorDisabled` to
+   `blue`.
 
 - [ ] Normal: Item 2 shows purple.
 - [ ] Pressed: Press and hold Item 2 — it turns green while pressed.
 - [ ] Focused: Use Ctrl+Tab to move keyboard focus to the toolbar, navigate to
       Item 2 — it turns red while focused.
 
-9. Change Slot 2 `tintColorNormal`, `tintColorPressed`, and `tintColorFocused`
-   all back to `default`.
+9. Toggle Slot 2 `disabled` on.
+
+- [ ] Disabled: Item 2 shows the **blue** disabled tint. Tapping Item 2 does
+      nothing. Items 1 and 3 stay enabled and unaffected.
+
+10. Toggle Slot 2 `disabled` back off.
+
+- [ ] Item 2 returns to its enabled appearance, showing purple at rest again.
+
+11. Change Slot 2 `tintColorNormal`, `tintColorPressed`, `tintColorFocused`, and
+    `tintColorDisabled` all back to `default`.
 
 - [ ] Item 2 returns to its original default appearance in all interaction
       states.
@@ -106,19 +114,19 @@ TBD: E2E coverage has not been determined yet.
 
 ### Props — native limitation: non-Normal tint without Normal tint
 
-10. Change Slot 3 `tintColorPressed` to `red` (leave `tintColorNormal` at
+12. Change Slot 3 `tintColorPressed` to `red` (leave `tintColorNormal` at
     `default`).
 
 - [ ] Item 3 icon becomes **invisible** in the normal state (Android platform
       behavior: setting any state-specific tint without a Normal tint causes the
       icon to disappear at rest). The tint is visible when Item 3 is pressed.
 
-11. Change Slot 3 `tintColorNormal` to `purple`.
+13. Change Slot 3 `tintColorNormal` to `purple`.
 
 - [ ] Item 3 icon becomes visible again, showing purple at rest and red when
       pressed.
 
-12. Change Slot 3 `tintColorNormal` and `tintColorPressed` back to `default`.
+14. Change Slot 3 `tintColorNormal` and `tintColorPressed` back to `default`.
 
 - [ ] Item 3 returns to its untinted `search_black.png` appearance.
 
@@ -126,17 +134,17 @@ TBD: E2E coverage has not been determined yet.
 
 ### Props — icon removed while tint is set
 
-13. Change Slot 3 `tintColorNormal` to `green`, then change Slot 3 `icon` to
+15. Change Slot 3 `tintColorNormal` to `green`, then change Slot 3 `icon` to
     `none`.
 
 - [ ] Item 3 shows no icon.
 
-14. Change Slot 3 `icon` back to `imageSource`.
+16. Change Slot 3 `icon` back to `imageSource`.
 
 - [ ] Item 3 shows `search_black.png` with green tint already applied. The tint
       was preserved while the icon was absent.
 
-15. Change Slot 3 `tintColorNormal` to `default`.
+17. Change Slot 3 `tintColorNormal` to `default`.
 
 - [ ] Item 3 returns to untinted `search_black.png`.
 
@@ -144,7 +152,7 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — no-op
 
-16. In **Send Command**, set target id = `item-1`, all fields = `no change`. Tap
+18. In **Send Command**, set target id = `item-1`, all fields = `no change`. Tap
     **Send Command**.
 
 - [ ] No visible change. All items appear exactly as before.
@@ -153,12 +161,12 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — single tint color change
 
-17. Set target id = `item-1`, `tintColorNormal` = `red`, all others = `no
+19. Set target id = `item-1`, `tintColorNormal` = `red`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 turns red. Items 2 and 3 are unchanged.
 
-18. Set target id = `item-2`, `tintColorNormal` = `purple`, all others = `no
+20. Set target id = `item-2`, `tintColorNormal` = `purple`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 2 turns purple. Items 1 and 3 are unchanged.
@@ -167,13 +175,13 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — native limitation: non-Normal tint without Normal tint
 
-19. Set target id = `item-3`, `tintColorPressed` = `green`, all others = `no
+21. Set target id = `item-3`, `tintColorPressed` = `green`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 3 becomes **invisible** in the normal state (same platform behavior
-      as in steps 10–11). It is visible (green) when pressed.
+      as in steps 12–13). It is visible (green) when pressed.
 
-20. Set target id = `item-3`, `tintColorNormal` = `purple`, all others = `no
+22. Set target id = `item-3`, `tintColorNormal` = `purple`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 3 becomes visible again, showing purple at rest and green when
@@ -183,36 +191,46 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — restore single tint color to default
 
-21. Set target id = `item-1`, `tintColorNormal` = `default`, all others = `no
+23. Set target id = `item-1`, `tintColorNormal` = `default`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 returns to no tint (original colors).
 
 ---
 
-### Commands — multiple tint colors at once (Normal + Pressed + Focused)
+### Commands — multiple tint colors (Normal + Pressed + Focused + Disabled)
 
-22. Set target id = `item-3`, `tintColorNormal` = `green`, `tintColorPressed` =
-    `red`, `tintColorFocused` = `purple`, all others = `no change`. Tap **Send
-    Command**.
+24. Set target id = `item-3`, `tintColorNormal` = `green`, `tintColorPressed` =
+    `red`, `tintColorFocused` = `purple`, `tintColorDisabled` = `blue`, all
+    others = `no change`. Tap **Send Command**.
 
-- [ ] Normal: Item 3 shows green. Item 2 still shows purple from step 18. Item 1
+- [ ] Normal: Item 3 shows green. Item 2 still shows purple from step 20. Item 1
       is at default.
 - [ ] Pressed: Press and hold Item 3 — it turns red.
 - [ ] Focused: Use Ctrl+Tab and keyboard to focus Item 3 — it turns purple.
+
+25. Set target id = `item-3`, `disabled` = `true`, all others = `no change`. Tap
+    **Send Command**.
+
+- [ ] Item 3 shows the **blue** disabled tint. Tapping Item 3 does nothing.
+
+26. Set target id = `item-3`, `disabled` = `false`, all others = `no change`.
+    Tap **Send Command**.
+
+- [ ] Item 3 returns to its enabled appearance, showing green at rest again.
 
 ---
 
 ### Commands — partial restore (change one, restore another, preserve third)
 
-23. Set target id = `item-3`, `tintColorNormal` = `purple`, `tintColorPressed` =
+27. Set target id = `item-3`, `tintColorNormal` = `purple`, `tintColorPressed` =
     `no change`, `tintColorFocused` = `no change`. Tap **Send Command**.
 
 - [ ] Item 3 normal tint changes to purple. `tintColorPressed` (red) and
       `tintColorFocused` (purple) are preserved — they were absent from the
       options object. Pressing Item 3 still shows red.
 
-24. Set target id = `item-3`, `tintColorNormal` = `no change`,
+28. Set target id = `item-3`, `tintColorNormal` = `no change`,
     `tintColorPressed` = `default`, `tintColorFocused` = `no change`. Tap
     **Send Command**.
 
@@ -225,17 +243,17 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — change icon only (tint colors preserved)
 
-25. Set target id = `item-2`, `icon` = `drawableResource`, all tint fields = `no
+29. Set target id = `item-2`, `icon` = `drawableResource`, all tint fields = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 2 changes to the `sym_call_missed` icon. Its `tintColorNormal`
-      remains purple from step 18 — the drawable is shown in purple.
+      remains purple from step 20 — the drawable is shown in purple.
 
 ---
 
 ### Commands — change icon and tint color simultaneously
 
-26. Set target id = `item-1`, `icon` = `drawableResource`, `tintColorNormal` =
+30. Set target id = `item-1`, `icon` = `drawableResource`, `tintColorNormal` =
     `green`, all others = `no change`. Tap **Send Command**.
 
 - [ ] Item 1 changes to `sym_call_missed` and simultaneously turns green.
@@ -244,7 +262,7 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — restore tint color only (icon preserved)
 
-27. Set target id = `item-1`, `tintColorNormal` = `default`, `icon` = `no
+31. Set target id = `item-1`, `tintColorNormal` = `default`, `icon` = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 `tintColorNormal` resets to the regular default (no tint). The icon
@@ -254,29 +272,29 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — restore icon to none, then restore with stored tint
 
-28. Set target id = `item-1`, `icon` = `none`, `tintColorNormal` = `no change`.
+32. Set target id = `item-1`, `icon` = `none`, `tintColorNormal` = `no change`.
     Tap **Send Command**.
 
 - [ ] Item 1 shows no icon.
 
-29. Set target id = `item-1`, `tintColorNormal` = `red`, `icon` = `no change`.
+33. Set target id = `item-1`, `tintColorNormal` = `red`, `icon` = `no change`.
     Tap **Send Command**.
 
 - [ ] Item 1 still shows no icon. The tint is stored but invisible.
 
-30. Set target id = `item-1`, `icon` = `imageSource`, `tintColorNormal` = `no
+34. Set target id = `item-1`, `icon` = `imageSource`, `tintColorNormal` = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 shows `search_black.png` with red tint (the `tintColorNormal` set
-      in step 29 was preserved while the icon was absent and becomes visible
+      in step 33 was preserved while the icon was absent and becomes visible
       once the icon is restored).
 
 ---
 
 ### Commands — props update resets all command state
 
-31. At this point all three items have command overrides applied (icon and/or
-    tint changes from steps 17–30). In **Menu Items — Props**, change Slot 1
+35. At this point all three items have command overrides applied (icon and/or
+    tint changes from steps 19–34). In **Menu Items — Props**, change Slot 1
     `tintColorNormal` from `default` to `purple` and then immediately back to
     `default`.
 
@@ -289,16 +307,16 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — restore resets to global default, not prop value
 
-32. In **Menu Items — Props**, change Slot 1 `tintColorNormal` to `purple`.
+36. In **Menu Items — Props**, change Slot 1 `tintColorNormal` to `purple`.
 
 - [ ] Item 1 shows purple.
 
-33. Set target id = `item-1`, `tintColorNormal` = `red`, all others = `no
+37. Set target id = `item-1`, `tintColorNormal` = `red`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 changes to red (command override on top of the purple prop value).
 
-34. Set target id = `item-1`, `tintColorNormal` = `default`, all others = `no
+38. Set target id = `item-1`, `tintColorNormal` = `default`, all others = `no
     change`. Tap **Send Command**.
 
 - [ ] Item 1 shows **no tint** — the icon returns to its original colors. This
@@ -306,7 +324,7 @@ TBD: E2E coverage has not been determined yet.
       `tintColorNormal = purple` for Slot 1, but the command's `default` resets
       to the regular default (no tint) rather than restoring purple.
 
-35. In **Menu Items — Props**, change Slot 1 `tintColorNormal` back to
+39. In **Menu Items — Props**, change Slot 1 `tintColorNormal` back to
     `default`.
 
 - [ ] Item 1 remains untinted (no visible change — command already set the
@@ -316,16 +334,16 @@ TBD: E2E coverage has not been determined yet.
 
 ### Commands — excluded item safe targeting
 
-36. In **Menu Items — Props**, toggle Slot 2 `include` to `false`.
+40. In **Menu Items — Props**, toggle Slot 2 `include` to `false`.
 
 - [ ] Item 2 disappears from the toolbar.
 
-37. Set target id = `item-2`, `icon` = `drawableResource`, `tintColorNormal` =
+41. Set target id = `item-2`, `icon` = `drawableResource`, `tintColorNormal` =
     `red`. Tap **Send Command**.
 
 - [ ] No crash. Items 1 and 3 are unaffected.
 
-38. Toggle Slot 2 `include` back to `true`.
+42. Toggle Slot 2 `include` back to `true`.
 
 - [ ] Item 2 reappears with its props-configured appearance (`search_black.png`,
-      no tint). The command from step 37 did not leak into the re-included slot.
+      no tint). The command from step 41 did not leak into the re-included slot.

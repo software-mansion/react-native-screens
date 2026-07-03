@@ -43,4 +43,16 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @end
 
+#pragma mark - Content scroll view
+
+@interface RNSStackScreenComponentView ()
+
+/**
+ * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
+ * none has been registered. Queried by the owning controller (`RNSContainerItem`).
+ */
+- (nullable UIScrollView *)cachedContentScrollView;
+
+@end
+
 NS_ASSUME_NONNULL_END

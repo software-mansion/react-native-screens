@@ -10,5 +10,6 @@ internal sealed interface StackHeaderToolbarMenuElementConfig {
     data class Submenu(
         override val item: StackHeaderToolbarMenuItemConfig,
         val menu: StackHeaderToolbarMenuConfig,
+        val menuTitle: String?,
     ) : StackHeaderToolbarMenuElementConfig
 }
