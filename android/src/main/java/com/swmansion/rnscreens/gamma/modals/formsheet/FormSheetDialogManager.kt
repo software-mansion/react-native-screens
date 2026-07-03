@@ -52,6 +52,20 @@ class FormSheetDialogManager(
             behaviorController = behaviorController,
         )
 
+    private val presentationManager: FormSheetPresentationManager =
+        FormSheetPresentationManager(
+            performPresent = {
+                dialog.show()
+            },
+            performDismiss = {
+                animationCoordinator.runExitAnimation(bottomSheetView) {
+                    dialog.dismiss()
+                    presentationManager.handleDismissCompleted()
+                }
+            },
+            onNativeDismissComplete = onDismissRequest,
+        )
+
     private val lifecycleCoordinator =
         FormSheetLifecycleCoordinator(
             dialog = dialog,
@@ -59,10 +73,14 @@ class FormSheetDialogManager(
             onShow = {
                 dimmingManager.onDialogShown()
                 bottomSheetView?.let { view ->
-                    animationCoordinator.runEnterAnimation(view)
-                }
+                    animationCoordinator.runEnterAnimation(view) {
+                        presentationManager.handlePresentationCompleted()
+                    }
+                } ?: presentationManager.handlePresentationCompleted()
             },
-            onDismiss = onDismissRequest,
+            onDismiss = {
+                presentationManager.handleNativeDismiss()
+            },
         )
 
     init {
@@ -74,35 +92,27 @@ class FormSheetDialogManager(
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
-        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
-        val isClosing = !newConfig.isOpen && formSheetConfig.isOpen
-        if (isOpening) {
-            dialog.show()
-        } else if (isClosing) {
-            animationCoordinator.runExitAnimation(bottomSheetView) {
-                dialog.dismiss()
-            }
+        if (formSheetConfig.isOpen != newConfig.isOpen) {
+            presentationManager.updatePresentationState(newConfig.isOpen)
         }
 
         if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
-        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
-            resolvedDetents = resolveDetents(newConfig.detents)
-            shouldReconfigureDetents = true
-        }
-
         // TODO: @t0maboro
-        // - a dedicated presentation manager should be introduced as on iOS,
         // - invalidation flags logic should be implemented following other components convention
-        if (isOpening) {
-            shouldReconfigureDetents = true
-        }
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
 
-        if (shouldReconfigureDetents) {
-            dimensionsCoordinator.updateFormSheetDetents(resolvedDetents, shouldReconfigureDetents)
-            shouldReconfigureDetents = false
+        if (detentsChanged || isOpening) {
+            if (detentsChanged) {
+                resolvedDetents = resolveDetents(newConfig.detents)
+            }
+
+            dimensionsCoordinator.updateFormSheetDetents(
+                detents = resolvedDetents,
+            )
         }
 
         formSheetConfig = newConfig

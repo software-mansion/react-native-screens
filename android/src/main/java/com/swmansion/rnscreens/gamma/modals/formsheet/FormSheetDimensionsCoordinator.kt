@@ -16,7 +16,6 @@ internal class FormSheetDimensionsCoordinator(
     private var lastTopInset = 0
     private var lastBottomInset = 0
     private var currentDetents: FormSheetDetents? = null
-    private var pendingInitialState = false
 
     internal fun setup() {
         setupWindowInsetsListener()
@@ -51,14 +50,8 @@ internal class FormSheetDimensionsCoordinator(
         }
     }
 
-    internal fun updateFormSheetDetents(
-        detents: FormSheetDetents?,
-        applyInitialState: Boolean,
-    ) {
+    internal fun updateFormSheetDetents(detents: FormSheetDetents?) {
         currentDetents = detents
-        if (applyInitialState) {
-            pendingInitialState = true
-        }
         updateNativeContainerHeight()
     }
 
@@ -80,9 +73,7 @@ internal class FormSheetDimensionsCoordinator(
             behaviorController?.updateSheetBehavior(
                 detents = detents,
                 sheetAvailableSpace = dialogDecorHeight,
-                applyInitialState = pendingInitialState,
             )
-            pendingInitialState = false
         }
 
         val sheetContainerHeight =
