@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)detachContainer:(UIViewController<RNSContainer> *)container;
 
+- (void)notifyContentScrollViewChangeInContainer:(UIViewController<RNSContainer> *)container;
+
 @end
 
 NS_ASSUME_NONNULL_END

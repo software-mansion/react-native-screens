@@ -28,16 +28,44 @@
 - (void)registerNestedContainer:(id<RNSContainer>)container
 {
   [_containerItemSupport registerNestedContainer:container];
+  [self contentScrollViewSourceDidChange];
 }
 
 - (void)unregisterNestedContainer:(id<RNSContainer>)container
 {
   [_containerItemSupport unregisterNestedContainer:container];
+  [self contentScrollViewSourceDidChange];
 }
 
 - (nullable id<RNSContainer>)resolveNestedContainer
 {
   return [_containerItemSupport resolveNestedContainer];
+}
+
+- (void)nestedContainerContentScrollViewDidChange:(UIViewController<RNSContainer> *)container
+{
+  [self contentScrollViewSourceDidChange];
+}
+
+- (void)contentScrollViewSourceDidChange
+{
+  if ([self.navigationController isKindOfClass:RNSStackNavigationController.class]) {
+    [static_cast<RNSStackNavigationController *>(self.navigationController) notifyContentScrollViewChange];
+  }
+}
+
+- (BOOL)isContentScrollViewConfiguredForScrollEdgeEffects
+{
+  if ([_screenView hasDirectContentScrollViewScrollEdgeEffects]) {
+    return YES;
+  }
+
+  id<RNSContainer> nestedContainer = [_containerItemSupport resolveNestedContainer];
+  if ([nestedContainer respondsToSelector:@selector(isCurrentContentScrollViewConfiguredForScrollEdgeEffects)]) {
+    return [nestedContainer isCurrentContentScrollViewConfiguredForScrollEdgeEffects];
+  }
+
+  return NO;
 }
 
 - (nullable UIScrollView *)findContentScrollView

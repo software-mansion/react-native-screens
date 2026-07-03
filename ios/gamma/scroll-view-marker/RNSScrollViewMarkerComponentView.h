@@ -4,7 +4,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UIScrollView;
+
 @interface RNSScrollViewMarkerComponentView : RNSReactBaseView
+
+- (BOOL)hasScrollEdgeEffects;
+- (void)applyScrollEdgeEffectsToScrollView:(nullable UIScrollView *)scrollView;
 
 @end
 

@@ -105,6 +105,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)removeNavigationStateObserver:(id<RNSTabsNavigationStateObserver>)observer;
 
+- (void)notifyContentScrollViewChange;
+
 #pragma mark - Internal API (host-only; subject to change without notice)
 
 - (instancetype)initWithTabsHostComponentView:(nullable RNSTabsHostComponentView *)tabsHostComponentView;

@@ -107,6 +107,8 @@ type SystemItem =
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
@@ -162,6 +164,11 @@ export interface NativeProps extends ViewProps {
     boolean,
     true
   >;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  hasScrollEdgeEffects?: CT.WithDefault<boolean, false>;
   // Experimental
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }

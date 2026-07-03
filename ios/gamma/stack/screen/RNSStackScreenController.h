@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithComponentView:(RNSStackScreenComponentView *)componentView;
 
+- (void)contentScrollViewSourceDidChange;
+
 @end
 
 NS_ASSUME_NONNULL_END

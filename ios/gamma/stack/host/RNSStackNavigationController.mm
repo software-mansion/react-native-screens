@@ -50,6 +50,16 @@
   return [static_cast<RNSStackScreenController *>(topController) findContentScrollView];
 }
 
+- (BOOL)isCurrentContentScrollViewConfiguredForScrollEdgeEffects
+{
+  UIViewController *topController = self.topViewController;
+  if (![topController respondsToSelector:@selector(isContentScrollViewConfiguredForScrollEdgeEffects)]) {
+    return NO;
+  }
+
+  return [static_cast<id<RNSContainerItem>>(topController) isContentScrollViewConfiguredForScrollEdgeEffects];
+}
+
 - (void)attachToParentContainerItem
 {
   [_parentContainerRegistry attachContainer:self];
@@ -120,6 +130,12 @@
 
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];
+  [self notifyContentScrollViewChange];
+}
+
+- (void)notifyContentScrollViewChange
+{
+  [_parentContainerRegistry notifyContentScrollViewChangeInContainer:self];
 }
 
 #pragma mark - Debug

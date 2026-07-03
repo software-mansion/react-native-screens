@@ -49,6 +49,12 @@ class ScrollViewMarkerViewManager :
         value: String?,
     ) = Unit
 
+    // iOS only
+    override fun setHasScrollEdgeEffects(
+        view: ScrollViewMarker?,
+        value: Boolean,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSScrollViewMarker"
     }

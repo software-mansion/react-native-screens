@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UIScrollView *)resolveCurrentContentScrollView;
 
+@optional
+
+- (BOOL)isCurrentContentScrollViewConfiguredForScrollEdgeEffects;
+
 @end
 
 NS_ASSUME_NONNULL_END

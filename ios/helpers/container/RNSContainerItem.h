@@ -30,6 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable id<RNSContainer>)resolveNestedContainer;
 
+@optional
+
+- (void)nestedContainerContentScrollViewDidChange:(UIViewController<RNSContainer> *)container;
+
+- (BOOL)isContentScrollViewConfiguredForScrollEdgeEffects;
+
 #pragma mark - Content Scroll View support
 
 // `findContentScrollView` is inherited from `RNSContentScrollViewProviding`.

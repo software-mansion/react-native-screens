@@ -53,6 +53,8 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
  */
 - (nullable UIScrollView *)cachedContentScrollView;
 
+- (BOOL)hasDirectContentScrollViewScrollEdgeEffects;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -22,6 +22,7 @@ import type {
 import type { TabsScreenProps } from './TabsScreen.types';
 import type { PlatformIconIOS } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
+import { hasExplicitScrollEdgeEffects } from '../../helpers/scrollEdgeEffects';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -55,6 +56,8 @@ function TabsScreen(props: TabsScreenProps) {
     });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
+  const scrollEdgeEffects = ios?.scrollEdgeEffects;
+  const hasScrollEdgeEffects = hasExplicitScrollEdgeEffects(scrollEdgeEffects);
 
   return (
     <TabsScreenIOSNativeComponent
@@ -73,6 +76,11 @@ function TabsScreen(props: TabsScreenProps) {
       scrollEdgeAppearance={mapAppearanceToNativeProp(
         ios?.scrollEdgeAppearance,
       )}
+      bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
+      leftScrollEdgeEffect={scrollEdgeEffects?.left}
+      rightScrollEdgeEffect={scrollEdgeEffects?.right}
+      topScrollEdgeEffect={scrollEdgeEffects?.top}
+      hasScrollEdgeEffects={hasScrollEdgeEffects}
       userInterfaceStyle={ios?.experimental_userInterfaceStyle}
       systemItem={ios?.systemItem}
       overrideScrollViewContentInsetAdjustmentBehavior={

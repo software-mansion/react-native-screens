@@ -21,11 +21,13 @@ namespace react = facebook::react;
 @implementation RNSScrollViewMarkerComponentView {
   BOOL _hasAttemptedRegistration;
   BOOL _needsEdgeEffectUpdate;
+  BOOL _needsSeekingAncestorUpdate;
 
   RNSScrollEdgeEffect _leftScrollEdgeEffect;
   RNSScrollEdgeEffect _topScrollEdgeEffect;
   RNSScrollEdgeEffect _rightScrollEdgeEffect;
   RNSScrollEdgeEffect _bottomScrollEdgeEffect;
+  BOOL _hasScrollEdgeEffects;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -43,6 +45,7 @@ namespace react = facebook::react;
   [self resetProps];
   _hasAttemptedRegistration = NO;
   _needsEdgeEffectUpdate = NO;
+  _needsSeekingAncestorUpdate = NO;
 }
 
 - (void)resetProps
@@ -53,6 +56,7 @@ namespace react = facebook::react;
   _topScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
   _rightScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
   _bottomScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
+  _hasScrollEdgeEffects = NO;
 }
 
 /**
@@ -121,6 +125,16 @@ namespace react = facebook::react;
     return;
   }
   [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:self];
+}
+
+- (BOOL)hasScrollEdgeEffects
+{
+  return _hasScrollEdgeEffects;
+}
+
+- (void)applyScrollEdgeEffectsToScrollView:(nullable UIScrollView *)scrollView
+{
+  [self configureScrollView:scrollView];
 }
 
 /**
@@ -215,6 +229,12 @@ namespace react = facebook::react;
     _needsEdgeEffectUpdate = YES;
   }
 
+  if (oldComponentProps.hasScrollEdgeEffects != newComponentProps.hasScrollEdgeEffects) {
+    _hasScrollEdgeEffects = newComponentProps.hasScrollEdgeEffects;
+    _needsEdgeEffectUpdate = YES;
+    _needsSeekingAncestorUpdate = YES;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -227,6 +247,11 @@ namespace react = facebook::react;
   if (_needsEdgeEffectUpdate) {
     _needsEdgeEffectUpdate = NO;
     [self configureScrollView:[self findScrollView]];
+  }
+
+  if (_needsSeekingAncestorUpdate) {
+    _needsSeekingAncestorUpdate = NO;
+    [self registerWithSeekingAncestor];
   }
 
   // It allows 0 for cases where the child is unmounted

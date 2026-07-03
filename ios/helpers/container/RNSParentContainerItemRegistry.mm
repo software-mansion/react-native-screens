@@ -26,6 +26,13 @@
   _parentItem = nil;
 }
 
+- (void)notifyContentScrollViewChangeInContainer:(UIViewController<RNSContainer> *)container
+{
+  if ([_parentItem respondsToSelector:@selector(nestedContainerContentScrollViewDidChange:)]) {
+    [_parentItem nestedContainerContentScrollViewDidChange:container];
+  }
+}
+
 /**
  * Walks the view-controller containment chain (`parentViewController`) upwards looking for the
  * nearest `RNSContainerItem`. We test via `respondsToSelector:` rather than `conformsToProtocol:`

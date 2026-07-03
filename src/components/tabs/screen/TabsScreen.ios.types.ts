@@ -1,5 +1,9 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
+import type {
+  UserInterfaceStyle,
+  BlurEffect,
+  ScrollEdgeEffect,
+} from '../../shared/types';
 import type { PlatformIconIOS } from '../../../types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
@@ -226,6 +230,26 @@ export interface TabsScreenPropsIOS {
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
+  /**
+   * @summary Specifies scroll edge effects applied to the tab screen's content scroll view.
+   *
+   * The supported values correspond to the `UIScrollEdgeEffect`'s `style` and `isHidden` props.
+   *
+   * To disable iOS 26 bottom tab bar fade for a screen, use `{ bottom: 'hidden' }`.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
+   *
+   * @platform ios
+   * @supported iOS 26 or higher
+   */
+  scrollEdgeEffects?:
+    | {
+        bottom?: ScrollEdgeEffect | undefined;
+        left?: ScrollEdgeEffect | undefined;
+        right?: ScrollEdgeEffect | undefined;
+        top?: ScrollEdgeEffect | undefined;
+      }
+    | undefined;
   /**
    * @summary Specifies the icon for the tab bar item.
    *

@@ -33,6 +33,7 @@ namespace react = facebook::react;
   // the owning `RNSStackScreenController` (as `RNSContainerItem`) when resolving the content
   // scroll view for special effects.
   __weak UIScrollView *_Nullable _contentScrollView;
+  __weak RNSScrollViewMarkerComponentView *_Nullable _contentScrollViewMarker;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
@@ -94,11 +95,18 @@ namespace react = facebook::react;
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
   // Cache used by the container-nesting content-scroll-view resolution.
   _contentScrollView = scrollView;
+  _contentScrollViewMarker = marker;
+  [_controller contentScrollViewSourceDidChange];
 }
 
 - (nullable UIScrollView *)cachedContentScrollView
 {
   return _contentScrollView;
+}
+
+- (BOOL)hasDirectContentScrollViewScrollEdgeEffects
+{
+  return [_contentScrollViewMarker hasScrollEdgeEffects];
 }
 
 #pragma mark - Events

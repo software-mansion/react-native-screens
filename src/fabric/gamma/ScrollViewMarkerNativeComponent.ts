@@ -10,6 +10,7 @@ interface NativeProps extends ViewProps {
   topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  hasScrollEdgeEffects?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScrollViewMarker');

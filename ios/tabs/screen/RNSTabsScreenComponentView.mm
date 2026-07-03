@@ -1,10 +1,11 @@
 #import "RNSTabsScreenComponentView.h"
 #import "NSString+RNSUtility.h"
+#import "RNSContainer.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSSafeAreaViewNotifications.h"
-#import "RNSScrollViewFinder.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -26,7 +27,10 @@ namespace react = facebook::react;
 #pragma mark - View implementation
 
 #if RNS_GAMMA_ENABLED
-@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking, RNSScrollEdgeEffectProviding>
+@end
+#else
+@interface RNSTabsScreenComponentView () <RNSScrollEdgeEffectProviding>
 @end
 #endif
 
@@ -40,12 +44,19 @@ namespace react = facebook::react;
   // the owning `RNSTabsScreenViewController` (as `RNSContainerItem`) when resolving the content
   // scroll view for special effects.
   __weak UIScrollView *_Nullable _contentScrollView;
+#if RNS_GAMMA_ENABLED
+  __weak RNSScrollViewMarkerComponentView *_Nullable _contentScrollViewMarker;
+#endif
+  NSHashTable<UIScrollView *> *_Nonnull _tabScrollEdgeEffectsScrollViews;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
   // Tracks that the first child was mounted before props were set.
   // The pending override will be applied once updateProps runs.
   BOOL _needsScrollViewBehaviorOverride;
+  BOOL _shouldUpdateScrollEdgeEffects;
+  BOOL _shouldResetScrollEdgeEffects;
+  BOOL _shouldNotifyScrollEdgeEffectsOwnershipChange;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -85,6 +96,15 @@ namespace react = facebook::react;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
+  _bottomScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
+  _leftScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
+  _rightScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
+  _topScrollEdgeEffect = RNSScrollEdgeEffectAutomatic;
+  _hasScrollEdgeEffects = NO;
+  _tabScrollEdgeEffectsScrollViews = [NSHashTable weakObjectsHashTable];
+  _shouldUpdateScrollEdgeEffects = NO;
+  _shouldResetScrollEdgeEffects = NO;
+  _shouldNotifyScrollEdgeEffectsOwnershipChange = NO;
 
   _iconType = RNSTabsIconTypeSfSymbol;
 
@@ -128,12 +148,73 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
   // Cache used by the container-nesting content-scroll-view resolution.
   _contentScrollView = scrollView;
+#if RNS_GAMMA_ENABLED
+  _contentScrollViewMarker = marker;
+#endif
+  [self updateContentScrollViewEdgeEffectsIfExists];
+  [self notifyParentContainerAboutContentScrollViewChangeIfNeeded];
 }
 #endif // RNS_GAMMA_ENABLED
 
 - (nullable UIScrollView *)cachedContentScrollView
 {
   return _contentScrollView;
+}
+
+- (BOOL)hasDirectContentScrollViewScrollEdgeEffects
+{
+  if (_hasScrollEdgeEffects) {
+    return YES;
+  }
+
+#if RNS_GAMMA_ENABLED
+  return [_contentScrollViewMarker hasScrollEdgeEffects];
+#else
+  return NO;
+#endif
+}
+
+- (void)updateContentScrollViewEdgeEffectsIfExists
+{
+  UIScrollView *scrollView = [_controller findContentScrollView];
+
+  BOOL hasDirectMarkerOwner = NO;
+#if RNS_GAMMA_ENABLED
+  hasDirectMarkerOwner = scrollView == _contentScrollView && [_contentScrollViewMarker hasScrollEdgeEffects];
+#endif
+
+  id<RNSContainer> nestedContainer = [_controller resolveNestedContainer];
+  BOOL hasNestedOwner = scrollView != nil && scrollView != _contentScrollView &&
+      [nestedContainer respondsToSelector:@selector(isCurrentContentScrollViewConfiguredForScrollEdgeEffects)] &&
+      [nestedContainer isCurrentContentScrollViewConfiguredForScrollEdgeEffects];
+
+  if (_shouldResetScrollEdgeEffects) {
+    for (UIScrollView *tabScrollView in _tabScrollEdgeEffectsScrollViews) {
+      if (tabScrollView == scrollView && (hasDirectMarkerOwner || hasNestedOwner)) {
+        continue;
+      }
+      [RNSScrollEdgeEffectApplicator applyToScrollView:tabScrollView withProvider:self];
+    }
+    [_tabScrollEdgeEffectsScrollViews removeAllObjects];
+  }
+
+#if RNS_GAMMA_ENABLED
+  if (hasDirectMarkerOwner) {
+    [_tabScrollEdgeEffectsScrollViews removeObject:scrollView];
+    [_contentScrollViewMarker applyScrollEdgeEffectsToScrollView:scrollView];
+    return;
+  }
+#endif
+
+  if (hasNestedOwner) {
+    [_tabScrollEdgeEffectsScrollViews removeObject:scrollView];
+    return;
+  }
+
+  if (scrollView != nil && _hasScrollEdgeEffects) {
+    [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:self];
+    [_tabScrollEdgeEffectsScrollViews addObject:scrollView];
+  }
 }
 
 #pragma mark - Events
@@ -147,6 +228,14 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
+}
+
+- (void)notifyParentContainerAboutContentScrollViewChangeIfNeeded
+{
+  RNSTabBarController *tabBarController = [self findTabBarController];
+  if (tabBarController.selectedViewController == _controller) {
+    [tabBarController notifyContentScrollViewChange];
+  }
 }
 
 #pragma mark - RNSScrollViewBehaviorOverriding
@@ -355,6 +444,37 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
+  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
+    _bottomScrollEdgeEffect = rnscreens::conversion::RNSScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffect(
+        newComponentProps.bottomScrollEdgeEffect);
+    _shouldUpdateScrollEdgeEffects = YES;
+  }
+
+  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
+    _leftScrollEdgeEffect = rnscreens::conversion::RNSScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffect(
+        newComponentProps.leftScrollEdgeEffect);
+    _shouldUpdateScrollEdgeEffects = YES;
+  }
+
+  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
+    _rightScrollEdgeEffect = rnscreens::conversion::RNSScrollEdgeEffectFromTabsScreenRightScrollEdgeEffect(
+        newComponentProps.rightScrollEdgeEffect);
+    _shouldUpdateScrollEdgeEffects = YES;
+  }
+
+  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
+    _topScrollEdgeEffect = rnscreens::conversion::RNSScrollEdgeEffectFromTabsScreenTopScrollEdgeEffect(
+        newComponentProps.topScrollEdgeEffect);
+    _shouldUpdateScrollEdgeEffects = YES;
+  }
+
+  if (newComponentProps.hasScrollEdgeEffects != oldComponentProps.hasScrollEdgeEffects) {
+    _hasScrollEdgeEffects = newComponentProps.hasScrollEdgeEffects;
+    _shouldResetScrollEdgeEffects = oldComponentProps.hasScrollEdgeEffects && !newComponentProps.hasScrollEdgeEffects;
+    _shouldUpdateScrollEdgeEffects = YES;
+    _shouldNotifyScrollEdgeEffectsOwnershipChange = YES;
+  }
+
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
@@ -401,6 +521,22 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+  [super finalizeUpdates:updateMask];
+
+  if (_shouldUpdateScrollEdgeEffects) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
+    _shouldResetScrollEdgeEffects = NO;
+  }
+
+  if (_shouldNotifyScrollEdgeEffectsOwnershipChange) {
+    [self notifyParentContainerAboutContentScrollViewChangeIfNeeded];
+    _shouldNotifyScrollEdgeEffectsOwnershipChange = NO;
+  }
+}
+
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
@@ -431,6 +567,8 @@ RNS_IGNORE_SUPER_CALL_END
     } else {
       _needsScrollViewBehaviorOverride = YES;
     }
+
+    [self updateContentScrollViewEdgeEffectsIfExists];
   }
 }
 

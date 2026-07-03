@@ -165,6 +165,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   return [static_cast<RNSTabsScreenViewController *>(selectedController) findContentScrollView];
 }
 
+- (BOOL)isCurrentContentScrollViewConfiguredForScrollEdgeEffects
+{
+  UIViewController *selectedController = self.selectedViewController;
+  if (![selectedController respondsToSelector:@selector(isContentScrollViewConfiguredForScrollEdgeEffects)]) {
+    return NO;
+  }
+
+  return [static_cast<id<RNSContainerItem>>(selectedController) isContentScrollViewConfiguredForScrollEdgeEffects];
+}
+
 - (void)attachToParentContainerItem
 {
   [_parentContainerRegistry attachContainer:self];
@@ -173,6 +183,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)detachFromParentContainerItem
 {
   [_parentContainerRegistry detachContainer:self];
+}
+
+- (void)notifyContentScrollViewChange
+{
+  [_parentContainerRegistry notifyContentScrollViewChangeInContainer:self];
 }
 
 #pragma mark - UIKit callbacks
@@ -200,6 +215,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (!_isHandlingExplicitSelectionUpdate) {
     [self reconcileNavigationStateWithUIKitState];
   }
+  [self notifyContentScrollViewChange];
 }
 
 - (void)setSelectedViewController:(__kindof UIViewController *)selectedViewController
@@ -208,6 +224,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (!_isHandlingExplicitSelectionUpdate) {
     [self reconcileNavigationStateWithUIKitState];
   }
+  [self notifyContentScrollViewChange];
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection

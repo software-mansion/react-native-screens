@@ -64,6 +64,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL preventNativeSelection;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+@property (nonatomic, readonly) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic, readonly) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic, readonly) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic, readonly) RNSScrollEdgeEffect topScrollEdgeEffect;
+@property (nonatomic, readonly) BOOL hasScrollEdgeEffects;
 
 @property (nonatomic, readonly, nullable) NSString *tabItemTestID;
 @property (nonatomic, readonly, nullable) NSString *tabItemAccessibilityLabel;
@@ -101,6 +106,10 @@ NS_ASSUME_NONNULL_BEGIN
  * none has been registered. Queried by the owning controller (`RNSContainerItem`).
  */
 - (nullable UIScrollView *)cachedContentScrollView;
+
+- (BOOL)hasDirectContentScrollViewScrollEdgeEffects;
+
+- (void)updateContentScrollViewEdgeEffectsIfExists;
 
 @end
 

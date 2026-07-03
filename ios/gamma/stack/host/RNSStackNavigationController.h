@@ -18,4 +18,6 @@
 
 - (void)performContainerUpdateIfNeeded;
 
+- (void)notifyContentScrollViewChange;
+
 @end

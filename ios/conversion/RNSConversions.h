@@ -56,6 +56,18 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
 
 UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem);
 
+RNSScrollEdgeEffect RNSScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffect(
+    react::RNSTabsScreenIOSBottomScrollEdgeEffect edgeEffect);
+
+RNSScrollEdgeEffect RNSScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffect(
+    react::RNSTabsScreenIOSLeftScrollEdgeEffect edgeEffect);
+
+RNSScrollEdgeEffect RNSScrollEdgeEffectFromTabsScreenRightScrollEdgeEffect(
+    react::RNSTabsScreenIOSRightScrollEdgeEffect edgeEffect);
+
+RNSScrollEdgeEffect RNSScrollEdgeEffectFromTabsScreenTopScrollEdgeEffect(
+    react::RNSTabsScreenIOSTopScrollEdgeEffect edgeEffect);
+
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 API_AVAILABLE(ios(26.0))

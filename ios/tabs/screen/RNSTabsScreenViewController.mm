@@ -119,16 +119,46 @@
 - (void)registerNestedContainer:(id<RNSContainer>)container
 {
   [_containerItemSupport registerNestedContainer:container];
+  [self.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
+  if (self.tabBarController.selectedViewController == self) {
+    [[self findTabBarController] notifyContentScrollViewChange];
+  }
 }
 
 - (void)unregisterNestedContainer:(id<RNSContainer>)container
 {
   [_containerItemSupport unregisterNestedContainer:container];
+  [self.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
+  if (self.tabBarController.selectedViewController == self) {
+    [[self findTabBarController] notifyContentScrollViewChange];
+  }
 }
 
 - (nullable id<RNSContainer>)resolveNestedContainer
 {
   return [_containerItemSupport resolveNestedContainer];
+}
+
+- (void)nestedContainerContentScrollViewDidChange:(UIViewController<RNSContainer> *)container
+{
+  [self.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
+  if (self.tabBarController.selectedViewController == self) {
+    [[self findTabBarController] notifyContentScrollViewChange];
+  }
+}
+
+- (BOOL)isContentScrollViewConfiguredForScrollEdgeEffects
+{
+  if ([self.tabScreenComponentView hasDirectContentScrollViewScrollEdgeEffects]) {
+    return YES;
+  }
+
+  id<RNSContainer> nestedContainer = [_containerItemSupport resolveNestedContainer];
+  if ([nestedContainer respondsToSelector:@selector(isCurrentContentScrollViewConfiguredForScrollEdgeEffects)]) {
+    return [nestedContainer isCurrentContentScrollViewConfiguredForScrollEdgeEffects];
+  }
+
+  return NO;
 }
 
 - (nullable UIScrollView *)findContentScrollView
