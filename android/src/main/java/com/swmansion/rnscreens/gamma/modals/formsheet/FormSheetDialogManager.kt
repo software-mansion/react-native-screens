@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
@@ -52,15 +53,26 @@ class FormSheetDialogManager(
             behaviorController = behaviorController,
         )
 
-    private val presentationManager: FormSheetPresentationManager =
+    private val presentationManager =
         FormSheetPresentationManager(
-            performPresent = {
+            performPresent = { onComplete ->
                 dialog.show()
+                dimmingManager.onDialogShown()
+
+                bottomSheetView?.let { view ->
+                    if (view.isLaidOut) {
+                        animationCoordinator.runEnterAnimation(view, onComplete)
+                    } else {
+                        view.doOnPreDraw {
+                            animationCoordinator.runEnterAnimation(view, onComplete)
+                        }
+                    }
+                } ?: onComplete()
             },
-            performDismiss = {
+            performDismiss = { onComplete ->
                 animationCoordinator.runExitAnimation(bottomSheetView) {
                     dialog.dismiss()
-                    presentationManager.handleDismissCompleted()
+                    onComplete()
                 }
             },
             onNativeDismissComplete = onDismissRequest,
@@ -70,14 +82,6 @@ class FormSheetDialogManager(
         FormSheetLifecycleCoordinator(
             dialog = dialog,
             dimmingManager = dimmingManager,
-            onShow = {
-                dimmingManager.onDialogShown()
-                bottomSheetView?.let { view ->
-                    animationCoordinator.runEnterAnimation(view) {
-                        presentationManager.handlePresentationCompleted()
-                    }
-                } ?: presentationManager.handlePresentationCompleted()
-            },
             onDismiss = {
                 presentationManager.handleNativeDismiss()
             },

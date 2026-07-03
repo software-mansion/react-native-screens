@@ -1,10 +1,8 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-import android.util.Log
-
 internal class FormSheetPresentationManager(
-    private val performPresent: () -> Unit,
-    private val performDismiss: () -> Unit,
+    private val performPresent: (onComplete: () -> Unit) -> Unit,
+    private val performDismiss: (onComplete: () -> Unit) -> Unit,
     private val onNativeDismissComplete: () -> Unit,
 ) {
     private var state = FormSheetPresentationState.DISMISSED
@@ -29,7 +27,13 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
-        performPresent()
+        performPresent {
+            if (state == FormSheetPresentationState.PRESENTING) {
+                state = FormSheetPresentationState.PRESENTED
+                // ensure state hasn't updated during presentation
+                resolvePresentationState()
+            }
+        }
     }
 
     private fun dismissIfNeeded() {
@@ -38,22 +42,12 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
-        performDismiss()
-    }
-
-    internal fun handlePresentationCompleted() {
-        if (state == FormSheetPresentationState.PRESENTING) {
-            state = FormSheetPresentationState.PRESENTED
-            // ensure state hasn't changed during presentation
-            resolvePresentationState()
-        }
-    }
-
-    internal fun handleDismissCompleted() {
-        if (state == FormSheetPresentationState.DISMISSING) {
-            state = FormSheetPresentationState.DISMISSED
-            // ensure state hasn't changed during dismissal
-            resolvePresentationState()
+        performDismiss {
+            if (state == FormSheetPresentationState.DISMISSING) {
+                state = FormSheetPresentationState.DISMISSED
+                // ensure state hasn't changed during presentation
+                resolvePresentationState()
+            }
         }
     }
 
