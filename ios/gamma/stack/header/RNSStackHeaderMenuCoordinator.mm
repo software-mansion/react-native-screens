@@ -1,4 +1,5 @@
 #import "RNSStackHeaderMenuCoordinator.h"
+#import "RNSDefines.h"
 
 #import <React/RCTAssert.h>
 
@@ -169,6 +170,8 @@
               }];
   toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
 
+  [self decorateActionKeepsMenuPresented:toggleAction withData:data];
+
   return toggleAction;
 }
 
@@ -177,12 +180,16 @@
 {
   __weak id<RNSStackHeaderEventsDelegate> weakDelegate = delegate;
 
-  return [UIAction actionWithTitle:data.title
-                             image:nil
-                        identifier:nil
-                           handler:^(__kindof UIAction *_Nonnull action) {
-                             [weakDelegate didPressMenuItem:data.menuElementId];
-                           }];
+  UIAction *action = [UIAction actionWithTitle:data.title
+                                         image:nil
+                                    identifier:nil
+                                       handler:^(__kindof UIAction *_Nonnull action) {
+                                         [weakDelegate didPressMenuItem:data.menuElementId];
+                                       }];
+
+  [self decorateActionKeepsMenuPresented:action withData:data];
+
+  return action;
 }
 
 #pragma mark - Helpers
@@ -226,6 +233,22 @@
                                 intoArray:ids
                     insideSingleSelection:insideSingleSelection];
     }
+  }
+}
+
++ (void)decorateActionKeepsMenuPresented:(UIAction *)action withData:(RNSStackHeaderMenuItemData *)data
+{
+  if (data.keepsMenuPresented) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+    if (@available(iOS 16.0, *)) {
+      action.attributes |= UIMenuElementAttributesKeepsMenuPresented;
+    }
+#endif
+#if TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000
+    if (@available(tvOS 16.0, *)) {
+      action.attributes |= UIMenuElementAttributesKeepsMenuPresented;
+    }
+#endif
   }
 }
 

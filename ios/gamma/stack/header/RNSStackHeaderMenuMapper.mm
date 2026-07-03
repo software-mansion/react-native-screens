@@ -54,7 +54,8 @@
                                                     title:[self stringForKey:@"title" in:dict]
                                                  itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
                                                                                                    in:dict]]
-                                       initialToggleState:[self boolForKey:@"initialToggleState" in:dict]];
+                                       initialToggleState:[self boolForKey:@"initialToggleState" in:dict]
+                                       keepsMenuPresented:[self boolForKey:@"keepsMenuPresented" in:dict]];
   }
 
   return nil;
@@ -78,7 +79,8 @@
 {
   for (NSString *key in dict) {
     RCTAssert([key isEqualToString:@"id"] || [key isEqualToString:@"type"] || [key isEqualToString:@"title"] ||
-                  [key isEqualToString:@"itemType"] || [key isEqualToString:@"initialToggleState"],
+                  [key isEqualToString:@"itemType"] || [key isEqualToString:@"initialToggleState"] ||
+                  [key isEqualToString:@"keepsMenuPresented"],
               @"[RNScreens] Invalid key \"%@\" found in menu item",
               key);
   }
