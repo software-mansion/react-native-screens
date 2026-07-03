@@ -67,7 +67,7 @@ class FormSheetDialogManager(
 
     init {
         bottomSheetView?.let { view ->
-            setupBehaviorCallbacksForDimmingView(view)
+            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
             animationCoordinator.prepareViewForAnimation(view)
         }
         lifecycleCoordinator.setup()
@@ -124,12 +124,6 @@ class FormSheetDialogManager(
             )
             FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
         }
-    }
-
-    private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
-        // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
-        val behavior = BottomSheetBehavior.from(view)
-        dimmingManager.attachToBehavior(behavior)
     }
 
     internal fun destroy() {
