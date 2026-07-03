@@ -10,6 +10,13 @@ import android.widget.FrameLayout
 import androidx.core.view.WindowCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+/**
+ * A custom BottomSheetDialog override used to render the FormSheet native component.
+ *
+ * We enforce edge-to-edge rendering, bypassing standard Material checks.
+ * This enforcement is required because our custom dimming view must span the entire screen.
+ * The FormSheetContainer is sized manually against the system insets.
+ */
 internal class FormSheetDialog(
     context: Context,
 ) : BottomSheetDialog(context) {
@@ -34,7 +41,6 @@ internal class FormSheetDialog(
      * `BottomSheetDialog#onAttachedToWindow`).
      *
      * We force edge-to-edge on every API level so the custom dimming view covers the whole screen.
-     * The sheet content is sized manually against the system insets, so drawing behind the bars is safe here.
      */
     private fun forceEdgeToEdge() {
         val window = window ?: return
