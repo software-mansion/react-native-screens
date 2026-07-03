@@ -221,7 +221,7 @@ class FormSheetDialogManager(
             ).bottom
 
     internal fun destroy() {
-        dimmingManager.setOnBackdropClickListener {}
+        dimmingManager.setOnBackdropClickListener(null)
 
         ViewCompat.setOnApplyWindowInsetsListener(container, null)
 
