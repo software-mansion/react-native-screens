@@ -14,8 +14,6 @@ class FormSheetDialogManager(
 ) {
     private var formSheetConfig = FormSheetConfig()
 
-    private var resolvedDetents: FormSheetDetents? = null
-
     internal val invalidationFlags = FormSheetInvalidationFlags()
 
     private val themedContext =
@@ -77,7 +75,7 @@ class FormSheetDialogManager(
             invalidationFlags.isAppearanceInvalidated = true
         }
 
-        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
+        if (formSheetConfig.detents != newConfig.detents) {
             invalidationFlags.isBehaviorInvalidated = true
         }
 
