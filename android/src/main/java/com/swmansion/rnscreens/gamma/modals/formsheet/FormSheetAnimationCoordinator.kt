@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
+import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
@@ -15,6 +16,12 @@ internal class FormSheetAnimationCoordinator(
     val animationDuration = 250L
 
     private var currentAnimatorSet: AnimatorSet? = null
+
+    internal fun prepareViewForAnimation(view: View) {
+        view.doOnPreDraw {
+            it.translationY = it.height.toFloat()
+        }
+    }
 
     internal fun runEnterAnimation(view: View) {
         val isAnimating = currentAnimatorSet?.isRunning == true
