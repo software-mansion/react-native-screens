@@ -35,6 +35,13 @@ class RNSStackHeaderConfigComponentDescriptor final
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
+
+#if !defined(ANDROID)
+    std::weak_ptr<void> imageLoader =
+        contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
+    configShadowNode.setImageLoader(imageLoader);
+#endif // !defined(ANDROID)
+
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

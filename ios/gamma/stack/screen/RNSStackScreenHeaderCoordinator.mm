@@ -269,9 +269,10 @@
                            toBarButtonItem:barButtonItem
                   withHeaderEventsDelegate:_eventsDelegate
                               stateTracker:tracker
-                        menuToggleCallback:^{
-                          [weakSelf reapplyMenuForItemWithId:itemId];
-                        }];
+                           withImageLoader:_imageLoader
+                   menuInvalidatedCallback:^{
+                     [weakSelf reapplyMenuForItemWithId:itemId];
+                   }];
 }
 
 - (nullable id<RNSStackHeaderItemDataProviding>)findItemWithId:(NSString *)itemId
@@ -366,7 +367,8 @@
 {
   UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
                                                                     withFrameChangeDelegate:_frameChangeDelegate
-                                                                   withHeaderEventsDelegate:_eventsDelegate];
+                                                                   withHeaderEventsDelegate:_eventsDelegate
+                                                                            withImageLoader:_imageLoader];
 
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
@@ -376,9 +378,10 @@
                              toBarButtonItem:barButtonItem
                     withHeaderEventsDelegate:_eventsDelegate
                                 stateTracker:tracker
-                          menuToggleCallback:^{
-                            [weakSelf reapplyMenuForItemWithId:capturedItemId];
-                          }];
+                             withImageLoader:_imageLoader
+                     menuInvalidatedCallback:^{
+                       [weakSelf reapplyMenuForItemWithId:capturedItemId];
+                     }];
   }
 
   if (item.itemId != nil) {

@@ -32,10 +32,15 @@ export type StackHeaderMenuElementIOS =
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type HeaderItemPressEvent = Readonly<{}>;
 
+export type PlatformIconIOS = {
+  type: string;
+};
+
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
   itemId?: string | undefined;
   title?: string | undefined;
+  icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
   respondsToOnPress?: CT.WithDefault<boolean, false>;
   onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;

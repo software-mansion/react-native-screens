@@ -1,5 +1,7 @@
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
+#import "RNSStackHeaderIconResolver.h"
 #import "RNSStackHeaderItemWrapperView.h"
 #import "RNSStackHeaderMenuCoordinator.h"
 
@@ -8,6 +10,7 @@
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
                        withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
+                                withImageLoader:(id<RNSImageLoading>)imageLoader
 {
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -21,6 +24,16 @@
                                                                   frameChangeDelegate:delegate]];
   }
 
+  return [self labelBarButtonItemForHeaderItem:item
+                      withHeaderEventsDelegate:headerEventsDelegate
+                               withImageLoader:imageLoader];
+}
+
++ (UIBarButtonItem *)labelBarButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
+                            withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
+                                     withImageLoader:(id<RNSImageLoading>)imageLoader
+{
+  UIBarButtonItem *barButtonItem;
   if (item.respondsToOnPress) {
     __weak id<RNSStackHeaderEventsDelegate> weakDelegate = headerEventsDelegate;
     NSString *itemId = item.itemId;
@@ -30,10 +43,29 @@
                                               handler:^(__kindof UIAction *_Nonnull action) {
                                                 [weakDelegate didPressHeaderItem:itemId];
                                               }];
-    return [[UIBarButtonItem alloc] initWithPrimaryAction:pressAction];
+    barButtonItem = [[UIBarButtonItem alloc] initWithPrimaryAction:pressAction];
+  } else {
+    barButtonItem = [[UIBarButtonItem alloc] initWithTitle:item.title
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:nil
+                                                    action:nil];
   }
 
-  return [[UIBarButtonItem alloc] initWithTitle:item.title style:UIBarButtonItemStylePlain target:nil action:nil];
+  if (item.icon != nil) {
+    __weak UIBarButtonItem *weakBarButtonItem = barButtonItem;
+    UIImage *syncImage = [RNSStackHeaderIconResolver resolveIcon:item.icon
+                                                 withImageLoader:imageLoader
+                                            asyncCompletionBlock:^(UIImage *_Nullable image) {
+                                              if (weakBarButtonItem == nil) {
+                                                RNSLog(@"[RNScreens] Attempt to set image on nil UIBarButtonItem");
+                                                return;
+                                              }
+                                              weakBarButtonItem.image = image;
+                                            }];
+    barButtonItem.image = syncImage ? syncImage : [UIImage imageWithCIImage:[CIImage emptyImage]];
+  }
+
+  return barButtonItem;
 }
 
 + (UIView *)wrappedViewForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item

@@ -6,3 +6,5 @@ export type * from './StackHeaderConfig.android.types';
 export type * from './StackHeaderConfig.ios.types';
 
 export type * from './ios/StackHeaderMenu.ios.types';
+
+export type { PlatformIconIOS } from '../../../../types';

@@ -9,6 +9,7 @@ import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
+import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
 import TestStackBackButton from './test-stack-back-button-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
 import TestStackToolbarMenuDisabled from './test-stack-toolbar-menu-disabled-android';
@@ -29,6 +30,7 @@ export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
+export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackBackButton } from './test-stack-back-button-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
 export { default as TestStackToolbarMenuDisabled } from './test-stack-toolbar-menu-disabled-android';
@@ -46,6 +48,7 @@ const scenarios = {
   TestStackSubviewsAndroid,
   TestStackSubviewsIOS,
   TestStackHeaderMenuIOS,
+  TestStackHeaderIconIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackBackButton,
