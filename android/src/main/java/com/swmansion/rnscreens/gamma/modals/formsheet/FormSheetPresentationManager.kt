@@ -45,7 +45,7 @@ internal class FormSheetPresentationManager(
         performDismiss {
             if (state == FormSheetPresentationState.DISMISSING) {
                 state = FormSheetPresentationState.DISMISSED
-                // ensure state hasn't changed during presentation
+                // ensure state hasn't updated during presentation
                 resolvePresentationState()
             }
         }
