@@ -181,28 +181,30 @@ class FormSheetDialogManager(
     private fun updateNativeContainerHeight() {
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
 
-        if (dialogDecorHeight > 0) {
-            resolvedDetents?.let { detents ->
-                behaviorController?.updateSheetBehavior(
-                    detents = detents,
-                    sheetAvailableSpace = dialogDecorHeight,
-                    applyInitialState = shouldReconfigureDetents,
-                )
-                shouldReconfigureDetents = false
-            }
+        if (dialogDecorHeight <= 0) {
+            return
+        }
 
-            val sheetContainerHeight =
-                resolvedDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
-                    ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
+        resolvedDetents?.let { detents ->
+            behaviorController?.updateSheetBehavior(
+                detents = detents,
+                sheetAvailableSpace = dialogDecorHeight,
+                applyInitialState = shouldReconfigureDetents,
+            )
+            shouldReconfigureDetents = false
+        }
 
-            val layoutParams =
-                container.layoutParams
-                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sheetContainerHeight)
-            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != sheetContainerHeight) {
-                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                layoutParams.height = sheetContainerHeight
-                container.layoutParams = layoutParams
-            }
+        val sheetContainerHeight =
+            resolvedDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
+                ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
+
+        val layoutParams =
+            container.layoutParams
+                ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sheetContainerHeight)
+        if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != sheetContainerHeight) {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            layoutParams.height = sheetContainerHeight
+            container.layoutParams = layoutParams
         }
     }
 
