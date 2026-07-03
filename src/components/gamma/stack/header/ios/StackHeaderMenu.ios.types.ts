@@ -76,7 +76,7 @@ export interface StackHeaderMenuItemIOS {
    */
   onPress?: () => void | undefined;
   /**
-   * @summary Keeps the menu presented after this item is selected.
+   * @summary Keeps the menu presented after this item is tapped.
    *
    * @description
    * When enabled, selecting this item will not dismiss the menu,
