@@ -22,12 +22,12 @@ internal class FormSheetDetents(
 
     internal val count: Int get() = detents.size
 
-    internal fun at(index: Int): Double = detents[index]
+    private fun heightFractionAt(index: Int): Double = detents[index]
 
-    internal fun heightAt(
+    private fun heightAt(
         index: Int,
         containerHeight: Int,
-    ): Int = (at(index) * containerHeight).toInt()
+    ): Int = (heightFractionAt(index) * containerHeight).toInt()
 
     internal fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
@@ -35,7 +35,7 @@ internal class FormSheetDetents(
 
     internal fun halfExpandedRatio(): Float {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for halfExpandedRatio." }
-        return (at(1) / at(2)).toFloat()
+        return (heightFractionAt(1) / heightFractionAt(2)).toFloat()
     }
 
     internal fun expandedOffsetFromTop(
@@ -43,7 +43,7 @@ internal class FormSheetDetents(
         topInset: Int = 0,
     ): Int {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for expandedOffsetFromTop." }
-        return ((1 - at(2)) * containerHeight).toInt() + topInset
+        return ((1 - heightFractionAt(2)) * containerHeight).toInt() + topInset
     }
 
     // Distance from the top of the window to the top of the largest detent's surface.
