@@ -125,7 +125,6 @@ class FormSheetDialogManager(
             object : android.view.ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     view.viewTreeObserver.removeOnPreDrawListener(this)
-                    view.translationY = view.height.toFloat()
                     disableMaterialInsetsAnimationCallback(view)
                     return true
                 }
