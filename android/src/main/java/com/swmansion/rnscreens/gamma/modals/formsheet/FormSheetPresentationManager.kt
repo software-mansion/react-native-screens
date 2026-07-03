@@ -51,13 +51,12 @@ internal class FormSheetPresentationManager(
         }
     }
 
-    internal fun handleNativeDismiss(): Boolean {
+    internal fun handleNativeDismiss() {
         if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
-            return false
+            return
         }
 
         onNativeDismiss()
         updatePresentationState(isOpen = false)
-        return true
     }
 }
