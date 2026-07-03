@@ -34,7 +34,7 @@ class DimmingViewManager(
         dimmingView.setOnClickListener(listener)
     }
 
-    internal fun onDialogShown() {
+    internal fun onDialogShow() {
         attachDimmingViewOverNativeTouchOutside()
     }
 

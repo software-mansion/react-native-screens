@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
@@ -56,18 +55,12 @@ class FormSheetDialogManager(
     private val presentationManager =
         FormSheetPresentationManager(
             performPresent = { onComplete ->
+                dialog.setOnShowListener {
+                    dialog.setOnShowListener(null)
+                    dimmingManager.onDialogShow()
+                    animationCoordinator.runEnterAnimation(bottomSheetView, onComplete)
+                }
                 dialog.show()
-                dimmingManager.onDialogShown()
-
-                bottomSheetView?.let { view ->
-                    if (view.isLaidOut) {
-                        animationCoordinator.runEnterAnimation(view, onComplete)
-                    } else {
-                        view.doOnPreDraw {
-                            animationCoordinator.runEnterAnimation(view, onComplete)
-                        }
-                    }
-                } ?: onComplete()
             },
             performDismiss = { onComplete ->
                 animationCoordinator.runExitAnimation(bottomSheetView) {
@@ -78,11 +71,11 @@ class FormSheetDialogManager(
             onNativeDismiss = onDismissRequest,
         )
 
-    private val lifecycleCoordinator =
-        FormSheetLifecycleCoordinator(
+    private val nativeDismissCoordinator =
+        FormSheetNativeDismissCoordinator(
             dialog = dialog,
             dimmingManager = dimmingManager,
-            onDismiss = {
+            onNativeDismiss = {
                 presentationManager.handleNativeDismiss()
             },
         )
@@ -91,7 +84,7 @@ class FormSheetDialogManager(
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
         }
-        lifecycleCoordinator.setup()
+        nativeDismissCoordinator.setup()
         dimensionsCoordinator.setup()
     }
 
@@ -109,11 +102,11 @@ class FormSheetDialogManager(
         val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
         val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
 
-        if (detentsChanged || isOpening) {
-            if (detentsChanged) {
-                resolvedDetents = resolveDetents(newConfig.detents)
-            }
+        if (detentsChanged) {
+            resolvedDetents = resolveDetents(newConfig.detents)
+        }
 
+        if (detentsChanged || isOpening) {
             dimensionsCoordinator.updateFormSheetDetents(
                 detents = resolvedDetents,
             )
@@ -140,7 +133,8 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
-        lifecycleCoordinator.destroy()
+        dialog.setOnShowListener(null)
+        nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()
     }
