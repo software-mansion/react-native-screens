@@ -17,9 +17,14 @@ internal class FormSheetAnimationCoordinator(
     private var currentAnimatorSet: AnimatorSet? = null
 
     internal fun runEnterAnimation(
-        view: View,
+        view: View?,
         onAnimationEnd: () -> Unit,
     ) {
+        if (view == null) {
+            onAnimationEnd()
+            return
+        }
+
         val isAnimating = currentAnimatorSet?.isRunning == true
 
         currentAnimatorSet?.cancel()
