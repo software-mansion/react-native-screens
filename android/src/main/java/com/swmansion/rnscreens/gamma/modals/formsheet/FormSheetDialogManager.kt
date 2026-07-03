@@ -65,7 +65,7 @@ class FormSheetDialogManager(
             invalidationFlags.isPresentationInvalidated = true
             if (newConfig.isOpen) {
                 // ALWAYS refresh the sheet configuration when reopening to ensure that BottomSheet
-                // state and layout is synchronized with native behavior.
+                // state and layout are synchronized with native behavior.
                 invalidationFlags.isAppearanceInvalidated = true
                 invalidationFlags.isBehaviorInvalidated = true
             }

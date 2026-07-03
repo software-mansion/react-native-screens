@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
-class FormSheetInvalidationFlags(
+internal class FormSheetInvalidationFlags(
     var isPresentationInvalidated: Boolean = false,
     var isAppearanceInvalidated: Boolean = false,
     var isBehaviorInvalidated: Boolean = false,
