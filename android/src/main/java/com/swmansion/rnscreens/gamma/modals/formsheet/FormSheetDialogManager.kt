@@ -99,7 +99,7 @@ class FormSheetDialogManager(
 
     private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
         if (rawDetents.isEmpty()) {
-            return FormSheetDetents(listOf(LARGE_DETENT))
+            return FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
         }
 
         return try {
@@ -110,7 +110,7 @@ class FormSheetDialogManager(
                 "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
                 e,
             )
-            FormSheetDetents(listOf(LARGE_DETENT))
+            FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
         }
     }
 
@@ -231,6 +231,6 @@ class FormSheetDialogManager(
     }
 
     companion object {
-        private const val LARGE_DETENT = 1.0
+        private const val LARGE_DETENT_FRACTION = 1.0
     }
 }
