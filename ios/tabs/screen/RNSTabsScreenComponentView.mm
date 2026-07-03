@@ -36,6 +36,11 @@ namespace react = facebook::react;
 
   RNSTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
 
+  // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
+  // the owning `RNSTabsScreenViewController` (as `RNSContainerItem`) when resolving the content
+  // scroll view for special effects.
+  __weak UIScrollView *_Nullable _contentScrollView;
+
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
   // Tracks that the first child was mounted before props were set.
@@ -119,9 +124,17 @@ RNS_IGNORE_SUPER_CALL_END
 #if RNS_GAMMA_ENABLED
 - (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
 {
+  // Native iOS-26 scroll-edge behavior (status-bar tap scroll-to-top, scroll edge appearance).
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  // Cache used by the container-nesting content-scroll-view resolution.
+  _contentScrollView = scrollView;
 }
 #endif // RNS_GAMMA_ENABLED
+
+- (nullable UIScrollView *)cachedContentScrollView
+{
+  return _contentScrollView;
+}
 
 #pragma mark - Events
 

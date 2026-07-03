@@ -6,6 +6,7 @@
 #import <limits>
 #import "NSString+RNSUtility.h"
 #import "RNSLog.h"
+#import "RNSParentContainerItemRegistry.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsNavigationStateObserverRegistry.h"
@@ -86,6 +87,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   BOOL _isHandlingExplicitSelectionUpdate;
 
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
+
+  RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
 }
 
 - (instancetype)init
@@ -98,6 +101,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
+    _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 
     // Delegate field retains weakly, no risk of cycle.
     self.delegate = self;
@@ -148,6 +152,29 @@ static void rns_pushViewController(__unsafe_unretained id self,
   return self;
 }
 
+#pragma mark - RNSContainer
+
+- (nullable UIScrollView *)resolveCurrentContentScrollView
+{
+  // `selectedViewController` may be the `moreNavigationController` (a `UINavigationController`) -
+  // we only resolve for our own tab screens.
+  UIViewController *selectedController = self.selectedViewController;
+  if (![selectedController isKindOfClass:RNSTabsScreenViewController.class]) {
+    return nil;
+  }
+  return [static_cast<RNSTabsScreenViewController *>(selectedController) findContentScrollView];
+}
+
+- (void)attachToParentContainerItem
+{
+  [_parentContainerRegistry attachContainer:self];
+}
+
+- (void)detachFromParentContainerItem
+{
+  [_parentContainerRegistry detachContainer:self];
+}
+
 #pragma mark - UIKit callbacks
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -156,6 +183,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   if (parent != nil) {
     [self updateLayoutDirectionBelowIOS17IfNeeded];
+    [self attachToParentContainerItem];
+  } else {
+    [self detachFromParentContainerItem];
   }
 }
 

@@ -7,6 +7,14 @@ export const describeIfiOS =
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
+/**
+ * Detox targets a single simulator per run, selected via the
+ * `RNS_APPLE_SIM_NAME` env var (see scripts/e2e/ios-devices.js), which
+ * defaults to an iPhone. There is no runtime UIUserInterfaceIdiom query
+ * exposed to Detox, so we infer the idiom from the requested simulator name.
+ * This lets iPad-only suites self-skip on the default iPhone CI run; they
+ * execute only when invoked with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
+ */
 export const isIPadTarget =
   device.getPlatform() === 'ios' &&
   /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
