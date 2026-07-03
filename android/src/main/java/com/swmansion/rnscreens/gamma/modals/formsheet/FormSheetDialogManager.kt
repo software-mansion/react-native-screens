@@ -63,13 +63,13 @@ class FormSheetDialogManager(
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
-        if (formSheetConfig.isOpen != newConfig.isOpen) {
-            if (newConfig.isOpen) {
-                dialog.show()
-            } else {
-                animationCoordinator.runExitAnimation(bottomSheetView) {
-                    dialog.dismiss()
-                }
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        val isClosing = !newConfig.isOpen && formSheetConfig.isOpen
+        if (isOpening) {
+            dialog.show()
+        } else if (isClosing) {
+            animationCoordinator.runExitAnimation(bottomSheetView) {
+                dialog.dismiss()
             }
         }
 
@@ -85,7 +85,6 @@ class FormSheetDialogManager(
         // TODO: @t0maboro
         // - a dedicated presentation manager should be introduced as on iOS,
         // - invalidation flags logic should be implemented following other components convention
-        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
         if (isOpening) {
             shouldReconfigureDetents = true
         }
