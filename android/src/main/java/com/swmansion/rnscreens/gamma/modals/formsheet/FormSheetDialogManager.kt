@@ -16,6 +16,8 @@ class FormSheetDialogManager(
 
     private var resolvedDetents: FormSheetDetents? = null
 
+    internal val invalidationFlags = FormSheetInvalidationFlags()
+
     private val themedContext =
         ContextThemeWrapper(
             context,
@@ -62,29 +64,57 @@ class FormSheetDialogManager(
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
         if (formSheetConfig.isOpen != newConfig.isOpen) {
-            presentationManager.updatePresentationState(newConfig.isOpen)
+            invalidationFlags.isPresentationInvalidated = true
+            if (newConfig.isOpen) {
+                // ALWAYS refresh the sheet configuration when reopening to ensure that BottomSheet
+                // state and layout is synchronized with native behavior.
+                invalidationFlags.isAppearanceInvalidated = true
+                invalidationFlags.isBehaviorInvalidated = true
+            }
         }
 
         if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
-            container.setGrabberVisible(newConfig.prefersGrabberVisible)
+            invalidationFlags.isAppearanceInvalidated = true
         }
 
-        // TODO: @t0maboro
-        // - invalidation flags logic should be implemented following other components convention
-        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
-        val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
-
-        if (detentsChanged) {
-            resolvedDetents = resolveDetents(newConfig.detents)
-        }
-
-        if (detentsChanged || isOpening) {
-            dimensionsCoordinator.updateFormSheetDetents(
-                detents = resolvedDetents,
-            )
+        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
+            invalidationFlags.isBehaviorInvalidated = true
         }
 
         formSheetConfig = newConfig
+
+        flushPendingUpdates()
+    }
+
+    private fun flushPendingUpdates() {
+        if (!invalidationFlags.any()) return
+
+        if (invalidationFlags.isBehaviorInvalidated) {
+            invalidationFlags.isBehaviorInvalidated = false
+            updateSheetBehavior()
+        }
+
+        if (invalidationFlags.isAppearanceInvalidated) {
+            invalidationFlags.isAppearanceInvalidated = false
+            updateSheetAppearance()
+        }
+
+        if (invalidationFlags.isPresentationInvalidated) {
+            invalidationFlags.isPresentationInvalidated = false
+            updateSheetPresentation()
+        }
+    }
+
+    private fun updateSheetBehavior() {
+        dimensionsCoordinator.updateFormSheetDetents(resolveDetents(formSheetConfig.detents))
+    }
+
+    private fun updateSheetAppearance() {
+        container.setGrabberVisible(formSheetConfig.prefersGrabberVisible)
+    }
+
+    private fun updateSheetPresentation() {
+        presentationManager.updatePresentationState(formSheetConfig.isOpen)
     }
 
     private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
