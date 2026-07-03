@@ -46,18 +46,30 @@ internal class FormSheetDimensionsCoordinator(
      * This method must run after the first layout pass.
      */
     private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
-        view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-            override fun onLayoutChange(
-                v: View, left: Int, top: Int, right: Int, bottom: Int,
-                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
-            ) {
-                ViewCompat.setWindowInsetsAnimationCallback(v, null)
-                v.removeOnLayoutChangeListener(this)
-            }
-        })
+        view.addOnLayoutChangeListener(
+            object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    v: View,
+                    left: Int,
+                    top: Int,
+                    right: Int,
+                    bottom: Int,
+                    oldLeft: Int,
+                    oldTop: Int,
+                    oldRight: Int,
+                    oldBottom: Int,
+                ) {
+                    ViewCompat.setWindowInsetsAnimationCallback(v, null)
+                    v.removeOnLayoutChangeListener(this)
+                }
+            },
+        )
     }
 
-    internal fun updateFormSheetDetents(detents: FormSheetDetents?, applyInitialState: Boolean) {
+    internal fun updateFormSheetDetents(
+        detents: FormSheetDetents?,
+        applyInitialState: Boolean,
+    ) {
         currentDetents = detents
         if (applyInitialState) {
             pendingInitialState = true
