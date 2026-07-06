@@ -56,8 +56,9 @@ private fun loadImageInternal(
                 val closeableImage = imageReference.get()
 
                 if (closeableImage is CloseableStaticBitmap) {
+                    val bitmap = closeableImage.underlyingBitmap
                     val drawable =
-                        closeableImage.underlyingBitmap
+                        bitmap
                             ?.copy(closeableImage.underlyingBitmap.config ?: Bitmap.Config.ARGB_8888, false)
                             ?.toDrawable(context.resources)
                     onLoaded(drawable)
