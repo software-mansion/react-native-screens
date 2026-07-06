@@ -2,7 +2,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
 // scenario group consumed by the selection menu.
-import TestStackPreventNativeDismissSingleStack from './prevent-native-dismiss-single-stack';
+import TestStackPreventNativeDismissSingleStack from './test-stack-prevent-native-dismiss-single-stack';
 import TestStackPreventNativeDismissNestedStack from './prevent-native-dismiss-nested-stack';
 import TestStackAnimationAndroid from './test-animation-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
@@ -21,7 +21,7 @@ import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-i
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
-export { default as TestStackPreventNativeDismissSingleStack } from './prevent-native-dismiss-single-stack';
+export { default as TestStackPreventNativeDismissSingleStack } from './test-stack-prevent-native-dismiss-single-stack';
 export { default as TestStackPreventNativeDismissNestedStack } from './prevent-native-dismiss-nested-stack';
 export { default as TestStackAnimationAndroid } from './test-animation-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
