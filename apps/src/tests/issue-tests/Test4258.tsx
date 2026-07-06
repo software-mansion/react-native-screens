@@ -78,9 +78,7 @@ function HomeTab({
         1. Press "Push cover screen" (tabs get detached underneath).
       </Text>
       <Text style={styles.step}>
-        2. On the cover screen press "Remount tabs while detached" (simulates
-        what expo-router does when the visible tab set changes — the new
-        TabsContainer never attaches, so its navState stays EMPTY).
+        2. On the cover screen press "Remount tabs while detached".
       </Text>
       <Text style={styles.step}>
         3. Press "Toggle theme" (changes standardAppearance
@@ -170,9 +168,7 @@ function TabsScreen({
   ];
 
   // `key` remounts TabsContainer, exactly like expo-router does when the set
-  // of visible tabs changes (its internal `key: visibleTabsKeys`). The old
-  // TabsContainer leaks (stays detached with EMPTY navState) but keeps
-  // receiving Fabric prop updates.
+  // of visible tabs changes (its internal `key: visibleTabsKeys`).
   return (
     <TabsContainer
       key={`generation-${generation}`}
