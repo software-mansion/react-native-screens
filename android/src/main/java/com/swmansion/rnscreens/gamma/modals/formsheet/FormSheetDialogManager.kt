@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.content.Context
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,13 @@ class FormSheetDialogManager(
     private val onDismissRequest: () -> Unit,
 ) {
     private var formSheetConfig = FormSheetConfig()
+
+    private var resolvedDetents: FormSheetDetents? = null
+
+    private var shouldReconfigureDetents = false
+
+    private var lastTopInset = 0
+    private var lastBottomInset = 0
 
     private val themedContext =
         ContextThemeWrapper(
@@ -35,6 +43,9 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
+    private val behaviorController =
+        bottomSheetView?.let { FormSheetBehaviorController(it) }
+
     private val dimmingManager = DimmingViewManager(context, dialog)
 
     private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
@@ -48,17 +59,17 @@ class FormSheetDialogManager(
         setupDialogCancelListener()
         setupWindowInsetsListener()
 
-        dimmingManager.setOnBackdropClickListener(onDismissRequest)
+        dimmingManager.setOnBackdropClickListener { onDismissRequest() }
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
-        if (formSheetConfig.isOpen != newConfig.isOpen) {
-            if (newConfig.isOpen) {
-                dialog.show()
-            } else {
-                animationCoordinator.runExitAnimation(bottomSheetView) {
-                    dialog.dismiss()
-                }
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        val isClosing = !newConfig.isOpen && formSheetConfig.isOpen
+        if (isOpening) {
+            dialog.show()
+        } else if (isClosing) {
+            animationCoordinator.runExitAnimation(bottomSheetView) {
+                dialog.dismiss()
             }
         }
 
@@ -66,7 +77,40 @@ class FormSheetDialogManager(
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
+        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
+            resolvedDetents = resolveDetents(newConfig.detents)
+            shouldReconfigureDetents = true
+        }
+
+        // TODO: @t0maboro
+        // - a dedicated presentation manager should be introduced as on iOS,
+        // - invalidation flags logic should be implemented following other components convention
+        if (isOpening) {
+            shouldReconfigureDetents = true
+        }
+
+        if (shouldReconfigureDetents) {
+            updateNativeContainerHeight()
+        }
+
         formSheetConfig = newConfig
+    }
+
+    private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
+        if (rawDetents.isEmpty()) {
+            return FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
+        }
+
+        return try {
+            FormSheetDetents(rawDetents)
+        } catch (e: IllegalArgumentException) {
+            Log.e(
+                "[RNScreens]",
+                "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
+                e,
+            )
+            FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
+        }
     }
 
     private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
@@ -80,11 +124,25 @@ class FormSheetDialogManager(
             object : android.view.ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     view.viewTreeObserver.removeOnPreDrawListener(this)
-                    view.translationY = view.height.toFloat()
+                    disableMaterialInsetsAnimationCallback(view)
                     return true
                 }
             },
         )
+    }
+
+    /**
+     * BottomSheetBehavior registers an internal `WindowInsetsAnimationCallback` on the
+     * sheet view during its first `onLayoutChild`. That callback drives `translationY` to follow
+     * animated inset changes, what interferes with our slide-in custom animation.
+     *
+     * We manage insets ourselves by setting a fixed height for FormSheetContainer, so we can
+     * clear the Material's callback to remove the conflict entirely.
+     *
+     * This method must run after the first layout pass.
+     */
+    private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
+        ViewCompat.setWindowInsetsAnimationCallback(view, null)
     }
 
     private fun setupDialogShowListener() {
@@ -104,8 +162,10 @@ class FormSheetDialogManager(
     }
 
     private fun setupWindowInsetsListener() {
-        ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
-            updateNativeContainerHeight(view, insets)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { _, insets ->
+            lastTopInset = getTopInset(insets)
+            lastBottomInset = getBottomInset(insets)
+            updateNativeContainerHeight()
             insets
         }
     }
@@ -117,25 +177,33 @@ class FormSheetDialogManager(
      * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
      * the system insets, we completely bypass these redundant layout passes.
      */
-    private fun updateNativeContainerHeight(
-        view: View,
-        insets: WindowInsetsCompat,
-    ) {
-        val topInset = getTopInset(insets)
-        val bottomInset = getBottomInset(insets)
+    private fun updateNativeContainerHeight() {
         val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
 
-        if (dialogDecorHeight > 0) {
-            val availableHeight = (dialogDecorHeight - topInset - bottomInset).coerceAtLeast(0)
+        if (dialogDecorHeight <= 0) {
+            return
+        }
 
-            val layoutParams =
-                view.layoutParams
-                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, availableHeight)
-            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != availableHeight) {
-                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                layoutParams.height = availableHeight
-                view.layoutParams = layoutParams
-            }
+        resolvedDetents?.let { detents ->
+            behaviorController?.updateSheetBehavior(
+                detents = detents,
+                sheetAvailableSpace = dialogDecorHeight,
+                applyInitialState = shouldReconfigureDetents,
+            )
+            shouldReconfigureDetents = false
+        }
+
+        val sheetContainerHeight =
+            resolvedDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
+                ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
+
+        val layoutParams =
+            container.layoutParams
+                ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sheetContainerHeight)
+        if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != sheetContainerHeight) {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            layoutParams.height = sheetContainerHeight
+            container.layoutParams = layoutParams
         }
     }
 
@@ -152,12 +220,16 @@ class FormSheetDialogManager(
             ).bottom
 
     internal fun destroy() {
-        dimmingManager.setOnBackdropClickListener {}
+        dimmingManager.setOnBackdropClickListener(null)
 
         ViewCompat.setOnApplyWindowInsetsListener(container, null)
 
         dialog.setOnShowListener(null)
         dialog.setOnCancelListener(null)
         dialog.dismiss()
+    }
+
+    companion object {
+        private const val LARGE_DETENT_FRACTION = 1.0
     }
 }

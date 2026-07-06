@@ -30,10 +30,8 @@ class DimmingViewManager(
                 )
         }
 
-    internal fun setOnBackdropClickListener(listener: () -> Unit) {
-        dimmingView.setOnClickListener {
-            listener()
-        }
+    internal fun setOnBackdropClickListener(listener: View.OnClickListener?) {
+        dimmingView.setOnClickListener(listener)
     }
 
     internal fun onDialogShown() {
