@@ -121,7 +121,7 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
-        dialog.setOnShowListener(null)
+        presentationManager.destroy()
         nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()

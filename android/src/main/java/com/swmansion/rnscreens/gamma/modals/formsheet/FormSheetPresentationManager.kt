@@ -121,4 +121,13 @@ internal class FormSheetPresentationManager(
         onNativeDismiss()
         updatePresentationState(isOpen = false)
     }
+
+    internal fun destroy() {
+        currentSheetAnimator?.cancel()
+        currentSheetAnimator = null
+
+        dialog.setOnShowListener(null)
+
+        state = FormSheetPresentationState.DISMISSED
+    }
 }
