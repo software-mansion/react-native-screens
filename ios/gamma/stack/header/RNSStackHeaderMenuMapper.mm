@@ -3,9 +3,9 @@
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-static NSSet<NSString *> *const kAllowedMenuKeys =
+static NSSet<NSString *> *const kRNSAllowedMenuKeys =
     [NSSet setWithObjects:@"id", @"type", @"title", @"children", @"singleSelection", nil];
-static NSSet<NSString *> *const kAllowedMenuItemKeys =
+static NSSet<NSString *> *const kRNSAllowedMenuItemKeys =
     [NSSet setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", nil];
 
 @implementation RNSStackHeaderMenuMapper
@@ -71,7 +71,7 @@ static NSSet<NSString *> *const kAllowedMenuItemKeys =
 + (void)validateMenuKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([kAllowedMenuKeys containsObject:key], @"[RNScreens] Invalid key \"%@\" found in menu", key);
+    RCTAssert([kRNSAllowedMenuKeys containsObject:key], @"[RNScreens] Invalid key \"%@\" found in menu", key);
   }
   RCTAssert(dict[@"children"], @"[RNScreens] missing key \"children\" in menu");
   RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
@@ -80,7 +80,7 @@ static NSSet<NSString *> *const kAllowedMenuItemKeys =
 + (void)validateMenuItemKeys:(NSDictionary *)dict
 {
   for (NSString *key in dict) {
-    RCTAssert([kAllowedMenuItemKeys containsObject:key], @"[RNScreens] Invalid key \"%@\" found in menu item", key);
+    RCTAssert([kRNSAllowedMenuItemKeys containsObject:key], @"[RNScreens] Invalid key \"%@\" found in menu item", key);
   }
   RCTAssert(dict[@"id"], @"[RNScreens] missing id on one of menu elements");
 }
