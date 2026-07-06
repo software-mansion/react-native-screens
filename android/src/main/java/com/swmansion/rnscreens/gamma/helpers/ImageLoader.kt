@@ -59,7 +59,7 @@ private fun loadImageInternal(
                     val bitmap = closeableImage.underlyingBitmap
                     val drawable =
                         bitmap
-                            ?.copy(closeableImage.underlyingBitmap.config ?: Bitmap.Config.ARGB_8888, false)
+                            ?.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
                             ?.toDrawable(context.resources)
                     onLoaded(drawable)
                 }
