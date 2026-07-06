@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
@@ -16,8 +15,6 @@ class FormSheetDialogManager(
     private var formSheetConfig = FormSheetConfig()
 
     private var resolvedDetents: FormSheetDetents? = null
-
-    private var shouldReconfigureDetents = false
 
     private val themedContext =
         ContextThemeWrapper(
@@ -42,8 +39,6 @@ class FormSheetDialogManager(
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
-    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
-
     private val dimensionsCoordinator =
         FormSheetDimensionsCoordinator(
             dialog = dialog,
@@ -52,57 +47,41 @@ class FormSheetDialogManager(
             behaviorController = behaviorController,
         )
 
-    private val lifecycleCoordinator =
-        FormSheetLifecycleCoordinator(
+    private val presentationManager =
+        FormSheetPresentationManager(
             dialog = dialog,
+            bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            onShow = {
-                dimmingManager.onDialogShown()
-                bottomSheetView?.let { view ->
-                    animationCoordinator.runEnterAnimation(view)
-                }
-            },
-            onDismiss = onDismissRequest,
+            onNativeDismiss = onDismissRequest,
         )
 
     init {
-        bottomSheetView?.let { view ->
-            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-        }
-        lifecycleCoordinator.setup()
+        presentationManager.setup()
         dimensionsCoordinator.setup()
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
-        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
-        val isClosing = !newConfig.isOpen && formSheetConfig.isOpen
-        if (isOpening) {
-            dialog.show()
-        } else if (isClosing) {
-            animationCoordinator.runExitAnimation(bottomSheetView) {
-                dialog.dismiss()
-            }
+        if (formSheetConfig.isOpen != newConfig.isOpen) {
+            presentationManager.updatePresentationState(newConfig.isOpen)
         }
 
         if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
-        if (resolvedDetents == null || formSheetConfig.detents != newConfig.detents) {
-            resolvedDetents = resolveDetents(newConfig.detents)
-            shouldReconfigureDetents = true
-        }
-
         // TODO: @t0maboro
-        // - a dedicated presentation manager should be introduced as on iOS,
         // - invalidation flags logic should be implemented following other components convention
-        if (isOpening) {
-            shouldReconfigureDetents = true
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
+
+        if (detentsChanged) {
+            resolvedDetents = resolveDetents(newConfig.detents)
         }
 
-        if (shouldReconfigureDetents) {
-            dimensionsCoordinator.updateFormSheetDetents(resolvedDetents, shouldReconfigureDetents)
-            shouldReconfigureDetents = false
+        if (detentsChanged || isOpening) {
+            dimensionsCoordinator.updateFormSheetDetents(
+                detents = resolvedDetents,
+            )
         }
 
         formSheetConfig = newConfig
@@ -126,7 +105,7 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
-        lifecycleCoordinator.destroy()
+        presentationManager.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()
     }

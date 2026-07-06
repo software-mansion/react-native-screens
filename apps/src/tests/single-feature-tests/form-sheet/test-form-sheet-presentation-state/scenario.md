@@ -4,7 +4,7 @@
 
 **Description:** Verify the presentation state machine. This test ensures that when the React Native state rapidly toggles between `false` and `true` the native layer correctly queues the presentation changes and prevents state desynchronization.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ Other: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone
+- Android emulator
 
 ## Steps - iPhone
 
