@@ -15,7 +15,7 @@ internal class FormSheetBehaviorController(
      * behind the status bar, where Material pads insets for us.
      * @param contentHeightForFitToContents - the exact height of the content, e.g. React content calculated by Yoga.
      * Used exclusively when the sheet is in `fitToContents` mode.
-     * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the 
+     * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the
      * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
      * the safe area.
      */

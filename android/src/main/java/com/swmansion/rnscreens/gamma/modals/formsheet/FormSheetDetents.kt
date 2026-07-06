@@ -51,6 +51,10 @@ internal class FormSheetDetents(
          * is laid out behind the system navigation bar. The sheet's container covers the insets,
          * while the RN content is strictly constrained to `contentHeight`.
          */
+        if (contentHeight <= 0) {
+            // Avoid collapsing the sheet before the React content has been laid out and measured.
+            return containerHeight
+        }
         return (contentHeight + bottomInset).coerceAtMost(containerHeight)
     }
 
@@ -82,6 +86,10 @@ internal class FormSheetDetents(
         contentHeight: Int = 0,
     ): Int {
         if (isFitToContents) {
+            // Until we have a measured content height, fall back to a safe-area height so Yoga can lay out.
+            if (contentHeight <= 0) {
+                return (containerHeight - topInset - bottomInset).coerceAtLeast(0)
+            }
             return contentHeight.coerceAtMost(containerHeight)
         }
 
