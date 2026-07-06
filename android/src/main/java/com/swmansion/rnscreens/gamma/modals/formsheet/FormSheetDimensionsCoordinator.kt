@@ -42,7 +42,7 @@ internal class FormSheetDimensionsCoordinator(
      *
      * We manage insets ourselves by setting a fixed height for FormSheetContainer, so we can
      * clear the Material's callback to remove the conflict entirely.
-     * 
+     *
      * This method must run after the first layout pass.
      */
     private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
