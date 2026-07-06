@@ -116,18 +116,14 @@ function SecondTab() {
   );
 }
 
-function TabsScreen({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<RouteParamList>;
-}) {
+function TabsScreen({ homeTab }: { homeTab: TabRouteConfig['Component'] }) {
   const { dark, generation } = React.useContext(AppStateContext);
   const bg = dark ? DarkColors.background : Colors.background;
 
   const routeConfigs: TabRouteConfig[] = [
     {
       name: 'Home',
-      Component: () => HomeTab({ navigation }),
+      Component: homeTab,
       options: {
         ...DEFAULT_TAB_ROUTE_OPTIONS,
         title: 'Home',
@@ -201,7 +197,8 @@ function CoverScreen() {
 }
 
 function MainScreen({ navigation }: StackNavigationProp) {
-  return <TabsScreen navigation={navigation} />;
+  const homeTab = () => <HomeTab navigation={navigation} />;
+  return <TabsScreen homeTab={homeTab} />;
 }
 
 export default function App() {
