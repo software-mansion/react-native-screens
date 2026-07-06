@@ -18,6 +18,7 @@ import {
   type TabRouteConfig,
   useTabsNavigationContext,
 } from '@apps/shared/gamma/containers/tabs';
+import { Colors, DarkColors, Palette } from '@apps/shared/styling';
 
 type RouteParamList = {
   Tabs: undefined;
@@ -33,9 +34,6 @@ const Stack = createNativeStackNavigator<RouteParamList>();
 const AppStateContext = React.createContext({
   generation: 0,
   dark: false,
-  stackNavigation: undefined as
-    | NativeStackNavigationProp<RouteParamList>
-    | undefined,
   setGeneration: (_: number) => {},
   setDark: (_: boolean) => {},
 });
@@ -45,7 +43,7 @@ function useAppearanceSync() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
 
   useEffect(() => {
-    const bg = dark ? '#111318' : '#ffffff';
+    const bg = dark ? DarkColors.background : Colors.background;
     setRouteOptions(routeKey, {
       android: {
         ...DEFAULT_TAB_ROUTE_OPTIONS.android,
@@ -63,10 +61,14 @@ function useAppearanceSync() {
   }, [dark, routeKey, setRouteOptions]);
 }
 
-function HomeTab() {
+function HomeTab({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<RouteParamList>;
+}) {
   useAppearanceSync();
 
-  const { generation, dark, setGeneration, setDark, stackNavigation } =
+  const { generation, dark, setGeneration, setDark } =
     React.useContext(AppStateContext);
 
   return (
@@ -99,7 +101,7 @@ function HomeTab() {
         />
         <Button
           title="Push cover screen"
-          onPress={() => stackNavigation?.navigate('Cover')}
+          onPress={() => navigation.navigate('Cover')}
         />
       </View>
     </ScrollView>
@@ -116,14 +118,18 @@ function SecondTab() {
   );
 }
 
-function TabsScreen() {
+function TabsScreen({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<RouteParamList>;
+}) {
   const { dark, generation } = React.useContext(AppStateContext);
-  const bg = dark ? '#111318' : '#ffffff';
+  const bg = dark ? DarkColors.background : Colors.background;
 
   const routeConfigs: TabRouteConfig[] = [
     {
       name: 'Home',
-      Component: HomeTab,
+      Component: () => HomeTab({ navigation }),
       options: {
         ...DEFAULT_TAB_ROUTE_OPTIONS,
         title: 'Home',
@@ -175,7 +181,7 @@ function TabsScreen() {
   );
 }
 
-function CoverScreen({ navigation }: StackNavigationProp) {
+function CoverScreen() {
   const { generation, dark, setGeneration, setDark } =
     React.useContext(AppStateContext);
 
@@ -193,22 +199,13 @@ function CoverScreen({ navigation }: StackNavigationProp) {
           title={`Toggle theme (current: ${dark ? 'dark' : 'light'})`}
           onPress={() => setDark(!dark)}
         />
-        <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
     </View>
   );
 }
 
 function MainScreen({ navigation }: StackNavigationProp) {
-  return (
-    <AppStateContext.Provider
-      value={{
-        ...React.useContext(AppStateContext),
-        stackNavigation: navigation,
-      }}>
-      <TabsScreen />
-    </AppStateContext.Provider>
-  );
+  return <TabsScreen navigation={navigation} />;
 }
 
 export default function App() {
@@ -220,7 +217,6 @@ export default function App() {
       value={{
         generation,
         dark,
-        stackNavigation: undefined,
         setGeneration,
         setDark,
       }}>
@@ -231,11 +227,7 @@ export default function App() {
             component={MainScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
-            name="Cover"
-            component={CoverScreen}
-            options={{ headerShown: false }}
-          />
+          <Stack.Screen name="Cover" component={CoverScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppStateContext.Provider>
@@ -267,7 +259,7 @@ const styles = StyleSheet.create({
   },
   step: {
     fontSize: 14,
-    color: '#555',
+    color: Palette.NavyLight60,
   },
   buttons: {
     marginTop: 24,
