@@ -86,7 +86,7 @@ export interface StackHeaderMenuItemIOS {
    * This prop should only be used for items in top-level menus. Requires iOS 16.0 or later.
    *
    * @default false
-
+   *
    * @platform ios
    */
   keepsMenuPresented?: boolean | undefined;
