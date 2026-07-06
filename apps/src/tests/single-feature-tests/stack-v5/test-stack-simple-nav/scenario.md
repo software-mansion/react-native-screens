@@ -2,20 +2,16 @@
 
 ## Details
 
-**Description:** Verifies basic push and pop navigation on the gamma/v5
-`StackContainer`. The route stack starts with **Home** and can push **A**
-or **B** any number of times (including re-pushing a route that is already
-on the stack), each push creating a new screen instance with its own unique
-`routeKey` exposed via `useStackNavigationContext`. Non-root screens expose
-a **Pop** button that calls `navigation.pop(routeKey)` on themselves. The
-test validates that JS-driven push/pop via on-screen buttons produces
-consistent stack state on both platforms, that the iOS native header back
-button and interactive edge-swipe-back gesture behave the same as **Pop**,
-that `routeKey` values are unique per pushed instance (even for repeated
-pushes of the same route name), and that the root screen (**Home**) cannot
-be popped and shows no back button. On Android there is no header back
-button and the system/hardware back button does not currently pop the
-stack (see issue #1459), so back-button steps are iOS-only.
+**Description:** Verify basic push and pop navigation on the gamma/v5
+`StackContainer`. The stack starts with **Home** and can push **A** or **B**
+any number of times (including re-pushing a route already on the stack),
+each push creating a new screen instance with its own unique `routeKey`;
+non-root screens expose a **Pop** button. The test validates that push/pop
+via the on-screen buttons, the iOS native header back button, and the iOS
+edge-swipe-back gesture all produce consistent stack state, that `routeKey`
+values are unique per pushed instance, and that the root screen (**Home**)
+cannot be popped. See the Notes for `routeKey` behavior and the Android
+back-button caveat (issue #1459).
 
 **OS test creation version:** iOS 18.6 and 26.5, Android API Level 36.
 
