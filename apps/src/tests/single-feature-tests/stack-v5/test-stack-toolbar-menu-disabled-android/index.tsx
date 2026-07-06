@@ -10,10 +10,10 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
-import { scenarioDescription } from './scenario-descriptions';
+import { scenarioDescription } from './scenario-description';
 
 // Every disable-relevant element: a toolbar action button, an overflow
 // action item, a checkable group (one item starts checked), and a submenu
@@ -211,7 +211,7 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdDisabled !== 'no change' && {
         disabled:
           cmdDisabled === 'undefined' ? undefined : cmdDisabled === 'true',
