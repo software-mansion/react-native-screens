@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
+import androidx.core.animation.doOnStart
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetAnimatorFactory(
@@ -18,8 +19,6 @@ internal class FormSheetAnimatorFactory(
     ): Animator {
         val startY = if (isInterrupting) view.translationY else view.height.toFloat()
         val startAlpha = if (isInterrupting) dimmingManager.dimmingViewAlpha else 0f
-
-        view.translationY = startY
 
         val slideAnimator =
             ValueAnimator.ofFloat(startY, 0f).apply {
@@ -38,6 +37,7 @@ internal class FormSheetAnimatorFactory(
         return AnimatorSet().apply {
             playTogether(slideAnimator, alphaAnimator)
             duration = animationDuration
+            doOnStart { view.translationY = startY }
         }
     }
 
