@@ -56,14 +56,11 @@ private fun loadImageInternal(
                 val closeableImage = imageReference.get()
 
                 if (closeableImage is CloseableStaticBitmap) {
-                    val bitmap = closeableImage.underlyingBitmap
-                    if (bitmap != null) {
-                        val safeBitmap = bitmap.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false) ?: bitmap
-                        val drawable = safeBitmap.toDrawable(context.resources)
-                        onLoaded(drawable)
-                    } else {
-                        onLoaded(null)
-                    }
+                    val drawable =
+                        closeableImage.underlyingBitmap
+                            ?.copy(closeableImage.underlyingBitmap.config ?: Bitmap.Config.ARGB_8888, false)
+                            ?.toDrawable(context.resources)
+                    onLoaded(drawable)
                 }
 
                 imageReference.close()
