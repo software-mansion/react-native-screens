@@ -34,6 +34,7 @@ export type HeaderItemPressEvent = Readonly<{}>;
 
 export type PlatformIconIOS = {
   type: string;
+  /* there are multiple variants, we're skipping them here */
 };
 
 export interface NativeProps extends ViewProps {

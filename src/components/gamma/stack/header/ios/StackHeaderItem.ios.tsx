@@ -45,9 +45,6 @@ function resolveMenuElementIcons(
 function resolveMenuIcons(menu: StackHeaderMenuIOS): StackHeaderMenuIOS {
   const resolvedIcon = resolveIconAssetSources(menu.icon);
   const resolvedChildren = menu.children.map(resolveMenuElementIcons);
-  if (resolvedIcon === menu.icon && resolvedChildren === menu.children) {
-    return menu;
-  }
   return { ...menu, icon: resolvedIcon, children: resolvedChildren };
 }
 

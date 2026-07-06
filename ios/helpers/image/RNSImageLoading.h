@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
                      asTemplate:(BOOL)isTemplate
-         withCompletionCallback:(void (^)(UIImage *image))completionBlock;
+         withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock;
 
 @end
 

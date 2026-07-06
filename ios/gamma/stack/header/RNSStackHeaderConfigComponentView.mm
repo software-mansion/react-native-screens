@@ -69,12 +69,20 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 - (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
                      asTemplate:(BOOL)isTemplate
-         withCompletionCallback:(void (^)(UIImage *image))completionBlock
+         withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
 {
-  RCTAssert(_imageLoader != nil, @"[RNScreens] imageLoader must not be nil when loading images");
+  if (_imageLoader == nil) {
+    RNSLog(@"[RNScreens] imageLoader must not be nil when loading images");
+    completionBlock(nil);
+    return;
+  }
 
   RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonSource];
-  RCTAssert(imageSource != nil, @"[RNScreens] Expected nonnil image source");
+  if (imageSource == nil) {
+    RNSLog(@"[RNScreens] Expected nonnil image source");
+    completionBlock(nil);
+    return;
+  }
 
   [RNSImageLoadingHelper loadImageFromSource:imageSource
                              withImageLoader:_imageLoader
