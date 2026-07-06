@@ -75,6 +75,21 @@ export interface StackHeaderMenuItemIOS {
    * @platform ios
    */
   onPress?: () => void | undefined;
+  /**
+   * @summary Keeps the menu presented after this item is tapped.
+   *
+   * @description
+   * When enabled, selecting this item will not dismiss the menu,
+   * allowing the user to continue interacting with other items.
+   *
+   * @remarks
+   * This prop should only be used for items in top-level menus. Requires iOS 16.0 or later.
+   *
+   * @default false
+   *
+   * @platform ios
+   */
+  keepsMenuPresented?: boolean | undefined;
 }
 
 /**

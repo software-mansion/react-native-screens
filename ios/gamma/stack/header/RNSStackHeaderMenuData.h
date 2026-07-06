@@ -21,11 +21,13 @@ typedef NS_ENUM(NSInteger, RNSMenuItemType) {
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 @property (nonatomic, readonly) RNSMenuItemType itemType;
 @property (nonatomic, readonly) BOOL initialToggleState;
+@property (nonatomic, readonly) BOOL keepsMenuPresented;
 
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
                   itemType:(RNSMenuItemType)itemType
-        initialToggleState:(BOOL)initialToggleState;
+        initialToggleState:(BOOL)initialToggleState
+        keepsMenuPresented:(BOOL)keepsMenuPresented;
 
 @end
 

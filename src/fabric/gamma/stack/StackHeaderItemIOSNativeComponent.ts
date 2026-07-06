@@ -15,6 +15,7 @@ export type StackHeaderMenuItemIOS = {
   id: string;
   type: 'menuItem';
   title?: string | undefined;
+  keepsMenuPresented?: boolean | undefined;
 };
 
 export type StackHeaderMenuIOS = {
