@@ -41,7 +41,6 @@
                         completionBlock(image);
                       }
                     }];
-      // Completion may have already fired synchronously if image was cached
       return iconData.resolvedImage;
     }
   }
