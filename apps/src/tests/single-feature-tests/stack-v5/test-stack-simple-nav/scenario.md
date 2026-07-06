@@ -43,7 +43,7 @@ not yet implemented.
   a preserved (not recreated) screen keeps the same `Key`.
 - **Android:** the gamma Stack does not render a header back button, and
   the Android system/hardware back button does not currently pop the stack
-  (see issue #1459). All back-button steps below are therefore **iOS
+  (see issue [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)). All back-button steps below are therefore **iOS
   only**; on Android use the on-screen **Pop** button to go back.
 
 ## Steps
