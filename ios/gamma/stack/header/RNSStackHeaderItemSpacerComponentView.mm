@@ -61,7 +61,7 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 
   if (needsUpdate) {
-    [_invalidationDelegate headerItemDidInvalidate];
+    [_invalidationDelegate headerItemSpacerDidInvalidate];
   }
 }
 

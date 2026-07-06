@@ -6,7 +6,6 @@
 #import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
-#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -15,9 +14,6 @@
 #import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 namespace react = facebook::react;
-
-@interface RNSStackHeaderItemComponentView () <RNSViewFrameChangeDelegate>
-@end
 
 @implementation RNSStackHeaderItemComponentView {
   BOOL _didSetHeaderItemPlacement;
@@ -49,7 +45,6 @@ namespace react = facebook::react;
   _itemId = nil;
   _title = nil;
   _menu = nil;
-  _menuToggleStateTracker = nil;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
@@ -87,7 +82,7 @@ namespace react = facebook::react;
 
   // An existing item may have transitioned from label-only to custom view,
   // and needs to be rebuilt.
-  [_invalidationDelegate headerItemDidInvalidate];
+  [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -96,7 +91,7 @@ namespace react = facebook::react;
 
   // An existing item may have transitioned from custom view to label-only,
   // and needs to be rebuilt.
-  [_invalidationDelegate headerItemDidInvalidate];
+  [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
 }
 
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
@@ -149,6 +144,7 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldItemProps = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(_props);
 
   BOOL needsUpdate = NO;
+  BOOL menuDidChange = NO;
 
   if (oldItemProps.itemId != newItemProps.itemId) {
     _itemId = RCTNSStringFromStringNilIfEmpty(newItemProps.itemId);
@@ -171,8 +167,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.menu != newItemProps.menu) {
     _menu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
-    _menuToggleStateTracker = _menu != nil ? [RNSStackHeaderMenuToggleStateTracker new] : nil;
-    needsUpdate = YES;
+    menuDidChange = YES;
   }
 
   if (oldItemProps.respondsToOnPress != newItemProps.respondsToOnPress) {
@@ -183,7 +178,18 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateProps:props oldProps:oldProps];
 
   if (needsUpdate) {
-    [_invalidationDelegate headerItemDidInvalidate];
+    // rebuilds the item; needs to rebuilds the menu, but keeps its state
+    [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
+  }
+
+  if (menuDidChange) {
+    // there are 3 distinct cases for rebuilding the menu
+    // 1. only menu changed -- no item rebuilding, menu state reset
+    // 2. some different prop changed -- item rebuilds, but menu should keep its state
+    // 3. both menu and some other prop changed -- both item and menu rebuilds + menu state should be reset
+    // If we don't have separate if-s, we won't cover all cases,
+    // but unfortunately we're rebuilding the menu twice for 3. case.
+    [_invalidationDelegate headerItemMenuDidChangeWithId:_itemId];
   }
 }
 

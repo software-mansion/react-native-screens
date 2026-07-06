@@ -7,13 +7,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHeaderItemComponentView : RNSReactBaseView <RNSStackHeaderItemDataProviding>
+@interface RNSStackHeaderItemComponentView
+    : RNSReactBaseView <RNSStackHeaderItemDataProviding, RNSViewFrameChangeDelegate>
 
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
 @property (nonatomic, readonly, nullable) NSString *itemId;
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
-@property (nonatomic, readonly, nullable) RNSStackHeaderMenuToggleStateTracker *menuToggleStateTracker;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
 

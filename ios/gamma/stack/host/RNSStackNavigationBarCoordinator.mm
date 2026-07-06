@@ -2,25 +2,18 @@
 
 @implementation RNSStackNavigationBarCoordinator
 
-- (void)applyConfiguration:(RNSStackHeaderData *)data
-    forNavigationController:(nonnull UINavigationController *)navigationController
+- (void)setHidden:(BOOL)hidden
+    forNavigationController:(UINavigationController *)navigationController
                    animated:(BOOL)animated
 {
-  [self setupVisibility:data forNavigationController:navigationController animated:animated];
+  [navigationController setNavigationBarHidden:hidden animated:animated];
 }
 
-- (void)initializeNavigationBarOfNavigationController:(nonnull UINavigationController *)navigationController
+- (void)initializeNavigationBarOfNavigationController:(UINavigationController *)navigationController
 {
 #if !TARGET_OS_TV
   navigationController.navigationBar.prefersLargeTitles = YES;
 #endif // !TARGET_OS_TV
-}
-
-- (void)setupVisibility:(RNSStackHeaderData *)data
-    forNavigationController:(nonnull UINavigationController *)navigationController
-                   animated:(BOOL)animated
-{
-  [navigationController setNavigationBarHidden:data.hidden animated:animated];
 }
 
 @end
