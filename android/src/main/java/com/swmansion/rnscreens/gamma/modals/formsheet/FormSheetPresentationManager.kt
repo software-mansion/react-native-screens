@@ -10,12 +10,12 @@ internal class FormSheetPresentationManager(
     private val dialog: FormSheetDialog,
     private val bottomSheetView: View?,
     private val dimmingManager: DimmingViewManager,
-    private val animatorFactory: FormSheetAnimatorFactory,
     private val onNativeDismiss: () -> Unit,
 ) {
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
 
+    private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
 
     internal fun updatePresentationState(isOpen: Boolean) {

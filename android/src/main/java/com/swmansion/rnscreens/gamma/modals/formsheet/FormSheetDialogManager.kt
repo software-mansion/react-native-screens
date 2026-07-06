@@ -40,8 +40,6 @@ class FormSheetDialogManager(
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
-    private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
-
     private val dimensionsCoordinator =
         FormSheetDimensionsCoordinator(
             dialog = dialog,
@@ -55,7 +53,6 @@ class FormSheetDialogManager(
             dialog = dialog,
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            animatorFactory = animatorFactory,
             onNativeDismiss = onDismissRequest,
         )
 
