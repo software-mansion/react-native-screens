@@ -50,16 +50,26 @@ class FormSheetDialogManager(
 
     private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
 
+    private val lifecycleCoordinator =
+        FormSheetLifecycleCoordinator(
+            dialog = dialog,
+            dimmingManager = dimmingManager,
+            onShow = {
+                dimmingManager.onDialogShown()
+                bottomSheetView?.let { view ->
+                    animationCoordinator.runEnterAnimation(view)
+                }
+            },
+            onDismiss = onDismissRequest,
+        )
+
     init {
         bottomSheetView?.let { view ->
             setupBehaviorCallbacksForDimmingView(view)
             setupOffscreenPositionBeforeFirstDraw(view)
         }
-        setupDialogShowListener()
-        setupDialogCancelListener()
+        lifecycleCoordinator.setup()
         setupWindowInsetsListener()
-
-        dimmingManager.setOnBackdropClickListener { onDismissRequest() }
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
@@ -145,22 +155,6 @@ class FormSheetDialogManager(
         ViewCompat.setWindowInsetsAnimationCallback(view, null)
     }
 
-    private fun setupDialogShowListener() {
-        dialog.setOnShowListener {
-            dimmingManager.onDialogShown()
-
-            bottomSheetView?.let { view ->
-                animationCoordinator.runEnterAnimation(view)
-            }
-        }
-    }
-
-    private fun setupDialogCancelListener() {
-        dialog.setOnCancelListener {
-            onDismissRequest()
-        }
-    }
-
     private fun setupWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener(container) { _, insets ->
             lastTopInset = getTopInset(insets)
@@ -220,12 +214,8 @@ class FormSheetDialogManager(
             ).bottom
 
     internal fun destroy() {
-        dimmingManager.setOnBackdropClickListener(null)
-
+        lifecycleCoordinator.destroy()
         ViewCompat.setOnApplyWindowInsetsListener(container, null)
-
-        dialog.setOnShowListener(null)
-        dialog.setOnCancelListener(null)
         dialog.dismiss()
     }
 
