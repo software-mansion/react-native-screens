@@ -50,7 +50,7 @@ not yet implemented.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Simple navigation** screen (Stack
+1. Launch the app and navigate to the **Simple stack navigation** screen (Stack
    v5).
 
 - [ ] The **Home** screen is shown with a light blue background, `Name:
