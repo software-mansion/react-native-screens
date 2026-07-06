@@ -24,7 +24,10 @@ internal class FormSheetPresentationManager(
         onNativeDismiss = { handleNativeDismiss() }
     )
 
-    init {
+    internal fun setup() {
+        bottomSheetView?.let { view ->
+            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
+        }
         nativeDismissCoordinator.setup()
     }
 
@@ -47,6 +50,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
             dimmingManager.onDialogShow()

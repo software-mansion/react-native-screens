@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
@@ -57,9 +56,7 @@ class FormSheetDialogManager(
         )
 
     init {
-        bottomSheetView?.let { view ->
-            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-        }
+        presentationManager.setup()
         dimensionsCoordinator.setup()
     }
 
