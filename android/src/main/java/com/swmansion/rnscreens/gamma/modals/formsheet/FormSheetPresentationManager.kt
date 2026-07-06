@@ -18,6 +18,16 @@ internal class FormSheetPresentationManager(
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
 
+    private val nativeDismissCoordinator = FormSheetNativeDismissCoordinator(
+        dialog = dialog,
+        dimmingManager = dimmingManager,
+        onNativeDismiss = { handleNativeDismiss() }
+    )
+
+    init {
+        nativeDismissCoordinator.setup()
+    }
+
     internal fun updatePresentationState(isOpen: Boolean) {
         targetIsOpen = isOpen
         resolvePresentationState()
@@ -113,7 +123,7 @@ internal class FormSheetPresentationManager(
         }
     }
 
-    internal fun handleNativeDismiss() {
+    private fun handleNativeDismiss() {
         if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
             return
         }
@@ -129,5 +139,7 @@ internal class FormSheetPresentationManager(
         dialog.setOnShowListener(null)
 
         state = FormSheetPresentationState.DISMISSED
+
+        nativeDismissCoordinator.destroy()
     }
 }

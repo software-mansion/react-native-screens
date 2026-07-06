@@ -56,20 +56,10 @@ class FormSheetDialogManager(
             onNativeDismiss = onDismissRequest,
         )
 
-    private val nativeDismissCoordinator =
-        FormSheetNativeDismissCoordinator(
-            dialog = dialog,
-            dimmingManager = dimmingManager,
-            onNativeDismiss = {
-                presentationManager.handleNativeDismiss()
-            },
-        )
-
     init {
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
         }
-        nativeDismissCoordinator.setup()
         dimensionsCoordinator.setup()
     }
 
@@ -119,7 +109,6 @@ class FormSheetDialogManager(
 
     internal fun destroy() {
         presentationManager.destroy()
-        nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()
     }
