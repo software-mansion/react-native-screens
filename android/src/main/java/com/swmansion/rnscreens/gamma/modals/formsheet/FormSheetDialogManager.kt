@@ -59,7 +59,7 @@ class FormSheetDialogManager(
         setupDialogCancelListener()
         setupWindowInsetsListener()
 
-        dimmingManager.setOnBackdropClickListener(onDismissRequest)
+        dimmingManager.setOnBackdropClickListener { onDismissRequest() }
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
