@@ -23,6 +23,8 @@ class FormSheetHost(
 
     internal var detents: List<Double> = emptyList()
 
+    internal var reactContentsHeight: Int = 0
+
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
             updateStateIfNeeded(width, height)
@@ -43,18 +45,39 @@ class FormSheetHost(
         child: View,
         index: Int,
     ) {
+        if (child is FormSheetContentWrapper) {
+            child.onContentsHeightChange = { newHeight ->
+                if (reactContentsHeight != newHeight) {
+                    reactContentsHeight = newHeight
+                    onAfterUpdateTransaction()
+                }
+            }
+        }
         sheetContentView.addView(child, index)
     }
 
     internal fun unmountReactSubview(child: View) {
+        if (child is FormSheetContentWrapper) {
+            child.onContentsHeightChange = null
+        }
         sheetContentView.removeView(child)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
+        val child = sheetContentView.getChildAt(index)
+        if (child is FormSheetContentWrapper) {
+            child.onContentsHeightChange = null
+        }
         sheetContentView.removeViewAt(index)
     }
 
     internal fun unmountAllReactSubviews() {
+        for (i in 0 until sheetContentView.childCount) {
+            val child = sheetContentView.getChildAt(i)
+            if (child is FormSheetContentWrapper) {
+                child.onContentsHeightChange = null
+            }
+        }
         sheetContentView.removeAllViews()
     }
 
@@ -86,6 +109,7 @@ class FormSheetHost(
                 isOpen = this.isOpen,
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
+                contentHeight = this.reactContentsHeight,
             )
         dialogManager.applyConfig(config)
     }

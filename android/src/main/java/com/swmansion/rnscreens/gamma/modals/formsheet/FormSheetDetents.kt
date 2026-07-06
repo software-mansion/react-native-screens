@@ -9,16 +9,24 @@ internal class FormSheetDetents(
         require(detents.isNotEmpty()) { "[RNScreens] At least one detent must be provided." }
         require(detents.size <= MAX_DETENTS) { "[RNScreens] Maximum of $MAX_DETENTS detents supported, got ${detents.size}." }
 
-        detents.forEach {
-            require(it in 0.0..1.0) {
-                "[RNScreens] Detent values must be within 0.0 and 1.0, got $it."
+        if (isFitToContents) {
+            // Valid fitToContents configuration is a single detent with value -1.0,
+            // guarded by isFitToContents check.
+        } else {
+            detents.forEach {
+                require(it in 0.0..1.0) {
+                    "[RNScreens] Detent values must be within 0.0 and 1.0, got $it."
+                }
+            }
+
+            require(detents == detents.distinct().sorted()) {
+                "[RNScreens] Detents must be sorted in strictly ascending order."
             }
         }
-
-        require(detents == detents.distinct().sorted()) {
-            "[RNScreens] Detents must be sorted in strictly ascending order."
-        }
     }
+
+    internal val isFitToContents: Boolean
+        get() = detents.size == 1 && detents[0] == FIT_TO_CONTENTS
 
     internal val count: Int get() = detents.size
 
@@ -32,6 +40,19 @@ internal class FormSheetDetents(
     internal fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
     internal fun maxAllowedHeight(containerHeight: Int): Int = heightAt(count - 1, containerHeight)
+
+    internal fun maxAllowedHeightForFitToContents(
+        containerHeight: Int,
+        contentHeight: Int,
+        bottomInset: Int,
+    ): Int {
+        /*
+         * We add the `bottomInset` to the `contentHeight` so that the Material BottomSheet
+         * is laid out behind the system navigation bar. The sheet's container covers the insets,
+         * while the RN content is strictly constrained to `contentHeight`.
+         */
+        return (contentHeight + bottomInset).coerceAtMost(containerHeight)
+    }
 
     internal fun halfExpandedRatio(): Float {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for halfExpandedRatio." }
@@ -58,7 +79,12 @@ internal class FormSheetDetents(
         containerHeight: Int,
         topInset: Int,
         bottomInset: Int,
+        contentHeight: Int = 0,
     ): Int {
+        if (isFitToContents) {
+            return contentHeight.coerceAtMost(containerHeight)
+        }
+
         // Bottom inset is always fully subtracted because the sheet is in its dedicated window and it's
         // anchored to the bottom.
         // Top inset is subtracted only by the amount the sheet actually overlaps it.
@@ -68,5 +94,6 @@ internal class FormSheetDetents(
 
     companion object {
         const val MAX_DETENTS = 3
+        const val FIT_TO_CONTENTS = -1.0
     }
 }
