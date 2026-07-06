@@ -399,7 +399,7 @@ class TabsContainer internal constructor(
     // region TabsScreenDelegate impl
 
     override fun onAppearanceChanged(tabsScreen: TabsScreen) {
-        if (selectedTab.tabsScreen === tabsScreen) {
+        if (isAttachedToWindow && selectedTab.tabsScreen === tabsScreen) {
             invalidationFlags.isNavigationMenuAppearanceInvalidated = true
             post {
                 this.flushPendingUpdates()
