@@ -68,7 +68,6 @@ class FormSheetDialogManager(
     init {
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-            animationCoordinator.prepareViewForAnimation(view)
         }
         lifecycleCoordinator.setup()
         dimensionsCoordinator.setup()
