@@ -138,7 +138,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export default function Test0000() {
+export default function App() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
