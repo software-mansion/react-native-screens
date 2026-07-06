@@ -5,6 +5,5 @@ internal class FormSheetInvalidationFlags(
     var isAppearanceInvalidated: Boolean = false,
     var isBehaviorInvalidated: Boolean = false,
 ) {
-    internal fun any(): Boolean =
-        isPresentationInvalidated || isAppearanceInvalidated || isBehaviorInvalidated
+    internal fun any(): Boolean = isPresentationInvalidated || isAppearanceInvalidated || isBehaviorInvalidated
 }
