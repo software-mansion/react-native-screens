@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
+import android.animation.Animator
 import android.content.Context
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -40,7 +41,7 @@ class FormSheetDialogManager(
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
-    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
+    private val animationCoordinator = FormSheetAnimatorFactory(dimmingManager)
 
     private val dimensionsCoordinator =
         FormSheetDimensionsCoordinator(
@@ -50,20 +51,61 @@ class FormSheetDialogManager(
             behaviorController = behaviorController,
         )
 
+    private var currentSheetAnimator: Animator? = null
+
     private val presentationManager =
         FormSheetPresentationManager(
             performPresent = { onComplete ->
                 dialog.setOnShowListener {
                     dialog.setOnShowListener(null)
                     dimmingManager.onDialogShow()
-                    animationCoordinator.runEnterAnimation(bottomSheetView, onComplete)
+
+                    if (bottomSheetView == null) {
+                        onComplete()
+                        return@setOnShowListener
+                    }
+
+                    val isInterrupting = currentSheetAnimator?.isRunning == true
+                    currentSheetAnimator?.cancel()
+
+                    currentSheetAnimator = animationCoordinator.createEnterAnimator(bottomSheetView, isInterrupting).apply {
+                        addListener(object : android.animation.AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                if (currentSheetAnimator == this@apply) currentSheetAnimator = null
+                                onComplete()
+                            }
+                        })
+                        start()
+                    }
                 }
                 dialog.show()
             },
             performDismiss = { onComplete ->
-                animationCoordinator.runExitAnimation(bottomSheetView) {
+                if (bottomSheetView == null) {
                     dialog.dismiss()
                     onComplete()
+                    return@FormSheetPresentationManager
+                }
+
+                val behavior = BottomSheetBehavior.from(bottomSheetView)
+                if (behavior.state == BottomSheetBehavior.STATE_HIDDEN) {
+                    dialog.dismiss()
+                    onComplete()
+                    return@FormSheetPresentationManager
+                }
+
+                val isInterrupting = currentSheetAnimator?.isRunning == true
+                currentSheetAnimator?.cancel()
+
+                currentSheetAnimator = animationCoordinator.createExitAnimator(bottomSheetView, isInterrupting).apply {
+                    addListener(object : android.animation.AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            if (currentSheetAnimator == this@apply) currentSheetAnimator = null
+                            dialog.dismiss()
+                            onComplete()
+                        }
+                    })
+                    start()
                 }
             },
             onNativeDismiss = onDismissRequest,
