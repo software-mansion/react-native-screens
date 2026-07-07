@@ -344,11 +344,19 @@ class ScreenStackHeaderConfig(
             }
         }
 
+        // Subviews attached or re-attached while the search bar action view is expanded must
+        // respect the search-driven hidden state (SearchBarView applies it only at open/close
+        // time); conversely a stale pin from a previous search session must not survive here.
+        val isSearchBarExpanded = screenFragment?.searchView?.isIconified == false
+
         var i = 0
         val size = configSubviews.size
         while (i < size) {
             val view = configSubviews[i]
             val type = view.type
+            if (type !== ScreenStackHeaderSubview.Type.SEARCH_BAR && view.isHiddenBySearchBar != isSearchBarExpanded) {
+                view.setHiddenBySearchBar(isSearchBarExpanded)
+            }
             if (type === ScreenStackHeaderSubview.Type.BACK) {
                 // we special case BACK button header config type as we don't add it as a view into toolbar
                 // but instead just copy the drawable from imageview that's added as a first child to it.

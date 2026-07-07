@@ -20,6 +20,34 @@ class ScreenStackHeaderSubview(
 
     var type = Type.LEFT
 
+    /**
+     * Whether this subview is currently hidden because the header's search bar action view is
+     * expanded (see `SearchBarView.setToolbarElementsVisibility`). The search bar hides its
+     * sibling subviews imperatively — outside of React's knowledge — so the hidden state must be
+     * pinned: on Fabric, `SurfaceMountingManager.updateLayout` force-syncs `View.visibility` from
+     * the ShadowTree display type on every layout update of this view, which would otherwise
+     * resurrect a hidden subview (e.g. on rotation with a display cutout, where the inset change
+     * relayouts the header). The toolbar then lays the resurrected END-gravity subview out in the
+     * space left over by the full-width expanded search view — at the start edge of the header.
+     */
+    internal var isHiddenBySearchBar: Boolean = false
+        private set
+
+    internal fun setHiddenBySearchBar(hidden: Boolean) {
+        isHiddenBySearchBar = hidden
+        super.setVisibility(if (hidden) GONE else VISIBLE)
+    }
+
+    override fun setVisibility(visibility: Int) {
+        // While hidden for an expanded search bar, ignore any attempt to make the subview visible
+        // again (Fabric layout updates in particular) — `setHiddenBySearchBar(false)` is the only
+        // way back to visible.
+        if (isHiddenBySearchBar && visibility != GONE) {
+            return
+        }
+        super.setVisibility(visibility)
+    }
+
     val config: ScreenStackHeaderConfig?
         get() = (parent as? CustomToolbar)?.config
 
