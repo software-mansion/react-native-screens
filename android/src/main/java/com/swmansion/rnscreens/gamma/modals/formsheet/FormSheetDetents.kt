@@ -25,7 +25,7 @@ internal class FormSheetDetents(
     }
 
     internal val isFitToContents: Boolean
-        get() = detents.size == 1 && detents[0] == FIT_TO_CONTENTS
+        get() = detents.size == 1 && detents[0] == FIT_TO_CONTENTS_DETENT_VALUE
 
     internal val count: Int get() = detents.size
 
@@ -101,6 +101,6 @@ internal class FormSheetDetents(
 
     companion object {
         const val MAX_DETENTS = 3
-        const val FIT_TO_CONTENTS = -1.0
+        const val FIT_TO_CONTENTS_DETENT_VALUE = -1.0
     }
 }
