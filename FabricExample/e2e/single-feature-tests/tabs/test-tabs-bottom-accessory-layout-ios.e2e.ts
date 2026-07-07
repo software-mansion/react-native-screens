@@ -91,34 +91,27 @@ async function scrollScrollViewToItem(
 }
 
 type VariantCase = {
-  title: string;
-  variantId?: string; // card to tap; omitted for the initial-load case
+  variantId?: string; // card to tap; omitted for the initial-load variant
   accessories: { testID: string; text?: string }[];
 };
 
-const VARIANT_CASES: VariantCase[] = [
-  {
-    title: 'should show the Upper Left accessory variant on initial load',
+const VARIANTS = {
+  upperLeft: {
     accessories: [{ testID: 'accessory-upper-left', text: 'Upper Left' }],
   },
-  {
-    title: 'should update the accessory when Center variant card is tapped',
+  center: {
     variantId: 'variant-center',
     accessories: [{ testID: 'accessory-center', text: 'Center' }],
   },
-  {
-    title:
-      'should update the accessory when Lower Right variant card is tapped',
+  lowerRight: {
     variantId: 'variant-lower-right',
     accessories: [{ testID: 'accessory-lower-right', text: 'Lower Right' }],
   },
-  {
-    title: 'should update the accessory when Long variant card is tapped',
+  long: {
     variantId: 'variant-long',
     accessories: [{ testID: 'accessory-long' }],
   },
-  {
-    title: 'should update the accessory when RGB variant card is tapped',
+  rgb: {
     variantId: 'variant-rgb',
     accessories: [
       { testID: 'rgb-strip-0' },
@@ -126,9 +119,17 @@ const VARIANT_CASES: VariantCase[] = [
       { testID: 'rgb-strip-2' },
     ],
   },
-];
+} satisfies Record<string, VariantCase>;
 
-async function runVariantSwitch({ variantId, accessories }: VariantCase) {
+/**
+ * Shared body of a variant test: taps the variant card (when present) and
+ * asserts its accessory(ies) are shown. Kept behind a helper so each `it(...)`
+ * remains a one-liner while its name stays declared inline at the call site.
+ */
+async function switchToVariantAndVerifyAccessory({
+  variantId,
+  accessories,
+}: VariantCase) {
   if (variantId) {
     await element(by.id(variantId)).tap();
   }
@@ -141,38 +142,19 @@ async function runVariantSwitch({ variantId, accessories }: VariantCase) {
 }
 
 /**
- * Registers the shared variant-switch tests inside the calling describe block.
- * `titleSuffix` differentiates the iPad titles; `afterSwitch` runs any
- * platform-specific assertion once the variant is applied.
+ * Shared body of the initial-load test: the Config tab renders every variant
+ * card plus the initial accessory.
  */
-function registerVariantTests(
-  titleSuffix = '',
-  afterSwitch?: () => Promise<void> | void,
-) {
-  for (const variantCase of VARIANT_CASES) {
-    it(`${variantCase.title}${titleSuffix}`, async () => {
-      await runVariantSwitch(variantCase);
-      await afterSwitch?.();
-    });
-  }
-}
-
-/**
- * Registers the shared initial-load test inside the calling describe block.
- * Asserts the Config tab renders every variant card plus the initial accessory.
- */
-function registerInitialLoadTest() {
-  it('should display the Config tab content and initial accessory on load', async () => {
-    await expect(element(by.id('config-scrollview'))).toBeVisible();
-    await expect(element(by.id('variant-upper-left'))).toBeVisible();
-    await expect(element(by.id('variant-center'))).toBeVisible();
-    await expect(element(by.id('variant-lower-right'))).toBeVisible();
-    await expect(element(by.id('variant-long'))).toBeVisible();
-    await expect(element(by.id('variant-rgb'))).toBeVisible();
-    await expect(
-      element(by.type('RNSTabsBottomAccessoryComponentView')),
-    ).toBeVisible();
-  });
+async function verifyConfigTabInitialContent() {
+  await expect(element(by.id('config-scrollview'))).toBeVisible();
+  await expect(element(by.id('variant-upper-left'))).toBeVisible();
+  await expect(element(by.id('variant-center'))).toBeVisible();
+  await expect(element(by.id('variant-lower-right'))).toBeVisible();
+  await expect(element(by.id('variant-long'))).toBeVisible();
+  await expect(element(by.id('variant-rgb'))).toBeVisible();
+  await expect(
+    element(by.type('RNSTabsBottomAccessoryComponentView')),
+  ).toBeVisible();
 }
 
 describeIfiOS('Tabs bottomAccessory (iOS)', () => {
@@ -184,9 +166,29 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
     );
   });
 
-  registerInitialLoadTest();
+  it('should display the Config tab content and initial accessory on load', async () => {
+    await verifyConfigTabInitialContent();
+  });
 
-  registerVariantTests();
+  it('should show the Upper Left accessory variant on initial load', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.upperLeft);
+  });
+
+  it('should update the accessory when Center variant card is tapped', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.center);
+  });
+
+  it('should update the accessory when Lower Right variant card is tapped', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.lowerRight);
+  });
+
+  it('should update the accessory when Long variant card is tapped', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.long);
+  });
+
+  it('should update the accessory when RGB variant card is tapped', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.rgb);
+  });
 
   // ---------------------------------------------------------------------------
   // Accessory persistence across tab switches
@@ -325,9 +327,44 @@ describeIfiPad('@ipad Tabs bottomAccessory (iPad)', () => {
     })) as IosElementAttributes;
   });
 
-  registerInitialLoadTest();
+  it('should display the Config tab content and initial accessory on load', async () => {
+    await verifyConfigTabInitialContent();
+  });
 
-  registerVariantTests(' and stays anchored to the bottom', async () => {
+  it('should show the Upper Left accessory variant on initial load and stay anchored to the bottom', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.upperLeft);
+    expectBottomAccessoryAtTheBottom(
+      await getBottomAccessoryAttributes(),
+      configScrollView,
+    );
+  });
+
+  it('should update the accessory when Center variant card is tapped and stay anchored to the bottom', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.center);
+    expectBottomAccessoryAtTheBottom(
+      await getBottomAccessoryAttributes(),
+      configScrollView,
+    );
+  });
+
+  it('should update the accessory when Lower Right variant card is tapped and stay anchored to the bottom', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.lowerRight);
+    expectBottomAccessoryAtTheBottom(
+      await getBottomAccessoryAttributes(),
+      configScrollView,
+    );
+  });
+
+  it('should update the accessory when Long variant card is tapped and stay anchored to the bottom', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.long);
+    expectBottomAccessoryAtTheBottom(
+      await getBottomAccessoryAttributes(),
+      configScrollView,
+    );
+  });
+
+  it('should update the accessory when RGB variant card is tapped and stay anchored to the bottom', async () => {
+    await switchToVariantAndVerifyAccessory(VARIANTS.rgb);
     expectBottomAccessoryAtTheBottom(
       await getBottomAccessoryAttributes(),
       configScrollView,
