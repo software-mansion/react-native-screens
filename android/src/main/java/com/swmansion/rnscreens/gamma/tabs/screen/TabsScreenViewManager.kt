@@ -171,7 +171,10 @@ class TabsScreenViewManager :
         view.appearance = parseAndroidTabsAppearance(value, view.context)
     }
 
-    private fun parseAndroidTabsAppearance(appearance: ReadableMap, context: Context): TabsAppearance =
+    private fun parseAndroidTabsAppearance(
+        appearance: ReadableMap,
+        context: Context,
+    ): TabsAppearance =
         TabsAppearance(
             tabBarBackgroundColor = appearance.readOptionalColor("tabBarBackgroundColor", context),
             tabBarItemRippleColor = appearance.readOptionalColor("tabBarItemRippleColor", context),
@@ -191,7 +194,10 @@ class TabsScreenViewManager :
             tabBarItemBadgeTextColor = appearance.readOptionalColor("tabBarItemBadgeTextColor", context),
         )
 
-    private fun parseItemStateAppearance(itemStateAppearance: ReadableMap?, context: Context): ItemStateAppearance? {
+    private fun parseItemStateAppearance(
+        itemStateAppearance: ReadableMap?,
+        context: Context,
+    ): ItemStateAppearance? {
         if (itemStateAppearance == null) return null
         return ItemStateAppearance(
             tabBarItemIconColor = itemStateAppearance.readOptionalColor("tabBarItemIconColor", context),

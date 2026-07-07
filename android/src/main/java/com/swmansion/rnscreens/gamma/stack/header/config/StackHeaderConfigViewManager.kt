@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
-import android.content.Context
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException

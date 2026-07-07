@@ -15,7 +15,10 @@ import com.swmansion.rnscreens.gamma.helpers.requireNotNullString
 internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
-    fun parseMenu(value: Dynamic, context: Context): Pair<StackHeaderToolbarMenuConfig, Map<String, StackHeaderToolbarMenuItemIconSource>> {
+    fun parseMenu(
+        value: Dynamic,
+        context: Context,
+    ): Pair<StackHeaderToolbarMenuConfig, Map<String, StackHeaderToolbarMenuItemIconSource>> {
         if (value.isNull) return Pair(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), emptyMap())
         val map =
             value.asMapOrNull()
@@ -31,7 +34,10 @@ internal object StackHeaderToolbarMenuMapper {
 
     // region Menu element command parsing
 
-    fun parseMenuElementOptions(map: ReadableMap, context: Context): StackHeaderToolbarMenuElementOptions =
+    fun parseMenuElementOptions(
+        map: ReadableMap,
+        context: Context,
+    ): StackHeaderToolbarMenuElementOptions =
         StackHeaderToolbarMenuElementOptions(
             title = map.readNullableStringUpdate("title"),
             titleCondensed = map.readNullableStringUpdate("titleCondensed"),
@@ -91,7 +97,7 @@ internal object StackHeaderToolbarMenuMapper {
     private fun parseChildren(
         map: ReadableMap,
         iconSources: MutableMap<String, StackHeaderToolbarMenuItemIconSource>,
-        context: Context
+        context: Context,
     ): List<StackHeaderToolbarMenuElementConfig> {
         val array = map.getArray("children") ?: return emptyList()
         return (0 until array.size()).map { i ->
@@ -135,7 +141,10 @@ internal object StackHeaderToolbarMenuMapper {
                 map.readImageUri("imageIconResource", StackHeaderToolbarMenuItemDefaults.IMAGE_ICON_URI),
         )
 
-    private fun parseItemConfig(map: ReadableMap, context: Context): StackHeaderToolbarMenuItemConfig =
+    private fun parseItemConfig(
+        map: ReadableMap,
+        context: Context,
+    ): StackHeaderToolbarMenuItemConfig =
         StackHeaderToolbarMenuItemConfig(
             id = map.requireNotNullString("id"),
             title = map.readOptionalString("title") ?: StackHeaderToolbarMenuItemDefaults.TITLE,
@@ -151,25 +160,25 @@ internal object StackHeaderToolbarMenuMapper {
                 map.readColor(
                     "iconTintColorNormal",
                     StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_NORMAL,
-                    context
+                    context,
                 ),
             iconTintColorPressed =
                 map.readColor(
                     "iconTintColorPressed",
                     StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_PRESSED,
-                    context
+                    context,
                 ),
             iconTintColorFocused =
                 map.readColor(
                     "iconTintColorFocused",
                     StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_FOCUSED,
-                    context
+                    context,
                 ),
             iconTintColorDisabled =
                 map.readColor(
                     "iconTintColorDisabled",
                     StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED,
-                    context
+                    context,
                 ),
             groupId = map.readOptionalString("groupId"),
             itemType = map.readItemTypeEnum("itemType", StackHeaderToolbarMenuItemDefaults.ITEM_TYPE),
@@ -267,7 +276,10 @@ internal object StackHeaderToolbarMenuMapper {
                 } ?: default
         }
 
-    private fun ReadableMap.readNullableColorUpdate(key: String, context: Context): StackHeaderToolbarUpdate<Int>? =
+    private fun ReadableMap.readNullableColorUpdate(
+        key: String,
+        context: Context,
+    ): StackHeaderToolbarUpdate<Int>? =
         when {
             !this.hasKey(key) -> null
             this.isNull(key) -> StackHeaderToolbarUpdate.Reset
