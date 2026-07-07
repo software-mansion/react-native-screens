@@ -12,11 +12,14 @@ internal class FormSheetAppearanceCoordinator(
     private val bottomSheetView: FrameLayout?,
 ) {
     private var currentCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
+    private var currentBackgroundColor: Int? = null
 
     private var isCornerRadiusApplyPending = false
+    private var isBackgroundColorApplyPending = false
 
     // Needs to be caught to restore when the app switches back to `systemDefault`.
     private var defaultShapeAppearanceModel: ShapeAppearanceModel? = null
+    private var defaultBackgroundColor: android.content.res.ColorStateList? = null
 
     // Rounded-corner clipping of the sheet's content is only reliable on Android API 33+. Prior to API 33,
     // `Outline.canClip()` returns `false` for asymmetrical outlines, causing clipToOutline to be ignored
@@ -77,5 +80,39 @@ internal class FormSheetAppearanceCoordinator(
                 .setTopLeftCorner(CornerFamily.ROUNDED, radiusInPx)
                 .setTopRightCorner(CornerFamily.ROUNDED, radiusInPx)
                 .build()
+    }
+
+    internal fun updateBackgroundColor(color: Int?) {
+        currentBackgroundColor = color
+
+        val view = bottomSheetView ?: return
+
+        val background = view.background as? MaterialShapeDrawable
+        if (background != null) {
+            applyBackgroundColor(background)
+            return
+        }
+
+        if (isBackgroundColorApplyPending) return
+        isBackgroundColorApplyPending = true
+        view.doOnNextLayout {
+            isBackgroundColorApplyPending = false
+            (it.background as? MaterialShapeDrawable)?.let(::applyBackgroundColor)
+        }
+    }
+
+    private fun applyBackgroundColor(background: MaterialShapeDrawable) {
+        if (defaultBackgroundColor == null) {
+            defaultBackgroundColor = background.fillColor
+        }
+
+        val color = currentBackgroundColor
+        if (color == null) {
+            background.fillColor = defaultBackgroundColor
+        } else {
+            background.fillColor =
+                android.content.res.ColorStateList
+                    .valueOf(color)
+        }
     }
 }

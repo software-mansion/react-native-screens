@@ -23,6 +23,8 @@ class FormSheetHost(
 
     internal var preferredCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
 
+    internal var nativeContainerBackgroundColor: Int? = null
+
     internal var detents: List<Double> = emptyList()
 
     internal var initialDetentIndex: Int = 0
@@ -92,6 +94,7 @@ class FormSheetHost(
                 prefersGrabberVisible = this.prefersGrabberVisible,
                 initialDetentIndex = this.initialDetentIndex,
                 preferredCornerRadius = this.preferredCornerRadius,
+                nativeContainerBackgroundColor = this.nativeContainerBackgroundColor,
             )
         dialogManager.applyConfig(config)
     }

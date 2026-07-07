@@ -121,7 +121,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Int?,
     ) {
-        // TODO: @t0maboro - implement later
+        view.nativeContainerBackgroundColor = value
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
