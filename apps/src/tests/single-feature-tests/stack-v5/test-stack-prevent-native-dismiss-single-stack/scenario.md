@@ -2,103 +2,162 @@
 
 ## Details
 
-**Description:** Verifies that enabling `preventNativeDismiss` on a
-gamma Stack route blocks Android native dismissal (system back and the
-header back-button chevron) and fires `onNativeDismissPrevented`, while
-the on-screen **Pop** button always pops regardless of the flag.
+**Description:** Verify the `preventNativeDismiss` route option on the
+gamma/v5 `StackContainer`. When **Enabled**, native dismissal (the Android
+system/hardware back button, the native header back-button chevron, and the
+system gesture-back / edge swipe) is blocked and `onNativeDismissPrevented`
+fires (a green toast is shown); the screen stays put. When **Disabled**,
+those same native gestures pop the stack normally. The on-screen **Pop**
+button is JS-driven and always pops regardless of the flag. The stack starts
+on **Home** and pushes **A** (`preventNativeDismiss` disabled) and **B**
+(`preventNativeDismiss` enabled, with a **Toggle Prevent Native Dismiss**
+button). See the Notes for `routeKey` behavior and how Android is launched
+directly to work around issue #1459.
 
-**OS test creation version:** Android: API Level 36
+**OS test creation version:** Android API Level 36.
 
 ## E2E test
 
-TBD: Automation is plausible — the system back button, the header
-back-button chevron, and the on-screen buttons are all Detox-drivable
-on Android — but no e2e test has been implemented yet.
+TBD: Automation is plausible — the system back button, the native header
+back-button chevron, and the on-screen buttons are all Detox-drivable on
+Android — but no e2e test has been implemented yet. The system gesture-back
+(edge swipe) step may need platform-specific handling.
 
 ## Prerequisites
 
 - Android emulator or device
 
+### Android launch
+
+- This is an **Android-only** feature (no iOS implementation).
+- To test the native-back / gesture-back flows, run the screen **directly**
+  by editing [apps/App.tsx](../../../../../App.tsx): import and render
+  `TestStackPreventNativeDismissSingleStack` as the root component instead of
+  `Example`, e.g.:
+
+  ```tsx
+  import { TestStackPreventNativeDismissSingleStack as Example } from './src/tests/single-feature-tests';
+  ```
+
+  With the gamma `StackContainer` at the root, the Android system back button
+  and gesture-back interact with the stack directly. When the screen is
+  nested inside the example app's own navigation, native back navigates out
+  to the system/selection menu instead of popping the stack (issue
+  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
+  which is why Android is tested via the direct launch.
+
+- The system gesture-back requires **Gesture navigation** to be enabled on
+  the emulator/device. If it is not already set, enable it manually in
+  **Settings → Navigation mode → select Gesture navigation**.
+
 ## Note
 
-- Android-only feature (no iOS implementation); do not run this screen
-on iOS. Both `A` and `B` render a header with a back-button chevron;
-the chevron is intercepted identically to the system back button. The
-on-screen **Pop** button is JS-driven and always pops regardless of
-the flag.
-- Known-issue caveat
-([#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)):
-when `preventNativeDismiss` is **disabled**, native back (system button
-and header chevron) navigates out to the system menu instead of popping
-the stack. Steps exercising native dismissal while the flag is Disabled
-were removed until this is fixed; only native-back-while-Enabled
-(interception) steps remain.
-- `Key` values (`r-<routeName>-<n>`) use a session-global counter that
-never resets — only verify relationships: a push yields a new, higher
-key; popping back to a preserved instance keeps its original key.
+- The `Key` has the form `r-<routeName>-<n>`, where `<n>` comes from a
+  session-global counter that increments on every push and is **never
+  reset**. Do **not** expect specific numbers such as `r-A-1`; only the
+  **relationships** matter — every push produces a strictly new (higher)
+  `Key`, and a preserved (not recreated) screen keeps the same `Key`.
+- Route **A** starts with `preventNativeDismiss` **Disabled**; route **B**
+  starts with it **Enabled**. On **B**, the **Toggle Prevent Native
+  Dismiss** button flips the flag at runtime via `setRouteOptions`.
+- The on-screen **Pop** button always pops regardless of the flag.
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Prevent native dismiss -
-   single stack** screen.
+1. Launch the app directly via `App.tsx` so the
+   **Home** screen is shown.
 
-- [ ] **Home** screen is shown (blue background). No header/back
-      button is visible. Only
-      **Push A** / **Push B** buttons are shown (no Pop button).
+- [ ] **Home** is shown (light blue background), `Name: Home` and a `Key`
+      `r-Home-<n>`. No header/back button is visible. Only **Push A** /
+      **Push B** buttons are shown (no **Pop** button).
 
 ### Push navigation and initial state
 
 2. Tap **Push A**.
 
-- [ ] Screen **A** is shown (yellow background) with a header titled
-      "A" and a back-button chevron. Shows `Name: A` and a `Key`
-      `r-A-<n>`. Shows "Prevent native dismiss: Disabled". Push A /
-      Push B / Pop buttons are all present.
+- [ ] Screen **A** is shown (yellow background) with a header titled "A" and
+      a back-button chevron. Shows `Name: A`, a `Key` `r-A-<n>`, and
+      **Prevent native dismiss: Disabled**. **Push A** / **Push B** / **Pop**
+      buttons are all present.
 
-3. On A, tap **Push B**.
+3. On **A**, tap **Push B**.
 
-- [ ] Screen **B** is shown (green background) with a header titled
-      "B" and a back-button chevron. Shows `Name: B` and a `Key`
-      `r-B-<m>`, higher than A's key. Shows "Prevent native dismiss:
-      Enabled". Push A / Push B / Pop, and a **Toggle Prevent Native
-      Dismiss** button are all present.
+- [ ] Screen **B** is shown (green background) with a header titled "B" and a
+      back-button chevron. Shows `Name: B`, a `Key` `r-B-<m>` higher than
+      A's key, and **Prevent native dismiss: Enabled**. **Push A** / **Push
+      B** / **Pop** and a **Toggle Prevent Native Dismiss** button are all
+      present.
 
-### Native dismiss blocked while enabled
+### Native dismiss blocked while Enabled (screen B)
 
-4. On B (prevent native dismiss Enabled), press the Android system/
-   hardware back button.
+4. On **B** (prevent native dismiss Enabled), tap the native header back-button chevron.
 
-- [ ] Back press is intercepted: a green toast reading "Native dismiss
-      prevented" appears, and the app remains on screen **B** (no pop
-      occurs).
+- [ ] The tap is intercepted: a green toast reading "Native dismiss
+      prevented" appears, and the app remains on **B** (no pop, `Key`
+      unchanged).
 
-5. On B, tap the header's back-button chevron.
+5. On **B**, perform a system gesture-back: swipe from the left screen edge
+   to the right.
 
-- [ ] Same as step 4: the tap is intercepted, the green toast appears
-      again, and the app remains on screen **B**.
+- [ ] The gesture is intercepted: the green toast appears, and the app
+      remains on **B**. No pop occurs.
 
-6. Repeat step 4 (system back) three or four times in quick
-   succession.
+6. Repeat tapping the header back-button chevron three or four times in
+   quick succession.
 
-- [ ] Each press is intercepted individually; the toast reappears (or
-      re-queues) each time; the app never pops off of **B**.
+- [ ] Each tap is intercepted individually; a new toast appears each time;
+      the app never pops off of **B**.
+
+### Native dismiss allowed while Disabled (screen A)
+
+7. Tap the on-screen **Pop** button to return to **A**.
+   Confirm **A** shows **Prevent native dismiss: Disabled**.
+   Tap the native header back-button chevron.
+
+- [ ] The chevron pops the stack normally, the app returns to the screen below
+      **A**. **No toast** is shown (dismissal is not prevented while
+      Disabled).
+
+8. Push **A** again so it is on top with a screen below it. On **A**,
+   perform a system gesture-back: swipe from the left screen edge to the
+   right.
+
+- [ ] The gesture pops the stack normally. No toast is shown.
+
+### Toggling the flag at runtime (screen B)
+
+9. From **Home**, tap **Push B** so **B** (Prevent native dismiss Enabled)
+   is directly above Home. Tap **Toggle Prevent Native Dismiss**.
+
+- [ ] The label updates to **Prevent native dismiss: Disabled**.
+
+10. With **B** now Disabled, tap the native header back-button chevron.
+
+- [ ] The chevron pops **B** normally and returns to **Home**. No toast is
+      shown.
+
+11. From **Home**, tap **Push B** again so **B** (Prevent native dismiss
+    Enabled) is on top. Tap the native header back-button chevron.
+
+- [ ] The chevron is intercepted: the green toast appears and the app remains
+      on **B**.
 
 ### JS-driven Pop always works regardless of the flag
 
-7. On B (prevent native dismiss still Enabled), tap the on-screen
-   **Pop** button.
+12. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
+    button.
 
-- [ ] App pops back to screen **A** normally. No toast is shown — Pop
-      bypasses `preventNativeDismiss` entirely.
+- [ ] App pops back to **Home** normally. **No toast** is shown — the on-screen
+      **Pop** bypasses `preventNativeDismiss` entirely.
 
 ### Edge case: toggling immediately before a native dismiss
 
-8. From A, tap **Push B**. On B, tap **Toggle Prevent Native
-   Dismiss** to Disabled, then immediately toggle it back to Enabled,
-   then immediately press the system back button.
+13. From **Home**, tap **Push B**. On **B**, tap **Toggle Prevent Native
+    Dismiss** to Disabled, then immediately toggle it back to Enabled, then
+    immediately press the native header back-button chevron.
 
 - [ ] The most recent toggle takes effect before the back press: since
-      prevent is Enabled at press time, back is intercepted (toast
-      shown, app stays on B).
+      prevent is Enabled at press time, back is intercepted (toast shown, app
+      stays on **B**).
