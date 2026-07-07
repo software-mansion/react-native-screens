@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   ColorValue,
+  Platform,
 } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
@@ -82,6 +83,7 @@ function TestFormSheetNativeContainerStyle() {
 
           <Button
             title={isExpanded ? 'Collapse Content' : 'Expand Content'}
+            color={Platform.OS === 'ios' ? Colors.White : undefined}
             onPress={() => setIsExpanded(!isExpanded)}
           />
 
@@ -99,6 +101,7 @@ function TestFormSheetNativeContainerStyle() {
 
           <Button
             title="Dismiss from JS"
+            color={Platform.OS === 'ios' ? Colors.White : undefined}
             onPress={handleDismiss}
           />
         </View>
