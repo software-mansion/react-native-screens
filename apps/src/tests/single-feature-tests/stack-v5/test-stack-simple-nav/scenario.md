@@ -7,11 +7,12 @@
 any number of times (including re-pushing a route already on the stack),
 each push creating a new screen instance with its own unique `routeKey`;
 non-root screens expose a **Pop** button. The test validates that push/pop
-via the on-screen buttons, the iOS native header back button, and the iOS
-edge-swipe-back gesture all produce consistent stack state, that `routeKey`
-values are unique per pushed instance, and that the root screen (**Home**)
-cannot be popped. See the Notes for `routeKey` behavior and the Android
-back-button caveat (issue #1459).
+via the on-screen buttons, the native header back button, and the
+edge-swipe-back / system gesture-back produce
+consistent stack state, that `routeKey` values are unique per pushed
+instance, and that the root screen (**Home**) cannot be popped. See the
+Notes for `routeKey` behavior and how the two platforms are launched
+(issue #1459).
 
 **OS test creation version:** iOS 18.6 and 26.5, Android API Level 36.
 
@@ -20,13 +21,35 @@ back-button caveat (issue #1459).
 TBD: Automation is planned and should be straightforward for the
 button-driven push/pop steps (similar in scope to the tabs
 `test-tabs-simple-nav` suite). Native back button, iOS edge-swipe gesture,
-and Android hardware back steps may need platform-specific handling and are
-not yet implemented.
+and Android system gesture-back steps may need platform-specific handling
+and are not yet implemented.
 
 ## Prerequisites
 
 - iOS device or simulator
 - Android emulator or device
+
+### iOS launch
+
+- Run the app normally and navigate to the **Simple stack navigation**
+  screen (Stack v5) from the in-app scenario selection menu.
+
+### Android launch
+
+- To test on Android, run the screen **directly** by editing
+  [apps/App.tsx](../../../../../App.tsx): import and render
+  `TestStackSimpleNav` as the root component instead of `Example`, e.g.:
+
+  ```tsx
+  import { TestStackSimpleNav as Example } from './src/tests/single-feature-tests';
+  ```
+
+  With the gamma `StackContainer` at the root, the Android system
+  gesture-back pops the stack directly.
+
+- The Android system gesture-back requires **Gesture navigation** to be
+  enabled on the emulator/device. If it is not already set, enable it
+  manually in **Settings → Navigation mode → select Gesture navigation**.
 
 ## Note
 
@@ -41,17 +64,21 @@ not yet implemented.
   session and will differ between runs and after a JS reload. Only the
   **relationships** matter — every push produces a strictly new `Key`, and
   a preserved (not recreated) screen keeps the same `Key`.
-- **Android:** the gamma Stack does not render a header back button, and
-  the Android system/hardware back button does not currently pop the stack
-  (see issue [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)). All back-button steps below are therefore **iOS
-  only**; on Android use the on-screen **Pop** button to go back.
+- **Android:** when the screen is launched **directly** via `App.tsx` (see
+  the Android launch prerequisite),both the **native header back button** and
+  the **system gesture-back** work — the same as on iOS. These only fail when the screen
+  is nested inside the example app's own navigation (issue
+  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
+  which is exactly why Android is tested via the direct launch. On both
+  platforms the on-screen **Pop** button always works.
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Simple stack navigation** screen (Stack
-   v5).
+1. Launch the app for the platform under test (see Prerequisites: iOS from
+   the selection menu, Android directly via `App.tsx`) so the **Home**
+   screen of the Simple stack navigation is shown.
 
 - [ ] The **Home** screen is shown with a light blue background, `Name:
   Home`, and a `Key` of the form `r-Home-<n>`. No back button is visible in
@@ -64,16 +91,14 @@ not yet implemented.
 
 - [ ] Screen **A** is pushed. Background is light yellow, `Name: A`, and a
   `Key` of the form `r-A-<n>` is shown (a new value, distinct from Home's).
-  On iOS a native back button is visible in the header (Android shows no
-  header back button). **Push A**, **Push B**, and **Pop** buttons are all
-  shown. Note this `Key` value.
+  A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
+  buttons are all shown. Note this `Key` value.
 
 3. While on **A**, tap **Push B**.
 
 - [ ] Screen **B** is pushed on top of **A**. Background is green, `Name:
-  B`, and a new `Key` of the form `r-B-<n>` is shown (distinct from all
-  previous keys). On iOS a native back button is visible in the header.
-  Note this `Key` value.
+  B`, and a new `Key` of the form `r-B-<n>` is shown.
+  A native back button is visible in the header. Note this `Key` value.
 
 ### Re-pushing an already-present route
 
@@ -97,29 +122,29 @@ not yet implemented.
 
 7. Tap **Pop** again.
 
-- [ ] Returns to **Home**. No **Pop** button is shown and, on iOS, no
-  header back button appears (root screen reached).
+- [ ] Returns to **Home**. No **Pop** button is shown and no header back
+  button appears (root screen reached).
 
-### Native header back button (iOS only)
+### Native header back button
 
-8. On iOS, tap **Push A**, then tap **Push B**. Then tap the native back
-   button in the header (not the **Pop** button).
+8. Tap **Push A**, then tap **Push B**. Then tap the native back button in the
+header.
 
 - [ ] Tapping the native back button behaves the same as tapping **Pop**:
   returns to screen **A** with its `Key` unchanged. No crash and no
   inconsistent state.
 
-### iOS edge-swipe-back gesture (iOS only)
+### Edge-swipe / system gesture-back 
 
-9. On iOS, while on screen **A** or **B**, swipe from the left screen edge
+9. While on screen **A** or **B**, swipe from the left screen edge
    to the right to trigger the interactive pop gesture.
 
-- [ ] Completing the swipe pops the current screen, identical in effect to
-  tapping **Pop**. The screen below is shown with its original,
+- [ ] Completing the swipe/gesture pops the current screen, identical in
+  effect to tapping **Pop**. The screen below is shown with its original,
   unchanged `Key`.
-- [ ] Starting the swipe and releasing before the halfway point cancels
-  the gesture: the current screen returns to place and no navigation
-  change occurs.
+- [ ] Starting the swipe/gesture and releasing before the halfway point
+  cancels it: the current screen returns to place and no navigation change
+  occurs.
 
 ### Route key uniqueness (edge case)
 
