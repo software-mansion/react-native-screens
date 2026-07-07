@@ -8,12 +8,14 @@
                      title:(nullable NSString *)title
                   itemType:(RNSMenuItemType)itemType
         initialToggleState:(BOOL)initialToggleState
+        keepsMenuPresented:(BOOL)keepsMenuPresented
 {
   if (self = [super init]) {
     _menuElementId = [menuElementId copy];
     _title = [title copy];
     _itemType = itemType;
     _initialToggleState = initialToggleState;
+    _keepsMenuPresented = keepsMenuPresented;
   }
   return self;
 }

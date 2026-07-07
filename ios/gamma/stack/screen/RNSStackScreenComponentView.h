@@ -1,7 +1,6 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
-#import "RNSStackHeaderData.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -40,6 +39,18 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter;
+
+@end
+
+#pragma mark - Content scroll view
+
+@interface RNSStackScreenComponentView ()
+
+/**
+ * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
+ * none has been registered. Queried by the owning controller (`RNSContainerItem`).
+ */
+- (nullable UIScrollView *)cachedContentScrollView;
 
 @end
 

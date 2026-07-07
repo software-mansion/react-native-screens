@@ -21,8 +21,5 @@
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
     "react-native-worklets": "*"
-  },
-  "devDependencies": {
-    "eslint-plugin-local-rules": "link:./eslint-plugin-local-rules"
   }
 }

@@ -33,6 +33,7 @@ function TestStackHeaderMenuIOS() {
 function buildHeaderConfig(
   trailingItemsCount: number,
   showToast: (text: string) => void,
+  keepsMenuPresented: boolean,
 ): StackHeaderConfigProps {
   const trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
@@ -58,6 +59,7 @@ function buildHeaderConfig(
             type: 'menuItem',
             itemType: 'action',
             title: `Action ${i}-1`,
+            keepsMenuPresented,
             onPress: () => showToast(`Clicked Action ${i}-1`),
           },
           {
@@ -65,18 +67,21 @@ function buildHeaderConfig(
             type: 'menuItem',
             itemType: 'toggle',
             title: `Toggle ${i}-1`,
+            keepsMenuPresented,
           },
           {
             id: `toggle-${i}-2`,
             type: 'menuItem',
             itemType: 'toggle',
             title: `Toggle ${i}-2`,
+            keepsMenuPresented,
           },
           {
             id: `toggle-${i}-3`,
             type: 'menuItem',
             itemType: 'toggle',
             title: `Toggle ${i}-3`,
+            keepsMenuPresented,
           },
           {
             id: `submenu-${i}`,
@@ -130,6 +135,7 @@ function ConfigScreen() {
   const [trailingItemsCount, setTrailingItemsCount] = useState<number>(
     DEFAULT_TRAILING_ITEMS_COUNT,
   );
+  const [keepsMenuPresented, setKeepsMenuPresented] = useState(false);
 
   const showToast = useCallback(
     (text: string) => {
@@ -140,8 +146,8 @@ function ConfigScreen() {
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(
-    () => buildHeaderConfig(trailingItemsCount, showToast),
-    [trailingItemsCount, showToast],
+    () => buildHeaderConfig(trailingItemsCount, showToast, keepsMenuPresented),
+    [trailingItemsCount, showToast, keepsMenuPresented],
   );
 
   useLayoutEffect(() => {
@@ -155,6 +161,10 @@ function ConfigScreen() {
       <Button
         title={`Toggle trailing items count (${trailingItemsCount}/4)`}
         onPress={() => setTrailingItemsCount(count => (count + 1) % 5)}
+      />
+      <Button
+        title={`keepsMenuPresented: ${keepsMenuPresented}`}
+        onPress={() => setKeepsMenuPresented(prev => !prev)}
       />
       <LongText />
     </ScrollView>

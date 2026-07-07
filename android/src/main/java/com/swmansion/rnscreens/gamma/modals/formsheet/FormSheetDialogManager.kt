@@ -1,13 +1,10 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import android.content.Context
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
@@ -16,6 +13,8 @@ class FormSheetDialogManager(
     private val onDismissRequest: () -> Unit,
 ) {
     private var formSheetConfig = FormSheetConfig()
+
+    private var resolvedDetents: FormSheetDetents? = null
 
     private val themedContext =
         ContextThemeWrapper(
@@ -35,129 +34,83 @@ class FormSheetDialogManager(
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
+    private val behaviorController =
+        bottomSheetView?.let { FormSheetBehaviorController(it) }
+
     private val dimmingManager = DimmingViewManager(context, dialog)
 
-    private val animationCoordinator = FormSheetAnimationCoordinator(dimmingManager)
+    private val dimensionsCoordinator =
+        FormSheetDimensionsCoordinator(
+            dialog = dialog,
+            container = container,
+            bottomSheetView = bottomSheetView,
+            behaviorController = behaviorController,
+        )
+
+    private val presentationManager =
+        FormSheetPresentationManager(
+            dialog = dialog,
+            bottomSheetView = bottomSheetView,
+            dimmingManager = dimmingManager,
+            onNativeDismiss = onDismissRequest,
+        )
 
     init {
-        bottomSheetView?.let { view ->
-            setupBehaviorCallbacksForDimmingView(view)
-            setupOffscreenPositionBeforeFirstDraw(view)
-        }
-        setupDialogShowListener()
-        setupDialogCancelListener()
-        setupWindowInsetsListener()
-
-        dimmingManager.setOnBackdropClickListener(onDismissRequest)
+        presentationManager.setup()
+        dimensionsCoordinator.setup()
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
         if (formSheetConfig.isOpen != newConfig.isOpen) {
-            if (newConfig.isOpen) {
-                dialog.show()
-            } else {
-                animationCoordinator.runExitAnimation(bottomSheetView) {
-                    dialog.dismiss()
-                }
-            }
+            presentationManager.updatePresentationState(newConfig.isOpen)
         }
 
         if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
+        // TODO: @t0maboro
+        // - invalidation flags logic should be implemented following other components convention
+        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
+        val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
+
+        if (detentsChanged) {
+            resolvedDetents = resolveDetents(newConfig.detents)
+        }
+
+        if (detentsChanged || isOpening) {
+            dimensionsCoordinator.updateFormSheetDetents(
+                detents = resolvedDetents,
+            )
+        }
+
         formSheetConfig = newConfig
     }
 
-    private fun setupBehaviorCallbacksForDimmingView(view: FrameLayout) {
-        // TODO: @t0maboro - BottomSheetBehavior override might be needed at some point
-        val behavior = BottomSheetBehavior.from(view)
-        dimmingManager.attachToBehavior(behavior)
-    }
+    private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
+        if (rawDetents.isEmpty()) {
+            return FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
+        }
 
-    private fun setupOffscreenPositionBeforeFirstDraw(view: FrameLayout) {
-        view.viewTreeObserver.addOnPreDrawListener(
-            object : android.view.ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    view.viewTreeObserver.removeOnPreDrawListener(this)
-                    view.translationY = view.height.toFloat()
-                    return true
-                }
-            },
-        )
-    }
-
-    private fun setupDialogShowListener() {
-        dialog.setOnShowListener {
-            dimmingManager.onDialogShown()
-
-            bottomSheetView?.let { view ->
-                animationCoordinator.runEnterAnimation(view)
-            }
+        return try {
+            FormSheetDetents(rawDetents)
+        } catch (e: IllegalArgumentException) {
+            Log.e(
+                "[RNScreens]",
+                "Invalid FormSheet detents: $rawDetents. Falling back to large detent.",
+                e,
+            )
+            FormSheetDetents(listOf(LARGE_DETENT_FRACTION))
         }
     }
-
-    private fun setupDialogCancelListener() {
-        dialog.setOnCancelListener {
-            onDismissRequest()
-        }
-    }
-
-    private fun setupWindowInsetsListener() {
-        ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
-            updateNativeContainerHeight(view, insets)
-            insets
-        }
-    }
-
-    /**
-     * For Yoga we require the container height to be "stable" to avoid updating content size in flight.
-     * If left as MATCH_PARENT, BottomSheetDialog dynamically applies insets as padding when sheet overflows
-     * status bar or display cutout. This causes Yoga to recalculate the layout, resulting in UI flickering
-     * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
-     * the system insets, we completely bypass these redundant layout passes.
-     */
-    private fun updateNativeContainerHeight(
-        view: View,
-        insets: WindowInsetsCompat,
-    ) {
-        val topInset = getTopInset(insets)
-        val bottomInset = getBottomInset(insets)
-        val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
-
-        if (dialogDecorHeight > 0) {
-            val availableHeight = (dialogDecorHeight - topInset - bottomInset).coerceAtLeast(0)
-
-            val layoutParams =
-                view.layoutParams
-                    ?: FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, availableHeight)
-            if (layoutParams.width != ViewGroup.LayoutParams.MATCH_PARENT || layoutParams.height != availableHeight) {
-                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                layoutParams.height = availableHeight
-                view.layoutParams = layoutParams
-            }
-        }
-    }
-
-    private fun getTopInset(insetsCompat: WindowInsetsCompat): Int =
-        insetsCompat
-            .getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
-            ).top
-
-    private fun getBottomInset(insetsCompat: WindowInsetsCompat): Int =
-        insetsCompat
-            .getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
-            ).bottom
 
     internal fun destroy() {
-        dimmingManager.setOnBackdropClickListener {}
-
-        ViewCompat.setOnApplyWindowInsetsListener(container, null)
-
-        dialog.setOnShowListener(null)
-        dialog.setOnCancelListener(null)
+        presentationManager.destroy()
+        dimensionsCoordinator.destroy()
         dialog.dismiss()
+    }
+
+    companion object {
+        private const val LARGE_DETENT_FRACTION = 1.0
     }
 }

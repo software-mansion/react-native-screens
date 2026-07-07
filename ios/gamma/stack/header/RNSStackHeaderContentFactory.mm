@@ -9,24 +9,6 @@
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
                        withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
 {
-  UIBarButtonItem *barButtonItem =
-      [RNSStackHeaderContentFactory internalBarButtonItemForHeaderItem:item
-                                               withFrameChangeDelegate:delegate
-                                              withHeaderEventsDelegate:headerEventsDelegate];
-  if (item.menu != nil) {
-    [RNSStackHeaderMenuCoordinator applyMenu:item.menu
-                             toBarButtonItem:barButtonItem
-                    withHeaderEventsDelegate:headerEventsDelegate
-                                stateTracker:item.menuToggleStateTracker];
-  }
-
-  return barButtonItem;
-}
-
-+ (UIBarButtonItem *)internalBarButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
-                                withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
-                               withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
-{
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {

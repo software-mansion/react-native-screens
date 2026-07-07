@@ -186,15 +186,18 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
   it('should preserve the accessory when switching to the ScrollDown tab and back', async () => {
     await element(by.id('variant-center')).tap();
     await expectBottomAccessoryExist('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
   });

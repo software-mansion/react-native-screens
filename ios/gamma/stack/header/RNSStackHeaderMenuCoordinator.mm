@@ -1,4 +1,5 @@
 #import "RNSStackHeaderMenuCoordinator.h"
+#import "RNSDefines.h"
 
 #import <React/RCTAssert.h>
 
@@ -8,6 +9,7 @@
              toBarButtonItem:(UIBarButtonItem *)item
     withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
                 stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+          menuToggleCallback:(nullable void (^)(void))onMenuToggle
 {
 #if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
   if (@available(tvOS 17.0, *)) {
@@ -15,7 +17,8 @@
                   withHeaderEventsDelegate:delegate
                               stateTracker:tracker
                        singleSelectionRoot:nil
-        initialSingleSelectionStateClaimed:NULL];
+        initialSingleSelectionStateClaimed:NULL
+                        menuToggleCallback:onMenuToggle];
   }
 #endif // !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
 }
@@ -25,6 +28,7 @@
                           stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
                    singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
     initialSingleSelectionStateClaimed:(BOOL *)initialSingleSelectionStateClaimed
+                    menuToggleCallback:(nullable void (^)(void))onMenuToggle
 {
   // Resolve singleSelection root: first menu in hierarchy with singleSelection becomes the root.
   // Only the root is set the singleSelection option - less things to check if sth goes wrong
@@ -47,7 +51,8 @@
                                            stateTracker:tracker
                                              parentMenu:data
                                     singleSelectionRoot:resolvedRoot
-                     initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed];
+                     initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed
+                                     menuToggleCallback:onMenuToggle];
     if (element != nil) {
       [elements addObject:element];
     }
@@ -62,13 +67,15 @@
                                       parentMenu:(RNSStackHeaderMenuData *)parentMenu
                              singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
               initialSingleSelectionStateClaimed:(BOOL *)initialSingleSelectionStateClaimed
+                              menuToggleCallback:(nullable void (^)(void))onMenuToggle
 {
   if ([element isKindOfClass:[RNSStackHeaderMenuData class]]) {
     return [self buildMenuFromData:(RNSStackHeaderMenuData *)element
                   withHeaderEventsDelegate:delegate
                               stateTracker:tracker
                        singleSelectionRoot:singleSelectionRoot
-        initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed];
+        initialSingleSelectionStateClaimed:initialSingleSelectionStateClaimed
+                        menuToggleCallback:onMenuToggle];
   }
 
   if ([element isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
@@ -93,7 +100,8 @@
                         withParentMenu:parentMenu
                    singleSelectionRoot:singleSelectionRoot
                     toggleStateTracker:tracker
-                  headerEventsDelegate:delegate];
+                  headerEventsDelegate:delegate
+                    menuToggleCallback:onMenuToggle];
     }
 
     // it effective type is not 'toggle', then it is a regular action button that triggers onPress instead
@@ -118,6 +126,7 @@
                             singleSelectionRoot:(nullable RNSStackHeaderMenuData *)singleSelectionRoot
                              toggleStateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
                            headerEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                             menuToggleCallback:(nullable void (^)(void))onMenuToggle
 {
   BOOL isItemToggledOn = [tracker getToggleStateForItemWithId:data.menuElementId initialState:data.initialToggleState];
   BOOL insideSingleSelection = singleSelectionRoot != nil;
@@ -151,10 +160,17 @@
                 // radio
                 if ([tracker toggleStateChanged]) {
                   [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
+
                   [tracker setToggleStateChanged:NO];
+                }
+
+                if (onMenuToggle) {
+                  onMenuToggle();
                 }
               }];
   toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
+
+  [self decorateActionKeepsMenuPresented:toggleAction withData:data];
 
   return toggleAction;
 }
@@ -164,12 +180,16 @@
 {
   __weak id<RNSStackHeaderEventsDelegate> weakDelegate = delegate;
 
-  return [UIAction actionWithTitle:data.title
-                             image:nil
-                        identifier:nil
-                           handler:^(__kindof UIAction *_Nonnull action) {
-                             [weakDelegate didPressMenuItem:data.menuElementId];
-                           }];
+  UIAction *action = [UIAction actionWithTitle:data.title
+                                         image:nil
+                                    identifier:nil
+                                       handler:^(__kindof UIAction *_Nonnull action) {
+                                         [weakDelegate didPressMenuItem:data.menuElementId];
+                                       }];
+
+  [self decorateActionKeepsMenuPresented:action withData:data];
+
+  return action;
 }
 
 #pragma mark - Helpers
@@ -213,6 +233,17 @@
                                 intoArray:ids
                     insideSingleSelection:insideSingleSelection];
     }
+  }
+}
+
++ (void)decorateActionKeepsMenuPresented:(UIAction *)action withData:(RNSStackHeaderMenuItemData *)data
+{
+  if (data.keepsMenuPresented) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000)
+    if (@available(iOS 16.0, tvOS 16.0, *)) {
+      action.attributes |= UIMenuElementAttributesKeepsMenuPresented;
+    }
+#endif
   }
 }
 

@@ -8,8 +8,6 @@ __metadata:
 "@rnscreens/apps@workspace:.":
   version: 0.0.0-use.local
   resolution: "@rnscreens/apps@workspace:."
-  dependencies:
-    eslint-plugin-local-rules: "link:./eslint-plugin-local-rules"
   peerDependencies:
     "@react-navigation/bottom-tabs": "*"
     "@react-navigation/core": "*"
@@ -30,10 +28,4 @@ __metadata:
     react-native-screens: "*"
     react-native-worklets: "*"
   languageName: unknown
-  linkType: soft
-
-"eslint-plugin-local-rules@link:./eslint-plugin-local-rules::locator=%40rnscreens%2Fapps%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "eslint-plugin-local-rules@link:./eslint-plugin-local-rules::locator=%40rnscreens%2Fapps%40workspace%3A."
-  languageName: node
   linkType: soft
