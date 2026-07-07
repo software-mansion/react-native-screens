@@ -8,7 +8,7 @@ stack can block native dismissal from exiting into the parent stack.
 Also verifies non-root screens inside the nested stack behave like a
 single stack, and that each screen's `onNativeDismissPrevented` fires
 its own distinct toast. See Note for mechanics and the currently
-deferred back-button coverage (#1459).
+deferred back-button coverage ([#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)).
 
 **OS test creation version:** Android: API Level 36
 
@@ -30,7 +30,7 @@ yet.
 - Back-button dismissal is **not yet covered** by this scenario. When a
   screen does not prevent dismissal, popping via the system
   navigation-bar back button and via the header back chevron does not
-  work yet (#1459); steps covering both will be added once it is fixed.
+  work yet ([#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)); steps covering both will be added once it is fixed.
   Until then, navigate back with the on-screen **Pop** button.
   (Pressing a native back button on a screen that *does* prevent
   dismissal still triggers the block — the steps below cover that.)
