@@ -168,40 +168,40 @@ class TabsScreenViewManager :
             return
         }
 
-        view.appearance = parseAndroidTabsAppearance(value, view.context)
+        view.appearance = parseAndroidTabsAppearance(view.context, value)
     }
 
     private fun parseAndroidTabsAppearance(
-        appearance: ReadableMap,
         context: Context,
+        appearance: ReadableMap,
     ): TabsAppearance =
         TabsAppearance(
-            tabBarBackgroundColor = appearance.readOptionalColor("tabBarBackgroundColor", context),
-            tabBarItemRippleColor = appearance.readOptionalColor("tabBarItemRippleColor", context),
+            tabBarBackgroundColor = appearance.readOptionalColor(context, "tabBarBackgroundColor"),
+            tabBarItemRippleColor = appearance.readOptionalColor(context, "tabBarItemRippleColor"),
             tabBarItemLabelVisibilityMode = appearance.readOptionalString("tabBarItemLabelVisibilityMode"),
-            normal = if (appearance.hasKey("normal")) parseItemStateAppearance(appearance.getMap("normal"), context) else null,
-            selected = if (appearance.hasKey("selected")) parseItemStateAppearance(appearance.getMap("selected"), context) else null,
-            focused = if (appearance.hasKey("focused")) parseItemStateAppearance(appearance.getMap("focused"), context) else null,
-            disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(appearance.getMap("disabled"), context) else null,
-            tabBarItemActiveIndicatorColor = appearance.readOptionalColor("tabBarItemActiveIndicatorColor", context),
+            normal = if (appearance.hasKey("normal")) parseItemStateAppearance(context, appearance.getMap("normal")) else null,
+            selected = if (appearance.hasKey("selected")) parseItemStateAppearance(context, appearance.getMap("selected")) else null,
+            focused = if (appearance.hasKey("focused")) parseItemStateAppearance(context, appearance.getMap("focused")) else null,
+            disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(context, appearance.getMap("disabled")) else null,
+            tabBarItemActiveIndicatorColor = appearance.readOptionalColor(context, "tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.readOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
             tabBarItemTitleFontWeight = appearance.readOptionalString("tabBarItemTitleFontWeight"),
             tabBarItemTitleFontStyle = appearance.readOptionalString("tabBarItemTitleFontStyle"),
-            tabBarItemBadgeBackgroundColor = appearance.readOptionalColor("tabBarItemBadgeBackgroundColor", context),
-            tabBarItemBadgeTextColor = appearance.readOptionalColor("tabBarItemBadgeTextColor", context),
+            tabBarItemBadgeBackgroundColor = appearance.readOptionalColor(context, "tabBarItemBadgeBackgroundColor"),
+            tabBarItemBadgeTextColor = appearance.readOptionalColor(context, "tabBarItemBadgeTextColor"),
         )
 
     private fun parseItemStateAppearance(
-        itemStateAppearance: ReadableMap?,
         context: Context,
+        itemStateAppearance: ReadableMap?,
     ): ItemStateAppearance? {
         if (itemStateAppearance == null) return null
         return ItemStateAppearance(
-            tabBarItemIconColor = itemStateAppearance.readOptionalColor("tabBarItemIconColor", context),
-            tabBarItemTitleFontColor = itemStateAppearance.readOptionalColor("tabBarItemTitleFontColor", context),
+            tabBarItemIconColor = itemStateAppearance.readOptionalColor(context, "tabBarItemIconColor"),
+            tabBarItemTitleFontColor = itemStateAppearance.readOptionalColor(context, "tabBarItemTitleFontColor"),
         )
     }
 

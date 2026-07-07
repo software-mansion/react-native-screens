@@ -227,7 +227,7 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value, view.context)
+        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(view.context, value)
         view.toolbarMenu = menu
         view.toolbarMenuItemIconSourceMap = iconSources
     }
@@ -240,7 +240,7 @@ internal open class StackHeaderConfigViewManager :
         val map = options.getMap(0) ?: return
         view.dispatchMenuElementUpdate(
             id,
-            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map, view.context),
+            StackHeaderToolbarMenuMapper.parseMenuElementOptions(view.context, map),
             StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
         )
     }

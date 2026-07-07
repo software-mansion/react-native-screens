@@ -26,11 +26,11 @@ internal fun ReadableMap.readOptionalFloat(key: String): Float? {
 }
 
 internal fun ReadableMap.readOptionalColor(
-    key: String,
     context: Context,
+    key: String,
 ): Int? {
     if (!hasKey(key) || isNull(key)) return null
-    return parseColor(key, context)
+    return parseColor(context, key)
 }
 
 // endregion
@@ -48,10 +48,10 @@ internal fun ReadableMap.readBoolean(
 ): Boolean = readOptionalBoolean(key) ?: default
 
 internal fun ReadableMap.readColor(
+    context: Context,
     key: String,
     default: Int?,
-    context: Context,
-): Int? = if (!hasKey(key) || isNull(key)) default else parseColor(key, context)
+): Int? = if (!hasKey(key) || isNull(key)) default else parseColor(context, key)
 
 internal fun ReadableMap.readImageUri(
     key: String,
@@ -79,8 +79,8 @@ internal fun ReadableMap.requireNotNullString(key: String): String =
 // region Parsing color
 
 internal fun ReadableMap.parseColor(
-    key: String,
     context: Context,
+    key: String,
 ): Int? =
     try {
         when (getType(key)) {
