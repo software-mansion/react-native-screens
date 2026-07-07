@@ -11,6 +11,7 @@
 #import "RNSLog.h"
 
 #import "RNSContainerHelpers.h"
+#import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
@@ -55,6 +56,21 @@ namespace react = facebook::react;
       [self setupViewConstraintsForController:_stackNavigationController];
     }
   }
+}
+
+// By default, the header buttons that are not inside the native hit area
+// cannot be clicked, so we check it by ourselves
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  if (CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
+    RNSStackHeaderConfigComponentView *headerConfig = [self requireTopScreenHeaderConfig];
+    CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
+    UIView *headerHitTestResult = [headerConfig hitTest:convertedPoint withEvent:event];
+    if (headerHitTestResult != nil) {
+      return headerHitTestResult;
+    }
+  }
+  return [super hitTest:point withEvent:event];
 }
 
 #pragma mark - Communication with StackScreen
@@ -145,6 +161,15 @@ namespace react = facebook::react;
     [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
     [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
   ]];
+}
+
+- (RNSStackHeaderConfigComponentView *)requireTopScreenHeaderConfig
+{
+  RCTAssert([_stackNavigationController.topViewController.view isKindOfClass:[RNSStackScreenComponentView class]],
+            @"[RNScreens] Expected top screen to be a react compontent view of type RNSStackScreenComponentView");
+  auto screenView = (RNSStackScreenComponentView *)_stackNavigationController.topViewController.view;
+
+  return screenView.headerConfig;
 }
 
 #pragma mark - RCTMountingTransactionObserving

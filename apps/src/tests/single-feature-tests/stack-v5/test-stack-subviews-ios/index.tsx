@@ -56,6 +56,10 @@ function ResizingItem() {
   return (
     <PressableWithFeedback
       onPress={() => setLarge(lg => !lg)}
+      // pressable props don't seem to update at runtime
+      // changing the key forces the view to rebuild completely
+      // - similar thing has been done in Test3446
+      key={`${pressableProps.hitSlop}_${pressableProps.pressRetentionOffset}`}
       {...pressableProps}
       style={{
         width: large ? 60 : 20,
