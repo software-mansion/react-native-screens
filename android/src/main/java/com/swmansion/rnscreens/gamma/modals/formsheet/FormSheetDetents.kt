@@ -9,10 +9,9 @@ internal class FormSheetDetents(
         require(detents.isNotEmpty()) { "[RNScreens] At least one detent must be provided." }
         require(detents.size <= MAX_DETENTS) { "[RNScreens] Maximum of $MAX_DETENTS detents supported, got ${detents.size}." }
 
-        if (isFitToContents) {
-            // Valid fitToContents configuration is a single detent with value -1.0.
-            // This is guarded by the custom getter of the `isFitToContents` property below.
-        } else {
+        // Valid fitToContents configuration is a single detent with value -1.0.
+        // For any other configuration, we should validate provided detents array.
+        if (!isFitToContents) {
             detents.forEach {
                 require(it in 0.0..1.0) {
                     "[RNScreens] Detent values must be within 0.0 and 1.0, got $it."
