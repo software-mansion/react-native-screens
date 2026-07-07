@@ -52,7 +52,7 @@ internal class FormSheetDimensionsCoordinator(
         }
     }
 
-    internal fun updateFormSheetDetents(
+    internal fun updateFormSheetDimensions(
         detents: FormSheetDetents?,
         contentHeightForFitToContents: Int = 0,
     ) {

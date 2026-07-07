@@ -107,7 +107,7 @@ class FormSheetDialogManager(
         listOf(
             ConfigStep(
                 dependsOn = { listOf(it.detents, it.contentHeight) },
-                apply = { dimensionsCoordinator.updateFormSheetDetents(resolveDetents(it.detents), it.contentHeight) },
+                apply = { dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(it.detents), it.contentHeight) },
             ),
             ConfigStep(
                 dependsOn = { it.prefersGrabberVisible },
