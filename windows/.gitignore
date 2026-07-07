@@ -1,8 +1,10 @@
 *AppPackages*
 *BundleArtifacts*
+
 #OS junk files
 [Tt]humbs.db
 *.DS_Store
+
 #Visual Studio files
 *.[Oo]bj
 *.user
