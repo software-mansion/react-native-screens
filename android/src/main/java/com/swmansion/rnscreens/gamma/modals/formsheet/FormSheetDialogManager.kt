@@ -64,11 +64,23 @@ class FormSheetDialogManager(
 
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
-        configSteps.forEach { step ->
-            val changed = step.dependencyValue(oldConfig) != step.dependencyValue(newConfig)
-            if (changed || (step.forceOnReopen && reopened)) {
-                step.apply(newConfig)
-            }
+        // ALWAYS refresh dimensions when reopening to ensure that BottomSheet
+        // state and layout are synchronized with native behavior.
+        val dimensionsChanged =
+            oldConfig.detents != newConfig.detents || oldConfig.contentHeight != newConfig.contentHeight
+        if (dimensionsChanged || reopened) {
+            dimensionsCoordinator.updateFormSheetDimensions(
+                resolveDetents(newConfig.detents),
+                newConfig.contentHeight,
+            )
+        }
+
+        if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
+            container.setGrabberVisible(newConfig.prefersGrabberVisible)
+        }
+
+        if (oldConfig.isOpen != newConfig.isOpen) {
+            presentationManager.updatePresentationState(newConfig.isOpen)
         }
     }
 
@@ -94,40 +106,6 @@ class FormSheetDialogManager(
         dimensionsCoordinator.destroy()
         dialog.dismiss()
     }
-
-    /**
-     * Describes a single native effect driven by [FormSheetConfig].
-     *
-     * @param dependencyValue Extracts the config fields this effect reads. The step re-runs whenever
-     * the extracted value changes.
-     * @param forceOnReopen When `true`, the step is re-applied on reopen even if its fields are
-     * unchanged.
-     * @param apply Triggers the effect callback.
-     */
-    private class ConfigStep(
-        val dependencyValue: (FormSheetConfig) -> Any?,
-        val forceOnReopen: Boolean = false,
-        val apply: (FormSheetConfig) -> Unit,
-    )
-
-    private val configSteps =
-        listOf(
-            // ALWAYS refresh behavior when reopening to ensure that BottomSheet
-            // state and layout are synchronized with native behavior.
-            ConfigStep(
-                dependencyValue = { listOf(it.detents, it.contentHeight) },
-                forceOnReopen = true,
-                apply = { dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(it.detents), it.contentHeight) },
-            ),
-            ConfigStep(
-                dependencyValue = { it.prefersGrabberVisible },
-                apply = { container.setGrabberVisible(it.prefersGrabberVisible) },
-            ),
-            ConfigStep(
-                dependencyValue = { it.isOpen },
-                apply = { presentationManager.updatePresentationState(it.isOpen) },
-            ),
-        )
 
     companion object {
         private const val LARGE_DETENT_FRACTION = 1.0
