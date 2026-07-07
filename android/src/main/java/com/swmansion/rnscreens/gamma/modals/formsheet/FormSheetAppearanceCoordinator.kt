@@ -17,7 +17,7 @@ internal class FormSheetAppearanceCoordinator(
     private var isCornerRadiusApplyPending = false
     private var isBackgroundColorApplyPending = false
 
-    // Needs to be caught to restore when the app switches back to `systemDefault`.
+    // Needs to be cached to restore when the app switches back to `systemDefault`.
     private var defaultShapeAppearanceModel: ShapeAppearanceModel? = null
     private var defaultBackgroundColor: android.content.res.ColorStateList? = null
 

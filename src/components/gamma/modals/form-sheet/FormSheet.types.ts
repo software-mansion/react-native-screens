@@ -11,8 +11,6 @@ export interface FormSheetDetentChangedEvent {
 export type FormSheetNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container hosting the sheet content.
-   *
-   * @platform ios
    */
   backgroundColor?: ColorValue | undefined;
 };
