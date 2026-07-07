@@ -1,27 +1,44 @@
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
-import { Scenario, ScenarioGroup } from './helpers';
+import { Platform, ScrollView } from 'react-native';
+import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
-function ScenarioSelect(props: { scenarios: Scenario[] }) {
+function ScenarioSelect(props: {
+  scenarios: Record<string, Scenario>;
+  groupName: string;
+}) {
+  const scenarioGroupName = props.groupName.replace(/\s/g, '');
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.values(props.scenarios).map(({ name, key, details, platforms }) => (
-        <ScenarioButton
-          title={name}
-          details={details}
-          route={key}
-          key={key}
-          platformsHint={platforms}
-          testID={key}
-        />
-      ))}
-    </ScrollView>
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        testID={`${scenarioGroupName}-scenarios-scrollview`}>
+        {Object.values(props.scenarios).map(
+          ({ scenarioDescription }: Scenario) => {
+            const { name, key, details, platforms, smokeTest, e2eCoverage } =
+              scenarioDescription;
+            return (
+              <ScenarioButton
+                title={name}
+                details={details}
+                route={key}
+                key={key}
+                platformsHint={platforms}
+                smokeTest={smokeTest}
+                e2eCoverage={e2eCoverage}
+                testID={key}
+              />
+            );
+          },
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -42,11 +59,25 @@ export default function ScenarioSelectionScreen(props: {
               headerLargeTitleEnabled: true,
               headerTitle: props.scenarioGroup.name,
             }}>
-            {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
+            {() => (
+              <ScenarioSelect
+                scenarios={props.scenarioGroup.scenarios}
+                groupName={props.scenarioGroup.name}
+              />
+            )}
           </Stack.Screen>
-          {Object.values(props.scenarioGroup.scenarios).map(({ key, AppComponent }) => (
-            <Stack.Screen name={key} key={key} component={AppComponent} />
-          ))}
+          {Object.values<Scenario>(props.scenarioGroup.scenarios).map(
+            (ScenarioComponent: Scenario) => {
+              const { key } = ScenarioComponent.scenarioDescription;
+              return (
+                <Stack.Screen
+                  key={key}
+                  name={key}
+                  component={ScenarioComponent}
+                />
+              );
+            },
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

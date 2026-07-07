@@ -21,9 +21,12 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
+
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [stackNavState, navActionDispatch]: [
     StackNavigationState,
@@ -62,7 +65,12 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   return (
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
-        ({ Component, options, activityMode, routeKey }) => {
+        ({
+          options: { headerConfig, headerConfigRef, ...options },
+          activityMode,
+          routeKey,
+          name,
+        }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
             routeOptions: { ...options },
@@ -72,6 +80,13 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
             batch: navMethods.batchAction,
             setRouteOptions: navMethods.setRouteOptions,
           };
+
+          const Component = componentsByName.get(name);
+          if (!Component) {
+            throw new Error(
+              `[Stack] No config matches the "${name}" route name`,
+            );
+          }
 
           return (
             <Stack.Screen
@@ -83,6 +98,9 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 <Component />
+                {headerConfig !== undefined && (
+                  <Stack.HeaderConfig ref={headerConfigRef} {...headerConfig} />
+                )}
               </StackNavigationContext.Provider>
             </Stack.Screen>
           );

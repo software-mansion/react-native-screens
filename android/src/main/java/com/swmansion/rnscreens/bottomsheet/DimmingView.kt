@@ -54,7 +54,7 @@ internal class DimmingView(
     // We do not want to have any action defined here. We just want listeners notified that the click happened.
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (blockGestures) {
+        if (blockGestures && event?.actionMasked == MotionEvent.ACTION_UP) {
             callOnClick()
         }
         return blockGestures

@@ -27,7 +27,7 @@ export type TabRouteConfig = {
 /**
  * Runtime instance of a tab route. Created from a TabRouteConfig blueprint.
  */
-export type TabRoute = TabRouteConfig & {
+export type TabRoute = Omit<TabRouteConfig, 'Component'> & {
   routeKey: string;
 };
 
@@ -55,6 +55,7 @@ export type TabsContainerState = {
 export type TabsNavigationActionSelectTab = {
   type: 'tab-select';
   routeKey: string;
+  forceAction: boolean;
 };
 
 export type TabsNavigationActionNativeSelectTab = {
@@ -78,14 +79,12 @@ export type TabsNavigationAction =
 
 export type TabsHostConfig = Omit<
   TabsHostProps,
-  | 'children'
-  | 'navState'
-  | 'experimentalControlNavigationStateInJS'
+  'children' | 'navStateRequest'
 >;
 
 export type TabsContainerProps = Omit<
   TabsHostProps,
-  'children' | 'navState'
+  'children' | 'navStateRequest'
 > & {
   routeConfigs: TabRouteConfig[];
   /**
@@ -94,11 +93,6 @@ export type TabsContainerProps = Omit<
    * Defaults to the first tab if not provided.
    */
   defaultRouteName?: string;
-  /**
-   * Whether to control navigation state in JS.
-   * Passed to Tabs.Host as experimentalControlNavigationStateInJS.
-   */
-  experimentalControlNavigationStateInJS?: boolean;
 };
 
 export type SetTabOptionsMethod = (
@@ -106,11 +100,11 @@ export type SetTabOptionsMethod = (
   options: Partial<TabRouteOptions>,
 ) => void;
 
-export type SelectTabMethod = (routeKey: string) => void;
+export type SelectTabMethod = (routeKey: string, forceAction?: boolean) => void;
 
 /// Navigation methods (user facing)
 
 export type TabsNavigationMethods = {
   setRouteOptions: SetTabOptionsMethod;
   selectTab: SelectTabMethod;
-}
+};

@@ -10,6 +10,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 
+#import "RNSContainerHelpers.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
@@ -46,7 +47,14 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLog(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
-  [self reactAddControllerToClosestParent:_stackNavigationController];
+  if (self.window != nil && _stackNavigationController.parentViewController == nil) {
+    BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
+                                          toViewControllerManaging:self.reactSuperview
+                                                 withContainerView:self];
+    if (mountResult) {
+      [self setupViewConstraintsForController:_stackNavigationController];
+    }
+  }
 }
 
 #pragma mark - Communication with StackScreen
@@ -71,11 +79,10 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
@@ -85,11 +92,10 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSStackScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
@@ -103,8 +109,8 @@ namespace react = facebook::react;
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
     [_stackOperationCoordinator addPopOperation:stackScreen];
   } else {
-    RNSLog(
-        @"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed", stackScreen.screenKey);
+    RNSLog(@"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed",
+           stackScreen.screenKey);
   }
 }
 
@@ -129,22 +135,16 @@ namespace react = facebook::react;
   }
 }
 
-- (void)reactAddControllerToClosestParent:(nonnull UIViewController *)controller
+- (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
 {
-  RCTAssert(controller != nil, @"[RNScreens] Attempt to move to a nullish controller");
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
-    }
-    return;
-  }
+  // Enable auto-layout to ensure valid size of stack controller view.
+  controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+  [NSLayoutConstraint activateConstraints:@[
+    [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+    [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+    [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+    [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  ]];
 }
 
 #pragma mark - RCTMountingTransactionObserving
@@ -155,6 +155,16 @@ namespace react = facebook::react;
   [_stackOperationCoordinator executePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

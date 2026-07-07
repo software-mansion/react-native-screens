@@ -68,7 +68,10 @@ android/.settings
 *Example/artifacts
 
 # AI assistant configuration (local only)
-/CLAUDE.md
-/AGENTS.md
+/CLAUDE.local.md
 /.claude/
+/.agents
+
+# General rule for files explicitly marked as local
+*.local.*
 

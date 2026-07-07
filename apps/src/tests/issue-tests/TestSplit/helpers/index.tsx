@@ -1,1 +1,1 @@
-export * from './NativeStackNavigatorComponent'
+export * from './NativeStackNavigatorComponent';

@@ -17,12 +17,7 @@ import {
  * updateHostConfig (via TabsHostConfigContext) rather than prop changes.
  */
 export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
-  const {
-    routeConfigs,
-    defaultRouteName,
-    experimentalControlNavigationStateInJS,
-    ...hostProps
-  } = props;
+  const { routeConfigs, defaultRouteName, ...hostProps } = props;
 
   const [hostConfig, setHostConfig] = React.useState<TabsHostConfig>(hostProps);
 
@@ -43,12 +38,8 @@ export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
       <TabsContainer
         routeConfigs={routeConfigs}
         defaultRouteName={defaultRouteName}
-        experimentalControlNavigationStateInJS={
-          experimentalControlNavigationStateInJS
-        }
         {...hostConfig}
       />
     </TabsHostConfigContext>
   );
 }
-

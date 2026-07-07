@@ -19,7 +19,9 @@ import SearchBarNativeComponent, {
 import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands | null> }
+  SearchBarNativeProps & {
+    ref?: React.RefObject<SearchBarCommands | null> | undefined;
+  }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
@@ -88,9 +90,6 @@ function SearchBar(
     return View as unknown as React.ReactNode;
   }
 
-  // This is necessary only for legacy architecture (Paper).
-  const parsedProps = parseUndefinedPropsToSystemDefault(props);
-
   const {
     obscureBackground,
     hideNavigationBar,
@@ -100,7 +99,7 @@ function SearchBar(
     onCancelButtonPress,
     onChangeText,
     ...rest
-  } = parsedProps;
+  } = props;
 
   return (
     <NativeSearchBar
@@ -123,14 +122,6 @@ function SearchBar(
       onChangeText={onChangeText as CT.DirectEventHandler<ChangeTextEvent>}
     />
   );
-}
-
-// This function is necessary for legacy architecture (Paper) to ensure
-// consistent behavior for props with `systemDefault` option.
-function parseUndefinedPropsToSystemDefault(
-  props: SearchBarProps,
-): SearchBarProps {
-  return { ...props, autoCapitalize: props.autoCapitalize ?? 'systemDefault' };
 }
 
 export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);

@@ -10,19 +10,19 @@ type TabSelectedEvent = Readonly<{
   provenance: CT.Int32;
   isRepeated: boolean;
   hasTriggeredSpecialEffect: boolean;
-  isNativeAction: boolean;
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 }>;
 
-type NavigationState = Readonly<{
+type NavigationStateRequest = Readonly<{
   selectedScreenKey: string;
-  provenance: CT.Int32;
+  baseProvenance: CT.Int32;
 }>;
 
 type TabSelectionRejectedEvent = Readonly<{
   selectedScreenKey: string;
   provenance: CT.Int32;
   rejectedScreenKey: string;
-  rejectedProvenance: CT.Int32;
+  rejectedBaseProvenance: CT.Int32;
   rejectionReason: 'stale' | 'repeated';
 }>;
 
@@ -57,29 +57,30 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface NativeProps extends ViewProps {
   // Control
-  navState: NavigationState;
+  navStateRequest: NavigationStateRequest;
   rejectStaleNavStateUpdates?: CT.WithDefault<boolean, false>;
 
   // Events
-  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent>;
-  onTabSelectionRejected?: CT.DirectEventHandler<TabSelectionRejectedEvent>;
-  onTabSelectionPrevented?: CT.DirectEventHandler<TabSelectionPreventedEvent>;
-  onMoreTabSelected?: CT.DirectEventHandler<MoreTabSelectedEvent>;
+  onTabSelected?: CT.DirectEventHandler<TabSelectedEvent> | undefined;
+  onTabSelectionRejected?:
+    | CT.DirectEventHandler<TabSelectionRejectedEvent>
+    | undefined;
+  onTabSelectionPrevented?:
+    | CT.DirectEventHandler<TabSelectionPreventedEvent>
+    | undefined;
+  onMoreTabSelected?: CT.DirectEventHandler<MoreTabSelectedEvent> | undefined;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
-  nativeContainerBackgroundColor?: ColorValue;
+  nativeContainerBackgroundColor?: ColorValue | undefined;
   colorScheme?: CT.WithDefault<TabsHostColorScheme, 'inherit'>;
 
   // We can't use `direction` name for this prop as it's also used by
   // direction style View prop.
   layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
-  // Experimental support
-  controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
-
   // iOS-specific props
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
 }

@@ -16,9 +16,8 @@ class RNSStackScreenComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
-
 #ifdef ANDROID
+    react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode =
         static_cast<RNSStackScreenShadowNode &>(shadowNode);
     react_native_assert(

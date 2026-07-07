@@ -1,11 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Split } from 'react-native-screens/experimental';
-import { Colors } from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { TestBottomTabs, TestScreenStack } from '..';
 import { SplitBaseConfig } from './helpers/types';
 
-const SplitBaseApp = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
+const SplitBaseApp = ({
+  splitBaseConfig,
+}: {
+  splitBaseConfig: SplitBaseConfig;
+}) => {
   return (
     <Split.Host {...splitBaseConfig}>
       <Split.Column>
@@ -21,7 +25,7 @@ const SplitBaseApp = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig })
       </Split.Column>
     </Split.Host>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -32,18 +36,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   text: {
-    fontSize: 24
+    fontSize: 24,
   },
   button: {
     width: 120,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.BlueDark100
-  }
-})
+    backgroundColor: Colors.BlueDark100,
+  },
+});
 
 export default SplitBaseApp;

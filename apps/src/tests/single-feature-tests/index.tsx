@@ -10,29 +10,43 @@ import TabsScenarioGroup from './tabs';
 import SplitScenarioGroup from './split';
 import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
+import ScrollViewMarkerScenarioGroup from './scroll-view-marker';
+import FormSheetScenarioGroup from './form-sheet';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
+
+export * from './tabs';
+export * from './split';
+export * from './stack-v5';
+export * from './stack-v4';
+export * from './scroll-view-marker';
+export * from './form-sheet';
 
 export const COMPONENT_SCENARIOS = {
   Tabs: TabsScenarioGroup,
   Split: SplitScenarioGroup,
   StackV5: StackV5ScenarioGroup,
   StackV4: StackV4ScenarioGroup,
+  ScrollViewMarker: ScrollViewMarkerScenarioGroup,
+  FormSheet: FormSheetScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      testID="single-feature-tests-scrollview">
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
         <ScenarioButton
           key={key}
           title={scenarioGroup.name}
           route={key}
           details={scenarioGroup.details}
+          testID={`single-feature-tests-${scenarioGroup.name}`}
         />
       ))}
     </ScrollView>

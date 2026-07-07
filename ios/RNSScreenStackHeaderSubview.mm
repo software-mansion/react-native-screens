@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -91,14 +90,10 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     _lastScheduledFrame = frame;
   }
@@ -110,18 +105,13 @@ namespace react = facebook::react;
   [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
     _lastScheduledFrame = CGRectZero;
+    _synchronousShadowStateUpdatesEnabled = YES;
   }
 
   return self;
@@ -214,9 +204,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (UIBarButtonItem *)getUIBarButtonItem
 {
-  RCTAssert(
-      _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
-      @"[RNScreens] Unexpected subview type.");
+  RCTAssert(_type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
+            @"[RNScreens] Unexpected subview type.");
 
   if (_barButtonItem == nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -299,6 +288,16 @@ RNS_IGNORE_SUPER_CALL_END
   [self configureBarButtonItem];
 }
 
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
@@ -309,20 +308,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;
 }
-
-@implementation RCTConvert (RNSScreenStackHeaderSubview)
-
-RCT_ENUM_CONVERTER(
-    RNSScreenStackHeaderSubviewType,
-    (@{
-      @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-      @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-      @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-      @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-      @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-      @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-    }),
-    RNSScreenStackHeaderSubviewTypeTitle,
-    integerValue)
-
-@end

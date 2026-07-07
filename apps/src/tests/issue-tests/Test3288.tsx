@@ -24,7 +24,7 @@ import {
   View,
 } from 'react-native';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import type {
   TabBarMinimizeBehavior,

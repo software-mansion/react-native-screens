@@ -11,10 +11,11 @@
 
 #import <React/RCTAssert.h>
 #import <React/RCTScrollViewComponentView.h>
+#import <React/UIView+React.h>
 
 namespace react = facebook::react;
 
-@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding, RCTMountingTransactionObserving>
+@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding>
 @end
 
 @implementation RNSScrollViewMarkerComponentView {
@@ -61,10 +62,9 @@ namespace react = facebook::react;
 - (nullable UIScrollView *)findScrollView
 {
   // It allows 0 for cases where the child is unmounted
-  RCTAssert(
-      self.subviews.count <= 1,
-      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
-      self.subviews);
+  RCTAssert(self.subviews.count <= 1,
+            @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+            self.subviews);
 
   UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:self.subviews.firstObject];
 
@@ -79,7 +79,11 @@ namespace react = facebook::react;
     if ([superview respondsToSelector:@selector(registerDescendantScrollView:fromMarker:)]) {
       return static_cast<id<RNSScrollViewSeeking>>(superview);
     }
-    superview = superview.superview;
+    if ([superview respondsToSelector:@selector(reactSuperview)]) {
+      superview = [superview reactSuperview];
+    } else {
+      superview = superview.superview;
+    }
   }
   return nil;
 }
@@ -143,12 +147,20 @@ namespace react = facebook::react;
 
 #pragma mark - Override
 
-// TODO: This will be way too late to configure options etc.
-// Potentially we want to run in the end of transaction, before containers are updated.
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   [super willMoveToWindow:newWindow];
-  [self maybeRegisterWithSeekingAncestor];
+  if (newWindow != nil) {
+    [self maybeRegisterWithSeekingAncestor];
+  }
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  if (self.window == nil) {
+    _hasAttemptedRegistration = NO;
+  }
 }
 
 #pragma mark - RNSScrollEdgeEffectProviding
@@ -185,22 +197,22 @@ namespace react = facebook::react;
 
   if (oldComponentProps.leftScrollEdgeEffect != newComponentProps.leftScrollEdgeEffect) {
     _leftScrollEdgeEffect = RNSScrollEdgeEffectFromSVMLeftEdgeEffect(newComponentProps.leftScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.topScrollEdgeEffect != newComponentProps.topScrollEdgeEffect) {
     _topScrollEdgeEffect = RNSScrollEdgeEffectFromSVMTopEdgeEffect(newComponentProps.topScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.rightScrollEdgeEffect != newComponentProps.rightScrollEdgeEffect) {
     _rightScrollEdgeEffect = RNSScrollEdgeEffectFromSVMRightEdgeEffect(newComponentProps.rightScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   if (oldComponentProps.bottomScrollEdgeEffect != newComponentProps.bottomScrollEdgeEffect) {
     _bottomScrollEdgeEffect = RNSScrollEdgeEffectFromSVMBottomEdgeEffect(newComponentProps.bottomScrollEdgeEffect);
-    _needsEdgeEffectUpdate = true;
+    _needsEdgeEffectUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -218,10 +230,9 @@ namespace react = facebook::react;
   }
 
   // It allows 0 for cases where the child is unmounted
-  RCTAssert(
-      self.subviews.count <= 1,
-      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
-      self.subviews);
+  RCTAssert(self.subviews.count <= 1,
+            @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+            self.subviews);
 
   [super finalizeUpdates:updateMask];
 }
@@ -246,13 +257,15 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScrollViewMarkerComponentDescriptor>();
 }
 
-#pragma mark - RCTMountingTransactionObserving
+#pragma mark - Dynamic frameworks support
 
-- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
-               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
 {
-  [self maybeRegisterWithSeekingAncestor];
+  [super load];
 }
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

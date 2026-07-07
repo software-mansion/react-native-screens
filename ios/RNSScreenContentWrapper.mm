@@ -90,8 +90,8 @@ namespace react = facebook::react;
 {
   // Directly search subviews
   for (UIView *subview in self.subviews) {
-    if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
+    if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
+      return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview),
                                          .contentContainerView = self};
     }
   }
@@ -102,10 +102,9 @@ namespace react = facebook::react;
     UIView *maybeSafeAreaView = self.subviews.firstObject;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
-        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          return (RNSScrollViewSearchResult){
-              .scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
-              .contentContainerView = maybeSafeAreaView};
+        if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
+          return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview),
+                                             .contentContainerView = maybeSafeAreaView};
         }
       }
     }
@@ -118,7 +117,7 @@ namespace react = facebook::react;
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
 {
   auto scrollViewComponentAndContentContainerPair = [self childRCTScrollViewComponentAndContentContainer];
-  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+  RCTScrollViewComponentView *_Nullable scrollViewComponent =
       scrollViewComponentAndContentContainerPair.scrollViewComponent;
   UIView *_Nullable containerView = scrollViewComponentAndContentContainerPair.contentContainerView;
 
@@ -183,11 +182,15 @@ Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
   return RNSScreenContentWrapper.class;
 }
 
+#pragma mark - Dynamic frameworks support
+
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
 + (void)load
 {
   [super load];
 }
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

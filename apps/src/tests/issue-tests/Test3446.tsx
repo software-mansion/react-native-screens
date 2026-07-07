@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/native-stack';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { ScrollView, View } from 'react-native';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 
 type RouteParamList = {

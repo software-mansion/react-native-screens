@@ -1,16 +1,23 @@
 #import "RNSStackNavigationController.h"
+#import "RNSContainer.h"
 #import "RNSLog.h"
+#import "RNSParentContainerItemRegistry.h"
 #import "RNSStackOperation.h"
+#import "RNSStackScreenController.h"
+#import "RNSViewFrameChangeDelegate.h"
 #import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
+  RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
+    _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
+    [_navigationBarCoordinator initializeNavigationBarOfNavigationController:self];
     [self initState];
   }
   return self;
@@ -20,6 +27,50 @@
 {
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
+  _parentContainerRegistry = [RNSParentContainerItemRegistry new];
+}
+
+#pragma mark-- Layout
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
+}
+
+#pragma mark - RNSContainer
+
+- (nullable UIScrollView *)resolveCurrentContentScrollView
+{
+  // We assume `topViewController` corresponds to the currently presented screen.
+  UIViewController *topController = self.topViewController;
+  if (![topController isKindOfClass:RNSStackScreenController.class]) {
+    return nil;
+  }
+  return [static_cast<RNSStackScreenController *>(topController) findContentScrollView];
+}
+
+- (void)attachToParentContainerItem
+{
+  [_parentContainerRegistry attachContainer:self];
+}
+
+- (void)detachFromParentContainerItem
+{
+  [_parentContainerRegistry detachContainer:self];
+}
+
+#pragma mark - View controller containment
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+
+  if (parent != nil) {
+    [self attachToParentContainerItem];
+  } else {
+    [self detachFromParentContainerItem];
+  }
 }
 
 - (BOOL)hasPendingOperations
@@ -70,6 +121,8 @@
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];
 }
+
+#pragma mark - Debug
 
 - (void)dumpStackModel
 {

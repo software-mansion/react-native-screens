@@ -23,7 +23,7 @@ import {
   SearchBarPlacement,
   StackPresentationTypes,
 } from 'react-native-screens';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {

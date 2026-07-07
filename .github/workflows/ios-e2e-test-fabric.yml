@@ -21,6 +21,7 @@ jobs:
     timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample
+      RNS_GAMMA_ENABLED: 1
     concurrency:
       group: ios-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -39,7 +40,7 @@ jobs:
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils
-        run: brew tap wix/brew && brew install applesimutils
+        run: brew tap wix/brew && brew trust wix/brew && brew install applesimutils
       - name: Install root node dependencies
         run: yarn install && yarn submodules
       - name: Install node dependencies

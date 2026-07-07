@@ -11,7 +11,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 enableFreeze(true);
 

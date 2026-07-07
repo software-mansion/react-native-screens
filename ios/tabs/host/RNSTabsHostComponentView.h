@@ -4,13 +4,8 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
-#import "RNSTabsHostComponentViewManager.h"
 #import "RNSTabsHostEventEmitter.h"
 #import "RNSTabsNavigationState.h"
-
-#if !RCT_NEW_ARCH_ENABLED
-#import <React/RCTInvalidating.h>
-#endif
 
 #import "RNSTabBarController.h"
 
@@ -26,18 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <
-                                          RNSScreenContainerDelegate,
-                                          RNSTabBarControllerDelegate
-#if !RCT_NEW_ARCH_ENABLED
-                                          ,
-                                          RCTInvalidating
-#endif
-                                          >
-
-#if !RCT_NEW_ARCH_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
-#endif // !RCT_NEW_ARCH_ENABLED
+@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate, RNSTabsNavigationStateObserver>
 
 @property (nonatomic, nonnull, strong, readonly) RNSTabBarController *controller;
 
@@ -48,9 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabsHostComponentView ()
 
 /**
- * Last navigation state requested by JS. Will be nonnull after first prop update.
+ * Last navigation state update requested by JS. Will be nonnull after first prop update.
  */
-@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationState *navState;
+@property (nonatomic, strong, readonly, nullable) RNSTabsNavigationStateUpdateRequest *navStateRequest;
 
 @property (nonatomic, readonly) BOOL rejectStaleNavStateUpdates;
 
@@ -61,8 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
 
 @property (nonatomic, readonly) UIUserInterfaceStyle colorScheme;
-
-@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 @property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;
 
@@ -83,13 +65,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsHostEventEmitter *)reactEventEmitter;
-
-#if !RCT_NEW_ARCH_ENABLED
-#pragma mark - LEGACY Event blocks
-
-@property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
-
-#endif
 
 @end
 

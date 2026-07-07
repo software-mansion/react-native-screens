@@ -1,22 +1,22 @@
 package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
-import android.view.Choreographer
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
-import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.gamma.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
-import com.swmansion.rnscreens.gamma.tabs.container.TabSelectOp
+import com.swmansion.rnscreens.gamma.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.gamma.tabs.container.TabsContainer
-import com.swmansion.rnscreens.gamma.tabs.container.TabsContainerDelegate
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavState
-import com.swmansion.rnscreens.gamma.tabs.container.TabsNavStateUpdateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationState
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateObserver
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateRejectionReason
+import com.swmansion.rnscreens.gamma.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
@@ -26,13 +26,18 @@ import kotlin.properties.Delegates
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : FrameLayout(reactContext),
-    TabsContainerDelegate,
+    TabsNavigationStateObserver,
+    ViewTreeObserver.OnPreDrawListener,
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
-    private var jsNavState: TabsNavState = TabsNavState.EMPTY
+    private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
+    private val layoutCoordinator: TabsHostLayoutCoordinator =
+        TabsHostLayoutCoordinator(this, ::forceSubtreeMeasureAndLayoutPass)
+
+    private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext, this).apply {
+        TabsContainer(reactContext).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -40,11 +45,9 @@ class TabsHost(
                 )
         }
 
-    internal var rejectStaleNavStateUpdates: Boolean by container::rejectOpsWithStaleNavState
+    internal var rejectStaleNavigationStateUpdates: Boolean by container::rejectStaleNavigationStateUpdates
 
     internal lateinit var eventEmitter: TabsHostEventEmitter
-
-    private var isLayoutEnqueued: Boolean = false
 
     var tabBarHidden: Boolean by container::tabBarHidden
 
@@ -59,6 +62,9 @@ class TabsHost(
 
     init {
         addView(container)
+        check(container.addNavigationStateObserver(this)) {
+            "[RNScreens] Failed to register TabsHost as navigation state observer"
+        }
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
             .addUIManagerEventListener(this)
@@ -66,10 +72,13 @@ class TabsHost(
 
     override fun onAttachedToWindow() {
         RNSLog.i(TAG, "TabsHost [$id] attached to window")
+        viewTreeObserver.addOnPreDrawListener(this)
         super.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
+        viewTreeObserver.removeOnPreDrawListener(this)
+        hasFirstLayoutWithInsets = false
         super.onDetachedFromWindow()
     }
 
@@ -109,30 +118,42 @@ class TabsHost(
         container.removeAllTabsScreens()
     }
 
-    internal fun updateJSNavState(navState: TabsNavState) {
-        jsNavState = navState
-        container.setContainerOperation(TabSelectOp(jsNavState.copy()))
+    internal fun updateJSNavigationStateUpdateRequest(navStateRequest: TabsNavigationStateUpdateRequest) {
+        jsNavStateRequest = navStateRequest
+        container.setPendingNavigationStateUpdate(navStateRequest.copy())
     }
 
-    private val layoutCallback =
-        Choreographer.FrameCallback {
-            isLayoutEnqueued = false
-            forceSubtreeMeasureAndLayoutPass()
-        }
-
+    /*
+     * Forces a measure/layout pass across this subtree, ensuring the layout reaches native views embedded deep
+     * within the React hierarchy (React views blocks layout because they have empty overrides for native layout logic).
+     *
+     * Scheduling is hybrid: `Handler.post` until the view tree is first laid out with insets applied (see
+     * [onPreDraw]), then `ReactChoreographer` afterwards. This is required to avoid an inset jump on the initial
+     * mount while preserving the Material BottomNavigationView tab-switch (ChangeBounds) animation. Rationale and
+     * the full TransitionManager interaction are documented in the PR:
+     * https://github.com/software-mansion/react-native-screens/pull/4161
+     */
     private fun refreshLayout() {
-        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
-        if (!isLayoutEnqueued && layoutCallback != null) {
-            isLayoutEnqueued = true
-            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-            ReactChoreographer
-                .getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback,
-                )
+        @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
+        if (layoutCoordinator != null) {
+            if (!hasFirstLayoutWithInsets) {
+                layoutCoordinator.postLayoutToMessageQueue()
+            } else {
+                layoutCoordinator.postLayoutToReactChoreographer()
+            }
         }
+    }
+
+    /**
+     * Marks that the view tree has been laid out with window insets already applied.
+     *
+     * `onPreDraw` is a reliable signal for this: within a single `ViewRootImpl.performTraversals()` insets are
+     * dispatched and layout runs before `dispatchOnPreDraw()`, so by the time this fires the frame's insets have
+     * been applied. See https://github.com/software-mansion/react-native-screens/pull/4161 for details.
+     */
+    override fun onPreDraw(): Boolean {
+        hasFirstLayoutWithInsets = true
+        return true
     }
 
     override fun requestLayout() {
@@ -155,42 +176,54 @@ class TabsHost(
         eventEmitter = TabsHostEventEmitter(reactContext, id)
     }
 
-    override fun onNavStateUpdate(
-        navState: TabsNavState,
+    override fun onNavigationStateUpdate(
+        navState: TabsNavigationState,
         isRepeated: Boolean,
         hasTriggeredSpecialEffect: Boolean,
-        isNativeAction: Boolean,
+        actionOrigin: TabsActionOrigin,
     ) {
         eventEmitter.emitOnTabSelectedEvent(
-            navState.selectedKey,
+            navState.selectedScreenKey,
             navState.provenance,
             isRepeated,
             hasTriggeredSpecialEffect,
-            isNativeAction,
+            actionOrigin,
         )
     }
 
-    override fun onNavStateUpdateRejected(
-        currentNavState: TabsNavState,
-        rejectedNavState: TabsNavState,
-        reason: TabsNavStateUpdateRejectionReason,
+    override fun onNavigationStateUpdateRejected(
+        currentNavState: TabsNavigationState,
+        rejectedRequest: TabsNavigationStateUpdateRequest,
+        reason: TabsNavigationStateRejectionReason,
     ) {
         eventEmitter.emitOnTabSelectionRejectedEvent(
             currentNavState,
-            rejectedNavState,
+            rejectedRequest,
             reason,
         )
     }
 
-    override fun onNavStateUpdatePrevented(
-        currentNavState: TabsNavState,
+    override fun onNavigationStateUpdatePrevented(
+        currentNavState: TabsNavigationState,
         preventedScreenKey: String,
     ) {
         eventEmitter.emitOnTabSelectionPreventedEvent(currentNavState, preventedScreenKey)
     }
 
     override fun didMountItems(uiManager: UIManager) {
-        container.performContainerUpdateIfNeeded()
+        container.flushPendingUpdates()
+    }
+
+    /**
+     * Called by [TabsHostViewManager.onDropViewInstance] when this view is recycled.
+     * Idempotent: safe to call multiple times.
+     */
+    internal fun tearDown() {
+        container.removeNavigationStateObserver(this)
+        container.tearDown()
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .removeUIManagerEventListener(this)
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit

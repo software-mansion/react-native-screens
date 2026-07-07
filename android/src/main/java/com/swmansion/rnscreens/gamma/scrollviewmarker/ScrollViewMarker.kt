@@ -5,24 +5,28 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.core.view.children
 import androidx.core.widget.NestedScrollView
-import com.facebook.react.bridge.UIManager
-import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // Should never be inflated / restored
 class ScrollViewMarker(
     private val reactContext: ThemedReactContext,
-) : ReactViewGroup(reactContext),
-    UIManagerListener {
-    init {
-        // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
-        UIManagerHelper.getFabricUIManagerNotNull(reactContext).addUIManagerEventListener(this)
+) : ReactViewGroup(reactContext) {
+    // region Base override
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        maybeRegisterWithSeekingAncestor()
     }
+
+    override fun onDetachedFromWindow() {
+        hasAttemptedRegistration = false
+        super.onDetachedFromWindow()
+    }
+
+    // endregion
 
     private var hasAttemptedRegistration: Boolean = false
 
@@ -71,21 +75,5 @@ class ScrollViewMarker(
         hasAttemptedRegistration = true
     }
 
-    // UIManagerListener
-
-    override fun didMountItems(uiManager: UIManager) {
-        maybeRegisterWithSeekingAncestor()
-    }
-
-    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-
-    override fun willMountItems(uiManager: UIManager) = Unit
-
-    override fun didDispatchMountItems(uiManager: UIManager) = Unit
-
-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
-
-    internal fun onViewManagerDropViewInstance() {
-        UIManagerHelper.getFabricUIManagerNotNull(reactContext).removeUIManagerEventListener(this)
-    }
+    internal fun onViewManagerDropViewInstance() = Unit
 }

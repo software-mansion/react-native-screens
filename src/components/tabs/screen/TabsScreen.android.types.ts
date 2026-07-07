@@ -13,13 +13,13 @@ export interface TabsScreenItemStateAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarItemTitleFontColor?: TextStyle['color'];
+  tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
    * @summary Specifies the icon color for each tab bar item.
    *
    * @platform android
    */
-  tabBarItemIconColor?: ColorValue;
+  tabBarItemIconColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenAppearanceAndroid {
@@ -28,13 +28,13 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarBackgroundColor?: ColorValue;
+  tabBarBackgroundColor?: ColorValue | undefined;
   /**
    * @summary Specifies the color of each tab bar item's ripple effect.
    *
    * @platform android
    */
-  tabBarItemRippleColor?: ColorValue;
+  tabBarItemRippleColor?: ColorValue | undefined;
   /**
    * @summary Specifies the label visibility mode.
    *
@@ -53,14 +53,14 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
+  tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode | undefined;
   /**
    * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform android
    */
-  normal?: TabsScreenItemStateAppearanceAndroid;
+  normal?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
@@ -68,7 +68,7 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  selected?: TabsScreenItemStateAppearanceAndroid;
+  selected?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
@@ -76,7 +76,7 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  focused?: TabsScreenItemStateAppearanceAndroid;
+  focused?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
@@ -84,13 +84,13 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  disabled?: TabsScreenItemStateAppearanceAndroid;
+  disabled?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * @summary Specifies the background color of the active indicator.
    *
    * @platform android
    */
-  tabBarItemActiveIndicatorColor?: ColorValue;
+  tabBarItemActiveIndicatorColor?: ColorValue | undefined;
   /**
    * @summary Specifies if the active indicator should be used.
    *
@@ -98,13 +98,13 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarItemActiveIndicatorEnabled?: boolean;
+  tabBarItemActiveIndicatorEnabled?: boolean | undefined;
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
    * @platform android
    */
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * @summary Specifies the font size used for the title of unselected tab bar items.
    *
@@ -112,7 +112,7 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarItemTitleSmallLabelFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleSmallLabelFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * @summary Specifies the font size used for the title of selected tab bar item.
    *
@@ -120,31 +120,31 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @platform android
    */
-  tabBarItemTitleLargeLabelFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleLargeLabelFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    *
    * @platform android
    */
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * @summary Specifies the font style used for the title of each tab bar item.
    *
    * @platform android
    */
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * @summary Specifies the background color of the badge.
    *
    * @platform android
    */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
   /**
    * @summary Specifies the text color of the badge.
    *
    * @platform android
    */
-  tabBarItemBadgeTextColor?: ColorValue;
+  tabBarItemBadgeTextColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenPropsAndroid {
@@ -157,7 +157,7 @@ export interface TabsScreenPropsAndroid {
    *
    * @platform android
    */
-  standardAppearance?: TabsScreenAppearanceAndroid;
+  standardAppearance?: TabsScreenAppearanceAndroid | undefined;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
@@ -175,7 +175,7 @@ export interface TabsScreenPropsAndroid {
    *
    * @platform android
    */
-  icon?: PlatformIconAndroid;
+  icon?: PlatformIconAndroid | undefined;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
@@ -185,5 +185,5 @@ export interface TabsScreenPropsAndroid {
    *
    * @platform android
    */
-  selectedIcon?: PlatformIconAndroid;
+  selectedIcon?: PlatformIconAndroid | undefined;
 }

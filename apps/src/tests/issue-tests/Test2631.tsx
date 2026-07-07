@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import {Button, Pressable, StyleSheet, Text, View} from 'react-native';
-import {FullWindowOverlay} from 'react-native-screens';
+import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FullWindowOverlay } from 'react-native-screens';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 function SharedPressable() {
@@ -17,13 +17,15 @@ function SharedPressable() {
 function HomeScreen() {
   const [overlayShown, setOverlayShown] = React.useState(false);
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} collapsable={true}>
+    <View
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+      collapsable={true}>
       <Text>Home Screen</Text>
       <Button title="Show Overlay" onPress={() => setOverlayShown(true)} />
       <SharedPressable />
       {overlayShown && (
         <FullWindowOverlay>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Pressable
               style={{
                 flex: 1,
@@ -44,9 +46,9 @@ function HomeScreen() {
 
 function Header() {
   return (
-    <View pointerEvents='box-none' style={{ height: 100.6666 }}>
-      <View style={[StyleSheet.absoluteFill, { }]}>
-        <View style={{ flex: 1, backgroundColor: 'white', opacity: 0.6}} />
+    <View pointerEvents="box-none" style={{ height: 100.6666 }}>
+      <View style={[StyleSheet.absoluteFill, {}]}>
+        <View style={{ flex: 1, backgroundColor: 'white', opacity: 0.6 }} />
       </View>
     </View>
   );
@@ -54,10 +56,9 @@ function Header() {
 
 export default function App() {
   return (
-    <View style={{flex: 1, backgroundColor: 'lightsalmon' }}>
+    <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Header />
       <HomeScreen />
     </View>
   );
 }
-

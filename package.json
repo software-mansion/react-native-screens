@@ -1,13 +1,13 @@
 {
   "name": "react-native-screens",
-  "version": "4.24.0",
+  "version": "1000.0.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
-    "format-js": "prettier --write --list-different './{src,FabricExample}/**/*.{js,ts,tsx}'",
+    "format-js": "prettier --write --list-different './{src,FabricExample,apps}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
     "format-ios-swift": "sh scripts/swift-format-helper.sh format",
     "format-ios-cpp": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
@@ -83,11 +83,10 @@
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
     "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.85.0",
-    "@react-native/eslint-config": "0.85.0",
-    "@react-native/jest-preset": "0.85.0",
-    "@react-native/metro-config": "0.85.0",
-    "@react-native/typescript-config": "0.85.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/eslint-config": "0.86.0",
+    "@react-native/metro-config": "0.86.0",
+    "@react-native/typescript-config": "0.86.0",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^29.5.13",
@@ -110,9 +109,9 @@
     "prettier": "^2.8.8",
     "react": "19.2.3",
     "react-dom": "^19.1.0",
-    "react-native": "0.85.0",
+    "react-native": "0.86.0",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-gesture-handler": "^2.28.0",
+    "react-native-gesture-handler": "^3.0.1",
     "react-native-reanimated": "^3.19.0",
     "react-native-safe-area-context": "5.6.0",
     "react-native-windows": "^0.82.3",
@@ -197,6 +196,15 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
+        "RNSStackHeaderConfigIOS": {
+          "className": "RNSStackHeaderConfigComponentView"
+        },
+        "RNSStackHeaderItemIOS": {
+          "className": "RNSStackHeaderItemComponentView"
+        },
+        "RNSStackHeaderItemSpacerIOS": {
+          "className": "RNSStackHeaderItemSpacerComponentView"
+        },
         "RNSTabsScreenIOS": {
           "className": "RNSTabsScreenComponentView"
         },
@@ -220,6 +228,12 @@
         },
         "RNSScrollViewMarker": {
           "className": "RNSScrollViewMarkerComponentView"
+        },
+        "RNSFormSheetHost": {
+          "className": "RNSFormSheetHostComponentView"
+        },
+        "RNSFormSheetContentWrapper": {
+          "className": "RNSFormSheetContentWrapperComponentView"
         }
       }
     },

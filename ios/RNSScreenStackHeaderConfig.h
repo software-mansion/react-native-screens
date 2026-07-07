@@ -110,12 +110,3 @@ NS_ASSUME_NONNULL_END
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
-
-#pragma mark - RCTConvert
-
-@interface RCTConvert (RNSScreenStackHeader)
-
-+ (UISemanticContentAttribute)UISemanticContentAttribute:(nonnull id)json;
-+ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(nonnull id)json;
-
-@end

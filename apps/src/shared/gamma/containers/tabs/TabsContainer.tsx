@@ -3,7 +3,7 @@ import { I18nManager, type NativeSyntheticEvent } from 'react-native';
 import {
   type TabSelectedEvent,
   Tabs,
-  type TabsHostNavState,
+  type TabsHostNavStateRequest,
 } from 'react-native-screens';
 import type {
   SelectTabMethod,
@@ -21,19 +21,16 @@ import {
 } from './reducer';
 import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
+import { useComponentsByName } from '../shared/use-components-by-name';
 
 export function TabsContainer(props: TabsContainerProps) {
   RNSLog.info('TabsContainer render');
 
-  const {
-    routeConfigs,
-    defaultRouteName,
-    experimentalControlNavigationStateInJS,
-    onTabSelected,
-    ...restProps
-  } = props;
+  const { routeConfigs, defaultRouteName, onTabSelected, ...restProps } = props;
 
   useSanitizeRouteConfigs(routeConfigs);
+
+  const componentsByName = useComponentsByName(routeConfigs);
 
   const [tabsNavState, dispatch]: [
     TabsContainerState,
@@ -44,7 +41,7 @@ export function TabsContainer(props: TabsContainerProps) {
     determineInitialTabsContainerState,
   );
 
-  const hostNavState = useTabsHostNavState(tabsNavState);
+  const hostNavStateRequest = useTabsHostNavStateRequest(tabsNavState);
 
   const onTabSelectedCallback = React.useCallback(
     (event: NativeSyntheticEvent<TabSelectedEvent>) => {
@@ -75,12 +72,8 @@ export function TabsContainer(props: TabsContainerProps) {
 
   return (
     <Tabs.Host
-      // Use controlled tabs by default, but allow to overwrite if user wants to
-      navState={hostNavState}
+      navStateRequest={hostNavStateRequest}
       onTabSelected={onTabSelectedCallback}
-      experimentalControlNavigationStateInJS={
-        experimentalControlNavigationStateInJS
-      }
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabsNavState.routes.map((route: TabRoute) => {
@@ -89,23 +82,39 @@ export function TabsContainer(props: TabsContainerProps) {
         const pendingForUpdate =
           route.routeKey === tabsNavState.suggestedState.selectedRouteKey;
 
-        return <TabsContainerItem key={route.routeKey} route={route} navMethods={navMethods} isSelected={isSelected} pendingForUpdate={pendingForUpdate} />
+        const Component = componentsByName.get(route.name);
+        if (!Component) {
+          throw new Error(
+            `[Tabs] No route config matches the "${route.name}" route name`,
+          );
+        }
+
+        return (
+          <TabsContainerItem
+            key={route.routeKey}
+            route={route}
+            navMethods={navMethods}
+            isSelected={isSelected}
+            pendingForUpdate={pendingForUpdate}
+            Component={Component}
+          />
+        );
       })}
     </Tabs.Host>
   );
 }
 
-function useTabsHostNavState(
+function useTabsHostNavStateRequest(
   tabsNavState: TabsContainerState,
-): TabsHostNavState {
-  const hostNavState: TabsHostNavState = React.useMemo(() => {
+): TabsHostNavStateRequest {
+  const hostNavStateRequest: TabsHostNavStateRequest = React.useMemo(() => {
     return {
       selectedScreenKey: tabsNavState.suggestedState.selectedRouteKey,
-      provenance: tabsNavState.suggestedState.provenance,
+      baseProvenance: tabsNavState.suggestedState.provenance,
     };
   }, [tabsNavState.suggestedState]);
 
-  return hostNavState;
+  return hostNavStateRequest;
 }
 
 function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
@@ -123,7 +132,9 @@ function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
   }
 }
 
-function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>): TabsNavigationMethods {
+function useTabsNavigationMethods(
+  dispatch: React.Dispatch<TabsNavigationAction>,
+): TabsNavigationMethods {
   const setRouteOptions = React.useCallback(
     (routeKey: string, options: Partial<TabRouteOptions>) => {
       dispatch({ type: 'set-options', routeKey, options });
@@ -132,15 +143,22 @@ function useTabsNavigationMethods(dispatch: React.Dispatch<TabsNavigationAction>
   );
 
   const selectTab: SelectTabMethod = React.useCallback(
-    (routeKey: string) => {
-      dispatch({ type: 'tab-select', routeKey });
+    (routeKey: string, forceAction?: boolean) => {
+      const shouldForceAction = forceAction ?? false;
+      dispatch({
+        type: 'tab-select',
+        routeKey,
+        forceAction: shouldForceAction,
+      });
     },
     [dispatch],
   );
 
-
-  return React.useMemo(() => ({
-    setRouteOptions,
-    selectTab
-  }), [setRouteOptions, selectTab]);
+  return React.useMemo(
+    () => ({
+      setRouteOptions,
+      selectTab,
+    }),
+    [setRouteOptions, selectTab],
+  );
 }

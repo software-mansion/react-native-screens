@@ -45,7 +45,7 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   /**
    * @summary Specifies the minimize behavior for the tab bar.
    *
@@ -68,7 +68,7 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 26 or higher
    */
-  tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior?: TabBarMinimizeBehavior | undefined;
   /**
    * @summary Specifies component used as bottom accessory.
    *
@@ -83,22 +83,18 @@ export interface TabsHostPropsIOS {
    *
    * If this prop is `undefined`, the bottom accessory will not be rendered.
    *
-   * On legacy architecture (Paper) and on new architecture (Fabric) with RN < 0.82,
-   * implementation uses DisplayLink which might result in the size of bottom
-   * accessory being updated with a delay.
-   *
-   * Starting from RN 0.82, this issue is mitigated but in order to allow accessory
-   * rendering based on environment, component is rendered 2 times for both `regular`
-   * and `inline` environments at the same time. Environment determines which component
-   * is visible at given moment. This might require implementing a solution to share
-   * state between both rendered components (e.g. usage of context).
+   * In order to allow accessory rendering based on environment, the component is
+   * rendered 2 times for both `regular` and `inline` environments at the same time.
+   * Environment determines which component is visible at given moment. This might
+   * require implementing a solution to share state between both rendered components
+   * (e.g. usage of context).
    *
    * Available starting from iOS 26.
    *
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: TabsBottomAccessoryComponentFactory;
+  bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
@@ -119,7 +115,7 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 18 or higher
    */
-  tabBarControllerMode?: TabBarControllerMode;
+  tabBarControllerMode?: TabBarControllerMode | undefined;
   /**
    * @summary
    * A callback that gets invoked when the user taps the "More" tab bar item.
@@ -133,7 +129,7 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  onMoreTabSelected?: (
-    event: NativeSyntheticEvent<MoreTabSelectedEvent>,
-  ) => void;
+  onMoreTabSelected?:
+    | ((event: NativeSyntheticEvent<MoreTabSelectedEvent>) => void)
+    | undefined;
 }

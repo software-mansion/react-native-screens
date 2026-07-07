@@ -10,7 +10,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View } from 'react-native';
-import Colors from '@apps/shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 const FORM_SHEET_CONFIGURATIONS: Record<string, NativeStackNavigationOptions> =
   {
@@ -89,7 +89,6 @@ function FormSheet({ route }: StackNavigationProp) {
       </Text>
       <View
         style={{
-          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 180,
@@ -100,7 +99,6 @@ function FormSheet({ route }: StackNavigationProp) {
       </View>
       <View
         style={{
-          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 180,
@@ -112,7 +110,6 @@ function FormSheet({ route }: StackNavigationProp) {
       </View>
       <View
         style={{
-          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
           height: 200,

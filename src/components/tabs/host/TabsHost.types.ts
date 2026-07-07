@@ -5,7 +5,7 @@ import type { ColorScheme, Direction } from '../../shared/types';
 
 // #region Control
 
-export type TabsHostNavState = {
+export type TabsHostNavStateRequest = {
   /**
    * @summary Valid screen key.
    *
@@ -14,13 +14,12 @@ export type TabsHostNavState = {
    */
   selectedScreenKey: string;
   /**
-   * @summary A number describing the provenance of the state instance.
+   * @summary Provenance of the navigation state this request is derived from.
    *
    * @description
    * The provenance value establishes a relationship between different navigation state instances
-   * held by given state holder. The assumption here is that when the navigation
-   * state is progressed (modified), the provenance number is incremented.
-   * This creates a relationship where we can say that:
+   * held by given state holder. The assumption is that when the navigation state is progressed
+   * (modified), the provenance number is incremented. This creates a relationship where we can say:
    *
    * 1. State with provenance = n + 1 has been derived from state with provenance = n.
    * 2. For two given navigation states A and B, we can say that A *is stale* iff
@@ -31,12 +30,15 @@ export type TabsHostNavState = {
    *
    * Currently, the native implementation of TabsHost is the state holder.
    *
-   * When you use object of this shape to trigger a navigation via {@link TabsHostPropsBase#navState},
-   * pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
-   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance number
-   * of last confirmed state you base your update request on.
+   * Pass here THE PROVENANCE OF THE LAST ACKNOWLEDGED state you received from native side
+   * via {@link TabsHostPropsBase#onTabSelected}. In other words this should be the provenance
+   * number of last confirmed state you base your update request on.
+   *
+   * It is named `baseProvenance` (rather than `provenance`) to disambiguate it from the
+   * `provenance` field on the {@link TabSelectedEvent} payload, which carries the provenance
+   * of the state *resulting* from a transition.
    */
-  provenance: number;
+  baseProvenance: number;
 };
 
 // #endregion Control
@@ -60,10 +62,18 @@ export type TabSelectedEvent = {
   /** Whether the selection triggered a special effect (e.g. scroll-to-top on repeated selection). */
   hasTriggeredSpecialEffect: boolean;
   /**
-   * False in case the event is a result of JS-driven update. True otherwise, e.g. in case of user action (tap)
-   * or implicit UIKit action (app resize, orientation change, etc.).
+   * @summary Origin (actor) that requested this tab transition.
+   *
+   * @description
+   * - `user` — direct native UI interaction (e.g. tab bar tap, iOS tab drag-and-drop).
+   * - `programmatic-js` — JS-initiated request delivered via the `navStateRequest` prop.
+   * - `programmatic-native` — request initiated from the native side by an actor
+   *   integrating directly against the native container.
+   * - `implicit` — platform side effect not attributable to an explicit actor
+   *   (e.g. UIKit reshuffling the selection during a horizontal size-class transition on iPad).
+   *   Currently only emitted on iOS.
    */
-  isNativeAction: boolean;
+  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
 };
 
 /**
@@ -93,8 +103,8 @@ export type TabSelectionRejectedEvent = {
   provenance: number;
   /** Screen key of the tab whose selection was rejected. */
   rejectedScreenKey: string;
-  /** Provenance of the rejected navigation state update. */
-  rejectedProvenance: number;
+  /** Base provenance of the rejected navigation state update. */
+  rejectedBaseProvenance: number;
   /** Reason the selection was rejected. */
   rejectionReason: TabSelectionRejectionReason;
 };
@@ -122,7 +132,7 @@ export type TabsHostNativeContainerStyleProps = {
    *
    * @platform android, ios
    */
-  backgroundColor?: ColorValue;
+  backgroundColor?: ColorValue | undefined;
 };
 
 // #endregion General helpers
@@ -140,15 +150,15 @@ export interface TabsHostPropsBase {
    * the update might get accepted or rejected.
    *
    * @see {@link TabsHostPropsBase#rejectStaleNavStateUpdates}
-   * @see {@link TabsHostNavState} for description of the type model & accepted values.
+   * @see {@link TabsHostNavStateRequest} for description of the type model & accepted values.
    */
-  navState: TabsHostNavState;
+  navStateRequest: TabsHostNavStateRequest;
   /**
    * @summary If true, the native side will reject any navigation state updates coming from JS
    * if they are stale.
    *
    * @description A navigation state update is considered stale if it is based of an stale state
-   * (@{link TabsHostNavState#provenance} indicates the base state).
+   * ({@link TabsHostNavStateRequest#baseProvenance} indicates the base state).
    * A state is stale, when at the time of executing update, there already had been accepted a newer state
    * of different origin.
    *
@@ -164,10 +174,10 @@ export interface TabsHostPropsBase {
    *
    * @default false
    */
-  rejectStaleNavStateUpdates?: boolean;
+  rejectStaleNavStateUpdates?: boolean | undefined;
 
   // General
-  children?: ViewProps['children'];
+  children: NonNullable<ViewProps['children']>;
   /**
    * @summary Hides the tab bar.
    *
@@ -175,7 +185,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  tabBarHidden?: boolean;
+  tabBarHidden?: boolean | undefined;
   /**
    * @summary Allows for native container view customization.
    *
@@ -185,7 +195,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
+  nativeContainerStyle?: TabsHostNativeContainerStyleProps | undefined;
   /**
    * @summary Specifies the layout direction of the native container, its views and child containers.
    *
@@ -211,7 +221,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  direction?: TabsHostDirection;
+  direction?: TabsHostDirection | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child containers.
    *
@@ -224,26 +234,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  colorScheme?: TabsHostColorScheme;
-
-  // Experimental support
-  /**
-   * @summary Experimental prop for changing container control.
-   *
-   * If set to true, tab screen changes need to be handled by JS using
-   * onNativeFocusChange callback (controlled/programatically-driven).
-   *
-   * If set to false, tab screen change will not be prevented by the
-   * native side (managed/natively-driven).
-   *
-   * On Android, only controlled tabs are currently supported and the
-   * value of this prop is ignored.
-   *
-   * @default Defaults to `false`.
-   *
-   * @platform android, ios
-   */
-  experimentalControlNavigationStateInJS?: boolean;
+  colorScheme?: TabsHostColorScheme | undefined;
 
   // Events
   /**
@@ -251,7 +242,9 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  onTabSelected?: (event: NativeSyntheticEvent<TabSelectedEvent>) => void;
+  onTabSelected?:
+    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -259,9 +252,9 @@ export interface TabsHostPropsBase {
    *
    * @see {@link TabSelectionRejectedEvent}
    */
-  onTabSelectionRejected?: (
-    event: NativeSyntheticEvent<TabSelectionRejectedEvent>,
-  ) => void;
+  onTabSelectionRejected?:
+    | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
+    | undefined;
 
   /**
    * @summary
@@ -270,12 +263,12 @@ export interface TabsHostPropsBase {
    *
    * @see {@link TabSelectionPreventedEvent}
    */
-  onTabSelectionPrevented?: (
-    event: NativeSyntheticEvent<TabSelectionPreventedEvent>,
-  ) => void;
+  onTabSelectionPrevented?:
+    | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
+    | undefined;
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
-  ios?: TabsHostPropsIOS;
-  android?: TabsHostPropsAndroid;
+  ios?: TabsHostPropsIOS | undefined;
+  android?: TabsHostPropsAndroid | undefined;
 }

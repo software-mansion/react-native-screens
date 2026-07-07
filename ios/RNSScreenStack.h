@@ -10,14 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController : UINavigationController <
-                                         RNSViewControllerDelegate,
-                                         RNSTabsSpecialEffectsSupporting
+@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate,
+                                                             RNSTabsSpecialEffectsSupporting
 #if !TARGET_OS_TV
-                                         ,
-                                         RNSOrientationProviding
+                                                             ,
+                                                             RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                                         >
+                                                             >
 
 @end
 
@@ -31,9 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
-
-@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
-@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedModals;
 
 @end
 

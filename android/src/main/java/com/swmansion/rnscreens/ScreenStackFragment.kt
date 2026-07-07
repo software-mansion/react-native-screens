@@ -37,6 +37,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.swmansion.rnscreens.utils.RNSLog
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
 
@@ -128,9 +129,14 @@ class ScreenStackFragment :
 
     override fun setToolbarTranslucent(translucent: Boolean) {
         if (isToolbarTranslucent != translucent) {
-            val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior =
-                if (translucent) null else ScrollingViewBehavior()
+            // FormSheet is using BottomSheetBehavior which shouldn't be overwritten.
+            if (!screen.usesFormSheetPresentation()) {
+                val params = screen.layoutParams
+                (params as CoordinatorLayout.LayoutParams).behavior =
+                    if (translucent) null else ScrollingViewBehavior()
+            } else {
+                RNSLog.w(TAG, "Skipping behavior update: Cannot override BottomSheetBehavior on a FormSheet.")
+            }
             isToolbarTranslucent = translucent
         }
     }
@@ -142,19 +148,17 @@ class ScreenStackFragment :
 
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
+        notifyViewTransitionEnd()
+    }
 
-        // Rely on guards inside the callee to detect whether this was indeed appear transition.
-        notifyViewAppearTransitionEnd()
+    private fun notifyViewTransitionEnd() {
+        val screenStack = view?.parent
+        if (screenStack is ScreenStack) {
+            screenStack.onViewTransitionEnd(coordinatorLayout)
+        }
 
         // Rely on guards inside the callee to detect whether this was indeed removal transition.
         screen.endRemovalTransition()
-    }
-
-    private fun notifyViewAppearTransitionEnd() {
-        val screenStack = view?.parent
-        if (screenStack is ScreenStack) {
-            screenStack.onViewAppearTransitionEnd()
-        }
     }
 
     /**
@@ -270,6 +274,14 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        super.onPrepare(animation)
+
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationStart()
+                        }
+                    }
+
                     // Replace InsetsAnimationCallback created by BottomSheetBehavior
                     // to avoid interfering with custom animations.
                     // See: https://github.com/software-mansion/react-native-screens/pull/2909
@@ -287,6 +299,10 @@ class ScreenStackFragment :
 
                     override fun onEnd(animation: WindowInsetsAnimationCompat) {
                         super.onEnd(animation)
+
+                        if ((animation.typeMask and WindowInsetsCompat.Type.ime()) != 0) {
+                            sheetDelegate.notifyKeyboardAnimationEnd()
+                        }
 
                         screen.onSheetYTranslationChanged()
                     }
@@ -582,5 +598,9 @@ class ScreenStackFragment :
             bottomSheetWindowInsetListenerChain = BottomSheetWindowInsetListenerChain()
         }
         return bottomSheetWindowInsetListenerChain!!
+    }
+
+    companion object {
+        private const val TAG = "ScreenStackFragment"
     }
 }

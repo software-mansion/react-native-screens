@@ -8,7 +8,6 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -62,12 +61,6 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   RCTImageLoader *_imageLoader;
 }
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -88,6 +81,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
+  _synchronousShadowStateUpdatesEnabled = YES;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -183,14 +177,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
-#endif
-    );
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
   }
 }
 
@@ -287,11 +277,10 @@ RNS_IGNORE_SUPER_CALL_END
         // in the image attribute not being updated. We manually set frame to the size of an image
         // in order to trigger proper reload that'd update the image attribute.
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        [imageView reactSetFrame:CGRectMake(
-                                     imageView.frame.origin.x,
-                                     imageView.frame.origin.y,
-                                     imageSource.size.width,
-                                     imageSource.size.height)];
+        [imageView reactSetFrame:CGRectMake(imageView.frame.origin.x,
+                                            imageView.frame.origin.y,
+                                            imageSource.size.width,
+                                            imageSource.size.height)];
       }
 
       UIImage *image = imageView.image;
@@ -853,13 +842,12 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(
-      childComponentView.superview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.superview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   //  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self insertReactSubview:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
@@ -1113,6 +1101,16 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
 }
 
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
@@ -1121,28 +1119,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 }
 
 @implementation RNSScreenStackHeaderConfigManager
-
-@end
-
-@implementation RCTConvert (RNSScreenStackHeader)
-
-RCT_ENUM_CONVERTER(
-    UISemanticContentAttribute,
-    (@{
-      @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
-      @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
-    }),
-    UISemanticContentAttributeUnspecified,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    UINavigationItemBackButtonDisplayMode,
-    (@{
-      @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
-      @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
-      @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
-    }),
-    UINavigationItemBackButtonDisplayModeDefault,
-    integerValue)
 
 @end

@@ -1,0 +1,80 @@
+import { device, expect, element, by } from 'detox';
+import {
+  scrollUntilVisible,
+  selectSingleFeatureTestsScreen,
+  forceSelectTabByLabel,
+} from '../../e2e-utils';
+
+describe('Tabs specialEffects — scrollToTop', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+    await selectSingleFeatureTestsScreen(
+      'Tabs',
+      'test-tabs-special-effects-scroll-to-top',
+    );
+  });
+
+  it('should display tab bar and Tab1 scrollable list on load', async () => {
+    await expect(element(by.id('tab1-scrollview'))).toBeVisible();
+    await expect(element(by.id('tab1-item-1'))).toBeVisible();
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.type('UITabBar'))).toBeVisible();
+    } else {
+      await expect(element(by.id('tab1-tab-item'))).toBeVisible();
+      await expect(element(by.id('tab2-tab-item'))).toBeVisible();
+      await expect(element(by.id('tab3-tab-item'))).toBeVisible();
+    }
+  });
+
+  it('Tab1 (scrollToTop: true) — re-tapping active tab scrolls list back to top', async () => {
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
+    await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
+
+    await forceSelectTabByLabel('tab1-tab-item-label');
+
+    await waitFor(element(by.id('tab1-item-1')))
+      .toBeVisible()
+      .withTimeout(3000);
+  });
+
+  it('Tab2 (scrollToTop: false) — re-tapping active tab preserves scroll position', async () => {
+    await element(by.id('tab2-tab-item')).tap();
+    await expect(element(by.id('tab2-item-1'))).toBeVisible();
+
+    await scrollUntilVisible('tab2-item-22', 'tab2-scrollview');
+    await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
+
+    await forceSelectTabByLabel('tab2-tab-item-label');
+
+    await expect(element(by.id('tab2-item-1'))).not.toBeVisible();
+  });
+
+  it('Tab3 (no specialEffects) — re-tapping active tab scrolls list back to top', async () => {
+    await element(by.id('tab3-tab-item')).tap();
+    await expect(element(by.id('tab3-item-1'))).toBeVisible();
+
+    await scrollUntilVisible('tab3-item-22', 'tab3-scrollview');
+    await expect(element(by.id('tab3-item-1'))).not.toBeVisible();
+
+    await forceSelectTabByLabel('tab3-tab-item-label');
+
+    await waitFor(element(by.id('tab3-item-1')))
+      .toBeVisible()
+      .withTimeout(3000);
+  });
+
+  it('Tab1 (scrollToTop: true) — switching away and back preserves scroll position', async () => {
+    await forceSelectTabByLabel('tab1-tab-item-label');
+    await expect(element(by.id('tab1-item-1'))).toBeVisible();
+
+    await scrollUntilVisible('tab1-item-22', 'tab1-scrollview');
+    await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
+
+    await forceSelectTabByLabel('tab3-tab-item-label');
+    await expect(element(by.id('tab3-item-1'))).toBeVisible();
+
+    await forceSelectTabByLabel('tab1-tab-item-label');
+
+    await expect(element(by.id('tab1-item-1'))).not.toBeVisible();
+  });
+});

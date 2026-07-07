@@ -8,10 +8,8 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import {
-  Split
-} from 'react-native-screens/experimental';
-import { Colors } from '@apps/shared/styling/Colors';
+import { Split } from 'react-native-screens/experimental';
+import { Colors } from '@apps/shared/styling';
 import { SplitBaseConfig } from './helpers/types';
 
 const { width } = Dimensions.get('window');

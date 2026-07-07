@@ -21,14 +21,16 @@ export interface NativeProps extends ViewProps {
 
   // Events
 
-  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 
-  onDismiss?: CT.DirectEventHandler<OnDismissEventPayload>;
+  onDismiss?: CT.DirectEventHandler<OnDismissEventPayload> | undefined;
 
-  onNativeDismissPrevented?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onNativeDismissPrevented?:
+    | CT.DirectEventHandler<GenericEmptyEvent>
+    | undefined;
 
   // Configuration
 

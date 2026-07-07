@@ -21,7 +21,7 @@ const NativeFullWindowOverlay: React.ComponentType<
 
 type FullWindowOverlayProps = {
   children: ReactNode;
-  unstable_accessibilityContainerViewIsModal?: boolean;
+  unstable_accessibilityContainerViewIsModal?: boolean | undefined;
 };
 
 function FullWindowOverlay(props: FullWindowOverlayProps) {

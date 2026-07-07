@@ -1,6 +1,14 @@
 # Test Scenario: tabBarMinimizeBehavior
 
-**E2E test:** ongoing research
+## Details
+
+**Description:** Validates the adaptive visibility of the tab bar on iOS 26+ based on the tabBarMinimizeBehavior property. This test ensures that the tab bar correctly minimizes or remains static during scroll interactions according to the selected mode (automatic, onScrollDown, onScrollUp, or never), and verifies that the UI remains stable during tab switching.
+
+**OS test creation version:** iOS 26.2
+
+## E2E test
+
+Incomplete: Not automated. Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed.
 
 ## Prerequisites
 
@@ -19,7 +27,7 @@
 
 1. Launch the app and navigate to the **Tab Bar Minimize Behavior** screen.
 
-- [ ] Expected: **Tab1** is selected. The `tabBarMinimizeBehavior` picker defaults to `automatic`.
+- [ ] **Tab1** is selected. The `tabBarMinimizeBehavior` picker defaults to `automatic`.
 
 ---
 
@@ -27,11 +35,11 @@
 
 2. Ensure `tabBarMinimizeBehavior` is set to `automatic`. Switch to **Tab2** and scroll **down** through the list.
 
-- [ ] Expected: Tab bar behave according to the system default behavior - typically remains fully visible throughout.
+- [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
 3. Scroll back **up** on **Tab2**.
 
-- [ ] Expected: Tab bar behave according to the system default behavior - typically remains fully visible throughout.
+- [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
 ---
 
@@ -39,11 +47,11 @@
 
 4. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2** and scroll **down**.
 
-- [ ] Expected: Tab bar minimizes as the user scrolls down.
+- [ ] Tab bar minimizes as the user scrolls down.
 
 5. Scroll back **up** on **Tab2**.
 
-- [ ] Expected: Tab bar reappears when scrolling up.
+- [ ] Tab bar reappears when scrolling up.
 
 ---
 
@@ -51,11 +59,11 @@
 
 6. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `onScrollUp`. Switch to **Tab2** and scroll **up** (toward the top of the list).
 
-- [ ] Expected: Tab bar minimizes/hides as the user scrolls up.
+- [ ] Tab bar minimizes/hides as the user scrolls up.
 
 7. Scroll **down** on **Tab2**.
 
-- [ ] Expected: Tab bar reappears when scrolling down.
+- [ ] Tab bar reappears when scrolling down.
 
 ---
 
@@ -63,11 +71,11 @@
 
 8. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `never`. Switch to **Tab2** and scroll **down** through the entire list.
 
-- [ ] Expected: Tab bar remains fully visible throughout — it does not minimize or hide at any point.
+- [ ] Tab bar remains fully visible throughout — it does not minimize or hide at any point.
 
 9. Scroll **up** through the entire list on **Tab2**.
 
-- [ ] Expected: Tab bar remains fully visible — still no minimization.
+- [ ] Tab bar remains fully visible — still no minimization.
 
 ---
 
@@ -75,8 +83,8 @@
 
 10.  Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap minimized tab bar.
 
-- [ ] Expected: Tab bar should reappeaer with two tabs.
+- [ ] Tab bar should reappeaer with two tabs.
 
 11.  Navigate to **Tab1** and switch back to **Tab2**.
 
-- [ ] Expected: **Tab2** scroll position is preserved — no crash or blank screen.
+- [ ] **Tab2** scroll position is preserved — no crash or blank screen.

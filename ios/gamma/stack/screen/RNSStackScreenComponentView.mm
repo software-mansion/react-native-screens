@@ -8,14 +8,19 @@
 #import <rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSScrollViewMarkerComponentView.h"
+#import "RNSScrollViewSeeking.h"
+#import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
+#import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
-@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving, RNSScrollViewSeeking>
 @end
 
 #pragma mark - View implementation
@@ -23,6 +28,11 @@ namespace react = facebook::react;
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+
+  // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
+  // the owning `RNSStackScreenController` (as `RNSContainerItem`) when resolving the content
+  // scroll view for special effects.
+  __weak UIScrollView *_Nullable _contentScrollView;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
@@ -76,6 +86,21 @@ namespace react = facebook::react;
   });
 }
 
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  // Native scroll-edge behavior (UINavigationBar scroll edge appearance, top-screen-tap scroll-to-top on iPad).
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  // Cache used by the container-nesting content-scroll-view resolution.
+  _contentScrollView = scrollView;
+}
+
+- (nullable UIScrollView *)cachedContentScrollView
+{
+  return _contentScrollView;
+}
+
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
@@ -105,6 +130,14 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+    [_controller.headerCoordinator clearHeaderConfiguration];
+  }
+  [super unmountChildComponentView:childComponentView index:index];
+}
+
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   if (_hasUpdatedActivityMode) {
@@ -129,8 +162,6 @@ namespace react = facebook::react;
 
 + (BOOL)shouldBeRecycled
 {
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
   return NO;
 }
 
@@ -138,6 +169,16 @@ namespace react = facebook::react;
 {
   [self invalidateImpl];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

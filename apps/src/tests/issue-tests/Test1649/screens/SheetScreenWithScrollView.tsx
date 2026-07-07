@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  Button,
-  View,
-  ScrollView,
-  Text,
-} from 'react-native';
+import { Button, View, ScrollView, Text } from 'react-native';
 
 import CommonSheetContent from '../components/CommonSheetContent';
 
@@ -39,4 +34,3 @@ export default function SheetScreenWithScrollView() {
   //   </ScrollView>
   // );
 }
-

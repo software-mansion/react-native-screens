@@ -1,7 +1,8 @@
 #pragma once
 
-#import <Foundation/Foundation.h>
-#import <React/RCTSurfaceTouchHandler.h>
+#import <UIKit/UIKit.h>
+
+@class RCTSurfaceTouchHandler;
 
 NS_ASSUME_NONNULL_BEGIN
 

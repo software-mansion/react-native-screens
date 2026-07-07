@@ -250,12 +250,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark-- Fabric specific
 
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
-}
-
 #pragma mark - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -267,13 +261,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   RNSScreenView *screenView = (RNSScreenView *)childComponentView;
 
-  RCTAssert(
-      childComponentView.reactSuperview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.reactSuperview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   [_reactSubviews insertObject:screenView atIndex:index];
   screenView.reactSuperview = self;
@@ -285,12 +278,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      childComponentView.reactSuperview == self,
-      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-      self,
-      childComponentView,
-      @(index));
+  RCTAssert(childComponentView.reactSuperview == self,
+            @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+            self,
+            childComponentView,
+            @(index));
   RCTAssert(
       (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
       @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
@@ -316,6 +308,17 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)

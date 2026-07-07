@@ -3,18 +3,16 @@
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 
-#if RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace react = facebook::react;
 
 #pragma mark - View implementation
 
 @implementation RNSTabsBottomAccessoryContentComponentView {
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   RNSTabsBottomAccessoryComponentView *__weak _Nullable _accessoryView;
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -25,43 +23,28 @@ namespace react = facebook::react;
 
 #pragma mark - UIKit callbacks
 
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)didMoveToWindow
 {
-  if ([self.superview isKindOfClass:[RNSTabsBottomAccessoryComponentView class]]) {
+  if (self.window != nil && [self.superview isKindOfClass:[RNSTabsBottomAccessoryComponentView class]]) {
     RNSTabsBottomAccessoryComponentView *accessoryView =
         static_cast<RNSTabsBottomAccessoryComponentView *>(self.superview);
     _accessoryView = accessoryView;
-    [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
+    [_accessoryView.helper setContentView:self forEnvironment:_environment];
   } else {
+    // We are leaving the accessory. Detach from the helper so it removes its `hidden` KVO observer while we are still
+    // alive. Must run on the `window == nil` path too (Fabric unmount removes from superview, then deallocates).
     [_accessoryView.helper setContentView:nil forEnvironment:_environment];
     _accessoryView = nil;
   }
 }
 
-// `RCTViewComponentView` uses this deprecated callback to invalidate layer when trait collection
-// `hasDifferentColorAppearanceComparedToTraitCollection`. This updates opacity which breaks our
-// content view switching workaround. To mitigate this, we update content view visibility after
-// RCTViewComponentView handles the change. We need to use the same deprecated callback as it's
-// called after callbacks registered via the new API.
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
-{
-  [super traitCollectionDidChange:previousTraitCollection];
-  if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-    [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
-  }
-}
-
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
-
-#if RCT_NEW_ARCH_ENABLED
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - RCTViewComponentViewProtocol
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
-
-#if REACT_NATIVE_VERSION_MINOR >= 82
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
@@ -77,22 +60,6 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  [super finalizeUpdates:updateMask];
-
-  // In finalize updates, `invalidateLayer` is called. It resets `view.layer.opacity`
-  // which we use to switch visible bottom accessory content view. In order to mitigate
-  // this, we update visibility after `[super finalizeUpdates:updateMask]`. Without this,
-  // both content views are visible on first render. It does not happen on subsequent
-  // renders because `updateState` is called before trait changes but there might be other
-  // cases when `finalizeUpdates` will run so to make sure that we maintain correct
-  // visibility, we call `handleContentViewVisibilityForEnvironmentIfNeeded` here.
-  [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
-}
-
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSTabsBottomAccessoryContentComponentDescriptor>();
@@ -107,16 +74,21 @@ namespace react = facebook::react;
   return NO;
 }
 
-#endif // RCT_NEW_ARCH_ENABLED
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSTabsBottomAccessoryContentCls(void)
 {
   return RNSTabsBottomAccessoryContentComponentView.class;
 }
-
-#endif // RCT_NEW_ARCH_ENABLED

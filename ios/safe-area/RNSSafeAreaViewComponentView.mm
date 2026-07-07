@@ -7,7 +7,6 @@
 #import "RNSSafeAreaProviding.h"
 #import "RNSSafeAreaViewNotifications.h"
 
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>
@@ -23,12 +22,6 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   facebook::react::RNSSafeAreaViewShadowNode::ConcreteState::Shared _state;
   UIEdgeInsets _currentSafeAreaInsets;
   __weak UIView<RNSSafeAreaProviding> *_Nullable _providerView;
-}
-
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -111,13 +104,7 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   }
 
   auto newData = facebook::react::RNSSafeAreaViewState{RCTEdgeInsetsFromUIEdgeInsets(_currentSafeAreaInsets)};
-  _state->updateState(
-      std::move(newData)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-          ,
-      facebook::react::EventQueue::UpdateMode::unstable_Immediate
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-  );
+  _state->updateState(std::move(newData), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -152,6 +139,16 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   _providerView = nil;
   _currentSafeAreaInsets = UIEdgeInsetsZero;
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

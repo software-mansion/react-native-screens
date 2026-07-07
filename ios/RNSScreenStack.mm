@@ -19,7 +19,6 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
-#import "RNSViewInteractionAware.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
@@ -27,13 +26,11 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackView () <
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate,
-    RNSViewInteractionAware,
-    RCTMountingTransactionObserving>
+@interface RNSScreenStackView () <UINavigationControllerDelegate,
+                                  UIAdaptivePresentationControllerDelegate,
+                                  UIGestureRecognizerDelegate,
+                                  UIViewControllerTransitioningDelegate,
+                                  RCTMountingTransactionObserving>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -178,13 +175,6 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-  UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
-}
-
-// Needed because of this: https://github.com/facebook/react-native/pull/37274
-+ (void)load
-{
-  [super load];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -214,10 +204,7 @@ namespace react = facebook::react;
   _presentedModals = [NSMutableArray new];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
-  _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
   _nativeContainerBackgroundColor = nil;
-  _iosPreventReattachmentOfDismissedScreens = YES;
-  _iosPreventReattachmentOfDismissedModals = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -294,12 +281,6 @@ RNS_IGNORE_SUPER_CALL_END
   [super didMoveToWindow];
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
-  if (self.window == nil) {
-    // When hot reload happens that would remove the whole stack, disabling the interaction on a screen out transition
-    // will not be matched with enabling the interactions on another screen's in transition. We need to make sure
-    // that the subtree is interactive again
-    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
-  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -709,7 +690,14 @@ RNS_IGNORE_SUPER_CALL_END
           /// quickly. Since view recycling is disabled, once we detect that a screen has been removed from the view
           /// hierarchy, it won't be reused. This allows us to safely filter out dismissed screens from screens coming
           /// from JS state via `controllers`.
-          if (_iosPreventReattachmentOfDismissedScreens && screen.controller.isRemovedFromParent) {
+          ///
+          /// Note: screens with `preventNativeDismiss` are intentionally excluded from this guard.
+          /// When `preventNativeDismiss` is set and the user triggers a native back gesture, UIKit removes
+          /// the screen from its parent. We then need to reattach it so that the `preventNativeDismiss`
+          /// callback fires correctly on the JS side. This breaks the general assumption that a screen
+          /// removed from the hierarchy will never be reattached.
+          /// See: https://github.com/software-mansion/react-native-screens/issues/3885
+          if (screen.controller.isRemovedFromParent && !screen.preventNativeDismiss) {
             continue;
           }
           [pushControllers addObject:screen.controller];
@@ -722,7 +710,7 @@ RNS_IGNORE_SUPER_CALL_END
           /// Since view recycling is disabled, once we detect that a modal has been removed from the view
           /// hierarchy, it won't be reused. This allows us to safely filter out dismissed modal from modals coming
           /// from JS state via `controllers`.
-          if (_iosPreventReattachmentOfDismissedModals && screen.controller.isRemovedFromParent) {
+          if (screen.controller.isRemovedFromParent) {
             continue;
           }
           [modalControllers addObject:screen.controller];
@@ -791,20 +779,6 @@ RNS_IGNORE_SUPER_CALL_END
   // gesture and onPress may fire when we release the finger.
 
   [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
-}
-
-- (void)rnscreens_disableInteractions
-{
-  // When transitioning between screens, disable interactions on stack subview which wraps the screens
-  // and sink all gesture events. This should work for nested stacks and stack inside tabs, inside stack.
-  self.subviews[0].userInteractionEnabled = NO;
-  [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
-}
-
-- (void)rnscreens_enableInteractions
-{
-  self.subviews[0].userInteractionEnabled = YES;
-  [self removeGestureRecognizer:_sinkEventsPanGestureRecognizer];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -1056,8 +1030,8 @@ RNS_IGNORE_SUPER_CALL_END
   float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
 
   // we check if any of the constraints are violated and return NO if so
-  return !(
-      (start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) || (bottom != -1 && y > bottom));
+  return !((start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) ||
+           (bottom != -1 && y > bottom));
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -1189,15 +1163,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  if (otherGestureRecognizer == _sinkEventsPanGestureRecognizer) {
-    // When transition happens between two stack screens, a special "sink" recognizer is added, and then removed.
-    // It captures all gestures for the time of transition and does nothing, so that in nested stack scenario,
-    // the outer most stack does not recognize swipe gestures, otherwise it would dismiss the whole nested stack.
-    // For the recognizer to work as described, it should have precedence over all other recognizers.
-    // see also: rnscreens_enableInteractions, rnscreens_disableInteractions
-    return YES;
-  }
-
   if (@available(iOS 26, *)) {
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
         [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
@@ -1307,16 +1272,6 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(props);
 
-  if (newScreenProps.iosPreventReattachmentOfDismissedScreens !=
-      oldScreenProps.iosPreventReattachmentOfDismissedScreens) {
-    [self setIosPreventReattachmentOfDismissedScreens:newScreenProps.iosPreventReattachmentOfDismissedScreens];
-  }
-
-  if (newScreenProps.iosPreventReattachmentOfDismissedModals !=
-      oldScreenProps.iosPreventReattachmentOfDismissedModals) {
-    [self setIosPreventReattachmentOfDismissedModals:newScreenProps.iosPreventReattachmentOfDismissedModals];
-  }
-
   if (newScreenProps.nativeContainerBackgroundColor != oldScreenProps.nativeContainerBackgroundColor) {
     _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.nativeContainerBackgroundColor);
     _controller.view.backgroundColor = _nativeContainerBackgroundColor;
@@ -1332,13 +1287,12 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(
-      childComponentView.reactSuperview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.reactSuperview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
@@ -1361,12 +1315,11 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [screenChildComponent.controller setViewToSnapshot];
 
-  RCTAssert(
-      screenChildComponent.reactSuperview == self,
-      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-      self,
-      screenChildComponent,
-      @(index));
+  RCTAssert(screenChildComponent.reactSuperview == self,
+            @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+            self,
+            screenChildComponent,
+            @(index));
   RCTAssert(
       (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
       @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
@@ -1400,7 +1353,7 @@ RNS_IGNORE_SUPER_CALL_END
     // Note that self.tag might be invalid in cases this stack is removed.
     // This mostlikely does not cause any problems now, but it is something
     // worth to be aware of.
-    if (MUTATION_PARENT_TAG(mutation) == self.tag &&
+    if (mutation.parentTag == self.tag &&
         (mutation.type == react::ShadowViewMutation::Type::Insert ||
          mutation.type == react::ShadowViewMutation::Type::Remove)) {
       // we need to wait until children have their layout set. At this point they don't have the layout
@@ -1433,6 +1386,16 @@ RNS_IGNORE_SUPER_CALL_END
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackComponentDescriptor>();
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

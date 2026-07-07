@@ -8,7 +8,7 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.common.UIManagerType
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
@@ -24,16 +24,15 @@ class StackHost(
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
+    private var isLayoutEnqueued = false
 
     init {
         addView(container)
 
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
-        val uiManager =
-            checkNotNull(UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)) {
-                "[RNScreens] UIManager must not be null."
-            }
-        uiManager.addUIManagerEventListener(this)
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .addUIManagerEventListener(this)
     }
 
     override fun onAttachedToWindow() {
@@ -113,6 +112,32 @@ class StackHost(
         container.layout(l, t, r, b)
     }
 
+    // ReactViewGroup overrides requestLayout to a no-op therefore the request might not be
+    // propagated to the root view. That's why we need to manually force measure and layout pass.
+    override fun requestLayout() {
+        super.requestLayout()
+        refreshLayout()
+    }
+
+    private fun refreshLayout() {
+        if (!isLayoutEnqueued) {
+            isLayoutEnqueued = true
+            post {
+                isLayoutEnqueued = false
+                forceSubtreeMeasureAndLayoutPass()
+            }
+        }
+    }
+
+    private fun forceSubtreeMeasureAndLayoutPass() {
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+        )
+
+        layout(left, top, right, bottom)
+    }
+
     override fun layoutContainerNow() {
         if (measuredWidth != container.measuredWidth || measuredHeight != container.measuredHeight) {
             container.measure(
@@ -134,6 +159,12 @@ class StackHost(
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
     override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    internal fun tearDown() {
+        UIManagerHelper
+            .getFabricUIManagerNotNull(reactContext)
+            .removeUIManagerEventListener(this)
+    }
 
     companion object {
         const val TAG = "StackHost"

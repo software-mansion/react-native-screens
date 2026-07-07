@@ -1,5 +1,11 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+const {
+  topbarBannerReservationScript,
+} = require('./src/components/TopbarBanner/shared');
+const { TOPBAR_BANNER } = require('./src/components/TopbarBanner/config');
+
+const firstZone = TOPBAR_BANNER.zones[0];
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -15,6 +21,20 @@ const config = {
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
+
+  headTags: firstZone
+    ? [
+        {
+          tagName: 'script',
+          attributes: {},
+          innerHTML: topbarBannerReservationScript(
+            firstZone.zoneId,
+            firstZone.contentId,
+            TOPBAR_BANNER.hiddenPaths
+          ),
+        },
+      ]
+    : [],
 
   i18n: {
     defaultLocale: 'en',

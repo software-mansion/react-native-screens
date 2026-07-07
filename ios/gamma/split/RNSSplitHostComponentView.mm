@@ -5,6 +5,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSSplitScreenComponentView.h"
@@ -124,33 +125,19 @@ static const CGFloat epsilon = 1e-6;
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
   [self requestSplitHostControllerForAppearanceUpdate];
-  [self reactAddControllerToClosestParent:_controller];
-}
-
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
-{
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
-    }
-    return;
+  if (self.window != nil && _controller.parentViewController == nil) {
+    [RNSContainerHelpers addChildViewController:_controller
+                       toViewControllerManaging:self.reactSuperview
+                              withContainerView:self];
   }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews
 {
-  RCTAssert(
-      _reactSubviews != nil,
-      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
-      self);
+  RCTAssert(_reactSubviews != nil,
+            @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
+            self);
   return _reactSubviews;
 }
 RNS_IGNORE_SUPER_CALL_END
@@ -165,11 +152,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
-      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSSplitScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSSplitScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
   childScreen.splitHost = self;
@@ -179,11 +165,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
-      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-      childComponentView.class,
-      RNSSplitScreenComponentView.class);
+  RCTAssert([childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+            childComponentView.class,
+            RNSSplitScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
   childScreen.splitHost = nil;
@@ -225,6 +210,11 @@ RNS_IGNORE_SUPER_CALL_END
     _needsSplitDisplayModeUpdate = true;
     _preferredDisplayMode =
         rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
+  }
+
+  if (oldComponentProps.colorScheme != newComponentProps.colorScheme) {
+    _needsSplitAppearanceUpdate = true;
+    _colorScheme = rnscreens::conversion::UIUserInterfaceStyleFromHostProp(newComponentProps.colorScheme);
   }
 
 #if !TARGET_OS_TV
@@ -414,6 +404,16 @@ RNS_IGNORE_SUPER_CALL_END
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
 }
+
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
 

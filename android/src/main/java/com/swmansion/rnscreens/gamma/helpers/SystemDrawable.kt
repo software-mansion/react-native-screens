@@ -4,7 +4,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen.Companion.TAG
+
+private const val TAG = "SystemDrawable"
 
 internal fun getSystemDrawableResource(
     context: Context,
@@ -28,6 +29,6 @@ internal fun getSystemDrawableResource(
         return AppCompatResources.getDrawable(context, systemDrawableId)
     }
 
-    Log.w(TAG, "TabsScreen could not resolve drawable resource with the name $iconName")
+    Log.w(TAG, "[RNScreens] Unable to resolve drawable resource with the name $iconName")
     return null
 }

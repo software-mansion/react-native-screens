@@ -12,6 +12,9 @@
     "build-e2e-android": "detox build --configuration android.emu.release",
     "test-e2e-ios": "detox test --configuration ios.sim.release --take-screenshots failing",
     "test-e2e-android": "detox test --configuration android.emu.release --take-screenshots failing",
+    "test-e2e-ios-smoke": "detox test --configuration ios.sim.release --take-screenshots failing -- -t '@smoke'",
+    "test-e2e-ios-ipad": "../scripts/e2e/test-e2e-ios-ipad.sh",
+    "test-e2e-android-smoke": "detox test --configuration android.emu.release --take-screenshots failing -- -t '@smoke'",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -23,15 +26,16 @@
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
     "@react-navigation/routers": "link:../react-navigation/packages/routers/",
     "@react-navigation/stack": "link:../react-navigation/packages/stack/",
+    "@rnscreens/apps": "link:../apps",
     "nanoid": "^4.0.2",
     "react": "19.2.3",
-    "react-native": "0.85.0",
-    "react-native-gesture-handler": "^2.31.1",
-    "react-native-reanimated": "~4.3.0",
+    "react-native": "0.86.0",
+    "react-native-gesture-handler": "^3.0.1",
+    "react-native-reanimated": "4.5.0-nightly-20260531-e6a8526c5",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.6.0",
     "react-native-screens": "link:../",
-    "react-native-worklets": "~0.8.1"
+    "react-native-worklets": "0.10.0-nightly-20260531-e6a8526c5"
   },
   "resolutions": {
     "@react-navigation/core": "link:../react-navigation/packages/core/"
@@ -43,11 +47,11 @@
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
     "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.85.0",
-    "@react-native/eslint-config": "0.85.0",
-    "@react-native/jest-preset": "0.85.0",
-    "@react-native/metro-config": "0.85.0",
-    "@react-native/typescript-config": "0.85.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/eslint-config": "0.86.0",
+    "@react-native/metro-config": "0.86.0",
+    "@react-native/typescript-config": "0.86.0",
+    "@rnrepo/build-tools": "~0.1.3-beta.0",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.2.0",
     "@types/react-test-renderer": "^19.1.0",
