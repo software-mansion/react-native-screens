@@ -66,8 +66,8 @@ class FormSheetDialogManager(
         // state and layout are synchronized with native behavior.
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
-        if (reopened || formSheetConfig.contentHeight != newConfig.contentHeight) {
-            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(formSheetConfig.detents), formSheetConfig.contentHeight)
+        if (reopened || oldConfig.contentHeight != newConfig.contentHeight) {
+            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(newConfig.detents), formSheetConfig.contentHeight)
         }
 
         if (reopened || oldConfig.detents != newConfig.detents) {
