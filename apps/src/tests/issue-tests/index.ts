@@ -199,6 +199,7 @@ export { default as Test4155 } from './Test4155';
 export { default as Test4161 } from './Test4161';
 export { default as Test4220 } from './Test4220';
 export { default as Test4240 } from './Test4240';
+export { default as Test4244 } from './Test4244';
 export { default as Test4258 } from './Test4258';
 export { default as Test4265 } from './Test4265';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
