@@ -14,8 +14,6 @@ class FormSheetDialogManager(
 ) {
     private var formSheetConfig = FormSheetConfig()
 
-    private var resolvedDetents: FormSheetDetents? = null
-
     private val themedContext =
         ContextThemeWrapper(
             context,
@@ -61,30 +59,24 @@ class FormSheetDialogManager(
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
-        if (formSheetConfig.isOpen != newConfig.isOpen) {
-            presentationManager.updatePresentationState(newConfig.isOpen)
+        val oldConfig = formSheetConfig
+        formSheetConfig = newConfig
+
+        // ALWAYS refresh behavior & appearance when reopening to ensure that BottomSheet
+        // state and layout are synchronized with native behavior.
+        val reopened = !oldConfig.isOpen && newConfig.isOpen
+
+        if (reopened || oldConfig.detents != newConfig.detents) {
+            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(newConfig.detents))
         }
 
-        if (formSheetConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
+        if (reopened || oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
         }
 
-        // TODO: @t0maboro
-        // - invalidation flags logic should be implemented following other components convention
-        val isOpening = newConfig.isOpen && !formSheetConfig.isOpen
-        val detentsChanged = resolvedDetents == null || formSheetConfig.detents != newConfig.detents
-
-        if (detentsChanged) {
-            resolvedDetents = resolveDetents(newConfig.detents)
+        if (oldConfig.isOpen != newConfig.isOpen) {
+            presentationManager.updatePresentationState(newConfig.isOpen)
         }
-
-        if (detentsChanged || isOpening) {
-            dimensionsCoordinator.updateFormSheetDetents(
-                detents = resolvedDetents,
-            )
-        }
-
-        formSheetConfig = newConfig
     }
 
     private fun resolveDetents(rawDetents: List<Double>): FormSheetDetents {
