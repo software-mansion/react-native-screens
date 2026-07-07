@@ -68,13 +68,13 @@ internal class FormSheetAppearanceCoordinator(
 
         val radiusInPx = PixelUtil.toPixelFromDIP(currentCornerRadius)
 
+        val baseModel = defaultShapeAppearanceModel ?: background.shapeAppearanceModel
         background.shapeAppearanceModel =
-            ShapeAppearanceModel
-                .Builder()
-                .apply {
-                    setTopLeftCorner(CornerFamily.ROUNDED, radiusInPx)
-                    setTopRightCorner(CornerFamily.ROUNDED, radiusInPx)
-                }.build()
+            baseModel
+                .toBuilder()
+                .setTopLeftCorner(CornerFamily.ROUNDED, radiusInPx)
+                .setTopRightCorner(CornerFamily.ROUNDED, radiusInPx)
+                .build()
     }
 
     companion object {
