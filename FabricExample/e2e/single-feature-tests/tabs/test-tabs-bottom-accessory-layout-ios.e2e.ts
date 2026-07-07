@@ -58,19 +58,25 @@ function expectBottomAccessoryInline(
 
 function expectBottomAccessoryAtTheBottom(
   bottomAccessory: IosElementAttributes,
-  scrollView: IosElementAttributes,
+  windowSpanningElement: IosElementAttributes,
 ) {
-  // The accessory sits above the scroll view's bottom edge by the 20pt padding
-  // set on the scroll view's style in the test screen.
-  const SCROLL_VIEW_BOTTOM_PADDING = 20;
+  // On iPad there is no bottom tab bar; the bottom accessory floats in the
+  // window's bottom band. iOS reserves that band by inflating the scroll
+  // view's bottom safe-area inset (so scrollable content isn't obscured by the
+  // accessory), while the accessory itself sits just above the window's
+  // physical bottom edge. The exact floating gap is a system value that can
+  // change across devices / OS versions, so instead of hardcoding it we assert
+  // the accessory's bottom edge lands inside that reserved band: at or above
+  // the window bottom, and no higher than the safe-area line.
+  const windowBottom =
+    windowSpanningElement.frame.y + windowSpanningElement.frame.height;
+  const safeAreaLine =
+    windowBottom - windowSpanningElement.safeAreaInsets.bottom;
   const bottomAccessoryBottom =
-    bottomAccessory.frame.y +
-    bottomAccessory.frame.height +
-    SCROLL_VIEW_BOTTOM_PADDING;
-  const scrollViewBottom = scrollView.frame.y + scrollView.frame.height;
+    bottomAccessory.frame.y + bottomAccessory.frame.height;
 
-  // Detox frames may involve fractional point values; avoid strict equality.
-  jestExpect(bottomAccessoryBottom).toBeCloseTo(scrollViewBottom, 0);
+  jestExpect(bottomAccessoryBottom).toBeLessThanOrEqual(windowBottom);
+  jestExpect(bottomAccessoryBottom).toBeGreaterThanOrEqual(safeAreaLine);
 }
 
 async function scrollScrollViewToItem(
@@ -300,8 +306,9 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
 });
 
 describeIfiPad('@ipad Tabs bottomAccessory (iPad)', () => {
-  // The Config scroll view is the same across every test in this block, so read
-  // its frame once and reuse it.
+  // The Config scroll view spans the full window height and is the same across
+  // every test in this block, so read its frame + safe-area insets once and
+  // reuse it as the window/safe-area reference for the bottom-anchor assertion.
   let configScrollView: IosElementAttributes;
 
   beforeAll(async () => {
