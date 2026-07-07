@@ -2,11 +2,7 @@
 #import "RNSLog.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
-#import "RNSStackHeaderContentFactory.h"
-#import "RNSStackHeaderData.h"
-#import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderItemComponentView.h"
-#import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
@@ -30,22 +26,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
             RNSStackHeaderItemSpacerComponentView.class);
 }
 
-@interface RNSStackHeaderConfigComponentView () <RNSStackHeaderItemInvalidationDelegate, RNSStackHeaderEventsDelegate>
-@end
-
 @implementation RNSStackHeaderConfigComponentView {
-  NSString *_Nullable _title;
-  NSString *_Nullable _subtitle;
-  BOOL _hidden;
-  NSString *_Nullable _largeTitle;
-  NSString *_Nullable _largeSubtitle;
-  BOOL _largeTitleEnabled;
-
-  NSMutableArray<UIView<RCTComponentViewProtocol> *> *_Nonnull _children;
-
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
+  NSMutableArray<id> *_children;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -71,13 +56,27 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeTitleEnabled = NO;
 }
 
+- (NSArray<id> *)children
+{
+  return [_children copy];
+}
+
 #pragma mark - UIView lifecycle
 
 - (void)didMoveToWindow
 {
   if (self.window != nil) {
     [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
-    [self submitCurrentData];
+    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
+    coordinator.configDataProvider = self;
+    coordinator.frameChangeDelegate = self;
+    coordinator.eventsDelegate = self;
+    [coordinator rebuild];
+  } else {
+    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
+    coordinator.configDataProvider = nil;
+    coordinator.frameChangeDelegate = nil;
+    coordinator.eventsDelegate = nil;
   }
   [super didMoveToWindow];
 }
@@ -89,7 +88,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSAssertIsValidHeaderChild(childComponentView);
 
   // Do NOT call super — children are not added to the view hierarchy.
-  // They are tracked here and converted to UIBarButtonItems in submitCurrentData.
+  // They are tracked here and read by the coordinator during rebuild.
   [_children insertObject:childComponentView atIndex:index];
 
   if ([childComponentView isKindOfClass:RNSStackHeaderItemComponentView.class]) {
@@ -98,7 +97,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = self;
   }
 
-  [self submitCurrentDataIfMounted];
+  [[self headerCoordinator] rebuild];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -112,14 +111,36 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   [_children removeObjectAtIndex:index];
-  [self submitCurrentDataIfMounted];
+  [[self headerCoordinator] rebuild];
 }
 
 #pragma mark - RNSStackHeaderItemInvalidationDelegate
 
-- (void)headerItemDidInvalidate
+- (void)headerItemDidInvalidateWithId:(NSString *)itemId
 {
-  [self submitCurrentDataIfMounted];
+  if (itemId == nil) {
+    RNSLog(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
+    [[self headerCoordinator] rebuild];
+    return;
+  }
+  [[self headerCoordinator] rebuildItemWithId:itemId];
+}
+
+- (void)headerItemMenuDidChangeWithId:(NSString *)itemId
+{
+  if (itemId == nil) {
+    RNSLog(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
+    [[self headerCoordinator] rebuild];
+    return;
+  }
+  RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
+  [coordinator resetTrackerForItemWithId:itemId];
+  [coordinator reapplyMenuForItemWithId:itemId];
+}
+
+- (void)headerItemSpacerDidInvalidate
+{
+  [[self headerCoordinator] rebuild];
 }
 
 #pragma mark - RNSStackHeaderEventsDelegate
@@ -132,8 +153,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds
 {
   [_reactEventEmitter emitOnMenuSelectionChange:menuId selectedMenuItemIds:selectedIds];
-  // UIKit doesn't update UIAction.state after tap — rebuild menu so tracker state is reflected
-  [self submitCurrentDataIfMounted];
 }
 
 - (void)didPressHeaderItem:(NSString *)itemId
@@ -211,7 +230,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   [super updateProps:props oldProps:oldProps];
 
-  [self submitCurrentDataIfMounted];
+  [[self headerCoordinator] applyConfigProperties];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -233,92 +252,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - Private
 
-- (void)submitCurrentDataIfMounted
+- (nullable RNSStackScreenHeaderCoordinator *)headerCoordinator
 {
-  if (self.superview != nil) {
-    [self submitCurrentData];
+  if (self.superview == nil) {
+    return nil;
   }
-}
-
-- (void)submitCurrentData
-{
+  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
   RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
-
-  NSMutableArray<UIBarButtonItem *> *leadingItems = [NSMutableArray new];
-  NSMutableArray<UIBarButtonItem *> *trailingItems = [NSMutableArray new];
-  UIView *titleView = nil;
-  UIView *subtitleView = nil;
-  UIView *largeSubtitleView = nil;
-  [self buildBarButtonItemsWithLeadingItems:leadingItems
-                              trailingItems:trailingItems
-                                  titleView:&titleView
-                               subtitleView:&subtitleView
-                          largeSubtitleView:&largeSubtitleView];
-
-  RNSStackHeaderData *data = [[RNSStackHeaderData alloc] initWithTitle:_title
-                                                              subtitle:_subtitle
-                                                             screenKey:screen.screenKey
-                                                                hidden:_hidden
-                                                            largeTitle:_largeTitle
-                                                         largeSubtitle:_largeSubtitle
-                                                     largeTitleEnabled:_largeTitleEnabled
-                                                 leadingBarButtonItems:leadingItems
-                                                trailingBarButtonItems:trailingItems
-                                                             titleView:titleView
-                                                          subtitleView:subtitleView
-                                                     largeSubtitleView:largeSubtitleView];
-  [screen.controller.headerCoordinator submitHeaderData:data];
-}
-
-- (void)buildBarButtonItemsWithLeadingItems:(NSMutableArray<UIBarButtonItem *> *)leadingItems
-                              trailingItems:(NSMutableArray<UIBarButtonItem *> *)trailingItems
-                                  titleView:(UIView *_Nullable *_Nonnull)outTitleView
-                               subtitleView:(UIView *_Nullable *_Nonnull)outSubtitleView
-                          largeSubtitleView:(UIView *_Nullable *_Nonnull)outLargeSubtitleView
-{
-  for (UIView *child in _children) {
-    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
-      auto *item = static_cast<RNSStackHeaderItemComponentView *>(child);
-      switch (item.placement) {
-        case RNSHeaderItemPlacementLeading:
-          [leadingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
-                                                                   withFrameChangeDelegate:self
-                                                                  withHeaderEventsDelegate:self]];
-          break;
-        case RNSHeaderItemPlacementTrailing:
-          [trailingItems addObject:[RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
-                                                                    withFrameChangeDelegate:self
-                                                                   withHeaderEventsDelegate:self]];
-          break;
-        case RNSHeaderItemPlacementTitle:
-          if (item.customView != nil) {
-            *outTitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item frameChangeDelegate:self];
-          }
-          break;
-        case RNSHeaderItemPlacementSubtitle:
-          if (item.customView != nil) {
-            *outSubtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item frameChangeDelegate:self];
-          }
-          break;
-        case RNSHeaderItemPlacementLargeSubtitle:
-          if (item.customView != nil) {
-            *outLargeSubtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
-                                                                       frameChangeDelegate:self];
-          }
-          break;
-      }
-    } else if ([child isKindOfClass:RNSStackHeaderItemSpacerComponentView.class]) {
-      auto *spacer = static_cast<RNSStackHeaderItemSpacerComponentView *>(child);
-      switch (spacer.placement) {
-        case RNSHeaderItemSpacerPlacementLeading:
-          [leadingItems addObject:[RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer]];
-          break;
-        case RNSHeaderItemSpacerPlacementTrailing:
-          [trailingItems addObject:[RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer]];
-          break;
-      }
-    }
-  }
+  return screen.controller.headerCoordinator;
 }
 
 - (RNSStackNavigationController *)requireNavigationController

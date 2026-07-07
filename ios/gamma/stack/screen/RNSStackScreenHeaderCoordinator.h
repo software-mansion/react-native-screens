@@ -1,7 +1,9 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#import "RNSStackHeaderData.h"
+#import "RNSStackHeaderConfigDataProviding.h"
+#import "RNSStackHeaderEventsDelegate.h"
+#import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -11,7 +13,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithScreenController:(RNSStackScreenController *)controller;
 
-- (void)submitHeaderData:(nonnull RNSStackHeaderData *)data;
+@property (nonatomic, weak, nullable) id<RNSStackHeaderConfigDataProviding> configDataProvider;
+@property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> frameChangeDelegate;
+@property (nonatomic, weak, nullable) id<RNSStackHeaderEventsDelegate> eventsDelegate;
+
+- (void)rebuild;
+
+- (void)applyConfigProperties;
+
+- (void)rebuildItemWithId:(nullable NSString *)itemId;
+
+- (void)reapplyMenuForItemWithId:(nullable NSString *)itemId;
+
+- (void)resetTrackerForItemWithId:(nullable NSString *)itemId;
 
 - (void)clearHeaderConfiguration;
 

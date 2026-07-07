@@ -13,7 +13,7 @@ import TestFormSheetLifecycleEvents from './test-form-sheet-lifecycle-events-ios
 import TestFormSheetNativeContainerStyle from './test-form-sheet-native-container-style-ios';
 import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed-ios';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius-ios';
-import TestFormSheetPresentationState from './test-form-sheet-presentation-state-ios';
+import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
 import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
@@ -30,7 +30,7 @@ export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifec
 export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style-ios';
 export { default as TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed-ios';
 export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius-ios';
-export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state-ios';
+export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
 export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss-ios';
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking-ios';
 
