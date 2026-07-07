@@ -5,7 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-form-sheet-native-container-style-ios',
   details:
     'Allows to test the native container style properties (backgroundColor) of the FormSheet.',
-  platforms: ['ios'],
+  platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

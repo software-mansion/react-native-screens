@@ -82,7 +82,6 @@ function TestFormSheetNativeContainerStyle() {
 
           <Button
             title={isExpanded ? 'Collapse Content' : 'Expand Content'}
-            color={Colors.White}
             onPress={() => setIsExpanded(!isExpanded)}
           />
 
@@ -100,7 +99,6 @@ function TestFormSheetNativeContainerStyle() {
 
           <Button
             title="Dismiss from JS"
-            color={Colors.White}
             onPress={handleDismiss}
           />
         </View>
