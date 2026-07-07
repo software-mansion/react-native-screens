@@ -62,8 +62,6 @@ class FormSheetDialogManager(
         val oldConfig = formSheetConfig
         formSheetConfig = newConfig
 
-        // ALWAYS refresh behavior & appearance when reopening to ensure that BottomSheet
-        // state and layout are synchronized with native behavior.
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
         configSteps.forEach { step ->
@@ -105,12 +103,15 @@ class FormSheetDialogManager(
 
     private val configSteps =
         listOf(
+            // ALWAYS refresh behavior when reopening to ensure that BottomSheet
+            // state and layout are synchronized with native behavior.
             ConfigStep(
                 dependsOn = { listOf(it.detents, it.contentHeight) },
                 apply = { dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(it.detents), it.contentHeight) },
             ),
             ConfigStep(
                 dependsOn = { it.prefersGrabberVisible },
+                forceOnReopen = false,
                 apply = { container.setGrabberVisible(it.prefersGrabberVisible) },
             ),
             // Presentation reconciles open/close via its own field, so it must not be forced on reopen.
