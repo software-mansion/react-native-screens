@@ -139,8 +139,6 @@ export interface FormSheetProps {
    * @summary Style applied to the native container hosting the sheet content.
    *
    * These properties are forwarded directly to the underlying native view.
-   *
-   * @platform ios
    */
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
