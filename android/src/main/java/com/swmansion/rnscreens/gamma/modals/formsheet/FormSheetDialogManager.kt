@@ -66,20 +66,11 @@ class FormSheetDialogManager(
         // state and layout are synchronized with native behavior.
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
-        if (reopened || oldConfig.contentHeight != newConfig.contentHeight) {
-            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(newConfig.detents), formSheetConfig.contentHeight)
-        }
-
-        if (reopened || oldConfig.detents != newConfig.detents) {
-            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(newConfig.detents))
-        }
-
-        if (reopened || oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
-            container.setGrabberVisible(newConfig.prefersGrabberVisible)
-        }
-
-        if (oldConfig.isOpen != newConfig.isOpen) {
-            presentationManager.updatePresentationState(newConfig.isOpen)
+        configSteps.forEach { step ->
+            val changed = step.dependsOn(oldConfig) != step.dependsOn(newConfig)
+            if (changed || (step.forceOnReopen && reopened)) {
+                step.apply(newConfig)
+            }
         }
     }
 
@@ -105,6 +96,30 @@ class FormSheetDialogManager(
         dimensionsCoordinator.destroy()
         dialog.dismiss()
     }
+
+    private class ConfigStep(
+        val dependsOn: (FormSheetConfig) -> Any?,
+        val forceOnReopen: Boolean = true,
+        val apply: (FormSheetConfig) -> Unit,
+    )
+
+    private val configSteps =
+        listOf(
+            ConfigStep(
+                dependsOn = { listOf(it.detents, it.contentHeight) },
+                apply = { dimensionsCoordinator.updateFormSheetDetents(resolveDetents(it.detents), it.contentHeight) },
+            ),
+            ConfigStep(
+                dependsOn = { it.prefersGrabberVisible },
+                apply = { container.setGrabberVisible(it.prefersGrabberVisible) },
+            ),
+            // Presentation reconciles open/close via its own field, so it must not be forced on reopen.
+            ConfigStep(
+                dependsOn = { it.isOpen },
+                forceOnReopen = false,
+                apply = { presentationManager.updatePresentationState(it.isOpen) },
+            ),
+        )
 
     companion object {
         private const val LARGE_DETENT_FRACTION = 1.0
