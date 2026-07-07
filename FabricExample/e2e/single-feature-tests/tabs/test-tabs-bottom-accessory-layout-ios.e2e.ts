@@ -63,11 +63,14 @@ function expectBottomAccessoryAtTheBottom(
   // The accessory sits above the scroll view's bottom edge by the 20pt padding
   // set on the scroll view's style in the test screen.
   const SCROLL_VIEW_BOTTOM_PADDING = 20;
-  jestExpect(
+  const bottomAccessoryBottom =
     bottomAccessory.frame.y +
-      bottomAccessory.frame.height +
-      SCROLL_VIEW_BOTTOM_PADDING,
-  ).toEqual(scrollView.frame.height);
+    bottomAccessory.frame.height +
+    SCROLL_VIEW_BOTTOM_PADDING;
+  const scrollViewBottom = scrollView.frame.y + scrollView.frame.height;
+
+  // Detox frames may involve fractional point values; avoid strict equality.
+  jestExpect(bottomAccessoryBottom).toBeCloseTo(scrollViewBottom, 0);
 }
 
 async function scrollScrollViewToItem(
