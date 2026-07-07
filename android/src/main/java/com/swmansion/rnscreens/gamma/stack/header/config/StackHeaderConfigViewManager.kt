@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
+import android.content.Context
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -227,7 +228,7 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value)
+        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(value, view.context)
         view.toolbarMenu = menu
         view.toolbarMenuItemIconSourceMap = iconSources
     }
@@ -240,7 +241,7 @@ internal open class StackHeaderConfigViewManager :
         val map = options.getMap(0) ?: return
         view.dispatchMenuElementUpdate(
             id,
-            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map),
+            StackHeaderToolbarMenuMapper.parseMenuElementOptions(map, view.context),
             StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
         )
     }
