@@ -134,7 +134,7 @@ header.
   returns to screen **A** with its `Key` unchanged. No crash and no
   inconsistent state.
 
-### Edge-swipe / system gesture-back 
+### Edge-swipe / system gesture-back
 
 9. While on screen **A** or **B**, swipe from the left screen edge
    to the right to trigger the interactive pop gesture.
