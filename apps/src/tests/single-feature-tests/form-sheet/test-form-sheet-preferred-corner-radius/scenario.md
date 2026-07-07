@@ -4,7 +4,7 @@
 
 **Description:** Verify the `preferredCornerRadius` property of the `FormSheet` component. This test ensures that negative values successfully map to the system's automatic dimension, specific positive values correctly alter the corner rounding, and the sheet dynamically updates its radius when the prop changes while presented.
 
-**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -14,12 +14,14 @@ TBD: Planned, but will be implemented separately.
 
 - iOS device or simulator: iPhone and iPad
 - On iPad: Ensure the device is in full-screen mode, regular width, regular height size class
+- Android emulator
 
 ## Note
 
 - On iOS 18, the corner radius primarily affects the **top** corners of the bottom sheet.
 - On iOS 26, the corner radius primarily affects **all** corners of the bottom sheet.
 - On iPad, because the FormSheet is presented as a floating panel, the corner radius will affect **all four** corners.
+- On Android, rounded-corner clipping is only applied on API level 33+.
 
 ## Steps - iPhone
 

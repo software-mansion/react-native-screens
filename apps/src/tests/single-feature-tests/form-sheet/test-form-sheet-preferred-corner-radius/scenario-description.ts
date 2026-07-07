@@ -5,7 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-form-sheet-preferred-corner-radius-ios',
   details:
     'Allows to test the preferredCornerRadius property of the FormSheet component.',
-  platforms: ['ios'],
+  platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
