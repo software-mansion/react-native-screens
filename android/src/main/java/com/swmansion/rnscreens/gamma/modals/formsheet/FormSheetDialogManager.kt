@@ -65,7 +65,7 @@ class FormSheetDialogManager(
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
         configSteps.forEach { step ->
-            val changed = step.dependsOn(oldConfig) != step.dependsOn(newConfig)
+            val changed = step.dependencyValue(oldConfig) != step.dependencyValue(newConfig)
             if (changed || (step.forceOnReopen && reopened)) {
                 step.apply(newConfig)
             }
@@ -95,8 +95,17 @@ class FormSheetDialogManager(
         dialog.dismiss()
     }
 
+    /**
+     * Describes a single native effect driven by [FormSheetConfig].
+     *
+     * @param dependencyValue Extracts the config fields this effect reads. The step re-runs whenever
+     * the extracted value changes.
+     * @param forceOnReopen When `true`, the step is re-applied on reopen even if its fields are
+     * unchanged.
+     * @param apply Triggers the effect callback.
+     */
     private class ConfigStep(
-        val dependsOn: (FormSheetConfig) -> Any?,
+        val dependencyValue: (FormSheetConfig) -> Any?,
         val forceOnReopen: Boolean = true,
         val apply: (FormSheetConfig) -> Unit,
     )
@@ -106,17 +115,16 @@ class FormSheetDialogManager(
             // ALWAYS refresh behavior when reopening to ensure that BottomSheet
             // state and layout are synchronized with native behavior.
             ConfigStep(
-                dependsOn = { listOf(it.detents, it.contentHeight) },
+                dependencyValue = { listOf(it.detents, it.contentHeight) },
                 apply = { dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(it.detents), it.contentHeight) },
             ),
             ConfigStep(
-                dependsOn = { it.prefersGrabberVisible },
+                dependencyValue = { it.prefersGrabberVisible },
                 forceOnReopen = false,
                 apply = { container.setGrabberVisible(it.prefersGrabberVisible) },
             ),
-            // Presentation reconciles open/close via its own field, so it must not be forced on reopen.
             ConfigStep(
-                dependsOn = { it.isOpen },
+                dependencyValue = { it.isOpen },
                 forceOnReopen = false,
                 apply = { presentationManager.updatePresentationState(it.isOpen) },
             ),
