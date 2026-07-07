@@ -106,7 +106,7 @@ class FormSheetDialogManager(
      */
     private class ConfigStep(
         val dependencyValue: (FormSheetConfig) -> Any?,
-        val forceOnReopen: Boolean = true,
+        val forceOnReopen: Boolean = false,
         val apply: (FormSheetConfig) -> Unit,
     )
 
@@ -116,16 +116,15 @@ class FormSheetDialogManager(
             // state and layout are synchronized with native behavior.
             ConfigStep(
                 dependencyValue = { listOf(it.detents, it.contentHeight) },
+                forceOnReopen = true,
                 apply = { dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(it.detents), it.contentHeight) },
             ),
             ConfigStep(
                 dependencyValue = { it.prefersGrabberVisible },
-                forceOnReopen = false,
                 apply = { container.setGrabberVisible(it.prefersGrabberVisible) },
             ),
             ConfigStep(
                 dependencyValue = { it.isOpen },
-                forceOnReopen = false,
                 apply = { presentationManager.updatePresentationState(it.isOpen) },
             ),
         )
