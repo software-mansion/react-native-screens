@@ -69,8 +69,13 @@ export interface FormSheetProps {
    * If set to `systemDefault` or a negative number, it defaults to the system's
    * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
    *
+   * @remarks
+   * On Android, non-uniform rounded-corner clipping is only applied on API level 33+.
+   * On older versions this prop is ignored, because clipping the sheet content to non-uniform
+   * rounded corners is not reliable on those versions.
+   *
    * @default systemDefault
-   * @platform ios
+   * @platform android, ios
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
