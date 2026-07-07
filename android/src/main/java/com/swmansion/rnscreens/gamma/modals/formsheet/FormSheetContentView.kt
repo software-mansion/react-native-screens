@@ -64,6 +64,13 @@ class FormSheetContentView(
         }
     }
 
+    override fun onViewRemoved(child: View) {
+        super.onViewRemoved(child)
+        if (child is FormSheetContentWrapper) {
+            child.onContentsHeightChange = null
+        }
+    }
+
     override fun onSizeChanged(
         w: Int,
         h: Int,

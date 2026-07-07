@@ -57,27 +57,14 @@ class FormSheetHost(
     }
 
     internal fun unmountReactSubview(child: View) {
-        if (child is FormSheetContentWrapper) {
-            child.onContentsHeightChange = null
-        }
         sheetContentView.removeView(child)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        val child = sheetContentView.getChildAt(index)
-        if (child is FormSheetContentWrapper) {
-            child.onContentsHeightChange = null
-        }
         sheetContentView.removeViewAt(index)
     }
 
     internal fun unmountAllReactSubviews() {
-        for (i in 0 until sheetContentView.childCount) {
-            val child = sheetContentView.getChildAt(i)
-            if (child is FormSheetContentWrapper) {
-                child.onContentsHeightChange = null
-            }
-        }
         sheetContentView.removeAllViews()
     }
 
