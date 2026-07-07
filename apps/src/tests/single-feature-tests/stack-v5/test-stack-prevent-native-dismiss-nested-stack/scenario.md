@@ -7,8 +7,8 @@ Stack nested inside another Stack. A screen at the root of the nested
 stack can block native dismissal from exiting into the parent stack.
 Also verifies non-root screens inside the nested stack behave like a
 single stack, and that each screen's `onNativeDismissPrevented` fires
-its own distinct toast. See Note for mechanics and the Android
-system-back caveat (#1459).
+its own distinct toast. See Note for mechanics and the currently
+deferred back-button coverage (#1459).
 
 **OS test creation version:** Android: API Level 36
 
@@ -27,13 +27,13 @@ yet.
 
 - Android-only feature (no iOS implementation); do not run this screen
   on iOS.
-- Android #1459 limitation: the system/hardware back button does NOT
-  currently pop the gamma Stack when the top screen does not prevent
-  dismissal — pressing it does nothing (no pop, no exit, and it does
-  not even background the app to the launcher). Interception still
-  works on system back (a prevented screen shows its toast).
-  To leave a stack whose top screen does not prevent
-  dismissal - use the on-screen **Pop** button.
+- Back-button dismissal is **not yet covered** by this scenario. When a
+  screen does not prevent dismissal, popping via the system
+  navigation-bar back button and via the header back chevron does not
+  work yet (#1459); steps covering both will be added once it is fixed.
+  Until then, navigate back with the on-screen **Pop** button.
+  (Pressing a native back button on a screen that *does* prevent
+  dismissal still triggers the block — the steps below cover that.)
 - `Key` values (`r-<routeName>-<n>`) use a session-global counter that
   never resets — only verify relationships: a push yields a new,
   higher key; popping back to a preserved instance keeps its key.
@@ -140,11 +140,10 @@ yet.
       Push NestedA / Push NestedB / Pop buttons are present (no
       Toggle button).
 
-14. On NestedA,the on-screen **Pop** button.
+14. On NestedA, tap the Pop button.
 
-- [ ] Pops normally back to **NestedHome** within the nested stack. NestedHome's `Key` is
-      preserved from step 12. (The header chevron works; the system
-      back button would do nothing here — see Note.)
+- [ ] Pops normally back to **NestedHome** within the nested stack, no
+      toast. NestedHome's `Key` is preserved from step 12.
 
 ### Native dismiss blocked on NestedB
 
@@ -173,7 +172,7 @@ yet.
 - [ ] Pops back to **NestedHome** normally, no toast shown. NestedHome
       is now the sole attached route of the nested stack.
 
-19.  On NestedHome, tap **Pop**.
+19. On NestedHome, tap **Pop**.
 
 - [ ] Since NestedHome is the only attached route left in the nested
       stack, Pop bubbles up and pops the whole **NestedStack** route
@@ -183,39 +182,37 @@ yet.
 
 ### Edge case: layered prevention across nesting levels
 
-21. From A, tap **Push B**.
+20. From A, tap **Push B**.
 
 - [ ] Screen **B** is shown, "Prevent native dismiss: Enabled", with a
       `Key` higher than any seen so far.
 
-22. On B, tap **Push NestedStack**.
+21. On B, tap **Push NestedStack**.
 
 - [ ] **NestedHome** is shown (fresh instance), "Prevent native
       dismiss: Enabled".
 
-23. On NestedHome, press the system back button.
+22. On NestedHome, press the system back button.
 
 - [ ] Back press is intercepted by **NestedHome** specifically: the
       toast reads "Native dismiss prevented - NestedHome" (not "B"),
       confirming only the current top screen intercepts even though B
       below it also prevents. App stays on NestedHome.
 
-24. On NestedHome, tap **Toggle Prevent Native Dismiss** to Disabled,
-    then tap
-    the on-screen **Pop** button.
+23. On NestedHome, tap **Toggle Prevent Native Dismiss** to Disabled,
+    then tap the on-screen **Pop** button.
 
-- [ ] Tapping **Pop** exits the
-      nested stack and returns to screen **B** (not A/Home) — the
-      screen directly below NestedStack on the outer stack. No toast
-      is shown.
+- [ ] Tapping **Pop** exits the nested stack and returns to screen
+      **B** (not A/Home) — the screen directly below NestedStack on
+      the outer stack. No toast is shown.
 
-25.  Back on B (now the top screen again, still prevent Enabled), press
+24. Back on B (now the top screen again, still prevent Enabled), press
     the system back button.
 
 - [ ] Back press is intercepted again: the toast now reads "Native
       dismiss prevented - B", and the app stays on **B** — B resumes
       blocking native dismissal once it becomes the top screen again.
 
-26. On B, tap the on-screen **Pop** button.
+25. On B, tap the on-screen **Pop** button.
 
 - [ ] Pops back to screen **A** normally, no toast shown.
