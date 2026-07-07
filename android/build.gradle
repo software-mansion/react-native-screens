@@ -1,6 +1,3 @@
-import com.android.Version
-import groovy.json.JsonSlurper
-
 buildscript {
     ext {
         rnsDefaultTargetSdkVersion = 34
