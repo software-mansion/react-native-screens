@@ -50,6 +50,10 @@ namespace react = facebook::react;
   BOOL _needsTabBarAppearanceUpdate;
 
   RNSTabsNavigationStateUpdateRequest *_Nullable _navStateRequest;
+
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+  UIView *_Nullable _bottomAccessoryWrapperView;
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -81,6 +85,8 @@ namespace react = facebook::react;
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
+
+  _bottomAccessoryWrapperView = nil;
 }
 
 - (void)resetProps
@@ -91,6 +97,7 @@ namespace react = facebook::react;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
   _rejectStaleNavStateUpdates = NO;
+  _bottomAccessoryHidden = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -158,7 +165,7 @@ namespace react = facebook::react;
 
   if (_hasModifiedBottomAccessoryInCurrentTransation) {
     RNSLog(@"updateContainer: bottomAccessory: %@", bottomAccessory);
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
     if (@available(iOS 26.0, *)) {
       if (bottomAccessory != nil) {
         // We wrap RNSTabsBottomAccessoryComponentView in plain UIView to maintain native
@@ -167,13 +174,14 @@ namespace react = facebook::react;
         // to default corner radius.
         UIView *wrapperView = [UIView new];
         [wrapperView addSubview:bottomAccessory];
-
-        [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+        _bottomAccessoryWrapperView = wrapperView;
       } else {
-        [_controller setBottomAccessory:nil animated:YES];
+        _bottomAccessoryWrapperView = nil;
       }
+
+      [self applyBottomAccessoryVisibility];
     }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
 }
 
@@ -240,6 +248,15 @@ namespace react = facebook::react;
     {
       _controller.tabBar.hidden = _tabBarHidden;
     }
+  }
+
+  if (newComponentProps.bottomAccessoryHidden != oldComponentProps.bottomAccessoryHidden) {
+    _bottomAccessoryHidden = newComponentProps.bottomAccessoryHidden;
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+    if (@available(iOS 26.0, *)) {
+      [self applyBottomAccessoryVisibility];
+    }
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
 
   if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
@@ -385,6 +402,18 @@ namespace react = facebook::react;
     [_reactSubviews removeObject:subview];
   }
 }
+
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+- (void)applyBottomAccessoryVisibility API_AVAILABLE(ios(26.0))
+{
+  if (_bottomAccessoryWrapperView != nil && !_bottomAccessoryHidden) {
+    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:_bottomAccessoryWrapperView]
+                           animated:YES];
+  } else {
+    [_controller setBottomAccessory:nil animated:YES];
+  }
+}
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
 {
