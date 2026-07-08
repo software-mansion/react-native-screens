@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
-internal class FormSheetDialogManager(
+class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
     private val onDismissRequest: () -> Unit,
