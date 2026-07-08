@@ -143,32 +143,24 @@ export interface FormSheetProps {
   /**
    * @summary A callback that gets invoked when the FormSheet will appear.
    * This is called as soon as the transition begins.
-   *
-   * @platform ios
    */
   onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did appear.
    * This is called as soon as the transition ends.
-   *
-   * @platform ios
    */
   onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet will disappear.
    * This is called as soon as the transition begins.
-   *
-   * @platform ios
    */
   onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did disappear.
    * This is called as soon as the transition ends.
-   *
-   * @platform ios
    */
   onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
