@@ -86,7 +86,9 @@ namespace react = facebook::react;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
 
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   _bottomAccessoryWrapperView = nil;
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (void)resetProps

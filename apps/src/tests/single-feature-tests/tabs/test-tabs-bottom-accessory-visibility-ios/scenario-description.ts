@@ -4,7 +4,8 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Bottom Accessory Visibility',
   key: 'test-tabs-bottom-accessory-visibility-ios',
   details:
-    'Test bottom accessory visibility toggling via bottomAccessory and hidden props.',
+    'Test bottom accessory visibility toggling via bottomAccessory ' +
+    'and bottomAccessoryHidden props.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
