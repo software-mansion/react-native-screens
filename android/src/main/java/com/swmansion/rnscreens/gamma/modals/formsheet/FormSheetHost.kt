@@ -33,6 +33,7 @@ class FormSheetHost(
             context = context,
             contentView = sheetContentView,
             onDismissRequest = { eventEmitter.emitOnNativeDismissEvent() },
+            onDetentChanged = { index -> eventEmitter.emitOnDetentChanged(index) },
         )
 
     init {

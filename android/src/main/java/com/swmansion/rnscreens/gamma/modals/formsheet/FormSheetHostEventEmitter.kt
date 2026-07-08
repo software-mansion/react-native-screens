@@ -44,4 +44,10 @@ internal class FormSheetHostEventEmitter(
             FormSheetDidDisappearEvent(surfaceId, viewTag),
         )
     }
+
+    fun emitOnDetentChanged(index: Int) {
+        reactEventDispatcher.dispatchEvent(
+            FormSheetDetentChangedEvent(surfaceId, viewTag, index),
+        )
+    }
 }

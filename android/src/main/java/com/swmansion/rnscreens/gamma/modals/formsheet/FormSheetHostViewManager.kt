@@ -132,6 +132,7 @@ class FormSheetHostViewManager :
             makeEventRegistrationInfo(FormSheetDidAppearEvent),
             makeEventRegistrationInfo(FormSheetWillDisappearEvent),
             makeEventRegistrationInfo(FormSheetDidDisappearEvent),
+            makeEventRegistrationInfo(FormSheetDetentChangedEvent),
         )
 
     override fun updateState(

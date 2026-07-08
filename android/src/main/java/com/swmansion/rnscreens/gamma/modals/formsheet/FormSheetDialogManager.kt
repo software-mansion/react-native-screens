@@ -12,6 +12,7 @@ class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
     private val onDismissRequest: () -> Unit,
+    private val onDetentChanged: ((index: Int) -> Unit)? = null,
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -34,7 +35,7 @@ class FormSheetDialogManager(
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
     private val behaviorController =
-        bottomSheetView?.let { FormSheetBehaviorController(it) }
+        bottomSheetView?.let { FormSheetBehaviorController(it, onDetentChanged) }
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
@@ -62,6 +63,7 @@ class FormSheetDialogManager(
     init {
         presentationManager.setup()
         dimensionsCoordinator.setup()
+        behaviorController?.setup()
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
@@ -104,6 +106,7 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
+        behaviorController?.destroy()
         presentationManager.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()
