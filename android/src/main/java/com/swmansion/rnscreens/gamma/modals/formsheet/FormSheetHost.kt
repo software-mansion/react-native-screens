@@ -23,6 +23,13 @@ class FormSheetHost(
 
     internal var detents: List<Double> = emptyList()
 
+<<<<<<< HEAD
+=======
+    internal var initialDetentIndex: Int = 0
+
+    internal var reactContentsHeight: Int = 0
+
+>>>>>>> c91a1dfa3 (Add support for initialDetentIndex on Android)
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
             updateStateIfNeeded(width, height)
@@ -86,6 +93,7 @@ class FormSheetHost(
                 isOpen = this.isOpen,
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
+                initialDetentIndex = this.initialDetentIndex,
             )
         dialogManager.applyConfig(config)
     }

@@ -78,7 +78,11 @@ class FormSheetDialogManager(
         // state and layout are synchronized with native behavior.
         val dimensionsChanged = oldConfig.detents != newConfig.detents
         if (dimensionsChanged || reopened) {
-            dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(newConfig.detents))
+            dimensionsCoordinator.updateFormSheetDimensions(
+                resolveDetents(newConfig.detents),
+                newConfig.initialDetentIndex,
+                reopened,
+            )
         }
 
         if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
