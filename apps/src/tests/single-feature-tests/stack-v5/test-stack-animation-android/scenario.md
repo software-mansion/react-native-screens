@@ -10,7 +10,7 @@ The screen uses deliberately high-contrast, full-bleed screens — **Home**
 `StackContainer` (**NestedHome** yellow / **NestedBlue** / **NestedRed**) —
 so the transition, its shadow, and any content jump are easy to see.
 
-The test validates that push, on-screen **Pop**, native (system) back, and
+The test validates that push, on-screen **Pop** and
 the **predictive back gesture** all animate smoothly, and guards against the
 four regressions PR #3629 fixed:
 
@@ -41,7 +41,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 
 ### Android launch
 
-- To exercise the native back button and the predictive back gesture, run the
+- To exercise the predictive back gesture, run the
   screen **directly** by editing
   [apps/App.tsx](../../../../../App.tsx): import and render
   `TestStackAnimationAndroid` as the root component instead of `Example`, e.g.:
