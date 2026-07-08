@@ -112,28 +112,65 @@ export async function selectSingleFeatureTestsScreen(
   );
   await element(by.id(`${screenKey}`)).tap();
 }
+
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
+type ElementMatcher = {
+  /** Which matcher to resolve the element by. */
+  by: 'label' | 'id' | 'type';
+  /** The label text, testID, or native type name to match. */
+  value: string;
+  /** Disambiguate when the matcher resolves to multiple elements. */
+  index?: number;
+};
+
+function resolveMatcher({ by: matcher, value }: ElementMatcher) {
+  switch (matcher) {
+    case 'label':
+      return by.label(value);
+    case 'id':
+      return by.id(value);
+    case 'type':
+      return by.type(value);
+    default: {
+      const _exhaustive: never = matcher;
+      throw new Error(`Unsupported matcher: ${_exhaustive}`);
+    }
+  }
+}
+
+/**
+ * Reads the attributes of a single element on either platform. Cast the result
+ * to `IosElementAttributes` / `AndroidElementAttributes` at the call site when
+ * you need platform-specific fields.
+ */
 export async function getElementAttributes(
-  testLabel: string,
+  matcher: ElementMatcher,
 ): Promise<ElementAttributes> {
-  const attrs = await element(by.label(testLabel)).getAttributes();
+  const target = element(resolveMatcher(matcher));
+  const attrs = await (matcher.index === undefined
+    ? target
+    : target.atIndex(matcher.index)
+  ).getAttributes();
 
   if ('elements' in attrs) {
     throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for label: "${testLabel}". `,
+      `Multiple elements (${attrs.elements.length}) found for ${matcher.by}: "${matcher.value}". ` +
+        `Pass an \`index\` to disambiguate.`,
     );
   }
 
   return attrs as ElementAttributes;
 }
-
 /**
  * Performs a coordinate-based tap on iOS to interact with an element that may be
  * obstructed by other UI layers, bypassing Detox's default visibility checks.
  */
 export async function forceTapByLabeliOS(testLabel: string) {
-  const elementAttributes = await getElementAttributes(testLabel);
+  const elementAttributes = await getElementAttributes({
+    by: 'label',
+    value: testLabel,
+  });
   const { x, y, width, height } = elementAttributes.frame;
   await device.tap({
     x: x + width / 2,
