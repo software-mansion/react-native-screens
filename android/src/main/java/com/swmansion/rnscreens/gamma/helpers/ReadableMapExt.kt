@@ -1,7 +1,8 @@
 package com.swmansion.rnscreens.gamma.helpers
 
+import android.content.Context
 import android.util.Log
-import androidx.core.graphics.toColorInt
+import com.facebook.react.bridge.ColorPropConverter
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 
@@ -24,9 +25,12 @@ internal fun ReadableMap.readOptionalFloat(key: String): Float? {
     return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
 }
 
-internal fun ReadableMap.readOptionalColor(key: String): Int? {
+internal fun ReadableMap.readOptionalColor(
+    context: Context,
+    key: String,
+): Int? {
     if (!hasKey(key) || isNull(key)) return null
-    return parseColor(key)
+    return parseColor(context, key)
 }
 
 // endregion
@@ -44,9 +48,10 @@ internal fun ReadableMap.readBoolean(
 ): Boolean = readOptionalBoolean(key) ?: default
 
 internal fun ReadableMap.readColor(
+    context: Context,
     key: String,
     default: Int?,
-): Int? = if (!hasKey(key) || isNull(key)) default else parseColor(key)
+): Int? = if (!hasKey(key) || isNull(key)) default else parseColor(context, key)
 
 internal fun ReadableMap.readImageUri(
     key: String,
@@ -71,13 +76,16 @@ internal fun ReadableMap.requireNotNullString(key: String): String =
 
 // endregion
 
-// region Building blocks
+// region Parsing color
 
-internal fun ReadableMap.parseColor(key: String): Int? =
+internal fun ReadableMap.parseColor(
+    context: Context,
+    key: String,
+): Int? =
     try {
         when (getType(key)) {
+            ReadableType.Map -> ColorPropConverter.getColor(getMap(key), context)
             ReadableType.Number -> getInt(key)
-            ReadableType.String -> getString(key)?.toColorInt()
             else -> null
         }
     } catch (e: Exception) {
