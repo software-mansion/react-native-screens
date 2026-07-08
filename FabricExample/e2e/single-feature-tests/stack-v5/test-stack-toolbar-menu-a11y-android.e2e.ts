@@ -8,7 +8,7 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
-      'Stack V5',
+      'Stack v5',
       'test-stack-toolbar-menu-a11y-android',
     );
   });
