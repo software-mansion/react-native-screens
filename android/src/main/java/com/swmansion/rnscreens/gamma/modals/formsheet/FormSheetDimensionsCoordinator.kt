@@ -12,10 +12,12 @@ internal class FormSheetDimensionsCoordinator(
     private val container: FormSheetContainer,
     private val bottomSheetView: FrameLayout?,
     private val behaviorController: FormSheetBehaviorController?,
-) {
+) : FormSheetContentSizeChangeDelegate {
     private var lastTopInset = 0
     private var lastBottomInset = 0
     private var currentDetents: FormSheetDetents? = null
+
+    private var currentContentHeight: Int = 0
 
     internal fun setup() {
         setupWindowInsetsListener()
@@ -50,7 +52,14 @@ internal class FormSheetDimensionsCoordinator(
         }
     }
 
-    internal fun updateFormSheetDetents(detents: FormSheetDetents?) {
+    override fun onContentHeightChanged(newHeight: Int) {
+        if (currentContentHeight != newHeight) {
+            currentContentHeight = newHeight
+            updateNativeContainerHeight()
+        }
+    }
+
+    internal fun updateFormSheetDimensions(detents: FormSheetDetents?) {
         currentDetents = detents
         updateNativeContainerHeight()
     }
@@ -73,11 +82,13 @@ internal class FormSheetDimensionsCoordinator(
             behaviorController?.updateSheetBehavior(
                 detents = detents,
                 sheetAvailableSpace = dialogDecorHeight,
+                contentHeightForFitToContents = currentContentHeight,
+                nativeContainerPaddingBottom = lastBottomInset,
             )
         }
 
         val sheetContainerHeight =
-            currentDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset)
+            currentDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset, currentContentHeight)
                 ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
 
         val layoutParams =

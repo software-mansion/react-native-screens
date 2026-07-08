@@ -35,6 +35,10 @@ class FormSheetHost(
             onDismissRequest = ::onNativeDismiss,
         )
 
+    init {
+        sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
+    }
+
     internal fun onNativeDismiss() {
         eventEmitter.emitOnNativeDismissEvent()
     }

@@ -7,7 +7,4 @@ interface NativeProps extends ViewProps {}
 
 export default codegenNativeComponent<NativeProps>(
   'RNSFormSheetContentWrapper',
-  {
-    excludedPlatforms: ['android'],
-  },
 );

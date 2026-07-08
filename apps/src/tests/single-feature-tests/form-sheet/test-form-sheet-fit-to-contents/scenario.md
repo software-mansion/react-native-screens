@@ -4,7 +4,7 @@
 
 **Description:** Verify the `fitToContents` for the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening, and dynamically animates to a new height when the internal content size changes.
 
-**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -14,10 +14,12 @@ TBD: Planned, but will be implemented separately.
 
 - iOS device or simulator: iPhone and iPad
 - On iPad: Ensure the device is in full-screen mode, regular width, regular height size class
+- Android emulator
 
 ## Note
 
 - On iPad: The FormSheet is presented as a **centered floating panel**. The `fitToContents` behavior still applies to the height of this panel seamlessly, while its width remains fixed. Therefore, explicit separate steps for iPad are omitted.
+- On Android: While mounting/unmounting the component immediately, the sheet updates it's position to a desired state. The animation for dynamic content size update will be considered separately in a follow-up PRs.
 
 ## Steps
 
