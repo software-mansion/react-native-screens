@@ -11,6 +11,7 @@ internal class FormSheetBehaviorController(
     private val behavior = BottomSheetBehavior.from(sheetView)
 
     private var currentDetentsCount: Int = 1
+    private var lastEmittedDetentIndex: Int = -1
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -19,7 +20,8 @@ internal class FormSheetBehaviorController(
                 newState: Int,
             ) {
                 val index = mapStateToDetentIndex(newState)
-                if (index != -1) {
+                if (index != -1 && index != lastEmittedDetentIndex) {
+                    lastEmittedDetentIndex = index
                     onDetentChanged?.invoke(index)
                 }
             }
