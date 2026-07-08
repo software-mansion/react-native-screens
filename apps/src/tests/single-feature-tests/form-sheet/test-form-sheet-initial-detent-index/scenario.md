@@ -4,7 +4,7 @@
 
 **Description:** Verify the `initialDetentIndex` property of the `FormSheet` component. This test ensures that the FormSheet correctly respects the initial index when mounting and does not forcibly snap back to the initial index if the component re-renders while already presented.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4; Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ TBD: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator (iPhone).
+- Android emulator
 
 ## Steps
 
