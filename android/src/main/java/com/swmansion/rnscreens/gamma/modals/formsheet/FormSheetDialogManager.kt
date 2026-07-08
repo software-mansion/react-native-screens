@@ -5,14 +5,16 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
     private val onDismissRequest: () -> Unit,
-    private val lifecycleEventEmitter: ViewAppearanceEventEmitter,
+    private val onWillAppear: (() -> Unit)? = null,
+    private val onDidAppear: (() -> Unit)? = null,
+    private val onWillDisappear: (() -> Unit)? = null,
+    private val onDidDisappear: (() -> Unit)? = null,
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -53,7 +55,10 @@ internal class FormSheetDialogManager(
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
             onNativeDismiss = onDismissRequest,
-            lifecycleEventEmitter = lifecycleEventEmitter,
+            onWillAppear = onWillAppear,
+            onDidAppear = onDidAppear,
+            onWillDisappear = onWillDisappear,
+            onDidDisappear = onDidDisappear,
         )
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate

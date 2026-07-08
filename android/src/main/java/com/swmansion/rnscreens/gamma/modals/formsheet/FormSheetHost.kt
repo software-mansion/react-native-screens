@@ -6,7 +6,6 @@ import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.ShadowStateProxy
-import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,
@@ -29,31 +28,19 @@ class FormSheetHost(
             updateStateIfNeeded(width, height)
         }
 
-    private val lifecycleEventEmitter =
-        object : ViewAppearanceEventEmitter {
-            override fun emitOnWillAppear() = eventEmitter.emitOnWillAppear()
-
-            override fun emitOnDidAppear() = eventEmitter.emitOnDidAppear()
-
-            override fun emitOnWillDisappear() = eventEmitter.emitOnWillDisappear()
-
-            override fun emitOnDidDisappear() = eventEmitter.emitOnDidDisappear()
-        }
-
     private val dialogManager =
         FormSheetDialogManager(
             context = context,
             contentView = sheetContentView,
-            onDismissRequest = ::onNativeDismiss,
-            lifecycleEventEmitter = lifecycleEventEmitter,
+            onDismissRequest = { eventEmitter.emitOnNativeDismissEvent() },
+            onWillAppear = { eventEmitter.emitOnWillAppear() },
+            onDidAppear = { eventEmitter.emitOnDidAppear() },
+            onWillDisappear = { eventEmitter.emitOnWillDisappear() },
+            onDidDisappear = { eventEmitter.emitOnDidDisappear() },
         )
 
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
-    }
-
-    internal fun onNativeDismiss() {
-        eventEmitter.emitOnNativeDismissEvent()
     }
 
     internal fun mountReactSubviewAt(
