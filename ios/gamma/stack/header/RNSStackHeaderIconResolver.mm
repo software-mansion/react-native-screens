@@ -46,4 +46,18 @@
   }
 }
 
++ (UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData
+{
+  CGFloat width = [iconData.jsonSource[@"width"] doubleValue];
+  CGFloat height = [iconData.jsonSource[@"height"] doubleValue];
+  CGFloat scale = [iconData.jsonSource[@"scale"] doubleValue] ?: 1.0;
+  CGSize size = (width > 0 && height > 0) ? CGSizeMake(width, height) : CGSizeMake(1, 1);
+
+  UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+  format.scale = scale;
+  UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size format:format];
+  return [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull ctx){
+  }];
+}
+
 @end
