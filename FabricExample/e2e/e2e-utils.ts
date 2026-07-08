@@ -132,6 +132,10 @@ function resolveMatcher({ by: matcher, value }: ElementMatcher) {
       return by.id(value);
     case 'type':
       return by.type(value);
+    default: {
+      const _exhaustive: never = matcher;
+      throw new Error(`Unsupported matcher: ${_exhaustive}`);
+    }
   }
 }
 
