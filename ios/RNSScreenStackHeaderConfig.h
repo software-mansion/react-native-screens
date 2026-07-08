@@ -87,7 +87,9 @@ NS_ASSUME_NONNULL_END
  * Allows to send information with size to the corresponding node in shadow tree.
  * This method updates state of header config shadow node only.
  */
-- (void)updateShadowStateWithSize:(CGSize)size edgeInsets:(NSDirectionalEdgeInsets)edgeInsets;
+- (void)updateShadowStateWithSize:(CGSize)size
+                       edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
+                      frameOrigin:(CGPoint)frameOrigin;
 
 /**
  * Updates state of header config shadow node and all subview shadow nodes in context of given UINavigationBar.

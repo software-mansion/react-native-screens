@@ -69,7 +69,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _show = YES;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
-    _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
+    _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
     [self initProps];
   }
   return self;
@@ -167,13 +167,16 @@ RNS_IGNORE_SUPER_CALL_END
   [navctr.view setNeedsLayout];
 }
 
-- (void)updateShadowStateWithSize:(CGSize)size edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
+- (void)updateShadowStateWithSize:(CGSize)size
+                       edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
+                      frameOrigin:(CGPoint)frameOrigin
 {
   // I believe Yoga handles RTL internally & .left will be treated as .right in RTL etc.
   react::EdgeInsets convertedEdgeInsets{
       .left = edgeInsets.leading, .top = edgeInsets.top, .right = edgeInsets.trailing, .bottom = edgeInsets.bottom};
   react::Size convertedSize = RCTSizeFromCGSize(size);
-  auto newState = react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets);
+  auto newState =
+      react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets, RCTPointFromCGPoint(frameOrigin));
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
@@ -190,8 +193,20 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  CGRect navBarFrameInScreenView = [navigationBar convertRect:navigationBar.bounds toView:_screenView];
+
+  // On iOS 26+ in landscape mode there is a bug with `edgesForExtendedLayout` for non-transparent
+  // header. We're applying SAV to fix it but we need to take it into account for HeaderConfig's
+  // origin as well.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (!_translucent && self.shouldHeaderBeVisible) {
+    navBarFrameInScreenView.origin.y -= _screenView.safeAreaInsets.top;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   [self updateShadowStateWithSize:navigationBar.frame.size
-                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]];
+                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
+                      frameOrigin:navBarFrameInScreenView.origin];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
@@ -970,7 +985,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   [super prepareForRecycle];
   _initialPropsSet = NO;
 
-  _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
+  _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value

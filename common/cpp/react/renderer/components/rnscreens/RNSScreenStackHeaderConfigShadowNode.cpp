@@ -26,7 +26,8 @@ void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {
   ensureUnsealed();
 
   const auto &stateData = getStateData();
-  layoutMetrics_.frame.origin.y = -stateData.frameSize.height;
+  layoutMetrics_.frame.origin.x = stateData.frameOrigin.x;
+  layoutMetrics_.frame.origin.y = stateData.frameOrigin.y;
 }
 
 #if !defined(ANDROID)
