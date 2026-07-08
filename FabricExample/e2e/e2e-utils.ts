@@ -88,6 +88,7 @@ export async function selectSingleFeatureTestsScreen(
   scenarioGroup: string,
   screenKey: string,
 ) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
   await scrollUntilVisible(
     'root-screen-single-feature-tests',
     'root-screen-examples-scrollview',
@@ -98,17 +99,17 @@ export async function selectSingleFeatureTestsScreen(
     .withTimeout(3000);
 
   await scrollUntilVisible(
-    `single-feature-tests-${scenarioGroup}`,
+    `single-feature-tests-${scenarioGroupId}`,
     'single-feature-tests-scrollview',
   );
-  await element(by.id(`single-feature-tests-${scenarioGroup}`)).tap();
-  await waitFor(element(by.id(`${scenarioGroup}-scenarios-scrollview`)))
+  await element(by.id(`single-feature-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
     .toBeVisible()
     .withTimeout(3000);
 
   await scrollUntilVisible(
     `${screenKey}`,
-    `${scenarioGroup}-scenarios-scrollview`,
+    `${scenarioGroupId}-scenarios-scrollview`,
   );
   await element(by.id(`${screenKey}`)).tap();
 }
