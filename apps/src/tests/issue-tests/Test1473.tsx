@@ -1,35 +1,46 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  First: undefined;
+  Second: undefined;
+  Modal: undefined;
+};
 
-function First(props) {
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function First({ navigation }: NativeStackScreenProps<StackParamList, 'First'>) {
   return (
     <View style={styles.container}>
       <Text>This is the first screen</Text>
       <Button
-        onPress={() => props.navigation.navigate('Second')}
+        onPress={() => navigation.navigate('Second')}
         title="Navigate to second screen"
       />
     </View>
   );
 }
 
-function Second(props) {
+function Second({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Second'>) {
   return (
     <View style={styles.container}>
       <Text>This is the second screen</Text>
       <Button
-        onPress={() => props.navigation.navigate('Modal')}
+        onPress={() => navigation.navigate('Modal')}
         title="Open modal"
       />
     </View>
   );
 }
 
-function Modal(props) {
+function Modal({ navigation }: NativeStackScreenProps<StackParamList, 'Modal'>) {
   return (
     <View
       style={{
@@ -38,7 +49,7 @@ function Modal(props) {
       }}>
       <Text>This is the modal</Text>
       <Button
-        onPress={() => props.navigation.goBack()}
+        onPress={() => navigation.goBack()}
         title="Close the modal"
       />
     </View>

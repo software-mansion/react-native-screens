@@ -1,13 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "lib": ["esnext", "dom"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "paths": {
-      "@apps/*": ["src/*"],
-      "@assets/*": ["assets/*"],
+      "@apps/*": ["./src/*"],
+      "@assets/*": ["./assets/*"],
       "react-native-screens": ["../src"],
-      "react-native-screens/*": ["../src/*"],
-      "@react-navigation/*": ["../react-navigation/packages/*/src"]
+      "react-native-screens/*": ["../src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]

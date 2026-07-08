@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ScrollView, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, useTheme } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const ArticleScreen = () => {
@@ -45,7 +45,7 @@ export default function App() {
             options={{
               headerTransparent: true,
               headerBlurEffect: 'extraLight',
-              headerLargeTitle: true,
+              headerLargeTitleEnabled: true,
             }}
           />
         </Stack.Navigator>

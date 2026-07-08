@@ -63,7 +63,7 @@ function Screen3({ navigation }: StackNavigationProp) {
   );
 }
 
-const backImage = _ => (
+const backImage = () => (
   <Image
     source={require('@assets/backButton.png')} // can be regular view instead of image
     style={{ width: 40, height: 40 }}
@@ -93,7 +93,7 @@ export default function App() {
                     onPress={() => {
                       navigation.goBack();
                     }}
-                    backImage={backImage}
+                    icon={backImage}
                   />
                 ),
                 hidesSharedBackground: true,

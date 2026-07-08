@@ -4,7 +4,14 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import {
+  Button,
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TextInputFocusEventData,
+  View,
+} from 'react-native';
 
 type RouteParams = {
   Home: undefined;
@@ -99,7 +106,9 @@ export default function App() {
               // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
-              onChangeText: event => {
+              onChange: (
+                event: NativeSyntheticEvent<TextInputFocusEventData>,
+              ) => {
                 console.log('Search text:', event.nativeEvent.text);
               },
             },
@@ -118,7 +127,9 @@ export default function App() {
               // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
-              onChangeText: event => {
+              onChange: (
+                event: NativeSyntheticEvent<TextInputFocusEventData>,
+              ) => {
                 console.log('Search text:', event.nativeEvent.text);
               },
             },

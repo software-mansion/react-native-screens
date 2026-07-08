@@ -1,23 +1,30 @@
-import { NavigationContainer, useRoute } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Button, View } from 'react-native';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  Screen: { title?: string; count?: number } | undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerBackTitleVisible: false,
+          headerBackButtonDisplayMode: 'minimal',
           // headerBackTitle: 'NavHeader',
           // disableBackButtonMenu: true,
         }}>
         <Stack.Screen
           name="Screen"
           component={Screen}
-          options={({ route }: any) => ({
+          options={({ route }) => ({
             title: route.params?.title ?? 'Hello',
           })}
         />
@@ -26,12 +33,14 @@ export default function App() {
   );
 }
 
-function Screen({ navigation }: any) {
-  const route = useRoute<any>();
+function Screen({
+  navigation,
+  route,
+}: NativeStackScreenProps<StackParamList, 'Screen'>) {
   const count = route.params?.count ?? 0;
 
   // React.useEffect(() => {
-  //   navigation.setOptions({headerBackTitleVisible: count % 2 === 0});
+  //   navigation.setOptions({headerBackButtonDisplayMode: count % 2 === 0 ? 'default' : 'minimal'});
   // }, [count, navigation]);
 
   // React.useEffect(() => {
@@ -42,7 +51,7 @@ function Screen({ navigation }: any) {
     <View>
       <Button
         onPress={() =>
-          navigation.push(route.name, {
+          navigation.push('Screen', {
             title: `Hello ${count + 1}`,
             count: count + 1,
           })

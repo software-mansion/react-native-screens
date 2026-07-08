@@ -72,7 +72,7 @@ const Tabs = createBottomTabNavigator();
 
 function MainStackScreen() {
   return (
-    <MainStack.Navigator screenOptions={{ headerLargeTitle: true }}>
+    <MainStack.Navigator screenOptions={{ headerLargeTitleEnabled: true }}>
       <MainStack.Screen name="Main" component={TabsScreen} />
       <MainStack.Screen name="Details" component={DetailsScreen} />
       <MainStack.Screen name="Settings" component={SettingsScreen} />
@@ -82,9 +82,7 @@ function MainStackScreen() {
 
 function TabsScreen() {
   return (
-    <Tabs.Navigator
-      detachInactiveScreens={true}
-      screenOptions={{ headerShown: false }}>
+    <Tabs.Navigator screenOptions={{ headerShown: false }}>
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Second" component={SecondScreen} />
     </Tabs.Navigator>

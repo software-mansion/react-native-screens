@@ -14,7 +14,7 @@ export default function SheetScreenWithTextInput({ navigation }: NavPropObj) {
         value={textValue}
         onChangeText={text => setTextValue(text)}
       />
-      <CommonSheetContent />
+      <CommonSheetContent navigation={navigation} />
     </View>
   );
 }

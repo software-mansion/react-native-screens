@@ -1,25 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
-import {
-  NavigationContainer,
-  NavigationProp,
-  ParamListBase,
-} from '@react-navigation/native';
+import { Button, ScrollView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationOptions,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import { SearchBarCommands } from 'react-native-screens';
 
-const AppStack = createNativeStackNavigator();
+type StackParamList = {
+  First: undefined;
+  Second: undefined;
+  Third: undefined;
+};
 
-export default function App(): JSX.Element {
+type HeaderSearchBarOptions = NonNullable<
+  NativeStackNavigationOptions['headerSearchBarOptions']
+>;
+
+const AppStack = createNativeStackNavigator<StackParamList>();
+
+export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          headerLargeTitle: true,
+          headerLargeTitleEnabled: true,
           headerTransparent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
@@ -30,8 +37,10 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
-  const searchBarRef = React.useRef<SearchBarCommands>();
+function First({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'First'>) {
+  const searchBarRef = React.useRef<SearchBarCommands>(null);
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -41,8 +50,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
 
   const [search, setSearch] = React.useState('');
 
-  const searchBarOptions = {
-    // @ts-ignore
+  const searchBarOptions: HeaderSearchBarOptions = {
     ref: searchBarRef,
     barTintColor: 'powderblue',
     hideWhenScrolling: true,
@@ -51,8 +59,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
     placement: 'stacked',
-    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
-      setSearch(e.nativeEvent.text),
+    onChange: e => setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
     onFocus: () => console.warn('onFocus event'),
@@ -118,7 +125,9 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
   );
 }
 
-function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
+function Second({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Second'>) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
@@ -133,11 +142,12 @@ function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   );
 }
 
-function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
-  const searchBarRef = React.useRef<SearchBarCommands>();
+function Third({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Third'>) {
+  const searchBarRef = React.useRef<SearchBarCommands>(null);
 
-  const searchBarProps = {
-    // @ts-ignore
+  const searchBarProps: HeaderSearchBarOptions = {
     ref: searchBarRef,
     barTintColor: 'powderblue',
     hideWhenScrolling: true,
@@ -148,8 +158,7 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     // Added in https://github.com/software-mansion/react-native-screens/pull/3186
     // to preserve test's original search bar configuration.
     placement: 'stacked',
-    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
-      console.warn(`Text changed to ${e.nativeEvent.text}`),
+    onChange: e => console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
     onFocus: () => console.warn('onFocus event'),

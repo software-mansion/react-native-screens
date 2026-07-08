@@ -5,7 +5,12 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import * as Tests from './issue-tests';
-import { ScrollView, useColorScheme } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  ScrollView,
+  TextInputFocusEventData,
+  useColorScheme,
+} from 'react-native';
 import { ListItem } from '@apps/shared';
 import {
   ScreensDarkTheme,
@@ -75,7 +80,8 @@ function MainScreen(props: {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerSearchBarOptions: {
-        onChangeText: event => setSearchQuery(event.nativeEvent.text),
+        onChange: (event: NativeSyntheticEvent<TextInputFocusEventData>) =>
+          setSearchQuery(event.nativeEvent.text),
         placement: 'stacked',
         hideNavigationBar: false,
         obscureBackground: false,

@@ -56,7 +56,7 @@ const Navigation = () => {
           fullScreenGestureEnabled: true,
           animation: 'fade_from_bottom',
           animationMatchesGesture: true,
-          // headerLargeTitle: true,
+          // headerLargeTitleEnabled: true,
           headerTransparent: true,
         }}>
         <Stack.Screen

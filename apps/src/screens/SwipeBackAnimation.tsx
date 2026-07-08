@@ -29,31 +29,26 @@ interface ScreenBProps {
 }
 
 const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => {
-  const [gestureType, setGestureType] = React.useState<
-    NonNullable<NativeStackNavigationOptions['gestureType']>
-  >('twoDimensionalSwipe');
+  const [gestureDirection, setGestureDirection] =
+    React.useState<
+      NonNullable<NativeStackNavigationOptions['gestureDirection']>
+    >('horizontal');
 
   React.useEffect(() => {
     navigation.setOptions({
-      gestureType,
+      gestureDirection,
     });
-  }, [gestureType]);
+  }, [gestureDirection, navigation]);
 
   return (
     <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
-      <SettingsPicker<NonNullable<NativeStackNavigationOptions['gestureType']>>
-        label="Stack animation"
-        value={gestureType}
-        onValueChange={setGestureType}
-        items={[
-          'swipeRight',
-          'swipeLeft',
-          'swipeUp',
-          'swipeDown',
-          'verticalSwipe',
-          'horizontalSwipe',
-          'twoDimensionalSwipe',
-        ]}
+      <SettingsPicker<
+        NonNullable<NativeStackNavigationOptions['gestureDirection']>
+      >
+        label="Gesture direction"
+        value={gestureDirection}
+        onValueChange={setGestureDirection}
+        items={['horizontal', 'vertical']}
       />
       <Button
         title="Go ScreenC"

@@ -37,7 +37,10 @@ export function TabsContainer(props: TabsContainerProps) {
     React.Dispatch<TabsNavigationAction>,
   ] = React.useReducer(
     tabsNavigationReducerWithLogging,
-    { routeConfigs, defaultRouteName },
+    {
+      routeConfigs,
+      ...(defaultRouteName === undefined ? {} : { defaultRouteName }),
+    },
     determineInitialTabsContainerState,
   );
 

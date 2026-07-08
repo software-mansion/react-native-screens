@@ -2,13 +2,32 @@ import React from 'react';
 import { Button, Modal, SafeAreaView, Text, View } from 'react-native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+  useNavigation,
+} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Stack = createNativeStackNavigator();
-const Tabs = createBottomTabNavigator();
+type TabParamList = {
+  A: undefined;
+  B: undefined;
+};
 
-function TabScreens({ navigation }): React.JSX.Element {
+const Tabs = createBottomTabNavigator<TabParamList>();
+
+type StackParamList = {
+  Tabs: NavigatorScreenParams<typeof Tabs> | undefined;
+  Home: undefined;
+  TransparentModal: undefined;
+  Modal: undefined;
+  ForeignModal: undefined;
+  Test2: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function TabScreens(): React.JSX.Element {
   return (
     <Tabs.Navigator>
       <Tabs.Screen name="A" component={HomeScreen} />
@@ -17,7 +36,9 @@ function TabScreens({ navigation }): React.JSX.Element {
   );
 }
 
-function TabHomeScreen({ navigation }): React.JSX.Element {
+function TabHomeScreen(): React.JSX.Element {
+  const navigation = useNavigation<typeof Stack, 'B'>('B');
+
   return (
     <View
       style={{
@@ -42,7 +63,8 @@ function TabHomeScreen({ navigation }): React.JSX.Element {
   );
 }
 
-function HomeScreen({ navigation }): React.JSX.Element {
+function HomeScreen(): React.JSX.Element {
+  const navigation = useNavigation<typeof Stack, 'Home'>('Home');
   const [toggle, setToggle] = React.useState(false);
   return (
     <View
@@ -95,30 +117,26 @@ function HomeScreen({ navigation }): React.JSX.Element {
   );
 }
 
-function ModalScreen({ navigation }): React.JSX.Element {
+function ModalScreen({
+  onGoBack,
+  onPushModal,
+  onPushForeignModal,
+}: {
+  onGoBack: () => void;
+  onPushModal: () => void;
+  onPushForeignModal: () => void;
+}): React.JSX.Element {
   const [toggle2, setToggle2] = React.useState(false);
 
   return (
     <View style={{ flex: 1, backgroundColor: 'lightcoral', opacity: 0.4 }}>
       <Text>Where do you where do you go, my lovely, oh oh oh oh</Text>
-      <Button
-        title="Go back"
-        onPress={() => {
-          navigation.goBack();
-        }}
-      />
+      <Button title="Go back" onPress={onGoBack} />
       <View style={{ width: '100%', height: 50, backgroundColor: 'red' }} />
-      <Button
-        title="Push another Modal"
-        onPress={() => {
-          navigation.push('Modal');
-        }}
-      />
+      <Button title="Push another Modal" onPress={onPushModal} />
       <Button
         title="Push foreign modal(inside Screen Component)"
-        onPress={() => {
-          navigation.push('ForeignModal');
-        }}
+        onPress={onPushForeignModal}
       />
       <Button
         title="Push foreign modal"
@@ -145,7 +163,33 @@ function ModalScreen({ navigation }): React.JSX.Element {
   );
 }
 
-function ForeignModal({ navigation }): React.JSX.Element | null {
+function TransparentModalScreen(): React.JSX.Element {
+  const navigation = useNavigation<typeof Stack, 'TransparentModal'>(
+    'TransparentModal',
+  );
+
+  return (
+    <ModalScreen
+      onGoBack={() => navigation.goBack()}
+      onPushModal={() => navigation.push('Modal')}
+      onPushForeignModal={() => navigation.push('ForeignModal')}
+    />
+  );
+}
+
+function ModalRouteScreen(): React.JSX.Element {
+  const navigation = useNavigation<typeof Stack, 'Modal'>('Modal');
+
+  return (
+    <ModalScreen
+      onGoBack={() => navigation.goBack()}
+      onPushModal={() => navigation.push('Modal')}
+      onPushForeignModal={() => navigation.push('ForeignModal')}
+    />
+  );
+}
+
+function ForeignModal(): React.JSX.Element | null {
   const [toggle, setToggle] = React.useState(false);
   return (
     <Modal
@@ -166,7 +210,9 @@ function ForeignModal({ navigation }): React.JSX.Element | null {
   );
 }
 
-const TestScreen = ({ navigation }): React.JSX.Element => {
+const TestScreen = (): React.JSX.Element => {
+  const navigation = useNavigation<typeof Stack, 'Test2'>('Test2');
+
   return (
     <SafeAreaView>
       <Button
@@ -199,20 +245,21 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen
           name="TransparentModal"
-          component={ModalScreen}
+          component={TransparentModalScreen}
           options={{
             presentation: 'transparentModal',
           }}
         />
         <Stack.Screen
           name="Modal"
-          component={ModalScreen}
+          component={ModalRouteScreen}
           options={{
             presentation: 'modal',
             headerShown: true,
           }}
         />
         <Stack.Screen name={'ForeignModal'} component={ForeignModal} />
+        <Stack.Screen name="Test2" component={TestScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

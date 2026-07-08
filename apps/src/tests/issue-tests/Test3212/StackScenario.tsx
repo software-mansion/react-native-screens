@@ -1,5 +1,8 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import { ConfigWithNavigation } from './Config';
 import {
   NavigationContainer,
@@ -13,12 +16,25 @@ import {
 } from './context';
 import { useState } from 'react';
 
-function ConfigComponent() {
-  return <ConfigWithNavigation title="Stack / scrollEdgeEffects:" />;
+type StackParamList = {
+  Config: undefined;
+  Test: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function ConfigComponent({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Config'>) {
+  return (
+    <ConfigWithNavigation
+      title="Stack / scrollEdgeEffects:"
+      onGoPress={() => navigation.navigate('Test')}
+    />
+  );
 }
 
 export function StackScenario() {
-  const Stack = createNativeStackNavigator();
   const [config, setConfig] = useState<ScrollEdgeEffects>({
     ...SCROLL_EDGE_EFFECT_DEFAULTS,
   });

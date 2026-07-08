@@ -27,7 +27,7 @@ type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-const First = ({ navigation }: Props): JSX.Element => {
+const First = ({ navigation }: Props): React.JSX.Element => {
   return (
     <Button
       title="Tap me for second screen"
@@ -36,7 +36,7 @@ const First = ({ navigation }: Props): JSX.Element => {
   );
 };
 
-const Second = ({ navigation }: Props): JSX.Element => {
+const Second = ({ navigation }: Props): React.JSX.Element => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('gestureCancel', () => {
       console.log('gestureCancel');

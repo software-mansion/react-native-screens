@@ -5,9 +5,69 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@react-navigation/bottom-tabs@link:../react-navigation/packages/bottom-tabs/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/bottom-tabs@link:../react-navigation/packages/bottom-tabs/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/core@link:../react-navigation/packages/core/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/core@link:../react-navigation/packages/core/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/elements@link:../react-navigation/packages/elements/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/native-stack@link:../react-navigation/packages/native-stack/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/native-stack@link:../react-navigation/packages/native-stack/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/native@link:../react-navigation/packages/native/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/native@link:../react-navigation/packages/native/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/routers@link:../react-navigation/packages/routers/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/routers@link:../react-navigation/packages/routers/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@react-navigation/stack@link:../react-navigation/packages/stack/::locator=%40rnscreens%2Fapps%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/stack@link:../react-navigation/packages/stack/::locator=%40rnscreens%2Fapps%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@rnscreens/apps@workspace:.":
   version: 0.0.0-use.local
   resolution: "@rnscreens/apps@workspace:."
+  dependencies:
+    "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/"
+    "@react-navigation/core": "link:../react-navigation/packages/core/"
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/"
+    "@react-navigation/elements": "link:../react-navigation/packages/elements/"
+    "@react-navigation/native": "link:../react-navigation/packages/native/"
+    "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/"
+    "@react-navigation/routers": "link:../react-navigation/packages/routers/"
+    "@react-navigation/stack": "link:../react-navigation/packages/stack/"
+    jotai: "npm:^2.9.0"
+    nanoid: "npm:^4.0.2"
+    react-native-restart: "npm:^0.0.27"
   peerDependencies:
     "@react-navigation/bottom-tabs": "*"
     "@react-navigation/core": "*"
@@ -29,3 +89,43 @@ __metadata:
     react-native-worklets: "*"
   languageName: unknown
   linkType: soft
+
+"jotai@npm:^2.9.0":
+  version: 2.20.1
+  resolution: "jotai@npm:2.20.1"
+  peerDependencies:
+    "@babel/core": ">=7.0.0"
+    "@babel/template": ">=7.0.0"
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@babel/template":
+      optional: true
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/a0d5104784efd5328aa25e29bb8e4e51d91c87d78afd0edd5dc90cdd1ee735828d3987adfcbe35b817ed921e6742794a0523b71467df49f52964c2275d6284f0
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "nanoid@npm:4.0.2"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10c0/3fec62f422bc4727918eda0e7aa43e9cbb2e759be72813a0587b9dac99727d3c7ad972efce7f4f1d4cb5c7c554136a1ec3b1043d1d91d28d818d6acbe98200e5
+  languageName: node
+  linkType: hard
+
+"react-native-restart@npm:^0.0.27":
+  version: 0.0.27
+  resolution: "react-native-restart@npm:0.0.27"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/13ef35f98d12658e29a2c84aa68946cec6e0add946eb3a5d4ffae1fdce050bb563e269e55d9c037e47072a78bcea98f010536d9d7dd9c26eec9e7c9795bf713f
+  languageName: node
+  linkType: hard

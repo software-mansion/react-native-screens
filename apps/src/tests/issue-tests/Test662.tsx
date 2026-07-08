@@ -12,7 +12,7 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -35,7 +35,7 @@ export default function App(): JSX.Element {
   );
 }
 
-const First = ({ navigation }: Props): JSX.Element => (
+const First = ({ navigation }: Props): React.JSX.Element => (
   <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'blue' }}>
     <Button
       title="Tap me for the second screen"
@@ -48,7 +48,7 @@ const First = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Second = ({ navigation }: Props): JSX.Element => (
+const Second = ({ navigation }: Props): React.JSX.Element => (
   <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'red' }}>
     <Button
       title="Tap me for the third screen"
@@ -62,7 +62,7 @@ const Second = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Third = ({ navigation }: Props): JSX.Element => (
+const Third = ({ navigation }: Props): React.JSX.Element => (
   <View
     style={{ flex: 1, justifyContent: 'center', backgroundColor: 'purple' }}>
     <Button
@@ -73,7 +73,7 @@ const Third = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Fourth = ({ navigation }: Props): JSX.Element => (
+const Fourth = ({ navigation }: Props): React.JSX.Element => (
   <View
     style={{ flex: 1, justifyContent: 'center', backgroundColor: 'orange' }}>
     <Button

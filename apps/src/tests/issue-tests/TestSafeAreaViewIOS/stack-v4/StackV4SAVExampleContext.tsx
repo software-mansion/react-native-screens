@@ -4,7 +4,7 @@ import { ContentType } from '../shared';
 
 export interface StackV4SAVExampleConfig {
   headerTransparent: boolean;
-  headerLargeTitle: boolean;
+  headerLargeTitleEnabled: boolean;
   headerShown: boolean;
   headerSearchBar: 'disabled' | SearchBarPlacement;
 

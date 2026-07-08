@@ -37,7 +37,7 @@ export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
     <TabsHostConfigContext value={tabsHostConfigContext}>
       <TabsContainer
         routeConfigs={routeConfigs}
-        defaultRouteName={defaultRouteName}
+        {...(defaultRouteName === undefined ? {} : { defaultRouteName })}
         {...hostConfig}
       />
     </TabsHostConfigContext>

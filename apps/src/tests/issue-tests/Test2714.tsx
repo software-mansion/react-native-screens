@@ -1,25 +1,43 @@
 import React from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { Text, View, StyleSheet, Button } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  Home: undefined;
+  Profile: undefined;
+};
 
-function RootStack() {
+type SimpleStackParamList = {
+  SimpleHome: undefined;
+  HomeScreen: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const SimpleStackNavigator = createNativeStackNavigator<SimpleStackParamList>();
+
+export function RootStack() {
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: true,
         headerBackButtonDisplayMode: 'minimal',
       }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Profile" component={HomeScreen} />
+      <Stack.Screen name="Home" component={RootHomeScreen} />
+      <Stack.Screen name="Profile" component={RootProfileScreen} />
     </Stack.Navigator>
   );
 }
 
-const HomeScreen = ({ navigation }: any) => {
+function HeaderOptionsContent({
+  setHeaderRight,
+}: {
+  setHeaderRight: (headerRight: () => React.JSX.Element) => void;
+}) {
   const [secondButtonShown, setSecondButtonShown] = React.useState(true);
   const [thirdButtonShown, setThirdButtonShown] = React.useState(true);
   const [showAllButtons, setShowAllButtons] = React.useState(true);
@@ -58,11 +76,8 @@ const HomeScreen = ({ navigation }: any) => {
   }, [secondButtonShown, thirdButtonShown, showAllButtons, isLargeSize]);
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerStyle: { backgroundColor: 'pink' },
-      headerRight: headerRight,
-    });
-  }, [navigation, headerRight, showAllButtons]);
+    setHeaderRight(headerRight);
+  }, [headerRight, setHeaderRight]);
 
   return (
     <View>
@@ -82,10 +97,59 @@ const HomeScreen = ({ navigation }: any) => {
       />
     </View>
   );
-};
+}
 
-function SimpleHome() {
-  const navigation = useNavigation();
+function RootHomeScreen({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, 'Home'>) {
+  const setHeaderRight = React.useCallback(
+    (headerRight: () => React.JSX.Element) => {
+      navigation.setOptions({
+        headerStyle: { backgroundColor: 'pink' },
+        headerRight,
+      });
+    },
+    [navigation],
+  );
+
+  return <HeaderOptionsContent setHeaderRight={setHeaderRight} />;
+}
+
+function RootProfileScreen({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, 'Profile'>) {
+  const setHeaderRight = React.useCallback(
+    (headerRight: () => React.JSX.Element) => {
+      navigation.setOptions({
+        headerStyle: { backgroundColor: 'pink' },
+        headerRight,
+      });
+    },
+    [navigation],
+  );
+
+  return <HeaderOptionsContent setHeaderRight={setHeaderRight} />;
+}
+
+function SimpleHomeScreen({
+  navigation,
+}: NativeStackScreenProps<SimpleStackParamList, 'HomeScreen'>) {
+  const setHeaderRight = React.useCallback(
+    (headerRight: () => React.JSX.Element) => {
+      navigation.setOptions({
+        headerStyle: { backgroundColor: 'pink' },
+        headerRight,
+      });
+    },
+    [navigation],
+  );
+
+  return <HeaderOptionsContent setHeaderRight={setHeaderRight} />;
+}
+
+function SimpleHome({
+  navigation,
+}: NativeStackScreenProps<SimpleStackParamList, 'SimpleHome'>) {
   const [isExpanded, setExpanded] = React.useState(false);
 
   const headerRight = React.useCallback(() => {
@@ -123,10 +187,13 @@ function SimpleHome() {
 
 function SimpleStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="SimpleHome" component={SimpleHome} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-    </Stack.Navigator>
+    <SimpleStackNavigator.Navigator>
+      <SimpleStackNavigator.Screen name="SimpleHome" component={SimpleHome} />
+      <SimpleStackNavigator.Screen
+        name="HomeScreen"
+        component={SimpleHomeScreen}
+      />
+    </SimpleStackNavigator.Navigator>
   );
 }
 

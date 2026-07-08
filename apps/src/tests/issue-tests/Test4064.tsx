@@ -11,7 +11,10 @@ import {
   createStaticNavigation,
   useNavigation,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  createNativeStackScreen,
+} from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors } from '@apps/shared/styling';
 
@@ -40,7 +43,7 @@ export function SecureForm() {
 }
 
 export function Home() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation('Home');
   return (
     <View style={styles.container}>
       <Text style={styles.title}>FormSheet</Text>
@@ -59,8 +62,11 @@ export function Home() {
 
 const RootNavigator = createNativeStackNavigator({
   screens: {
-    Home: { screen: Home, options: { headerShown: false } },
-    Sheet: {
+    Home: createNativeStackScreen({
+      screen: Home,
+      options: { headerShown: false },
+    }),
+    Sheet: createNativeStackScreen({
       screen: SecureForm,
       options: {
         presentation: 'formSheet',
@@ -68,7 +74,7 @@ const RootNavigator = createNativeStackNavigator({
         headerShown: Platform.OS === 'android',
         headerTitle: 'Auth',
       },
-    },
+    }),
   },
 });
 

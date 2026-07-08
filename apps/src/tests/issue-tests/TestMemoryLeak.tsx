@@ -4,7 +4,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, ColorValue, ScrollView, Text, View } from 'react-native';
+import { ColorValue, ScrollView, Text, View } from 'react-native';
 
 type HomeParams = {
   backgroundColor: ColorValue;

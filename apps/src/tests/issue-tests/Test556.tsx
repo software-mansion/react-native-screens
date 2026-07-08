@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
+  NativeStackHeaderItem,
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Square } from '@apps/shared';
 
 const Stack = createNativeStackNavigator();
 
@@ -104,9 +104,10 @@ function Second({ navigation }: ScreenBaseProps) {
         title="Use multiple right items"
         onPress={() => {
           navigation.setOptions({
-            headerRightItems: [
+            unstable_headerRightItems: (): NativeStackHeaderItem[] => [
               {
-                customView: () => (
+                type: 'custom',
+                element: (
                   <View
                     style={[
                       styles.container,
@@ -117,7 +118,8 @@ function Second({ navigation }: ScreenBaseProps) {
                 ),
               },
               {
-                customView: () => (
+                type: 'custom',
+                element: (
                   <View style={[styles.container, { backgroundColor: 'red' }]}>
                     <Text>Right-3</Text>
                   </View>

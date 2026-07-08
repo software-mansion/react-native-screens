@@ -1,11 +1,20 @@
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
-function ProfileScreen() {
-  const navigation = useNavigation();
+type StackParamList = {
+  Home: undefined;
+  Profile: undefined;
+};
+
+function ProfileScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Profile'>) {
   const [count, setCount] = useState(0);
   const onPress = () => setCount(prevCount => prevCount + 1);
 
@@ -56,7 +65,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<StackParamList>();
 
 function RootStack() {
   return (

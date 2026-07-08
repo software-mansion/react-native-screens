@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
-import { NavigatorScreenParams, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const DISAPPEAR_AFTER = 2000; // ms
 
 interface Props {
-  route: NavigatorScreenParams<{
-    params: { backgroundColor: string; message: string };
-  }>;
-  navigation: NativeStackNavigationProp<ParamListBase>;
+  route: {
+    params?: {
+      backgroundColor: string;
+      message: string;
+    };
+  };
+  navigation: {
+    goBack: () => void;
+  };
 }
 
 export const Snack = ({ route, navigation }: Props): React.JSX.Element => {

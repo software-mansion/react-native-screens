@@ -42,7 +42,11 @@ export const SplitWithNativeStackHeader = ({
           }}
           customScreenThreeNavigationOptions={{
             headerShown: true,
-            headerBackImageSource: require('@assets/backButton.png'),
+            headerBackIcon: {
+              type: 'image',
+              source: require('@assets/backButton.png'),
+            },
+            headerBackButtonDisplayMode: 'minimal',
           }}
         />
       </Split.Column>

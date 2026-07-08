@@ -78,7 +78,7 @@ const App = () => (
 
 const styles = StyleSheet.create({
   screen: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flex: 1,
     paddingTop: 200,
     alignItems: 'center',

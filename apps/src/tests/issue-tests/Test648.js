@@ -10,7 +10,7 @@ export default function App() {
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          headerLargeTitle: true,
+          headerLargeTitleEnabled: true,
           animation: 'slide_from_right',
         }}>
         <AppStack.Screen name="First" component={First} />

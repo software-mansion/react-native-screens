@@ -62,7 +62,7 @@ export default function App() {
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: [0.3, 0.5, 0.8],
-            sheetInitialDetent: 1,
+            sheetInitialDetentIndex: 1,
           }}
         />
         <RootStack.Screen

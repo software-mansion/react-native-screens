@@ -139,8 +139,8 @@ export default function BarButtonItemsExample() {
             {
               type: 'button',
               icon: {
-                type: 'xcasset',
-                name: 'custom-icon-fill',
+                type: 'image',
+                source: { uri: 'custom-icon-fill' },
               },
               label: 'Xcasset',
               onPress: () => Alert.alert('Icon Xcasset pressed'),
@@ -440,7 +440,10 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: 'xcasset', name: 'custom-icon-fill' },
+                    icon: {
+                      type: 'image',
+                      source: { uri: 'custom-icon-fill' },
+                    },
                     type: 'action',
                     state: 'on',
                     destructive: true,
@@ -450,8 +453,9 @@ export default function BarButtonItemsExample() {
                   {
                     label: 'Image Source',
                     icon: {
-                      type: 'imageSource',
-                      imageSource: require('@assets/search_black.png'),
+                      type: 'image',
+                      source: require('@assets/search_black.png'),
+                      tinted: false,
                     },
                     type: 'action',
                     destructive: true,
@@ -460,8 +464,8 @@ export default function BarButtonItemsExample() {
                   {
                     label: 'Template Source',
                     icon: {
-                      type: 'templateSource',
-                      templateSource: require('@assets/search_black.png'),
+                      type: 'image',
+                      source: require('@assets/search_black.png'),
                     },
                     destructive: true,
                     type: 'action',
@@ -480,8 +484,9 @@ export default function BarButtonItemsExample() {
                     label: 'Image Submenu',
                     displayInline: true,
                     icon: {
-                      type: 'imageSource',
-                      imageSource: require('@assets/search_black.png'),
+                      type: 'image',
+                      source: require('@assets/search_black.png'),
+                      tinted: false,
                     },
                     type: 'submenu',
                     items: [
@@ -489,8 +494,8 @@ export default function BarButtonItemsExample() {
                         label: 'Sub Image Action',
                         type: 'action',
                         icon: {
-                          type: 'templateSource',
-                          templateSource: require('@assets/search_black.png'),
+                          type: 'image',
+                          source: require('@assets/search_black.png'),
                         },
                         onPress: () => Alert.alert('Sub Image Action pressed'),
                       },
@@ -512,7 +517,10 @@ export default function BarButtonItemsExample() {
                         destructive: true,
                         keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
-                        icon: { type: 'xcasset', name: 'custom-icon-fill' },
+                        icon: {
+                          type: 'image',
+                          source: { uri: 'custom-icon-fill' },
+                        },
                       },
                       {
                         label: 'Sub Action 2',
@@ -529,12 +537,14 @@ export default function BarButtonItemsExample() {
                     type: 'submenu',
                     items: [
                       {
+                        label: 'Palette Action 1',
                         state: 'on',
                         icon: { type: 'sfSymbol', name: '0.circle.fill' },
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 1 pressed'),
                       },
                       {
+                        label: 'Palette Action 2',
                         icon: { type: 'sfSymbol', name: '1.circle.fill' },
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 2 pressed'),

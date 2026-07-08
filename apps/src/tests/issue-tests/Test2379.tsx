@@ -57,7 +57,7 @@ function InnerStack() {
           presentation: 'formSheet',
           sheetAllowedDetents: [0.5, 1],
           sheetCornerRadius: 20,
-          unstable_screenStyle: { backgroundColor: 'lavender' },
+          contentStyle: { backgroundColor: 'lavender' },
         }}
       />
     </Stack.Navigator>

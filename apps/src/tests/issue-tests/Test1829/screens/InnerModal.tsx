@@ -1,9 +1,13 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { RootStack } from '../navigation/Stacks';
 
 const HomeView = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<typeof RootStack, 'inner-modal'>(
+    'inner-modal',
+  );
+
   return (
     <View style={styles.container}>
       <Text>

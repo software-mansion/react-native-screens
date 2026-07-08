@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,

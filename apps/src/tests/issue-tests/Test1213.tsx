@@ -9,7 +9,7 @@ import { Text } from 'react-native';
 const Stack = createNativeStackNavigator();
 const NStack = createNativeStackNavigator();
 
-const NStackNavigator = (): JSX.Element => {
+const NStackNavigator = (): React.JSX.Element => {
   return (
     <NStack.Navigator>
       <NStack.Screen name="Main" component={MainScreen} />
@@ -21,7 +21,7 @@ type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-const MainScreen = ({ navigation }: Props): JSX.Element => {
+const MainScreen = ({ navigation }: Props): React.JSX.Element => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('transitionStart', () => {
       console.log('1');
@@ -48,7 +48,7 @@ const MainScreen = ({ navigation }: Props): JSX.Element => {
   );
 };
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen name="Main" component={NStackNavigator} />

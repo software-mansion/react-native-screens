@@ -13,7 +13,7 @@ export default function App() {
           name="First"
           component={First}
           options={{
-            headerLargeTitle: true,
+            headerLargeTitleEnabled: true,
           }}
         />
         <Stack.Screen name="Second" component={Second} />

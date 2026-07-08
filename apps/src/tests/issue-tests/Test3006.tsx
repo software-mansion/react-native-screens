@@ -46,7 +46,13 @@ const Screen = ({
 
 const createScreen = (current: InnerScreenName, next?: InnerScreenName) =>
   function ScreenWrapper({ navigation }: { navigation: any }) {
-    return <Screen current={current} next={next} navigation={navigation} />;
+    return (
+      <Screen
+        current={current}
+        navigation={navigation}
+        {...(next === undefined ? {} : { next })}
+      />
+    );
   };
 
 const screenGroups: Record<

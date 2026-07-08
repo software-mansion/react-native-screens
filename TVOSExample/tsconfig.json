@@ -1,7 +1,9 @@
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    "baseUrl": ".",
+    "lib": ["esnext", "dom"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "paths": {
       "@apps/*": ["../apps/src/*"],
       "@assets/*": ["../apps/assets/*"],

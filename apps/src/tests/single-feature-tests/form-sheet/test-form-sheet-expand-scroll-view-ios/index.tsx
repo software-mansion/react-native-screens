@@ -18,6 +18,8 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows testing the prefersScrollingExpandsWhenScrolledToEdge prop with nested ScrollView.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 function TestFormSheetExpandScrollView() {

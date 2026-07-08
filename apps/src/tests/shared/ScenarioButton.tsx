@@ -1,9 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export function ScenarioButton(props: {
-  route: string;
+  onPress: () => void;
   title: string;
   details?: string;
   platformsHint?: ('ios' | 'android')[];
@@ -11,7 +10,6 @@ export function ScenarioButton(props: {
   e2eCoverage?: 'full' | 'incomplete' | 'tbd';
   testID?: string;
 }) {
-  const navigation = useNavigation<any>();
   const hasAndroid =
     props.platformsHint?.length === 0 ||
     props.platformsHint?.includes('android');
@@ -22,7 +20,7 @@ export function ScenarioButton(props: {
     <TouchableOpacity
       testID={props.testID}
       style={styles.button}
-      onPress={() => navigation.navigate(props.route)}>
+      onPress={props.onPress}>
       <View style={styles.descriptionContainer}>
         <Text style={styles.text}>{props.title}</Text>
         {props.details && <Text style={styles.details}>{props.details}</Text>}

@@ -30,30 +30,26 @@ const DummyContent = () => {
 
 const ChildStackScreen = () => (
   <ChildStack.Navigator
-    screenOptions={{ headerShown: false, headerLargeTitle: false }}>
+    screenOptions={{ headerShown: false, headerLargeTitleEnabled: false }}>
     <Tab1Stack.Screen name="ChildStack" component={BottomStackScreen} />
   </ChildStack.Navigator>
 );
 
 const Another = () => (
   <ChildStack.Navigator
-    screenOptions={{ headerShown: true, headerLargeTitle: false }}>
+    screenOptions={{ headerShown: true, headerLargeTitleEnabled: false }}>
     <Tab1Stack.Screen name="ChildStack1" component={InitialScreen} />
   </ChildStack.Navigator>
 );
 
 const AnotherBottomTabs = () => (
-  <BottomTab.Navigator
-    screenOptions={{ headerShown: false }}
-    detachInactiveScreens={true}>
+  <BottomTab.Navigator screenOptions={{ headerShown: false }}>
     <BottomTab.Screen name="Tab2" component={ChildStackScreen} />
   </BottomTab.Navigator>
 );
 
 const BottomStackScreen = () => (
-  <BottomTab.Navigator
-    screenOptions={{ headerShown: false }}
-    detachInactiveScreens={true}>
+  <BottomTab.Navigator screenOptions={{ headerShown: false }}>
     <BottomTab.Screen name="Tab1" component={Another} />
   </BottomTab.Navigator>
 );

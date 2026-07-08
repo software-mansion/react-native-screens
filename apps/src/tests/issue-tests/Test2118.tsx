@@ -1,11 +1,26 @@
 import React from 'react';
 import { View, Text, Button, Pressable, StyleSheet, Alert } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+  useNavigation,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator(); // <-- change to createStackNavigator to see a difference
+type ModalStackParamList = {
+  ModalHome: undefined;
+  ModalDetails: undefined;
+};
 
-const ModalStack = createNativeStackNavigator();
+const ModalStack = createNativeStackNavigator<ModalStackParamList>();
+
+type StackParamList = {
+  Home: undefined;
+  DetailsStack: undefined;
+  StackInModal: NavigatorScreenParams<typeof ModalStack> | undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>(); // <-- change to createStackNavigator to see a difference
 
 export default function App() {
   return (
@@ -23,20 +38,41 @@ export default function App() {
   );
 }
 
-function HomeScreen() {
-  const navigation = useNavigation();
+function HomeContent({
+  onDetailsPress,
+  onModalPress,
+}: {
+  onDetailsPress: () => void;
+  onModalPress: () => void;
+}) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('DetailsStack')}
-      />
-      <Button
-        title="Go to StackInModal"
-        onPress={() => navigation.navigate('StackInModal')}
-      />
+      <Button title="Go to Details" onPress={onDetailsPress} />
+      <Button title="Go to StackInModal" onPress={onModalPress} />
     </View>
+  );
+}
+
+function HomeScreen() {
+  const navigation = useNavigation<typeof Stack, 'Home'>('Home');
+
+  return (
+    <HomeContent
+      onDetailsPress={() => navigation.navigate('DetailsStack')}
+      onModalPress={() => navigation.navigate('StackInModal')}
+    />
+  );
+}
+
+function ModalHomeScreen() {
+  const navigation = useNavigation<typeof Stack, 'ModalHome'>('ModalHome');
+
+  return (
+    <HomeContent
+      onDetailsPress={() => navigation.navigate('DetailsStack')}
+      onModalPress={() => navigation.navigate('StackInModal')}
+    />
   );
 }
 
@@ -67,7 +103,7 @@ function DetailsScreen() {
 function StackInModal() {
   return (
     <ModalStack.Navigator>
-      <ModalStack.Screen name="ModalHome" component={HomeScreen} />
+      <ModalStack.Screen name="ModalHome" component={ModalHomeScreen} />
       <ModalStack.Screen name="ModalDetails" component={DetailsScreen} />
     </ModalStack.Navigator>
   );

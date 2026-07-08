@@ -1,11 +1,9 @@
 import * as React from 'react';
 
 import CommonSheetContent from '../components/CommonSheetContent';
-import { useNavigation } from '@react-navigation/native';
+import { NavPropObj } from '../types';
 
-export default function SheetScreen() {
-  const navigation = useNavigation();
-
+export default function SheetScreen({ navigation }: NavPropObj) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('sheetDetentChange', event => {
       console.log(`SheetScreen: ${JSON.stringify(event)}`);
@@ -14,6 +12,6 @@ export default function SheetScreen() {
     return () => {
       unsubscribe();
     };
-  }, []);
-  return <CommonSheetContent />;
+  }, [navigation]);
+  return <CommonSheetContent navigation={navigation} />;
 }

@@ -43,7 +43,7 @@ type SimpleStackParams = {
   Second: undefined;
   Third: undefined;
 };
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <ReanimatedScreenProvider>
       <NavigationContainer>
@@ -199,7 +199,7 @@ const Dialog = ({
   navigation,
 }: {
   navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>;
-}): JSX.Element => {
+}): React.JSX.Element => {
   // using Animated with the progress
   const { progress } = useTransitionProgress();
   const reaProgress = useReanimatedTransitionProgress();

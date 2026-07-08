@@ -66,13 +66,13 @@ const ScreenThree = ({ navigation }: ScreenThreeProps) => (
 );
 
 export interface NativeStackNavigatorComponentProps {
-  CustomScreenOne?: ({ navigation }: ScreenOneProps) => JSX.Element;
-  CustomScreenTwo?: ({ navigation }: ScreenTwoProps) => JSX.Element;
-  CustomScreenThree?: ({ navigation }: ScreenThreeProps) => JSX.Element;
+  CustomScreenOne?: ({ navigation }: ScreenOneProps) => React.JSX.Element;
+  CustomScreenTwo?: ({ navigation }: ScreenTwoProps) => React.JSX.Element;
+  CustomScreenThree?: ({ navigation }: ScreenThreeProps) => React.JSX.Element;
 
-  customScreenOneName?: string;
-  customScreenTwoName?: string;
-  customScreenThreeName?: string;
+  customScreenOneName?: keyof StackParamList;
+  customScreenTwoName?: keyof StackParamList;
+  customScreenThreeName?: keyof StackParamList;
 
   customScreenOneNavigationOptions?: NativeStackNavigationOptions;
   customScreenTwoNavigationOptions?: NativeStackNavigationOptions;

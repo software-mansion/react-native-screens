@@ -101,7 +101,7 @@ export default function App() {
               fullScreenGestureEnabled: true,
               animation: 'fade_from_bottom',
               animationMatchesGesture: true,
-              headerLargeTitle: true,
+              headerLargeTitleEnabled: true,
               // headerTranslucent: true,
             }}>
             <Stack.Screen name="First" component={First} />
@@ -137,7 +137,7 @@ function generatePhotos(
   amount: number,
   width: number,
   height: number,
-): JSX.Element[] {
+): React.JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {
     const uri = `https://picsum.photos/id/${

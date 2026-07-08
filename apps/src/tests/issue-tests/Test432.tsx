@@ -1,6 +1,8 @@
 import { View, Button, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
+  NativeStackHeaderBackProps,
+  NativeStackHeaderItemProps,
   NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
@@ -72,7 +74,7 @@ const SettingsScreen = () => {
 const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
   const [hasLeftItem, setHasLeftItem] = useState(false);
 
-  const square1 = (props: { tintColor?: string }) => (
+  const square1 = (props: NativeStackHeaderItemProps) => (
     <View style={{ gap: 8, flexDirection: 'row' }}>
       {hasLeftItem && (
         <Square
@@ -91,7 +93,7 @@ const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
     </View>
   );
 
-  const square2 = (props: { tintColor?: string }) => (
+  const square2 = (props: NativeStackHeaderBackProps) => (
     <Square {...props} color="red" size={20} testID="info-headerLeft-red" />
   );
 

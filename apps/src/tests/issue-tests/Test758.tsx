@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
+import { Button, ScrollView } from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -8,18 +8,22 @@ import {
 } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationOptions,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { SearchBarProps } from 'react-native-screens';
+
+type HeaderSearchBarOptions = NonNullable<
+  NativeStackNavigationOptions['headerSearchBarOptions']
+>;
 
 const AppStack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          headerLargeTitle: true,
+          headerLargeTitleEnabled: true,
           headerTransparent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
@@ -38,7 +42,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
 
   const [search, setSearch] = React.useState('');
 
-  const searchBarOptions: SearchBarProps = {
+  const searchBarOptions: HeaderSearchBarOptions = {
     barTintColor: 'powderblue',
     tintColor: 'red',
     textColor: 'red',
@@ -51,8 +55,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     // to preserve test's original search bar configuration.
     placement: 'stacked',
     cancelButtonText: 'Cancel text',
-    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
-      setSearch(e.nativeEvent.text),
+    onChange: e => setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
     onFocus: () => console.warn('onFocus event'),

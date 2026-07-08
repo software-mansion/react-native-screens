@@ -159,7 +159,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        detachInactiveScreens={true}
         screenOptions={{
           presentation: 'modal',
           animationEnabled: true,

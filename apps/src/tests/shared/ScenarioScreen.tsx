@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Platform, ScrollView } from 'react-native';
 import type { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   NavigationContainer,
   NavigationIndependentTree,
+  useNavigation,
 } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
@@ -13,6 +14,7 @@ function ScenarioSelect(props: {
   scenarios: Record<string, Scenario>;
   groupName: string;
 }) {
+  const navigation = useNavigation<typeof Stack, 'Main'>('Main');
   const scenarioGroupName = props.groupName.replace(/\s/g, '');
   return (
     <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
@@ -26,13 +28,15 @@ function ScenarioSelect(props: {
             return (
               <ScenarioButton
                 title={name}
-                details={details}
-                route={key}
+                onPress={() => navigation.navigate(key)}
                 key={key}
-                platformsHint={platforms}
                 smokeTest={smokeTest}
                 e2eCoverage={e2eCoverage}
                 testID={key}
+                {...(details === undefined ? {} : { details })}
+                {...(platforms === undefined
+                  ? {}
+                  : { platformsHint: platforms })}
               />
             );
           },
@@ -42,11 +46,11 @@ function ScenarioSelect(props: {
   );
 }
 
-export default function ScenarioSelectionScreen(props: {
-  scenarioGroup: ScenarioGroup;
-}) {
-  const Stack = useMemo(() => createNativeStackNavigator(), []);
+const Stack = createNativeStackNavigator();
 
+export default function ScenarioSelectionScreen(props: {
+  scenarioGroup: ScenarioGroup<string>;
+}) {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>

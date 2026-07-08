@@ -35,7 +35,7 @@ function First(props: Props) {
   );
 }
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <NavigationContainer>

@@ -1,12 +1,22 @@
 import React from 'react';
 import { Button, SafeAreaView, View } from 'react-native';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  Test: undefined;
+  Test2: undefined;
+};
 
-const TestScreen = ({ navigation }): React.JSX.Element => {
+const Stack = createNativeStackNavigator<StackParamList>();
+
+const TestScreen = ({
+  navigation,
+}: NativeStackScreenProps<StackParamList>): React.JSX.Element => {
   return (
     <SafeAreaView>
       <Button

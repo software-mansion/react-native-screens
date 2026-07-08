@@ -46,7 +46,7 @@ const App = () => {
         JS Navigation
       </Text>
       <NavigationContainer>
-        <Stack.Navigator detachInactiveScreens={true}>
+        <Stack.Navigator>
           <Stack.Screen component={Home} name="HOME" />
           <Stack.Screen component={Details} name="DETAILS" />
         </Stack.Navigator>

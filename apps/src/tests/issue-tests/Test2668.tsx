@@ -5,7 +5,6 @@ import {
 } from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, Modal, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 

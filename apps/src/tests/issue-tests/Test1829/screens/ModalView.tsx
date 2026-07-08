@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const ModalView = () => {
+type ModalViewProps = {
+  onBack: () => void;
+  onOpenSiblingModal: () => void;
+};
+
+const ModalView = ({ onBack, onOpenSiblingModal }: ModalViewProps) => {
   useEffect(() => {
     console.log('ModalView mounted');
   }, []);
 
-  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Text>
@@ -16,12 +19,12 @@ const ModalView = () => {
         inner modal, it does work! In addition, if opening a modal in the same
         navigator stack also works.
       </Text>
-      <TouchableOpacity onPress={() => navigation.navigate('modal-2')}>
+      <TouchableOpacity onPress={onOpenSiblingModal}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Open sibling outer modal.</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={onBack}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Back</Text>
         </View>

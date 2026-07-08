@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
-import { Button, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 import { Screen, ScreenStack } from 'react-native-screens';
 

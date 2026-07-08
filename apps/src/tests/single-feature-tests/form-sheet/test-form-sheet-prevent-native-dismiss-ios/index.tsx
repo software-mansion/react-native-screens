@@ -11,6 +11,8 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows testing the preventNativeDismiss property and firing the onNativeDismissPrevented event.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 function TestFormSheetPreventNativeDismiss() {

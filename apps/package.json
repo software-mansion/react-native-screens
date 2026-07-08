@@ -21,5 +21,18 @@
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
     "react-native-worklets": "*"
+  },
+  "devDependencies": {
+    "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
+    "@react-navigation/core": "link:../react-navigation/packages/core/",
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",
+    "@react-navigation/elements": "link:../react-navigation/packages/elements/",
+    "@react-navigation/native": "link:../react-navigation/packages/native/",
+    "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
+    "@react-navigation/routers": "link:../react-navigation/packages/routers/",
+    "@react-navigation/stack": "link:../react-navigation/packages/stack/",
+    "jotai": "^2.9.0",
+    "nanoid": "^4.0.2",
+    "react-native-restart": "^0.0.27"
   }
 }

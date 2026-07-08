@@ -13,7 +13,7 @@ interface Props {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   return (
     <NavigationContainer>
       <Stack.Navigator>

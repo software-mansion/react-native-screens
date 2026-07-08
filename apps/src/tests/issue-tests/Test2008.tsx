@@ -8,7 +8,6 @@ import {
   NavigationContainer,
   useNavigation,
   ParamListBase,
-  type NavigationProp,
 } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -57,7 +56,7 @@ type RootStackScreens = {
 const RootStack = createNativeStackNavigator<RootStackScreens>();
 
 function Home() {
-  const navigation = useNavigation<NavigationProp<RootStackScreens>>();
+  const navigation = useNavigation('Home');
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.inner}>

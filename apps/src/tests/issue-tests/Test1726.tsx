@@ -1,17 +1,31 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { Button, View } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
-const RootStack = createNativeStackNavigator();
+type StackParamList = {
+  Screen1: undefined;
+  Screen2: undefined;
+  Screen3: undefined;
+};
 
-const Screen1 = ({ navigation: { navigate } }) => (
+type ScreenProps<T extends keyof StackParamList> = NativeStackScreenProps<
+  StackParamList,
+  T
+>;
+
+const RootStack = createNativeStackNavigator<StackParamList>();
+
+const Screen1 = ({ navigation: { navigate } }: ScreenProps<'Screen1'>) => (
   <View style={{ flex: 1 }}>
     <Button onPress={() => navigate('Screen2')} title="Screen 2" />
   </View>
 );
 
-const Screen2 = ({ navigation: { navigate } }) => (
+const Screen2 = ({ navigation: { navigate } }: ScreenProps<'Screen2'>) => (
   <View style={{ flex: 1 }}>
     <Button onPress={() => navigate('Screen3')} title="Screen 3" />
   </View>

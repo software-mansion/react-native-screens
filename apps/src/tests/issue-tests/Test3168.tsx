@@ -14,7 +14,14 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { Button, ScrollView, Text, View } from 'react-native';
+import {
+  Button,
+  NativeSyntheticEvent,
+  ScrollView,
+  Text,
+  TextInputFocusEventData,
+  View,
+} from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
 import { ListItem, SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
@@ -135,7 +142,7 @@ function ExamplesStackComponent({ showMenu = true }: { showMenu?: boolean }) {
         name="Test"
         component={Test}
         options={{
-          headerLargeTitle: true,
+          headerLargeTitleEnabled: true,
           headerTransparent: true,
           headerBackButtonDisplayMode: 'minimal',
         }}
@@ -171,7 +178,8 @@ function Test({ navigation }: ExamplesStackNavigationProp) {
       headerSearchBarOptions: {
         placement: searchBarConfig.placement ?? 'automatic',
         allowToolbarIntegration: searchBarConfig.allowToolbarIntegration,
-        onChangeText: event => setSearch(event.nativeEvent.text),
+        onChange: (event: NativeSyntheticEvent<TextInputFocusEventData>) =>
+          setSearch(event.nativeEvent.text),
       },
     });
   }, [navigation, search, searchBarConfig]);
@@ -263,7 +271,7 @@ function AnotherTab() {
 
 function Menu({ tabsMode = false }: { tabsMode?: boolean }) {
   const { searchBarConfig, setSearchBarConfig } = useSearchBarConfig();
-  const navigation = useNavigation<ExamplesStackNavigationProp['navigation']>();
+  const navigation = useNavigation('Test');
 
   return (
     <CenteredLayoutView>
