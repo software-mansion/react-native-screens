@@ -91,6 +91,7 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
 
         dimmingManager.isTransitionAnimationRunning = true
@@ -118,6 +119,7 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
 
         dimmingManager.isTransitionAnimationRunning = true
