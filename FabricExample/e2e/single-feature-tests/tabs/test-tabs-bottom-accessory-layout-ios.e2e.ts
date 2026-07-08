@@ -8,16 +8,17 @@ import {
   getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
+import { RNS_TABS_BOTTOM_ACCESSORY_TYPE } from '../../native-component-types';
 
 const bottomAccessoryElement = (testID: string) =>
   element(
-    by.id(testID).withAncestor(by.type('RNSTabsBottomAccessoryComponentView')),
+    by.id(testID).withAncestor(by.type(RNS_TABS_BOTTOM_ACCESSORY_TYPE)),
   ).atIndex(0);
 
 const getBottomAccessoryAttributes = () =>
   getElementAttributes({
     by: 'type',
-    value: 'RNSTabsBottomAccessoryComponentView',
+    value: RNS_TABS_BOTTOM_ACCESSORY_TYPE,
     index: 0,
   }) as Promise<IosElementAttributes>;
 
@@ -152,9 +153,7 @@ async function verifyConfigTabInitialContent() {
   await expect(element(by.id('variant-lower-right'))).toBeVisible();
   await expect(element(by.id('variant-long'))).toBeVisible();
   await expect(element(by.id('variant-rgb'))).toBeVisible();
-  await expect(
-    element(by.type('RNSTabsBottomAccessoryComponentView')),
-  ).toBeVisible();
+  await expect(element(by.type(RNS_TABS_BOTTOM_ACCESSORY_TYPE))).toBeVisible();
 }
 
 describeIfiOS('Tabs bottomAccessory (iOS)', () => {
