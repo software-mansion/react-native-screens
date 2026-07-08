@@ -8,7 +8,7 @@ import {
   getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
-import { RNS_TABS_BOTTOM_ACCESSORY_TYPE } from '../../native-component-types';
+import { RNS_TABS_BOTTOM_ACCESSORY_TYPE } from '../../native-type-names';
 
 const bottomAccessoryElement = (testID: string) =>
   element(
