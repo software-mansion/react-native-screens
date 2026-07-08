@@ -4,5 +4,4 @@ internal data class FormSheetConfig(
     val isOpen: Boolean = false,
     val detents: List<Double> = emptyList(),
     val prefersGrabberVisible: Boolean = false,
-    val contentHeight: Int = 0,
 )

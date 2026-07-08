@@ -5,10 +5,14 @@ import com.facebook.react.views.view.ReactViewGroup
 
 class FormSheetContentWrapper(
     context: Context,
-) : ReactViewGroup(context) {
-    internal var onContentsHeightChange: ((newHeight: Int) -> Unit)? = null
-
+) : ReactViewGroup(context),
+    FormSheetContentSizeChangeProvider {
+    private var delegate: FormSheetContentSizeChangeDelegate? = null
     private var lastReportedHeight: Int = -1
+
+    override fun setContentSizeChangeDelegate(delegate: FormSheetContentSizeChangeDelegate?) {
+        this.delegate = delegate
+    }
 
     override fun onLayout(
         changed: Boolean,
@@ -23,7 +27,7 @@ class FormSheetContentWrapper(
 
         if (currentHeight != lastReportedHeight) {
             lastReportedHeight = currentHeight
-            onContentsHeightChange?.invoke(currentHeight)
+            delegate?.onContentHeightChanged(currentHeight)
         }
     }
 }

@@ -28,6 +28,8 @@ class FormSheetContentView(
     RootView,
     UIManagerListener,
     ViewTreeObserver.OnPreDrawListener {
+    internal var contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate? = null
+
     private val themedReactContext: ThemedReactContext
         get() = context as ThemedReactContext
     private val jsTouchDispatcher = JSTouchDispatcher(this)
@@ -64,11 +66,14 @@ class FormSheetContentView(
         }
     }
 
+    override fun onViewAdded(child: View) {
+        super.onViewAdded(child)
+        (child as? FormSheetContentSizeChangeProvider)?.setContentSizeChangeDelegate(contentSizeChangeDelegate)
+    }
+
     override fun onViewRemoved(child: View) {
         super.onViewRemoved(child)
-        if (child is FormSheetContentWrapper) {
-            child.onContentsHeightChange = null
-        }
+        (child as? FormSheetContentSizeChangeProvider)?.setContentSizeChangeDelegate(null)
     }
 
     override fun onSizeChanged(

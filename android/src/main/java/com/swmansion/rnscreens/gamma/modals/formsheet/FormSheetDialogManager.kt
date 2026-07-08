@@ -53,6 +53,9 @@ class FormSheetDialogManager(
             onNativeDismiss = onDismissRequest,
         )
 
+    internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
+        get() = dimensionsCoordinator
+
     init {
         presentationManager.setup()
         dimensionsCoordinator.setup()
@@ -66,13 +69,9 @@ class FormSheetDialogManager(
 
         // ALWAYS refresh dimensions when reopening to ensure that BottomSheet
         // state and layout are synchronized with native behavior.
-        val dimensionsChanged =
-            oldConfig.detents != newConfig.detents || oldConfig.contentHeight != newConfig.contentHeight
+        val dimensionsChanged = oldConfig.detents != newConfig.detents
         if (dimensionsChanged || reopened) {
-            dimensionsCoordinator.updateFormSheetDimensions(
-                resolveDetents(newConfig.detents),
-                newConfig.contentHeight,
-            )
+            dimensionsCoordinator.updateFormSheetDimensions(resolveDetents(newConfig.detents))
         }
 
         if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {

@@ -12,7 +12,7 @@ internal class FormSheetDimensionsCoordinator(
     private val container: FormSheetContainer,
     private val bottomSheetView: FrameLayout?,
     private val behaviorController: FormSheetBehaviorController?,
-) {
+) : FormSheetContentSizeChangeDelegate {
     private var lastTopInset = 0
     private var lastBottomInset = 0
     private var currentDetents: FormSheetDetents? = null
@@ -52,12 +52,15 @@ internal class FormSheetDimensionsCoordinator(
         }
     }
 
-    internal fun updateFormSheetDimensions(
-        detents: FormSheetDetents?,
-        contentHeightForFitToContents: Int = 0,
-    ) {
+    override fun onContentHeightChanged(newHeight: Int) {
+        if (currentContentHeight != newHeight) {
+            currentContentHeight = newHeight
+            updateNativeContainerHeight()
+        }
+    }
+
+    internal fun updateFormSheetDimensions(detents: FormSheetDetents?) {
         currentDetents = detents
-        currentContentHeight = contentHeightForFitToContents
         updateNativeContainerHeight()
     }
 

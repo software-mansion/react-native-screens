@@ -23,8 +23,6 @@ class FormSheetHost(
 
     internal var detents: List<Double> = emptyList()
 
-    internal var reactContentsHeight: Int = 0
-
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
             updateStateIfNeeded(width, height)
@@ -37,6 +35,10 @@ class FormSheetHost(
             onDismissRequest = ::onNativeDismiss,
         )
 
+    init {
+        sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
+    }
+
     internal fun onNativeDismiss() {
         eventEmitter.emitOnNativeDismissEvent()
     }
@@ -45,14 +47,6 @@ class FormSheetHost(
         child: View,
         index: Int,
     ) {
-        if (child is FormSheetContentWrapper) {
-            child.onContentsHeightChange = { newHeight ->
-                if (reactContentsHeight != newHeight) {
-                    reactContentsHeight = newHeight
-                    onAfterUpdateTransaction()
-                }
-            }
-        }
         sheetContentView.addView(child, index)
     }
 
@@ -96,7 +90,6 @@ class FormSheetHost(
                 isOpen = this.isOpen,
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
-                contentHeight = this.reactContentsHeight,
             )
         dialogManager.applyConfig(config)
     }
