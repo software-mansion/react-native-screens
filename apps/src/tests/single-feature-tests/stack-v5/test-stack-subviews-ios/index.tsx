@@ -195,8 +195,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     trailingItems.splice(1, 0, {
       type: 'spacer',
       id: 'spacer-trailing-1',
-      sizing: 'fixed',
-      width: 100,
+      sizing: 'flexible',
     });
   }
 
