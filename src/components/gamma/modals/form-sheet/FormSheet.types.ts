@@ -27,7 +27,7 @@ export interface FormSheetProps {
    * from `false` to `true` triggers the sheet to present, while changing
    * it from `true` to `false` triggers a programmatic dismissal.
    *
-   * @platform ios
+   * @platform android, ios
    */
   isOpen: boolean;
 
@@ -47,7 +47,7 @@ export interface FormSheetProps {
    * @remarks
    * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
    *
-   * @platform ios
+   * @platform android, ios
    */
   detents?: number[] | 'fitToContents' | undefined;
 
@@ -59,7 +59,7 @@ export interface FormSheetProps {
    * hide the grabber in some presentation contexts.
    *
    * @default false
-   * @platform ios
+   * @platform android, ios
    */
   prefersGrabberVisible?: boolean | undefined;
 
@@ -143,24 +143,32 @@ export interface FormSheetProps {
   /**
    * @summary A callback that gets invoked when the FormSheet will appear.
    * This is called as soon as the transition begins.
+   *
+   * @platform android, ios
    */
   onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did appear.
    * This is called as soon as the transition ends.
+   *
+   * @platform android, ios
    */
   onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet will disappear.
    * This is called as soon as the transition begins.
+   *
+   * @platform android, ios
    */
   onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did disappear.
    * This is called as soon as the transition ends.
+   *
+   * @platform android, ios
    */
   onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -179,7 +187,7 @@ export interface FormSheetProps {
    * It is highly recommended to use this callback to synchronize
    * your local React state to prevent UI mismatches (e.g., updating `isOpen` back to `false`).
    *
-   * @platform ios
+   * @platform android, ios
    */
   onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
