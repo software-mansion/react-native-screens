@@ -50,8 +50,8 @@ internal class FormSheetBehaviorController(
      * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the
      * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
      * the safe area.
-     * @param initialDetentIndex - the index of the detent the sheet should snap to while opening. 
-     * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state. 
+     * @param initialDetentIndex - the index of the detent the sheet should snap to while opening.
+     * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state.
      * This should typically be `true` only when the sheet transitions from closed to open.
      */
     internal fun updateSheetBehavior(
@@ -141,18 +141,22 @@ internal class FormSheetBehaviorController(
         }
     }
 
-    private fun resolveStateFromIndex(index: Int, detentsCount: Int): Int {
+    private fun resolveStateFromIndex(
+        index: Int,
+        detentsCount: Int,
+    ): Int {
         val resolvedIndex = if (index == FORM_SHEET_LAST_DETENT_INDEX) detentsCount - 1 else index
         val safeIndex = resolvedIndex.coerceIn(0, detentsCount - 1)
 
         return when (detentsCount) {
             1 -> BottomSheetBehavior.STATE_EXPANDED
             2 -> if (safeIndex == 0) BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_EXPANDED
-            3 -> when (safeIndex) {
-                0 -> BottomSheetBehavior.STATE_COLLAPSED
-                1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
-                else -> BottomSheetBehavior.STATE_EXPANDED
-            }
+            3 ->
+                when (safeIndex) {
+                    0 -> BottomSheetBehavior.STATE_COLLAPSED
+                    1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
+                    else -> BottomSheetBehavior.STATE_EXPANDED
+                }
             else -> BottomSheetBehavior.STATE_COLLAPSED
         }
     }
