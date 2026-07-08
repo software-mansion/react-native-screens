@@ -13,7 +13,7 @@ const Stack2 = createNativeStackNavigator();
 const Stack3 = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Tab.Navigator>

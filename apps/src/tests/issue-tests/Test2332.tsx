@@ -10,16 +10,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { Button, Text, TextInput, View } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HeaderButton } from '@react-navigation/elements';
-type RootStackNavigatorParamsList = {
-  Home: undefined;
-  Details: undefined;
-};
+
 const Stack = createNativeStackNavigator();
 const HomeScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackNavigatorParamsList>>();
+  const navigation = useNavigation('Home');
   const onHandlePress = () => {
     navigation.navigate('Details');
   };
@@ -34,8 +29,7 @@ const HomeScreen = () => {
 };
 const DetailsScreen = () => {
   const [text, setText] = React.useState('');
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackNavigatorParamsList>>();
+  const navigation = useNavigation('Details');
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: 'Detail Screen',

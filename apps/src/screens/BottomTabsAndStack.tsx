@@ -21,7 +21,7 @@ const DetailsScreen = ({
   navigation,
   route,
   letter,
-}: DetailsScreenProps & { letter: number }): React.JSX.Element => {
+}: DetailsScreenProps & { letter: string }): React.JSX.Element => {
   const colors = [
     'snow',
     'cornsilk',

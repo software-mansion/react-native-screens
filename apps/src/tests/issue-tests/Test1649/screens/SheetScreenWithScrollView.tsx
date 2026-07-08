@@ -2,8 +2,9 @@ import * as React from 'react';
 import { Button, View, ScrollView, Text } from 'react-native';
 
 import CommonSheetContent from '../components/CommonSheetContent';
+import { NavPropObj } from '../types';
 
-export default function SheetScreenWithScrollView() {
+export default function SheetScreenWithScrollView({ navigation }: NavPropObj) {
   const [additionalContentVisible, setAdditionalContentVisible] =
     React.useState(true);
 
@@ -13,7 +14,7 @@ export default function SheetScreenWithScrollView() {
   return (
     <ScrollView ref={svRef} nestedScrollEnabled={false} scrollEnabled>
       <View ref={contentRef}>
-        <CommonSheetContent />
+        <CommonSheetContent navigation={navigation} />
         <Button
           title="Toggle content"
           onPress={() => setAdditionalContentVisible(old => !old)}

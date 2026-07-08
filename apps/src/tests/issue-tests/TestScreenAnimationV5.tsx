@@ -18,7 +18,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenA'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button
       title="Go ScreenB"
@@ -34,7 +34,7 @@ interface ScreenBProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenB'>;
 }
 
-const ScreenB = ({ navigation }: ScreenBProps): JSX.Element => (
+const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button title="Go ScreenC" onPress={() => navigation.navigate('ScreenC')} />
     <Button title="Go back" onPress={() => navigation.goBack()} />
@@ -45,7 +45,7 @@ interface ScreenCProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenC'>;
 }
 
-const ScreenC = ({ navigation }: ScreenCProps): JSX.Element => (
+const ScreenC = ({ navigation }: ScreenCProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'blue' }}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
@@ -53,7 +53,7 @@ const ScreenC = ({ navigation }: ScreenCProps): JSX.Element => (
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <GestureDetectorProvider>
@@ -63,13 +63,7 @@ const App = (): JSX.Element => (
             animation: 'none',
           }}>
           <Stack.Screen name="ScreenA" component={MainScreen} />
-          <Stack.Screen
-            name="ScreenB"
-            component={ScreenB}
-            options={{
-              goBackGesture: 'twoDimensionalSwipe',
-            }}
-          />
+          <Stack.Screen name="ScreenB" component={ScreenB} />
           <Stack.Screen name="ScreenC" component={ScreenC} />
         </Stack.Navigator>
       </GestureDetectorProvider>

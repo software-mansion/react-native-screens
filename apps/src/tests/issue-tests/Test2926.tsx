@@ -4,7 +4,14 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, Text, View, ScrollView } from 'react-native';
+import {
+  Button,
+  NativeSyntheticEvent,
+  Text,
+  TextInputFocusEventData,
+  View,
+  ScrollView,
+} from 'react-native';
 import { ListItem, SettingsSwitch } from '@apps/shared';
 
 type StackRouteParamList = {
@@ -42,7 +49,8 @@ function Home({ navigation }: StackNavigationProp) {
           // to preserve test's original search bar configuration.
           placement: 'stacked',
           hideWhenScrolling: false,
-          onChangeText: event => setSearchQuery(event.nativeEvent.text),
+          onChange: (event: NativeSyntheticEvent<TextInputFocusEventData>) =>
+            setSearchQuery(event.nativeEvent.text),
         },
       });
     } else {

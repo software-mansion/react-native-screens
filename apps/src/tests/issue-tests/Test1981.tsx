@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   NavigationContainer,
-  NavigationContext,
   ParamListBase,
 } from '@react-navigation/native';
 import {

@@ -94,12 +94,12 @@ export default function ReactNativeScreensBugs() {
           presentation: 'modal',
         }}>
         <NativeStack.Screen
-          options={{ headerLargeTitle: true }}
+          options={{ headerLargeTitleEnabled: true }}
           name="StickyHeader"
           component={HomeScreen}
         />
         <NativeStack.Screen
-          options={{ headerLargeTitle: true, gestureEnabled: true }}
+          options={{ headerLargeTitleEnabled: true, gestureEnabled: true }}
           name="Second"
           component={Example}
         />

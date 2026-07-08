@@ -1,14 +1,10 @@
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
-  NativeStackNavigationProp,
+  type NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-
-type RouteNavProps<T extends ParamListBase> = {
-  navigation: NativeStackNavigationProp<T>;
-};
 
 type StackRouteParamList = {
   StackHome: undefined;
@@ -24,13 +20,16 @@ type NestedStackRouteParamList = StackRouteParamList & {
   NestedSecond: undefined;
 };
 
-type StackRouteNavProps = RouteNavProps<StackRouteParamList>;
-type NestedStackRouteNavProps = RouteNavProps<NestedStackRouteParamList>;
+type StackRouteNavProps<RouteName extends keyof StackRouteParamList> =
+  NativeStackScreenProps<StackRouteParamList, RouteName>;
+type NestedStackRouteNavProps<
+  RouteName extends keyof NestedStackRouteParamList,
+> = NativeStackScreenProps<NestedStackRouteParamList, RouteName>;
 
 const Stack = createNativeStackNavigator<StackRouteParamList>();
 const NestedStack = createNativeStackNavigator<NestedStackRouteParamList>();
 
-function StackHome({ navigation }: StackRouteNavProps) {
+function StackHome({ navigation }: StackRouteNavProps<'StackHome'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightgreen' }}>
       <Button
@@ -49,7 +48,7 @@ function StackHome({ navigation }: StackRouteNavProps) {
   );
 }
 
-function StackSheet({ navigation }: StackRouteNavProps) {
+function StackSheet({ navigation }: StackRouteNavProps<'StackSheet'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
       <Text>Hello world from sheet</Text>
@@ -61,7 +60,7 @@ function StackSheet({ navigation }: StackRouteNavProps) {
   );
 }
 
-function StackSecond({ navigation }: StackRouteNavProps) {
+function StackSecond({ navigation }: StackRouteNavProps<'StackSecond'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'yellow' }}>
       <Button
@@ -76,7 +75,7 @@ function StackSecond({ navigation }: StackRouteNavProps) {
   );
 }
 
-function NestedHome({ navigation }: NestedStackRouteNavProps) {
+function NestedHome({ navigation }: NestedStackRouteNavProps<'NestedHome'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'crimson' }}>
       <Button
@@ -91,7 +90,7 @@ function NestedHome({ navigation }: NestedStackRouteNavProps) {
   );
 }
 
-function NestedSheet({ navigation }: NestedStackRouteNavProps) {
+function NestedSheet({ navigation }: NestedStackRouteNavProps<'NestedSheet'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'goldenrod' }}>
       <Text>Hello world from nested sheet</Text>
@@ -103,7 +102,9 @@ function NestedSheet({ navigation }: NestedStackRouteNavProps) {
   );
 }
 
-function NestedSecond({ navigation }: NestedStackRouteNavProps) {
+function NestedSecond({
+  navigation,
+}: NestedStackRouteNavProps<'NestedSecond'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'crimson' }}>
       <Text>Hello from NestedSecond</Text>
@@ -115,10 +116,11 @@ function NestedSecond({ navigation }: NestedStackRouteNavProps) {
   );
 }
 
-function NestedStackHost({ navigation }: StackRouteNavProps) {
+function NestedStackHost() {
   return (
     <NestedStack.Navigator>
       <NestedStack.Screen name="NestedHome" component={NestedHome} />
+      <NestedStack.Screen name="NestedSecond" component={NestedSecond} />
       <NestedStack.Screen
         name="NestedSheet"
         component={NestedSheet}

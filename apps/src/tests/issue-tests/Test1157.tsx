@@ -44,7 +44,7 @@ function ButtonWithBiggerChild(props: {
   tintColor?: string | undefined;
   onClickText?: string | undefined;
   backgroundColor?: string | undefined;
-}): JSX.Element {
+}): React.JSX.Element {
   const {
     onClickText = 'Hello there General Kenobi',
     backgroundColor = 'red',

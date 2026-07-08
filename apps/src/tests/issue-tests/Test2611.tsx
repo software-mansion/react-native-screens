@@ -1,3 +1,4 @@
+import React from 'react';
 import { ScrollView, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

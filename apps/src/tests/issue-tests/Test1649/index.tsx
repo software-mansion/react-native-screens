@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { NativeSyntheticEvent } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -17,13 +16,13 @@ import SheetScreen from './screens/SheetScreen';
 import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
-import Second from './screens/Second';
+import { StackParamList } from './types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<StackParamList>();
 
 const InnerStack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   const sheetOptions = jotai.useAtomValue(sheetOptionsAtom);
 
   return (

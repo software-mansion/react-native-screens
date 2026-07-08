@@ -34,7 +34,7 @@ function RootStackScreen() {
     <RootStack.Navigator
       screenOptions={{
         headerTitleStyle: { fontWeight: '900' },
-        headerLargeTitle: true,
+        headerLargeTitleEnabled: true,
         headerLargeTitleStyle: {
           fontWeight: '900',
         },

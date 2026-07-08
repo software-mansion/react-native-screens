@@ -23,7 +23,6 @@ export default function NativeNavigation() {
           name="Home"
           component={Home}
           options={{
-            statusBarBackgroundColor: 'rgba(0,0,255,0.25)',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             // statusBarTranslucent: true, // This prop has been deprecated.
@@ -36,7 +35,6 @@ export default function NativeNavigation() {
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            statusBarBackgroundColor: 'red',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarHidden: true,
@@ -81,7 +79,6 @@ const InnerStack = createNativeStackNavigator();
 const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
-      statusBarBackgroundColor: 'pink',
       statusBarAnimation: 'none',
       statusBarStyle: 'auto',
       // navigationBarColor: 'pink', // This prop has been deprecated.

@@ -1,5 +1,8 @@
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
   ReanimatedScreenProvider,
@@ -10,6 +13,13 @@ import Reanimated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import { Button } from 'react-native';
+
+type StackParamList = {
+  Root: undefined;
+  Second: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function App() {
   return (
@@ -24,10 +34,9 @@ export default function App() {
   );
 }
 
-const Stack = createNativeStackNavigator();
-
-function RootScreen() {
-  const { navigate } = useNavigation();
+function RootScreen({
+  navigation: { navigate },
+}: NativeStackScreenProps<StackParamList, 'Root'>) {
   const reaProgress = useReanimatedTransitionProgress();
   const sv = useDerivedValue(
     () =>

@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Button,
+  Image,
+  NativeSyntheticEvent,
+  Text,
+  TextInputFocusEventData,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -61,7 +69,8 @@ function Second({
         autoCapitalize: 'none',
         autoFocus: true,
         onClose: () => navigation.popTo('First'),
-        onChangeText: e => setText(e.nativeEvent.text),
+        onChange: (e: NativeSyntheticEvent<TextInputFocusEventData>) =>
+          setText(e.nativeEvent.text),
         barTintColor: text,
       },
       animation: 'none',

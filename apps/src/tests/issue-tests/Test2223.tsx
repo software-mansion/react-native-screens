@@ -1,10 +1,26 @@
 import React from 'react';
 import { Alert, Button, Pressable, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+  useNavigation,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator();
-const NestedStack = createNativeStackNavigator();
+type NestedStackParamList = {
+  NSHome: undefined;
+  NSDetailsStack: undefined;
+};
+
+const NestedStack = createNativeStackNavigator<NestedStackParamList>();
+
+type StackParamList = {
+  Home: undefined;
+  DetailsStack: undefined;
+  NestedStack: NavigatorScreenParams<typeof NestedStack> | undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function App() {
   return (
@@ -21,30 +37,59 @@ export default function App() {
 function NestedStackScreen() {
   return (
     <NestedStack.Navigator>
-      <NestedStack.Screen name="NSHome" component={HomeScreen} />
+      <NestedStack.Screen name="NSHome" component={NestedHomeScreen} />
       <NestedStack.Screen name="NSDetailsStack" component={DetailsScreen} />
     </NestedStack.Navigator>
   );
 }
 
-function HomeScreen() {
-  const navigation = useNavigation();
+function HomeContent({
+  onDetailsPress,
+  onNestedStackPress,
+  onNestedDetailsPress,
+}: {
+  onDetailsPress: () => void;
+  onNestedStackPress: () => void;
+  onNestedDetailsPress: () => void;
+}) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('DetailsStack')}
-      />
-      <Button
-        title="Go to NestedStack"
-        onPress={() => navigation.navigate('NestedStack')}
-      />
+      <Button title="Go to Details" onPress={onDetailsPress} />
+      <Button title="Go to NestedStack" onPress={onNestedStackPress} />
       <Button
         title="Go to NestedStack Details"
-        onPress={() => navigation.navigate('NSDetailsStack')}
+        onPress={onNestedDetailsPress}
       />
     </View>
+  );
+}
+
+function HomeScreen() {
+  const navigation = useNavigation<typeof Stack, 'Home'>('Home');
+
+  return (
+    <HomeContent
+      onDetailsPress={() => navigation.navigate('DetailsStack')}
+      onNestedStackPress={() => navigation.navigate('NestedStack')}
+      onNestedDetailsPress={() =>
+        navigation.navigate('NestedStack', { screen: 'NSDetailsStack' })
+      }
+    />
+  );
+}
+
+function NestedHomeScreen() {
+  const navigation = useNavigation<typeof Stack, 'NSHome'>('NSHome');
+
+  return (
+    <HomeContent
+      onDetailsPress={() => navigation.navigate('DetailsStack')}
+      onNestedStackPress={() => navigation.navigate('NestedStack')}
+      onNestedDetailsPress={() =>
+        navigation.navigate('NestedStack', { screen: 'NSDetailsStack' })
+      }
+    />
   );
 }
 

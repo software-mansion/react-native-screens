@@ -1,25 +1,40 @@
 import { NavigationContainer } from '@react-navigation/native';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
 import React from 'react';
 import { Button, View } from 'react-native';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  Screen1: undefined;
+  Screen2: undefined;
+  Screen3: undefined;
+  Screen4: undefined;
+};
 
-const Screen1 = ({ navigation }) => (
+type ScreenProps<T extends keyof StackParamList> = NativeStackScreenProps<
+  StackParamList,
+  T
+>;
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+const Screen1 = ({ navigation }: ScreenProps<'Screen1'>) => (
   <View style={{ flex: 1 }}>
     <Button onPress={() => navigation.navigate('Screen2')} title="Next" />
   </View>
 );
 
-const Screen2 = ({ navigation }) => (
+const Screen2 = ({ navigation }: ScreenProps<'Screen2'>) => (
   <View style={{ flex: 1 }}>
     <Button onPress={() => navigation.navigate('Screen3')} title="Next" />
   </View>
 );
 
-const Screen3 = ({ navigation }) => (
+const Screen3 = ({ navigation }: ScreenProps<'Screen3'>) => (
   <View style={{ flex: 1 }}>
     <Button onPress={() => navigation.navigate('Screen4')} title="Next" />
   </View>
@@ -36,7 +51,7 @@ const App = () => {
           component={Screen2}
           name="Screen2"
           options={{
-            headerBackTitleVisible: false,
+            headerBackButtonDisplayMode: 'minimal',
             headerBackTitle: 'Custom title in back button menu',
           }}
         />

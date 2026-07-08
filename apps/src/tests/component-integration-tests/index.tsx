@@ -3,6 +3,7 @@ import { ScrollView } from 'react-native';
 import {
   NavigationContainer,
   NavigationIndependentTree,
+  useNavigation,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
@@ -28,27 +29,42 @@ export const COMPONENT_SCENARIOS = {
   ScrollViewMarker: SvmScenarioGroup,
 } as const;
 
-type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
-  Home: undefined;
-};
+type ScenarioName = keyof typeof COMPONENT_SCENARIOS;
+type ParamsList = { [Key in ScenarioName | 'Home']: undefined };
+
+const SCENARIO_NAMES: ScenarioName[] = [
+  'Orientation',
+  'ScrollView',
+  'FormSheet',
+  'TabsInStackV5',
+  'ScrollViewMarker',
+];
 
 export function HomeScreen() {
+  const navigation = useNavigation<typeof Stack, 'Home'>('Home');
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       testID="component-integration-tests-scrollview">
-      {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
-        <ScenarioButton
-          key={key}
-          title={scenarioGroup.name}
-          route={key}
-          details={scenarioGroup.details}
-          testID={`component-integration-tests-${scenarioGroup.name.replace(
-            /\s/g,
-            '',
-          )}`}
-        />
-      ))}
+      {SCENARIO_NAMES.map(key => {
+        const scenarioGroup = COMPONENT_SCENARIOS[key];
+
+        return (
+          <ScenarioButton
+            key={key}
+            title={scenarioGroup.name}
+            onPress={() => navigation.navigate(key)}
+            testID={`component-integration-tests-${scenarioGroup.name.replace(
+              /\s/g,
+              '',
+            )}`}
+            {...(scenarioGroup.details === undefined
+              ? {}
+              : { details: scenarioGroup.details })}
+          />
+        );
+      })}
     </ScrollView>
   );
 }
@@ -69,16 +85,20 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
-            <Stack.Screen name={key}>
-              {() => (
-                <ScenarioSelectionScreen
-                  key={key}
-                  scenarioGroup={scenarioGroup}
-                />
-              )}
-            </Stack.Screen>
-          ))}
+          {SCENARIO_NAMES.map(key => {
+            const scenarioGroup = COMPONENT_SCENARIOS[key];
+
+            return (
+              <Stack.Screen name={key}>
+                {() => (
+                  <ScenarioSelectionScreen
+                    key={key}
+                    scenarioGroup={scenarioGroup}
+                  />
+                )}
+              </Stack.Screen>
+            );
+          })}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

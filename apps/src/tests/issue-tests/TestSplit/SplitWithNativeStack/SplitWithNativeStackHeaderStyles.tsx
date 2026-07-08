@@ -29,10 +29,10 @@ export const SplitWithNativeStackHeaderStyles = ({
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
-            headerLargeTitle: true,
+            headerLargeTitleEnabled: true,
           }}
           customScreenTwoNavigationOptions={{
-            headerLargeTitle: true,
+            headerLargeTitleEnabled: true,
             headerLargeTitleStyle: {
               color: Colors.RedDark100,
               fontSize: 30,
@@ -40,7 +40,7 @@ export const SplitWithNativeStackHeaderStyles = ({
             },
           }}
           customScreenThreeNavigationOptions={{
-            headerLargeTitle: true,
+            headerLargeTitleEnabled: true,
             headerLargeStyle: {
               backgroundColor: Colors.GreenDark100,
             },

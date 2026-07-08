@@ -1,11 +1,8 @@
 import React from 'react';
-import {
-  DefaultTheme,
-  NavigationContainer,
-  ParamListBase,
-} from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import {
   NativeStackNavigationProp,
+  NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -25,15 +22,16 @@ type RouteParamList = {
   Screen3: undefined;
 };
 
-type NavigationProp<ParamList extends ParamListBase> = {
-  navigation: NativeStackNavigationProp<ParamList>;
-};
+type ScreenProps<RouteName extends keyof RouteParamList> =
+  NativeStackScreenProps<RouteParamList, RouteName>;
 
-type StackNavigationProp = NavigationProp<RouteParamList>;
+type TabScreenProps = {
+  navigation: NativeStackNavigationProp<RouteParamList, 'Screen2'>;
+};
 
 const Stack = createNativeStackNavigator<RouteParamList>();
 
-function Screen1({ navigation }: StackNavigationProp) {
+function Screen1({ navigation }: ScreenProps<'Screen1'>) {
   return (
     <View>
       <Text>Enable system dark mode and observe the back button.</Text>
@@ -45,7 +43,7 @@ function Screen1({ navigation }: StackNavigationProp) {
   );
 }
 
-function TabScreen({ navigation }: StackNavigationProp) {
+function TabScreen({ navigation }: TabScreenProps) {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.cardBackground }}>
       <Button
@@ -61,7 +59,7 @@ function TabScreen({ navigation }: StackNavigationProp) {
   );
 }
 
-function Screen2(stackNavProp: StackNavigationProp) {
+function Screen2({ navigation }: ScreenProps<'Screen2'>) {
   const [config, setConfig] = React.useState<Configuration>(
     DEFAULT_GLOBAL_CONFIGURATION,
   );
@@ -69,7 +67,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'Tab1',
-      Component: () => TabScreen(stackNavProp),
+      Component: () => <TabScreen navigation={navigation} />,
       options: {
         title: 'Tab 1',
         ios: {
@@ -83,7 +81,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
     },
     {
       name: 'Tab2',
-      Component: () => TabScreen(stackNavProp),
+      Component: () => <TabScreen navigation={navigation} />,
       options: {
         title: 'Tab 2',
         ios: {
@@ -125,7 +123,6 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           statusBarStyle: 'dark',
-          experimental_userInterfaceStyle: 'light',
         }}>
         <Stack.Screen name="Screen1" component={Screen1} />
         <Stack.Screen

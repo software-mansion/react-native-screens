@@ -1,13 +1,12 @@
 import React from 'react';
 import { Button, Text } from 'react-native';
 import { useScrollEdgeEffectsConfigContext } from './context';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
 import { SettingsPicker } from '@apps/shared';
 import { ScrollEdgeEffect } from 'react-native-screens';
 
 interface ConfigProps {
   title: string;
-  navigation?: NavigationProp<{ Test: undefined }>;
+  onGoPress?: () => void;
 }
 
 const SCROLL_EDGE_EFFECT_OPTIONS: ScrollEdgeEffect[] = [
@@ -18,7 +17,7 @@ const SCROLL_EDGE_EFFECT_OPTIONS: ScrollEdgeEffect[] = [
 ];
 
 function ConfigWithOptionalNavigation(props: ConfigProps) {
-  const { title, navigation } = props;
+  const { title, onGoPress } = props;
 
   const { config, setConfig } = useScrollEdgeEffectsConfigContext();
 
@@ -49,9 +48,7 @@ function ConfigWithOptionalNavigation(props: ConfigProps) {
         items={['automatic', 'hard', 'soft', 'hidden']}
         onValueChange={value => setConfig({ ...config, right: value })}
       />
-      {navigation && (
-        <Button title="Go" onPress={() => navigation.navigate('Test')} />
-      )}
+      {onGoPress && <Button title="Go" onPress={onGoPress} />}
     </>
   );
 }
@@ -60,10 +57,6 @@ export function Config(props: Pick<ConfigProps, 'title'>) {
   return <ConfigWithOptionalNavigation title={props.title} />;
 }
 
-export function ConfigWithNavigation(props: Pick<ConfigProps, 'title'>) {
-  const navigation: NavigationProp<{ Test: undefined }> = useNavigation();
-
-  return (
-    <ConfigWithOptionalNavigation title={props.title} navigation={navigation} />
-  );
+export function ConfigWithNavigation(props: Required<ConfigProps>) {
+  return <ConfigWithOptionalNavigation {...props} />;
 }

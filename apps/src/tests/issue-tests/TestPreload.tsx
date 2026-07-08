@@ -215,10 +215,10 @@ const StackTabB = createNativeStackNavigator();
 
 function TabB() {
   return (
-    <StackTabA.Navigator>
-      <StackTabA.Screen name="TabB_1" component={TabB_1} />
-      <StackTabA.Screen name="TabB_2" component={TabB_2} />
-    </StackTabA.Navigator>
+    <StackTabB.Navigator>
+      <StackTabB.Screen name="TabB_1" component={TabB_1} />
+      <StackTabB.Screen name="TabB_2" component={TabB_2} />
+    </StackTabB.Navigator>
   );
 }
 

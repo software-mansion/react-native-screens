@@ -25,7 +25,7 @@ import {
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -36,7 +36,7 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import {
   createNativeStackNavigator,
-  type NativeStackNavigationProp,
+  type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
 
@@ -57,7 +57,7 @@ type NavigationProps =
 
 interface Config {
   headerTransparent: boolean;
-  headerLargeTitle: boolean;
+  headerLargeTitleEnabled: boolean;
   headerShown: boolean;
   presentation: StackPresentationTypes;
   searchBarPlacement: 'disabled' | SearchBarPlacement;
@@ -146,10 +146,10 @@ function ConfigScreen(props: NavigationProps) {
         }
       />
       <SettingsSwitch
-        label="headerLargeTitle"
-        value={config.headerLargeTitle}
+        label="headerLargeTitleEnabled"
+        value={config.headerLargeTitleEnabled}
         onValueChange={value =>
-          setConfig({ ...config, headerLargeTitle: value })
+          setConfig({ ...config, headerLargeTitleEnabled: value })
         }
       />
       <SettingsSwitch
@@ -333,10 +333,10 @@ function ReactNativeScreensNavigation() {
               translucent:
                 config.headerTransparent ||
                 ((config.searchBarPlacement !== 'disabled' ||
-                  config.headerLargeTitle) &&
+                  config.headerLargeTitleEnabled) &&
                   Platform.OS === 'ios' &&
                   config.headerTransparent !== false),
-              largeTitle: config.headerLargeTitle,
+              largeTitle: config.headerLargeTitleEnabled,
               title: 'Test Screen',
               hideBackButton: true,
               backgroundColor: config.headerTransparent
@@ -369,19 +369,21 @@ type RouteParamList = {
   TestScreen: undefined;
 };
 
-type NavigationProp<ParamList extends ParamListBase> = {
-  navigation: NativeStackNavigationProp<ParamList>;
-};
-
-type StackNavigationProp = NavigationProp<RouteParamList>;
+type StackNavigationProp =
+  | NativeStackScreenProps<RouteParamList, 'ConfigScreen'>
+  | NativeStackScreenProps<RouteParamList, 'TestScreen'>;
 
 const Stack = createNativeStackNavigator<RouteParamList>();
 
-const ConfigScreenComponent = (props: StackNavigationProp) => (
+const ConfigScreenComponent = (
+  props: NativeStackScreenProps<RouteParamList, 'ConfigScreen'>,
+) => (
   <ConfigScreen {...{ type: 'REACT_NAVIGATION', props }} />
 );
 
-const TestScreenComponent = (props: StackNavigationProp) => (
+const TestScreenComponent = (
+  props: NativeStackScreenProps<RouteParamList, 'TestScreen'>,
+) => (
   <ReactNavigationTestScreenWrapper {...{ type: 'REACT_NAVIGATION', props }} />
 );
 
@@ -402,7 +404,7 @@ function ReactNavigationNavigation() {
           options={{
             headerBackVisible: false,
             headerTransparent: config.headerTransparent,
-            headerLargeTitle: config.headerLargeTitle,
+            headerLargeTitleEnabled: config.headerLargeTitleEnabled,
             headerShown: config.headerShown,
             presentation:
               config.presentation === 'push' ? 'card' : config.presentation,
@@ -425,7 +427,7 @@ function ReactNavigationNavigation() {
 function HeaderHeightTest() {
   const [config, setConfig] = useState<Config>({
     headerTransparent: false,
-    headerLargeTitle: false,
+    headerLargeTitleEnabled: false,
     headerShown: true,
     presentation: 'push',
     searchBarPlacement: 'disabled',
@@ -456,7 +458,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function HeaderHeightTabsWrapper() {
+export function HeaderHeightTabsWrapper() {
   const [config, setConfig] = React.useState<Configuration>(
     DEFAULT_GLOBAL_CONFIGURATION,
   );

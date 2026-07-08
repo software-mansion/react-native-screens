@@ -1,5 +1,11 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Platform } from 'react-native';
+import {
+  ColorValue,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Platform,
+} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -58,7 +64,7 @@ const SettingsScreen = ({
   const [headerShown, setHeaderShown] = useState(true);
   const [headerTitleAlign, setHeaderTitleAlign] =
     useState<HeaderTitleAlignment>('left');
-  const [headerLargeTitle, setHeaderLargeTitle] = useState(true);
+  const [headerLargeTitleEnabled, setHeaderLargeTitle] = useState(true);
   const [headerItem, setHeaderItem] = useState<HeaderItemPosition>('right');
   const [headerBackTitle, setHeaderBackTitle] = useState('Back');
   const [headerShadowVisible, setHeaderShadowVisible] = useState(false);
@@ -66,16 +72,16 @@ const SettingsScreen = ({
   const [headerBlurEffect, setHeaderBlurEffect] =
     useState<BlurEffectTypes>('extraLight');
 
-  const square = (props: { tintColor?: string }) => (
-    <Square {...props} color="green" size={20} />
+  const square = ({ tintColor }: { tintColor?: ColorValue | undefined }) => (
+    <Square color={tintColor ?? 'green'} size={20} />
   );
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackVisible: backButtonVisible,
-      headerBackTitleVisible: backButtonVisible, // iOS
-      headerLargeTitle, // iOS
+      headerLargeTitleEnabled, // iOS
       headerBackTitle, // iOS
+      headerBackButtonDisplayMode: backButtonVisible ? 'default' : 'minimal', // iOS
       headerShown,
       headerTitleAlign, // Android
       headerRight: headerItem === 'right' ? square : undefined,
@@ -89,7 +95,7 @@ const SettingsScreen = ({
     navigation,
     headerTitle,
     backButtonVisible,
-    headerLargeTitle,
+    headerLargeTitleEnabled,
     headerBackTitle,
     headerItem,
     headerTitleAlign,
@@ -167,7 +173,7 @@ const SettingsScreen = ({
       <Text style={styles.heading}>iOS only</Text>
       <SettingsSwitch
         label="Header large title"
-        value={headerLargeTitle}
+        value={headerLargeTitleEnabled}
         onValueChange={setHeaderLargeTitle}
       />
       <SettingsInput

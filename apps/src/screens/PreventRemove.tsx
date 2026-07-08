@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TextInput,
-  Platform,
   Alert,
   ScrollView,
   Text,
@@ -25,7 +24,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'bisque' }}>
     <Button
       title="Go to screen"
@@ -43,7 +42,7 @@ const PreventRemoveScreen = ({
   navigation,
 }: {
   navigation: NativeStackNavigationProp<StackParamList>;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [text, setText] = React.useState('');
 
   const hasUnsavedChanges = Boolean(text);
@@ -97,7 +96,7 @@ const PreventRemoveScreen = ({
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator>
     <Stack.Screen
       name="Main"

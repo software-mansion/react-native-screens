@@ -2,16 +2,20 @@ import React from 'react';
 import { View, Modal, Button, TouchableWithoutFeedback } from 'react-native';
 import { useState } from 'react';
 
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
 type AppStackPages = {
   Home: undefined;
   Modal: undefined;
 };
 
-function HomeScreen() {
-  const navigation = useNavigation();
+function HomeScreen({
+  navigation,
+}: NativeStackScreenProps<AppStackPages, 'Home'>) {
   const [visible, setVisible] = useState(false);
 
   return (

@@ -40,6 +40,8 @@ function ScreenComponent() {
 
 function StackComponent(props: { orientation?: ScreenOrientationTypes }) {
   const Stack = createNativeStackNavigator();
+  const screenOptions =
+    props.orientation === undefined ? {} : { orientation: props.orientation };
 
   return (
     <NavigationContainer>
@@ -50,7 +52,7 @@ function StackComponent(props: { orientation?: ScreenOrientationTypes }) {
           component={ScreenComponent}
           options={{
             headerTransparent: true,
-            orientation: props.orientation,
+            ...screenOptions,
           }}
         />
       </Stack.Navigator>
@@ -69,6 +71,17 @@ interface TabsOrientations {
   landscape: TabOrientation;
 }
 
+function renderTabElement(
+  TabElement: React.ComponentType<{ orientation?: ScreenOrientationTypes }>,
+  orientation: ScreenOrientationTypes | undefined,
+) {
+  return orientation === undefined ? (
+    <TabElement />
+  ) : (
+    <TabElement orientation={orientation} />
+  );
+}
+
 function makeTabConfigs(
   tabsOrientations: TabsOrientations,
   TabElement: React.ComponentType<{ orientation?: ScreenOrientationTypes }>,
@@ -76,9 +89,8 @@ function makeTabConfigs(
   return [
     {
       name: 'Auto',
-      Component: tabsOrientations.home.stackScreen
-        ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
-        : TabElement,
+      Component: () =>
+        renderTabElement(TabElement, tabsOrientations.home.stackScreen),
       options: {
         title: 'Auto',
         orientation: tabsOrientations.home.tabScreen,
@@ -106,9 +118,8 @@ function makeTabConfigs(
     },
     {
       name: 'Portrait',
-      Component: () => (
-        <TabElement orientation={tabsOrientations.portrait.stackScreen} />
-      ),
+      Component: () =>
+        renderTabElement(TabElement, tabsOrientations.portrait.stackScreen),
       options: {
         title: 'Portrait',
         ios: {
@@ -136,9 +147,8 @@ function makeTabConfigs(
     },
     {
       name: 'Landscape',
-      Component: () => (
-        <TabElement orientation={tabsOrientations.landscape.stackScreen} />
-      ),
+      Component: () =>
+        renderTabElement(TabElement, tabsOrientations.landscape.stackScreen),
       options: {
         title: 'Landscape',
         orientation: tabsOrientations.landscape.tabScreen,

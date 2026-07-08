@@ -1,15 +1,26 @@
 import React from 'react';
-import { Button, Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import { NavigationContainer as NavigationContainerNative } from '@react-navigation/native';
 
 import {
   createNativeStackNavigator,
-  NativeStackNavigationOptions,
+  NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 
-const NativeStack = createNativeStackNavigator();
+type StackParamList = {
+  screenA: undefined;
+  screenB: undefined;
+  modalA: undefined;
+};
 
-function ScreenA({ navigation }) {
+type ScreenProps<T extends keyof StackParamList> = NativeStackScreenProps<
+  StackParamList,
+  T
+>;
+
+const NativeStack = createNativeStackNavigator<StackParamList>();
+
+function ScreenA({ navigation }: ScreenProps<'screenA'>) {
   return (
     <View
       style={{
@@ -29,7 +40,7 @@ function ScreenA({ navigation }) {
   );
 }
 
-function ScreenB({ navigation }) {
+function ScreenB({ navigation }: ScreenProps<'screenB'>) {
   return (
     <View
       style={{
@@ -47,9 +58,7 @@ function ScreenB({ navigation }) {
   );
 }
 
-type Props = {};
-
-function ModalA(props: Props) {
+function ModalA({ navigation }: ScreenProps<'modalA'>) {
   return (
     <View
       style={{
@@ -63,87 +72,40 @@ function ModalA(props: Props) {
         <Text>
           At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
         </Text>
-        <Button title={'pop modal'} onPress={() => props.navigation.pop()} />
+        <Button title={'pop modal'} onPress={() => navigation.pop()} />
       </View>
     </View>
   );
 }
 
-const StackBuilder = (
-  configs: any,
-  groupOptions?: NativeStackNavigationOptions,
-) => {
-  return () => (
-    <NativeStack.Group screenOptions={groupOptions}>
-      {configs.map(config => {
-        const { options, ...anyConfig } = config;
-        const {
-          statusBarStyle,
-          statusBarAnimation,
-          statusBarHidden,
-          ...anyOption
-        } = options || {};
-        return (
-          <NativeStack.Screen
-            key={config.name}
-            {...anyConfig}
-            options={anyOption}
-          />
-        );
-      })}
-    </NativeStack.Group>
-  );
-};
-
-const ScreenGroup = StackBuilder(
-  [
-    {
-      name: 'screenA',
-      component: ScreenA,
-    },
-    {
-      name: 'screenB',
-      component: ScreenB,
-    },
-  ],
-  {
-    // headerShadowVisible: false,
-    headerTintColor: 'black',
-    headerBackTitleVisible: false,
-    gestureEnabled: true,
-    contentStyle: { backgroundColor: 'white' },
-    fullScreenGestureEnabled: true,
-  },
-);
-
-const ModalGroup = StackBuilder(
-  [
-    {
-      name: 'modalA',
-      component: ModalA,
-      // options: { stackAnimation: 'fade' },
-    },
-  ],
-  {
-    headerShown: false,
-    animation: 'fade_from_bottom',
-    presentation: 'containedTransparentModal',
-    fullScreenGestureEnabled: true,
-    animationMatchesGesture: true,
-  },
-);
-
 export default function TestModalPresentation() {
   return (
     <NavigationContainerNative>
       <NativeStack.Navigator>
-        {ScreenGroup()}
-        {ModalGroup()}
+        <NativeStack.Group
+          screenOptions={{
+            // headerShadowVisible: false,
+            headerTintColor: 'black',
+            headerBackButtonDisplayMode: 'minimal',
+            gestureEnabled: true,
+            contentStyle: { backgroundColor: 'white' },
+            fullScreenGestureEnabled: true,
+          }}>
+          <NativeStack.Screen name="screenA" component={ScreenA} />
+          <NativeStack.Screen name="screenB" component={ScreenB} />
+        </NativeStack.Group>
+        <NativeStack.Group
+          screenOptions={{
+            headerShown: false,
+            animation: 'fade_from_bottom',
+            presentation: 'containedTransparentModal',
+            fullScreenGestureEnabled: true,
+            animationMatchesGesture: true,
+          }}>
+          {/* options: { stackAnimation: 'fade' }, */}
+          <NativeStack.Screen name="modalA" component={ModalA} />
+        </NativeStack.Group>
       </NativeStack.Navigator>
     </NavigationContainerNative>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});

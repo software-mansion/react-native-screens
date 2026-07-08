@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 const CardView = () => {
   return <View style={styles.container} />;

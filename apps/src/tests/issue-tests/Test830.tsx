@@ -18,7 +18,7 @@ interface DetailsScreenProps {
 const DetailsScreen = ({
   navigation,
   route,
-}: DetailsScreenProps): JSX.Element => {
+}: DetailsScreenProps): React.JSX.Element => {
   const index = route.params?.index ? route.params?.index : 0;
 
   useLayoutEffect(() => {
@@ -37,9 +37,9 @@ const DetailsScreen = ({
   );
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen name="Details" component={DetailsScreen} />

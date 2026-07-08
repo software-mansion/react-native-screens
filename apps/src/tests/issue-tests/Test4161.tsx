@@ -1,7 +1,10 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {
   TabsContainer,
   type TabRouteConfig,
@@ -10,10 +13,17 @@ import {
 } from '@apps/shared/gamma/containers/tabs';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  First: undefined;
+  NestedTabs: undefined;
+  SecondScreen: undefined;
+};
 
-function FirstScreen() {
-  const navigation = useNavigation<any>();
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function FirstScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'First'>) {
   return (
     <View style={[styles.centered, styles.firstScreen]}>
       <Text style={styles.title}>First stack screen</Text>
@@ -29,8 +39,9 @@ function FirstScreen() {
   );
 }
 
-function SecondScreen() {
-  const navigation = useNavigation<any>();
+function SecondScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'SecondScreen'>) {
   return (
     <SafeAreaView edges={{ bottom: true }}>
       <View style={[styles.centered, styles.firstScreen]}>

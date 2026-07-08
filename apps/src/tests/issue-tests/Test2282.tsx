@@ -1,6 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens';
 import {
   StyleSheet,
@@ -16,6 +19,11 @@ import {
 
 enableScreens(true);
 
+type StackParamList = {
+  Home: undefined;
+  List: undefined;
+};
+
 function Item({ children, ...props }: ViewProps) {
   return (
     <View style={styles.item} {...props}>
@@ -25,7 +33,7 @@ function Item({ children, ...props }: ViewProps) {
   );
 }
 
-function Home({ navigation }: any) {
+function Home({ navigation }: NativeStackScreenProps<StackParamList, 'Home'>) {
   return (
     <View style={styles.container}>
       <Button title="Go to List" onPress={() => navigation.navigate('List')} />
@@ -33,7 +41,7 @@ function Home({ navigation }: any) {
   );
 }
 
-function ListScreen() {
+export function ListScreen() {
   return (
     <View
       style={{ flex: 1, backgroundColor: 'slateblue' }}
@@ -142,7 +150,7 @@ function ExtraNestedFlatlist(props: Partial<FlatListProps<number>>) {
   );
 }
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<StackParamList>();
 
 /**
  * You can use either the App component with `ListScreen` or `ListScreenSimplified`,

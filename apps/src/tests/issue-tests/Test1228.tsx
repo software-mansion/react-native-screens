@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export const FirstScreen = () => {
   const [theme, setTheme] = useState(false);
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation('screen1');
 
   useEffect(() => {
     navigation.setOptions({
@@ -30,7 +30,7 @@ export const FirstScreen = () => {
 
 export const SecondScreen = () => {
   const [theme, setTheme] = useState(false);
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation('screen2');
 
   useEffect(() => {
     navigation.setOptions({

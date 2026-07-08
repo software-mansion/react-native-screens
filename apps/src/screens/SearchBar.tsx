@@ -1,5 +1,10 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  TextInputFocusEventData,
+} from 'react-native';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
@@ -66,7 +71,8 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         // to preserve test's original search bar configuration.
         placement: 'stacked',
         inputType,
-        onChangeText: event => setSearch(event.nativeEvent.text),
+        onChange: (event: NativeSyntheticEvent<TextInputFocusEventData>) =>
+          setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
             message: '[iOS] Cancel button pressed',
@@ -238,7 +244,8 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
         // Added in https://github.com/software-mansion/react-native-screens/pull/3186
         // to preserve test's original search bar configuration.
         placement: 'stacked',
-        onChangeText: event => setSearch(event.nativeEvent.text),
+        onChange: (event: NativeSyntheticEvent<TextInputFocusEventData>) =>
+          setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',
         hideWhenScrolling: false,
@@ -282,7 +289,7 @@ const App = (): React.JSX.Element => (
         name="Search"
         component={SearchScreen}
         options={{
-          headerLargeTitle: true,
+          headerLargeTitleEnabled: true,
         }}
       />
     </Stack.Navigator>

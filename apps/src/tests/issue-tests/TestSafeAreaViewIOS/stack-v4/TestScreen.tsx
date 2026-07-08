@@ -9,7 +9,7 @@ export default function TestScreen({ navigation }: StackNavigationProp) {
 
   useEffect(() => {
     navigation.setOptions({
-      headerLargeTitle: config.headerLargeTitle,
+      headerLargeTitleEnabled: config.headerLargeTitleEnabled,
       headerTransparent: config.headerTransparent,
       headerShown: config.headerShown,
       headerSearchBarOptions:

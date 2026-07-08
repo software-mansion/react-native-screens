@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import {
-  NavigationContainer,
-  NavigationProp,
-  useNavigation,
-} from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { Button, TextInput, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function Home() {
-  const navigation = useNavigation<NavigationProp<{ FormSheet: undefined }>>();
+  const navigation = useNavigation('Home');
   const [text, setText] = useState('Edit me');
 
   return (
@@ -35,7 +31,7 @@ function Home() {
 }
 
 function FormSheet() {
-  const navigation = useNavigation<NavigationProp<{ FormSheet2: undefined }>>();
+  const navigation = useNavigation('FormSheet');
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

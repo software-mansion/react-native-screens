@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { View, StyleSheet, Button } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 
 export const Modal1 = React.memo(() => {
   return <View style={{ flexGrow: 1, backgroundColor: 'red', opacity: 0.7 }} />;
@@ -12,28 +15,35 @@ export const Modal2 = React.memo(() => {
     <View style={{ flexGrow: 1, backgroundColor: 'blue', opacity: 0.7 }} />
   );
 });
-export const MainScreen = React.memo(() => {
-  const navigation = useNavigation();
-  return (
-    <View
-      style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button
-        title={'Open modal 1'}
-        onPress={() => {
-          navigation.navigate('modalScreen-1');
-        }}
-      />
-      <Button
-        title={'Open modal 2'}
-        onPress={() => {
-          navigation.navigate('modalScreen-2');
-        }}
-      />
-    </View>
-  );
-});
+type StackParamList = {
+  main: undefined;
+  'modalScreen-1': undefined;
+  'modalScreen-2': undefined;
+};
 
-const Stack = createNativeStackNavigator();
+export const MainScreen = React.memo(
+  ({ navigation }: NativeStackScreenProps<StackParamList, 'main'>) => {
+    return (
+      <View
+        style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Button
+          title={'Open modal 1'}
+          onPress={() => {
+            navigation.navigate('modalScreen-1');
+          }}
+        />
+        <Button
+          title={'Open modal 2'}
+          onPress={() => {
+            navigation.navigate('modalScreen-2');
+          }}
+        />
+      </View>
+    );
+  },
+);
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function App() {
   return (

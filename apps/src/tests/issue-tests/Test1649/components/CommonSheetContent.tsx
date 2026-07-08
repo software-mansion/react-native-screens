@@ -12,13 +12,14 @@ import {
   largestUndimmedDetentAtom,
   selectedDetentIndexAtom,
 } from '../state';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavProp } from '../types';
 import GestureHandlerButton from './GestureHandlerButton';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function CommonSheetContent(): React.JSX.Element {
-  const navigation: NativeStackNavigationProp<ParamListBase> = useNavigation();
-
+export default function CommonSheetContent({
+  navigation,
+}: {
+  navigation: NavProp;
+}): React.JSX.Element {
   const [radius, setRadius] = jotai.useAtom(cornerRadiusAtom);
   const [detents, _] = jotai.useAtom(allowedDetentsAtom);
   const [largestUndimmedDetent, setLargestUndimmedDetent] = jotai.useAtom(
@@ -100,8 +101,11 @@ export default function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Change detent level"
           onPress={() => {
+            const selectedDetent = Array.isArray(detents)
+              ? detents[selectedDetentIndex]
+              : 0;
             const newDetentLevel = nextDetentLevel(
-              detents[selectedDetentIndex],
+              selectedDetent ?? 0,
             );
             setSelectedDetentIndex(newDetentLevel);
             // navigation.setOptions({
@@ -113,10 +117,14 @@ export default function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Change largest undimmed detent"
           onPress={() => {
-            const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
+            const newDetentLevel = nextDetentLevel(
+              typeof largestUndimmedDetent === 'number'
+                ? largestUndimmedDetent
+                : 0,
+            );
             setLargestUndimmedDetent(newDetentLevel);
             navigation.setOptions({
-              sheetLargestUndimmedDetent: newDetentLevel,
+              sheetLargestUndimmedDetentIndex: newDetentLevel,
             });
           }}
         />

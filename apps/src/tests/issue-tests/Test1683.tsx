@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { View, StyleSheet, Button, useColorScheme } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 import {
   NavigationContainer,
   DarkTheme,
@@ -11,10 +10,12 @@ import React, { createContext, useContext, useState } from 'react';
 
 const RootStack = createNativeStackNavigator();
 
-const ThemeContext = createContext({
+const ThemeContext = createContext<{
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+}>({
   theme: DefaultTheme,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setTheme: (theme: Theme) => {},
+  setTheme: () => {},
 });
 
 const HomeScreen = () => {
@@ -60,7 +61,7 @@ const Navigator = () => {
 };
 
 export default function App() {
-  const [theme, setTheme] = useState(DefaultTheme);
+  const [theme, setTheme] = useState<Theme>(DefaultTheme);
   return (
     <ThemeContext.Provider value={{ theme: theme, setTheme: setTheme }}>
       <Navigator />

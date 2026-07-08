@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,7 +69,7 @@ function TitleTextComponent({
   );
 }
 
-const headerOptions = {
+const headerOptions: NativeStackNavigationOptions = {
   headerLeft: () => <HeaderLeftSmall />,
   // headerRight: () => (
   //   <View style={{ width: 120, height: 20, backgroundColor: 'goldenrod', opacity: 0.4, flexDirection: 'row' }}>

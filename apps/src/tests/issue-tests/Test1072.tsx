@@ -81,7 +81,7 @@ function generatePhotos(
   amount: number,
   width: number,
   height: number,
-): JSX.Element[] {
+): React.JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {
     const uri = `https://picsum.photos/id/${

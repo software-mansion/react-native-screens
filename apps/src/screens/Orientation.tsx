@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, I18nManager } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   createNativeStackNavigator,

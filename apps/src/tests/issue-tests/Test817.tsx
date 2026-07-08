@@ -10,7 +10,7 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   return (
     <NavigationContainer>
       <Stack.Navigator

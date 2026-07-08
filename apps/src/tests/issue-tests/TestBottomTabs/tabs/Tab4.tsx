@@ -69,7 +69,7 @@ export function Tab4() {
         <Stack.Screen
           name="Screen2"
           component={Screen2}
-          options={{ headerLargeTitle: true }}
+          options={{ headerLargeTitleEnabled: true }}
         />
         <Stack.Screen
           name="Screen3"

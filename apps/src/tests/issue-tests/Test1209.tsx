@@ -1,18 +1,36 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationProp,
+  NavigatorScreenParams,
+  RouteProp,
+} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
 
-const Tab = createBottomTabNavigator();
+type StackParamList = {
+  Screen1: undefined;
+  Screen2: undefined;
+  Screen3: undefined;
+};
+
+const Stack = createStackNavigator<StackParamList>();
+
+type TabParamList = {
+  TabA: NavigatorScreenParams<typeof Stack> | undefined;
+  TabB: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabParamList>();
 
 function Screen1({
   navigation,
 }: {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: StackNavigationProp<StackParamList, 'Screen1'>;
 }) {
   return (
     <View
@@ -34,7 +52,7 @@ function Screen1({
 function Screen2({
   navigation,
 }: {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: StackNavigationProp<StackParamList, 'Screen2'>;
 }) {
   return (
     <View
@@ -75,8 +93,6 @@ function ScreenB() {
   );
 }
 
-const Stack = createStackNavigator();
-
 function TabAStack() {
   return (
     <Stack.Navigator initialRouteName="Screen1">
@@ -88,7 +104,8 @@ function TabAStack() {
 }
 
 export const maybePopToTop = (
-  navigation: StackNavigationProp<ParamListBase>,
+  navigation: NavigationProp<TabParamList>,
+  tabName: keyof TabParamList,
 ) => {
   const state = navigation.getState().routes;
 
@@ -98,17 +115,21 @@ export const maybePopToTop = (
     stackWithState.length &&
     stackWithState.some(route => route.state?.index !== 0)
   ) {
-    navigation.popToTop();
+    if (tabName === 'TabA') {
+      navigation.navigate('TabA', { screen: 'Screen1' });
+    }
   }
 };
 
 const listeners = ({
   navigation,
+  route,
 }: {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NavigationProp<TabParamList>;
+  route: RouteProp<TabParamList, keyof TabParamList>;
 }) => ({
   tabPress: () => {
-    maybePopToTop(navigation);
+    maybePopToTop(navigation, route.name);
   },
 });
 

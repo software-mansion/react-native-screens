@@ -7,10 +7,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
-  NativeStackNavigationProp,
+  type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {
   GestureHandlerRootView,
@@ -19,13 +19,16 @@ import {
   TapGestureHandler,
 } from 'react-native-gesture-handler';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  First: undefined;
+  Second: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 function First({
   navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+}: NativeStackScreenProps<StackParamList, 'First'>) {
   return (
     <View
       style={{
@@ -74,7 +77,7 @@ export default function App() {
 
 // components
 
-function Post({ onPress }: { onPress?: () => void }) {
+export function Post({ onPress }: { onPress?: () => void }) {
   const [width] = useState(Math.round(Dimensions.get('screen').width));
 
   return (
@@ -96,7 +99,7 @@ function generatePhotos(
   amount: number,
   width: number,
   height: number,
-): JSX.Element[] {
+): React.JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {
     const uri = `https://picsum.photos/id/${

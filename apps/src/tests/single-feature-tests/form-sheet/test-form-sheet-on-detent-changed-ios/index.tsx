@@ -11,6 +11,8 @@ const scenarioDescription: ScenarioDescription = {
   details:
     'Allows testing the onDetentChanged event, verifying that the correct detent index is reported when swiping.',
   platforms: ['ios'],
+  e2eCoverage: 'tbd',
+  smokeTest: false,
 };
 
 function TestFormSheetOnDetentChanged() {

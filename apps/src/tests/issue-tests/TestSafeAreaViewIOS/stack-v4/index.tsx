@@ -36,7 +36,7 @@ export default function StackV4SAVExample({
 }) {
   const [config, setConfig] = useState<StackV4SAVExampleConfig>({
     headerTransparent: false,
-    headerLargeTitle: false,
+    headerLargeTitleEnabled: false,
     headerShown: true,
     headerSearchBar: 'disabled',
     content: 'regularView',
@@ -66,7 +66,7 @@ export default function StackV4SAVExample({
               options={
                 {
                   // headerTransparent: true,
-                  // headerLargeTitle: true,
+                  // headerLargeTitleEnabled: true,
                 }
               }
             />

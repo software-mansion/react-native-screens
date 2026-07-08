@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 
 import { sheetInitialOptions } from './state';
 
@@ -11,14 +11,25 @@ import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
 import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { NavPropObj, StackParamList } from './types';
 
 export type RouteDescriptor = {
-  name: string;
-  component: (props: any) => React.JSX.Element;
+  name: keyof StackParamList;
+  component: (props: NavPropObj) => ReactElement;
   options?: NativeStackNavigationOptions;
 };
 
-const routes: Record<string, RouteDescriptor> = {
+type RouteKey =
+  | 'First'
+  | 'Second'
+  | 'Third'
+  | 'Sheet'
+  | 'Modal'
+  | 'SheetWithScrollView'
+  | 'SheetWithTextInput'
+  | 'PushWithScrollView';
+
+const routes: { [Key in RouteKey]: RouteDescriptor } = {
   First: {
     name: 'First',
     component: Home,

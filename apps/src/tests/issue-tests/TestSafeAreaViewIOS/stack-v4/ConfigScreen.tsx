@@ -53,10 +53,10 @@ export default function ConfigScreen({ navigation }: StackNavigationProp) {
         }
       />
       <SettingsSwitch
-        label="headerLargeTitle"
-        value={config.headerLargeTitle}
+        label="headerLargeTitleEnabled"
+        value={config.headerLargeTitleEnabled}
         onValueChange={value =>
-          setConfig({ ...config, headerLargeTitle: value })
+          setConfig({ ...config, headerLargeTitleEnabled: value })
         }
       />
       <SettingsSwitch
