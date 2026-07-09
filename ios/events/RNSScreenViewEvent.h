@@ -6,7 +6,7 @@
 
 @interface RNSScreenViewEvent : NSObject
 #if defined(__cplusplus)
- <RCTEvent>
+                                <RCTEvent>
 #endif // defined(__cplusplus)
 
 - (instancetype)initWithEventName:(NSString *)eventName

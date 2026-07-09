@@ -3,10 +3,10 @@
 #import <UIKit/UIKit.h>
 
 #if defined(__cplusplus)
-#import <React/RCTViewComponentView.h>
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <React/RCTComponent.h>
+#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #endif
 
 #import "RNSDefines.h"
