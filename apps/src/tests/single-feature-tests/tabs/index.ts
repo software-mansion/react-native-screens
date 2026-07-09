@@ -4,7 +4,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 // scenario group consumed by the selection menu.
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
-import TestTabsStaleStateUpdateRejection from './test-tabs-stale-update-rejection';
+import TestTabsStaleUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
@@ -24,7 +24,7 @@ import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
-import TestTabsBottomAccessory from './test-tabs-bottom-accessory-layout-ios';
+import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
@@ -33,7 +33,7 @@ import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-ex
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
 export { default as TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
-export { default as TestTabsStaleStateUpdateRejection } from './test-tabs-stale-update-rejection';
+export { default as TestTabsStaleUpdateRejection } from './test-tabs-stale-update-rejection';
 export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
 export { default as TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
 export { default as TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
@@ -53,7 +53,7 @@ export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
-export { default as TestTabsBottomAccessory } from './test-tabs-bottom-accessory-layout-ios';
+export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
 export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
@@ -61,7 +61,7 @@ export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-
 const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
-  TestTabsStaleStateUpdateRejection,
+  TestTabsStaleUpdateRejection,
   TestTabsAppearanceDefinedBySelectedTab,
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
@@ -81,7 +81,7 @@ const scenarios = {
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
-  TestTabsBottomAccessory,
+  TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
   TestTabsScreenOrientation,
   TestTabsTabBarExperimentalUserInterfaceStyle,
