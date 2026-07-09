@@ -142,7 +142,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 3.  While **Image** tab is selected, use the Tab key on keyboard to
 switch focus to the **DrawableResource** tab.
 
-- [ ] Focused tab title is dark blue while selected tab title
+- [ ] Focused tab icon is dark blue while selected tab icon
 remains red.
 
 ---
