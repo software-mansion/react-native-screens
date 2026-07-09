@@ -7,6 +7,7 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.gamma.modals.formsheet.FormSheetContentWrapperViewManager
 import com.swmansion.rnscreens.gamma.modals.formsheet.FormSheetHostViewManager
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigViewManager
@@ -61,6 +62,7 @@ class RNScreensPackage : BaseReactPackage() {
             StackHeaderConfigViewManager(),
             StackHeaderSubviewViewManager(),
             FormSheetHostViewManager(),
+            FormSheetContentWrapperViewManager(),
         )
     }
 

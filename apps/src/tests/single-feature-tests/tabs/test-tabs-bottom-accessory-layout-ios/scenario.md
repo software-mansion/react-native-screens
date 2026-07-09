@@ -12,7 +12,16 @@ with tabBarMinimizeBehavior.
 
 ## E2E test
 
-Incomplete: Covers most of manual scenario steps only for iPhone.
+Incomplete: Covers most of the manual scenario steps on iPhone, plus a
+subset on iPad.
+
+iPhone: Covers the initial load, all five content variants, accessory
+persistence across tab switches, and the `regular`/`inline` layout
+transitions during tab bar minimize (ScrollDown and ScrollUp tabs).
+
+iPad: Covers the full-size app case only (step 20) - the initial load and all
+five content variants, asserting the accessory renders and stays anchored to
+the bottom of the screen.
 
 Not covered:
 
@@ -20,7 +29,9 @@ Not covered:
 - Content verification for the last two variants.
 - Variant selection visual check (the blue border is not automated).
 - Extending the tab bar using the collapsed tab bar state.
-- Test on iPad as it require app window resizing not supported by Detox.
+- iPad compact-width size class cases (steps 1-19): the `inline` effect and
+  tab bar minimize require resizing the window to compact width, which Detox
+  does not support.
 
 ## Prerequisites
 
