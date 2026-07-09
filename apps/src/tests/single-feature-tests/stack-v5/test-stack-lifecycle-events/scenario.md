@@ -12,7 +12,7 @@ nested stack.
 
 ## E2E test
 
-- **TBD:** E2E test has to be implemented in future.
+- **TBD:** E2E test has to be implemented in the future.
 
 ## Prerequisites
 
