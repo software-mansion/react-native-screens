@@ -32,6 +32,7 @@
                      title:(nullable NSString *)title
            singleSelection:(BOOL)singleSelection
              displayInline:(BOOL)displayInline
+          displayAsPalette:(BOOL)displayAsPalette
                   children:(NSArray<id<RNSStackHeaderMenuElement>> *)children
                       icon:(nullable RNSStackHeaderIconData *)icon
 {
@@ -40,6 +41,7 @@
     _title = [title copy];
     _singleSelection = singleSelection;
     _displayInline = displayInline;
+    _displayAsPalette = displayAsPalette;
     _children = [children copy];
     _icon = icon;
   }

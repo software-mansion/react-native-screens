@@ -4,8 +4,15 @@
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-static NSSet<NSString *> *const kRNSAllowedMenuKeys =
-    [NSSet setWithObjects:@"id", @"type", @"title", @"children", @"singleSelection", @"displayInline", @"icon", nil];
+static NSSet<NSString *> *const kRNSAllowedMenuKeys = [NSSet setWithObjects:@"id",
+                                                                            @"type",
+                                                                            @"title",
+                                                                            @"children",
+                                                                            @"singleSelection",
+                                                                            @"displayInline",
+                                                                            @"displayAsPalette",
+                                                                            @"icon",
+                                                                            nil];
 static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
     setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", @"icon", nil];
 
@@ -37,6 +44,7 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
 
   BOOL singleSelection = [self boolForKey:@"singleSelection" in:dict];
   BOOL displayInline = [self boolForKey:@"displayInline" in:dict];
+  BOOL displayAsPalette = [self boolForKey:@"displayAsPalette" in:dict];
 
   RNSStackHeaderIconData *icon = [RNSStackHeaderIconMapper iconFromDictionary:dict[@"icon"]];
 
@@ -44,6 +52,7 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
                                               title:[self stringForKey:@"title" in:dict]
                                     singleSelection:singleSelection
                                       displayInline:displayInline
+                                   displayAsPalette:displayAsPalette
                                            children:children
                                                icon:icon];
 }

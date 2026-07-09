@@ -50,6 +50,9 @@
   if (data.displayInline) {
     options |= UIMenuOptionsDisplayInline;
   }
+  if (data.displayAsPalette) {
+    options |= UIMenuOptionsDisplayAsPalette;
+  }
 
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray arrayWithCapacity:data.children.count];
   for (id<RNSStackHeaderMenuElement> child in data.children) {

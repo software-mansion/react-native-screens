@@ -183,6 +183,17 @@ export interface StackHeaderMenuIOS {
    */
   displayInline?: boolean | undefined;
   /**
+   * @summary Displays the menu as a row of compact items (palette).
+   *
+   * @description
+   * When enabled, the menu children are rendered as a horizontal palette
+   * row instead of a vertical list. Best suited for menus with icon-only items.
+   *
+   * @default false
+   * @platform ios
+   */
+  displayAsPalette?: boolean | undefined;
+  /**
    * @summary Child elements of this menu.
    *
    * @description

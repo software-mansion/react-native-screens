@@ -16,7 +16,9 @@ TBD
 
 ## Steps on iPhone
 
-1. Ensure both toggles for display mode are set to off
+### displayInline
+
+1. Ensure both toggles are set to `false`
 2. Tap the ellipsis (Options) button in the header
   - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
 3. Tap Sort By
@@ -39,3 +41,21 @@ TBD
 14. Toggle "displayInline (Rating)" to `true` again
 15. Tap the ellipsis button
   - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated, menu separator, Delete, all inline
+
+### displayAsPalette
+
+1. Ensure both toggles are set to `false`
+2. Tap the Palette button in the header
+  - [ ] Menu shows: Text Style as a collapsed submenu, Reset Formatting
+3. Tap Text Style
+  - [ ] A nested submenu opens with: Bold, Italic, Underline, Strikethrough as a (regular) vertical list
+4. Dismiss the menu
+5. Toggle "displayAsPalette (Text Style)" to `true`
+6. Tap the Palette button
+  - [ ] Menu still shows: Text Style as a collapsed submenu, Reset Formatting
+7. Tap Text Style
+  - [ ] Menu shows a horizontal palette row with Bold, Italic, Underline, Strikethrough icons
+8. Dismiss the menu
+9. Toggle "displayInline (Text Style)" to `true`
+10. Tap the Palette button
+  - [ ] Menu shows: Text Style as a horizontal palette row with Bold, Italic, Underline, Strikethrough icons, and Reset Formatting below
