@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '../e2e-utils';
+import { UI_REFRESH_CONTROL_TYPE } from '../native-type-names';
 
 describe('Test640', () => {
   beforeAll(async () => {
@@ -17,7 +18,7 @@ describe('Test640', () => {
     if (device.getPlatform() === 'android') {
       await expect(element(by.id('modal-refresh-control'))).toBeVisible();
     } else {
-      await expect(element(by.type('UIRefreshControl'))).toBeVisible();
+      await expect(element(by.type(UI_REFRESH_CONTROL_TYPE))).toBeVisible();
     }
 
     await expect(element(by.id('home-button-go-to-modal'))).not.toBeVisible();

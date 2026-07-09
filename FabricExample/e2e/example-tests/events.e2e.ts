@@ -1,4 +1,8 @@
 import { device, expect, element, by } from 'detox';
+import {
+  UI_BUTTON_BAR_BUTTON_TYPE,
+  ANDROID_APP_COMPAT_IMAGE_BUTTON_TYPE,
+} from '../native-type-names';
 
 const pressBack = async () => {
   if (device.getPlatform() === 'android') {
@@ -73,11 +77,9 @@ describe('Events', () => {
 
     await element(by.id('events-go-to-chats')).tap();
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).tap();
+      await element(by.type(UI_BUTTON_BAR_BUTTON_TYPE)).tap();
     } else {
-      await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton'),
-      ).tap();
+      await element(by.type(ANDROID_APP_COMPAT_IMAGE_BUTTON_TYPE)).tap();
     }
 
     await awaitClassicalEventBehavior();
@@ -92,11 +94,9 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).tap();
+      await element(by.type(UI_BUTTON_BAR_BUTTON_TYPE)).tap();
     } else {
-      await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton'),
-      ).tap();
+      await element(by.type(ANDROID_APP_COMPAT_IMAGE_BUTTON_TYPE)).tap();
     }
 
     await awaitClassicalEventBehavior();
@@ -139,11 +139,9 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).tap();
+      await element(by.type(UI_BUTTON_BAR_BUTTON_TYPE)).tap();
     } else {
-      await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton'),
-      ).tap();
+      await element(by.type(ANDROID_APP_COMPAT_IMAGE_BUTTON_TYPE)).tap();
     }
 
     await awaitClassicalEventBehavior();

@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { UI_BUTTON_BAR_BUTTON_TYPE } from '../native-type-names';
 
 // issue related to iOS native back button
 describeIfiOS('Test654', () => {
@@ -14,7 +15,7 @@ describeIfiOS('Test654', () => {
 
   it('back button should be visible on Second screen', async () => {
     await element(by.id('first-button-go-to-second')).tap();
-    await expect(element(by.type('_UIButtonBarButton'))).toBeVisible(100);
+    await expect(element(by.type(UI_BUTTON_BAR_BUTTON_TYPE))).toBeVisible(100);
     await expect(element(by.id('chevron.backward'))).toBeVisible(100);
   });
 });

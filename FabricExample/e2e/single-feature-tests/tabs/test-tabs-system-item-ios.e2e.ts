@@ -3,6 +3,12 @@ import { device, expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import { selectSingleFeatureTestsScreen, describeIfiOS } from '../../e2e-utils';
 import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+import {
+  UI_TAB_BAR_TYPE,
+  UI_TAB_BAR_BUTTON_LABEL_TYPE,
+  UI_TAB_BAR_BUTTON_TYPE_IOS26,
+  UI_TAB_BAR_BUTTON_TYPE_LEGACY,
+} from '../../native-type-names';
 const {
   getIOSVersionNumber,
 } = require('../../../../scripts/e2e/ios-devices.js');
@@ -40,8 +46,8 @@ function isIOSVersionAtLeast(version: string): boolean {
 }
 
 const tabBarButtonType = isIOSVersionAtLeast('26.0')
-  ? '_UITabButton'
-  : 'UITabBarButton';
+  ? UI_TAB_BAR_BUTTON_TYPE_IOS26
+  : UI_TAB_BAR_BUTTON_TYPE_LEGACY;
 
 describeIfiOS('Tab Bar System Item', () => {
   beforeAll(async () => {
@@ -50,7 +56,7 @@ describeIfiOS('Tab Bar System Item', () => {
   });
   describe('Static System Item tab', () => {
     it('should display the tab bar with system item titles and icons', async () => {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
       await expect(element(by.text('Static System Item'))).toBeVisible();
       await expect(element(by.id('bookmark-tab-item'))).toHaveLabel(
         'Bookmarks',
@@ -244,7 +250,7 @@ describeIfiOS('Tab Bar System Item', () => {
         ).toExist();
       } else {
         await expect(
-          element(by.label('').and(by.type('UITabBarButtonLabel'))),
+          element(by.label('').and(by.type(UI_TAB_BAR_BUTTON_LABEL_TYPE))),
         ).toExist();
       }
 
@@ -499,7 +505,7 @@ describeIfiOS('Tab Bar System Item', () => {
         ).not.toExist();
       } else {
         await expect(
-          element(by.label('').and(by.type('UITabBarButtonLabel'))),
+          element(by.label('').and(by.type(UI_TAB_BAR_BUTTON_LABEL_TYPE))),
         ).toExist();
       }
 

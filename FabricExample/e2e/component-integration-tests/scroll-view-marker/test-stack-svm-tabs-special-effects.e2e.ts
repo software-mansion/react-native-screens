@@ -5,6 +5,7 @@ import {
   forceSelectTabByLabel,
   describeIfAndroid,
 } from '../../e2e-utils';
+import { UI_TAB_BAR_TYPE } from '../../native-type-names';
 
 describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting', () => {
   beforeAll(async () => {
@@ -18,7 +19,7 @@ describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting
   it('should display tab bar and Home tab with scrollable view on load', async () => {
     await expect(element(by.id('home-scrollview'))).toBeVisible();
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
     } else {
       await expect(element(by.id('home-tab-item'))).toBeVisible();
       await expect(element(by.id('stack-tab-item'))).toBeVisible();

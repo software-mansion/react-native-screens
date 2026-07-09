@@ -4,6 +4,7 @@ import {
   selectSingleFeatureTestsScreen,
   forceSelectTabByLabel,
 } from '../../e2e-utils';
+import { UI_TAB_BAR_TYPE } from '../../native-type-names';
 
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
@@ -18,7 +19,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await expect(element(by.id('tab1-scrollview'))).toBeVisible();
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
     } else {
       await expect(element(by.id('tab1-tab-item'))).toBeVisible();
       await expect(element(by.id('tab2-tab-item'))).toBeVisible();

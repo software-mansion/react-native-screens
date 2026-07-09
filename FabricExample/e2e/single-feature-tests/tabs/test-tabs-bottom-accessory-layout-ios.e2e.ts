@@ -8,7 +8,10 @@ import {
   getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
-import { RNS_TABS_BOTTOM_ACCESSORY_TYPE } from '../../native-type-names';
+import {
+  RNS_TABS_BOTTOM_ACCESSORY_TYPE,
+  UI_TAB_BAR_TYPE,
+} from '../../native-type-names';
 
 const bottomAccessoryElement = (testID: string) =>
   element(
@@ -25,7 +28,7 @@ const getBottomAccessoryAttributes = () =>
 const getExtendedTabBarAttributes = async () =>
   getElementAttributes({
     by: 'type',
-    value: 'UITabBar',
+    value: UI_TAB_BAR_TYPE,
     index: 0,
   }) as Promise<IosElementAttributes>;
 

@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE } from '../native-type-names';
 
 // headerLargeTitle is supported only on iOS
 describeIfiOS('Test645', () => {
@@ -14,7 +15,9 @@ describeIfiOS('Test645', () => {
   it('header large title "Main" should be fully visible', async () => {
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -23,7 +26,9 @@ describeIfiOS('Test645', () => {
     await element(by.id('main-scrollview')).scroll(200, 'down', NaN, 0.85);
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).not.toBeVisible();
   });
@@ -32,7 +37,9 @@ describeIfiOS('Test645', () => {
     await element(by.id('main-scrollview')).scroll(250, 'up', NaN, 0.85);
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -43,7 +50,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Details')
-          .withAncestor(by.type('_UINavigationBarLargeTitleView')),
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -54,7 +61,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Settings')
-          .withAncestor(by.type('_UINavigationBarLargeTitleView')),
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -63,7 +70,9 @@ describeIfiOS('Test645', () => {
     await element(by.id('settings-button-go-to-home')).tap();
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -72,7 +81,9 @@ describeIfiOS('Test645', () => {
     await element(by.id('home-button-go-to-second')).tap();
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
@@ -81,7 +92,9 @@ describeIfiOS('Test645', () => {
     await element(by.id('second-button-go-back')).tap();
     await expect(
       element(
-        by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')),
+        by
+          .text('Main')
+          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
       ),
     ).toBeVisible(100);
   });
