@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
            oldState:(facebook::react::State::Shared const &)oldState;
 #endif
 
-- (void)updateShadowStateWithBounds:(CGRect)bounds origin:(CGPoint)origin;
+- (void)updateShadowStateWithBounds:(CGRect)bounds;
 
 @end
 
