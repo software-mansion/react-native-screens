@@ -30,8 +30,6 @@ swipe) steps may need platform-specific handling.
 
 ### Android launch
 
-- This is an **Android-only** feature (no iOS implementation); do not run
-  this screen on iOS.
 - To test the native-back / gesture-back flows, run the screen **directly**
   by editing [apps/App.tsx](../../../../../App.tsx): import and render
   `TestStackPreventNativeDismissNestedStack` as the root component instead of
@@ -54,6 +52,7 @@ swipe) steps may need platform-specific handling.
 
 ## Note
 
+- iOS does not yet support `preventNativeDismiss` for stack v5 - it is unimplemented.
 - Each `preventNativeDismiss` screen fires its **own** toast text, so you can
   tell which screen intercepted: `Native dismiss prevented - B`, `Native
   dismiss prevented - NestedHome`, `Native dismiss prevented - NestedB`.
