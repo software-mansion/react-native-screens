@@ -29,4 +29,4 @@
 
 @end
 
-#endif //defined(__cplusplus)
+#endif // defined(__cplusplus)

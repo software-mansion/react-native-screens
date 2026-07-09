@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 @class RCTImageLoader;
 #endif // defined(__cplusplus)
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabBarAppearanceCoordinator : NSObject
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 /**
  * Applies the tab bar appearance props to the tab bar and respective tab bar items, basing on information contained in
  * provided params.

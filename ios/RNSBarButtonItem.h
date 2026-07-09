@@ -2,7 +2,7 @@
 
 #if defined(__cplusplus)
 #import <React/RCTImageLoader.h>
-#endif //defined(__cplusplus)
+#endif // defined(__cplusplus)
 #import <UIKit/UIKit.h>
 
 typedef void (^RNSBarButtonItemAction)(NSString *buttonId);
@@ -15,6 +15,6 @@ typedef void (^RNSBarButtonMenuItemAction)(NSString *menuId);
                         action:(RNSBarButtonItemAction)action
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
                    imageLoader:(RCTImageLoader *)imageLoader;
-#endif //defined(__cplusplus)
+#endif // defined(__cplusplus)
 
 @end
