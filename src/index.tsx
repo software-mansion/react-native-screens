@@ -62,8 +62,5 @@ export { compatibilityFlags, featureFlags } from './flags';
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
 
-/**
- * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
- */
 export * from './components/tabs';
 export type * from './components/shared/types';
