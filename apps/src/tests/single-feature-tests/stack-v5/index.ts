@@ -4,6 +4,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 // scenario group consumed by the selection menu.
 import TestStackPreventNativeDismissSingleStack from './prevent-native-dismiss-single-stack';
 import TestStackPreventNativeDismissNestedStack from './prevent-native-dismiss-nested-stack';
+import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-animation-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
@@ -24,6 +25,7 @@ import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updat
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestStackPreventNativeDismissSingleStack } from './prevent-native-dismiss-single-stack';
 export { default as TestStackPreventNativeDismissNestedStack } from './prevent-native-dismiss-nested-stack';
+export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
 export { default as TestStackAnimationAndroid } from './test-animation-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
@@ -41,6 +43,7 @@ export { default as TestStackToolbarNestedMenu } from './test-stack-toolbar-nest
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
+  TestStackLifecycleEvents,
   TestStackAnimationAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
