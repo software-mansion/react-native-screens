@@ -195,6 +195,8 @@ export interface FormSheetProps {
    * @summary Called when the sheet settles at a new detent.
    *
    * Provides the `index` of the newly selected detent from the `detents` array.
+   *
+   * @platform android, ios
    */
   onDetentChanged?:
     | FormSheetEventHandler<FormSheetDetentChangedEvent>
