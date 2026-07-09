@@ -32,6 +32,10 @@ internal class FormSheetBehaviorController(
             ) = Unit
         }
 
+    init {
+        behavior.isHideable = true
+    }
+
     internal fun setup() {
         behavior.addBottomSheetCallback(bottomSheetCallback)
     }
