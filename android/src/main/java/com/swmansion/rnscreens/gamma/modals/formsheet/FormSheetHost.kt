@@ -32,15 +32,11 @@ class FormSheetHost(
         FormSheetDialogManager(
             context = context,
             contentView = sheetContentView,
-            onDismissRequest = ::onNativeDismiss,
+            onDismissRequest = { eventEmitter.emitOnNativeDismissEvent() },
         )
 
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
-    }
-
-    internal fun onNativeDismiss() {
-        eventEmitter.emitOnNativeDismissEvent()
     }
 
     internal fun mountReactSubviewAt(
@@ -82,6 +78,7 @@ class FormSheetHost(
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
         eventEmitter = FormSheetHostEventEmitter(reactContext, id)
+        dialogManager.appearanceEventEmitter = eventEmitter
     }
 
     internal fun onAfterUpdateTransaction() {

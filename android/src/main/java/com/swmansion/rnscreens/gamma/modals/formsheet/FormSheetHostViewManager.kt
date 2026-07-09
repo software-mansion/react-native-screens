@@ -128,6 +128,10 @@ class FormSheetHostViewManager :
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetNativeDismissEvent),
             makeEventRegistrationInfo(FormSheetSyncFlushEvent),
+            makeEventRegistrationInfo(FormSheetWillAppearEvent),
+            makeEventRegistrationInfo(FormSheetDidAppearEvent),
+            makeEventRegistrationInfo(FormSheetWillDisappearEvent),
+            makeEventRegistrationInfo(FormSheetDidDisappearEvent),
         )
 
     override fun updateState(

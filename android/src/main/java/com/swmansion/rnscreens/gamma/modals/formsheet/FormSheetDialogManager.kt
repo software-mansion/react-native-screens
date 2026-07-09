@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
+import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
@@ -52,6 +53,8 @@ class FormSheetDialogManager(
             dimmingManager = dimmingManager,
             onNativeDismiss = onDismissRequest,
         )
+
+    internal var appearanceEventEmitter: ViewAppearanceEventEmitter? by presentationManager::appearanceEventEmitter
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
         get() = dimensionsCoordinator
