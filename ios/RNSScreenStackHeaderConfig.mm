@@ -175,8 +175,9 @@ RNS_IGNORE_SUPER_CALL_END
   react::EdgeInsets convertedEdgeInsets{
       .left = edgeInsets.leading, .top = edgeInsets.top, .right = edgeInsets.trailing, .bottom = edgeInsets.bottom};
   react::Size convertedSize = RCTSizeFromCGSize(size);
-  auto newState =
-      react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets, RCTPointFromCGPoint(frameOrigin));
+  react::Point convertedOrigin = RCTPointFromCGPoint(frameOrigin);
+
+  auto newState = react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets, convertedOrigin);
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
