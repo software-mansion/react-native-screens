@@ -16,7 +16,7 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 ## Note
 
-- Behavior is only observable on iOS 26+; on older versions the tab bar should remain visible regardless of setting.
+- Behavior is only observable on iOS 26+; on older versions the tab bar should remains visible regardless of setting.
 - Scrolling **down** means moving content upward (revealing items below); scrolling **up** means moving content downward (revealing items above).
 - For test on iPad remember to resize app to state where down tab bar is display.
 - Tab bar minimize behavior should be updated immediately after each change with no crash, layout freeze, or visual glitch.
