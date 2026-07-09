@@ -22,6 +22,7 @@ TBD: Planned, but will be implemented separately.
 - On iOS 26, the corner radius primarily affects **all** corners of the bottom sheet.
 - On iPad, because the FormSheet is presented as a floating panel, the corner radius will affect **all four** corners.
 - On Android, rounded-corner clipping is only applied on API level 33+.
+- On Android, dynamically updating the corner radius while the sheet is fully expanded to the top of the screen will cause the corners to revert to a flat shape. This is a known limitation of the underlying Material component, which enforces flat corners as a reaction to the EXPANDED state transition. Updating prop dynamically from JS doesn't trigger native behavior state update.
 
 ## Steps - iPhone
 
