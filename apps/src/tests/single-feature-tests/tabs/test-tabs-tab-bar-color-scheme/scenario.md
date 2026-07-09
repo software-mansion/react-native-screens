@@ -83,4 +83,5 @@ Assumption:
 
 10. Switch to the **Keyboard** tab, open the keyboard via TextInput (or Cmd+K on iOS simulator)
    
-- [ ] Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
+- [ ] iOS: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
+- [ ] Android: Keyboard appearance matches the system color scheme.
