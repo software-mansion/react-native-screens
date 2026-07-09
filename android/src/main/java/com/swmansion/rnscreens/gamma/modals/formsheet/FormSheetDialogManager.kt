@@ -54,11 +54,7 @@ class FormSheetDialogManager(
             onNativeDismiss = onDismissRequest,
         )
 
-    internal var appearanceEventEmitter: ViewAppearanceEventEmitter?
-        get() = presentationManager.appearanceEventEmitter
-        set(value) {
-            presentationManager.appearanceEventEmitter = value
-        }
+    internal var appearanceEventEmitter: ViewAppearanceEventEmitter? by presentationManager::appearanceEventEmitter
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
         get() = dimensionsCoordinator
