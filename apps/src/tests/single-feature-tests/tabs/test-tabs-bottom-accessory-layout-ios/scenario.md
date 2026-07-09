@@ -1,4 +1,4 @@
-# Test Scenario: bottomAccessory
+# Test Scenario: Bottom Accessory Layout
 
 ## Details
 
