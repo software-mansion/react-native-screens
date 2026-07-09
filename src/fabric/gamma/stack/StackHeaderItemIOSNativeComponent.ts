@@ -26,6 +26,9 @@ export type StackHeaderMenuIOS = {
   id: string;
   type: 'menu';
   title?: string | undefined;
+  singleSelection?: boolean | undefined;
+  icon?: object | undefined;
+  displayInline?: boolean | undefined;
   children: StackHeaderMenuElementIOS[];
 };
 

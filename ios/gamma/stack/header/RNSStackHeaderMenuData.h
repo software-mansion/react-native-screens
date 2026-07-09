@@ -39,12 +39,14 @@ typedef NS_ENUM(NSInteger, RNSMenuItemType) {
 
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 @property (nonatomic, readonly) BOOL singleSelection;
+@property (nonatomic, readonly) BOOL displayInline;
 @property (nonatomic, copy, readonly) NSArray<id<RNSStackHeaderMenuElement>> *children;
 @property (nonatomic, strong, readonly, nullable) RNSStackHeaderIconData *icon;
 
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
            singleSelection:(BOOL)singleSelection
+             displayInline:(BOOL)displayInline
                   children:(NSArray<id<RNSStackHeaderMenuElement>> *)children
                       icon:(nullable RNSStackHeaderIconData *)icon;
 
