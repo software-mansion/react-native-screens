@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '../e2e-utils';
-import { UI_CONTEXT_MENU_VIEW_TYPE } from '../native-type-names';
+import { CLASS_NAME_UI_CONTEXT_MENU_VIEW } from '../native-class-names';
 
 const expectBackButtonMenuWithTheSameLabel = async (text: string) => {
   await element(by.text(text)).longPressAndDrag(
@@ -13,12 +13,18 @@ const expectBackButtonMenuWithTheSameLabel = async (text: string) => {
     'fast',
     0,
   ); // open
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).toBeVisible();
   await expect(
-    element(by.text(text).withAncestor(by.type(UI_CONTEXT_MENU_VIEW_TYPE))),
+    element(
+      by.text(text).withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+    ),
   ).toBeVisible();
   await element(by.text('VOID')).tap(); // close
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).not.toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).not.toBeVisible();
   await waitFor(element(by.text(text)).atIndex(1)).not.toExist();
   await expect(element(by.text(text)).atIndex(0)).toBeVisible();
 };
@@ -37,16 +43,20 @@ const expectBackButtonMenuWithDifferentLabels = async (
     'fast',
     0,
   ); // open
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).toBeVisible();
   await expect(
     element(
       by
         .text(backButtonMenuLabel)
-        .withAncestor(by.type(UI_CONTEXT_MENU_VIEW_TYPE)),
+        .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
     ),
   ).toBeVisible();
   await element(by.text('VOID')).tap(); // close
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).not.toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).not.toBeVisible();
   await waitFor(element(by.text(backButtonMenuLabel))).not.toBeVisible();
   await expect(element(by.text(buttonTitle))).toBeVisible();
 };
@@ -69,12 +79,16 @@ const expectBackButtonMenuIconAndLabel = async (
     element(
       by
         .text(backButtonMenuLabel)
-        .withAncestor(by.type(UI_CONTEXT_MENU_VIEW_TYPE)),
+        .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
     ),
   ).toBeVisible();
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).toBeVisible();
   await element(by.text('VOID')).tap(); // close
-  await waitFor(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).not.toBeVisible();
+  await waitFor(
+    element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+  ).not.toBeVisible();
 };
 
 const expectBackButtonMenuToNotExistOnLabel = async (text: string) => {
@@ -88,7 +102,7 @@ const expectBackButtonMenuToNotExistOnLabel = async (text: string) => {
     'fast',
     0,
   ); // open
-  await expect(element(by.type(UI_CONTEXT_MENU_VIEW_TYPE))).not.toExist();
+  await expect(element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW))).not.toExist();
 };
 
 const expectInitialPageToExist = async (

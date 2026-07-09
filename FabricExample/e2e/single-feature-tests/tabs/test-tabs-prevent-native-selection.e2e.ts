@@ -4,10 +4,10 @@ import {
   describeIfiPad,
 } from '../../e2e-utils';
 import {
-  UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE,
-  UI_BUTTON_TYPE,
-  UI_TAB_SIDEBAR_CELL_TYPE,
-} from '../../native-type-names';
+  CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL,
+  CLASS_NAME_UI_BUTTON,
+  CLASS_NAME_UI_TAB_SIDEBAR_CELL,
+} from '../../native-class-names';
 
 describe('@smoke Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
@@ -198,7 +198,7 @@ describeIfiPad(
       await element(
         by
           .id('Second')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
       await expect(
@@ -207,7 +207,7 @@ describeIfiPad(
       await element(
         by
           .id('First')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(
         element(by.label('1. onTabSelectionPrevented: First')),
@@ -237,13 +237,13 @@ describeIfiPad(
       await element(
         by
           .id('Fourth')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
       await element(
         by
           .id('First')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
@@ -256,7 +256,7 @@ describeIfiPad(
       await element(
         by
           .id('Third')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Third');
       await expect(
@@ -269,7 +269,7 @@ describeIfiPad(
       await element(
         by
           .id('Fourth')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
       await expect(
@@ -282,7 +282,7 @@ describeIfiPad(
       await element(
         by
           .id('Third')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(
         element(by.label('1. onTabSelectionPrevented: Third')),
@@ -292,7 +292,7 @@ describeIfiPad(
       await element(
         by
           .id('First')
-          .withAncestor(by.type(UI_FLOATING_TAB_BAR_ITEM_CELL_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
@@ -307,36 +307,48 @@ describeIfiPad(
       await expect(element(by.label('More'))).not.toExist();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await element(
-        by.label('Toggle sidebar').and(by.type(UI_BUTTON_TYPE)),
+        by.label('Toggle sidebar').and(by.type(CLASS_NAME_UI_BUTTON)),
       ).tap();
       await expect(
         element(
-          by.label('First').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('First')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
       await expect(
         element(
-          by.label('Second').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('Second')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
       await expect(
         element(
-          by.label('Third').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('Third')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
       await expect(
         element(
-          by.label('Fourth').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('Fourth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
       await expect(
         element(
-          by.label('Fifth').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('Fifth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
       await expect(
         element(
-          by.label('Sixth').withAncestor(by.type(UI_TAB_SIDEBAR_CELL_TYPE)),
+          by
+            .label('Sixth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
         ),
       ).toExist();
     });

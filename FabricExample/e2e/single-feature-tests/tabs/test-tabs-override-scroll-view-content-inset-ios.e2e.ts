@@ -6,7 +6,7 @@ import {
   forceTapByLabeliOS,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { UI_TAB_BAR_TYPE } from '../../native-type-names';
+import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
   top: number;
@@ -30,7 +30,7 @@ async function getTabBarFrame(): Promise<{
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.type(UI_TAB_BAR_TYPE)).getAttributes();
+  const attrs = await element(by.type(CLASS_NAME_UI_TAB_BAR)).getAttributes();
   return (attrs as IosElementAttributes).frame;
 }
 
@@ -101,7 +101,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await expect(
         element(by.id('override-inset-false-scrollview')),
       ).toBeVisible();
-      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     });
 
     it('should render the last item overlapping or behind the tab bar (not fully above it)', async () => {
@@ -124,7 +124,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await expect(
         element(by.id('override-inset-true-scrollview')),
       ).toBeVisible();
-      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     });
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {
@@ -146,7 +146,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
       await expect(
         element(by.id('override-inset-default-scrollview')),
       ).toBeVisible();
-      await expect(element(by.type(UI_TAB_BAR_TYPE))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     });
 
     it('should render the last item fully above the tab bar (proper inset applied)', async () => {

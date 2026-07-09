@@ -1,6 +1,6 @@
 import { device, element, by } from 'detox';
 import isVersionEqualOrHigherThan from '../helpers/isVersionEqualOrHigherThan';
-import { UI_BUTTON_BAR_BUTTON_TYPE } from '../native-type-names';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../native-class-names';
 
 const { getIOSVersionNumber } = require('../../../scripts/e2e/ios-devices.js');
 
@@ -25,7 +25,7 @@ async function getIOSBackButton() {
     const elements = elementsByAttributes.elements;
     if (Array.isArray(elements)) {
       const uiBarButtonIndex = elements.findIndex(
-        elem => elem.className === UI_BUTTON_BAR_BUTTON_TYPE,
+        elem => elem.className === CLASS_NAME_UI_BUTTON_BAR_BUTTON,
       );
       if (uiBarButtonIndex !== -1) {
         return backButtonElement.atIndex(uiBarButtonIndex);

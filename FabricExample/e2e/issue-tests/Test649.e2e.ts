@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
-import { UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE } from '../native-type-names';
+import { CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW } from '../native-class-names';
 
 // headerLargeTitle is supported only on iOS
 describeIfiOS('Test649', () => {
@@ -17,7 +17,7 @@ describeIfiOS('Test649', () => {
       element(
         by
           .text('First')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -28,7 +28,7 @@ describeIfiOS('Test649', () => {
       element(
         by
           .text('Second')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).not.toBeVisible(100);
   });
@@ -39,7 +39,7 @@ describeIfiOS('Test649', () => {
       element(
         by
           .text('First')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });

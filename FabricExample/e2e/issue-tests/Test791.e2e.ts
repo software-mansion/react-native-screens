@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
-import { UI_BUTTON_BAR_BUTTON_TYPE } from '../native-type-names';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../native-class-names';
 
 // issue related to iOS
 describeIfiOS('Test791', () => {
@@ -22,7 +22,7 @@ describeIfiOS('Test791', () => {
 
     for (let i = 0; i < 5; ++i) {
       await expect(element(by.id('push-text'))).toBeVisible();
-      await element(by.type(UI_BUTTON_BAR_BUTTON_TYPE)).atIndex(0).tap();
+      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
     }
 
     await expect(element(by.id('main-text'))).toBeVisible();

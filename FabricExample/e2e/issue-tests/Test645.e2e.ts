@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
-import { UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE } from '../native-type-names';
+import { CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW } from '../native-class-names';
 
 // headerLargeTitle is supported only on iOS
 describeIfiOS('Test645', () => {
@@ -17,7 +17,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -28,7 +28,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).not.toBeVisible();
   });
@@ -39,7 +39,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -50,7 +50,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Details')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -61,7 +61,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Settings')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -72,7 +72,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -83,7 +83,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
@@ -94,7 +94,7 @@ describeIfiOS('Test645', () => {
       element(
         by
           .text('Main')
-          .withAncestor(by.type(UI_NAVIGATION_BAR_LARGE_TITLE_VIEW_TYPE)),
+          .withAncestor(by.type(CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW)),
       ),
     ).toBeVisible(100);
   });
