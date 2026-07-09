@@ -5,14 +5,11 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
-    private val onDismissRequest: () -> Unit,
-    private val onDetentChanged: ((index: Int) -> Unit)? = null,
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -35,7 +32,9 @@ class FormSheetDialogManager(
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
     private val behaviorController =
-        bottomSheetView?.let { FormSheetBehaviorController(it, onDetentChanged) }
+        bottomSheetView?.let {
+            FormSheetBehaviorController(it) { index -> eventEmitter?.emitOnDetentChanged(index) }
+        }
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
@@ -52,10 +51,14 @@ class FormSheetDialogManager(
             dialog = dialog,
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            onNativeDismiss = onDismissRequest,
+            onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
         )
 
-    internal var appearanceEventEmitter: ViewAppearanceEventEmitter? by presentationManager::appearanceEventEmitter
+    internal var eventEmitter: FormSheetDialogEventEmitter? = null
+        set(value) {
+            field = value
+            presentationManager.appearanceEventEmitter = value
+        }
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
         get() = dimensionsCoordinator
