@@ -18,28 +18,38 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   RNSScreenStackHeaderConfigState() = default;
 
 #if !defined(ANDROID)
-  RNSScreenStackHeaderConfigState(Size frameSize_, EdgeInsets edgeInsets_)
-      : frameSize{frameSize_}, edgeInsets{edgeInsets_} {}
+  RNSScreenStackHeaderConfigState(
+      Size frameSize_,
+      EdgeInsets edgeInsets_,
+      Point frameOrigin_)
+      : frameSize{frameSize_},
+        edgeInsets{edgeInsets_},
+        frameOrigin{frameOrigin_} {}
 
   // Make it copyable
   RNSScreenStackHeaderConfigState(const RNSScreenStackHeaderConfigState &source)
-      : frameSize{source.frameSize}, edgeInsets{source.edgeInsets} {}
+      : frameSize{source.frameSize},
+        edgeInsets{source.edgeInsets},
+        frameOrigin{source.frameOrigin} {}
   RNSScreenStackHeaderConfigState &operator=(
       const RNSScreenStackHeaderConfigState &source) {
     this->frameSize.width = source.frameSize.width;
     this->frameSize.height = source.frameSize.height;
     this->edgeInsets = source.edgeInsets;
+    this->frameOrigin = source.frameOrigin;
     return *this;
   }
 
   bool operator==(const RNSScreenStackHeaderConfigState &other) {
     return this->frameSize == other.frameSize &&
-        this->edgeInsets == other.edgeInsets;
+        this->edgeInsets == other.edgeInsets &&
+        this->frameOrigin == other.frameOrigin;
   }
 
   bool operator!=(const RNSScreenStackHeaderConfigState &other) {
     return this->frameSize != other.frameSize ||
-        this->edgeInsets != other.edgeInsets;
+        this->edgeInsets != other.edgeInsets ||
+        this->frameOrigin != other.frameOrigin;
   }
 #endif
 
@@ -68,6 +78,7 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
 #if !defined(ANDROID)
   EdgeInsets edgeInsets{}; // zero initialized
+  Point frameOrigin{};
 #endif
 
 #ifdef ANDROID
