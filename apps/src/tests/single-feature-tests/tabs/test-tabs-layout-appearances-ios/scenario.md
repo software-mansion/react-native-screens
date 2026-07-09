@@ -58,7 +58,7 @@ simulated device is required for all steps.
 1. Launch the app and navigate to the **Tab Bar Layout Appearances (iOS)**
    screen. Use an **iPhone** simulator in **portrait** orientation.
 
-- [ ] Expected: Four tabs are visible (Info, Tab1, Tab2, Tab3). The first
+- [ ] Four tabs are visible (Info, Tab1, Tab2, Tab3). The first
   tab (Info) is selected by default. Its title **"Info"** should appear in
   a **red** italic font. On iOS18, unselected tabs
   should have normal (non-italic) titles in **darker red**.
@@ -67,14 +67,14 @@ simulated device is required for all steps.
 
 2. Tap **Tab1**.
 
-- [ ] Expected: "Tab1" title becomes **italic** and **red**.
+- [ ] "Tab1" title becomes **italic** and **red**.
   On iOS18, the previously selected "Info" tab title becomes normal
   and darker red. On iOS 26, "Info" tab use system
   default appearance.
 
 3. Tap **Tab2**, then **Tab3**, then back to **Tab1**.
 
-- [ ] Expected: Each selected tab displays an italic, red title.
+- [ ] Each selected tab displays an italic, red title.
   All other tabs display normal titles (iOS 18: darker red, iOS 26: system
 default color)
 
@@ -84,13 +84,13 @@ default color)
 
 4. On an **iPhone Pro** simulator, rotate to **landscape** and navigate to the screen.
 
-- [ ] Expected: Selected tab title appears in the **italic**, **green**.
+- [ ] Selected tab title appears in the **italic**, **green**.
 Unselected tab titles: display normal, on iOS 18: darker green, on iOS 26: system
 default color.
 
 5. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
-- [ ] Expected: Each tapped tab's title becomes italic and green. All other tab
+- [ ] Each tapped tab's title becomes italic and green. All other tab
 (unselected) display normal titles, on iOS 18: darker green, on iOS 26: system
 default color.
 
@@ -101,7 +101,7 @@ default color.
 6. On an **iPhone Pro** simulator, start in portrait (red stacked),
    then rotate to landscape (green compactInline), then rotate back to portrait.
 
-- [ ] Expected: Title colors and italic/normal styles update instantly with each
+- [ ] Title colors and italic/normal styles update instantly with each
 rotation to match the newly active layout appearance.
 
 ---
@@ -111,12 +111,12 @@ rotation to match the newly active layout appearance.
 7. On an **iPhone Pro Max**,
    rotate to **landscape** orientation and navigate to the screen.
 
-- [ ] Expected: Selected tab title appears in the **italic**, **blue**.
+- [ ] Selected tab title appears in the **italic**, **blue**.
 Unselected tab titles: display normal, darker blue.
 
 8. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
-- [ ] Expected: Each tapped tab's title becomes italic and blue.
+- [ ] Each tapped tab's title becomes italic and blue.
 Unselected tabs remain normal and darker blue.
 
 ---
@@ -126,5 +126,5 @@ Unselected tabs remain normal and darker blue.
 9. On an **iPhone Pro Max** simulator, start in portrait (red stacked),
    then rotate to landscape (blue inline), then rotate back to portrait.
 
-- [ ] Expected: Title colors and italic/normal styles update instantly with each
+- [ ] Title colors and italic/normal styles update instantly with each
 rotation to match the newly active layout appearance.

@@ -33,7 +33,7 @@ transition animation finishes.
 
 1. Launch the app and navigate to **Test simple navigation**.
 
-- [ ] Expected: Three tabs are visible in the tab bar -
+- [ ] Three tabs are visible in the tab bar -
   **First**, **Second**, and **Third**. The **First** tab is
   active. The content area displays the label `First`.
 
@@ -43,17 +43,17 @@ transition animation finishes.
 
 2. Tap the **Second** tab in the tab bar.
 
-- [ ] Expected: The **Second** tab becomes active. The content
+- [ ] The **Second** tab becomes active. The content
   area displays the label `Second`.
 
 3. Tap the **Third** tab in the tab bar.
 
-- [ ] Expected: The **Third** tab becomes active. The content
+- [ ] The **Third** tab becomes active. The content
   area displays the label `Third`.
 
 4. Tap the **First** tab in the tab bar.
 
-- [ ] Expected: The **First** tab becomes active. The content
+- [ ] The **First** tab becomes active. The content
   area displays the label `First`.
 
 ---
@@ -62,17 +62,17 @@ transition animation finishes.
 
 5. While on the **First** tab, tap **Select Second**.
 
-- [ ] Expected: The **Second** tab becomes active. The content
+- [ ] The **Second** tab becomes active. The content
   area displays the label `Second`.
 
 6. While on the **Second** tab, tap **Select Third**.
 
-- [ ] Expected: The **Third** tab becomes active. The content
+- [ ] The **Third** tab becomes active. The content
   area displays the label `Third`.
 
 7. While on the **Third** tab, tap **Select First**.
 
-- [ ] Expected: The **First** tab becomes active. The content
+- [ ] The **First** tab becomes active. The content
   area displays the label `First`.
 
 ---
@@ -81,13 +81,13 @@ transition animation finishes.
 
 8. While on the **First** tab, tap **Select Third**.
 
-- [ ] Expected: The **Third** tab becomes active directly,
+- [ ] The **Third** tab becomes active directly,
   skipping **Second**. The content area displays the label
   `Third`.
 
 9. While on the **Third** tab, tap **First** tab in the tab bar.
 
-- [ ] Expected: The **First** tab becomes active directly,
+- [ ] The **First** tab becomes active directly,
   skipping **Second**. The content area displays the label
   `First`.
 
@@ -97,12 +97,12 @@ transition animation finishes.
 
 10. Tap the **Second** tab in the tab bar.
 
-- [ ] Expected: The **Second** tab is active, label shows
+- [ ] The **Second** tab is active, label shows
   `Second`.
 
 11. Tap **Select First** in the content area.
 
-- [ ] Expected: The **First** tab becomes active. The content
+- [ ] The **First** tab becomes active. The content
   area displays the label `First`. The tab-bar item for
   **First** is visually selected.
 
@@ -113,13 +113,13 @@ transition animation finishes.
 12. While on the **First** tab, tap the **First** tab bar item
     again.
 
-- [ ] Expected: The **First** tab remains selected. The content
+- [ ] The **First** tab remains selected. The content
   area still displays `First`. No crash or unexpected transition
   occurs.
 
 13. While on the **First** tab, tap **Select First**.
 
-- [ ] Expected: The **First** tab remains selected. The content
+- [ ] The **First** tab remains selected. The content
   area still displays `First`. No crash or unexpected state
   change occurs.
 
@@ -130,6 +130,6 @@ transition animation finishes.
 14. From the **First** tab, tap **Select Second** and immediately
     tap **Select Third** before the transition completes.
 
-- [ ] Expected: The final active tab is **Third**. The content
+- [ ] The final active tab is **Third**. The content
   area displays the label `Third`. No crash or inconsistent
   label is shown.
