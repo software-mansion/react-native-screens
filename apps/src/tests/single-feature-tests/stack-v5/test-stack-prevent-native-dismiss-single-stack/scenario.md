@@ -29,7 +29,6 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 
 ### Android launch
 
-- This is an **Android-only** feature (no iOS implementation).
 - To test the native-back / gesture-back flows, run the screen **directly**
   by editing [apps/App.tsx](../../../../../App.tsx): import and render
   `TestStackPreventNativeDismissSingleStack` as the root component instead of
@@ -52,6 +51,7 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 
 ## Note
 
+- iOS does not yet support `preventNativeDismiss` for stack v5 - it is unimplemented.
 - The `Key` has the form `r-<routeName>-<n>`, where `<n>` comes from a
   session-global counter that increments on every push and is **never
   reset**. Do **not** expect specific numbers such as `r-A-1`; only the
