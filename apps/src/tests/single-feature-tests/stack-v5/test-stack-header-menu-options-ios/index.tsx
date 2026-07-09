@@ -229,8 +229,8 @@ function ConfigScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Text style={styles.label}>
-        To test <Text style={styles.code}>displayInline</Text> try different
-        combination with nested menus:
+        To test <Text style={styles.code}>displayInline</Text> (iOS 17.0+) try
+        different combinations with nested menus:
       </Text>
       <Button
         title={`displayInline (Sort By): ${displayInline}`}

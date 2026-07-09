@@ -189,8 +189,14 @@ export interface StackHeaderMenuIOS {
    * When enabled, the menu children are rendered as a horizontal palette
    * row instead of a vertical list. Best suited for menus with icon-only items.
    *
+   * @remarks
+   * Requires iOS 17.0 or later. On older versions, this option is ignored.
+   *
    * @default false
+   *
    * @platform ios
+   *
+   * @supported iOS 17.0 or higher
    */
   displayAsPalette?: boolean | undefined;
   /**
