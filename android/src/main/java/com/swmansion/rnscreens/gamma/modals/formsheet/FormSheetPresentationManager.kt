@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetPresentationManager(
@@ -11,11 +12,9 @@ internal class FormSheetPresentationManager(
     private val bottomSheetView: View?,
     private val dimmingManager: DimmingViewManager,
     private val onNativeDismiss: () -> Unit,
-    private val onWillAppear: (() -> Unit)? = null,
-    private val onDidAppear: (() -> Unit)? = null,
-    private val onWillDisappear: (() -> Unit)? = null,
-    private val onDidDisappear: (() -> Unit)? = null,
 ) {
+    internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
+
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
 
@@ -55,7 +54,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
-        onWillAppear?.invoke()
+        appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
             dimmingManager.onDialogShow()
@@ -70,7 +69,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
-        onWillDisappear?.invoke()
+        appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
             bottomSheetView?.let {
@@ -139,7 +138,7 @@ internal class FormSheetPresentationManager(
     private fun onPresentationComplete() {
         if (state == FormSheetPresentationState.PRESENTING) {
             state = FormSheetPresentationState.PRESENTED
-            onDidAppear?.invoke()
+            appearanceEventEmitter?.emitOnDidAppear()
             // ensure state hasn't updated during presentation
             resolvePresentationState()
         }
@@ -148,7 +147,7 @@ internal class FormSheetPresentationManager(
     private fun onDismissComplete() {
         if (state == FormSheetPresentationState.DISMISSING) {
             state = FormSheetPresentationState.DISMISSED
-            onDidDisappear?.invoke()
+            appearanceEventEmitter?.emitOnDidDisappear()
             // ensure state hasn't updated during dismissal
             resolvePresentationState()
         }
