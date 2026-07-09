@@ -1287,6 +1287,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string | undefined;
+  subtitle?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean | undefined;
