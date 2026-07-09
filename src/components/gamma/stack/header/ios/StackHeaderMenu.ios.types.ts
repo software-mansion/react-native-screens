@@ -177,6 +177,9 @@ export interface StackHeaderMenuIOS {
    * @description
    * A menu displayed inline is rendered directly inside its parent menu,
    * with horizontal bars separating it from the surrounding items.
+   *
+   * @default false
+   * @platform ios
    */
   displayInline?: boolean | undefined;
   /**
