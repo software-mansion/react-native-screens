@@ -96,8 +96,7 @@ export interface TabsHostPropsIOS {
    */
   bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;
   /**
-   * @summary Hides the bottom accessory with animation while keeping the React
-   * tree mounted.
+   * @summary Hides the bottom accessory with animation.
    *
    * @default false
    *
