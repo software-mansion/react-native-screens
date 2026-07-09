@@ -1,7 +1,6 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import "RCTAssert.h"
 #import "RNSDefines.h"
-#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -10,6 +9,7 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+#import "React/RCTLog.h"
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -84,13 +84,13 @@
       }
     } else if ([child conformsToProtocol:@protocol(RNSStackHeaderItemSpacerDataProviding)]) {
       id<RNSStackHeaderItemSpacerDataProviding> spacer = (id<RNSStackHeaderItemSpacerDataProviding>)child;
-      UIBarButtonItem *bbi = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
+      UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
       switch (spacer.placement) {
         case RNSHeaderItemSpacerPlacementLeading:
-          [_leadingBarButtonItems addObject:bbi];
+          [_leadingBarButtonItems addObject:barButtonItem];
           break;
         case RNSHeaderItemSpacerPlacementTrailing:
-          [_trailingBarButtonItems addObject:bbi];
+          [_trailingBarButtonItems addObject:barButtonItem];
           break;
       }
     }
@@ -142,7 +142,7 @@
         if (index != NSNotFound) {
           _leadingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -157,7 +157,7 @@
         if (index != NSNotFound) {
           _trailingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 

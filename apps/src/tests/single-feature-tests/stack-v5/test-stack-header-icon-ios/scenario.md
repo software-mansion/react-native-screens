@@ -12,7 +12,7 @@ TBD
 
 ## Prerequisites
 
-- iOS / iPadOS emulator
+- iOS / iPadOS simulator
 
 ## Note (Optional)
 

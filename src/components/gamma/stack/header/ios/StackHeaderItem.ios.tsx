@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import StackHeaderItemIOSNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
-import type { HeaderItemPressEvent } from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
+import type {
+  HeaderItemPressEvent,
+  PlatformIconIOS as ResolvedPlatformIconIOS,
+} from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
 import type { StackHeaderItemProps } from './StackHeaderItem.ios.types';
 import type { PlatformIconIOS } from '../../../../../types';
 import type {
@@ -11,7 +14,7 @@ import { Image, NativeSyntheticEvent, StyleSheet } from 'react-native';
 
 function resolveIconAssetSources(
   icon: PlatformIconIOS | undefined,
-): PlatformIconIOS | undefined {
+): ResolvedPlatformIconIOS | undefined {
   if (icon == null) {
     return undefined;
   }

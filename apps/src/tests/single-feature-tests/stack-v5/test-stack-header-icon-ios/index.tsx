@@ -4,14 +4,12 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import {
-  StackHeaderConfigProps,
-  PlatformIconIOS,
-} from 'react-native-screens/components/gamma/stack/header';
+import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import { Button, ScrollView, Text, View, StyleSheet } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
+import { type PlatformIconIOS } from 'react-native-screens';
 
 type IconVariant = 'sfSymbol' | 'xcasset' | 'imageSource' | 'templateSource';
 
@@ -200,7 +198,7 @@ function ConfigScreen() {
       </View>
       <View style={styles.section}>
         <Button
-          title="Push screen with same config"
+          title="Push another screen"
           onPress={() => navigation.push('Home')}
         />
       </View>

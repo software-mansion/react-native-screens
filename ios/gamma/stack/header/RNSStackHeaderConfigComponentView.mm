@@ -1,6 +1,5 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSImageLoadingHelper.h"
-#import "RNSLog.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -11,7 +10,9 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTConvert.h>
 #import <React/RCTImageLoader.h>
+#import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/utils/ManagedObjectWrapper.h>
@@ -72,14 +73,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
          withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
 {
   if (_imageLoader == nil) {
-    RNSLog(@"[RNScreens] imageLoader must not be nil when loading images");
+    RCTLogError(@"[RNScreens] imageLoader must not be nil when loading images");
     completionBlock(nil);
     return;
   }
 
   RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonSource];
   if (imageSource == nil) {
-    RNSLog(@"[RNScreens] Expected nonnil image source");
+    RCTLogError(@"[RNScreens] Expected nonnil image source");
     completionBlock(nil);
     return;
   }
@@ -167,7 +168,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)headerItemDidInvalidateWithId:(NSString *)itemId
 {
   if (itemId == nil) {
-    RNSLog(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
+    RCTLogWarn(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
     [[self headerCoordinator] rebuild];
     return;
   }
@@ -177,7 +178,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId
 {
   if (itemId == nil) {
-    RNSLog(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
+    RCTLogWarn(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
     [[self headerCoordinator] rebuild];
     return;
   }
