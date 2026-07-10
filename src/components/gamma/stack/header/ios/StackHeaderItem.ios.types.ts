@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { PlatformIconIOS } from '../../../../../types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
 
 export type StackHeaderItemPlacement =
@@ -12,6 +13,7 @@ export type StackHeaderItemProps = {
   placement: StackHeaderItemPlacement;
   itemId?: string | undefined;
   title?: string | undefined;
+  icon?: PlatformIconIOS | undefined;
   render?: (() => ReactElement) | undefined;
   menu?: StackHeaderMenuIOS | undefined;
   onPress?: (() => void) | undefined;

@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
+#import "RNSImageLoading.h"
 #import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -19,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (UIBarButtonItem *)barButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
                         withFrameChangeDelegate:(id<RNSViewFrameChangeDelegate>)delegate
-                       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate;
+                       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
+                                withImageLoader:(id<RNSImageLoading>)imageLoader;
 
 /**
  Builds views that can be added to other areas of the header: titleView, subtitleView, largeSubtitleView.

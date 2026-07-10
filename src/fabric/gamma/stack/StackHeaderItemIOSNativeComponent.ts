@@ -1,6 +1,10 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  ImageResolvedAssetSource,
+  ViewProps,
+} from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 import { UnsafeMixed } from '../../codegenUtils';
 
@@ -32,10 +36,37 @@ export type StackHeaderMenuElementIOS =
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type HeaderItemPressEvent = Readonly<{}>;
 
+export type PlatformIconShared = {
+  type: 'imageSource';
+  imageSource: ImageResolvedAssetSource;
+};
+
+export type PlatformIconTemplateIOS = {
+  type: 'templateSource';
+  templateSource: ImageResolvedAssetSource;
+};
+
+export type PlatformIconIOSSfSymbol = {
+  type: 'sfSymbol';
+  name: string;
+};
+
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
+  name: string;
+};
+
+export type PlatformIconIOS =
+  | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcasset
+  | PlatformIconTemplateIOS
+  | PlatformIconShared;
+
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
   itemId?: string | undefined;
   title?: string | undefined;
+  icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
   respondsToOnPress?: CT.WithDefault<boolean, false>;
   onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;

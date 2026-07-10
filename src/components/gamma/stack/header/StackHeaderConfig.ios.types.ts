@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { PlatformIconIOS } from '../../../../types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 export interface StackHeaderBaseItemIOS {
@@ -14,6 +15,17 @@ export interface StackHeaderBaseItemIOS {
    * @platform iOS
    */
   title?: string | undefined;
+  /**
+   * @summary Icon displayed for the header item.
+   *
+   * @description
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the item renders without an icon first and updates when loaded.
+   * Ignored when custom view ({@link StackHeaderInlineCustomItemIOS.render | render}) is set.
+   *
+   * @platform iOS
+   */
+  icon?: PlatformIconIOS | undefined;
 }
 
 export interface SupportsMenuIOS {

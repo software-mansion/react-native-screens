@@ -8,6 +8,8 @@
  *
  * @platform ios
  */
+import type { PlatformIconIOS } from '../../../../../types';
+
 export interface StackHeaderMenuItemIOS {
   /**
    * @summary Unique identifier of the menu item.
@@ -63,6 +65,16 @@ export interface StackHeaderMenuItemIOS {
    * @platform ios
    */
   initialToggleState?: boolean | undefined;
+  /**
+   * @summary Icon displayed for the menu item.
+   *
+   * @description
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the menu item renders without an icon first and updates when loaded.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
   /**
    * @summary Callback invoked when the menu item is pressed.
    *
@@ -149,6 +161,16 @@ export interface StackHeaderMenuIOS {
    * @platform ios
    */
   singleSelection?: boolean | undefined;
+  /**
+   * @summary Icon displayed for the submenu.
+   *
+   * @description
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the menu renders without an icon first and updates when loaded.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
   /**
    * @summary Child elements of this menu.
    *

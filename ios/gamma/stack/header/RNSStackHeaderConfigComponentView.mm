@@ -1,5 +1,5 @@
 #import "RNSStackHeaderConfigComponentView.h"
-#import "RNSLog.h"
+#import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -10,8 +10,12 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTConvert.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import <rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 
 namespace react = facebook::react;
@@ -31,6 +35,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
+  RCTImageLoader *_imageLoader;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -61,6 +66,31 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   return [_children copy];
 }
 
+#pragma mark - RNSImageLoading
+
+- (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
+                     asTemplate:(BOOL)isTemplate
+         withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
+{
+  if (_imageLoader == nil) {
+    RCTLogError(@"[RNScreens] imageLoader must not be nil when loading images");
+    completionBlock(nil);
+    return;
+  }
+
+  RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonSource];
+  if (imageSource == nil) {
+    RCTLogError(@"[RNScreens] Expected nonnil image source");
+    completionBlock(nil);
+    return;
+  }
+
+  [RNSImageLoadingHelper loadImageFromSource:imageSource
+                             withImageLoader:_imageLoader
+                                  asTemplate:isTemplate
+                             completionBlock:completionBlock];
+}
+
 #pragma mark - UIView
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -88,12 +118,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     coordinator.configDataProvider = self;
     coordinator.frameChangeDelegate = self;
     coordinator.eventsDelegate = self;
+    coordinator.imageLoader = self;
     [coordinator rebuild];
   } else {
     RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
     coordinator.configDataProvider = nil;
     coordinator.frameChangeDelegate = nil;
     coordinator.eventsDelegate = nil;
+    coordinator.imageLoader = nil;
   }
   [super didMoveToWindow];
 }
@@ -136,7 +168,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)headerItemDidInvalidateWithId:(NSString *)itemId
 {
   if (itemId == nil) {
-    RNSLog(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
+    RCTLogWarn(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
     [[self headerCoordinator] rebuild];
     return;
   }
@@ -146,7 +178,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId
 {
   if (itemId == nil) {
-    RNSLog(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
+    RCTLogWarn(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
     [[self headerCoordinator] rebuild];
     return;
   }
@@ -209,6 +241,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderConfigShadowNode::ConcreteState>(state);
+  if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
+    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+  }
 }
 
 - (react::RNSStackHeaderConfigShadowNode::ConcreteState::Shared)state

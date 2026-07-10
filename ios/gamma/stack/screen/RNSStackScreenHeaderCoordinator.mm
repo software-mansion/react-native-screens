@@ -1,7 +1,6 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import "RCTAssert.h"
 #import "RNSDefines.h"
-#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -10,6 +9,7 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+#import "React/RCTLog.h"
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -84,13 +84,13 @@
       }
     } else if ([child conformsToProtocol:@protocol(RNSStackHeaderItemSpacerDataProviding)]) {
       id<RNSStackHeaderItemSpacerDataProviding> spacer = (id<RNSStackHeaderItemSpacerDataProviding>)child;
-      UIBarButtonItem *bbi = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
+      UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
       switch (spacer.placement) {
         case RNSHeaderItemSpacerPlacementLeading:
-          [_leadingBarButtonItems addObject:bbi];
+          [_leadingBarButtonItems addObject:barButtonItem];
           break;
         case RNSHeaderItemSpacerPlacementTrailing:
-          [_trailingBarButtonItems addObject:bbi];
+          [_trailingBarButtonItems addObject:barButtonItem];
           break;
       }
     }
@@ -142,7 +142,7 @@
         if (index != NSNotFound) {
           _leadingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -157,7 +157,7 @@
         if (index != NSNotFound) {
           _trailingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RNSLog(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -269,9 +269,10 @@
                            toBarButtonItem:barButtonItem
                   withHeaderEventsDelegate:_eventsDelegate
                               stateTracker:tracker
-                        menuToggleCallback:^{
-                          [weakSelf reapplyMenuForItemWithId:itemId];
-                        }];
+                           withImageLoader:_imageLoader
+                   menuInvalidatedCallback:^{
+                     [weakSelf reapplyMenuForItemWithId:itemId];
+                   }];
 }
 
 - (nullable id<RNSStackHeaderItemDataProviding>)findItemWithId:(NSString *)itemId
@@ -366,7 +367,8 @@
 {
   UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
                                                                     withFrameChangeDelegate:_frameChangeDelegate
-                                                                   withHeaderEventsDelegate:_eventsDelegate];
+                                                                   withHeaderEventsDelegate:_eventsDelegate
+                                                                            withImageLoader:_imageLoader];
 
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
@@ -376,9 +378,10 @@
                              toBarButtonItem:barButtonItem
                     withHeaderEventsDelegate:_eventsDelegate
                                 stateTracker:tracker
-                          menuToggleCallback:^{
-                            [weakSelf reapplyMenuForItemWithId:capturedItemId];
-                          }];
+                             withImageLoader:_imageLoader
+                     menuInvalidatedCallback:^{
+                       [weakSelf reapplyMenuForItemWithId:capturedItemId];
+                     }];
   }
 
   if (item.itemId != nil) {
