@@ -8,11 +8,11 @@ navigation, covering push, pop via the **Pop** button, pop via the **header
 back button**, pop via the **native back gesture / system back**, and a
 nested stack.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: API LEVEL 36.
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 
-- **TBD:** E2E test has to be implemented in future.
+- **TBD:** E2E test has to be implemented in the future.
 
 ## Prerequisites
 

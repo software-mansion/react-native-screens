@@ -103,7 +103,7 @@ function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
-      <StackNavigationButtons isPopEnabled routeNames={['A','NestedStack']} />
+      <StackNavigationButtons isPopEnabled routeNames={['A', 'NestedStack']} />
     </CenteredLayoutView>
   );
 }
