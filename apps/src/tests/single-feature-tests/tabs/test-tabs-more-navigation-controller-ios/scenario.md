@@ -82,7 +82,7 @@ TBD: Ongoing research.
 
 ## Steps - iPad
 
-### Baseline - without More navigation controler displayed
+### Baseline - without More navigation controller displayed
 
 1. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
 
