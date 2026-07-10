@@ -47,6 +47,9 @@
     resolvedRoot = data;
     initialSingleSelectionStateClaimed = &newInitialSingleSelectionStateClaimed;
   }
+  if (data.displayInline) {
+    options |= UIMenuOptionsDisplayInline;
+  }
 
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray arrayWithCapacity:data.children.count];
   for (id<RNSStackHeaderMenuElement> child in data.children) {

@@ -31,6 +31,7 @@
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
            singleSelection:(BOOL)singleSelection
+             displayInline:(BOOL)displayInline
                   children:(NSArray<id<RNSStackHeaderMenuElement>> *)children
                       icon:(nullable RNSStackHeaderIconData *)icon
 {
@@ -38,6 +39,7 @@
     _menuElementId = [menuElementId copy];
     _title = [title copy];
     _singleSelection = singleSelection;
+    _displayInline = displayInline;
     _children = [children copy];
     _icon = icon;
   }
