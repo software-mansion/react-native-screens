@@ -34,8 +34,9 @@ iOS specific notes:
 tabBarItemTitleFontColor - it's reported native bug.
 - `tabBarTintColor` is applied only to selected tab bar item icon and title.
 - **`imageSource` icons are non-tintable:** they render in their original
-  colors regardless of `tabBarTintColor` or `tabBarItemIconColor`.
-  `templateSource`, `xcasset` and `sfSymbol` icons are tintable.
+  colors regardless of `tabBarTintColor` or `tabBarItemIconColor` (rendering as black in this scenario).
+  Conversely, `templateSource`, `xcasset` and `sfSymbol` icons are tintable.
+- System Theme Colors: The default unselected tab title color is gray on iOS 18 and lower, and black on iOS 26.
 
 ## Steps - iOS
 
