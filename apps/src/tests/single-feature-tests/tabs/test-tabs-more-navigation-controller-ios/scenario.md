@@ -84,7 +84,7 @@ TBD: Ongoing research.
 
 ### Baseline - without More navigation controler displayed
 
-1. Open app on iPad in full size and navigate to the **More navigation controller** scenario. Open DevTools.
+1. Open app on iPad in full size and navigate to the **More navigation controller** scenario.
 
 - [ ] Tab bar shows all six tabs. The **First** tab is selected. The content area displays `First` as the route key.
 
