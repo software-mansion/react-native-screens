@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify the rendering and interaction of `Split.Column` components inside a `Split.Host`. This test ensures that when a previously hidden column (e.g., the Primary column) transitions into window, the React Native hit-testing is correctly updated and `Pressable` components inside it remain fully interactive.
+**Description:** Verify the rendering and interaction of `Split.Column` components inside a `Split.Host`. This test ensures that when a previously hidden column (e.g., the Primary column) transitions into the window, the React Native hit-testing is correctly updated and `Pressable` components inside it remain fully interactive.
 
 **OS test creation version:** iOS: 18.6 and 26.4
 
