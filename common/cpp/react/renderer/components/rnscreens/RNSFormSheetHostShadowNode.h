@@ -19,7 +19,11 @@ class JSI_EXPORT RNSFormSheetHostShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
-  Point getContentOriginOffset(bool includeTransform) const override;
+  static ShadowNodeTraits BaseTraits() {
+    auto traits = ConcreteViewShadowNode::BaseTraits();
+    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
+    return traits;
+  }
 };
 
 } // namespace facebook::react
