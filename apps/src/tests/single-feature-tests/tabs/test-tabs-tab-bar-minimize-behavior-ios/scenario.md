@@ -81,9 +81,9 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 ### Tab switching behavior
 
-10. Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap minimized tab bar.
+10. Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap the minimized tab bar.
 
-- [ ] Tab bar should reappeaer with two tabs.
+- [ ] Tab bar should reappear, showing two tabs.
 
 11. Navigate to **Tab1** and switch back to **Tab2**.
 
