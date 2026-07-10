@@ -50,13 +50,13 @@
   if (data.displayInline) {
     options |= UIMenuOptionsDisplayInline;
   }
-  if (data.displayAsPalette) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0) || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 170000)
-    if (@available(iOS 17.0, tvOS 17.0, *)) {
+  if (@available(iOS 17.0, tvOS 17.0, *)) {
+    if (data.displayAsPalette) {
       options |= UIMenuOptionsDisplayAsPalette;
     }
-#endif
   }
+#endif
 
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray arrayWithCapacity:data.children.count];
   for (id<RNSStackHeaderMenuElement> child in data.children) {
