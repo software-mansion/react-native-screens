@@ -550,6 +550,10 @@ extension RNSSplitHostController: UISplitViewControllerDelegate {
           controller.columnPositioningDidChangeIn(splitViewController: self)
         }
       }
+    } else {
+      for controller in self.splitScreenControllers {
+        controller.columnPositioningDidChangeIn(splitViewController: self)
+      }
     }
   }
 

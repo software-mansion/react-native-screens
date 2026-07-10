@@ -1,4 +1,4 @@
-# Test Scenario: Split command show column
+# Test Scenario: Split pressables - iOS
 
 ## Details
 
@@ -25,20 +25,13 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Initial Interaction Validation
+### Interaction & Column Transition Validation
 
-2. Tap the text inside the currently visible columns (e.g., "Supplementary column" or "Secondary column").
+2. Tap the "Supplementary column" (or "Secondary column") text.
 
 - [ ] The `PressableWithFeedback` correctly registers the touch and provides visual feedback.
+- [ ] The Primary column is revealed as a result of the press.
 
----
-
-### Column Transition & Hit-Testing Validation
-
-3. Reveal the "Primary column" (tap the toggle button in the navigation bar).
-
-- [ ] The Primary column smoothly slides into view.
-
-4. Once the animation is fully completed, tap the "Primary column" text inside the newly revealed column.
+3. Once the animation is fully completed, tap the "Primary column" text inside the newly revealed column.
 
 - [ ] The `PressableWithFeedback` correctly registers the touch and provides visual feedback. The press must NOT be ignored or cancelled.

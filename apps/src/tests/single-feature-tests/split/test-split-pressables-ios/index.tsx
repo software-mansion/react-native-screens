@@ -11,25 +11,35 @@ function TestSplitPressables() {
   return (
     <Split.Host preferredDisplayMode="oneBesideSecondary" ref={hostRef}>
       <Split.Column>
-        <ColumnContent columnTitle="Primary column" hostRef={hostRef} />
+        <ColumnContent column="primary" columnTitle="Primary column" hostRef={hostRef} />
       </Split.Column>
       <Split.Column>
-        <ColumnContent columnTitle="Supplementary column" hostRef={hostRef} />
+        <ColumnContent
+          column="supplementary"
+          columnTitle="Supplementary column"
+          hostRef={hostRef}
+        />
       </Split.Column>
       <Split.Column>
-        <ColumnContent columnTitle="Secondary column" hostRef={hostRef} />
+        <ColumnContent column="secondary" columnTitle="Secondary column" hostRef={hostRef} />
       </Split.Column>
     </Split.Host>
   );
 }
 
 function ColumnContent(props: {
+  column: 'primary' | 'supplementary' | 'secondary';
   columnTitle: string;
   hostRef: React.RefObject<SplitHostCommands | null>;
 }) {
+  const onPress =
+    props.column === 'primary'
+      ? undefined
+      : () => props.hostRef.current?.show('primary');
+
   return (
     <View style={styles.container}>
-      <PressableWithFeedback style={styles.pressable}>
+      <PressableWithFeedback style={styles.pressable} onPress={onPress}>
         <Text style={styles.columnTitle}>{props.columnTitle}</Text>
       </PressableWithFeedback>
     </View>
