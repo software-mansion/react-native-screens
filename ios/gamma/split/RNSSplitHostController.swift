@@ -545,7 +545,7 @@ extension RNSSplitHostController: UISplitViewControllerDelegate {
     if let coordinator = svc.transitionCoordinator {
       coordinator.animate(alongsideTransition: nil) { [weak self] _ in
         guard let self = self else { return }
-        
+
         for controller in self.splitScreenControllers {
           controller.columnPositioningDidChangeIn(splitViewController: self)
         }

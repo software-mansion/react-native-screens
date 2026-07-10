@@ -9,7 +9,7 @@ function TestSplitPressables() {
   const hostRef = React.useRef<SplitHostCommands>(null);
 
   return (
-    <Split.Host preferredDisplayMode='oneBesideSecondary' ref={hostRef}>
+    <Split.Host preferredDisplayMode="oneBesideSecondary" ref={hostRef}>
       <Split.Column>
         <ColumnContent columnTitle="Primary column" hostRef={hostRef} />
       </Split.Column>
