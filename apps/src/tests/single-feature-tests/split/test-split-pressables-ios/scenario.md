@@ -27,10 +27,9 @@ TBD: Planned, but will be implemented separately.
 
 ### Interaction & Column Transition Validation
 
-2. Tap the "Supplementary column" (or "Secondary column") text.
+2. Tap display mode change button in the top left corner.
 
-- [ ] The `PressableWithFeedback` correctly registers the touch and provides visual feedback.
-- [ ] The Primary column is revealed as a result of the press.
+- [ ] The Primary column is revealed.
 
 3. Once the animation is fully completed, tap the "Primary column" text inside the newly revealed column.
 
