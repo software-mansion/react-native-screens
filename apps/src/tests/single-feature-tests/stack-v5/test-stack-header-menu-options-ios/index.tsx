@@ -5,8 +5,9 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
-import { Button, ScrollView } from 'react-native';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { scenarioDescription } from './scenario-description';
+import { Colors } from '@apps/shared/styling';
 
 function TestStackHeaderMenuOptionsIOS() {
   return (
@@ -25,6 +26,8 @@ function TestStackHeaderMenuOptionsIOS() {
 function buildHeaderConfig(
   displayInline: boolean,
   nestedDisplayInline: boolean,
+  displayAsPalette: boolean,
+  paletteDisplayInline: boolean,
 ): StackHeaderConfigProps {
   return {
     title: 'Menu Options',
@@ -126,6 +129,68 @@ function buildHeaderConfig(
             ],
           },
         },
+        {
+          type: 'spacer',
+          id: 'palette-spacer',
+          sizing: 'flexible',
+        },
+        {
+          type: 'item',
+          id: 'palette-button',
+          title: 'Palette',
+          icon: { type: 'sfSymbol', name: 'paintpalette' },
+          menu: {
+            type: 'menu',
+            id: 'palette-root',
+            children: [
+              {
+                id: 'palette-submenu',
+                type: 'menu',
+                title: 'Text Style',
+                displayAsPalette,
+                displayInline: paletteDisplayInline,
+                icon: { type: 'sfSymbol', name: 'textformat' },
+                children: [
+                  {
+                    id: 'style-bold',
+                    type: 'menuItem',
+                    itemType: 'action',
+                    title: 'Bold',
+                    icon: { type: 'sfSymbol', name: 'bold' },
+                  },
+                  {
+                    id: 'style-italic',
+                    type: 'menuItem',
+                    itemType: 'action',
+                    title: 'Italic',
+                    icon: { type: 'sfSymbol', name: 'italic' },
+                  },
+                  {
+                    id: 'style-underline',
+                    type: 'menuItem',
+                    itemType: 'action',
+                    title: 'Underline',
+                    icon: { type: 'sfSymbol', name: 'underline' },
+                  },
+                  {
+                    id: 'style-strikethrough',
+                    type: 'menuItem',
+                    itemType: 'action',
+                    title: 'Strikethrough',
+                    icon: { type: 'sfSymbol', name: 'strikethrough' },
+                  },
+                ],
+              },
+              {
+                id: 'palette-action-reset',
+                type: 'menuItem',
+                itemType: 'action',
+                title: 'Reset Formatting',
+                icon: { type: 'sfSymbol', name: 'clear' },
+              },
+            ],
+          },
+        },
       ],
     },
   };
@@ -135,11 +200,24 @@ function ConfigScreen() {
   const navigation = useStackNavigationContext();
   const [displayInline, setDisplayInline] = useState(false);
   const [nestedDisplayInline, setNestedDisplayInline] = useState(false);
+  const [displayAsPalette, setDisplayAsPalette] = useState(false);
+  const [paletteDisplayInline, setPaletteDisplayInline] = useState(false);
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(
-    () => buildHeaderConfig(displayInline, nestedDisplayInline),
-    [displayInline, nestedDisplayInline],
+    () =>
+      buildHeaderConfig(
+        displayInline,
+        nestedDisplayInline,
+        displayAsPalette,
+        paletteDisplayInline,
+      ),
+    [
+      displayInline,
+      nestedDisplayInline,
+      displayAsPalette,
+      paletteDisplayInline,
+    ],
   );
 
   useLayoutEffect(() => {
@@ -150,6 +228,10 @@ function ConfigScreen() {
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <Text style={styles.label}>
+        To test <Text style={styles.code}>displayInline</Text> (iOS 17.0+) try
+        different combinations with nested menus:
+      </Text>
       <Button
         title={`displayInline (Sort By): ${displayInline}`}
         onPress={() => setDisplayInline(prev => !prev)}
@@ -157,6 +239,18 @@ function ConfigScreen() {
       <Button
         title={`displayInline (Rating): ${nestedDisplayInline}`}
         onPress={() => setNestedDisplayInline(prev => !prev)}
+      />
+      <Text style={styles.label}>
+        <Text style={styles.code}>displayAsPalette</Text> works best combined
+        with <Text style={styles.code}>displayInline</Text>:
+      </Text>
+      <Button
+        title={`displayAsPalette (Text Style): ${displayAsPalette}`}
+        onPress={() => setDisplayAsPalette(prev => !prev)}
+      />
+      <Button
+        title={`displayInline (Text Style): ${paletteDisplayInline}`}
+        onPress={() => setPaletteDisplayInline(prev => !prev)}
       />
     </ScrollView>
   );
@@ -166,3 +260,17 @@ export default createScenario(
   TestStackHeaderMenuOptionsIOS,
   scenarioDescription,
 );
+
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 16,
+    padding: 20,
+  },
+  code: {
+    backgroundColor: Colors.OffWhite,
+    fontSize: 16,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    padding: 4,
+    borderRadius: 4,
+  },
+});

@@ -29,6 +29,7 @@ export type StackHeaderMenuIOS = {
   singleSelection?: boolean | undefined;
   icon?: object | undefined;
   displayInline?: boolean | undefined;
+  displayAsPalette?: boolean | undefined;
   children: StackHeaderMenuElementIOS[];
 };
 
