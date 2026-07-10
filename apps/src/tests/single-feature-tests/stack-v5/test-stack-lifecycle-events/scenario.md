@@ -19,6 +19,28 @@ nested stack.
 - iOS simulator or device (iPhone)
 - Android emulator or device
 
+## Android launch
+
+- To test the native-back / gesture-back pop flows, run the screen
+  **directly** by editing [apps/App.tsx](../../../../../App.tsx): import and
+  render `TestStackLifecycleEvents` as the root component instead of
+  `Example`, e.g.:
+
+  ```tsx
+  import { TestStackLifecycleEvents as Example } from './src/tests/single-feature-tests';
+  ```
+
+  With the gamma `StackContainer` at the root, native back and gesture-back
+  interact with the stack directly. When the screen is nested inside the
+  example app's own navigation, native back navigates out to the
+  system/selection menu instead of popping the stack (issue
+  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
+  which is why Android is tested via the direct launch.
+
+- The system gesture-back requires **Gesture navigation** to be enabled on
+  the emulator/device. If it is not already set, enable it manually in
+  **Settings → Navigation mode → select Gesture navigation**.
+
 ## Note
 
 - **iOS and Android fire a fundamentally different set of events**, so verify
@@ -153,8 +175,8 @@ nested stack.
   **Android** — four toasts (`Home` fires nothing):
   1. `NestedStack: onWillAppear`
   2. `NestedHome: onWillAppear`
-  3. `NestedHome: onDidAppear`
-  4. `NestedStack: onDidAppear`
+  3. `NestedStack: onDidAppear`
+  4. `NestedHome: onDidAppear`
 
 ---
 
@@ -168,3 +190,25 @@ nested stack.
   per-platform event sets as at the top level (iOS: four per transition;
   Android: two per transition — appear for the entering screen on push,
   disappear for the leaving screen on pop).
+
+8. On **NestedHome** dismiss screen using the **native back
+   gesture** (iOS: swipe from the left screen edge) or the **Android system
+   back** (gesture / hardware button).
+
+- [ ] Screen **Home** is shown again. The pop toasts appear -
+  both `NestedStack` and `NestedHome` fire.
+
+  **iOS** — six toasts (both containers' `onWillAppear` fire before the
+  previous screen's `onDidDisappear`):
+  1. `Home: onWillDisappear`
+  2. `NestedStack: onWillAppear`
+  3. `NestedHome: onWillAppear`
+  4. `Home: onDidDisappear`
+  5. `NestedStack: onDidAppear`
+  6. `NestedHome: onDidAppear`
+
+  **Android** — four toasts (`Home` fires nothing):
+  1. `NestedHome: onWillDisappear`
+  2. `NestedStack: onWillDisappear`
+  3. `NestedHome: onDidDisappear`
+  4. `NestedStack: onDidDisappear`
