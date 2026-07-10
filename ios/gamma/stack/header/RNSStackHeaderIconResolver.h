@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  Creates a transparent placeholder image matching the size declared in iconData's jsonSource.
  Falls back to 1x1 if size info is missing.
  */
-+ (UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData;
++ (nullable UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData;
 
 @end
 

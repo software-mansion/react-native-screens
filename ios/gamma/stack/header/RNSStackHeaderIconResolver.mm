@@ -46,8 +46,12 @@
   }
 }
 
-+ (UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData
++ (nullable UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData
 {
+  if (iconData.jsonSource == nil) {
+    return nil;
+  }
+
   CGFloat width = [iconData.jsonSource[@"width"] doubleValue];
   CGFloat height = [iconData.jsonSource[@"height"] doubleValue];
   CGFloat scale = [iconData.jsonSource[@"scale"] doubleValue] ?: 1.0;
