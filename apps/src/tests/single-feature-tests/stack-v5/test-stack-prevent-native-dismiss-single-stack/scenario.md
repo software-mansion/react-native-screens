@@ -11,16 +11,16 @@ those same native gestures pop the stack normally. The on-screen **Pop**
 button is JS-driven and always pops regardless of the flag. The stack starts
 on **Home** and pushes **A** (`preventNativeDismiss` disabled) and **B**
 (`preventNativeDismiss` enabled, with a **Toggle Prevent Native Dismiss**
-button). See the Notes for `routeKey` behavior and how Android is launched
+button). See the Notes for `Instance` behavior and how Android is launched
 directly to work around issue #1459.
 
 **OS test creation version:** Android API Level 36.
 
 ## E2E test
 
-TBD: Automation is plausible — the system back button, the native header
+TBD: Automation is plausible - the system back button, the native header
 back-button chevron, and the on-screen buttons are all Detox-drivable on
-Android — but no e2e test has been implemented yet. The system gesture-back
+Android - but no e2e test has been implemented yet. The system gesture-back
 (edge swipe) step may need platform-specific handling.
 
 ## Prerequisites
@@ -52,11 +52,12 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 ## Note
 
 - iOS does not yet support `preventNativeDismiss` for stack v5 - it is unimplemented.
-- The `Key` has the form `r-<routeName>-<n>`, where `<n>` comes from a
-  session-global counter that increments on every push and is **never
-  reset**. Do **not** expect specific numbers such as `r-A-1`; only the
-  **relationships** matter — every push produces a strictly new (higher)
-  `Key`, and a preserved (not recreated) screen keeps the same `Key`.
+- Each screen shows an `Instance` number - a **test-owned** counter that
+  increments once per mounted screen instance (it does **not** rely on the
+  library's internal `routeKey`, which is an implementation detail). Do
+  **not** expect specific numbers; only the **relationships** matter - every
+  push produces a strictly new (higher) `Instance`, and a preserved (not
+  recreated) screen keeps the same `Instance`.
 - Route **A** starts with `preventNativeDismiss` **Disabled**; route **B**
   starts with it **Enabled**. On **B**, the **Toggle Prevent Native
   Dismiss** button flips the flag at runtime via `setRouteOptions`.
@@ -69,24 +70,24 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 1. Launch the app directly via `App.tsx` so the
    **Home** screen is shown.
 
-- [ ] **Home** is shown (light blue background), `Name: Home` and a `Key`
-      `r-Home-<n>`. No header/back button is visible. Only **Push A** /
+- [ ] **Home** is shown, `Name: Home` and an
+      `Instance` number. No header/back button is visible. Only **Push A** /
       **Push B** buttons are shown (no **Pop** button).
 
 ### Push navigation and initial state
 
 2. Tap **Push A**.
 
-- [ ] Screen **A** is shown (yellow background) with a header titled "A" and
-      a back-button chevron. Shows `Name: A`, a `Key` `r-A-<n>`, and
+- [ ] Screen **A** is shown with a header titled "A" and
+      a back-button chevron. Shows `Name: A`, an `Instance` number, and
       **Prevent native dismiss: Disabled**. **Push A** / **Push B** / **Pop**
       buttons are all present.
 
-3. On **A**, tap **Push B**.
+1. On **A**, tap **Push B**.
 
-- [ ] Screen **B** is shown (green background) with a header titled "B" and a
-      back-button chevron. Shows `Name: B`, a `Key` `r-B-<m>` higher than
-      A's key, and **Prevent native dismiss: Enabled**. **Push A** / **Push
+- [ ] Screen **B** is shown with a header titled "B" and a
+      back-button chevron. Shows `Name: B`, an `Instance` number higher than
+      A's, and **Prevent native dismiss: Enabled**. **Push A** / **Push
       B** / **Pop** and a **Toggle Prevent Native Dismiss** button are all
       present.
 
@@ -95,7 +96,7 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 4. On **B** (prevent native dismiss Enabled), tap the native header back-button chevron.
 
 - [ ] The tap is intercepted: a green toast reading "Native dismiss
-      prevented" appears, and the app remains on **B** (no pop, `Key`
+      prevented" appears, and the app remains on **B** (no pop, `Instance`
       unchanged).
 
 5. On **B**, perform a system gesture-back: swipe from the left screen edge
@@ -149,7 +150,7 @@ Android — but no e2e test has been implemented yet. The system gesture-back
 12. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
     button.
 
-- [ ] App pops back to **Home** normally. **No toast** is shown — the on-screen
+- [ ] App pops back to **Home** normally. **No toast** is shown - the on-screen
       **Pop** bypasses `preventNativeDismiss` entirely.
 
 ### Edge case: toggling immediately before a native dismiss

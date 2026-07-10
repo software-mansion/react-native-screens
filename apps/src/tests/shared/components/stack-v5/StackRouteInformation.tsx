@@ -1,16 +1,24 @@
 import React from 'react';
-import { useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
 import { StyleSheet, Text, View } from 'react-native';
 
+// Test-owned, session-global counter. It is incremented exactly once per
+// mounted screen instance so scenarios can tell a *preserved* screen (stable
+// id) apart from a *recreated* one (new, higher id) — without depending on the
+// library's internal `routeKey` format (`r-<name>-<n>`), which is an
+// implementation detail that may change without notice.
+let instanceCounter = 0;
+
 export function StackRouteInformation(props: { routeName?: string }) {
-  const routeKey = useStackNavigationContext().routeKey;
+  // The useState initializer runs exactly once per mounted instance: it
+  // survives re-renders and resets only when the screen is remounted.
+  const [instanceId] = React.useState(() => ++instanceCounter);
 
   return (
     <View>
       {props.routeName ? (
         <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
       ) : null}
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
+      <Text style={styles.routeInformation}>Instance: {instanceId}</Text>
     </View>
   );
 }
