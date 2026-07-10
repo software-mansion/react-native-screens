@@ -62,7 +62,7 @@
                                               }
                                               weakBarButtonItem.image = image;
                                             }];
-    barButtonItem.image = syncImage ? syncImage : [UIImage imageWithCIImage:[CIImage emptyImage]];
+    barButtonItem.image = syncImage ? syncImage : [RNSStackHeaderIconResolver placeholderImageForIcon:item.icon];
   }
 
   return barButtonItem;

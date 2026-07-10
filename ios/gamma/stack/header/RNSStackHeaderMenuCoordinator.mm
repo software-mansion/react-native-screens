@@ -65,13 +65,14 @@
 
   UIImage *menuImage = nil;
   if (data.icon != nil) {
-    menuImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
-                                        withImageLoader:imageLoader
-                                   asyncCompletionBlock:^(UIImage *_Nullable image) {
-                                     if (onMenuInvalidated) {
-                                       onMenuInvalidated();
-                                     }
-                                   }];
+    UIImage *syncImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
+                                                 withImageLoader:imageLoader
+                                            asyncCompletionBlock:^(UIImage *_Nullable image) {
+                                              if (onMenuInvalidated) {
+                                                onMenuInvalidated();
+                                              }
+                                            }];
+    menuImage = syncImage ? syncImage : [RNSStackHeaderIconResolver placeholderImageForIcon:data.icon];
   }
 
   return [UIMenu menuWithTitle:data.title image:menuImage identifier:nil options:options children:elements];
@@ -160,13 +161,14 @@
 
   UIImage *iconImage = nil;
   if (data.icon != nil) {
-    iconImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
-                                        withImageLoader:imageLoader
-                                   asyncCompletionBlock:^(UIImage *_Nullable image) {
-                                     if (onMenuInvalidated) {
-                                       onMenuInvalidated();
-                                     }
-                                   }];
+    UIImage *syncImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
+                                                 withImageLoader:imageLoader
+                                            asyncCompletionBlock:^(UIImage *_Nullable image) {
+                                              if (onMenuInvalidated) {
+                                                onMenuInvalidated();
+                                              }
+                                            }];
+    iconImage = syncImage ? syncImage : [RNSStackHeaderIconResolver placeholderImageForIcon:data.icon];
   }
 
   UIAction *toggleAction = [UIAction
@@ -218,13 +220,14 @@
 
   UIImage *iconImage = nil;
   if (data.icon != nil) {
-    iconImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
-                                        withImageLoader:imageLoader
-                                   asyncCompletionBlock:^(UIImage *_Nullable image) {
-                                     if (onMenuInvalidated) {
-                                       onMenuInvalidated();
-                                     }
-                                   }];
+    UIImage *syncImage = [RNSStackHeaderIconResolver resolveIcon:data.icon
+                                                 withImageLoader:imageLoader
+                                            asyncCompletionBlock:^(UIImage *_Nullable image) {
+                                              if (onMenuInvalidated) {
+                                                onMenuInvalidated();
+                                              }
+                                            }];
+    iconImage = syncImage ? syncImage : [RNSStackHeaderIconResolver placeholderImageForIcon:data.icon];
   }
 
   UIAction *action = [UIAction actionWithTitle:data.title

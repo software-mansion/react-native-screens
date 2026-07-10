@@ -20,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
                   withImageLoader:(id<RNSImageLoading>)imageLoader
              asyncCompletionBlock:(nullable void (^)(UIImage *_Nullable))completionBlock;
 
+/**
+ Creates a transparent placeholder image matching the size declared in iconData's jsonSource.
+ Falls back to 1x1 if size info is missing and returns nil if jsonSource is nil (sfSymbols, xcassets).
+ */
++ (nullable UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData;
+
 @end
 
 NS_ASSUME_NONNULL_END
