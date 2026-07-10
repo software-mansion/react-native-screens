@@ -41,7 +41,7 @@ and text frame Y-positions.
 2. Tap inside the TextInput box.
 
 - [ ] The soft keyboard (IME) slides up.
-- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard. 
+- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
 - [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.
 
 3. Dismiss the keyboard.
@@ -87,5 +87,5 @@ remains tucked behind the tab bar layer.
 11. Tap inside the TextInput box again.
 
 - [ ] The soft keyboard (IME) slides up.
-- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard. 
+- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
 - [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.

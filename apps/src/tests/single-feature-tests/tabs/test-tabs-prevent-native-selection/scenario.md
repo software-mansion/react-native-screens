@@ -102,7 +102,7 @@ navigation is not blocked by `preventNativeSelection`.
 
 - [ ] Third tab label shows `preventNativeSelection: true`.
 
-9. Navigate to  the **Fourth** tab and tap **Toggle preventNativeSelection**.
+9. Navigate to the **Fourth** tab and tap **Toggle preventNativeSelection**.
 
 - [ ] Fourth tab label shows `preventNativeSelection: true`.
 

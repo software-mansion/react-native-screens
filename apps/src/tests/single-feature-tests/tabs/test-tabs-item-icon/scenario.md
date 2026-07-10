@@ -139,7 +139,7 @@ tabBarItemTitleFontColor - it's reported native bug.
   the filled image. Unselected tab icon changes to sym_call_missed.
   Selected tab icon is **red** and unselected icon renders in **green**.
 
-3.  While **Image** tab is selected, use the Tab key on keyboard to
+3. While **Image** tab is selected, use the Tab key on keyboard to
 switch focus to the **DrawableResource** tab.
 
 - [ ] Focused tab icon is dark blue while selected tab icon
@@ -151,6 +151,6 @@ remains red.
 
 4. Switch between two tabs few times.
 
-- [ ] Each tab swaps between its `icon` and `selectedIcon` consistently on selection. 
-- [ ] The correct colors are applied each time: red for **Image**'s selected state and green for 
+- [ ] Each tab swaps between its `icon` and `selectedIcon` consistently on selection.
+- [ ] The correct colors are applied each time: red for **Image**'s selected state and green for
    **DrawableResource**'s unselected state.

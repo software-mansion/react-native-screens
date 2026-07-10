@@ -9,7 +9,7 @@ and both item states (`normal` unselected, `selected`).
 `tabBarItemTitleFontColor` is used as the visual discriminator — color
 identifies which display-mode bucket is active:
 
-- **Red**  → `stacked`
+- **Red** → `stacked`
 - **Blue** → `inline`
 - **Green** → `compactInline`
 
@@ -47,7 +47,7 @@ simulated device is required for all steps.
 - On **iOS 26**, configuring the `inline` bucket has no visible effect on
   iPhone because the system never activates the `inlineLayoutAppearance` on
   that platform version. Testers should not expect blue titles to appear on
-  an iPhone running iOS 26.  Instead, the `compactInline` configuration is displayed.
+  an iPhone running iOS 26. Instead, the `compactInline` configuration is displayed.
 - Icon color is set to the system default: blue for the selected tab, and
   black or gray for unselected tabs, depending on the iOS version.
 

@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:**  Validates the native iOS More navigation controller - the overflow mechanism UIKit creates when a tab bar has more than five tabs. Tests cover user-driven and JS-driven navigation to overflow tabs (Fifth, Sixth), correct onMoreTabSelected event lifecycle (fires only when opening the More list, not on subsequent selections within it), and iPad resize transitions between compact and regular size classes.
+**Description:** Validates the native iOS More navigation controller - the overflow mechanism UIKit creates when a tab bar has more than five tabs. Tests cover user-driven and JS-driven navigation to overflow tabs (Fifth, Sixth), correct onMoreTabSelected event lifecycle (fires only when opening the More list, not on subsequent selections within it), and iPad resize transitions between compact and regular size classes.
 
 **OS test creation version:** iOS: 18.6 and 26.2
 
@@ -132,7 +132,7 @@ TBD: Ongoing research.
 
 - [ ] **Second** tab becomes active. Tab bar selection updates, and the route key label reads `Second`. A blue toast appears at the bottom with the message `onTabSelected:"Second"`.
 
-12.  Tap **"More"** tab bar item and select **"Sixth"** from the More list.
+12. Tap **"More"** tab bar item and select **"Sixth"** from the More list.
 
 - [ ] **Sixth** tab content is shown, and the route key label reads `Sixth`. The **More** tab is selected in the tab bar. No crash or blank screen.
 
