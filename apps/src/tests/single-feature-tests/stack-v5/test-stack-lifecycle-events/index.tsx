@@ -78,7 +78,7 @@ function StackSetup() {
           options: {
             ...makeCallbacks('NestedStack'),
             headerConfig: {
-              hidden: true,
+              title: 'NestedStack',
             },
           },
         },
