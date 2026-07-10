@@ -34,6 +34,9 @@ Not covered:
 
 ## Note
 
+- On Android: Text color properties cannot be observed on Tab1 (empty badge) and Tab4 (icon).
+Validate background color only for these tabs.
+
 `badgeValue`:
 
 - On Android the maximum badge string length rendered verbatim is 4
@@ -158,8 +161,8 @@ maximum and is truncated by the system).
 
 2. Confirm Tab1 is active. Observe the Tab1 badge in the tab bar.
 
-- [ ] Badge shows as a small dot.
-- [ ] The badge renders with the Android system default: red background with white text.
+- [ ] Selected tab: Badge shows as a small dot.
+- [ ] Unselected tabs: The badge renders with the Android system default: red background with white text.
 
 ---
 
