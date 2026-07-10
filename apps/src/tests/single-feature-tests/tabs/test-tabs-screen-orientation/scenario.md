@@ -1,6 +1,6 @@
 # Test Scenario: Tabs screen orientation
 
-WIP: This file is placeholder for future test. Currently waiting for fix issues for iOS and implementation for Android.
+WIP: Placeholder scenario for a future test. Currently waiting for fixes on iOS and an Android implementation.
 
 ## Details
 
