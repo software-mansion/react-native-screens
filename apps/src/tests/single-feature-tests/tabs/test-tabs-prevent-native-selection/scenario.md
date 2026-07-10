@@ -55,8 +55,8 @@ is blocked.
 1. Launch the app and navigate to **Prevent native selection**.
 
 - [ ] Android: six tabs visible in the tab bar.
-- [ ] iOS: four tabs and a **More** item visible.The **First** tab is selected
-and displays `preventNativeSelection: false` under its name on the screen.
+- [ ] iOS: four tabs and a **More** item visible. The **First** tab is selected
+  and displays `preventNativeSelection: false` under its name on the screen.
 
 ---
 
