@@ -10,7 +10,7 @@ WIP: Placeholder scenario for a future test. Currently waiting for fixes on iOS 
 
 ## E2E test
 
-**TBD:** Probably won't be implemented but it's to be decide when functionality will work.
+**TBD:** Probably won't be implemented; this will be decided once the functionality works.
 
 ## Prerequisites
 
