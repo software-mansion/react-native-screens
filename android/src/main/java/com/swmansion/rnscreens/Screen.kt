@@ -357,12 +357,13 @@ class Screen(
             val height = b - t
 
             if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
-                val topLevelDecorView =
-                    requireNotNull(
-                        reactContext.currentActivity?.window?.decorView,
-                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
 
-                val topInset = getDecorViewTopInset(topLevelDecorView)
+                // The activity can be momentarily unavailable during recreation
+                // (e.g. backgrounding during startup). Skip the inset correction
+                // for this pass instead of crashing. See #4311.
+                val topLevelDecorView = reactContext.currentActivity?.window?.decorView
+                val topInset = topLevelDecorView?.let { getDecorViewTopInset(it) } ?: 0
+
                 val correctedHeight = height - topInset
                 val correctedOffsetY = t + topInset
 
