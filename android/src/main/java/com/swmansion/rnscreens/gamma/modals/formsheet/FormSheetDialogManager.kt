@@ -99,6 +99,10 @@ class FormSheetDialogManager(
             appearanceCoordinator.updateCornerRadius(newConfig.preferredCornerRadius)
         }
 
+        if (oldConfig.nativeContainerBackgroundColor != newConfig.nativeContainerBackgroundColor) {
+            appearanceCoordinator.updateBackgroundColor(newConfig.nativeContainerBackgroundColor)
+        }
+
         if (oldConfig.isOpen != newConfig.isOpen) {
             presentationManager.updatePresentationState(newConfig.isOpen)
         }

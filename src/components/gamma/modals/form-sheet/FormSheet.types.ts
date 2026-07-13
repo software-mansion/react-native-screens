@@ -12,7 +12,7 @@ export type FormSheetNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container hosting the sheet content.
    *
-   * @platform ios
+   * @platform android, ios
    */
   backgroundColor?: ColorValue | undefined;
 };
@@ -140,7 +140,7 @@ export interface FormSheetProps {
    *
    * These properties are forwarded directly to the underlying native view.
    *
-   * @platform ios
+   * @platform android, ios
    */
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
