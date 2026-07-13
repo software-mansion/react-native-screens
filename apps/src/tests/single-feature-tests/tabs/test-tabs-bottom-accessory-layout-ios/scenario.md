@@ -1,4 +1,4 @@
-# Test Scenario: bottomAccessory
+# Test Scenario: Bottom Accessory Layout
 
 ## Details
 
@@ -113,7 +113,7 @@ is not applied to the full-size app.
 - [ ] The **ScrollDown** tab content (a 40-row list) is displayed.
   The Center accessory remains visible below the content and above tab bar.
 
-9.  Tap the **Config** tab.
+9. Tap the **Config** tab.
 
 - [ ] The **Config** tab is displayed. The Center accessory is still
   visible. The **Center** card still has a blue border.
@@ -127,7 +127,7 @@ is not applied to the full-size app.
 - [ ] The tab bar is fully visible. The Center accessory is visible in
 its `regular` position above the tab bar.
 
-11.  Scroll the list **down** on the **ScrollDown** tab.
+11. Scroll the list **down** on the **ScrollDown** tab.
 
 - [ ] The tab bar minimizes as content scrolls down. The accessory
   transitions to the `inline` environment layout (rendered inside the
@@ -161,10 +161,10 @@ its `regular` position above the tab bar.
 
 ### Switch with minimized tab bar
 
-16.  Scroll the **ScrollUp** tab so the tab bar minimizes.
+16. Scroll the **ScrollUp** tab so the tab bar minimizes.
 
 - [ ] The tab bar collapses. The bottom accessory transitions to
-the `inline` layout inside the collapsed bar.  
+the `inline` layout inside the collapsed bar.
 
 17. Tap on the collapsed tab bar to expand it.
 
@@ -184,7 +184,7 @@ still has a blue border.
 
 ### iPad only - full-size app
 
-20.  Resize app to full-size and perform steps 1-7.
+20. Resize app to full-size and perform steps 1-7.
 
 - [ ] Tab bar is displayed at the top of screen. Different bottom
 accessory content variants should be displayed correctly at the bottom of the screen.

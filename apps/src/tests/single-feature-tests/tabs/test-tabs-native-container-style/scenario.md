@@ -30,8 +30,8 @@ manually.
 - On Android the color fills the `FrameLayout` that wraps currently focused
 screen and the `BottomNavigationView`.
 - On Android and iOS 18 and earlier, the tab bar may obscure the native container
-  background color unless a transparent or semi-transparent tab bar background  
-  color is configured.  
+  background color unless a transparent or semi-transparent tab bar background
+  color is configured.
 - On iOS 26, while the "liquid glass" tab bar partially obscures the color, it
   remains inherently visible through the material.
 

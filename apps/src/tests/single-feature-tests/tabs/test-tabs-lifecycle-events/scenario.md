@@ -7,7 +7,7 @@
 switches, covering happy-path transitions, re-tapping the active tab, and
 rapid switching.
 
-**OS test creation version:** iOS: 18.6 and 26.2, Android: 18.6.
+**OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
 ## E2E test
 
