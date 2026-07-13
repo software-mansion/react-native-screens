@@ -56,14 +56,10 @@ and are not yet implemented.
 - Each screen shows two labels: `Name` (the route name: `Home`, `A`, or
   `B`) and `Key` (the route's unique `routeKey`). Use the `Key` value to
   tell apart multiple stacked instances of the same route name.
-- The `Key` has the form `r-<routeName>-<n>`, where `<n>` comes from a
-  global counter that increments on every push and is **never reset** for
+- `Key` values use a session-global counterthat increments on every push and is **never reset** for
   the lifetime of the app session (it is shared across all Stack
-  containers). Do **not** expect specific numbers such as `r-A-1`: the
-  exact suffix depends on how many screens were pushed earlier in the
-  session and will differ between runs and after a JS reload. Only the
-  **relationships** matter — every push produces a strictly new `Key`, and
-  a preserved (not recreated) screen keeps the same `Key`.
+  containers). Only the **relationships** matter — every push produces a strictly
+  new `Key`, and a preserved (not recreated) screen keeps the same `Key`.
 - **Android:** when the screen is launched **directly** via `App.tsx` (see
   the Android launch prerequisite),both the **native header back button** and
   the **system gesture-back** work — the same as on iOS. These only fail when the screen
@@ -81,7 +77,7 @@ and are not yet implemented.
    screen of the Simple stack navigation is shown.
 
 - [ ] The **Home** screen is shown with a light blue background, `Name:
-  Home`, and a `Key` of the form `r-Home-<n>`. No back button is visible in
+  Home`, and a `Key`. No back button is visible in
   the header. No **Pop** button is shown, only **Push A** and **Push B**.
   Note the displayed `Key` value to compare against later steps.
 
@@ -90,14 +86,14 @@ and are not yet implemented.
 2. Tap **Push A**.
 
 - [ ] Screen **A** is pushed. Background is light yellow, `Name: A`, and a
-  `Key` of the form `r-A-<n>` is shown (a new value, distinct from Home's).
+  `Key` with a new value, distinct from Home's.
   A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
   buttons are all shown. Note this `Key` value.
 
 3. While on **A**, tap **Push B**.
 
 - [ ] Screen **B** is pushed on top of **A**. Background is green, `Name:
-  B`, and a new `Key` of the form `r-B-<n>` is shown.
+  B`, and a new `Key`is shown.
   A native back button is visible in the header. Note this `Key` value.
 
 ### Re-pushing an already-present route
@@ -106,7 +102,7 @@ and are not yet implemented.
 
 - [ ] A new instance of screen **A** is pushed on top of the stack (stack
   is now Home, A, B, A). `Name: A`, background light yellow, and a new
-  `r-A-<n>` `Key` that is **different** from the `Key` shown in step 2.
+  `Key` that is **different** from the `Key` shown in step 2.
 
 ### Pop via the on-screen button
 
