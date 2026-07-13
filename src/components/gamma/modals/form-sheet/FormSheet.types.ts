@@ -196,7 +196,7 @@ export interface FormSheetProps {
    *
    * Provides the `index` of the newly selected detent from the `detents` array.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDetentChanged?:
     | FormSheetEventHandler<FormSheetDetentChangedEvent>

@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens/experimental';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'OnDetentChanged',
-  key: 'test-form-sheet-on-detent-changed-ios',
-  details:
-    'Allows testing the onDetentChanged event, verifying that the correct detent index is reported when swiping.',
-  platforms: ['ios'],
-};
+import { scenarioDescription } from './scenario-description';
 
 function TestFormSheetOnDetentChanged() {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     padding: 24,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   sheetTitle: {

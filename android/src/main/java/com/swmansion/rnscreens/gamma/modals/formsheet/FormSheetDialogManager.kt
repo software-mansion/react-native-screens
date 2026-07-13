@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
+import kotlin.properties.Delegates
 
 class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
-    private val onDismissRequest: () -> Unit,
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -34,7 +33,9 @@ class FormSheetDialogManager(
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
     private val behaviorController =
-        bottomSheetView?.let { FormSheetBehaviorController(it) }
+        bottomSheetView?.let {
+            FormSheetBehaviorController(it) { index -> eventEmitter?.emitOnDetentChanged(index) }
+        }
 
     private val dimmingManager = DimmingViewManager(context, dialog)
 
@@ -51,10 +52,12 @@ class FormSheetDialogManager(
             dialog = dialog,
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            onNativeDismiss = onDismissRequest,
+            onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
         )
 
-    internal var appearanceEventEmitter: ViewAppearanceEventEmitter? by presentationManager::appearanceEventEmitter
+    internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
+        presentationManager.appearanceEventEmitter = newValue
+    }
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
         get() = dimensionsCoordinator
@@ -62,6 +65,7 @@ class FormSheetDialogManager(
     init {
         presentationManager.setup()
         dimensionsCoordinator.setup()
+        behaviorController?.setup()
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
@@ -104,6 +108,7 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
+        behaviorController?.destroy()
         presentationManager.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()

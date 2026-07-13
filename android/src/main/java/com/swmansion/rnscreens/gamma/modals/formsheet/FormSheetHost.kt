@@ -32,7 +32,6 @@ class FormSheetHost(
         FormSheetDialogManager(
             context = context,
             contentView = sheetContentView,
-            onDismissRequest = { eventEmitter.emitOnNativeDismissEvent() },
         )
 
     init {
@@ -78,7 +77,7 @@ class FormSheetHost(
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
         eventEmitter = FormSheetHostEventEmitter(reactContext, id)
-        dialogManager.appearanceEventEmitter = eventEmitter
+        dialogManager.eventEmitter = eventEmitter
     }
 
     internal fun onAfterUpdateTransaction() {

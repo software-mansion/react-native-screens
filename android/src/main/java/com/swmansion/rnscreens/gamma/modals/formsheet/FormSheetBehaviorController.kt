@@ -1,12 +1,44 @@
 package com.swmansion.rnscreens.gamma.modals.formsheet
 
+import android.view.View
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 internal class FormSheetBehaviorController(
     private val sheetView: FrameLayout,
+    private val onDetentChanged: ((index: Int) -> Unit)? = null,
 ) {
     private val behavior = BottomSheetBehavior.from(sheetView)
+
+    private var currentDetentsCount: Int = 1
+    private var lastEmittedDetentIndex: Int = UNKNOWN_DETENT_INDEX
+
+    private val bottomSheetCallback =
+        object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(
+                bottomSheet: View,
+                newState: Int,
+            ) {
+                val index = mapStateToDetentIndex(newState)
+                if (index != UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
+                    lastEmittedDetentIndex = index
+                    onDetentChanged?.invoke(index)
+                }
+            }
+
+            override fun onSlide(
+                bottomSheet: View,
+                slideOffset: Float,
+            ) = Unit
+        }
+
+    internal fun setup() {
+        behavior.addBottomSheetCallback(bottomSheetCallback)
+    }
+
+    internal fun destroy() {
+        behavior.removeBottomSheetCallback(bottomSheetCallback)
+    }
 
     /**
      * @param detents - parsed detents configuration.
@@ -25,6 +57,8 @@ internal class FormSheetBehaviorController(
         contentHeightForFitToContents: Int = 0,
         nativeContainerPaddingBottom: Int = 0,
     ) {
+        currentDetentsCount = detents.count
+
         if (sheetAvailableSpace <= 0) {
             return
         }
@@ -94,5 +128,28 @@ internal class FormSheetBehaviorController(
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
         // TODO: @t0maboro - in v4 impl the state was passed as a param, consider the same approach
         state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun mapStateToDetentIndex(state: Int): Int =
+        when (currentDetentsCount) {
+            1 -> if (state == BottomSheetBehavior.STATE_EXPANDED) 0 else UNKNOWN_DETENT_INDEX
+            2 ->
+                when (state) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> 0
+                    BottomSheetBehavior.STATE_EXPANDED -> 1
+                    else -> UNKNOWN_DETENT_INDEX
+                }
+            3 ->
+                when (state) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> 0
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
+                    BottomSheetBehavior.STATE_EXPANDED -> 2
+                    else -> UNKNOWN_DETENT_INDEX
+                }
+            else -> UNKNOWN_DETENT_INDEX
+        }
+
+    companion object {
+        private const val UNKNOWN_DETENT_INDEX = -1
     }
 }
