@@ -52,12 +52,10 @@ Android - but no e2e test has been implemented yet. The system gesture-back
 ## Note
 
 - iOS does not yet support `preventNativeDismiss` for stack v5 - it is unimplemented.
-- Each screen shows an `Key` number - a **test-owned** counter that
-  increments once per mounted screen instance (it does **not** rely on the
-  library's internal `routeKey`, which is an implementation detail). Do
-  **not** expect specific numbers; only the **relationships** matter - every
-  push produces a strictly new (higher) `Key`, and a preserved (not
-  recreated) screen keeps the same `Key`.
+- Each screen shows an `Key` number - counter that
+  increments once per mounted screen instance. Do **not** expect specific numbers;
+  only the **relationships** matter - every push produces a strictly new (higher) `Key`,
+  and a preserved (not recreated) screen keeps the same `Key`.
 - Route **A** starts with `preventNativeDismiss` **Disabled**; route **B**
   starts with it **Enabled**. On **B**, the **Toggle Prevent Native
   Dismiss** button flips the flag at runtime via `setRouteOptions`.
