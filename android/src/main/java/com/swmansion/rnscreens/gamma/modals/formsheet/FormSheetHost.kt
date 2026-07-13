@@ -21,6 +21,8 @@ class FormSheetHost(
 
     internal var prefersGrabberVisible = false
 
+    internal var preferredCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
+
     internal var detents: List<Double> = emptyList()
 
     internal var initialDetentIndex: Int = 0
@@ -89,6 +91,7 @@ class FormSheetHost(
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
                 initialDetentIndex = this.initialDetentIndex,
+                preferredCornerRadius = this.preferredCornerRadius,
             )
         dialogManager.applyConfig(config)
     }

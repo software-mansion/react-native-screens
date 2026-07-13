@@ -86,7 +86,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Float,
     ) {
-        // TODO: @t0maboro - implement later
+        view.preferredCornerRadius = value
     }
 
     override fun setLargestUndimmedDetentIndex(
