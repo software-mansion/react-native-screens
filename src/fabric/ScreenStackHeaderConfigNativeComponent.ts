@@ -84,10 +84,10 @@ export interface NativeProps extends ViewProps {
 
   // Experimental
   userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
-  consumeTopInset?: boolean | undefined;
-  consumeLeftInset?: boolean | undefined;
-  consumeRightInset?: boolean | undefined;
-  consumeBottomInset?: boolean | undefined;
+  consumeTopInset?: CT.WithDefault<boolean, true>;
+  consumeLeftInset?: CT.WithDefault<boolean, true>;
+  consumeRightInset?: CT.WithDefault<boolean, true>;
+  consumeBottomInset?: CT.WithDefault<boolean, true>;
   legacyTopInsetBehavior?: boolean | undefined;
 }
 
