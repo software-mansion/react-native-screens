@@ -23,6 +23,8 @@ class FormSheetHost(
 
     internal var detents: List<Double> = emptyList()
 
+    internal var initialDetentIndex: Int = 0
+
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
             updateStateIfNeeded(width, height)
@@ -86,6 +88,7 @@ class FormSheetHost(
                 isOpen = this.isOpen,
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
+                initialDetentIndex = this.initialDetentIndex,
             )
         dialogManager.applyConfig(config)
     }

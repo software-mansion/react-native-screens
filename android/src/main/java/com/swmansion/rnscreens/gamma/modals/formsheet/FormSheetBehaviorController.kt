@@ -11,7 +11,7 @@ internal class FormSheetBehaviorController(
     private val behavior = BottomSheetBehavior.from(sheetView)
 
     private var currentDetentsCount: Int = 1
-    private var lastEmittedDetentIndex: Int = UNKNOWN_DETENT_INDEX
+    private var lastEmittedDetentIndex: Int = FORM_SHEET_UNKNOWN_DETENT_INDEX
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -20,7 +20,7 @@ internal class FormSheetBehaviorController(
                 newState: Int,
             ) {
                 val index = mapStateToDetentIndex(newState)
-                if (index != UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
+                if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
                     lastEmittedDetentIndex = index
                     onDetentChanged?.invoke(index)
                 }
@@ -50,12 +50,17 @@ internal class FormSheetBehaviorController(
      * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the
      * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
      * the safe area.
+     * @param initialDetentIndex - the index of the detent the sheet should snap to while opening.
+     * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state.
+     * This should typically be `true` only when the sheet transitions from closed to open.
      */
     internal fun updateSheetBehavior(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
         contentHeightForFitToContents: Int = 0,
         nativeContainerPaddingBottom: Int = 0,
+        initialDetentIndex: Int = 0,
+        applyInitialDetent: Boolean = false,
     ) {
         currentDetentsCount = detents.count
 
@@ -68,8 +73,8 @@ internal class FormSheetBehaviorController(
         } else {
             when (detents.count) {
                 1 -> configureSingleDetent(detents, sheetAvailableSpace)
-                2 -> configureTwoDetents(detents, sheetAvailableSpace)
-                3 -> configureThreeDetents(detents, sheetAvailableSpace)
+                2 -> configureTwoDetents(detents, sheetAvailableSpace, initialDetentIndex, applyInitialDetent)
+                3 -> configureThreeDetents(detents, sheetAvailableSpace, initialDetentIndex, applyInitialDetent)
                 else -> throw IllegalStateException(
                     "[RNScreens] Unsupported detent count ${detents.count}.",
                 )
@@ -107,18 +112,23 @@ internal class FormSheetBehaviorController(
     private fun configureTwoDetents(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
+        initialDetentIndex: Int,
+        applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = true
         peekHeight = detents.firstHeight(sheetAvailableSpace)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
-        // TODO: @t0maboro - in v4 impl the state was passed as a param, consider the same approach
-        state = BottomSheetBehavior.STATE_COLLAPSED
+        if (applyInitialDetent) {
+            state = resolveStateFromIndex(initialDetentIndex, detents.count)
+        }
     }
 
     private fun configureThreeDetents(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
+        initialDetentIndex: Int,
+        applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = false
@@ -126,30 +136,52 @@ internal class FormSheetBehaviorController(
         halfExpandedRatio = detents.halfExpandedRatio()
         expandedOffset = detents.expandedOffsetFromTop(sheetAvailableSpace)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
-        // TODO: @t0maboro - in v4 impl the state was passed as a param, consider the same approach
-        state = BottomSheetBehavior.STATE_COLLAPSED
+        if (applyInitialDetent) {
+            state = resolveStateFromIndex(initialDetentIndex, detents.count)
+        }
+    }
+
+    private fun resolveStateFromIndex(
+        index: Int,
+        detentsCount: Int,
+    ): Int {
+        val resolvedIndex = if (index == FORM_SHEET_LAST_DETENT_INDEX) detentsCount - 1 else index
+        val safeIndex = resolvedIndex.coerceIn(0, detentsCount - 1)
+
+        return when (detentsCount) {
+            1 -> BottomSheetBehavior.STATE_EXPANDED
+            2 -> if (safeIndex == 0) BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_EXPANDED
+            3 ->
+                when (safeIndex) {
+                    0 -> BottomSheetBehavior.STATE_COLLAPSED
+                    1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
+                    else -> BottomSheetBehavior.STATE_EXPANDED
+                }
+            else -> BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     private fun mapStateToDetentIndex(state: Int): Int =
         when (currentDetentsCount) {
-            1 -> if (state == BottomSheetBehavior.STATE_EXPANDED) 0 else UNKNOWN_DETENT_INDEX
+            1 -> if (state == BottomSheetBehavior.STATE_EXPANDED) 0 else FORM_SHEET_UNKNOWN_DETENT_INDEX
             2 ->
                 when (state) {
                     BottomSheetBehavior.STATE_COLLAPSED -> 0
                     BottomSheetBehavior.STATE_EXPANDED -> 1
-                    else -> UNKNOWN_DETENT_INDEX
+                    else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
                 }
             3 ->
                 when (state) {
                     BottomSheetBehavior.STATE_COLLAPSED -> 0
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
                     BottomSheetBehavior.STATE_EXPANDED -> 2
-                    else -> UNKNOWN_DETENT_INDEX
+                    else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
                 }
-            else -> UNKNOWN_DETENT_INDEX
+            else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
         }
 
     companion object {
-        private const val UNKNOWN_DETENT_INDEX = -1
+        private const val FORM_SHEET_UNKNOWN_DETENT_INDEX = -1
+        private const val FORM_SHEET_LAST_DETENT_INDEX = -1
     }
 }

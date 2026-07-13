@@ -100,7 +100,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Int,
     ) {
-        // TODO: @t0maboro - implement later
+        view.initialDetentIndex = value
     }
 
     override fun setPrefersScrollingExpandsWhenScrolledToEdge(

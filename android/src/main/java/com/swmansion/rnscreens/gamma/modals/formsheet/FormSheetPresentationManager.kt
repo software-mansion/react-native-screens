@@ -91,13 +91,18 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
+
+        dimmingManager.isTransitionAnimationRunning = true
 
         currentSheetAnimator =
             animatorFactory.createEnterAnimator(bottomSheetView, isInterrupting).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
+                            dimmingManager.isTransitionAnimationRunning = false
+
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
                             onPresentationComplete()
                         }
@@ -114,13 +119,18 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
+
+        dimmingManager.isTransitionAnimationRunning = true
 
         currentSheetAnimator =
             animatorFactory.createExitAnimator(bottomSheetView, isInterrupting).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
+                            dimmingManager.isTransitionAnimationRunning = false
+
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
                             performDismiss()
                         }
