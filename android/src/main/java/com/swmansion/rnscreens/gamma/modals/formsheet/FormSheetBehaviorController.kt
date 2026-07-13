@@ -11,7 +11,7 @@ internal class FormSheetBehaviorController(
     private val behavior = BottomSheetBehavior.from(sheetView)
 
     private var currentDetentsCount: Int = 1
-    private var lastEmittedDetentIndex: Int = UNKNOWN_DETENT_INDEX
+    private var lastEmittedDetentIndex: Int = FORM_SHEET_UNKNOWN_DETENT_INDEX
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -20,7 +20,7 @@ internal class FormSheetBehaviorController(
                 newState: Int,
             ) {
                 val index = mapStateToDetentIndex(newState)
-                if (index != UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
+                if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
                     lastEmittedDetentIndex = index
                     onDetentChanged?.invoke(index)
                 }
@@ -163,25 +163,25 @@ internal class FormSheetBehaviorController(
 
     private fun mapStateToDetentIndex(state: Int): Int =
         when (currentDetentsCount) {
-            1 -> if (state == BottomSheetBehavior.STATE_EXPANDED) 0 else UNKNOWN_DETENT_INDEX
+            1 -> if (state == BottomSheetBehavior.STATE_EXPANDED) 0 else FORM_SHEET_UNKNOWN_DETENT_INDEX
             2 ->
                 when (state) {
                     BottomSheetBehavior.STATE_COLLAPSED -> 0
                     BottomSheetBehavior.STATE_EXPANDED -> 1
-                    else -> UNKNOWN_DETENT_INDEX
+                    else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
                 }
             3 ->
                 when (state) {
                     BottomSheetBehavior.STATE_COLLAPSED -> 0
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
                     BottomSheetBehavior.STATE_EXPANDED -> 2
-                    else -> UNKNOWN_DETENT_INDEX
+                    else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
                 }
-            else -> UNKNOWN_DETENT_INDEX
+            else -> FORM_SHEET_UNKNOWN_DETENT_INDEX
         }
 
     companion object {
-        private const val UNKNOWN_DETENT_INDEX = -1
+        private const val FORM_SHEET_UNKNOWN_DETENT_INDEX = -1
         private const val FORM_SHEET_LAST_DETENT_INDEX = -1
     }
 }
