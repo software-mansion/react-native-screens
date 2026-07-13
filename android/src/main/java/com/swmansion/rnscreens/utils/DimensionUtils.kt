@@ -48,6 +48,7 @@ internal fun dpToPx(
  * displays of differing density. See [dpToPx].
  */
 internal fun View.dpToPx(dp: Float): Float = dpToPx(dp, resources.displayMetrics.density)
+
 internal fun resolveDimensionAttr(
     context: Context,
     attrId: Int,
