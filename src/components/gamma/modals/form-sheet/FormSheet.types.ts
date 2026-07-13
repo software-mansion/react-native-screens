@@ -76,6 +76,7 @@ export interface FormSheetProps {
    *
    * @default systemDefault
    * @platform android, ios
+   * @supported android API level 33 or higher, iOS
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
