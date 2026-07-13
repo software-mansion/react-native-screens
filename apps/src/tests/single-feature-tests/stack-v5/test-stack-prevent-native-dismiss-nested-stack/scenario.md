@@ -64,7 +64,7 @@ swipe) steps may need platform-specific handling.
   route itself **Disabled** (it never intercepts), `NestedHome` **Enabled**,
   `NestedA` **Disabled**, `NestedB` **Enabled**. The **Toggle Prevent Native
   Dismiss** button flips the flag at runtime via `setRouteOptions`.
-- `Key` values (`r-<routeName>-<n>`) use a session-global counter that never
+- `Key` values use a session-global counter that never
   resets — only verify relationships: a push yields a new, higher key;
   popping back to a preserved instance keeps its key.
 - When more than one ancestor screen has `preventNativeDismiss` enabled at
@@ -88,14 +88,14 @@ swipe) steps may need platform-specific handling.
 2. Tap **Push A**.
 
 - [ ] Screen **A** is shown (yellow background) with a header titled "A" and
-      a back chevron. Shows `Name: A`, a `Key` `r-A-<n>`, and **Prevent
+      a back chevron. Shows `Name: A`, a `Key`, and **Prevent
       native dismiss: Disabled**. **Push A** / **Push B** / **Push
       NestedStack** / **Pop** buttons are all present.
 
-3. On **A**, tap **Push B**.
+1. On **A**, tap **Push B**.
 
 - [ ] Screen **B** is shown (green background) with a header titled "B" and a
-      back chevron. Shows `Name: B`, a `Key` `r-B-<m>` higher than A's, and
+      back chevron. Shows `Name: B`, a `Key` with number higher than A's, and
       **Prevent native dismiss: Enabled**. Push A / Push B / Push NestedStack
       / Pop and a **Toggle Prevent Native Dismiss** button are all present.
 
@@ -136,11 +136,11 @@ swipe) steps may need platform-specific handling.
 
 - [ ] The nested stack mounts and shows **NestedHome** (blue background). No
       header/back chevron is visible. Shows `Name: NestedHome`, a `Key`
-      `r-NestedHome-<p>` higher than any previous key, and **Prevent native
+      higher than any previous key, and **Prevent native
       dismiss: Enabled**. **Push NestedA** / **Push NestedB** / **Pop** and a
       **Toggle** button are present.
 
-10. On **NestedHome** (prevent Enabled, no chevron), perform a system
+1.  On **NestedHome** (prevent Enabled, no chevron), perform a system
     gesture-back.
 
 - [ ] The gesture is intercepted: a green toast reading "Native dismiss
@@ -174,11 +174,11 @@ swipe) steps may need platform-specific handling.
 15. On **NestedHome**, tap **Push NestedA**.
 
 - [ ] Screen **NestedA** is shown (blue background) with a header titled
-      "NestedA" and a back chevron. Shows `Name: NestedA`, a `Key`
-      `r-NestedA-<q>`, and **Prevent native dismiss: Disabled**. Push NestedA
+      "NestedA" and a back chevron. Shows `Name: NestedA`, a `Key`,
+      and **Prevent native dismiss: Disabled**. Push NestedA
       / Push NestedB / Pop buttons are present (no Toggle button).
 
-16. On **NestedA** (prevent Disabled), tap the native header back-button
+1.  On **NestedA** (prevent Disabled), tap the native header back-button
     chevron.
 
 - [ ] The chevron pops normally back to **NestedHome** within the nested
@@ -189,11 +189,11 @@ swipe) steps may need platform-specific handling.
 17. From **NestedHome**, tap **Push NestedB**.
 
 - [ ] Screen **NestedB** is shown (blue background) with a header titled
-      "NestedB" and a back chevron. Shows `Name: NestedB`, a `Key`
-      `r-NestedB-<r>`, and **Prevent native dismiss: Enabled**. A Toggle
+      "NestedB" and a back chevron. Shows `Name: NestedB`, a `Key`,
+      and **Prevent native dismiss: Enabled**. A Toggle
       button is present.
 
-18. On **NestedB** (prevent Enabled), tap the native header back-button
+1.  On **NestedB** (prevent Enabled), tap the native header back-button
     chevron.
 
 - [ ] The tap is intercepted: a green toast reading "Native dismiss prevented
