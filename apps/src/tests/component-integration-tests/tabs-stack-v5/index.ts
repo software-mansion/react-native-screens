@@ -3,6 +3,7 @@ import TestTabsInStackStableEnterTransition from './test-stack-tabs-tabs-in-stac
 import { default as TestStackTabsStackInTabsBaseNavigation } from './test-stack-tabs-stack-in-tabs-base-navigation';
 
 export { default as TestTabsInStackStableEnterTransition } from './test-stack-tabs-tabs-in-stack-stable-enter-transition';
+export { default as TestStackTabsStackInTabsBaseNavigation } from './test-stack-tabs-stack-in-tabs-base-navigation';
 
 const scenarios = {
   TestTabsInStackStableEnterTransition,
