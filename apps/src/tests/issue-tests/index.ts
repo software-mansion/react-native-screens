@@ -215,6 +215,7 @@ export { default as TestHeaderHeight } from './TestHeaderHeight';
 export { default as TestModalNavigation } from './TestModalNavigation';
 export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
+export { default as TestModalCornerRadius } from './TestModalCornerRadius';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
