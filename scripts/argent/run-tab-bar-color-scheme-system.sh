@@ -12,15 +12,15 @@
 # neither drives a physical device.
 #
 # Usage:
-#   scripts/run-tab-bar-color-scheme-system.sh ios     [extra argent flags…]
-#   scripts/run-tab-bar-color-scheme-system.sh android [extra argent flags…]
+#   scripts/argent/run-tab-bar-color-scheme-system.sh ios     [extra argent flags…]
+#   scripts/argent/run-tab-bar-color-scheme-system.sh android [extra argent flags…]
 #
 #   # seed & commit baselines on first run:
-#   scripts/run-tab-bar-color-scheme-system.sh ios --update-baselines
+#   scripts/argent/run-tab-bar-color-scheme-system.sh ios --update-baselines
 #
 #   # target a specific device (else the booted simulator / first emulator is used):
-#   IOS_UDID=<UDID>      scripts/run-tab-bar-color-scheme-system.sh ios
-#   ANDROID_SERIAL=<ser> scripts/run-tab-bar-color-scheme-system.sh android
+#   IOS_UDID=<UDID>      scripts/argent/run-tab-bar-color-scheme-system.sh ios
+#   ANDROID_SERIAL=<ser> scripts/argent/run-tab-bar-color-scheme-system.sh android
 #
 # Prereqs: the FabricExample app is installed on the target and (for a dev build) Metro is running.
 # Extra args after the platform are forwarded verbatim to every `argent flow run` (e.g.
@@ -38,8 +38,8 @@ RN_FLOW="test-tabs-tab-bar-color-scheme"
 DARK_FLOW="test-tabs-tab-bar-color-scheme-system-dark"
 LIGHT_FLOW="test-tabs-tab-bar-color-scheme-system-light"
 
-# Resolve to the repo root (this script lives in scripts/) so `argent flow run` finds .argent/flows.
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Resolve to the repo root (this script lives in scripts/argent/) so `argent flow run` finds .argent/flows.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 set_appearance() {
