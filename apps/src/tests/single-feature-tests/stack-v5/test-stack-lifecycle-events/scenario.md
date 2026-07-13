@@ -216,7 +216,7 @@ stack), exercising every dismissal method available at each level.
 
 ### Nested stack — inner pop via header back button — NestedA → NestedHome
 
-8. On screen **NestedA**, tap the **header back button** (top-left).
+8. On screen **NestedA**, tap the **header back button** in the NestedA header.
 
 - [ ] Screen **NestedHome** is shown again inside the nested stack. Only the
   inner screens fire — this is the inner mirror of the top-level pop (step 3):
