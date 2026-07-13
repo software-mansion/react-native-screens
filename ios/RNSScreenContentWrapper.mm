@@ -56,7 +56,7 @@ namespace react = facebook::react;
       UINavigationBar *navigationBar = navigationController.navigationBar;
 
       RNSScreenStackHeaderConfig *headerConfig = [self headerConfigForNavigationController:navigationController];
-      if (!headerConfig.translucent) {
+      if (headerConfig != nil && !headerConfig.translucent) {
         headerHeightErrata += navigationBar.frame.size.height * !navigationBar.isHidden;
       }
     }
