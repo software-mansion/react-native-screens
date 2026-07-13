@@ -3,10 +3,10 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 import android.os.Build
 import android.widget.FrameLayout
 import androidx.core.view.doOnNextLayout
-import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.utils.dpToPx
 
 internal class FormSheetAppearanceCoordinator(
     private val bottomSheetView: FrameLayout?,
@@ -56,6 +56,8 @@ internal class FormSheetAppearanceCoordinator(
     }
 
     private fun applyCornerRadius(background: MaterialShapeDrawable) {
+        val view = bottomSheetView ?: return
+
         // Snapshot the original shape once, before the first override, to be able to restore it later.
         if (defaultShapeAppearanceModel == null) {
             defaultShapeAppearanceModel = background.shapeAppearanceModel
@@ -66,7 +68,7 @@ internal class FormSheetAppearanceCoordinator(
             return
         }
 
-        val radiusInPx = PixelUtil.toPixelFromDIP(currentCornerRadius)
+        val radiusInPx = view.dpToPx(currentCornerRadius)
 
         val baseModel = defaultShapeAppearanceModel ?: background.shapeAppearanceModel
         background.shapeAppearanceModel =
