@@ -11,7 +11,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 internal class FormSheetAppearanceCoordinator(
     private val bottomSheetView: FrameLayout?,
 ) {
-    private var currentCornerRadius = SYSTEM_DEFAULT_CORNER_RADIUS
+    private var currentCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
 
     private var isCornerRadiusApplyPending = false
 
@@ -61,7 +61,7 @@ internal class FormSheetAppearanceCoordinator(
             defaultShapeAppearanceModel = background.shapeAppearanceModel
         }
 
-        if (currentCornerRadius == SYSTEM_DEFAULT_CORNER_RADIUS) {
+        if (currentCornerRadius == FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS) {
             defaultShapeAppearanceModel?.let { background.shapeAppearanceModel = it }
             return
         }
@@ -75,9 +75,5 @@ internal class FormSheetAppearanceCoordinator(
                 .setTopLeftCorner(CornerFamily.ROUNDED, radiusInPx)
                 .setTopRightCorner(CornerFamily.ROUNDED, radiusInPx)
                 .build()
-    }
-
-    companion object {
-        private const val SYSTEM_DEFAULT_CORNER_RADIUS = -1f
     }
 }

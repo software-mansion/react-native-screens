@@ -21,7 +21,7 @@ class FormSheetHost(
 
     internal var prefersGrabberVisible = false
 
-    internal var preferredCornerRadius = -1f
+    internal var preferredCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
 
     internal var detents: List<Double> = emptyList()
 
