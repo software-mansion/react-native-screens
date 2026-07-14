@@ -136,8 +136,8 @@ icons and titles are blue.
 6. Toggle the simulator between light and dark appearance while Tab4 is
    selected.
 
-- [ ] **iOS 18:** The `systemBackground` tab bar background resolve to
-  it's light/dark variant automatically, confirming the colors are platform-resolved rather than static.
+- [ ] **iOS 18:** The `systemBackground` tab bar background resolves to its
+  light/dark variant automatically, confirming the colors are platform-resolved rather than static.
 - [ ] **iOS 26:** Tab bar uses Liquid Glass (not systemBackground), adapting to
   light/dark modes via dynamic translucency instead of solid colors.
 
