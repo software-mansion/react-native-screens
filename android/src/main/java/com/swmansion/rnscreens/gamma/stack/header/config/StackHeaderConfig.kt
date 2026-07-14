@@ -18,8 +18,10 @@ import com.swmansion.rnscreens.gamma.stack.header.subview.OnStackHeaderSubviewCh
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuIconResolver
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemIconSource
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuUpdateQueue
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -194,7 +196,7 @@ internal class StackHeaderConfig(
     // mirrors a single prop — this cache deliberately merges resolved icons from BOTH sources
     // that can set a menu item icon: the `toolbarMenu` prop
     // (resolveToolbarMenuItemIconsIfNeeded) and the imperative `updateToolbarMenuElements`
-    // view command (dispatchMenuElementUpdate). It is necessary to ensure consistency.
+    // view command (commandIconResolver). It is necessary to ensure consistency.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
@@ -368,55 +370,48 @@ internal class StackHeaderConfig(
 
     // region Imperative menu item commands
 
-    /**
-     * Applies a batch of toolbar menu item view commands. Each update follows the same semantics
-     * as [dispatchMenuElementUpdate]: updates without icon changes are delivered immediately,
-     * updates with icon changes wait for (possibly async) image resolution.
-     */
-    internal fun dispatchMenuElementUpdates(
-        updates: List<Triple<String, StackHeaderToolbarMenuElementOptions, StackHeaderToolbarMenuItemIconSource?>>,
-    ) {
-        for ((id, options, iconSource) in updates) {
-            dispatchMenuElementUpdate(id, options, iconSource)
-        }
-    }
-
-    /**
-     * Applies a toolbar menu item view command. When the command does not touch the icon
-     * ([iconSource] is `null`) the options are delivered immediately. Otherwise, the icon is
-     * resolved first and all options — including the icon — are delivered together in a single
-     * update, so the change is applied atomically once the (possibly async) image has loaded.
-     */
-    private fun dispatchMenuElementUpdate(
-        id: String,
-        options: StackHeaderToolbarMenuElementOptions,
-        iconSource: StackHeaderToolbarMenuItemIconSource?,
-    ) {
-        if (iconSource == null) {
-            configObserver?.onMenuElementUpdated(id, options)
-            return
-        }
-
-        val resolver = toolbarMenuItemIconResolvers[id]
-        if (resolver == null) {
-            Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu element $id.")
-            configObserver?.onMenuElementUpdated(id, options)
-            return
-        }
-
-        resolver.resolve(reactContext, iconSource.drawableIconResourceName, iconSource.imageIconUri) { result ->
-            val icon =
+    // Resolves a single command's icon, reusing the same per-id [IconResolver] and shared
+    // icon cache as the `toolbarMenu` prop path (see [toolbarMenuItemIcons]).
+    private val commandIconResolver =
+        StackHeaderToolbarMenuIconResolver { id, iconSource, onResolved ->
+            val resolver = toolbarMenuItemIconResolvers[id]
+            if (resolver == null) {
+                Log.w(TAG, "[RNScreens] Unable to find icon resolver for menu element $id.")
+                onResolved(null)
+                return@StackHeaderToolbarMenuIconResolver
+            }
+            resolver.resolve(
+                reactContext,
+                iconSource.drawableIconResourceName,
+                iconSource.imageIconUri,
+            ) { result ->
                 when (result) {
-                    IconResolution.Unchanged -> null // keep the current icon
+                    IconResolution.Unchanged -> onResolved(null) // keep the current icon
                     is IconResolution.Resolved -> {
                         // Keep the cache in sync with the prop-array path: both share this
                         // id's resolver.
                         toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
-                        StackHeaderToolbarUpdate.from(result.drawable)
+                        onResolved(StackHeaderToolbarUpdate.from(result.drawable))
                     }
                 }
-            configObserver?.onMenuElementUpdated(id, options.copy(icon = icon))
+            }
         }
+
+    // Serializes `updateToolbarMenuElements` batches and waits for every icon in a batch to
+    // resolve before applying it, so each batch commits atomically and in order.
+    private val menuUpdateQueue =
+        StackHeaderToolbarMenuUpdateQueue(
+            iconResolver = commandIconResolver,
+            sink = { commits -> configObserver?.onMenuElementUpdatesCommitted(commits) },
+        )
+
+    /**
+     * Enqueues a batch of toolbar menu element view commands. The batch is processed only
+     * after any earlier batch has fully committed, and is applied atomically once all of its
+     * icons (if any) have resolved — see [StackHeaderToolbarMenuUpdateQueue].
+     */
+    internal fun dispatchMenuElementUpdates(updates: List<StackHeaderToolbarMenuElementUpdate>) {
+        menuUpdateQueue.enqueue(updates)
     }
 
     // endregion
@@ -448,6 +443,7 @@ internal class StackHeaderConfig(
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
+        menuUpdateQueue.clear()
         invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
     }

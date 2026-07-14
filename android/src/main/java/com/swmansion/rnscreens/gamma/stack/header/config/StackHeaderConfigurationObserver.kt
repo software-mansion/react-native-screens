@@ -1,12 +1,15 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementCommit
 
 internal interface StackHeaderConfigurationObserver {
     fun onConfigChanged(config: StackHeaderConfigurationProviding)
 
-    fun onMenuElementUpdated(
-        id: String,
-        options: StackHeaderToolbarMenuElementOptions,
-    )
+    /**
+     * Applies a fully-resolved batch of toolbar menu element updates atomically. The
+     * batch has already had its icons resolved by the toolbar menu update queue, so all
+     * elements — including any that loaded images — arrive together. Selection
+     * changes are coalesced to at most one event per affected group.
+     */
+    fun onMenuElementUpdatesCommitted(commits: List<StackHeaderToolbarMenuElementCommit>)
 }

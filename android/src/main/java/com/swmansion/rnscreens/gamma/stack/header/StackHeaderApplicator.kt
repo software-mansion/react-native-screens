@@ -509,7 +509,7 @@ internal class StackHeaderApplicator(
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
 
         // checked is intentionally not handled here. The coordinator layout manages it in
-        // handleGroupItemStateChange because toggling checked state requires group metadata
+        // applyGroupItemStateChange because toggling checked state requires group metadata
         // (radio vs checkbox) and may emit onGroupSelectionChanged events.
 
         options.icon?.let {

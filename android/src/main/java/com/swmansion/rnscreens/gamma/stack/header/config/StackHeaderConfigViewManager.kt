@@ -14,6 +14,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuMapper
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
@@ -242,7 +243,7 @@ internal open class StackHeaderConfigViewManager :
                     val map = updates.getMap(i) ?: continue
                     val id = map.getString("id") ?: continue
                     add(
-                        Triple(
+                        StackHeaderToolbarMenuElementUpdate(
                             id,
                             StackHeaderToolbarMenuMapper.parseMenuElementOptions(map),
                             StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
