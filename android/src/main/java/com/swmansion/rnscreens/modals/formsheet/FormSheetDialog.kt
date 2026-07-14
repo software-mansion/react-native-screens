@@ -20,6 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 internal class FormSheetDialog(
     context: Context,
 ) : BottomSheetDialog(context) {
+    internal var onPreventDismissRequested: (() -> Boolean)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,6 +35,14 @@ internal class FormSheetDialog(
         super.onAttachedToWindow()
 
         forceEdgeToEdge()
+    }
+
+    override fun cancel() {
+        if (onPreventDismissRequested?.invoke() == true) {
+            return
+        }
+
+        super.cancel()
     }
 
     /**

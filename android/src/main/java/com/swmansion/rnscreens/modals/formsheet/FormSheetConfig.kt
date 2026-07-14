@@ -6,6 +6,7 @@ internal data class FormSheetConfig(
     val prefersGrabberVisible: Boolean = false,
     val initialDetentIndex: Int = 0,
     val preferredCornerRadius: Float = SYSTEM_DEFAULT_CORNER_RADIUS,
+    val preventNativeDismiss: Boolean = false,
     val nativeContainerBackgroundColor: Int? = null,
 ) {
     companion object {
