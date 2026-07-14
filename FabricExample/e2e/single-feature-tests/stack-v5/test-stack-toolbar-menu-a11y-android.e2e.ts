@@ -39,6 +39,9 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
 
     await element(by.id('send-command-button')).tap();
 
+    await element(by.id('cmd-target-picker')).tap();
+    await element(by.id('cmd-label-picker')).tap();
+
     await expect(element(by.label('Updated label'))).toBeVisible();
     await expect(element(by.label('Accessibility for Alpha'))).not.toExist();
   });
@@ -48,6 +51,8 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
     await element(by.text('undefined')).tap();
 
     await element(by.id('send-command-button')).tap();
+
+    await element(by.id('cmd-label-picker')).tap();
 
     await expect(element(by.label('Alpha'))).toBeVisible();
     await expect(element(by.label('Updated label'))).not.toExist();
