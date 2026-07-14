@@ -58,4 +58,38 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
     await expect(element(by.label('Alpha'))).toBeVisible();
     await expect(element(by.label('Updated label'))).not.toExist();
   });
+
+  it('should update overflow item accessibilityLabel via view command', async () => {
+    await element(by.id('cmd-target-picker')).tap();
+    await element(by.text('overflow-item')).tap();
+
+    await element(by.id('cmd-label-picker')).tap();
+    await element(by.text('Updated label')).tap();
+
+    await element(by.id('send-command-button')).tap();
+
+    await element(by.id('cmd-target-picker')).tap();
+    await element(by.id('cmd-label-picker')).tap();
+
+    await element(by.label('More options')).tap();
+    await expect(element(by.label('Updated label'))).toBeVisible();
+    await device.pressBack();
+  });
+
+  it('should reset overflow item to no content description', async () => {
+    await element(by.id('cmd-label-picker')).tap();
+    await element(by.text('undefined')).tap();
+
+    await element(by.id('send-command-button')).tap();
+
+    await element(by.id('cmd-label-picker')).tap();
+
+    await element(by.label('More options')).tap();
+
+    await expect(element(by.text('Beta'))).toBeVisible();
+    await expect(element(by.label('Updated label'))).not.toExist();
+    await expect(element(by.label('Accessibility for Beta'))).not.toExist();
+
+    await device.pressBack();
+  });
 });
