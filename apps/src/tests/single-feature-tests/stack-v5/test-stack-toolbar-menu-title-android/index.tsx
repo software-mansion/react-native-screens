@@ -14,7 +14,7 @@ import type {
   StackHeaderToolbarMenuItemShowAsActionAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
-import { scenarioDescription } from './scenario-descriptions';
+import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
 type IdOption = (typeof ID_OPTIONS)[number];

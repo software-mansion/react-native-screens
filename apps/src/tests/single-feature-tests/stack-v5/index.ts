@@ -19,6 +19,7 @@ import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android
 import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
 import TestStackToolbarMenuBatchCommands from './test-stack-toolbar-menu-batch-commands-android';
 import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
+import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
@@ -48,6 +49,7 @@ const scenarios = {
   TestStackSubviewsIOS,
   TestStackHeaderMenuIOS,
   TestStackHeaderSubviewOnPress,
+  TestStackHeaderSelectiveUpdates,
   TestStackBackButton,
   TestStackToolbarMenuCommands,
   TestStackToolbarMenuDisabled,

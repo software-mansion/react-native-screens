@@ -13,7 +13,7 @@ import type {
   StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
 import type { PlatformIconAndroid } from 'react-native-screens';
-import { scenarioDescription } from './scenario-descriptions';
+import { scenarioDescription } from './scenario-description';
 
 // Every disable-relevant element: a toolbar action button, an overflow
 // action item, a checkable group (one item starts checked), and a submenu

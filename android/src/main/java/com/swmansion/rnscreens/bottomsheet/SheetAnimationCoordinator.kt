@@ -30,6 +30,10 @@ internal class SheetAnimationCoordinator(
     private var currentContentAnimator: ValueAnimator? = null
 
     private var lastKeyboardBottomOffset: Int = 0
+    private var lastScreenContainerBottomOffset: Int = 0
+    private val screenContainerRect = android.graphics.Rect()
+
+    private var lastBottomSystemBarInset: Int = 0
 
     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetDelegate.SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
@@ -213,6 +217,7 @@ internal class SheetAnimationCoordinator(
 
     internal fun notifyKeyboardAnimationStart() {
         activeKeyboardAnimationsCount++
+        updateScreenContainerBottomOffset()
     }
 
     internal fun notifyKeyboardAnimationEnd() {
@@ -221,6 +226,7 @@ internal class SheetAnimationCoordinator(
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+        lastBottomSystemBarInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
         // Prioritize enter/exit animations over direct keyboard inset reactions.
         // We store the latest keyboard offset in `lastKeyboardBottomOffset`
         // so that it can always be respected when applying translations in `updateSheetTranslationY`.
@@ -267,11 +273,37 @@ internal class SheetAnimationCoordinator(
         return minOf(offsetFromTop, keyboardHeight)
     }
 
-    private fun updateSheetTranslationY(baseTranslationY: Float) {
-        val keyboardCorrection = lastKeyboardBottomOffset
-        val bottomOffset = computeSheetOffsetYWithIMEPresent(keyboardCorrection).toFloat()
+    private fun updateScreenContainerBottomOffset() {
+        screen.container?.let { container ->
+            if (container.isLaidOut && container.height > 0) {
+                container.getGlobalVisibleRect(screenContainerRect)
+                lastScreenContainerBottomOffset = maxOf(0, container.rootView.height - screenContainerRect.bottom)
+            }
+        }
+    }
 
-        screen.translationY = baseTranslationY - bottomOffset
+    private fun updateSheetTranslationY(baseTranslationY: Float) {
+        screen.translationY = baseTranslationY - calculateKeyboardShiftHidingBottomInset()
+    }
+
+    private fun calculateKeyboardShiftHidingBottomInset(): Float {
+        // Calculate how much of the keyboard physically intersects with our container.
+        val keyboardHeightInContainerBounds = maxOf(0, lastKeyboardBottomOffset - lastScreenContainerBottomOffset)
+
+        if (keyboardHeightInContainerBounds <= 0) {
+            return 0f
+        }
+
+        // Determine the maximum upward shift needed to keep the content above the keyboard.
+        val maxAllowedUpwardShift = computeSheetOffsetYWithIMEPresent(keyboardHeightInContainerBounds).toFloat()
+
+        // Determine how much of the navigation bar is located within our container's bounds.
+        val navigationBarHeightWithinContainer = maxOf(0, lastBottomSystemBarInset - lastScreenContainerBottomOffset)
+
+        // By subtracting the nav bar height from our shift, we let that empty padding slide behind
+        // the keyboard. This keeps the sheet's actual content flush against the keyboard's top edge
+        // without requiring size updates.
+        return maxOf(0f, maxAllowedUpwardShift - navigationBarHeightWithinContainer.toFloat())
     }
 
     private fun createSheetSlideInAnimator(): ValueAnimator {
@@ -347,6 +379,7 @@ internal class SheetAnimationCoordinator(
             object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     isSheetAnimationInProgress = true
+                    updateScreenContainerBottomOffset()
                 }
 
                 override fun onAnimationCancel(animation: Animator) {

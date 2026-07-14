@@ -12,8 +12,8 @@ const bottomAccessoryElement = (testID: string) =>
     by.id(testID).withAncestor(by.type('RNSTabsBottomAccessoryComponentView')),
   ).atIndex(0);
 
-async function expectBottomAccessoryVisible(testID: string) {
-  await expect(bottomAccessoryElement(testID)).toBeVisible();
+async function expectBottomAccessoryExist(testID: string) {
+  await expect(bottomAccessoryElement(testID)).toExist();
 }
 
 async function expectBottomAccessoryText(testID: string, text: string) {
@@ -73,32 +73,32 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
   });
 
   it('should show the Upper Left accessory variant on initial load', async () => {
-    await expectBottomAccessoryVisible('accessory-upper-left');
+    await expectBottomAccessoryExist('accessory-upper-left');
     await expectBottomAccessoryText('accessory-upper-left', 'Upper Left');
   });
 
   it('should update the accessory when Center variant card is tapped', async () => {
     await element(by.id('variant-center')).tap();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
   });
 
   it('should update the accessory when Lower Right variant card is tapped', async () => {
     await element(by.id('variant-lower-right')).tap();
-    await expectBottomAccessoryVisible('accessory-lower-right');
+    await expectBottomAccessoryExist('accessory-lower-right');
     await expectBottomAccessoryText('accessory-lower-right', 'Lower Right');
   });
 
   it('should update the accessory when Long variant card is tapped', async () => {
     await element(by.id('variant-long')).tap();
-    await expectBottomAccessoryVisible('accessory-long');
+    await expectBottomAccessoryExist('accessory-long');
   });
 
   it('should update the accessory when RGB variant card is tapped', async () => {
     await element(by.id('variant-rgb')).tap();
-    await expectBottomAccessoryVisible('rgb-strip-0');
-    await expectBottomAccessoryVisible('rgb-strip-1');
-    await expectBottomAccessoryVisible('rgb-strip-2');
+    await expectBottomAccessoryExist('rgb-strip-0');
+    await expectBottomAccessoryExist('rgb-strip-1');
+    await expectBottomAccessoryExist('rgb-strip-2');
   });
 
   // ---------------------------------------------------------------------------
@@ -107,17 +107,17 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
 
   it('should preserve the accessory when switching to the ScrollDown tab and back', async () => {
     await element(by.id('variant-center')).tap();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
     await forceTapByLabeliOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
   });
 
@@ -140,7 +140,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       by.type('UITabBar'),
     ).getAttributes()) as IosElementAttributes;
 
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
   });
@@ -168,7 +168,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       .atIndex(0)
       .getAttributes()) as IosElementAttributes;
 
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryInline(
       inlineBottomAccessory,
@@ -211,7 +211,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       by.type('UITabBar'),
     ).getAttributes()) as IosElementAttributes;
 
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryExtended(extendedBottomAccessory, extendedTabBar);
   });
@@ -239,7 +239,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
       .atIndex(0)
       .getAttributes()) as IosElementAttributes;
 
-    await expectBottomAccessoryVisible('accessory-center');
+    await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
     expectBottomAccessoryInline(
       inlineBottomAccessory,

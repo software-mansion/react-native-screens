@@ -1,11 +1,12 @@
 #pragma once
 
+#import "RNSContainer.h"
 #include "RNSStackNavigationBarCoordinator.h"
 #include "RNSStackScreenComponentView.h"
 
 @protocol RNSViewFrameChangeDelegate;
 
-@interface RNSStackNavigationController : UINavigationController
+@interface RNSStackNavigationController : UINavigationController <RNSContainer>
 
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> navigationBarFrameChangeDelegate;
 

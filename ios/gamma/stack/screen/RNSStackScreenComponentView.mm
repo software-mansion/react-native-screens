@@ -8,6 +8,8 @@
 #import <rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSScrollViewMarkerComponentView.h"
+#import "RNSScrollViewSeeking.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
@@ -18,7 +20,7 @@
 
 namespace react = facebook::react;
 
-@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving, RNSScrollViewSeeking>
 @end
 
 #pragma mark - View implementation
@@ -26,6 +28,11 @@ namespace react = facebook::react;
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+
+  // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
+  // the owning `RNSStackScreenController` (as `RNSContainerItem`) when resolving the content
+  // scroll view for special effects.
+  __weak UIScrollView *_Nullable _contentScrollView;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
@@ -77,6 +84,21 @@ namespace react = facebook::react;
       strongSelf->_controller = nil;
     }
   });
+}
+
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  // Native scroll-edge behavior (UINavigationBar scroll edge appearance, top-screen-tap scroll-to-top on iPad).
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  // Cache used by the container-nesting content-scroll-view resolution.
+  _contentScrollView = scrollView;
+}
+
+- (nullable UIScrollView *)cachedContentScrollView
+{
+  return _contentScrollView;
 }
 
 #pragma mark - Events

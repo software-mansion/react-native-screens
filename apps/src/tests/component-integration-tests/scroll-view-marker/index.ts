@@ -2,6 +2,9 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestSvmTabsScrollEdgeEffects from './test-svm-tabs-scroll-edge-effects';
 import TestStackSvmTabsSpecialEffects from './test-stack-svm-tabs-special-effects';
 
+export { default as TestSvmTabsScrollEdgeEffects } from './test-svm-tabs-scroll-edge-effects';
+export { default as TestStackSvmTabsSpecialEffects } from './test-stack-svm-tabs-special-effects';
+
 const scenarios = {
   TestSvmTabsScrollEdgeEffects,
   TestStackSvmTabsSpecialEffects,

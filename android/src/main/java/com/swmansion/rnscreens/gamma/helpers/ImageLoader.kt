@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.helpers
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Handler
@@ -23,7 +24,7 @@ private const val TAG = "ImageLoader"
 internal fun loadImage(
     context: Context,
     uri: String,
-    onLoaded: (Drawable) -> Unit,
+    onLoaded: (Drawable?) -> Unit,
 ) {
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
@@ -39,7 +40,7 @@ internal fun loadImage(
 private fun loadImageInternal(
     context: Context,
     uri: Uri,
-    onLoaded: (Drawable) -> Unit,
+    onLoaded: (Drawable?) -> Unit,
 ) {
     val imageRequest =
         ImageRequestBuilder
@@ -56,10 +57,11 @@ private fun loadImageInternal(
 
                 if (closeableImage is CloseableStaticBitmap) {
                     val bitmap = closeableImage.underlyingBitmap
-                    if (bitmap != null) {
-                        val drawable = bitmap.toDrawable(context.resources)
-                        onLoaded(drawable)
-                    }
+                    val drawable =
+                        bitmap
+                            ?.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
+                            ?.toDrawable(context.resources)
+                    onLoaded(drawable)
                 }
 
                 imageReference.close()
