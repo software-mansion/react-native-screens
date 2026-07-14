@@ -20,6 +20,7 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
   it('should find overflow item by accessibilityLabel', async () => {
     await element(by.label('More options')).tap();
     await expect(element(by.label('Accessibility for Beta'))).toBeVisible();
+    await expect(element(by.label('Accessibility for Gamma'))).toBeVisible();
     await device.pressBack();
   });
 

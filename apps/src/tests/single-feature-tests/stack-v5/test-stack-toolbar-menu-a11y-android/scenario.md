@@ -23,7 +23,11 @@ Android emulator or physical device.
 
 To verify `contentDescription` values, use e.g.:
 - **Layout Inspector** (Android Studio) — select a view and check the
-  `contentDescription` property,
+  `contentDescription` property. Make sure to:
+  - build the app in debug mode to be able to use the Layout Inspector,
+  - in Layout Inspector -> "View Options for Component Tree", **uncheck**
+    "Filter System-Defined Layers" option to be able to inspect the action
+    button and menu items's `contentDescription`,
 - **TalkBack** — enable it in the settings, use keyboard navigation with
   hardware input enabled.
 
@@ -34,7 +38,7 @@ tool you chose.
 
 ### Baseline
 
-1. Open the scenario.
+1. Open the **Toolbar Menu A11y** screen scenario.
 
 - [ ] The toolbar shows an action item (search icon) in the
       toolbar.
