@@ -1,12 +1,20 @@
 #import "RNSStackHeaderMenuMapper.h"
+#import "RNSStackHeaderIconMapper.h"
 
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-static NSSet<NSString *> *const kRNSAllowedMenuKeys =
-    [NSSet setWithObjects:@"id", @"type", @"title", @"children", @"singleSelection", nil];
-static NSSet<NSString *> *const kRNSAllowedMenuItemKeys =
-    [NSSet setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", nil];
+static NSSet<NSString *> *const kRNSAllowedMenuKeys = [NSSet setWithObjects:@"id",
+                                                                            @"type",
+                                                                            @"title",
+                                                                            @"children",
+                                                                            @"singleSelection",
+                                                                            @"displayInline",
+                                                                            @"displayAsPalette",
+                                                                            @"icon",
+                                                                            nil];
+static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
+    setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", @"icon", nil];
 
 @implementation RNSStackHeaderMenuMapper
 
@@ -35,11 +43,18 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys =
   }
 
   BOOL singleSelection = [self boolForKey:@"singleSelection" in:dict];
+  BOOL displayInline = [self boolForKey:@"displayInline" in:dict];
+  BOOL displayAsPalette = [self boolForKey:@"displayAsPalette" in:dict];
+
+  RNSStackHeaderIconData *icon = [RNSStackHeaderIconMapper iconFromDictionary:dict[@"icon"]];
 
   return [[RNSStackHeaderMenuData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                               title:[self stringForKey:@"title" in:dict]
                                     singleSelection:singleSelection
-                                           children:children];
+                                      displayInline:displayInline
+                                   displayAsPalette:displayAsPalette
+                                           children:children
+                                               icon:icon];
 }
 
 + (nullable id<RNSStackHeaderMenuElement>)elementFromDictionary:(nullable id)dictionary
@@ -55,12 +70,15 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys =
   } else if ([type isEqual:@"menuItem"]) {
     [RNSStackHeaderMenuMapper validateMenuItemKeys:dict];
 
+    RNSStackHeaderIconData *icon = [RNSStackHeaderIconMapper iconFromDictionary:dict[@"icon"]];
+
     return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                                     title:[self stringForKey:@"title" in:dict]
                                                  itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
                                                                                                    in:dict]]
                                        initialToggleState:[self boolForKey:@"initialToggleState" in:dict]
-                                       keepsMenuPresented:[self boolForKey:@"keepsMenuPresented" in:dict]];
+                                       keepsMenuPresented:[self boolForKey:@"keepsMenuPresented" in:dict]
+                                                     icon:icon];
   }
 
   return nil;

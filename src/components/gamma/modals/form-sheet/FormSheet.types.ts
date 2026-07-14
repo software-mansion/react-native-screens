@@ -12,7 +12,7 @@ export type FormSheetNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container hosting the sheet content.
    *
-   * @platform ios
+   * @platform android, ios
    */
   backgroundColor?: ColorValue | undefined;
 };
@@ -27,7 +27,7 @@ export interface FormSheetProps {
    * from `false` to `true` triggers the sheet to present, while changing
    * it from `true` to `false` triggers a programmatic dismissal.
    *
-   * @platform ios
+   * @platform android, ios
    */
   isOpen: boolean;
 
@@ -47,7 +47,7 @@ export interface FormSheetProps {
    * @remarks
    * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
    *
-   * @platform ios
+   * @platform android, ios
    */
   detents?: number[] | 'fitToContents' | undefined;
 
@@ -59,7 +59,7 @@ export interface FormSheetProps {
    * hide the grabber in some presentation contexts.
    *
    * @default false
-   * @platform ios
+   * @platform android, ios
    */
   prefersGrabberVisible?: boolean | undefined;
 
@@ -69,8 +69,14 @@ export interface FormSheetProps {
    * If set to `systemDefault` or a negative number, it defaults to the system's
    * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
    *
+   * @remarks
+   * On Android, non-uniform rounded-corner clipping is only applied on API level 33+.
+   * On older versions this prop is ignored, because clipping the sheet content to non-uniform
+   * rounded corners is not reliable on those versions.
+   *
    * @default systemDefault
-   * @platform ios
+   * @platform android, ios
+   * @supported android API level 33 or higher, iOS
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
@@ -134,7 +140,7 @@ export interface FormSheetProps {
    *
    * These properties are forwarded directly to the underlying native view.
    *
-   * @platform ios
+   * @platform android, ios
    */
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
@@ -144,7 +150,7 @@ export interface FormSheetProps {
    * @summary A callback that gets invoked when the FormSheet will appear.
    * This is called as soon as the transition begins.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -152,7 +158,7 @@ export interface FormSheetProps {
    * @summary A callback that gets invoked when the FormSheet did appear.
    * This is called as soon as the transition ends.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -160,7 +166,7 @@ export interface FormSheetProps {
    * @summary A callback that gets invoked when the FormSheet will disappear.
    * This is called as soon as the transition begins.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -168,7 +174,7 @@ export interface FormSheetProps {
    * @summary A callback that gets invoked when the FormSheet did disappear.
    * This is called as soon as the transition ends.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -187,7 +193,7 @@ export interface FormSheetProps {
    * It is highly recommended to use this callback to synchronize
    * your local React state to prevent UI mismatches (e.g., updating `isOpen` back to `false`).
    *
-   * @platform ios
+   * @platform android, ios
    */
   onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -196,7 +202,7 @@ export interface FormSheetProps {
    *
    * Provides the `index` of the newly selected detent from the `detents` array.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDetentChanged?:
     | FormSheetEventHandler<FormSheetDetentChangedEvent>

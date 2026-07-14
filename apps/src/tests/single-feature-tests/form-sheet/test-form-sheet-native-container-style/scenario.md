@@ -4,7 +4,7 @@
 
 **Description:** Verify the `nativeContainerStyle` functionality of the `FormSheet` component. This test ensures that styling properties applied to the native container (e.g. `backgroundColor`) correctly map to the underlying `UIView`, seamlessly filling the entire modal bounds including the bottom safe area.
 
-**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ TBD: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone with a Home Indicator (e.g., iPhone 13/14/15) to properly verify the bottom safe area coverage.
+- Android emulator
 
 ## Steps
 

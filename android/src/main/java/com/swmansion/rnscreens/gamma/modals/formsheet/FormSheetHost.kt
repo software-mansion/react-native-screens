@@ -21,7 +21,13 @@ class FormSheetHost(
 
     internal var prefersGrabberVisible = false
 
+    internal var preferredCornerRadius = FormSheetConfig.SYSTEM_DEFAULT_CORNER_RADIUS
+
+    internal var nativeContainerBackgroundColor: Int? = null
+
     internal var detents: List<Double> = emptyList()
+
+    internal var initialDetentIndex: Int = 0
 
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
@@ -32,15 +38,10 @@ class FormSheetHost(
         FormSheetDialogManager(
             context = context,
             contentView = sheetContentView,
-            onDismissRequest = ::onNativeDismiss,
         )
 
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
-    }
-
-    internal fun onNativeDismiss() {
-        eventEmitter.emitOnNativeDismissEvent()
     }
 
     internal fun mountReactSubviewAt(
@@ -82,6 +83,7 @@ class FormSheetHost(
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] FormSheetHost must have its tag set when registering event emitters" }
         eventEmitter = FormSheetHostEventEmitter(reactContext, id)
+        dialogManager.eventEmitter = eventEmitter
     }
 
     internal fun onAfterUpdateTransaction() {
@@ -90,6 +92,9 @@ class FormSheetHost(
                 isOpen = this.isOpen,
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
+                initialDetentIndex = this.initialDetentIndex,
+                preferredCornerRadius = this.preferredCornerRadius,
+                nativeContainerBackgroundColor = this.nativeContainerBackgroundColor,
             )
         dialogManager.applyConfig(config)
     }

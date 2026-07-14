@@ -175,7 +175,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
                 tabBarItemTitleFontStyle: 'italic',
                 tabBarItemTitleFontWeight: 700,
                 tabBarBackgroundColor: Colors.PurpleDark100,
-                tabBarItemRippleColor: Colors.PurpleDark40,
+                tabBarItemRippleColor: Colors.GreenDark100,
                 normal: {
                   tabBarItemIconColor: Colors.YellowDark100,
                   tabBarItemTitleFontColor: Colors.YellowDark40,

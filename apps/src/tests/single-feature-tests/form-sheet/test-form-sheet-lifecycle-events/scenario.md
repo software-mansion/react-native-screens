@@ -4,7 +4,7 @@
 
 **Description:** Verify that the `FormSheet` component correctly emits lifecycle events (`onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`) in the exact order corresponding to the underlying native modal presentation transitions.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4; Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ TBD: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone
+- Android emulator
 
 ## Steps
 

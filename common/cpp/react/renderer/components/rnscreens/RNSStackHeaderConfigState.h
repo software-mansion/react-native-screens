@@ -21,6 +21,9 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
   Size frameSize{};
   Point contentOffset{};
 
+  void setImageLoader(std::weak_ptr<void> imageLoader);
+  std::weak_ptr<void> getImageLoader() const noexcept;
+
 #ifdef ANDROID
   RNSStackHeaderConfigState(
       RNSStackHeaderConfigState const &previousState,
@@ -42,6 +45,9 @@ class JSI_EXPORT RNSStackHeaderConfigState final {
   RNSStackHeaderConfigState(Size frameSize_, Point contentOffset_)
       : frameSize(frameSize_), contentOffset(contentOffset_) {};
 #endif // ANDROID
+
+ private:
+  std::weak_ptr<void> imageLoader_;
 };
 
 } // namespace facebook::react

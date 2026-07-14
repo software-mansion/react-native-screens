@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTViewManager.h>
+#endif // __cplusplus
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,7 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenContainerManager : RCTViewManager
+#else
+@interface RNSScreenContainerManager : NSObject
+#endif // __cplusplus
 
 @end
 

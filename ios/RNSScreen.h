@@ -1,7 +1,9 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
+#endif // __cplusplus
 
 #import "RNSEnums.h"
 #import "RNSSafeAreaProviding.h"
@@ -22,6 +24,7 @@ namespace react = facebook::react;
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if defined(__cplusplus)
 @interface RCTConvert (RNSScreen)
 
 #if !TARGET_OS_TV
@@ -31,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @end
+#endif
 
 @class RNSScreenView;
 
@@ -172,7 +176,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIViewController *)parentViewController;
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenManager : RCTViewManager
+#else
+@interface RNSScreenManager : NSObject
+#endif // __cplusplus
 
 @end
 

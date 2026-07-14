@@ -145,7 +145,7 @@ icons and titles are blue.
 - [ ] The tab bar background changes to purple.
 - [ ] The selected Tab2 icon and title change to red.
 - [ ] Unselected tab icons and titles are yellow.
-- [ ] The active indicator pill changes to purple.
+- [ ] The active indicator pill changes to dark purple.
 - [ ] Tab bar labels use the monospace italic font at the configured
   small (10pt) and large (16pt) label sizes.
 - [ ] The Tab3 badge still has value "123" in white text and green background.
@@ -153,8 +153,9 @@ icons and titles are blue.
 4. Press and hold a non-selected tab item in the tab bar to
    observe the ripple color while Tab2 is active.
 
-- [ ] A transient purple ripple is visible during the press; it
+- [ ] A transient green ripple is visible during the press; it
   fades on release.
+- [ ] After releasing the long press, the tab should not switch; Tab2 remains selected.
 - [ ] (Compare to Tab1's white translucent ripple when selected.)
 
 5. Tap the **"Select tab 1"** button on the Tab2 screen.

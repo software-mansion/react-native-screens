@@ -8,24 +8,27 @@ import {
   getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
-import { RNS_TABS_BOTTOM_ACCESSORY_TYPE } from '../../native-type-names';
+import {
+  CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
+  CLASS_NAME_UI_TAB_BAR,
+} from '../../native-class-names';
 
 const bottomAccessoryElement = (testID: string) =>
   element(
-    by.id(testID).withAncestor(by.type(RNS_TABS_BOTTOM_ACCESSORY_TYPE)),
+    by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
   ).atIndex(0);
 
 const getBottomAccessoryAttributes = () =>
   getElementAttributes({
     by: 'type',
-    value: RNS_TABS_BOTTOM_ACCESSORY_TYPE,
+    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
     index: 0,
   }) as Promise<IosElementAttributes>;
 
 const getExtendedTabBarAttributes = async () =>
   getElementAttributes({
     by: 'type',
-    value: 'UITabBar',
+    value: CLASS_NAME_UI_TAB_BAR,
     index: 0,
   }) as Promise<IosElementAttributes>;
 
@@ -153,7 +156,9 @@ async function verifyConfigTabInitialContent() {
   await expect(element(by.id('variant-lower-right'))).toBeVisible();
   await expect(element(by.id('variant-long'))).toBeVisible();
   await expect(element(by.id('variant-rgb'))).toBeVisible();
-  await expect(element(by.type(RNS_TABS_BOTTOM_ACCESSORY_TYPE))).toBeVisible();
+  await expect(
+    element(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
+  ).toBeVisible();
 }
 
 describeIfiOS('Tabs bottomAccessory (iOS)', () => {

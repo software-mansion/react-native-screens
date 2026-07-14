@@ -131,7 +131,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TestTabsStaleStateUpdateRejection() {
+function TestTabsStaleUpdateRejection() {
   return (
     <ToastProvider>
       <AppContents />
@@ -187,6 +187,6 @@ function blockThread(ms: number) {
 }
 
 export default createScenario(
-  TestTabsStaleStateUpdateRejection,
+  TestTabsStaleUpdateRejection,
   scenarioDescription,
 );

@@ -3,6 +3,11 @@ import {
   selectSingleFeatureTestsScreen,
   describeIfiPad,
 } from '../../e2e-utils';
+import {
+  CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL,
+  CLASS_NAME_UI_BUTTON,
+  CLASS_NAME_UI_TAB_SIDEBAR_CELL,
+} from '../../native-class-names';
 
 describe('@smoke Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
@@ -191,14 +196,18 @@ describeIfiPad(
         element(by.id('prevent-native-selection-state')),
       ).toHaveLabel('preventNativeSelection: true');
       await element(
-        by.id('Second').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('Second')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
       await expect(
         element(by.id('prevent-native-selection-state')),
       ).toHaveLabel('preventNativeSelection: false');
       await element(
-        by.id('First').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('First')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(
         element(by.label('1. onTabSelectionPrevented: First')),
@@ -226,11 +235,15 @@ describeIfiPad(
         element(by.id('prevent-native-selection-state')),
       ).toHaveLabel('preventNativeSelection: false');
       await element(
-        by.id('Fourth').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('Fourth')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
       await element(
-        by.id('First').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('First')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
@@ -241,7 +254,9 @@ describeIfiPad(
     it('should work independently per tab', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await element(
-        by.id('Third').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('Third')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Third');
       await expect(
@@ -252,7 +267,9 @@ describeIfiPad(
         element(by.id('prevent-native-selection-state')),
       ).toHaveLabel('preventNativeSelection: true');
       await element(
-        by.id('Fourth').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('Fourth')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
       await expect(
@@ -263,7 +280,9 @@ describeIfiPad(
         element(by.id('prevent-native-selection-state')),
       ).toHaveLabel('preventNativeSelection: true');
       await element(
-        by.id('Third').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('Third')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(
         element(by.label('1. onTabSelectionPrevented: Third')),
@@ -271,7 +290,9 @@ describeIfiPad(
       await element(by.label('1. onTabSelectionPrevented: Third')).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Fourth');
       await element(
-        by.id('First').withAncestor(by.type('_UIFloatingTabBarItemCell')),
+        by
+          .id('First')
+          .withAncestor(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_ITEM_CELL)),
       ).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
@@ -285,24 +306,50 @@ describeIfiPad(
       ).toBeVisible();
       await expect(element(by.label('More'))).not.toExist();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
-      await element(by.label('Toggle sidebar').and(by.type('UIButton'))).tap();
+      await element(
+        by.label('Toggle sidebar').and(by.type(CLASS_NAME_UI_BUTTON)),
+      ).tap();
       await expect(
-        element(by.label('First').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('First')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
       await expect(
-        element(by.label('Second').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('Second')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
       await expect(
-        element(by.label('Third').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('Third')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
       await expect(
-        element(by.label('Fourth').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('Fourth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
       await expect(
-        element(by.label('Fifth').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('Fifth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
       await expect(
-        element(by.label('Sixth').withAncestor(by.type('_UITabSidebarCell'))),
+        element(
+          by
+            .label('Sixth')
+            .withAncestor(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL)),
+        ),
       ).toExist();
     });
   },
