@@ -60,6 +60,9 @@ function StackSetup() {
           Component: HomeScreen,
           options: {
             ...makeCallbacks('Home'),
+            headerConfig: {
+              title: 'Home',
+            },
           },
         },
         {
@@ -119,6 +122,9 @@ function NestedStackScreen() {
           Component: NestedHomeScreen,
           options: {
             ...makeCallbacks('NestedHome'),
+            headerConfig: {
+              title: 'NestedHome',
+            },
           },
         },
         {
