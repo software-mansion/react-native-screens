@@ -95,7 +95,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 4. On **Red**, tap **Pop**.
 
 - [ ] **Red** slides back out and **Blue** is revealed with a smooth
-      animation (the reverse of the push). The button shadows stays visible;
+      animation (the reverse of the push). The button shadows stay visible;
       no content jump occurs.
 
 ### Predictive back gesture (interactive)
@@ -111,7 +111,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 - [ ] The gesture is **interactive and continuous**: **Red** follows your
       finger and the screen underneath (**Blue**) is progressively revealed,
       tracking the drag position. The animation is not stepped or frozen, and
-      the button shadows remains visible.
+      the button shadows remain visible.
 
 7. Continue the swipe **past** the commit threshold and release.
 
@@ -135,7 +135,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 10. On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
     **Push NestedRed**.
 
-- [ ] Each push inside the **nested** stack slides in smoothly, with a visible
+- [ ] Each push inside the **nested** stack slides in smoothly, with visible  
       button shadows and no content jump — identical behaviour to the top-level stack.
 
 11. Inside the nested stack, tap **Pop**, then perform a **predictive back gesture**
