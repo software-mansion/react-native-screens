@@ -238,11 +238,11 @@ text on a green background.
 - [ ] The badge backgrounds for Tab3 and Tab4 change to orange, while their values
   remain "123" and "Platform" with white text.
 
-8. With Tab4 selected, toggle the emulator between light and dark apperance and back.
+8. With Tab4 selected, toggle the emulator between light and dark appearance and back.
 
 - [ ] The tab bar background adapts to
   the system theme — light/near-white in light mode, near-black in dark
-  mode — confirming the background is a platform-resolved.
+  mode — confirming the background is a platform-resolved color.
 - [ ] The item colors do not change - configured colors are not
   appearance-adaptive tokens, so they resolve to the
   same color in both light and dark mode.
