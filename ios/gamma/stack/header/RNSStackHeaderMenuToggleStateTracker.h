@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)selectItemWithId:(NSString *)menuItemId fromIds:(NSArray<NSString *> *)allItemIdsInMenu;
 
+- (void)setToggleState:(BOOL)state forItemWithId:(NSString *)menuItemId;
+
 @end
 
 NS_ASSUME_NONNULL_END

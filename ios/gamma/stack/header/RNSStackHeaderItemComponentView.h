@@ -22,6 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)emitOnPress;
 
+/**
+ * Replaces a menu element in the item's menu tree with a new element constructed from command options.
+ * If parentMenu is nil, the element is the root menu and is replaced directly.
+ */
+- (void)updateMenuElementWithId:(NSString *)elementId
+                    withElement:(id<RNSStackHeaderMenuElement>)newElement
+                     parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu;
+
 @end
 
 NS_ASSUME_NONNULL_END

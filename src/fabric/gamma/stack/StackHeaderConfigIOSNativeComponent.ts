@@ -1,7 +1,11 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
@@ -27,6 +31,37 @@ export interface NativeProps extends ViewProps {
     | CT.DirectEventHandler<MenuSelectionChangeEvent>
     | undefined;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+// Codegen requires a concrete interface — bare `object` causes
+// "Unknown primitive type TSObjectKeyword". Fields are intentionally
+// loose (all optional) because the native side uses 3-state semantics
+// (key absent = no change, null = reset, value = set).
+export interface NativeMenuElementOptionsIOS {
+  title?: string | null | undefined;
+  icon?: string | null | undefined;
+  toggleState?: boolean | null | undefined;
+}
+
+export interface NativeCommands {
+  setMenuItemOptions: (
+    viewRef: React.ComponentRef<ComponentType>,
+    menuElementId: string,
+    // Array wrapper due to codegen limitation — only the first element is used.
+    options: NativeMenuElementOptionsIOS[],
+  ) => void;
+  setMenuOptions: (
+    viewRef: React.ComponentRef<ComponentType>,
+    menuElementId: string,
+    // Array wrapper due to codegen limitation — only the first element is used.
+    options: NativeMenuElementOptionsIOS[],
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setMenuItemOptions', 'setMenuOptions'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfigIOS', {
   interfaceOnly: true,

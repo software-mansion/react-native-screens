@@ -5,6 +5,7 @@
 #import "RNSStackHeaderIconMapper.h"
 #import "RNSStackHeaderItemEventEmitter.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
+#import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
 
@@ -55,6 +56,18 @@ namespace react = facebook::react;
 - (void)emitOnPress
 {
   [_headerItemEventEmitter emitOnPress];
+}
+
+- (void)updateMenuElementWithId:(NSString *)elementId
+                    withElement:(id<RNSStackHeaderMenuElement>)newElement
+                     parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+{
+  if (parentMenu == nil) {
+    _menu = (RNSStackHeaderMenuData *)newElement;
+  } else {
+    _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+  }
+  [_invalidationDelegate headerItemMenuDidUpdateFromCommandWithId:_itemId];
 }
 
 #pragma mark - RNSStackHeaderItemDataProviding

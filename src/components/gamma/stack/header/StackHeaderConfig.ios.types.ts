@@ -2,6 +2,63 @@ import type { ReactElement } from 'react';
 import type { PlatformIconIOS } from '../../../../types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
+/**
+ * @summary Options for updating a menu action (leaf item) at runtime.
+ *
+ * @description
+ * Omitted keys preserve current values. Explicit `undefined` resets to default.
+ *
+ * @platform ios
+ */
+export interface StackHeaderMenuActionOptionsIOS {
+  /**
+   * @summary New title for the menu action.
+   *
+   * @platform ios
+   */
+  title?: string | undefined;
+  /**
+   * @summary New icon for the menu action.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
+  /**
+   * @summary Sets the toggle state of the menu item.
+   *
+   * @description
+   * When inside a single selection hierarchy, setting `true` deselects the
+   * previously selected item and selects this one. Setting `false` is a noop
+   * in this case - only has effect for regular toggles.
+   *
+   * @platform ios
+   */
+  toggleState?: boolean | undefined;
+}
+
+/**
+ * @summary Options for updating a submenu at runtime.
+ *
+ * @description
+ * Omitted keys preserve current values. Explicit `undefined` resets to default.
+ *
+ * @platform ios
+ */
+export interface StackHeaderMenuOptionsIOS {
+  /**
+   * @summary New title for the submenu.
+   *
+   * @platform ios
+   */
+  title?: string | undefined;
+  /**
+   * @summary New icon for the submenu.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
+}
+
 export interface StackHeaderBaseItemIOS {
   /**
    * @summary A unique identifier within the screen header.
@@ -283,5 +340,31 @@ export interface StackHeaderConfigPropsIOS {
   largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StackHeaderConfigCommandsIOS {}
+export interface StackHeaderConfigCommandsIOS {
+  /**
+   * @summary Updates properties of a menu action (leaf item) at runtime.
+   *
+   * @param menuElementId The ID of the menu action to update.
+   * @param options Object with properties to change. Omitted keys preserve current
+   *        values. Explicit `undefined` resets to default.
+   *
+   * @platform ios
+   */
+  setMenuItemOptions: (
+    menuElementId: string,
+    options: StackHeaderMenuActionOptionsIOS,
+  ) => void;
+  /**
+   * @summary Updates properties of a submenu at runtime.
+   *
+   * @param menuElementId The ID of the submenu to update.
+   * @param options Object with properties to change. Omitted keys preserve current
+   *        values. Explicit `undefined` resets to default.
+   *
+   * @platform ios
+   */
+  setMenuOptions: (
+    menuElementId: string,
+    options: StackHeaderMenuOptionsIOS,
+  ) => void;
+}

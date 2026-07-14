@@ -54,4 +54,9 @@
       givenItemIsSelected, @"[RNScreens] Attempt to select item \"%@\" that is not present in the list", menuItemId);
 }
 
+- (void)setToggleState:(BOOL)state forItemWithId:(NSString *)menuItemId
+{
+  _states[menuItemId] = @(state);
+}
+
 @end

@@ -307,4 +307,41 @@
   }
 }
 
++ (RNSStackHeaderMenuData *)menu:(RNSStackHeaderMenuData *)menu
+            replacingChildWithId:(NSString *)elementId
+                     withElement:(id<RNSStackHeaderMenuElement>)newElement
+{
+  BOOL changed = NO;
+  NSMutableArray<id<RNSStackHeaderMenuElement>> *newChildren = [NSMutableArray arrayWithCapacity:menu.children.count];
+
+  for (id<RNSStackHeaderMenuElement> child in menu.children) {
+    if ([child.menuElementId isEqualToString:elementId]) {
+      [newChildren addObject:newElement];
+      changed = YES;
+    } else if ([child isKindOfClass:[RNSStackHeaderMenuData class]]) {
+      RNSStackHeaderMenuData *rebuilt = [self menu:(RNSStackHeaderMenuData *)child
+                              replacingChildWithId:elementId
+                                       withElement:newElement];
+      [newChildren addObject:rebuilt];
+      if (rebuilt != child) {
+        changed = YES;
+      }
+    } else {
+      [newChildren addObject:child];
+    }
+  }
+
+  if (!changed) {
+    return menu;
+  }
+
+  return [[RNSStackHeaderMenuData alloc] initWithId:menu.menuElementId
+                                              title:menu.title
+                                    singleSelection:menu.singleSelection
+                                      displayInline:menu.displayInline
+                                   displayAsPalette:menu.displayAsPalette
+                                           children:newChildren
+                                               icon:menu.icon];
+}
+
 @end
