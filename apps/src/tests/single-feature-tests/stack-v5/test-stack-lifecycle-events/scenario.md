@@ -86,8 +86,8 @@ stack), exercising every dismissal method available at each level.
   level: the top-level stack, the inner nested stack, and the container
   boundary.
 
-- On iOS the pushed `NestedStack` route keeps its own header, so inside the
-  nested stack there are **two back buttons**: the **inner** one (in the active
+- The pushed `NestedStack` route keeps its own header, so inside the
+  nested stack there are **two back buttons**. On iOS the **inner** one (in the active
   nested screen's header) pops within the nested stack, while the **outer** one
   (in the `NestedStack` header) pops the **whole container**
   back to `Home` in a single step — even from `NestedA`, skipping `NestedHome`.
