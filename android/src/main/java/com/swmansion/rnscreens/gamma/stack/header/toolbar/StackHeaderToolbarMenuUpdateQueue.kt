@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
  * A single toolbar menu element update carried by an `updateToolbarMenuElements`
  * view command, before its icon (if any) has been resolved.
  */
-internal data class StackHeaderToolbarMenuElementUpdate(
+internal data class StackHeaderToolbarMenuElementRawUpdate(
     val id: String,
     val options: StackHeaderToolbarMenuElementOptions,
     val iconSource: StackHeaderToolbarMenuItemIconSource?,
@@ -16,7 +16,7 @@ internal data class StackHeaderToolbarMenuElementUpdate(
  * A single toolbar menu element update whose icon has already been resolved and merged
  * into [options], ready to be applied to the toolbar.
  */
-internal data class StackHeaderToolbarMenuElementCommit(
+internal data class StackHeaderToolbarMenuElementUpdate(
     val id: String,
     val options: StackHeaderToolbarMenuElementOptions,
 )
@@ -32,15 +32,16 @@ internal fun interface StackHeaderToolbarMenuIconResolver {
     fun resolve(
         id: String,
         iconSource: StackHeaderToolbarMenuItemIconSource,
-        onResolved: (icon: StackHeaderToolbarUpdate<Drawable>?) -> Unit,
+        onResolved: (icon: StackHeaderToolbarFieldUpdate<Drawable>?) -> Unit,
     )
 }
 
 /**
- * Receives a fully-resolved batch, to be applied to the toolbar atomically.
+ * Receives a fully-resolved batch of menu element updates, to be applied to the toolbar
+ * atomically.
  */
-internal fun interface StackHeaderToolbarMenuCommitSink {
-    fun onBatchCommitted(commits: List<StackHeaderToolbarMenuElementCommit>)
+internal fun interface StackHeaderToolbarMenuUpdateQueueDelegate {
+    fun onUpdatesResolved(updates: List<StackHeaderToolbarMenuElementUpdate>)
 }
 
 /**
@@ -49,7 +50,7 @@ internal fun interface StackHeaderToolbarMenuCommitSink {
  * Each batch is processed to completion before the next one starts. Processing a batch
  * resolves every element's icon (drawable resources resolve synchronously, images
  * asynchronously) and, only once *all* of them have resolved, hands the fully-resolved
- * batch to [sink] in a single call. This guarantees:
+ * batch to [delegate] in a single call. This guarantees:
  *
  * - a batch is applied atomically, after its slowest image has loaded, so a mix of
  *   image-loading and plain updates yields a single coalesced application;
@@ -61,12 +62,12 @@ internal fun interface StackHeaderToolbarMenuCommitSink {
  */
 internal class StackHeaderToolbarMenuUpdateQueue(
     private val iconResolver: StackHeaderToolbarMenuIconResolver,
-    private val sink: StackHeaderToolbarMenuCommitSink,
+    private val delegate: StackHeaderToolbarMenuUpdateQueueDelegate,
 ) {
-    private val pendingBatches = ArrayDeque<List<StackHeaderToolbarMenuElementUpdate>>()
+    private val pendingBatches = ArrayDeque<List<StackHeaderToolbarMenuElementRawUpdate>>()
     private var isProcessing = false
 
-    internal fun enqueue(batch: List<StackHeaderToolbarMenuElementUpdate>) {
+    internal fun enqueue(batch: List<StackHeaderToolbarMenuElementRawUpdate>) {
         if (batch.isEmpty()) {
             return
         }
@@ -93,7 +94,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
         }
         isProcessing = true
 
-        val commits = arrayOfNulls<StackHeaderToolbarMenuElementCommit>(batch.size)
+        val updates = arrayOfNulls<StackHeaderToolbarMenuElementUpdate>(batch.size)
         var outstanding = batch.size
 
         fun onElementResolved(
@@ -102,14 +103,14 @@ internal class StackHeaderToolbarMenuUpdateQueue(
         ) {
             // Drop stale or duplicate resolutions: `!isProcessing` means the queue was
             // cleared (teardown); a non-null slot means this element already resolved.
-            if (!isProcessing || commits[index] != null) {
+            if (!isProcessing || updates[index] != null) {
                 return
             }
-            commits[index] = StackHeaderToolbarMenuElementCommit(batch[index].id, options)
+            updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options)
             outstanding -= 1
             if (outstanding == 0) {
                 pendingBatches.removeFirst()
-                sink.onBatchCommitted(commits.map { requireNotNull(it) })
+                delegate.onUpdatesResolved(updates.map { requireNotNull(it) })
                 processNext()
             }
         }

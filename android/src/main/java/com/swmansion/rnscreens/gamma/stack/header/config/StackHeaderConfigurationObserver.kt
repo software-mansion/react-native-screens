@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementCommit
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
 
 internal interface StackHeaderConfigurationObserver {
     fun onConfigChanged(config: StackHeaderConfigurationProviding)
@@ -11,5 +11,5 @@ internal interface StackHeaderConfigurationObserver {
      * elements — including any that loaded images — arrive together. Selection
      * changes are coalesced to at most one event per affected group.
      */
-    fun onMenuElementUpdatesCommitted(commits: List<StackHeaderToolbarMenuElementCommit>)
+    fun onMenuElementsUpdated(updates: List<StackHeaderToolbarMenuElementUpdate>)
 }

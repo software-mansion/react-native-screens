@@ -30,6 +30,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
@@ -37,7 +38,6 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemType
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.valueOrNull
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
@@ -514,8 +514,8 @@ internal class StackHeaderApplicator(
 
         options.icon?.let {
             when (it) {
-                StackHeaderToolbarUpdate.Reset -> menuItem.icon = null
-                is StackHeaderToolbarUpdate.Set<Drawable> ->
+                StackHeaderToolbarFieldUpdate.Reset -> menuItem.icon = null
+                is StackHeaderToolbarFieldUpdate.Set<Drawable> ->
                     menuItem.icon = getResizedDrawable(toolbar, it.value)
             }
         }
@@ -610,17 +610,17 @@ internal class StackHeaderApplicator(
 
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =
         StackHeaderToolbarMenuElementOptions(
-            title = StackHeaderToolbarUpdate.from(title),
-            titleCondensed = StackHeaderToolbarUpdate.from(titleCondensed),
-            tooltipText = StackHeaderToolbarUpdate.from(tooltipText),
+            title = StackHeaderToolbarFieldUpdate.from(title),
+            titleCondensed = StackHeaderToolbarFieldUpdate.from(titleCondensed),
+            tooltipText = StackHeaderToolbarFieldUpdate.from(tooltipText),
             hidden = hidden,
             disabled = disabled,
             showAsAction = showAsAction,
-            icon = StackHeaderToolbarUpdate.from(icon),
-            iconTintColorNormal = StackHeaderToolbarUpdate.from(iconTintColorNormal),
-            iconTintColorPressed = StackHeaderToolbarUpdate.from(iconTintColorPressed),
-            iconTintColorFocused = StackHeaderToolbarUpdate.from(iconTintColorFocused),
-            iconTintColorDisabled = StackHeaderToolbarUpdate.from(iconTintColorDisabled),
+            icon = StackHeaderToolbarFieldUpdate.from(icon),
+            iconTintColorNormal = StackHeaderToolbarFieldUpdate.from(iconTintColorNormal),
+            iconTintColorPressed = StackHeaderToolbarFieldUpdate.from(iconTintColorPressed),
+            iconTintColorFocused = StackHeaderToolbarFieldUpdate.from(iconTintColorFocused),
+            iconTintColorDisabled = StackHeaderToolbarFieldUpdate.from(iconTintColorDisabled),
         )
 
     private fun resolveBackButtonTintList(config: StackHeaderConfigurationProviding): ColorStateList? {
@@ -662,15 +662,15 @@ internal class StackHeaderApplicator(
 
         val finalNormal =
             when (val update = options.iconTintColorNormal) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
+                StackHeaderToolbarFieldUpdate.Reset -> null
+                is StackHeaderToolbarFieldUpdate.Set -> update.value
                 null -> currentNormal
             }
 
         val finalDisabled =
             when (val update = options.iconTintColorDisabled) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
+                StackHeaderToolbarFieldUpdate.Reset -> null
+                is StackHeaderToolbarFieldUpdate.Set -> update.value
                 null ->
                     currentTintList
                         ?.resolvedColorOrNull(intArrayOf(-android.R.attr.state_enabled))
@@ -679,8 +679,8 @@ internal class StackHeaderApplicator(
 
         val finalPressed =
             when (val update = options.iconTintColorPressed) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
+                StackHeaderToolbarFieldUpdate.Reset -> null
+                is StackHeaderToolbarFieldUpdate.Set -> update.value
                 null ->
                     currentTintList
                         ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed))
@@ -689,8 +689,8 @@ internal class StackHeaderApplicator(
 
         val finalFocused =
             when (val update = options.iconTintColorFocused) {
-                StackHeaderToolbarUpdate.Reset -> null
-                is StackHeaderToolbarUpdate.Set -> update.value
+                StackHeaderToolbarFieldUpdate.Reset -> null
+                is StackHeaderToolbarFieldUpdate.Set -> update.value
                 null ->
                     currentTintList
                         ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_focused))

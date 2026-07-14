@@ -18,7 +18,7 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementCommit
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
@@ -66,23 +66,21 @@ internal class StackHeaderCoordinatorLayout(
         object : StackHeaderConfigurationObserver {
             override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
 
-            override fun onMenuElementUpdatesCommitted(
-                commits: List<StackHeaderToolbarMenuElementCommit>,
-            ) {
+            override fun onMenuElementsUpdated(updates: List<StackHeaderToolbarMenuElementUpdate>) {
                 val toolbar = appBarLayout?.toolbar ?: return
                 // Apply every element first, collecting the groups whose selection changed,
                 // then emit a single coalesced event per affected group.
                 val affectedGroups = LinkedHashSet<String>()
-                for (commit in commits) {
+                for (update in updates) {
                     applicator.updateToolbarMenuElement(
                         toolbar,
                         toolbarMenuForwardIdMap,
-                        commit.id,
-                        commit.options,
+                        update.id,
+                        update.options,
                     )
-                    val checked = commit.options.checked
+                    val checked = update.options.checked
                     if (checked != null) {
-                        applyGroupItemStateChange(toolbar, commit.id, checked)?.let(affectedGroups::add)
+                        applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
                     }
                 }
                 affectedGroups.forEach { groupId -> emitGroupSelection(toolbar, groupId) }
