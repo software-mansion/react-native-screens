@@ -56,6 +56,10 @@ function ResizingItem() {
   return (
     <PressableWithFeedback
       onPress={() => setLarge(lg => !lg)}
+      // pressable props don't seem to update at runtime
+      // changing the key forces the view to rebuild completely
+      // - similar thing has been done in Test3446
+      key={`${pressableProps.hitSlop}_${pressableProps.pressRetentionOffset}`}
       {...pressableProps}
       style={{
         width: large ? 60 : 20,
@@ -195,8 +199,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     trailingItems.splice(1, 0, {
       type: 'spacer',
       id: 'spacer-trailing-1',
-      sizing: 'fixed',
-      width: 100,
+      sizing: 'flexible',
     });
   }
 

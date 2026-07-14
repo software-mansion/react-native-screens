@@ -16,9 +16,9 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 ## Note
 
-- Behavior is only observable on iOS 26+; on older versions the tab bar should remain visible regardless of setting.
+- Behavior is only observable on iOS 26+; on older versions the tab bar should remain visible regardless of the setting.
 - Scrolling **down** means moving content upward (revealing items below); scrolling **up** means moving content downward (revealing items above).
-- For test on iPad remember to resize app to state where down tab bar is display.
+- For testing on iPad, remember to resize the app until the bottom tab bar is displayed.
 - Tab bar minimize behavior should be updated immediately after each change with no crash, layout freeze, or visual glitch.
 
 ## Steps
@@ -81,10 +81,10 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 ### Tab switching behavior
 
-10.  Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap minimized tab bar.
+10. Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap the minimized tab bar.
 
-- [ ] Tab bar should reappeaer with two tabs.
+- [ ] Tab bar should reappear, showing two tabs.
 
-11.  Navigate to **Tab1** and switch back to **Tab2**.
+11. Navigate to **Tab1** and switch back to **Tab2**.
 
 - [ ] **Tab2** scroll position is preserved — no crash or blank screen.

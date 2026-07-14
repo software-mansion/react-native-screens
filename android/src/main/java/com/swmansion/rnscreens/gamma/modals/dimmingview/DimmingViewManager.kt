@@ -15,6 +15,8 @@ class DimmingViewManager(
     // TODO: @t0maboro - consider exposing as a prop
     internal val maxAlpha: Float = MAX_ALPHA
 
+    internal var isTransitionAnimationRunning: Boolean = false
+
     internal var dimmingViewAlpha: Float
         get() = dimmingView.alpha
         set(value) {
@@ -34,7 +36,7 @@ class DimmingViewManager(
         dimmingView.setOnClickListener(listener)
     }
 
-    internal fun onDialogShown() {
+    internal fun onDialogShow() {
         attachDimmingViewOverNativeTouchOutside()
     }
 
@@ -50,6 +52,13 @@ class DimmingViewManager(
                     bottomSheet: View,
                     slideOffset: Float,
                 ) {
+                    // Prevent system updates from overriding alpha while running custom enter/exit animation.
+                    // When initialDetentIndex is snapping to a high detent, BottomSheetBehavior fires onSlide
+                    // events that conflict with our manual alpha animator, causing the backdrop to flash.
+                    if (isTransitionAnimationRunning) {
+                        return
+                    }
+
                     val fraction = if (slideOffset >= 0) 1f else 1f + slideOffset
                     dimmingView.alpha = fraction * maxAlpha
                 }

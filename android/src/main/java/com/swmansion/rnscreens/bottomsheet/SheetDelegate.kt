@@ -7,7 +7,6 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -373,20 +372,10 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val newBottomInset = if (!isImeVisible) systemBarsInsets.bottom else 0
-
-        // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
-        // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
-        // This is important because in some specific edge cases - for example, when the keyboard slides in -
-        // the formSheet might overlap the status bar. If we ignored the top inset and it suddenly became necessary,
-        // it would result in a noticeable visual content jump. To ensure consistency and avoid layout shifts,
-        // we always include the top inset upfront, which can be disabled from the application perspective.
-        return WindowInsetsCompat
-            .Builder(insets)
-            .setInsets(
-                WindowInsetsCompat.Type.systemBars(),
-                Insets.of(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, newBottomInset),
-            ).build()
+        // This listener runs at the decor-view level (via InsetsObserverProxy), so anything we
+        // return here propagates to the entire view hierarchy. We therefore return the insets
+        // unmodified and we should never consume insets globally.
+        return insets
     }
 
     private fun shouldDismissSheetInState(

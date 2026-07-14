@@ -29,5 +29,17 @@ void RNSStackHeaderConfigShadowNode::applyFrameCorrections() {
   layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
   layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
 }
+
+void RNSStackHeaderConfigShadowNode::setImageLoader(
+    std::weak_ptr<void> imageLoader) {
+  getStateDataMutable().setImageLoader(imageLoader);
+}
+
+RNSStackHeaderConfigShadowNode::StateData &
+RNSStackHeaderConfigShadowNode::getStateDataMutable() {
+  ensureUnsealed();
+  return const_cast<RNSStackHeaderConfigShadowNode::StateData &>(
+      getStateData());
+}
 #endif // ANDROID
 } // namespace facebook::react

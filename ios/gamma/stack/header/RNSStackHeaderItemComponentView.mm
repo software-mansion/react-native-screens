@@ -2,6 +2,7 @@
 #import "RNSConversions-Stack.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSStackHeaderIconMapper.h"
 #import "RNSStackHeaderItemEventEmitter.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
 #import "RNSStackHeaderMenuData.h"
@@ -44,6 +45,7 @@ namespace react = facebook::react;
 {
   _itemId = nil;
   _title = nil;
+  _icon = nil;
   _menu = nil;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
@@ -161,6 +163,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.title != newItemProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newItemProps.title);
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.icon != newItemProps.icon) {
+    _icon = [RNSStackHeaderIconMapper
+        iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.icon)];
     needsUpdate = YES;
   }
 

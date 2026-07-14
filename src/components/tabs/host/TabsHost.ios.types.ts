@@ -96,6 +96,15 @@ export interface TabsHostPropsIOS {
    */
   bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;
   /**
+   * @summary Hides the bottom accessory with animation.
+   *
+   * @default false
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessoryHidden?: boolean | undefined;
+  /**
    * @summary Specifies the display mode for the tab bar.
    *
    * Available starting from iOS 18.

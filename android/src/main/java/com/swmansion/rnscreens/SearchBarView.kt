@@ -164,7 +164,10 @@ class SearchBarView(
         for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
             val subview = headerConfig?.getConfigSubview(i)
             if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR) {
-                subview?.visibility = visibility
+                // Pin the hidden state instead of writing plain visibility — Fabric layout
+                // updates would otherwise resurrect the subview while the search bar is open
+                // (see ScreenStackHeaderSubview.isHiddenBySearchBar).
+                subview?.setHiddenBySearchBar(visibility == GONE)
             }
         }
     }

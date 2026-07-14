@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTViewManager.h>
+#endif // __cplusplus
 #import <UIKit/UIKit.h>
 #import "RNSDefines.h"
 #import "RNSReactBaseView.h"
@@ -43,7 +45,11 @@ typedef struct {
 
 @end
 
+#if defined(__cplusplus)
 @interface RNSScreenContentWrapperManager : RCTViewManager
+#else
+@interface RNSScreenContentWrapperManager : NSObject
+#endif // __cplusplus
 
 @end
 

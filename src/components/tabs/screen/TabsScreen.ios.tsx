@@ -23,9 +23,6 @@ import type { TabsScreenProps } from './TabsScreen.types';
 import type { PlatformIconIOS } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function TabsScreen(props: TabsScreenProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.helpers
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Handler
@@ -56,12 +57,11 @@ private fun loadImageInternal(
 
                 if (closeableImage is CloseableStaticBitmap) {
                     val bitmap = closeableImage.underlyingBitmap
-                    if (bitmap != null) {
-                        val drawable = bitmap.toDrawable(context.resources)
-                        onLoaded(drawable)
-                    } else {
-                        onLoaded(null)
-                    }
+                    val drawable =
+                        bitmap
+                            ?.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
+                            ?.toDrawable(context.resources)
+                    onLoaded(drawable)
                 }
 
                 imageReference.close()

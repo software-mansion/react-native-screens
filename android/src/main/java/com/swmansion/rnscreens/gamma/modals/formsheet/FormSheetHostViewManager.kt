@@ -86,7 +86,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Float,
     ) {
-        // TODO: @t0maboro - implement later
+        view.preferredCornerRadius = value
     }
 
     override fun setLargestUndimmedDetentIndex(
@@ -100,7 +100,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Int,
     ) {
-        // TODO: @t0maboro - implement later
+        view.initialDetentIndex = value
     }
 
     override fun setPrefersScrollingExpandsWhenScrolledToEdge(
@@ -121,13 +121,18 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Int?,
     ) {
-        // TODO: @t0maboro - implement later
+        view.nativeContainerBackgroundColor = value
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetNativeDismissEvent),
             makeEventRegistrationInfo(FormSheetSyncFlushEvent),
+            makeEventRegistrationInfo(FormSheetWillAppearEvent),
+            makeEventRegistrationInfo(FormSheetDidAppearEvent),
+            makeEventRegistrationInfo(FormSheetWillDisappearEvent),
+            makeEventRegistrationInfo(FormSheetDidDisappearEvent),
+            makeEventRegistrationInfo(FormSheetDetentChangedEvent),
         )
 
     override fun updateState(

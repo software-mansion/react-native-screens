@@ -74,3 +74,9 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: npx react-native run-ios --no-packager --simulator="iPhone 17"
+
+        # Verify that the build above did not leak any React (React-Core / Fabric)
+        # symbols into the RNScreens Clang module consumed by Swift. See the script
+        # header for the rationale and detection details.
+      - name: Check React symbols are not leaked to Swift
+        run: node ./scripts/ios/check-react-symbols-not-leaked-to-swift.js

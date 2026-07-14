@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 3. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] The FormSheet expands to take up the maximum available height (respecting the top inset). The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded view area.
+- [ ] The FormSheet expands to take up the maximum available height (respecting the top inset). The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remains perfectly centered within the newly expanded view area.
 
 ---
 
@@ -74,7 +74,7 @@ TBD: Planned, but will be implemented separately.
 
 3. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
-- [ ] The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remain perfectly centered within the newly expanded panel.
+- [ ] The FormSheet panel expands vertically to take up the maximum available height (respecting the top inset), while the width remains fixed. The internal layout adapts dynamically, and the "FormSheet content" text along with the "Dismiss from JS" button remains perfectly centered within the newly expanded panel.
 
 ---
 

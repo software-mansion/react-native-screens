@@ -541,6 +541,21 @@ extension RNSSplitHostController: UISplitViewControllerDelegate {
     if self.displayMode != displayMode {
       reactEventEmitter.emitOnDisplayModeWillChange(from: self.displayMode, to: displayMode)
     }
+
+    let notifyColumnPositioningDidChange = { [weak self] in
+      guard let self = self else { return }
+      for controller in self.splitScreenControllers {
+        controller.columnPositioningDidChangeIn(splitViewController: self)
+      }
+    }
+
+    if let coordinator = svc.transitionCoordinator {
+      coordinator.animate(alongsideTransition: nil) { _ in
+        notifyColumnPositioningDidChange()
+      }
+    } else {
+      notifyColumnPositioningDidChange()
+    }
   }
 
   public func splitViewController(

@@ -1,5 +1,9 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '../e2e-utils';
+import {
+  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
+} from '../native-class-names';
 
 const awaitValidEventBehavior = async () => {
   await expect(
@@ -81,9 +85,9 @@ describe('Test593', () => {
     await element(by.id('privacy-button-go-to-another')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).atIndex(0).tap();
+      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
     } else {
-      await element(by.type('androidx.appcompat.widget.AppCompatImageButton'))
+      await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON))
         .atIndex(0)
         .tap();
     }
@@ -99,9 +103,9 @@ describe('Test593', () => {
     await element(by.id('privacy-button-go-to-another')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).atIndex(0).tap();
+      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
     } else {
-      await element(by.type('androidx.appcompat.widget.AppCompatImageButton'))
+      await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON))
         .atIndex(0)
         .tap();
     }
