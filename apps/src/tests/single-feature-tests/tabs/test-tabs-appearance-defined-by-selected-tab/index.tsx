@@ -275,7 +275,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
                 type: 'imageSource',
                 imageSource: require('@assets/variableIcons/icon_fill.png'),
               },
-              standardAppearance: TAB4_APPEARANCE_ANDROID
+              standardAppearance: TAB4_APPEARANCE_ANDROID,
             },
           },
         },
