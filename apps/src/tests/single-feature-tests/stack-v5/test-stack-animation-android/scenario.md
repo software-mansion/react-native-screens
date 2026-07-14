@@ -8,7 +8,7 @@ API** (see [PR #3629](https://github.com/software-mansion/react-native-screens/p
 The screen uses deliberately high-contrast, full-bleed screens — **Home**
 (yellow), **Blue**, **Red**, and a **NestedHost** that embeds a second
 `StackContainer` (**NestedHome** yellow / **NestedBlue** / **NestedRed**) —
-so the transition, its shadow, and any content jump are easy to see.
+so the transition, its button shadows, and any content jump are easy to see.
 
 The test validates that push, on-screen **Pop** and
 the **predictive back gesture** all animate smoothly, and guards against the
@@ -26,7 +26,7 @@ the top-level one.
 
 ## E2E test
 
-Incomplete: Not automated. Animation smoothness, shadow continuity, absence of content
+Incomplete: Not automated. Animation smoothness, button shadows continuity, absence of content
 jumps, and the interactive predictive back gesture are visual / interactive
 qualities that Detox cannot assert reliably. This scenario is manual only.
 
@@ -81,31 +81,30 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 
 2. Tap **Push Blue**.
 
-- [ ] The **Blue** screen slides from right to left 
+- [ ] The **Blue** screen slides from right to left
       in over **Home** with a smooth, continuous
-      animation. A drop shadow is visible along the leading edge of the
-      incoming screen throughout the transition. Neither screen's content
-      jumps; both move as rigid blocks.
+      animation. Button shadows persist during and after the transition.
+      Neither screen's content jumps; both move as rigid blocks.
 
 3. On **Blue**, tap **Push Red**.
 
 - [ ] The **Red** screen slides in over **Blue**, same as step 2 — smooth,
-      shadow present, no content jump.
+      button shadows present, no content jump.
 
 ### Pop animation (on-screen button)
 
 4. On **Red**, tap **Pop**.
 
 - [ ] **Red** slides back out and **Blue** is revealed with a smooth
-      animation (the reverse of the push). The shadow stays visible along the
-      moving edge; no content jump occurs.
+      animation (the reverse of the push). The button shadows stays visible;
+      no content jump occurs.
 
 ### Predictive back gesture (interactive)
 
 5. On **Blue**, tap **Push Red**.
 
 - [ ] The **Red** screen slides in over **Blue**, same as step 2 — smooth,
-      shadow present, no content jump.
+      button shadows present, no content jump.
 
 6. On **Red** slowly swipe inward from the **left screen edge** and **hold** without
    releasing.
@@ -113,7 +112,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 - [ ] The gesture is **interactive and continuous**: **Red** follows your
       finger and the screen underneath (**Blue**) is progressively revealed,
       tracking the drag position. The animation is not stepped or frozen, and
-      the shadow remains visible.
+      the button shadows remains visible.
 
 7. Continue the swipe **past** the commit threshold and release.
 
@@ -121,8 +120,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
       fully showing **Blue** — the animation continues to completion rather
       than snapping instantly.
 
-8. Push back to **Red**, start the same edge swipe, but **release before** the
-   commit threshold (a short drag).
+8. Push back to **Red**, start the same edge swipe, but then swipe back towards the left edge.
 
 - [ ] The gesture is **cancelled smoothly**: **Red** animates back into place
       and no navigation change occurs.
@@ -139,7 +137,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
     **Push NestedRed**.
 
 - [ ] Each push inside the **nested** stack slides in smoothly, with a visible
-      shadow and no content jump — identical behaviour to the top-level stack.
+      button shadows and no content jump — identical behaviour to the top-level stack.
 
 11. Inside the nested stack, tap **Pop**, then perform a **predictive back gesture**
 (swipe from the left edge) twice.
@@ -156,5 +154,5 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 
 - [ ] Every push animates a fresh **Blue** screen sliding in over the previous
       one (three stacked Blue instances). No transition is skipped, and no
-      screen jumps or loses its shadow, even though consecutive screens share
+      screen jumps or loses its button shadows, even though consecutive screens share
       the same color.
