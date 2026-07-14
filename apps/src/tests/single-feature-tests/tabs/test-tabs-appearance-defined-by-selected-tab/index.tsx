@@ -40,11 +40,11 @@ const TAB4_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarItemLabelVisibilityMode: 'labeled',
   normal: {
     tabBarItemIconColor: PlatformColor('@android:color/holo_blue_dark'),
-    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_blue_light'),
+    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_blue_dark'),
   },
   selected: {
     tabBarItemIconColor: PlatformColor('@android:color/holo_green_dark'),
-    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_green_light'),
+    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_green_dark'),
   },
   tabBarItemActiveIndicatorEnabled: true,
   tabBarItemActiveIndicatorColor: PlatformColor('@android:color/system_accent1_100'),
