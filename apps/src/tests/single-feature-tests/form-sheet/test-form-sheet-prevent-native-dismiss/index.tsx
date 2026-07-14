@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'PreventNativeDismiss',
-  key: 'test-form-sheet-prevent-native-dismiss-ios',
-  details:
-    'Allows testing the preventNativeDismiss property and firing the onNativeDismissPrevented event.',
-  platforms: ['ios'],
-};
+import { scenarioDescription } from './scenario-description';
 
 function TestFormSheetPreventNativeDismiss() {
   const [isOpen, setIsOpen] = useState(false);
