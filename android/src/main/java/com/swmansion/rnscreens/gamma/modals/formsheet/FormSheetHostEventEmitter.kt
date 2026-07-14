@@ -2,14 +2,13 @@ package com.swmansion.rnscreens.gamma.modals.formsheet
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
-import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 
 internal class FormSheetHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag),
-    ViewAppearanceEventEmitter {
-    fun emitOnNativeDismissEvent() {
+    FormSheetDialogEventEmitter {
+    override fun emitOnNativeDismissEvent() {
         reactEventDispatcher.dispatchEvent(
             FormSheetNativeDismissEvent(surfaceId, viewTag),
         )
@@ -42,6 +41,12 @@ internal class FormSheetHostEventEmitter(
     override fun emitOnDidDisappear() {
         reactEventDispatcher.dispatchEvent(
             FormSheetDidDisappearEvent(surfaceId, viewTag),
+        )
+    }
+
+    override fun emitOnDetentChanged(index: Int) {
+        reactEventDispatcher.dispatchEvent(
+            FormSheetDetentChangedEvent(surfaceId, viewTag, index),
         )
     }
 }

@@ -91,13 +91,18 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
+
+        dimmingManager.isTransitionAnimationRunning = true
 
         currentSheetAnimator =
             animatorFactory.createEnterAnimator(bottomSheetView, isInterrupting).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
+                            dimmingManager.isTransitionAnimationRunning = false
+
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
                             onPresentationComplete()
                         }
@@ -114,14 +119,20 @@ internal class FormSheetPresentationManager(
         }
 
         val isInterrupting = currentSheetAnimator?.isRunning == true
+        currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
+
+        dimmingManager.isTransitionAnimationRunning = true
 
         currentSheetAnimator =
             animatorFactory.createExitAnimator(bottomSheetView, isInterrupting).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
+                            dimmingManager.isTransitionAnimationRunning = false
+
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
+                            syncBehaviorStateAfterExitAnimationComplete(bottomSheetView)
                             performDismiss()
                         }
                     },
@@ -160,6 +171,27 @@ internal class FormSheetPresentationManager(
 
         onNativeDismiss()
         updatePresentationState(isOpen = false)
+    }
+
+    /**
+     * Synchronizes the BottomSheetBehavior state with our custom exit animation.
+     *
+     * Since our custom ExitAnimator uses `translationY` for visual movement, the physical
+     * `top` of the view remains at the top of the screen. If we just call `state = STATE_HIDDEN`,
+     * Material will attempt to align the layout and enter `STATE_SETTLING`, leaving the state
+     * machine corrupted for the next open.
+     *
+     * To fix this, we manually push the physical `top` to the bottom of the screen.
+     * This makes the behavior skip the animation and synchronously switch to `STATE_HIDDEN`,
+     * properly cleaning up its internal state on dismissal.
+     */
+    private fun syncBehaviorStateAfterExitAnimationComplete(view: View) {
+        val behavior = BottomSheetBehavior.from(view)
+        val parent = view.parent as? View
+        val targetTop = parent?.height ?: view.height
+
+        view.offsetTopAndBottom(targetTop - view.top)
+        behavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     internal fun destroy() {

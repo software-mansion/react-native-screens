@@ -12,7 +12,7 @@ export type FormSheetNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container hosting the sheet content.
    *
-   * @platform ios
+   * @platform android, ios
    */
   backgroundColor?: ColorValue | undefined;
 };
@@ -69,8 +69,14 @@ export interface FormSheetProps {
    * If set to `systemDefault` or a negative number, it defaults to the system's
    * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
    *
+   * @remarks
+   * On Android, non-uniform rounded-corner clipping is only applied on API level 33+.
+   * On older versions this prop is ignored, because clipping the sheet content to non-uniform
+   * rounded corners is not reliable on those versions.
+   *
    * @default systemDefault
-   * @platform ios
+   * @platform android, ios
+   * @supported android API level 33 or higher, iOS
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
@@ -134,7 +140,7 @@ export interface FormSheetProps {
    *
    * These properties are forwarded directly to the underlying native view.
    *
-   * @platform ios
+   * @platform android, ios
    */
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
@@ -196,7 +202,7 @@ export interface FormSheetProps {
    *
    * Provides the `index` of the newly selected detent from the `detents` array.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDetentChanged?:
     | FormSheetEventHandler<FormSheetDetentChangedEvent>
