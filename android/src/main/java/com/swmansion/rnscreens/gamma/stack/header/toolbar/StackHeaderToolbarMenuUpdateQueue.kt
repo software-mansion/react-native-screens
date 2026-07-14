@@ -57,8 +57,7 @@ internal fun interface StackHeaderToolbarMenuUpdateQueueDelegate {
  * - batches never overtake one another, so a later command cannot be overridden by an
  *   earlier one whose image happened to resolve late.
  *
- * This class is React-agnostic: icon resolution and application are injected. All
- * interaction happens on the main thread, so no synchronization is required.
+ * All interaction happens on the main thread, so no synchronization is required.
  */
 internal class StackHeaderToolbarMenuUpdateQueue(
     private val iconResolver: StackHeaderToolbarMenuIconResolver,
@@ -79,7 +78,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
 
     /**
      * Drops all pending batches and stops processing. In-flight icon resolutions that
-     * complete afterwards become no-ops. Used on teardown.
+     * complete afterward become no-ops. Used on teardown.
      */
     internal fun clear() {
         pendingBatches.clear()
