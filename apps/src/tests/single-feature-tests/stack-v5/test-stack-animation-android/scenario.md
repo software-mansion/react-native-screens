@@ -32,8 +32,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 
 ## Prerequisites
 
-- Android emulator or device (this is an **Android-only** test; there is no
-  iOS-specific behavior to verify here).
+- Android emulator or device
 
 - **System animations must be enabled** — this test observes transition
   animations, so they will not play at all if the OS is set to remove/disable
