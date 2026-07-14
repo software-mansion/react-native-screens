@@ -30,35 +30,43 @@ const VIEW_ITEMS: { id: string; title: string }[] = [
 function buildMenu(
   onGroupChange: (groupId: string, selectedIds: string[]) => void,
 ): StackHeaderToolbarMenuBaseAndroid {
+  const groups = [
+    {
+      groupId: 'fruits',
+      singleSelection: false,
+      onSelectionChange: (ids: string[]) => onGroupChange('fruits', ids),
+    },
+    {
+      groupId: 'view',
+      singleSelection: true,
+      onSelectionChange: (ids: string[])  => onGroupChange('view', ids),
+    },
+  ];
+
+  const fruitItems: StackHeaderToolbarMenuBaseAndroid['children'] = FRUIT_ITEMS.map(({ id, title }) => ({
+    type: 'menuItem',
+    id,
+    title,
+    groupId: 'fruits',
+    initialToggleState: id === 'apple',
+  }));
+
+  const viewItems: StackHeaderToolbarMenuBaseAndroid['children'] = VIEW_ITEMS.map(({ id, title }) => ({
+    type: 'menuItem',
+    id,
+    title,
+    groupId: 'view',
+    initialToggleState: id === 'list',
+  }));
+
+  const children: StackHeaderToolbarMenuBaseAndroid['children'] = [
+    ...fruitItems,
+    ...viewItems,
+  ];
+
   return {
-    groups: [
-      {
-        groupId: 'fruits',
-        singleSelection: false,
-        onSelectionChange: ids => onGroupChange('fruits', ids),
-      },
-      {
-        groupId: 'view',
-        singleSelection: true,
-        onSelectionChange: ids => onGroupChange('view', ids),
-      },
-    ],
-    children: [
-      ...FRUIT_ITEMS.map(({ id, title }) => ({
-        type: 'menuItem' as const,
-        id,
-        title,
-        groupId: 'fruits',
-        initialToggleState: id === 'apple',
-      })),
-      ...VIEW_ITEMS.map(({ id, title }) => ({
-        type: 'menuItem' as const,
-        id,
-        title,
-        groupId: 'view',
-        initialToggleState: id === 'list',
-      })),
-    ],
+    groups,
+    children
   };
 }
 
