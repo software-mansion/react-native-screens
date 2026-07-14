@@ -437,13 +437,15 @@ export interface StackHeaderConfigCommandsAndroid {
    * Accepts a single update or an array of updates. Each update targets a menu
    * element by `id` and applies the given `options`.
    *
-   * Updates that do not include an icon change are applied synchronously in
-   * iteration order. If an update includes an icon change (`icon` field in
-   * `options`) that requires asynchronous image loading, all options for that
-   * element (not just the icon) wait for the image to load before being
-   * applied — there is no partial application. Such updates may be applied
-   * after non-icon updates and in an unpredictable order relative to each
-   * other.
+   * Every call is enqueued and processed as one batch by a serial FIFO queue.
+   * Within a batch, an update whose `options` include an `icon` that requires
+   * asynchronous image loading holds the entire batch — no update in the batch
+   * is applied until every icon has resolved, then the whole batch is applied
+   * atomically (there is no partial application). Because the queue is FIFO,
+   * batches never overtake one another: a later command cannot be overridden by
+   * an earlier one whose image happened to resolve late. Once a batch is
+   * applied, each affected group emits a single coalesced
+   * `onToolbarMenuGroupSelectionChange`.
    *
    * @param updates A single update object or an array of updates.
    */
