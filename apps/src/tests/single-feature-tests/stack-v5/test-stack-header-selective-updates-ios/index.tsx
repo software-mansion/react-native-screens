@@ -130,7 +130,7 @@ function buildHeaderConfig(
   };
 }
 
-export function App() {
+export function TestStackHeaderSelectiveUpdatesIOS() {
   return (
     <ToastProvider>
       <StackContainer
@@ -252,4 +252,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackHeaderSelectiveUpdatesIOS, scenarioDescription);
