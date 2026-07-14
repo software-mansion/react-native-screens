@@ -127,8 +127,7 @@ icons and titles are blue.
 - [ ] The Tab4 badge still has value "Platform".
 - [ ] The badge background is red.
 - [ ] **iOS 18:** The tab bar background is the system background color - white
-  in light appearance, near-black in dark
-  appearance — not the dark navy used by Tab1. Unselected tab icons are
+  in light appearance, near-black in dark appearance. Unselected tab icons are
   blue and unselected titles are teal.
 - [ ] **iOS 26:** Only the selected-state colors (green icon, orange title)
   are observable; the `systemBackground` color and the normal-state
@@ -137,14 +136,14 @@ icons and titles are blue.
 6. Toggle the simulator between light and dark appearance while Tab4 is
    selected.
 
-- [ ] **iOS 18:** The `systemBackground` tab bar background, the
-  `systemBlue`/`systemTeal` unselected colors and the `systemRed` badge
-  background each resolve to their light/dark variant automatically,
-  confirming the colors are platform-resolved rather than static.
+- [ ] **iOS 18:** The `systemBackground` tab bar background resolve to
+  it's light/dark variant automatically, confirming the colors are platform-resolved rather than static.
+- [ ] **iOS 26:** Tab bar uses Liquid Glass (not systemBackground), adapting to
+  light/dark modes via dynamic translucency instead of solid colors.
 
 ---
 
-### Stability — rapid tab switchingcd
+### Stability — rapid tab switching
 
 7. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab4 → Tab1 several times,
    alternating between native tab bar taps and the in-screen
