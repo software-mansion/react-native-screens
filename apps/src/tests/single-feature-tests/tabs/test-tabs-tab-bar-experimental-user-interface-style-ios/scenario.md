@@ -35,7 +35,7 @@ Occasional flashes of the back button in the header are expected behavior and ar
 3. On `Home` screen click `Dark` button.
 
   - [ ] Screen is shown with a black background. A single button to push the screen with dark style is visible.
- 
+
 4. Tap **"Push screen with style: dark"** and observe tab bar.
 
 - [ ] The dark-styled tab screen is pushed, showing **Tab1** and **Tab2**. The tab bar reflects a **dark** style and appears without flash, flicker, or reversion to light style.

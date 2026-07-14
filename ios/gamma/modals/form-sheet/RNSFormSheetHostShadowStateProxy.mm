@@ -8,13 +8,13 @@ namespace react = facebook::react;
 
 @implementation RNSFormSheetHostShadowStateProxy {
   react::RNSFormSheetHostShadowNode::ConcreteState::Shared _state;
-  CGRect _lastScheduledFrame;
+  CGSize _lastScheduledSize;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
-    _lastScheduledFrame = CGRectNull;
+    _lastScheduledSize = CGSizeZero;
   }
   return self;
 }
@@ -24,20 +24,20 @@ namespace react = facebook::react;
   _state = std::static_pointer_cast<const react::RNSFormSheetHostShadowNode::ConcreteState>(state);
 }
 
-- (void)updateShadowStateWithBounds:(CGRect)bounds origin:(CGPoint)origin
+- (void)updateShadowStateWithBounds:(CGRect)bounds
 {
   if (_state == nullptr) {
     return;
   }
 
-  CGRect frame = {origin, bounds.size};
+  CGSize size = bounds.size;
 
-  if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
-    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(bounds.size), RCTPointFromCGPoint(origin)};
+  if (!CGSizeEqualToSize(size, _lastScheduledSize)) {
+    auto newState = react::RNSFormSheetHostState{RCTSizeFromCGSize(size)};
 
     _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
 
-    _lastScheduledFrame = frame;
+    _lastScheduledSize = size;
   }
 }
 

@@ -20,9 +20,6 @@ import type { PlatformIconAndroid } from '../../../types';
 import { useTabsScreen } from './useTabsScreen';
 import { parseAndroidIconToNativeProps } from '../../shared';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function TabsScreen(props: TabsScreenProps) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

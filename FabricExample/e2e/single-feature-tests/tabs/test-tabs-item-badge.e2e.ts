@@ -1,6 +1,10 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+import {
+  CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26,
+  CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
+} from '../../native-class-names';
 const {
   getIOSVersionNumber,
 } = require('../../../../scripts/e2e/ios-devices.js');
@@ -13,8 +17,8 @@ function isIOSVersionAtLeast(version: string): boolean {
 }
 
 const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
-  ? '_UIBarBadgeView'
-  : '_UIBadgeView';
+  ? CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26
+  : CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY;
 
 describeIfiOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {

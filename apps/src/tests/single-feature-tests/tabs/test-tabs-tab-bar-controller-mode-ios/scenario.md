@@ -79,14 +79,14 @@ Not automated:
 
 - [ ] Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
 
-12.   Set tabBarControllerMode = `automatic`
+12. Set tabBarControllerMode = `automatic`
 
 - [ ] Tab bar displayed at the **bottom**
 
-13.  Set tabBarControllerMode = `tabBar`
+13. Set tabBarControllerMode = `tabBar`
 
 - [ ] Tab bar displayed at the **bottom**
 
-14.  Set tabBarControllerMode = `tabSidebar`
+14. Set tabBarControllerMode = `tabSidebar`
 
 - [ ] Tab bar displayed at the **bottom**

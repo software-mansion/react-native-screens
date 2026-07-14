@@ -12,9 +12,6 @@ import TabsBottomAccessoryContent from '../bottom-accessory/TabsBottomAccessoryC
 import { isIOS26OrHigher } from '../../helpers/PlatformUtils';
 import { useTabsHost } from './useTabsHost';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function TabsHost(props: TabsHostProps) {
   RNSLog.log(`TabsHost render`);
 
@@ -54,6 +51,7 @@ function TabsHost(props: TabsHostProps) {
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
       tabBarTintColor={ios?.tabBarTintColor}
+      bottomAccessoryHidden={ios?.bottomAccessoryHidden}
       onMoreTabSelected={ios?.onMoreTabSelected}>
       {children}
       {ios?.bottomAccessory && isIOS26OrHigher && (

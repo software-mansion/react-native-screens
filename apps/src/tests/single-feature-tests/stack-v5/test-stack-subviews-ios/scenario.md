@@ -22,6 +22,7 @@ TBD
 - "Position of items on device matches element tree" means that the DevTools overlay the item highlight with correct position and size. Alternatively, this could be checked by pressing and moving the cursor over the button to see if the whole visible area works, not triggering onPressOut immediately
 - on iOS 26, view may move to overflow menu if there is no space for them, iOS 18 tries to render all of them (including the header)
 - spacers on iOS 26 work only to split the glass "bubble" around the item, setting width only works on iOS < 26
+- the difference between `flexible` sizing (applied to trailing items) and `fixed` sizing (applied to leading items) is only visible on iOS **below 26.0**
 - `subtitle`, `largeSubtitle` is only supported on iOS 26
 - custom view buttons don't move to overflow menu (native behavior); one needs to specify `menuRepresentation` for them (not implemented yet)
 - items are collapsed in the order: title, trailing buttons (one by one), leading buttons (all at once); this is in line with native behavior

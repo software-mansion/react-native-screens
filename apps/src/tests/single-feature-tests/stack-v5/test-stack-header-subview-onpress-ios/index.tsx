@@ -13,7 +13,7 @@ import { Colors } from '@apps/shared/styling';
 
 const MAX_ITEMS = 5;
 
-export function TestStackHeaderSubviewsOnpress() {
+export function TestStackHeaderSubviewsOnpressIOS() {
   return (
     <ToastProvider>
       <StackContainer
@@ -106,6 +106,6 @@ function ConfigScreen() {
 }
 
 export default createScenario(
-  TestStackHeaderSubviewsOnpress,
+  TestStackHeaderSubviewsOnpressIOS,
   scenarioDescription,
 );

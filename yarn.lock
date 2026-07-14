@@ -13492,7 +13492,7 @@ __metadata:
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
-    react-native: ">=0.82.0"
+    react-native: "*"
   languageName: unknown
   linkType: soft
 

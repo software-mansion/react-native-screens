@@ -8,6 +8,8 @@
  *
  * @platform ios
  */
+import type { PlatformIconIOS } from '../../../../../types';
+
 export interface StackHeaderMenuItemIOS {
   /**
    * @summary Unique identifier of the menu item.
@@ -63,6 +65,16 @@ export interface StackHeaderMenuItemIOS {
    * @platform ios
    */
   initialToggleState?: boolean | undefined;
+  /**
+   * @summary Icon displayed for the menu item.
+   *
+   * @description
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the menu item renders without an icon first and updates when loaded.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
   /**
    * @summary Callback invoked when the menu item is pressed.
    *
@@ -149,6 +161,44 @@ export interface StackHeaderMenuIOS {
    * @platform ios
    */
   singleSelection?: boolean | undefined;
+  /**
+   * @summary Icon displayed for the submenu.
+   *
+   * @description
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the menu renders without an icon first and updates when loaded.
+   *
+   * @platform ios
+   */
+  icon?: PlatformIconIOS | undefined;
+  /**
+   * @summary Displays the menu inline with parent menu instead of as a submenu.
+   *
+   * @description
+   * A menu displayed inline is rendered directly inside its parent menu,
+   * with horizontal bars separating it from the surrounding items.
+   *
+   * @default false
+   * @platform ios
+   */
+  displayInline?: boolean | undefined;
+  /**
+   * @summary Displays the menu as a row of compact items (palette).
+   *
+   * @description
+   * When enabled, the menu children are rendered as a horizontal palette
+   * row instead of a vertical list. Best suited for menus with icon-only items.
+   *
+   * @remarks
+   * Requires iOS 17.0 or later. On older versions, this option is ignored.
+   *
+   * @default false
+   *
+   * @platform ios
+   *
+   * @supported iOS 17.0 or higher
+   */
+  displayAsPalette?: boolean | undefined;
   /**
    * @summary Child elements of this menu.
    *

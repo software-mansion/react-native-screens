@@ -41,7 +41,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Nested container state preservation 
+### Nested container state preservation
 
 5. Navigate to the *Stack* tab.
 

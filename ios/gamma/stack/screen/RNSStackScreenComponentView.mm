@@ -130,10 +130,19 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
+    _headerConfig = (RNSStackHeaderConfigComponentView *)childComponentView;
+  }
+  [super mountChildComponentView:childComponentView index:index];
+}
+
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
     [_controller.headerCoordinator clearHeaderConfiguration];
+    _headerConfig = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];
 }

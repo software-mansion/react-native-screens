@@ -125,6 +125,7 @@ Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.26.0+         | 0.84.0+              |
 | 4.25.0+         | 0.82.0+              |
 | 4.19.0+         | 0.81.0+              |
 | 4.14.0+         | 0.79.0+              |

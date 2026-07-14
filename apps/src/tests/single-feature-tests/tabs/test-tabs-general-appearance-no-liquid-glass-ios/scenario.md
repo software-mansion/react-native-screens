@@ -134,8 +134,8 @@ is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
 grayish or milky cast.
 - [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
 transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
-- [ ] The final appearance is a blend of the  `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
-  
+- [ ] The final appearance is a blend of the `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
+
 9. Scroll **back to the top** of Tab2.
 
 - [ ] The background returns to solid dark blue with a red shadow line.
@@ -177,9 +177,9 @@ Tab2 until the trees image and end of content are visible.
 grayish or milky cast.
 - [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
 transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
-- [ ] The final appearance is a blend of the  `scrollEdgeAppearance` configuration mixed with the underlying view's green background. 
+- [ ] The final appearance is a blend of the `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
 
-13.  Re-enable both toggles to restore Tab2 default state before
+13. Re-enable both toggles to restore Tab2 default state before
     proceeding.
 
 - [ ] Both toggles are true; scrollEdgeAppearance and

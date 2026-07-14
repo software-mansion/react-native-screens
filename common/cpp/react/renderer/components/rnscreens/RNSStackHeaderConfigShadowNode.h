@@ -31,8 +31,11 @@ class JSI_EXPORT RNSStackHeaderConfigShadowNode final
 #else // ANDROID
   void layout(LayoutContext layoutContext) override;
 
+  void setImageLoader(std::weak_ptr<void> imageLoader);
+
  private:
   void applyFrameCorrections();
+  StateData &getStateDataMutable();
 #endif // ANDROID
 };
 

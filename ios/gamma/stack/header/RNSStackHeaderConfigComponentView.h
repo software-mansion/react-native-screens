@@ -1,5 +1,6 @@
 #pragma once
 
+#import "RNSImageLoading.h"
 #import "RNSReactBaseView.h"
 #import "RNSStackHeaderConfigDataProviding.h"
 #import "RNSStackHeaderEventsDelegate.h"
@@ -11,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackHeaderConfigComponentView : RNSReactBaseView <RNSViewFrameChangeDelegate,
                                                                  RNSStackHeaderConfigDataProviding,
                                                                  RNSStackHeaderItemInvalidationDelegate,
-                                                                 RNSStackHeaderEventsDelegate>
+                                                                 RNSStackHeaderEventsDelegate,
+                                                                 RNSImageLoading>
 
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) NSString *subtitle;

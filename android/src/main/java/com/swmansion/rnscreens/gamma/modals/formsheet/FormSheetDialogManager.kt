@@ -6,11 +6,11 @@ import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
 import com.swmansion.rnscreens.gamma.modals.dimmingview.DimmingViewManager
+import kotlin.properties.Delegates
 
 class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
-    private val onDismissRequest: () -> Unit,
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -33,9 +33,16 @@ class FormSheetDialogManager(
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
     private val behaviorController =
-        bottomSheetView?.let { FormSheetBehaviorController(it) }
+        bottomSheetView?.let {
+            FormSheetBehaviorController(it) { index -> eventEmitter?.emitOnDetentChanged(index) }
+        }
 
     private val dimmingManager = DimmingViewManager(context, dialog)
+
+    private val appearanceCoordinator =
+        FormSheetAppearanceCoordinator(
+            bottomSheetView = bottomSheetView,
+        )
 
     private val dimensionsCoordinator =
         FormSheetDimensionsCoordinator(
@@ -50,28 +57,50 @@ class FormSheetDialogManager(
             dialog = dialog,
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
-            onNativeDismiss = onDismissRequest,
+            onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
         )
+
+    internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
+        presentationManager.appearanceEventEmitter = newValue
+    }
+
+    internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
+        get() = dimensionsCoordinator
 
     init {
         presentationManager.setup()
+        appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
+        behaviorController?.setup()
     }
 
     internal fun applyConfig(newConfig: FormSheetConfig) {
         val oldConfig = formSheetConfig
         formSheetConfig = newConfig
 
-        // ALWAYS refresh behavior & appearance when reopening to ensure that BottomSheet
-        // state and layout are synchronized with native behavior.
         val reopened = !oldConfig.isOpen && newConfig.isOpen
 
-        if (reopened || oldConfig.detents != newConfig.detents) {
-            dimensionsCoordinator.updateFormSheetDetents(resolveDetents(newConfig.detents))
+        // ALWAYS refresh dimensions when reopening to ensure that BottomSheet
+        // state and layout are synchronized with native behavior.
+        val dimensionsChanged = oldConfig.detents != newConfig.detents
+        if (dimensionsChanged || reopened) {
+            dimensionsCoordinator.updateFormSheetDimensions(
+                resolveDetents(newConfig.detents),
+                newConfig.initialDetentIndex,
+                reopened,
+            )
         }
 
-        if (reopened || oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
+        if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
+        }
+
+        if (oldConfig.preferredCornerRadius != newConfig.preferredCornerRadius) {
+            appearanceCoordinator.updateCornerRadius(newConfig.preferredCornerRadius)
+        }
+
+        if (oldConfig.nativeContainerBackgroundColor != newConfig.nativeContainerBackgroundColor) {
+            appearanceCoordinator.updateBackgroundColor(newConfig.nativeContainerBackgroundColor)
         }
 
         if (oldConfig.isOpen != newConfig.isOpen) {
@@ -97,6 +126,7 @@ class FormSheetDialogManager(
     }
 
     internal fun destroy() {
+        behaviorController?.destroy()
         presentationManager.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()

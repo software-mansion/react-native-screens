@@ -3,6 +3,10 @@ import {
   describeIfiPad,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import {
+  CLASS_NAME_UI_TAB_BAR,
+  CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
+} from '../../native-class-names';
 
 describe('Tab Bar Hidden', () => {
   beforeAll(async () => {
@@ -19,7 +23,7 @@ describe('Tab Bar Hidden', () => {
     await expect(element(by.label('tabBarHidden: false'))).toExist();
     // On iOS, we need to check for the whole tab bar visibility as view hierarchy shows individual tab bar items as exist and visible even when UITabBar is invisible. On Android, we can check for the individual tab bar item visibility as they are hidden together with the tab bar.
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     } else {
       await expect(element(by.id('tab-bar-item-1-id'))).toBeVisible();
     }
@@ -34,7 +38,7 @@ describe('Tab Bar Hidden', () => {
       'tabBarHidden: true',
     );
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).not.toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).not.toBeVisible();
     } else {
       await expect(element(by.id('tab-bar-item-1-id'))).not.toBeVisible();
     }
@@ -49,7 +53,7 @@ describe('Tab Bar Hidden', () => {
       'tabBarHidden: false',
     );
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     } else {
       await expect(element(by.id('tab-bar-item-1-id'))).toBeVisible();
     }
@@ -72,7 +76,7 @@ describeIfiPad('@ipad Tabs: tabBarHidden (iPad)', () => {
       'tabBarHidden: false',
     );
     await expect(
-      element(by.type('_UIFloatingTabBarCollectionView')),
+      element(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW)),
     ).toBeVisible();
   });
 
@@ -85,7 +89,7 @@ describeIfiPad('@ipad Tabs: tabBarHidden (iPad)', () => {
       'tabBarHidden: true',
     );
     await expect(
-      element(by.type('_UIFloatingTabBarCollectionView')),
+      element(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW)),
     ).not.toBeVisible();
   });
 
@@ -98,7 +102,7 @@ describeIfiPad('@ipad Tabs: tabBarHidden (iPad)', () => {
       'tabBarHidden: false',
     );
     await expect(
-      element(by.type('_UIFloatingTabBarCollectionView')),
+      element(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW)),
     ).toBeVisible();
   });
 });
