@@ -16,16 +16,21 @@ class TabsHostA11yCoordinator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
     ) {
-        val menuView = bottomNavigationView.findViewById<NavigationBarItemView>(menuItem.itemId)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // The setting will overwrite default item title when building a11y description
             // see https://github.com/material-components/material-components-android/blob/9cc5d57d7b5a41d0ceafa29b98d2cd6d4094d19c/lib/java/com/google/android/material/navigation/NavigationBarItemView.java#L692
             menuItem.contentDescription = tabsScreen.tabBarItemAccessibilityLabel
         }
 
-        // when matching view by id, espresso driver seems to look for tag property
-        menuView.tag = tabsScreen.tabBarItemTestID
+        // findViewById(itemId) can resolve to the CustomBottomNavigationView container
+        // itself when its view id collides with the low menu-item id, so an unchecked
+        // cast to NavigationBarItemView throws ClassCastException on tab select.
+        // Look it up as a View and type-check before use.
+        val menuView = bottomNavigationView.findViewById<View>(menuItem.itemId)
+        if (menuView is NavigationBarItemView) {
+            // when matching view by id, espresso driver seems to look for tag property
+            menuView.tag = tabsScreen.tabBarItemTestID
+        }
     }
 
     fun setA11yPropertiesToAllTabItems() {
