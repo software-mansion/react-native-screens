@@ -14,7 +14,7 @@ TBD
 
 - iOS / iPadOS emulator
 
-## Note (Optional)
+## Note
 
 - For now, menus don't appear on items with custom views
 

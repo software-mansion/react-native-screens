@@ -25,7 +25,7 @@ List of devices or platforms required to run this test.
 
 Example: iOS physical device, Android emulator
 
-## Note (Optional)
+## Note
 
 Include any critical information for scenario execution not covered elsewhere. Use this section to document Known Issues (KI) or specific behaviors that might appear misleading but are considered expected results. Define rules that apply to the entire scenario to avoid repetition in individual steps.
 

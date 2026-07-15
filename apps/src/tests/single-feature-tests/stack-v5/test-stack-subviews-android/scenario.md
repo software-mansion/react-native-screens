@@ -14,7 +14,7 @@ Other - the subview API is still subject to significant changes.
 
 - Android emulator
 
-## Note (Optional)
+## Note
 
 This feature is still WIP.
 
