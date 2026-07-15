@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Dimensions,
   View,
-  ViewStyle,
   Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
@@ -16,7 +15,6 @@ interface ToastProps {
   id: string;
   backgroundColor: string;
   message: string;
-  style?: ViewStyle;
   remove: (_: string) => void;
 }
 
@@ -27,7 +25,6 @@ const Toast = ({
   id,
   backgroundColor,
   message,
-  style = {},
   remove,
 }: ToastProps): React.JSX.Element => {
   useEffect(() => {
@@ -38,9 +35,7 @@ const Toast = ({
   }, []);
 
   return (
-    <TouchableOpacity
-      style={{ ...styles.container, ...style }}
-      onPress={() => remove(id)}>
+    <TouchableOpacity style={styles.container} onPress={() => remove(id)}>
       <View style={{ ...styles.alert, backgroundColor }}>
         <Text style={styles.text}>
           {`${index + 1}. `}
@@ -91,6 +86,10 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         navigation bar.
         The overlay stays permanently mounted so the native SafeAreaView's
         asynchronously-resolved inset is ready before the first toast appears.
+        Note: the native SafeAreaView ignores `pointerEvents`, so while a toast
+        is visible it swallows taps on whatever is directly behind it (e.g. the
+        tab bar) until the toast is tapped or auto-dismissed. When idle it only
+        spans the navigation bar area, which has no interactive content.
       */}
       <View style={styles.overlay} pointerEvents="box-none">
         <SafeAreaView
@@ -108,8 +107,6 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 export const useToast = () => useContext(ToastContext);
 
 const styles = StyleSheet.create({
-  // Full-screen, `box-none` overlay: it lets touches through and only serves to
-  // push the toast stack to the bottom center of the screen.
   overlay: {
     position: 'absolute',
     top: 0,
