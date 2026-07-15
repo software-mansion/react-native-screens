@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Dimensions,
   View,
-  Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -62,9 +61,27 @@ const ToastContext = createContext({
 
 interface ToastProviderProps {
   children: React.ReactNode;
+  anchorSide?: 'top' | 'bottom';
 }
 
-export const ToastProvider = ({ children }: ToastProviderProps) => {
+function ToastContainer({ toasts, remove, anchorSide }: { toasts: IToast[]; remove: (id: string) => void; anchorSide?: 'top' | 'bottom' }) {
+  return (
+    <View style={styles.overlay} pointerEvents="box-none">
+      <SafeAreaView
+        pointerEvents='box-none'
+        collapsable={false}
+        edges={{ top: true, bottom: true, }}
+        style={[styles.toastArea, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]}
+      >
+        {toasts.map((toast, i) => (
+          <Toast index={i} key={toast.id} {...toast} remove={remove} />
+        ))}
+      </SafeAreaView>
+    </View>
+  );
+}
+
+export function ToastProvider({ children, anchorSide }: ToastProviderProps) {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
@@ -79,29 +96,11 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   return (
     <ToastContext.Provider value={{ push }}>
       {children}
-      {/*
-        Toasts live in a full-screen `box-none` overlay (so touches pass through
-        to `children`) that bottom-anchors them in a content-sized SafeAreaView
-        (`flex: 0`), whose Android `bottom` inset lifts them above the system
-        navigation bar.
-        The overlay stays permanently mounted so the native SafeAreaView's
-        asynchronously-resolved inset is ready before the first toast appears.
-        Note: While a toast is visible, the SafeAreaView spans the screen and 
-        swallows taps on the content behind it (such as the tab bar). When idle, the container only 
-        spans the safe navigation area where there is no interactive content.
-      */}
-      <View style={styles.overlay} pointerEvents="box-none">
-        <SafeAreaView
-          edges={{ bottom: Platform.OS === 'android' }}
-          style={styles.toastArea}>
-          {toasts.map((toast, i) => (
-            <Toast index={i} key={toast.id} {...toast} remove={remove} />
-          ))}
-        </SafeAreaView>
-      </View>
+      <ToastContainer toasts={toasts} remove={remove} anchorSide={anchorSide ?? 'bottom'} />
     </ToastContext.Provider>
   );
-};
+
+}
 
 export const useToast = () => useContext(ToastContext);
 
@@ -112,7 +111,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   toastArea: {
