@@ -60,6 +60,10 @@ platform, making automated assertion infeasible.
 the icon consistently uses a darker shade than the title. For instance,
 "blue" maps to BlueLight100 for the icon and BlueLight40 for the title,
 a pattern that applies across all green, blue, yellow, and red tab elements.
+- On Android: the active tab indicator dynamically matches the device's
+  system accent color, which is determined by the user's current wallpaper and theme settings.
+  Testers should expect this indicator's color to change accordingly when the
+  device's wallpaper or system color palette is updated.
 
 ## Steps - iOS
 
@@ -232,7 +236,7 @@ text on a green background.
 7. Tap **Tab4** in the native tab bar.
 
 - [ ] The screen label changes to "Tab4".
-- [ ] The selected Tab4 icon is dark green and the selected title is light green.
+- [ ] The selected Tab4 icon and title is green.
 - [ ] Unselected tab icons and titles are blue.
 - [ ] The active indicator pill uses the system accent color.
 - [ ] The badge backgrounds for Tab3 and Tab4 change to orange, while their values
