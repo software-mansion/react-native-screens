@@ -88,7 +88,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         Toasts live in a full-screen `box-none` overlay (so touches pass through
         to `children`) that bottom-anchors them in a content-sized SafeAreaView
         (`flex: 0`), whose Android `bottom` inset lifts them above the system
-        navigation bar — avoiding the ugly gap from wrapping the whole app.
+        navigation bar.
         The overlay stays permanently mounted so the native SafeAreaView's
         asynchronously-resolved inset is ready before the first toast appears.
       */}
