@@ -82,33 +82,49 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
-      <ToastContext.Provider value={{ push }}>
-        <>
-          {children}
+    <ToastContext.Provider value={{ push }}>
+      {children}
+      {/*
+        Toasts live in a full-screen `box-none` overlay (so touches pass through
+        to `children`) that bottom-anchors them in a content-sized SafeAreaView
+        (`flex: 0`), whose Android `bottom` inset lifts them above the system
+        navigation bar — avoiding the ugly gap from wrapping the whole app.
+        The overlay stays permanently mounted so the native SafeAreaView's
+        asynchronously-resolved inset is ready before the first toast appears.
+      */}
+      <View style={styles.overlay} pointerEvents="box-none">
+        <SafeAreaView
+          edges={{ bottom: Platform.OS === 'android' }}
+          style={styles.toastArea}>
           {toasts.map((toast, i) => (
-            <Toast
-              index={i}
-              key={toast.id}
-              style={{ marginBottom: i * 25 }}
-              {...toast}
-              remove={remove}
-            />
+            <Toast index={i} key={toast.id} {...toast} remove={remove} />
           ))}
-        </>
-      </ToastContext.Provider>
-    </SafeAreaView>
+        </SafeAreaView>
+      </View>
+    </ToastContext.Provider>
   );
 };
 
 export const useToast = () => useContext(ToastContext);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  // Full-screen, `box-none` overlay: it lets touches through and only serves to
+  // push the toast stack to the bottom center of the screen.
+  overlay: {
     position: 'absolute',
-    alignSelf: 'center',
-    bottom: 5,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  toastArea: {
+    flex: 0,
+    alignItems: 'center',
+  },
+  container: {
+    marginBottom: 5,
   },
   alert: {
     alignItems: 'center',
