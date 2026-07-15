@@ -217,7 +217,7 @@ function MainScreen() {
           cmdDisabled === 'undefined' ? undefined : cmdDisabled === 'true',
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
+    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
       cmdTargetId,
       options,
     );

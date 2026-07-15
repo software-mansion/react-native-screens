@@ -14,7 +14,7 @@ TBD
 
 - iOS / iPadOS simulator
 
-## Note (Optional)
+## Note
 
 - Crossfade doesn't work when changing between async images.
 - Changing items in menu while it is presented (default for this test) results in visible layout shifts.

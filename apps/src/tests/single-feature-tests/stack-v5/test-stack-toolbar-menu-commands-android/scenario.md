@@ -24,7 +24,7 @@ Other — automation is not implemented yet.
 
 - Android emulator or device
 
-## Note (Optional)
+## Note
 
 - `StackHeaderToolbarMenuElementOptionsAndroid` semantics:
   - A field missing from the options object means "preserve current
