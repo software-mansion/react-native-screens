@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.header.config
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -237,24 +238,31 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         updates: ReadableArray,
     ) {
-        val parsedUpdates =
-            buildList {
-                for (i in 0 until updates.size()) {
-                    val map = updates.getMap(i) ?: continue
-                    val id = map.getString("id") ?: continue
-                    add(
-                        StackHeaderToolbarMenuElementRawUpdate(
-                            id,
-                            StackHeaderToolbarMenuMapper.parseMenuElementOptions(view.context, map),
-                            StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
-                        ),
-                    )
-                }
+        val parsed = ArrayList<StackHeaderToolbarMenuElementRawUpdate>(updates.size())
+        for (i in 0 until updates.size()) {
+            val map = updates.getMap(i)
+            if (map == null) {
+                Log.w(TAG, "[RNScreens] Skipping toolbar menu update at index $i: not an object.")
+                continue
             }
-        view.dispatchMenuElementUpdates(parsedUpdates)
+            val id = map.getString("id")
+            if (id == null) {
+                Log.w(TAG, "[RNScreens] Skipping toolbar menu update at index $i: missing 'id'.")
+                continue
+            }
+            parsed.add(
+                StackHeaderToolbarMenuElementRawUpdate(
+                    id,
+                    StackHeaderToolbarMenuMapper.parseMenuElementOptions(view.context, map),
+                    StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
+                ),
+            )
+        }
+        view.dispatchMenuElementUpdates(parsed)
     }
 
     companion object {
+        private const val TAG = "StackHeaderConfigViewManager"
         const val REACT_CLASS = "RNSStackHeaderConfigAndroid"
     }
 }

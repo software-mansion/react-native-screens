@@ -67,7 +67,15 @@ internal class StackHeaderCoordinatorLayout(
             override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
 
             override fun onMenuElementsUpdated(updates: List<StackHeaderToolbarMenuElementUpdate>) {
-                val toolbar = appBarLayout?.toolbar ?: return
+                val toolbar = appBarLayout?.toolbar
+                if (toolbar == null) {
+                    Log.w(
+                        TAG,
+                        "[RNScreens] Dropping ${updates.size} resolved toolbar menu update(s): " +
+                            "the header toolbar is not currently attached (header hidden or detached).",
+                    )
+                    return
+                }
                 // Apply every element first, collecting the groups whose selection changed,
                 // then emit a single coalesced event per affected group.
                 val affectedGroups = LinkedHashSet<String>()

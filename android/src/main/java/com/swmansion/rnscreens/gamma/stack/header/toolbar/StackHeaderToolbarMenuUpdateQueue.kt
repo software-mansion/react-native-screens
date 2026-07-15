@@ -24,15 +24,13 @@ internal data class StackHeaderToolbarMenuElementUpdate(
 /**
  * Resolves the icon for a single menu element update.
  *
- * [onResolved] must be invoked exactly once — synchronously or asynchronously, always on
- * the main thread — with the icon update to merge into the element's options, or `null`
- * to keep the current icon.
+ * [onResolved] must be invoked exactly once — synchronously or asynchronously, always on the
+ * main thread — with the resolved icon to merge into the element's options.
  */
 internal fun interface StackHeaderToolbarMenuIconResolver {
     fun resolve(
-        id: String,
         iconSource: StackHeaderToolbarMenuItemIconSource,
-        onResolved: (icon: StackHeaderToolbarFieldUpdate<Drawable>?) -> Unit,
+        onResolved: (icon: StackHeaderToolbarFieldUpdate<Drawable>) -> Unit,
     )
 }
 
@@ -58,6 +56,7 @@ internal fun interface StackHeaderToolbarMenuUpdateQueueDelegate {
  *   earlier one whose image happened to resolve late.
  *
  * All interaction happens on the main thread, so no synchronization is required.
+ * The queue is single-use — teardown is terminal, and it is never enqueued to again afterward.
  */
 internal class StackHeaderToolbarMenuUpdateQueue(
     private val iconResolver: StackHeaderToolbarMenuIconResolver,
@@ -65,6 +64,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
 ) {
     private val pendingBatches = ArrayDeque<List<StackHeaderToolbarMenuElementRawUpdate>>()
     private var isProcessing = false
+    private var isTornDown = false
 
     internal fun enqueue(batch: List<StackHeaderToolbarMenuElementRawUpdate>) {
         if (batch.isEmpty()) {
@@ -76,55 +76,75 @@ internal class StackHeaderToolbarMenuUpdateQueue(
         }
     }
 
-    /**
-     * Drops all pending batches and stops processing. In-flight icon resolutions that
-     * complete afterward become no-ops. Used on teardown.
-     */
-    internal fun clear() {
+    internal fun tearDown() {
         pendingBatches.clear()
+        isTornDown = true
         isProcessing = false
     }
 
     private fun processNext() {
-        val batch = pendingBatches.firstOrNull()
-        if (batch == null) {
-            isProcessing = false
-            return
-        }
-        isProcessing = true
-
-        val updates = arrayOfNulls<StackHeaderToolbarMenuElementUpdate>(batch.size)
-        var outstanding = batch.size
-
-        fun onElementResolved(
-            index: Int,
-            options: StackHeaderToolbarMenuElementOptions,
-        ) {
-            // Drop stale or duplicate resolutions: `!isProcessing` means the queue was
-            // cleared (teardown); a non-null slot means this element already resolved.
-            if (!isProcessing || updates[index] != null) {
+        while (true) {
+            val batch = pendingBatches.firstOrNull()
+            if (batch == null) {
+                isProcessing = false
                 return
             }
-            updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options)
-            outstanding -= 1
-            if (outstanding == 0) {
+            isProcessing = true
+
+            val updates = arrayOfNulls<StackHeaderToolbarMenuElementUpdate>(batch.size)
+            var outstanding = batch.size
+
+            var isProcessingBatch = true
+
+            fun dispatchResolvedBatch() {
                 pendingBatches.removeFirst()
                 delegate.onUpdatesResolved(updates.map { requireNotNull(it) })
-                processNext()
             }
-        }
 
-        batch.forEachIndexed { index, update ->
-            val iconSource = update.iconSource
-            if (iconSource == null) {
-                onElementResolved(index, update.options)
-            } else {
-                iconResolver.resolve(update.id, iconSource) { icon ->
-                    val options =
-                        if (icon != null) update.options.copy(icon = icon) else update.options
-                    onElementResolved(index, options)
+            fun onElementResolved(
+                index: Int,
+                options: StackHeaderToolbarMenuElementOptions,
+            ) {
+                check(updates[index] == null) {
+                    "[RNScreens] Unexpected duplicated element resolution."
+                }
+
+                if (isTornDown) {
+                    return
+                }
+
+                updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options)
+                outstanding -= 1
+
+                // A synchronous completion is applied by the loop below; only an asynchronous one
+                // advances the queue processing from here.
+                if (outstanding == 0 && !isProcessingBatch) {
+                    dispatchResolvedBatch()
+                    processNext()
+                }
+
+            }
+
+            batch.forEachIndexed { index, update ->
+                val iconSource = update.iconSource
+                if (iconSource == null) {
+                    onElementResolved(index, update.options)
+                } else {
+                    iconResolver.resolve(iconSource) { icon ->
+                        onElementResolved(index, update.options.copy(icon = icon))
+                    }
                 }
             }
+            isProcessingBatch = false
+
+            if (outstanding > 0) {
+                // An icon is still loading asynchronously; its callback will apply the batch
+                // and resume.
+                return
+            }
+
+            // Every icon resolved synchronously; apply the batch now and continue with the next one.
+            dispatchResolvedBatch()
         }
     }
 }
