@@ -6,6 +6,7 @@ import {
   Dimensions,
   View,
   Platform,
+  ViewStyle,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -15,6 +16,7 @@ interface ToastProps {
   id: string;
   backgroundColor: string;
   message: string;
+  style?: ViewStyle;
   remove: (_: string) => void;
 }
 
@@ -25,6 +27,7 @@ const Toast = ({
   id,
   backgroundColor,
   message,
+  style,
   remove,
 }: ToastProps): React.JSX.Element => {
   useEffect(() => {
@@ -35,7 +38,9 @@ const Toast = ({
   }, []);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => remove(id)}>
+    <TouchableOpacity
+      style={[styles.container, style]}
+      onPress={() => remove(id)}>
       <View style={{ ...styles.alert, backgroundColor }}>
         <Text style={styles.text}>
           {`${index + 1}. `}
@@ -80,15 +85,13 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
     <ToastContext.Provider value={{ push }}>
       {children}
       {/*
-        Toasts live in a full-screen `box-none` overlay (so touches pass through
-        to `children`) that bottom-anchors them in a content-sized SafeAreaView
-        (`flex: 0`), whose Android `bottom` inset lifts them above the system
-        navigation bar.
-        The overlay stays permanently mounted so the native SafeAreaView's
-        asynchronously-resolved inset is ready before the first toast appears.
-        Note: While a toast is visible, the SafeAreaView spans the screen and 
-        swallows taps on the content behind it (such as the tab bar). When idle, the container only 
-        spans the safe navigation area where there is no interactive content.
+        Toasts render in a bottom-anchored, content-sized SafeAreaView whose
+        Android `bottom` inset keeps them above the system navigation bar. It
+        stays mounted even with no toasts: the native SafeAreaView needs a
+        layout pass to apply its bottom inset, so mounting it together with the
+        first toast renders that toast over the navigation bar (it only lifts
+        above once a later re-layout applies the inset). Keeping it mounted
+        means the inset is already applied when the first toast appears.
       */}
       <View style={styles.overlay} pointerEvents="box-none">
         <SafeAreaView
