@@ -60,10 +60,10 @@ platform, making automated assertion infeasible.
 the icon consistently uses a darker shade than the title. For instance,
 "blue" maps to BlueLight100 for the icon and BlueLight40 for the title,
 a pattern that applies across all green, blue, yellow, and red tab elements.
-- On Android: the active tab indicator dynamically matches the device's
-  system accent color, which is determined by the user's current wallpaper and theme settings.
-  Testers should expect this indicator's color to change accordingly when the
-  device's wallpaper or system color palette is updated.
+- On Android: when color is configured to use the system accent color - its dynamically determined
+  by the user's wallpaper and theme settings. In this scneario this behavior applies
+  to the active tab indicator for Tab4. Testers should expect this indicator's
+  color to update automatically whenever the device's wallpaper or system theme changes.
 
 ## Steps - iOS
 
