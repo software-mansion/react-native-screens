@@ -19,7 +19,7 @@ TBD
 ### displayInline
 
 1. Ensure both toggles are set to `false`
-2. Tap the ellipsis (Options) button in the header
+2. Tap the overflow menu button (three dots)in the header
   - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
 3. Tap Sort By
   - [ ] A nested submenu shows: Name, Date, Size and Rating as a collapsed submenu
