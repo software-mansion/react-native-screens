@@ -86,10 +86,9 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         navigation bar.
         The overlay stays permanently mounted so the native SafeAreaView's
         asynchronously-resolved inset is ready before the first toast appears.
-        Note: the native SafeAreaView ignores `pointerEvents`, so while a toast
-        is visible it swallows taps on whatever is directly behind it (e.g. the
-        tab bar) until the toast is tapped or auto-dismissed. When idle it only
-        spans the navigation bar area, which has no interactive content.
+        Note: While a toast is visible, the SafeAreaView spans the screen and 
+        swallows taps on the content behind it (such as the tab bar). When idle, the container only 
+        spans the safe navigation area where there is no interactive content.
       */}
       <View style={styles.overlay} pointerEvents="box-none">
         <SafeAreaView
