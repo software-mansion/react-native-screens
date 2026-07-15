@@ -229,7 +229,7 @@ class Screen(
     ) {
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
-        if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
+        if (isNativeStackScreen && !usesFormSheetPresentation()) {
             val width = r - l
             val height = b - t
 
@@ -561,6 +561,16 @@ class Screen(
                 )
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        // When pushing a screen on top another screen, reset the stored sizes
+        // This is important because when orientation changes, the commit hook resets
+        // the screen's shadow state for the frame sizes, which causes placeholder
+        // padding to be applied which then should be reset with updateShadowNodeScreenSize()
+        // inside onLayout(), but there is no change there (current size equals last size)
+        resetLastSizes()
     }
 
     private fun dispatchSheetDetentChanged(
