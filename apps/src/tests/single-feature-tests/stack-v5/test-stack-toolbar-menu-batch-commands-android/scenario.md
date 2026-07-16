@@ -2,14 +2,15 @@
 
 ## Details
 
-**Description:** This test verifies the batched `updateToolbarMenuElements`
-view command on the Stack v5 header for Android, which is backed by a serial
-FIFO command queue. It covers: per-batch **coalescing** (one
-`onToolbarMenuGroupSelectionChange` event per affected group, not one per
-changed item); **atomic** application of a batch that mixes an async image load
-with plain updates (applied only after the image has loaded); **FIFO ordering**
-of back-to-back commands (a late image load must not override a newer command);
-the single-object (non-array) normalization path.
+**Description:** This test exercises the batched `updateToolbarMenuElements`
+view command on the Stack v5 Android header. It covers **coalescing** (one
+`onToolbarMenuGroupSelectionChange` per affected group, not one per changed
+item); **atomic** application of a batch that mixes an async image load with
+plain updates (applied only once the image has loaded); **FIFO ordering** of
+back-to-back commands (a late image load must not override a newer command);
+the single-object (non-array) argument form; and **robustness** — a failing
+image load still completes the batch and clears the icon, and a repeated id in
+one batch is applied in order, with the last icon winning.
 
 **OS test creation version:** Android: API Level 36
 
@@ -25,19 +26,18 @@ TBD — automation is possible and planned but not yet implemented.
 ## Note
 
 - A batch emits **one** event per affected group. An item already in its target
-  state fires nothing; a batch that changes no item's state fires nothing (the
-  "Events received" counter stays put).
-- The menu's checked state is **cumulative** across button taps. **Reset log
-  clears only the counter and log, not the menu** — so the steps below run as
-  one linear sequence.
-- Android's overflow menu does **not render item icons**, and a toolbar action
-  item does **not show checkbox state**. So the image-load cases move **Apple**
-  into the toolbar to make its downloaded icon visible, and its checked state is
-  confirmed via the event log (or by moving Apple back to the overflow menu).
+  state fires nothing, and a batch that changes no item's state fires nothing
+  (the "Events received" counter stays put).
+- The menu's checked state is **cumulative** across taps. **Reset log clears
+  only the counter and log, not the menu**, so the steps below run as one linear
+  sequence.
+- Android's overflow menu does **not** render item icons, and a toolbar action
+  item does **not** show checkbox state. So an item's icon is only visible while
+  it is in the toolbar, and its checked state is only visible while it is in the
+  overflow menu — several steps below move **Apple** between the two to check
+  both.
 - The image cases download a large, uncached image, so the async load is
-  visibly delayed. The queue guarantees hold regardless of speed — the
-  behavioral assertions (single coalesced event; correct final checkbox state;
-  correct ordering) are the source of truth.
+  visibly delayed.
 
 ## Steps
 
@@ -48,8 +48,8 @@ TBD — automation is possible and planned but not yet implemented.
 
 - [ ] Header title reads "Toolbar Menu Batch Commands Test". The overflow menu
       shows a **fruits** group — Apple (checked), Banana, Cherry, Date
-      (multi-toggle) — and a **view** group — List (checked), Grid
-      (single-selection). "Events received" is 0.
+      (multi-select) — and a **view** group — List (checked), Grid
+      (single-select). "Events received" is 0.
 
 ---
 
@@ -57,9 +57,9 @@ TBD — automation is possible and planned but not yet implemented.
 
 2. Tap **Select All (1 event)**.
 
-- [ ] Exactly **1** new event (counter → 1). Newest ▶ reads
-      `fruits: ["apple","banana","cherry","date"]` — a 4-element batch yields
-      one coalesced event, not 3–4.
+- [ ] 1 new event (counter → 1). Newest ▶ reads
+      `fruits: ["apple","banana","cherry","date"]` — the four-element batch
+      yields one event, not four.
 - [ ] Overflow: all four fruits are checked.
 
 3. Tap **Deselect All (1 event)**.
@@ -73,10 +73,10 @@ TBD — automation is possible and planned but not yet implemented.
 
 4. Tap **Batch across groups (2 events)**.
 
-- [ ] **2** new events (counter → 4), in update order: `fruits: ["cherry"]`
-      then newest ▶ `view: ["grid"]` — one coalesced event per affected group.
-- [ ] Overflow: Cherry is checked; the view group is now Grid (List unchecked —
-      single-selection exclusivity).
+- [ ] 2 new events (counter → 4), in update order: `fruits: ["cherry"]` then
+      newest ▶ `view: ["grid"]` — one event per affected group.
+- [ ] Overflow: Cherry is checked, and the view group is now Grid (List
+      unchecked — single-select).
 
 ---
 
@@ -85,51 +85,95 @@ TBD — automation is possible and planned but not yet implemented.
 5. Tap **Single object update (1 event)**.
 
 - [ ] 1 new event (counter → 5). Newest ▶ reads `fruits: ["banana","cherry"]` —
-      the non-array argument is normalized to a one-element batch.
+      a single object argument is treated as a one-element batch.
 - [ ] Overflow: Banana and Cherry are checked.
 
 ---
 
-### Atomic image load + `showAsAction`
+### Atomic image load with `showAsAction`
 
 6. Tap **Move Apple to toolbar**.
 
-- [ ] **No** new event (counter stays 5). Apple leaves the overflow menu and
-      appears in the app bar as a text action ("APPLE") — it has no icon yet.
+- [ ] No new event (counter stays 5). Apple leaves the overflow menu and appears
+      in the app bar as a text button ("APPLE") with no icon.
 
-7. Tap **Deselect All** to reach a clean state.
+7. Tap **Deselect All (1 event)**.
 
-- [ ] 1 new event (counter → 6). Newest ▶ reads `fruits: []`. (Apple's checkbox
-      is not visible while it is in the toolbar; the event confirms it is
-      unchecked.)
+- [ ] 1 new event (counter → 6). Newest ▶ reads `fruits: []`.
 
 8. Tap **Batch: image + check (atomic)**.
 
-- [ ] After a short download delay, Apple's toolbar item shows the downloaded
-      photo **and**, at the same moment, exactly **1** new event appears
-      (counter → 7): newest ▶ `fruits: ["apple","cherry"]`.
-- [ ] The event must **not** appear before the image — the whole batch (Apple's
-      and Cherry's checks) is held until Apple's image loads, then applied
-      together.
+- [ ] After a short download, Apple's toolbar button shows the photo and, at the
+      same moment, 1 new event appears (counter → 7): newest ▶
+      `fruits: ["apple","cherry"]`. The event does not appear before the image —
+      the batch (Apple's icon and check, and Cherry's check) is held until the
+      image loads, then applied together.
 
-9. Tap **Move Apple to overflow**, then open the overflow menu.
+9. Tap **Move Apple to overflow**.
 
 - [ ] No new event (counter stays 7). Apple is back in the overflow menu and is
-      **checked** — confirming the check applied atomically in step 8.
+      checked.
 
 ---
 
 ### FIFO ordering — a late image must not override a newer command
 
-10. Tap **Deselect All** to reach a clean state (Apple unchecked).
+10. Tap **Deselect All (1 event)**.
 
 - [ ] 1 new event (counter → 8). Newest ▶ reads `fruits: []`.
 
 11. Tap **Ordering race (last: Apple absent)**.
 
-- [ ] **2** new events (counter → 10): `fruits: ["apple"]` (command 1, emitted
-      after its image loads) then newest ▶ `fruits: []` (command 2).
-- [ ] The newest event and the overflow menu both show Apple **unchecked /
-      absent**. (Without the queue, command 1's late image resolution would
-      carry `checked: true` and land after command 2, wrongly re-checking
-      Apple.)
+- [ ] 2 new events (counter → 10): `fruits: ["apple"]` (the first command, whose
+      image loads slowly) then newest ▶ `fruits: []` (the second command).
+- [ ] The newest event and the overflow menu both show Apple unchecked — the
+      second command is applied last even though the first command's image
+      resolves later.
+
+---
+
+### Robustness — a failing image still completes the batch
+
+12. Tap **Failing image + follow-up**.
+
+- [ ] 2 new events (counter → 12): `fruits: ["apple"]` then newest ▶
+      `fruits: ["apple","banana"]`. The first batch checks Apple with an image
+      that cannot load; the second checks Banana. Both apply — a failed image
+      does not stop later commands.
+
+13. Tap **Move Apple to toolbar**.
+
+- [ ] No new event (counter stays 12). Apple's toolbar button shows "APPLE" with
+      no icon — the failed image load leaves the icon cleared.
+
+14. Tap **Move Apple to overflow**.
+
+- [ ] No new event (counter stays 12). In the overflow menu Apple is checked —
+      the failing-image batch applied its check.
+
+---
+
+### Robustness — a repeated id in one batch (last icon wins)
+
+15. Tap **Deselect All (1 event)**.
+
+- [ ] 1 new event (counter → 13). Newest ▶ reads `fruits: []`.
+
+16. Tap **Move Apple to toolbar**.
+
+- [ ] No new event (counter stays 13). Apple shows "APPLE" with no icon.
+
+17. Tap **Duplicate id: merge + last icon**.
+
+- [ ] The batch lists Apple twice — the first update checks it with an image
+      that fails to load, the second sets a photo (and no check). After the
+      downloads, Apple's toolbar button shows the **photo**: the later icon wins
+      over the failed one.
+- [ ] 2 new events (counter → 15): `fruits: ["apple"]` then newest ▶
+      `fruits: ["apple","cherry"]`. The first event shows Apple checked — the
+      check from the first update is kept even though the second update set only
+      the icon. A following batch then checks Cherry.
+
+18. Tap **Move Apple to overflow**.
+
+- [ ] No new event (counter stays 15). In the overflow menu Apple is checked.

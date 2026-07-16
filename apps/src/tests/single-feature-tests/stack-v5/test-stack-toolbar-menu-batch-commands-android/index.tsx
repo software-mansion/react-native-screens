@@ -134,6 +134,17 @@ function MainScreen() {
     };
   }, []);
 
+  // A guaranteed-to-fail image. The load never yields a drawable; the queue
+  // must still complete the batch (icon cleared) rather than wait forever for a
+  // callback that never comes.
+  const failingIcon = useCallback(
+    (): PlatformIconAndroid => ({
+      type: 'imageSource',
+      imageSource: { uri: 'https://invalid.invalid/icon.png' },
+    }),
+    [],
+  );
+
   const resetLog = useCallback(() => {
     setEventLog([]);
     setEventCount(0);
@@ -207,6 +218,35 @@ function MainScreen() {
     ]);
   }, [nextPhotoIcon]);
 
+  // Case #6: a batch whose image fails to load. The failed load resolves to "no
+  // icon" (Apple's icon is cleared) and the batch still completes, so the
+  // following batch (checking Banana) is applied and emits its event.
+  const runFailingImageRepro = useCallback(() => {
+    const android = headerConfigRef.current?.android;
+    android?.updateToolbarMenuElements([
+      { id: 'apple', options: { checked: true, icon: failingIcon() } },
+    ]);
+    android?.updateToolbarMenuElements([
+      { id: 'banana', options: { checked: true } },
+    ]);
+  }, [failingIcon]);
+
+  // Case #7: the same id appears twice in one batch, applied in order. The first
+  // update checks Apple with a failing icon and the second sets a real photo (no
+  // check), so Apple ends up checked (the first update's check is kept) and shows
+  // the photo (the last icon wins over the failed one). A following batch then
+  // checks Cherry.
+  const runDuplicateIdRepro = useCallback(() => {
+    const android = headerConfigRef.current?.android;
+    android?.updateToolbarMenuElements([
+      { id: 'apple', options: { checked: true, icon: failingIcon() } },
+      { id: 'apple', options: { icon: nextPhotoIcon() } },
+    ]);
+    android?.updateToolbarMenuElements([
+      { id: 'cherry', options: { checked: true } },
+    ]);
+  }, [failingIcon, nextPhotoIcon]);
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Batch Commands</Text>
@@ -234,6 +274,14 @@ function MainScreen() {
         <Button
           title="Ordering race (last: Apple absent)"
           onPress={runOrderingRace}
+        />
+        <Button
+          title="Failing image + follow-up"
+          onPress={runFailingImageRepro}
+        />
+        <Button
+          title="Duplicate id: merge + last icon"
+          onPress={runDuplicateIdRepro}
         />
         <Button title="Reset log (menu state kept)" onPress={resetLog} />
       </View>
