@@ -76,7 +76,7 @@ and are not yet implemented.
    the selection menu, Android directly via `App.tsx`) so the **Home**
    screen of the Simple stack navigation is shown.
 
-- [ ] The **Home** screen is shown with a light blue background, `Name:
+- [ ] The **Home** screen is shown with `Name:
   Home`, and a `Key`. No back button is visible in
   the header. No **Pop** button is shown, only **Push A** and **Push B**.
   Note the displayed `Key` value to compare against later steps.
@@ -101,7 +101,7 @@ and are not yet implemented.
 4. While on **B**, tap **Push A** again.
 
 - [ ] A new instance of screen **A** is pushed on top of the stack (stack
-  is now Home, A, B, A). `Name: A`, background light yellow, and a new
+  is now Home, A, B, A). `Name: A` and a new
   `Key` that is **different** from the `Key` shown in step 2.
 
 ### Pop via the on-screen button
