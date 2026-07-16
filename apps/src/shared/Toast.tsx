@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   View,
+  ViewStyle,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -25,7 +26,7 @@ const Toast = ({
   id,
   backgroundColor,
   message,
-  style,
+  style ={},
   remove,
 }: ToastProps): React.JSX.Element => {
   useEffect(() => {
