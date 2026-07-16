@@ -28,7 +28,7 @@ TBD
 5. Change Menu picker for Item 1 to "multi"
   - [ ] Menu can be opened and the default first option is selected
 6. Select Option-0-B in Item 1 menu
-  - [ ] A toast `Item 1 \[multi]: "Option-0-A", "Option-0-B"` selected appears
+  - [ ] A toast `Item 1 \[multi]: "Option-0-A", "Option-0-B"` appears
   - [ ] When opened again, both Option-0-A and Option-0-B are checked
 7. Enable "Custom view" for Item 1
   - [ ] Item 1 flashes and shows a purple pressable square
@@ -37,7 +37,7 @@ TBD
   - [ ] Neither items flash
 9. Press "Add Item 3"
   - [ ] A third item appears
-  - [ ] Items 2 and 3 flash
+  - [ ] All items flash
 10. Press "Remove Item 3"
-  - [ ] Items 2 and 3 flash
+  - [ ] All items flash
   - [ ] Item 3 disappears under Item 2

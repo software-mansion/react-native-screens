@@ -504,6 +504,11 @@ internal class StackHeaderApplicator(
         options.title?.let { menuItem.title = it.valueOrNull() }
         options.titleCondensed?.let { menuItem.titleCondensed = it.valueOrNull() }
         options.tooltipText?.let { MenuItemCompat.setTooltipText(menuItem, it.valueOrNull()) }
+        options.accessibilityLabel?.let {
+            // Setting `null` will restore Android's default (`title` for items
+            // in toolbar, `null` otherwise).
+            MenuItemCompat.setContentDescription(menuItem, it.valueOrNull())
+        }
         options.hidden?.let { menuItem.isVisible = !it }
         options.disabled?.let { menuItem.isEnabled = !it }
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
@@ -613,6 +618,7 @@ internal class StackHeaderApplicator(
             title = StackHeaderToolbarFieldUpdate.from(title),
             titleCondensed = StackHeaderToolbarFieldUpdate.from(titleCondensed),
             tooltipText = StackHeaderToolbarFieldUpdate.from(tooltipText),
+            accessibilityLabel = StackHeaderToolbarFieldUpdate.from(accessibilityLabel),
             hidden = hidden,
             disabled = disabled,
             showAsAction = showAsAction,

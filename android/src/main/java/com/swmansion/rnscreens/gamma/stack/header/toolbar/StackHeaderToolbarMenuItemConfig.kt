@@ -7,6 +7,7 @@ internal data class StackHeaderToolbarMenuItemConfig(
     val title: String?,
     val titleCondensed: String?,
     val tooltipText: String?,
+    val accessibilityLabel: String?,
     val hidden: Boolean,
     val disabled: Boolean,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction,

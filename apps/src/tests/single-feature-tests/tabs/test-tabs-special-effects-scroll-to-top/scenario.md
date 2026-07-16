@@ -18,7 +18,7 @@ Full: Covers all manual scenario steps.
 - iOS device or simulator
 - Android emulator
 
-## Note (Optional)
+## Note
 
 Tab1 has `scrollToTop: true`, Tab2 has `scrollToTop: false`, and Tab3 has no
 `specialEffects` configured (default behavior). All three tabs display a scrollable

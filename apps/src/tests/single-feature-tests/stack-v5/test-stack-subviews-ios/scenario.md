@@ -17,7 +17,7 @@ TBD
 
 - iOS / iPadOS emulator
 
-## Note (Optional)
+## Note
 
 - "Position of items on device matches element tree" means that the DevTools overlay the item highlight with correct position and size. Alternatively, this could be checked by pressing and moving the cursor over the button to see if the whole visible area works, not triggering onPressOut immediately
 - on iOS 26, view may move to overflow menu if there is no space for them, iOS 18 tries to render all of them (including the header)

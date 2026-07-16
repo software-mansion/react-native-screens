@@ -11,6 +11,7 @@ internal data class StackHeaderToolbarMenuElementOptions(
     val title: StackHeaderToolbarFieldUpdate<String>? = null,
     val titleCondensed: StackHeaderToolbarFieldUpdate<String>? = null,
     val tooltipText: StackHeaderToolbarFieldUpdate<String>? = null,
+    val accessibilityLabel: StackHeaderToolbarFieldUpdate<String>? = null,
     val hidden: Boolean? = null,
     val disabled: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
