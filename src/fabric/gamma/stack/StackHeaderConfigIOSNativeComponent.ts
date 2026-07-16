@@ -6,6 +6,8 @@ import type {
   ViewProps,
 } from 'react-native';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
+import { PlatformIconIOS } from './StackHeaderItemIOSNativeComponent';
+import { UnsafeMixed } from '../../codegenUtils';
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
@@ -40,8 +42,8 @@ type ComponentType = HostComponent<NativeProps>;
 // (key absent = no change, null = reset, value = set).
 export interface NativeMenuElementOptionsIOS {
   title?: string | null | undefined;
-  icon?: string | null | undefined;
-  toggleState?: boolean | null | undefined;
+  icon?: UnsafeMixed<PlatformIconIOS> | null | undefined;
+  toggleState?: boolean | undefined;
 }
 
 export interface NativeCommands {

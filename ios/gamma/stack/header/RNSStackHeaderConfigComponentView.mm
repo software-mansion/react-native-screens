@@ -358,7 +358,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return nil;
   }
   id first = options[0];
-  return [first isKindOfClass:[NSDictionary class]] ? first : nil;
+  if (![first isKindOfClass:[NSDictionary class]]) {
+    return nil;
+  }
+  NSDictionary *dict = (NSDictionary *)first;
+  return dict.count > 0 ? dict : nil;
 }
 
 - (NSArray<RNSStackHeaderItemComponentView *> *)headerItems
