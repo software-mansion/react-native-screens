@@ -5,8 +5,6 @@ import {
   StyleSheet,
   Dimensions,
   View,
-  Platform,
-  ViewStyle,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -67,9 +65,27 @@ const ToastContext = createContext({
 
 interface ToastProviderProps {
   children: React.ReactNode;
+  anchorSide?: 'top' | 'bottom';
 }
 
-export const ToastProvider = ({ children }: ToastProviderProps) => {
+function ToastContainer({ toasts, remove, anchorSide }: { toasts: IToast[]; remove: (id: string) => void; anchorSide?: 'top' | 'bottom' }) {
+  return (
+    <View style={styles.overlay} pointerEvents="box-none">
+      <SafeAreaView
+        pointerEvents='box-none'
+        collapsable={false}
+        edges={{ top: true, bottom: true, }}
+        style={[styles.toastArea, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]}
+      >
+        {toasts.map((toast, i) => (
+          <Toast index={i} key={toast.id} {...toast} remove={remove} />
+        ))}
+      </SafeAreaView>
+    </View>
+  );
+}
+
+export function ToastProvider({ children, anchorSide }: ToastProviderProps) {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
@@ -84,27 +100,11 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   return (
     <ToastContext.Provider value={{ push }}>
       {children}
-      {/*
-        Toasts render in a bottom-anchored, content-sized SafeAreaView whose
-        Android `bottom` inset keeps them above the system navigation bar. It
-        stays mounted even with no toasts: the native SafeAreaView needs a
-        layout pass to apply its bottom inset, so mounting it together with the
-        first toast renders that toast over the navigation bar (it only lifts
-        above once a later re-layout applies the inset). Keeping it mounted
-        means the inset is already applied when the first toast appears.
-      */}
-      <View style={styles.overlay} pointerEvents="box-none">
-        <SafeAreaView
-          edges={{ bottom: Platform.OS === 'android' }}
-          style={styles.toastArea}>
-          {toasts.map((toast, i) => (
-            <Toast index={i} key={toast.id} {...toast} remove={remove} />
-          ))}
-        </SafeAreaView>
-      </View>
+      <ToastContainer toasts={toasts} remove={remove} anchorSide={anchorSide ?? 'bottom'} />
     </ToastContext.Provider>
   );
-};
+
+}
 
 export const useToast = () => useContext(ToastContext);
 
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   toastArea: {
