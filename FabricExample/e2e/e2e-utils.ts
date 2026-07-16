@@ -186,3 +186,9 @@ export async function forceSelectTabByLabel(label: string) {
     await element(by.label(label)).tap();
   }
 }
+export async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(3000);
+  await element(by.label(message)).tap();
+}

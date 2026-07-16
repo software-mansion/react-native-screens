@@ -45,6 +45,7 @@ export const CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY = '_UIBadgeView';
 export const CLASS_NAME_UI_BUTTON_BAR_BUTTON = '_UIButtonBarButton';
 export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
   '_UINavigationBarLargeTitleView';
+export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 
 // --- UIKit: other controls ---
 
@@ -52,8 +53,13 @@ export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
+export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
+  '_UIContextMenuCellContentView';
+export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
+  '_UIContextMenuSubmenuTitleView';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
-
+export const CLASS_NAME_UI_LABEL = 'UILabel';
+export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
 // --- Android ---
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =

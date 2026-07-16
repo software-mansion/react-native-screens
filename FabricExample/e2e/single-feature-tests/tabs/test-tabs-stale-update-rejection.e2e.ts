@@ -1,12 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
-
-async function dismissToast(message: string) {
-  await waitFor(element(by.label(message)))
-    .toBeVisible()
-    .withTimeout(3000);
-  await element(by.label(message)).tap();
-}
+import { dismissToast } from '../../e2e-utils';
 
 // These scenarios are split into two separate suites using `device.reloadReactNative()`.
 // Running these scenarios sequentially within a single app lifecycle caused deterministic
