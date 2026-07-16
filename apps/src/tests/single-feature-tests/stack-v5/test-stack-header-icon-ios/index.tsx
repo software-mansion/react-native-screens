@@ -202,7 +202,8 @@ function ConfigScreen() {
         <Button
           testID="cycle-menu-icons-button"
           title="Cycle menu icons"
-          onPress={cycleMenuIcons} />
+          onPress={cycleMenuIcons}
+        />
       </View>
       <View style={styles.section}>
         <Button
