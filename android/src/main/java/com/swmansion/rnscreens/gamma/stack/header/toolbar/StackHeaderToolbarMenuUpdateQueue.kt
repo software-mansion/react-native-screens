@@ -122,7 +122,6 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                     dispatchResolvedBatch()
                     processNext()
                 }
-
             }
 
             batch.forEachIndexed { index, update ->

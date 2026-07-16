@@ -39,25 +39,27 @@ function buildMenu(
     {
       groupId: 'view',
       singleSelection: true,
-      onSelectionChange: (ids: string[])  => onGroupChange('view', ids),
+      onSelectionChange: (ids: string[]) => onGroupChange('view', ids),
     },
   ];
 
-  const fruitItems: StackHeaderToolbarMenuBaseAndroid['children'] = FRUIT_ITEMS.map(({ id, title }) => ({
-    type: 'menuItem',
-    id,
-    title,
-    groupId: 'fruits',
-    initialToggleState: id === 'apple',
-  }));
+  const fruitItems: StackHeaderToolbarMenuBaseAndroid['children'] =
+    FRUIT_ITEMS.map(({ id, title }) => ({
+      type: 'menuItem',
+      id,
+      title,
+      groupId: 'fruits',
+      initialToggleState: id === 'apple',
+    }));
 
-  const viewItems: StackHeaderToolbarMenuBaseAndroid['children'] = VIEW_ITEMS.map(({ id, title }) => ({
-    type: 'menuItem',
-    id,
-    title,
-    groupId: 'view',
-    initialToggleState: id === 'list',
-  }));
+  const viewItems: StackHeaderToolbarMenuBaseAndroid['children'] =
+    VIEW_ITEMS.map(({ id, title }) => ({
+      type: 'menuItem',
+      id,
+      title,
+      groupId: 'view',
+      initialToggleState: id === 'list',
+    }));
 
   const children: StackHeaderToolbarMenuBaseAndroid['children'] = [
     ...fruitItems,
@@ -66,7 +68,7 @@ function buildMenu(
 
   return {
     groups,
-    children
+    children,
   };
 }
 
