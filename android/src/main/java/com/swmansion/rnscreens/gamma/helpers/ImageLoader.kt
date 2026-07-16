@@ -37,6 +37,7 @@ internal fun resolveImage(
     when {
         systemDrawableResourceName != null ->
             onComplete(getSystemDrawableResource(context, systemDrawableResourceName))
+
         imageUri != null -> loadImage(context, imageUri, onComplete)
         else -> onComplete(null)
     }
@@ -108,6 +109,10 @@ private fun loadImageInternal(
 
             override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                 Log.e(TAG, "[RNScreens] Error loading image: $uri", dataSource.failureCause)
+                onComplete(null)
+            }
+
+            override fun onCancellation(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                 onComplete(null)
             }
         },
