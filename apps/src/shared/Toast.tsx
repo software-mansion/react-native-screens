@@ -70,12 +70,12 @@ interface ToastProviderProps {
 
 function ToastContainer({ toasts, remove, anchorSide }: { toasts: IToast[]; remove: (id: string) => void; anchorSide?: 'top' | 'bottom' }) {
   return (
-    <View style={styles.overlay} pointerEvents="box-none">
+    <View style={[styles.overlay, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]} pointerEvents="box-none">
       <SafeAreaView
         pointerEvents='box-none'
         collapsable={false}
         edges={{ top: true, bottom: true, }}
-        style={[styles.toastArea, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]}
+        style={[styles.toastArea]}
       >
         {toasts.map((toast, i) => (
           <Toast index={i} key={toast.id} {...toast} remove={remove} />
