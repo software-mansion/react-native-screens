@@ -89,8 +89,9 @@ internal class ScreensCoordinatorLayout(
     }
 
     override fun clearAnimation() {
-        // The framework cancelled the transition (e.g., quick forward-and-backward navigation), so the transition
-        // also should be cancelled, preventing finalizing the screen removal which we manage manually in `onAnimationEnd`.
+        // Called when the system aborts a transition (e.g., fast forward/backward navigation).
+        // We must reset our manual finalization flags here to ensure our `onAnimationEnd` listener
+        // doesn't detach the view that the should be kept alive after navigating back.
         blockFrameworkTransitionFinalization = false
         needsTransitionFinalization = false
 
