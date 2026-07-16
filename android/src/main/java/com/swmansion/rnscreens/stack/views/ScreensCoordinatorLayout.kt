@@ -88,6 +88,13 @@ internal class ScreensCoordinatorLayout(
         }
     }
 
+    override fun clearAnimation() {
+        blockFrameworkTransitionFinalization = false
+        needsTransitionFinalization = false
+
+        super.clearAnimation()
+    }
+
     /**
      * This method implements a workaround for RN's autoFocus functionality. Because of the way
      * autoFocus is implemented it dismisses soft keyboard in fragment transition
