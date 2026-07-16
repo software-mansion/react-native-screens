@@ -26,7 +26,7 @@ const Toast = ({
   id,
   backgroundColor,
   message,
-  style ={},
+  style = {},
   remove,
 }: ToastProps): React.JSX.Element => {
   useEffect(() => {
