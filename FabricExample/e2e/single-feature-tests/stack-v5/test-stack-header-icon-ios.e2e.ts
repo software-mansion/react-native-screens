@@ -93,6 +93,21 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
             .withAncestor(by.type('_UIContextMenuCellContentView')),
         ).atIndex(3),
       ).toBeVisible();
+
+      await element(by.text('Submenu')).tap();
+      await expect(
+        element(
+          by
+            .label('favorite')
+            .withAncestor(
+              by
+                .label('Sub Toggle 1')
+                .and(by.type('_UIContextMenuCellContentView')),
+            ),
+        ),
+      ).toBeVisible();
+
+      await element(by.type('_UIContextMenuSubmenuTitleView')).tap();
     });
 
     it('should cycle the menu icon variant when repeatedly tapping "Cycle icons" inside the menu', async () => {
