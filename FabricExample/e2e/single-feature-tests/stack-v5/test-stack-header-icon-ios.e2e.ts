@@ -1,5 +1,11 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
+  CLASS_NAME_UI_LABEL,
+  CLASS_NAME_UI_MODERN_BAR_BUTTON,
+} from '../../native-class-names';
 
 describeIfiOS('Stack Header Icon (iOS)', () => {
   beforeAll(async () => {
@@ -12,10 +18,12 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
 
   it('should display the header with a star sfSymbol icon on the trailing item', async () => {
     await expect(
-      element(by.type('UILabel').and(by.text('Header Icons'))),
+      element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Icons'))),
     ).toExist();
     await expect(
-      element(by.type('_UIModernBarButton').and(by.label('favorite'))),
+      element(
+        by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('favorite')),
+      ),
     ).toBeVisible();
   });
 
@@ -26,7 +34,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(by.id('current-item-icon').and(by.text('xcasset'))),
       ).toBeVisible();
       await expect(
-        element(by.type('_UIModernBarButton').and(by.label('favorite'))),
+        element(
+          by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('favorite')),
+        ),
       ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
@@ -34,7 +44,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(by.id('current-item-icon').and(by.text('imageSource'))),
       ).toBeVisible();
       await expect(
-        element(by.type('_UIModernBarButton').and(by.label('favorite'))),
+        element(
+          by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('favorite')),
+        ),
       ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
@@ -42,7 +54,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(by.id('current-item-icon').and(by.text('templateSource'))),
       ).toBeVisible();
       await expect(
-        element(by.type('_UIModernBarButton').and(by.label('favorite'))),
+        element(
+          by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('favorite')),
+        ),
       ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
@@ -50,7 +64,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(by.id('current-item-icon').and(by.text('sfSymbol'))),
       ).toBeVisible();
       await expect(
-        element(by.type('_UIModernBarButton').and(by.label('favorite'))),
+        element(
+          by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('favorite')),
+        ),
       ).toBeVisible();
     });
   });
@@ -69,28 +85,36 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(0),
       ).toBeVisible();
       await expect(
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(1),
       ).toBeVisible();
       await expect(
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(2),
       ).toBeVisible();
       await expect(
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(3),
       ).toBeVisible();
 
@@ -102,12 +126,14 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
             .withAncestor(
               by
                 .label('Sub Toggle 1')
-                .and(by.type('_UIContextMenuCellContentView')),
+                .and(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
             ),
         ),
       ).toBeVisible();
 
-      await element(by.type('_UIContextMenuSubmenuTitleView')).tap();
+      await element(
+        by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW),
+      ).tap();
     });
 
     it('should cycle the menu icon variant when repeatedly tapping "Cycle icons" inside the menu', async () => {
@@ -120,7 +146,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(0),
       ).not.toExist();
 
@@ -132,7 +160,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(0),
       ).not.toExist();
 
@@ -142,7 +172,9 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
         element(
           by
             .label('favorite')
-            .withAncestor(by.type('_UIContextMenuCellContentView')),
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW),
+            ),
         ).atIndex(0),
       ).toBeVisible();
     });
