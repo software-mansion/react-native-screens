@@ -76,7 +76,7 @@ function ToastContainer({ toasts, remove, anchorSide }: { toasts: IToast[]; remo
         pointerEvents='box-none'
         collapsable={false}
         edges={{ top: true, bottom: true, }}
-        style={[styles.toastArea]}
+        style={styles.toastArea}
       >
         {toasts.map((toast, i) => (
           <Toast index={i} key={toast.id} {...toast} remove={remove} />
