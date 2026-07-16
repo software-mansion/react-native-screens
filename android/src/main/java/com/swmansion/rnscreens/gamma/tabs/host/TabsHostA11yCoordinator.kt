@@ -2,9 +2,10 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.os.Build
 import android.view.MenuItem
+import android.view.View
+import androidx.core.view.children
 import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarItemView
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
@@ -22,16 +23,13 @@ class TabsHostA11yCoordinator(
             menuItem.contentDescription = tabsScreen.tabBarItemAccessibilityLabel
         }
 
-        // findViewById(itemId) can resolve to the CustomBottomNavigationView container
-        // itself when its view id collides with the low menu-item id, so an unchecked
-        // cast to NavigationBarItemView throws ClassCastException on tab select.
-        // Look it up as a View and type-check before use.
-        val menuView = bottomNavigationView.findViewById<View>(menuItem.itemId)
-        if (menuView is NavigationBarItemView) {
-            // when matching view by id, espresso driver seems to look for tag property
-            menuView.tag = tabsScreen.tabBarItemTestID
-        }
+        // when matching view by id, espresso driver seems to look for tag property
+        findTabItemView(menuItem.itemId)?.tag = tabsScreen.tabBarItemTestID
     }
+
+    // Third-party SDKs can freely assign their own ids to id-less views in CustomBottomNavigationView's subtree and there is no way to
+    // coordinate that id space with them, so we should search ids only inside Material's menu items scope.
+    private fun findTabItemView(menuItemId: Int): View? = bottomNavigationView.menuViewGroup.children.firstOrNull { it.id == menuItemId }
 
     fun setA11yPropertiesToAllTabItems() {
         tabsScreenFragments.forEachIndexed { index, fragment ->
