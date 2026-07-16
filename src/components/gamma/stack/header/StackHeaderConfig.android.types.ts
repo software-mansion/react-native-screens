@@ -431,21 +431,29 @@ export interface StackHeaderToolbarMenuElementUpdateAndroid {
 
 export interface StackHeaderConfigCommandsAndroid {
   /**
-   * @summary Applies multiple menu element updates in a single batch.
+   * @summary Applies one or more updates to the toolbar menu in a single batch.
    *
    * @description
-   * Accepts a single update or an array of updates. Each update targets a menu
-   * element by `id` and applies the given `options`.
+   * Accepts a single update or an array of them; each targets a menu element
+   * by `id` and applies its `options`. The call is queued and applied as one
+   * atomic batch:
+   * - if any update carries an `icon` that loads asynchronously, the whole
+   *   batch waits for every icon before applying (updates are never applied
+   *   partially);
+   * - updates apply in array order, so an `id` may repeat and later values
+   *   win field by field;
+   * - once applied, each affected group emits at most one, coalesced
+   *   `onToolbarMenuGroupSelectionChange`.
    *
-   * Every call is enqueued and processed as one batch by a serial FIFO queue.
-   * Within a batch, an update whose `options` include an `icon` that requires
-   * asynchronous image loading holds the entire batch — no update in the batch
-   * is applied until every icon has resolved, then the whole batch is applied
-   * atomically (there is no partial application). Because the queue is FIFO,
-   * batches never overtake one another: a later command cannot be overridden by
-   * an earlier one whose image happened to resolve late. Once a batch is
-   * applied, each affected group emits a single coalesced
-   * `onToolbarMenuGroupSelectionChange`.
+   * Batches run in call order on a serial FIFO queue, so a later call is never
+   * overtaken by an earlier one whose icon happened to load late.
+   *
+   * @remarks
+   * Updates are applied to the live toolbar: they take effect only while the
+   * header is shown, and are discarded whenever the menu is rebuilt from the
+   * `toolbarMenu` prop — whether by a prop change or a structural change such
+   * as hiding and re-showing the header. They persist across unrelated
+   * re-renders. An update whose `id` is not in the current menu is ignored.
    *
    * @param updates A single update object or an array of updates.
    */
