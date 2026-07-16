@@ -27,7 +27,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       ).toBeVisible();
       await expect(
         element(by.type('_UIModernBarButton').and(by.label('favorite'))),
-      ).not.toBeVisible();
+      ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
@@ -35,7 +35,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       ).toBeVisible();
       await expect(
         element(by.type('_UIModernBarButton').and(by.label('favorite'))),
-      ).not.toBeVisible();
+      ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
@@ -43,7 +43,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       ).toBeVisible();
       await expect(
         element(by.type('_UIModernBarButton').and(by.label('favorite'))),
-      ).not.toBeVisible();
+      ).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
@@ -122,7 +122,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
             .label('favorite')
             .withAncestor(by.type('_UIContextMenuCellContentView')),
         ).atIndex(0),
-      ).not.toBeVisible();
+      ).not.toExist();
 
       await element(by.text('Cycle icons (imageSource)')).tap();
       await expect(
@@ -134,7 +134,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
             .label('favorite')
             .withAncestor(by.type('_UIContextMenuCellContentView')),
         ).atIndex(0),
-      ).not.toBeVisible();
+      ).not.toExist();
 
       await element(by.text('Cycle icons (templateSource)')).tap();
       await expect(element(by.text('Cycle icons (sfSymbol)'))).toBeVisible();
