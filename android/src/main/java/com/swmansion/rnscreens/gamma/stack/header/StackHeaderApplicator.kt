@@ -34,7 +34,7 @@ internal class StackHeaderApplicator(
 ) {
     // region Rebuild
 
-    fun rebuild(
+    internal fun rebuild(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ): StackHeaderAppBarLayout {
@@ -168,7 +168,7 @@ internal class StackHeaderApplicator(
 
     // region In-place updates
 
-    fun applyTitle(
+    internal fun applyTitle(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
@@ -184,7 +184,7 @@ internal class StackHeaderApplicator(
         }
     }
 
-    fun applyBackButton(
+    internal fun applyBackButton(
         toolbar: MaterialToolbar,
         config: StackHeaderConfigurationProviding,
         canNavigateBack: Boolean,
@@ -218,7 +218,7 @@ internal class StackHeaderApplicator(
         toolbar.setNavigationOnClickListener { onNavigationIconClick() }
     }
 
-    fun applyScrollFlags(
+    internal fun applyScrollFlags(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {

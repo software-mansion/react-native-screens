@@ -25,7 +25,7 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderTool
 internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
-    fun parseMenu(
+    internal fun parseMenu(
         context: Context,
         value: Dynamic,
     ): Pair<StackHeaderToolbarMenuConfig, Map<String, StackHeaderToolbarMenuItemIconSource>> {
@@ -44,7 +44,7 @@ internal object StackHeaderToolbarMenuMapper {
 
     // region Menu element command parsing
 
-    fun parseMenuElementOptions(
+    internal fun parseMenuElementOptions(
         context: Context,
         map: ReadableMap,
     ): StackHeaderToolbarMenuElementOptions =
@@ -73,7 +73,7 @@ internal object StackHeaderToolbarMenuMapper {
             menuTitle = map.readNullableStringUpdate("menuTitle"),
         )
 
-    fun parseMenuElementIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
+    internal fun parseMenuElementIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
         if (!map.hasKey("drawableIconResourceName") && !map.hasKey("imageIconResource")) {
             return null
         }

@@ -22,7 +22,7 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.valueOrNull
 internal object StackHeaderToolbarMenuApplicator {
     // region Mappings & metadata
 
-    fun generateToolbarMenuItemMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
+    internal fun generateToolbarMenuItemMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
         val forwardIdMap = mutableMapOf<String, Int>()
         val reverseIdMap = mutableMapOf<Int, String>()
         var counter = 1
@@ -30,14 +30,14 @@ internal object StackHeaderToolbarMenuApplicator {
         return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
     }
 
-    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Map<String, Int> {
+    internal fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Map<String, Int> {
         val forwardGroupIdMap = mutableMapOf<String, Int>()
         var counter = 1
         assignGroupIds(menuConfig, forwardGroupIdMap) { counter++ }
         return forwardGroupIdMap.toMap()
     }
 
-    fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
+    internal fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
         val itemGroupMap = mutableMapOf<String, String>()
         val groupSingleSelection = mutableMapOf<String, Boolean>()
         val groupMemberItems = mutableMapOf<String, MutableList<String>>()
@@ -49,7 +49,7 @@ internal object StackHeaderToolbarMenuApplicator {
         )
     }
 
-    fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
+    internal fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
         for (group in menuConfig.groups) {
             if (!group.singleSelection) continue
             var count = 0
@@ -160,7 +160,7 @@ internal object StackHeaderToolbarMenuApplicator {
 
     // region Menu build
 
-    fun rebuildToolbarMenu(
+    internal fun rebuildToolbarMenu(
         toolbar: MaterialToolbar,
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
@@ -259,7 +259,7 @@ internal object StackHeaderToolbarMenuApplicator {
 
     // region Element updates
 
-    fun updateToolbarMenuElement(
+    internal fun updateToolbarMenuElement(
         toolbar: MaterialToolbar,
         forwardIdMap: Map<String, Int>,
         id: String,
