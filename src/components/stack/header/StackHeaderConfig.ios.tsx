@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from 'react';
 import type {
@@ -30,8 +31,12 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
-import { resolveIconAssetSources } from './ios/iconUtils.ios';
+import {
+  findMenuElementById,
+  findMenuElementByIdInItems,
+  validateMenuCallbacks,
+} from './utils';
+import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -48,6 +53,7 @@ function StackHeaderConfig(
     leadingItems,
     trailingItems,
     titleItem,
+    titleMenu,
     subtitleItem,
     largeSubtitleItem,
     largeTitle,
@@ -101,15 +107,21 @@ function StackHeaderConfig(
         ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
         ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
       );
-      const menuElement = findMenuElementByIdInItems(
+      let menuElement = findMenuElementByIdInItems(
         items,
         event.nativeEvent.menuItemId,
       );
+      if (!menuElement && titleMenu) {
+        menuElement = findMenuElementById(
+          titleMenu,
+          event.nativeEvent.menuItemId,
+        );
+      }
       if (menuElement && menuElement.type === 'menuItem') {
         menuElement.onPress?.();
       }
     },
-    [leadingItems, trailingItems],
+    [leadingItems, trailingItems, titleMenu],
   );
 
   const allMenuItems = [
@@ -120,12 +132,15 @@ function StackHeaderConfig(
   const handleSelectionChange = useCallback(
     (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
       const { menuId, selectedMenuItemIds } = event.nativeEvent;
-      const menu = findMenuElementByIdInItems(allMenuItems, menuId);
+      let menu = findMenuElementByIdInItems(allMenuItems, menuId);
+      if (!menu && titleMenu) {
+        menu = findMenuElementById(titleMenu, menuId);
+      }
       if (menu && menu.type === 'menu') {
         menu.onSelectionChange?.(selectedMenuItemIds);
       }
     },
-    [allMenuItems],
+    [allMenuItems, titleMenu],
   );
 
   useEffect(() => {
@@ -134,8 +149,16 @@ function StackHeaderConfig(
         validateMenuCallbacks(item.menu);
       }
     }
+    if (titleMenu) {
+      validateMenuCallbacks(titleMenu);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leadingItems, trailingItems]);
+  }, [leadingItems, trailingItems, titleMenu]);
+
+  const resolvedTitleMenu = useMemo(
+    () => (titleMenu != null ? resolveMenuIcons(titleMenu) : undefined),
+    [titleMenu],
+  );
 
   return (
     <StackHeaderConfigIOSNativeComponent
@@ -145,6 +168,7 @@ function StackHeaderConfig(
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
+      titleMenu={resolvedTitleMenu}
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}
       onMenuSelectionChange={handleSelectionChange}>
