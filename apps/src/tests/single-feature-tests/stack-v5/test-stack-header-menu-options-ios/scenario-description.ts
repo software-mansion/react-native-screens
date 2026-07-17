@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-header-menu-options-ios',
   details: 'Tests menu options in nested submenus.',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };

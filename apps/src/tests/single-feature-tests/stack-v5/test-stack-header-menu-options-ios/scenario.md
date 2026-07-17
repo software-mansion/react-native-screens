@@ -8,7 +8,7 @@
 
 ## E2E test
 
-TBD
+Incomplete:
 
 ## Prerequisites
 
