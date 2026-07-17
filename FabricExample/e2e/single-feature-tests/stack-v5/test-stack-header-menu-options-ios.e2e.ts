@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
-  forceTapByLabeliOS,
+  getElementAttributes,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { expect as jestExpect } from '@jest/globals';
@@ -14,6 +14,13 @@ import {
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
 import { IosElementAttributes } from 'detox/detox';
+
+/**
+ * UIKit exposes no way to query a presented menu, so structure and layout are
+ * checked indirectly: `by.id(...)` on an image matches the SF Symbol name;
+ * a row's chevron tells a collapsed submenu from an inlined one; and icon
+ * frames tell a horizontal palette from a vertical list.
+ */
 
 const optionsMenuButton = element(
   by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label('Options')),
@@ -32,9 +39,9 @@ function menuRow(itemLabel: string) {
 }
 
 /**
- * The disclosure chevron on a menu row. Present only while the row is a
- * collapsed submenu: inlining a submenu's children removes its parent row,
- * chevron included.
+ * UIKit's disclosure indicator, drawn only on rows that open a submenu. Its
+ * absence marks an inlined submenu; the title alone cannot, since an inlined
+ * submenu may keep its title as a section header (see Text Style).
  */
 function chevronFor(itemLabel: string) {
   return element(
@@ -48,25 +55,19 @@ function chevronFor(itemLabel: string) {
   );
 }
 
-/**
- * The chevron on a palette's submenu title, which is its own class rather than
- * a regular menu row.
- */
+/** The palette submenu title's chevron — its own class, not a menu row. */
 const paletteTitleChevron = element(
   by
     .id('chevron.forward')
     .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW)),
 );
 
-/** A palette item rendered as an icon, matched by the testID on its image. */
+/** A palette item rendered as an icon, matched by its SF Symbol name. */
 function paletteIcon(iconId: string) {
   return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
 }
 
-/**
- * Top edge of a palette icon in screen coordinates. Smaller y means higher up,
- * so equal values mean two icons share a row.
- */
+/** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
 async function getPaletteIconTopY(iconId: string) {
   const attr = (await paletteIcon(
     iconId,
@@ -75,17 +76,23 @@ async function getPaletteIconTopY(iconId: string) {
 }
 
 /**
- * Taps outside the presented context menu to dismiss it without selecting
- * any item, mirroring the tap-the-root-view dismissal pattern used for other
- * iOS overlays (see test-tabs-tab-bar-controller-mode-ios.e2e.ts).
+ * Dismisses the presented context menu without selecting any item.
  *
- * Each tap closes a single level, so `levels` must match how deeply the menu
- * is currently nested.
+ * The platter is anchored under the header's trailing items, so it covers the
+ * centre of this full-width text: a centre tap hits the menu and only pops one
+ * submenu level, while a tap near the leading edge is clear of it and closes
+ * the menu at any depth. The label is just body text underneath, used to locate
+ * that point — it has nothing to do with the displayInline prop.
  */
-async function dismissMenu(levels = 1) {
-  for (let i = 0; i < levels; i++) {
-    await forceTapByLabeliOS('text-display-inline');
-  }
+async function dismissMenu() {
+  const { frame } = await getElementAttributes({
+    by: 'label',
+    value: 'text-display-inline',
+  });
+  await device.tap({
+    x: frame.x + frame.width / 10,
+    y: frame.y + frame.height / 2,
+  });
 }
 
 /** Taps a toggle and asserts the label it settles on. */
@@ -149,7 +156,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('dismisses the Sort By and Rating submenus without selecting an item', async () => {
-      await dismissMenu(3);
+      await dismissMenu();
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -179,13 +186,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Best Reviews'))).toBeVisible();
       await expect(element(by.text('Most Reviews'))).toBeVisible();
       await expect(element(by.text('Highest Rated'))).toBeVisible();
-      // "Rating" no longer shows up as its own row once its children are
-      // inlined directly into the Sort By submenu.
+      // Rating is gone as a row once its children are inlined.
       await expect(chevronFor('Rating')).not.toExist();
     });
 
     it('dismisses the Sort By submenu with Rating inlined', async () => {
-      await dismissMenu(2);
+      await dismissMenu();
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -225,7 +231,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('dismisses the top-level menu with Sort By inlined', async () => {
-      await dismissMenu(3);
+      await dismissMenu();
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -323,7 +329,8 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(paletteIcon('underline')).toBeVisible();
       await expect(paletteIcon('strikethrough')).toBeVisible();
 
-      // Laid out horizontally: every icon shares a row.
+      // Horizontal: first and last icon share a row. Precision 0 allows ±0.5pt,
+      // as the top edges differ by a fraction of a point.
       jestExpect(await getPaletteIconTopY('bold')).toBeCloseTo(
         await getPaletteIconTopY('strikethrough'),
         0,
@@ -331,7 +338,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('dismisses the palette submenu', async () => {
-      await dismissMenu(2);
+      await dismissMenu();
 
       await waitFor(paletteMenuButton).toBeVisible().withTimeout(2000);
     });
@@ -355,15 +362,14 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(paletteIcon('underline')).toBeVisible();
       await expect(paletteIcon('strikethrough')).toBeVisible();
 
-      // The palette keeps its horizontal layout once inlined.
+      // The palette keeps its horizontal layout once inlined (±0.5pt, as above).
       jestExpect(await getPaletteIconTopY('bold')).toBeCloseTo(
         await getPaletteIconTopY('strikethrough'),
         0,
       );
 
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
-      // Text Style is promoted from a tappable row to a section header once its
-      // palette is inlined into the top level.
+      // Text Style is promoted from a row to a section header once inlined.
       await expect(
         element(
           by
