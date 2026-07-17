@@ -5,6 +5,10 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
 
+/**
+ * Reports the header's frame and subview origins to the delegate as the app bar
+ * lays out or scrolls.
+ */
 internal object StackHeaderFrameSynchronizer {
     internal fun sync(
         appBar: StackHeaderAppBarLayout,

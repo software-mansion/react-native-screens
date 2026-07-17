@@ -29,6 +29,10 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
+/**
+ * Builds and applies the Material app bar — type, subviews, title, back button,
+ * scroll flags — from the header configuration.
+ */
 internal class StackHeaderApplicator(
     private val wrappedContext: ContextThemeWrapper,
 ) {

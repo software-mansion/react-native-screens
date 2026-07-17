@@ -4,6 +4,10 @@ import android.util.Log
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupMetadata
 
+/**
+ * Owns toolbar-menu selection state (id map + group metadata) and applies
+ * group-item checked-state changes.
+ */
 internal class StackHeaderToolbarMenuSelectionController {
     internal var forwardIdMap: Map<String, Int> = emptyMap()
         private set

@@ -19,6 +19,10 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderTool
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.valueOrNull
 
+/**
+ * Builds the toolbar menu from its config and applies in-place element updates
+ * (options, checkability, icon tint).
+ */
 internal object StackHeaderToolbarMenuApplicator {
     // region Mappings & metadata
 

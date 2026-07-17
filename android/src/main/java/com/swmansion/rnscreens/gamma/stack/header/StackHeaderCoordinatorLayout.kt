@@ -24,6 +24,11 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
+/**
+ * Root CoordinatorLayout for a screen's header: hosts the app bar and the
+ * content wrapper, wires header-config attach/observe, routes config
+ * invalidations to the applicators, and owns header lifecycle/teardown.
+ */
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
     context: Context,

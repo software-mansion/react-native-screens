@@ -22,6 +22,10 @@ import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolb
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
 
+/**
+ * Parses React toolbar-menu props (Dynamic / ReadableMap) into the native menu
+ * config and element-update models.
+ */
 internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
