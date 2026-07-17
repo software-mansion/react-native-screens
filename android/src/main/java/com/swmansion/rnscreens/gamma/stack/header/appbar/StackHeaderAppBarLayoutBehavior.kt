@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header
+package com.swmansion.rnscreens.gamma.stack.header.appbar
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout

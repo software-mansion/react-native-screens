@@ -12,6 +12,8 @@ import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.gamma.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.gamma.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.gamma.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationObserver
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
