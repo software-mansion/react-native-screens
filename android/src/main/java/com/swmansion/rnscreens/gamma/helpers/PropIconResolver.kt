@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 
 /**
- * Outcome of [IconResolver.resolve].
+ * Outcome of [PropIconResolver.resolve].
  *
  * [Unchanged] is reported when the requested source matches the one the resolver
  * last emitted, so the caller should keep whatever icon it already has (no reload
  * happens). [Resolved] carries a freshly resolved drawable, or `null` when the
- * source resolves to no icon (i.e. the icon should be cleared).
+ * source resolves to no icon or fails to load (i.e. the icon should be cleared).
  */
 internal sealed interface IconResolution {
     object Unchanged : IconResolution
@@ -19,7 +19,13 @@ internal sealed interface IconResolution {
     ) : IconResolution
 }
 
-internal class IconResolver {
+/**
+ * Stateful, latest-wins icon resolver for a single declaratively-driven icon slot — a `toolbarMenu`
+ * prop menu item, or the back button — that is re-evaluated on every prop transaction. It
+ * deduplicates unchanged sources ([IconResolution.Unchanged]) to avoid needless reloads/flicker,
+ * and drops stale async results so a slow load cannot clobber a newer source.
+ */
+internal class PropIconResolver {
     private var lastDrawableName: String? = null
     private var lastImageUri: String? = null
     private var lastEmittedDrawableName: String? = null
@@ -30,7 +36,9 @@ internal class IconResolver {
      *
      * The result is delivered to [onResult] synchronously for drawable resources and empty sources,
      * and asynchronously for image uris. For image uris, the callback is only invoked if the
-     * resolved uri is still the latest requested source (stale requests are dropped).
+     * resolved uri is still the latest requested source (stale requests are dropped). On a failed
+     * image load the latest request still emits [IconResolution.Resolved] with a `null` drawable, so
+     * the icon is cleared rather than left stale.
      */
     fun resolve(
         context: Context,
