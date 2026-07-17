@@ -252,4 +252,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackHeaderSelectiveUpdatesIOS, scenarioDescription);
+export default createScenario(
+  TestStackHeaderSelectiveUpdatesIOS,
+  scenarioDescription,
+);
