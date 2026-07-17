@@ -8,7 +8,14 @@
 
 ## E2E test
 
-Incomplete:
+Incomplete: Every step of both sections is covered - menu contents at each
+toggle combination, collapsed-vs-inlined submenus via the presence of the
+disclosure chevron, and the palette's horizontal icon row.
+
+Not covered:
+
+- The menu separators.
+- The exact top-to-bottom ordering of inlined items.
 
 ## Prerequisites
 
@@ -39,7 +46,7 @@ Incomplete:
   - [ ] A nested submenu opens with: Best Reviews, Most Reviews, Highest Rated
 13. Dismiss the menu
 14. Toggle "displayInline (Rating)" to `true` again
-15. Tap the ellipsis button
+15. Tap the overflow menu button (three dots)
   - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated, menu separator, Delete, all inline
 
 ### displayAsPalette
