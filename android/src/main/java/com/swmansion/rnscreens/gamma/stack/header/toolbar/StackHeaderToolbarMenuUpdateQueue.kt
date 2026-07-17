@@ -1,47 +1,5 @@
 package com.swmansion.rnscreens.gamma.stack.header.toolbar
 
-import android.graphics.drawable.Drawable
-
-/**
- * A single toolbar menu element update carried by an `updateToolbarMenuElements`
- * view command, before its icon (if any) has been resolved.
- */
-internal data class StackHeaderToolbarMenuElementRawUpdate(
-    val id: String,
-    val options: StackHeaderToolbarMenuElementOptions,
-    val iconSource: StackHeaderToolbarMenuItemIconSource?,
-)
-
-/**
- * A single toolbar menu element update whose icon has already been resolved and merged
- * into [options], ready to be applied to the toolbar.
- */
-internal data class StackHeaderToolbarMenuElementUpdate(
-    val id: String,
-    val options: StackHeaderToolbarMenuElementOptions,
-)
-
-/**
- * Resolves the icon for a single menu element update.
- *
- * [onResolved] must be invoked exactly once — synchronously or asynchronously, always on the
- * main thread — with the resolved icon to merge into the element's options.
- */
-internal fun interface StackHeaderToolbarMenuIconResolver {
-    fun resolve(
-        iconSource: StackHeaderToolbarMenuItemIconSource,
-        onResolved: (icon: StackHeaderToolbarFieldUpdate<Drawable>) -> Unit,
-    )
-}
-
-/**
- * Receives a fully-resolved batch of menu element updates, to be applied to the toolbar
- * atomically.
- */
-internal fun interface StackHeaderToolbarMenuUpdateQueueDelegate {
-    fun onUpdatesResolved(updates: List<StackHeaderToolbarMenuElementUpdate>)
-}
-
 /**
  * Serial, FIFO queue for `updateToolbarMenuElements` view command batches.
  *
