@@ -86,7 +86,7 @@ async function getPaletteIconTopY(iconId: string) {
  */
 async function dismissMenu() {
   const { frame } = await getElementAttributes({
-    by: 'label',
+    by: 'id',
     value: 'text-display-inline',
   });
   await device.tap({
