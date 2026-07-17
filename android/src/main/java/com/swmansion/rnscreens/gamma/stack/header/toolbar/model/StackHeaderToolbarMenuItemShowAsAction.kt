@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.toolbar
+package com.swmansion.rnscreens.gamma.stack.header.toolbar.model
 
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM

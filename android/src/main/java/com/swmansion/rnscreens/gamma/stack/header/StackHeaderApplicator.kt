@@ -30,15 +30,15 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarFieldUpdate
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuItemType
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.valueOrNull
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupMetadata
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemType
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.valueOrNull
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 
 internal class StackHeaderApplicator(

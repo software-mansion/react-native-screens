@@ -1,4 +1,6 @@
-package com.swmansion.rnscreens.gamma.stack.header.toolbar
+package com.swmansion.rnscreens.gamma.stack.header.toolbar.update
+
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
 
 /**
  * A single toolbar menu element update carried by an `updateToolbarMenuElements`

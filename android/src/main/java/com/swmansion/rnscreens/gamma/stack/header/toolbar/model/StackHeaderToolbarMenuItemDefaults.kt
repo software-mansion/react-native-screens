@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.toolbar
+package com.swmansion.rnscreens.gamma.stack.header.toolbar.model
 
 /**
  * Defaults for toolbar menu item fields.

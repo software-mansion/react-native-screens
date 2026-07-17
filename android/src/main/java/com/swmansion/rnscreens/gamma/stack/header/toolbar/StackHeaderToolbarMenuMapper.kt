@@ -11,6 +11,16 @@ import com.swmansion.rnscreens.gamma.helpers.readColor
 import com.swmansion.rnscreens.gamma.helpers.readImageUri
 import com.swmansion.rnscreens.gamma.helpers.readOptionalString
 import com.swmansion.rnscreens.gamma.helpers.requireNotNullString
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemDefaults
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemShowAsAction
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuItemType
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
 
 internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing

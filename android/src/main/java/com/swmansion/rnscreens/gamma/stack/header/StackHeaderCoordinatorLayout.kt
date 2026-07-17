@@ -18,8 +18,8 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupMetadata
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
 @SuppressLint("ViewConstructor")

@@ -15,8 +15,8 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementRawUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuMapper
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 internal open class StackHeaderConfigViewManager :

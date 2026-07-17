@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.toolbar
+package com.swmansion.rnscreens.gamma.stack.header.toolbar.update
 
 /**
  * A single toolbar menu element update whose icon has already been resolved and merged

@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack.header.toolbar
+package com.swmansion.rnscreens.gamma.stack.header.toolbar.update
 
 /**
  * Serial, FIFO queue for `updateToolbarMenuElements` view command batches.
