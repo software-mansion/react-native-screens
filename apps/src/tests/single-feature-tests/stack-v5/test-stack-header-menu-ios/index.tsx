@@ -31,10 +31,12 @@ const ACTION_IDS = [
   'radio-1-1',
   'radio-1-2',
   'radio-1-3',
+  'title-action-1',
+  'title-action-2',
 ] as const;
 type ActionId = (typeof ACTION_IDS)[number];
 
-const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1'] as const;
+const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1', 'title-menu'] as const;
 type MenuId = (typeof MENU_IDS)[number];
 
 const TITLE_OPTIONS = [
@@ -193,6 +195,28 @@ function buildHeaderConfig(
     title: 'Header Menu',
     ios: {
       trailingItems,
+      titleMenu: {
+        type: 'menu',
+        id: 'title-menu',
+        onSelectionChange: selection =>
+          showToast('Title menu selected "' + selection.join('", "') + '"'),
+        children: [
+          {
+            id: 'title-action-1',
+            type: 'menuItem',
+            itemType: 'action',
+            title: 'Title Action 1',
+            onPress: () => showToast('Clicked "Title Action 1"'),
+          },
+          {
+            id: 'title-action-2',
+            type: 'menuItem',
+            itemType: 'action',
+            title: 'Title Action 2',
+            onPress: () => showToast('Clicked "Title Action 2"'),
+          },
+        ],
+      },
     },
   };
 }

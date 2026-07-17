@@ -2,30 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import StackHeaderItemIOSNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
 import type { HeaderItemPressEvent } from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
 import type { StackHeaderItemProps } from './StackHeaderItem.ios.types';
-import type {
-  StackHeaderMenuIOS,
-  StackHeaderMenuElementIOS,
-} from './StackHeaderMenu.ios.types';
 import { NativeSyntheticEvent, StyleSheet } from 'react-native';
-import { resolveIconAssetSources } from './iconUtils.ios';
-
-function resolveMenuElementIcons(
-  element: StackHeaderMenuElementIOS,
-): StackHeaderMenuElementIOS {
-  if (element.type === 'menuItem') {
-    if (element.icon == null) {
-      return element;
-    }
-    return { ...element, icon: resolveIconAssetSources(element.icon) };
-  }
-  return resolveMenuIcons(element);
-}
-
-function resolveMenuIcons(menu: StackHeaderMenuIOS): StackHeaderMenuIOS {
-  const resolvedIcon = resolveIconAssetSources(menu.icon);
-  const resolvedChildren = menu.children.map(resolveMenuElementIcons);
-  return { ...menu, icon: resolvedIcon, children: resolvedChildren };
-}
+import { resolveIconAssetSources, resolveMenuIcons } from './iconUtils.ios';
 
 export default function StackHeaderItem(props: StackHeaderItemProps) {
   const { render, onPress, icon, menu, ...rest } = props;

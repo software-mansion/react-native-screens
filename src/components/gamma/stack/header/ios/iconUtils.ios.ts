@@ -1,5 +1,9 @@
 import type { PlatformIconIOS as ResolvedPlatformIconIOS } from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
 import type { PlatformIconIOS } from '../../../../../types';
+import type {
+  StackHeaderMenuIOS,
+  StackHeaderMenuElementIOS,
+} from './StackHeaderMenu.ios.types';
 import { Image } from 'react-native';
 
 export function resolveIconAssetSources(
@@ -21,4 +25,22 @@ export function resolveIconAssetSources(
     };
   }
   return icon;
+}
+
+export function resolveMenuElementIcons(
+  element: StackHeaderMenuElementIOS,
+): StackHeaderMenuElementIOS {
+  if (element.type === 'menuItem') {
+    if (element.icon == null) {
+      return element;
+    }
+    return { ...element, icon: resolveIconAssetSources(element.icon) };
+  }
+  return resolveMenuIcons(element);
+}
+
+export function resolveMenuIcons(menu: StackHeaderMenuIOS): StackHeaderMenuIOS {
+  const resolvedIcon = resolveIconAssetSources(menu.icon);
+  const resolvedChildren = menu.children.map(resolveMenuElementIcons);
+  return { ...menu, icon: resolvedIcon, children: resolvedChildren };
 }
