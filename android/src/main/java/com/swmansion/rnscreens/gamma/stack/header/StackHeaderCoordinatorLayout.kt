@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuApplicator
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.model.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -82,7 +83,7 @@ internal class StackHeaderCoordinatorLayout(
                 // then emit a single coalesced event per affected group.
                 val affectedGroups = LinkedHashSet<String>()
                 for (update in updates) {
-                    applicator.updateToolbarMenuElement(
+                    StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
                         toolbar,
                         toolbarMenuForwardIdMap,
                         update.id,
@@ -234,24 +235,24 @@ internal class StackHeaderCoordinatorLayout(
 
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 val (forwardIdMap, reverseIdMap) =
-                    applicator.generateToolbarMenuItemMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenu,
                     )
                 val forwardGroupIdMap =
-                    applicator.generateToolbarMenuGroupMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuGroupMappings(
                         provider.toolbarMenu,
                     )
                 val groupMetadata =
-                    applicator.computeGroupMetadata(
+                    StackHeaderToolbarMenuApplicator.computeGroupMetadata(
                         provider.toolbarMenu,
                     )
 
-                applicator.validateRadioInitialSelection(provider.toolbarMenu)
+                StackHeaderToolbarMenuApplicator.validateRadioInitialSelection(provider.toolbarMenu)
 
                 toolbarMenuForwardIdMap = forwardIdMap
                 toolbarMenuGroupMetadata = groupMetadata
 
-                applicator.rebuildToolbarMenu(
+                StackHeaderToolbarMenuApplicator.rebuildToolbarMenu(
                     appBar.toolbar,
                     provider.toolbarMenu,
                     forwardIdMap,
