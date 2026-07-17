@@ -368,13 +368,20 @@ internal class StackHeaderConfig(
 
     // region Imperative menu item commands
 
-    // Resolves a single command's icon. Unlike the `toolbarMenu` prop path, this does NOT go through
-    // the stateful per-id [PropIconResolver] (whose drop-stale async guard could leave the queue
-    // waiting forever) and does NOT touch the prop icon cache: it resolves the source with an
-    // always-completing [resolveImage] and forwards the result to the queue, which applies it to the
-    // live toolbar. Ordering across commands is guaranteed by the queue, so no drop-stale is needed
-    // here; a failed or empty source resolves to `null` -> Reset (the icon is cleared) rather than
-    // stalling the queue.
+    /**
+     * Resolves a single command's icon. Unlike the `toolbarMenu` prop path,
+     * this does NOT go through the stateful per-id [PropIconResolver] (whose
+     * drop-stale async guard could leave the queue waiting forever - the queue
+     * requires that [StackHeaderToolbarMenuIconResolver.resolve] always calls
+     * [onResolved] even if the image loading results in failure; see
+     * [StackHeaderToolbarMenuIconResolver] and
+     * [StackHeaderToolbarMenuUpdateQueue] for more details) and does NOT touch
+     * the prop icon cache: it resolves the source with an always-completing
+     * [resolveImage] and forwards the result to the queue, which applies it to
+     * the live toolbar. Ordering across commands is guaranteed by the queue, so
+     * no drop-stale is needed here; a failed or empty source resolves to `null`
+     * -> Reset (the icon is cleared) rather than stalling the queue.
+     */
     private val commandIconResolver =
         StackHeaderToolbarMenuIconResolver { iconSource, onResolved ->
             resolveImage(
