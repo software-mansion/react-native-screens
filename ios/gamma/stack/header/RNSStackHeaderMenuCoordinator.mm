@@ -189,7 +189,12 @@
                 NSArray<NSString *> *toggleItemsIds = insideSingleSelection
                     ? [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInSingleSelectionHierarchy:singleSelectionRoot]
                     : [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu];
+
                 if (insideSingleSelection) {
+                  if ([tracker toggleStateEquals:YES forItemWithId:data.menuElementId]) {
+                    return;
+                  }
+
                   [tracker selectItemWithId:data.menuElementId fromIds:toggleItemsIds];
                 } else {
                   [tracker toggleItemWithId:data.menuElementId];
@@ -202,13 +207,7 @@
                   }
                 }
 
-                // the state might be unchanged if user e.g. clicks on the same selected
-                // radio
-                if ([tracker toggleStateChanged]) {
-                  [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
-
-                  [tracker setToggleStateChanged:NO];
-                }
+                [weakDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
 
                 if (onMenuInvalidated) {
                   onMenuInvalidated();

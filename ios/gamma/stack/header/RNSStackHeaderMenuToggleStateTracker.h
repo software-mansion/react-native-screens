@@ -6,8 +6,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderMenuToggleStateTracker : NSObject
 
-@property (nonatomic, assign, readwrite) BOOL toggleStateChanged;
-
 - (BOOL)getToggleStateForItemWithId:(NSString *)menuItemId initialState:(BOOL)initialState;
 
 - (BOOL)toggleItemWithId:(NSString *)menuItemId;
@@ -15,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)selectItemWithId:(NSString *)menuItemId fromIds:(NSArray<NSString *> *)allItemIdsInMenu;
 
 - (void)setToggleState:(BOOL)state forItemWithId:(NSString *)menuItemId;
+
+- (BOOL)toggleStateEquals:(BOOL)state forItemWithId:(NSString *)menuItemId;
 
 @end
 

@@ -9,7 +9,6 @@
 {
   if (self = [super init]) {
     _states = [NSMutableDictionary new];
-    _toggleStateChanged = NO;
   }
   return self;
 }
@@ -33,14 +32,12 @@
   NSNumber *existing = _states[menuItemId];
   BOOL newValue = !(existing != nil ? existing.boolValue : NO);
   _states[menuItemId] = @(newValue);
-  _toggleStateChanged = YES;
   return newValue;
 }
 
 - (void)selectItemWithId:(NSString *)menuItemId fromIds:(NSArray<NSString *> *)allItemIdsInMenu
 {
   BOOL givenItemIsSelected = NO;
-  _toggleStateChanged = ![_states[menuItemId] boolValue];
   for (NSString *itemId in allItemIdsInMenu) {
     if ([itemId isEqualToString:menuItemId]) {
       _states[itemId] = @YES;
@@ -57,6 +54,15 @@
 - (void)setToggleState:(BOOL)state forItemWithId:(NSString *)menuItemId
 {
   _states[menuItemId] = @(state);
+}
+
+- (BOOL)toggleStateEquals:(BOOL)state forItemWithId:(nonnull NSString *)menuItemId
+{
+  if (_states[menuItemId] == nil) {
+    return NO;
+  }
+
+  return [_states[menuItemId] boolValue] == state;
 }
 
 @end

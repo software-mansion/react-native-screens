@@ -211,6 +211,10 @@
 
   RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
 
+  if ([tracker toggleStateEquals:state forItemWithId:elementId]) {
+    return;
+  }
+
   id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
   if (item == nil || item.menu == nil) {
     return;
