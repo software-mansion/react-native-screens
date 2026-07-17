@@ -22,37 +22,76 @@ const paletteMenuButton = element(
   by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label('Palette')),
 );
 
-async function getConfigYFrame(optionId: string) {
-  const attr = (await element(
-    by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(optionId)),
-  ).getAttributes()) as IosElementAttributes;
-  const yFrame = attr.frame.y;
-  return yFrame as number;
+/** A row of a presented menu, matched by its visible label. */
+function menuRow(itemLabel: string) {
+  return element(
+    by
+      .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+      .and(by.label(itemLabel)),
+  );
 }
 
 /**
- * Taps outside the presented context menu to dismiss it without selecting
- * any item, mirroring the tap-the-root-view dismissal pattern used for other
- * iOS overlays (see test-tabs-tab-bar-controller-mode-ios.e2e.ts).
+ * The disclosure chevron on a menu row. Present only while the row is a
+ * collapsed submenu: inlining a submenu's children removes its parent row,
+ * chevron included.
  */
-async function dismissMenu() {
-  await forceTapByLabeliOS('text-display-inline');
-}
-
-async function toggleAndExpectLabel(testID: string, expectedLabel: string) {
-  await element(by.id(testID)).tap();
-  await expect(element(by.id(testID))).toHaveLabel(expectedLabel);
-}
-function checkmarkFor(itemLabel: string) {
+function chevronFor(itemLabel: string) {
   return element(
     by
-      .id('checkmark')
+      .id('chevron.forward')
       .withAncestor(
         by
           .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
           .and(by.label(itemLabel)),
       ),
   );
+}
+
+/**
+ * The chevron on a palette's submenu title, which is its own class rather than
+ * a regular menu row.
+ */
+const paletteTitleChevron = element(
+  by
+    .id('chevron.forward')
+    .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW)),
+);
+
+/** A palette item rendered as an icon, matched by the testID on its image. */
+function paletteIcon(iconId: string) {
+  return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
+}
+
+/**
+ * Top edge of a palette icon in screen coordinates. Smaller y means higher up,
+ * so equal values mean two icons share a row.
+ */
+async function getPaletteIconTopY(iconId: string) {
+  const attr = (await paletteIcon(
+    iconId,
+  ).getAttributes()) as IosElementAttributes;
+  return attr.frame.y;
+}
+
+/**
+ * Taps outside the presented context menu to dismiss it without selecting
+ * any item, mirroring the tap-the-root-view dismissal pattern used for other
+ * iOS overlays (see test-tabs-tab-bar-controller-mode-ios.e2e.ts).
+ *
+ * Each tap closes a single level, so `levels` must match how deeply the menu
+ * is currently nested.
+ */
+async function dismissMenu(levels = 1) {
+  for (let i = 0; i < levels; i++) {
+    await forceTapByLabeliOS('text-display-inline');
+  }
+}
+
+/** Taps a toggle and asserts the label it settles on. */
+async function toggleAndExpectLabel(testID: string, expectedLabel: string) {
+  await element(by.id(testID)).tap();
+  await expect(element(by.id(testID))).toHaveLabel(expectedLabel);
 }
 
 describeIfiOS('Stack Header Menu Options (iOS)', () => {
@@ -92,24 +131,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('opens a nested submenu with Name, Date, Size, Rating when tapping Sort By', async () => {
-      await element(
-        by
-          .label('Sort By')
-          .and(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
-      ).tap();
+      await menuRow('Sort By').tap();
       await expect(element(by.text('Name'))).toBeVisible();
       await expect(element(by.text('Date'))).toBeVisible();
       await expect(element(by.text('Size'))).toBeVisible();
       await expect(element(by.text('Rating'))).toBeVisible();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Rating')),
-            ),
-        ),
-      ).toBeVisible();
+      await expect(chevronFor('Rating')).toBeVisible();
       // Rating's children are not yet inlined into this submenu.
       await expect(element(by.text('Best Reviews'))).not.toExist();
     });
@@ -121,10 +148,8 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Highest Rated'))).toBeVisible();
     });
 
-    it('dismisses the menu without selecting an item', async () => {
-      await dismissMenu();
-      await dismissMenu();
-      await dismissMenu();
+    it('dismisses the Sort By and Rating submenus without selecting an item', async () => {
+      await dismissMenu(3);
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -147,11 +172,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('inlines Best Reviews, Most Reviews, Highest Rated alongside Name, Date, Size under Sort By', async () => {
-      await element(
-        by
-          .label('Sort By')
-          .and(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
-      ).tap();
+      await menuRow('Sort By').tap();
       await expect(element(by.text('Name'))).toBeVisible();
       await expect(element(by.text('Date'))).toBeVisible();
       await expect(element(by.text('Size'))).toBeVisible();
@@ -160,20 +181,11 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Highest Rated'))).toBeVisible();
       // "Rating" no longer shows up as its own row once its children are
       // inlined directly into the Sort By submenu.
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Rating')),
-            ),
-        ),
-      ).not.toExist();
+      await expect(chevronFor('Rating')).not.toExist();
     });
 
-    it('dismisses the menu (Step 9)', async () => {
-      await dismissMenu();
-      await dismissMenu();
+    it('dismisses the Sort By submenu with Rating inlined', async () => {
+      await dismissMenu(2);
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -200,38 +212,20 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Size'))).toBeVisible();
       await expect(element(by.text('Rating'))).toBeVisible();
       await expect(element(by.text('Delete'))).toBeVisible();
-      // "Sort By" no longer shows up as its own row once it is flattened.
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Rating')),
-            ),
-        ),
-      ).toExist();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Sort By')),
-            ),
-        ),
-      ).not.toExist();
+      // Sort By is flattened away as a row, while Rating stays collapsed.
+      await expect(chevronFor('Rating')).toExist();
+      await expect(chevronFor('Sort By')).not.toExist();
     });
 
-    it('still opens Rating as a collapsed nested submenu (Step 12)', async () => {
+    it('still opens Rating as a collapsed nested submenu', async () => {
       await element(by.text('Rating')).tap();
       await expect(element(by.text('Best Reviews'))).toBeVisible();
       await expect(element(by.text('Most Reviews'))).toBeVisible();
       await expect(element(by.text('Highest Rated'))).toBeVisible();
     });
 
-    it('dismisses the menu', async () => {
-      await dismissMenu();
-      await dismissMenu();
-      await dismissMenu();
+    it('dismisses the top-level menu with Sort By inlined', async () => {
+      await dismissMenu(3);
 
       await expect(element(by.text('Copy'))).not.toExist();
       await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
@@ -244,7 +238,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       );
     });
 
-    it('fully flattens every item into a single top-level list when both displayInline flags are true (Step 15)', async () => {
+    it('fully flattens every item into a single top-level list when both displayInline flags are true', async () => {
       await optionsMenuButton.tap();
       await expect(element(by.text('Copy'))).toBeVisible();
       await expect(element(by.text('Paste'))).toBeVisible();
@@ -257,24 +251,9 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Highest Rated'))).toBeVisible();
       await expect(element(by.text('Delete'))).toBeVisible();
 
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Rating')),
-            ),
-        ),
-      ).not.toExist();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type('_UIContextMenuCellContentView').and(by.label('Sort By')),
-            ),
-        ),
-      ).not.toExist();
+      // Neither submenu survives as a row: every item sits at the top level.
+      await expect(chevronFor('Rating')).not.toExist();
+      await expect(chevronFor('Sort By')).not.toExist();
 
       await dismissMenu();
     });
@@ -293,33 +272,24 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     it('shows Text Style and Reset Formatting at the top level', async () => {
       await paletteMenuButton.tap();
       await expect(element(by.text('Text Style'))).toBeVisible();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by
-                .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-                .and(by.label('Text Style')),
-            ),
-        ),
-      ).toBeVisible();
+      await expect(chevronFor('Text Style')).toBeVisible();
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
     });
 
-    it('opens a regular list with Bold, Italic, Underline, Strikethrough (Step 3)', async () => {
+    it('opens a regular vertical list with Bold, Italic, Underline, Strikethrough', async () => {
       await element(by.text('Text Style')).tap();
       await expect(element(by.text('Bold'))).toBeVisible();
       await expect(element(by.text('Italic'))).toBeVisible();
       await expect(element(by.text('Underline'))).toBeVisible();
       await expect(element(by.text('Strikethrough'))).toBeVisible();
 
-      jestExpect(await getConfigYFrame('bold')).toBeLessThan(
-        await getConfigYFrame('strikethrough'),
+      // Stacked vertically: Bold sits above Strikethrough.
+      jestExpect(await getPaletteIconTopY('bold')).toBeLessThan(
+        await getPaletteIconTopY('strikethrough'),
       );
     });
 
-    it('dismisses the menu', async () => {
+    it('dismisses the Text Style submenu', async () => {
       await dismissMenu();
       await waitFor(paletteMenuButton).toBeVisible().withTimeout(2000);
     });
@@ -334,59 +304,34 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
     it('still shows Text Style as a collapsed submenu at the top level', async () => {
       await paletteMenuButton.tap();
       await expect(element(by.text('Text Style'))).toBeVisible();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by
-                .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-                .and(by.label('Text Style')),
-            ),
-        ),
-      ).toBeVisible();
+      await expect(chevronFor('Text Style')).toBeVisible();
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
     });
 
-    it('keeps Bold, Italic, Underline, Strikethrough present once rendered as a palette', async () => {
+    it('renders Bold, Italic, Underline, Strikethrough as icons in a horizontal palette row', async () => {
       await element(by.text('Text Style')).tap();
-      await expect(
-        element(
-          by
-            .id('chevron.forward')
-            .withAncestor(
-              by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW),
-            ),
-        ),
-      ).toBeVisible();
+      await expect(paletteTitleChevron).toBeVisible();
 
+      // A palette drops the text labels and shows icons only.
       await expect(element(by.text('Bold'))).not.toBeVisible();
       await expect(element(by.text('Italic'))).not.toBeVisible();
       await expect(element(by.text('Underline'))).not.toBeVisible();
       await expect(element(by.text('Strikethrough'))).not.toBeVisible();
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('bold'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('italic'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('underline'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('strikethrough'))),
-      ).toBeVisible();
+      await expect(paletteIcon('bold')).toBeVisible();
+      await expect(paletteIcon('italic')).toBeVisible();
+      await expect(paletteIcon('underline')).toBeVisible();
+      await expect(paletteIcon('strikethrough')).toBeVisible();
 
-      jestExpect(await getConfigYFrame('bold')).toBeCloseTo(
-        await getConfigYFrame('strikethrough'),
+      // Laid out horizontally: every icon shares a row.
+      jestExpect(await getPaletteIconTopY('bold')).toBeCloseTo(
+        await getPaletteIconTopY('strikethrough'),
         0,
       );
     });
 
-    it('dismisses the menu', async () => {
-      await dismissMenu();
-      await dismissMenu();
+    it('dismisses the palette submenu', async () => {
+      await dismissMenu(2);
 
       await waitFor(paletteMenuButton).toBeVisible().withTimeout(2000);
     });
@@ -405,26 +350,20 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Underline'))).not.toBeVisible();
       await expect(element(by.text('Strikethrough'))).not.toBeVisible();
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('bold'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('italic'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('underline'))),
-      ).toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id('strikethrough'))),
-      ).toBeVisible();
+      await expect(paletteIcon('bold')).toBeVisible();
+      await expect(paletteIcon('italic')).toBeVisible();
+      await expect(paletteIcon('underline')).toBeVisible();
+      await expect(paletteIcon('strikethrough')).toBeVisible();
 
-      jestExpect(await getConfigYFrame('bold')).toBeCloseTo(
-        await getConfigYFrame('strikethrough'),
+      // The palette keeps its horizontal layout once inlined.
+      jestExpect(await getPaletteIconTopY('bold')).toBeCloseTo(
+        await getPaletteIconTopY('strikethrough'),
         0,
       );
 
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
-      // "Text Style" no longer shows up as its own row once it is flattened.
+      // Text Style is promoted from a tappable row to a section header once its
+      // palette is inlined into the top level.
       await expect(
         element(
           by
