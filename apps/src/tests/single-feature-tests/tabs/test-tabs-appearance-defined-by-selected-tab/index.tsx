@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, PlatformColor, Text, View } from 'react-native';
 import {
   TabsContainer,
   useTabsNavigationContext,
@@ -16,7 +16,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarBackgroundColor: Colors.NavyLight100,
   tabBarItemRippleColor: Colors.WhiteTransparentDark,
-  tabBarItemLabelVisibilityMode: 'auto',
+  tabBarItemLabelVisibilityMode: 'labeled',
   normal: {
     tabBarItemIconColor: Colors.BlueLight100,
     tabBarItemTitleFontColor: Colors.BlueLight40,
@@ -33,6 +33,23 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
   tabBarItemActiveIndicatorColor: Colors.GreenLight40,
   tabBarItemBadgeTextColor: Colors.White,
   tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+};
+
+const TAB4_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
+  tabBarBackgroundColor: PlatformColor('@android:color/system_background'),
+  tabBarItemLabelVisibilityMode: 'labeled',
+  normal: {
+    tabBarItemIconColor: PlatformColor('@android:color/holo_blue_dark'),
+    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_blue_dark'),
+  },
+  selected: {
+    tabBarItemIconColor: PlatformColor('@android:color/holo_green_dark'),
+    tabBarItemTitleFontColor: PlatformColor('@android:color/holo_green_dark'),
+  },
+  tabBarItemActiveIndicatorEnabled: true,
+  tabBarItemActiveIndicatorColor: PlatformColor('@android:color/system_accent1_100'),
+  tabBarItemBadgeTextColor: PlatformColor('@android:color/white'),
+  tabBarItemBadgeBackgroundColor: PlatformColor('@android:color/holo_orange_dark'),
 };
 
 const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
@@ -84,6 +101,21 @@ const TAB3_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
   },
 };
 
+const TAB4_APPEARANCE_IOS: TabsScreenAppearanceIOS = {
+  tabBarBackgroundColor: PlatformColor('systemBackground'),
+  stacked: {
+    normal: {
+      tabBarItemIconColor: PlatformColor('systemBlue'),
+      tabBarItemTitleFontColor: PlatformColor('systemTealColor'),
+      tabBarItemBadgeBackgroundColor: PlatformColor('systemRedColor'),
+    },
+    selected: {
+      tabBarItemIconColor: PlatformColor('systemGreenColor'),
+      tabBarItemTitleFontColor: PlatformColor('systemOrangeColor'),
+    },
+  },
+};
+
 function TabScreen() {
   const navigation = useTabsNavigationContext();
   return (
@@ -100,6 +132,10 @@ function TabScreen() {
       <Button
         title="Select tab 3"
         onPress={() => navigation.selectTab('Tab3')}
+      />
+      <Button
+        title="Select tab 4"
+        onPress={() => navigation.selectTab('Tab4')}
       />
     </CenteredLayoutView>
   );
@@ -217,6 +253,29 @@ function TestTabsAppearanceDefinedBySelectedTab() {
                 tabBarItemBadgeTextColor: Colors.GreenDark100,
                 tabBarItemBadgeBackgroundColor: Colors.RedDark100,
               },
+            },
+          },
+        },
+        {
+          name: 'Tab4',
+          Component: TabScreen,
+          options: {
+            title: 'Tab4',
+            badgeValue: 'Platform',
+            ios: {
+              icon: {
+                type: 'sfSymbol',
+                name: 'star.fill',
+              },
+              standardAppearance: TAB4_APPEARANCE_IOS,
+              scrollEdgeAppearance: TAB4_APPEARANCE_IOS,
+            },
+            android: {
+              icon: {
+                type: 'imageSource',
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
+              },
+              standardAppearance: TAB4_APPEARANCE_ANDROID,
             },
           },
         },

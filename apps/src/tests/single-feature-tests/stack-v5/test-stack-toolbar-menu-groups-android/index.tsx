@@ -276,10 +276,10 @@ function MainScreen() {
         hidden: cmdHidden === 'undefined' ? undefined : cmdHidden === 'true',
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdChecked, cmdTitle, cmdHidden]);
 
   return (

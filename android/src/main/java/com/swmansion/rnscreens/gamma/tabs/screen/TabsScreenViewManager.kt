@@ -142,7 +142,9 @@ class TabsScreenViewManager :
         val uri = value?.getString("uri")
         if (uri != null) {
             loadImage(view.context, uri) { drawable ->
-                view.icon = drawable
+                if (drawable != null) {
+                    view.icon = drawable
+                }
             }
         }
     }
@@ -154,7 +156,9 @@ class TabsScreenViewManager :
         val uri = value?.getString("uri")
         if (uri != null) {
             loadImage(view.context, uri) { drawable ->
-                view.selectedIcon = drawable
+                if (drawable != null) {
+                    view.selectedIcon = drawable
+                }
             }
         }
     }

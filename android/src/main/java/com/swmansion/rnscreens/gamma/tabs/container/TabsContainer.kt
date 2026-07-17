@@ -686,12 +686,10 @@ class TabsContainer internal constructor(
                 .filter { it in tabsModel }
                 .toList()
 
-        val fragmentsWithAttachedUI = currentFragments.filterNot { it.isDetached }
-
-        if (currentFragments.size == tabsModel.size &&
-            fragmentsWithAttachedUI.size == 1 &&
-            fragmentsWithAttachedUI.first() === selectedTab
-        ) {
+        // We expect at most a single fragment added (detached fragments are not returned from
+        // FragmentManager.getFragments call) and it being the currently selected tab.
+        val isInUpToDateState = currentFragments.size == 1 && currentFragments.first() === selectedTab
+        if (isInUpToDateState) {
             return
         } else if (currentFragments.isEmpty()) {
             applyInitialStateToFragmentManagerSync(selectedTab)

@@ -11,6 +11,7 @@ internal object StackHeaderToolbarMenuItemDefaults {
     val TITLE: String? = null
     val TITLE_CONDENSED: String? = null
     val TOOLTIP_TEXT: String? = null
+    val ACCESSIBILITY_LABEL: String? = null
     const val HIDDEN: Boolean = false
     const val DISABLED: Boolean = false
     val SHOW_AS_ACTION: StackHeaderToolbarMenuItemShowAsAction = StackHeaderToolbarMenuItemShowAsAction.NEVER

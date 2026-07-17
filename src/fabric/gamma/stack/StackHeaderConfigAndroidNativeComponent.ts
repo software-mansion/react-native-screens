@@ -36,6 +36,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   title?: string | undefined;
   titleCondensed?: string | undefined;
   tooltipText?: string | undefined;
+  accessibilityLabel?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   disabled?: CT.WithDefault<boolean, false>;
   showAsAction?: CT.WithDefault<
@@ -121,18 +122,18 @@ export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
   menuTitle?: string | undefined;
 };
 
+type StackHeaderToolbarMenuElementUpdateNativeAndroid =
+  StackHeaderToolbarMenuElementOptionsAndroid & { id: string };
+
 export interface NativeCommands {
-  setToolbarMenuElementOptions: (
+  updateToolbarMenuElements: (
     viewRef: React.ComponentRef<ComponentType>,
-    id: string,
-    // We use the array here only due to codegen limitation. We're using only
-    // the first index of the array.
-    options: StackHeaderToolbarMenuElementOptionsAndroid[],
+    updates: StackHeaderToolbarMenuElementUpdateNativeAndroid[],
   ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['setToolbarMenuElementOptions'],
+  supportedCommands: ['updateToolbarMenuElements'],
 });
 
 export default codegenNativeComponent<NativeProps>(
