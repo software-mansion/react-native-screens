@@ -105,12 +105,11 @@ internal object StackHeaderToolbarMenuApplicator {
     }
 
     /**
-     * Recursively traverses menu elements and maps user-friendly string group IDs to integers
+     * Recursively traverses menu groups and maps user-friendly string group IDs to integers
      * expected by Android.
      *
-     * @param elements List of menu elements.
-     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
-     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
+     * @param menuConfig Menu whose groups — and those of its submenus — will be mapped.
+     * @param forwardMap Reference to String->Int group ID map to which entries will be added.
      * @param nextId Function that returns next ID integer. New unique integer should be returned
      *               each time the function is called. The function is used to handle recursive
      *               element traversal.
@@ -271,7 +270,7 @@ internal object StackHeaderToolbarMenuApplicator {
     ) {
         val item =
             forwardIdMap[id]?.let { toolbar.menu.findItem(it) } ?: run {
-                Log.e(TAG, "[RNScreens] Unable to find menu element.")
+                Log.e(TAG, "[RNScreens] Unable to find menu element with id '$id'.")
                 return
             }
         applyMenuElementOptions(toolbar, item, options)
