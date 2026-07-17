@@ -15,6 +15,7 @@ import StackHeaderConfigIOSNativeComponent, {
   Commands as StackHeaderConfigIOSNativeCommands,
   MenuItemPressEvent,
   MenuSelectionChangeEvent,
+  NativeMenuElementOptionsIOS,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
@@ -24,49 +25,13 @@ import { NativeSyntheticEvent, StyleSheet } from 'react-native';
 import type {
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
-  StackHeaderMenuActionOptionsIOS,
+  StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
 import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
 import { resolveIconAssetSources } from './ios/iconUtils.ios';
-
-function parseMenuElementOptionsToNative(
-  options: StackHeaderMenuActionOptionsIOS | StackHeaderMenuOptionsIOS,
-): object[] {
-  const nativeOptions: Record<string, unknown> = Object.fromEntries(
-    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
-      const typedKey = key as keyof (
-        | StackHeaderMenuActionOptionsIOS
-        | StackHeaderMenuOptionsIOS
-      );
-      switch (typedKey) {
-        case 'icon':
-          return [
-            [
-              'icon',
-              options.icon === undefined
-                ? null
-                : resolveIconAssetSources(options.icon),
-            ],
-          ];
-        default:
-          return [
-            [
-              key,
-              // We need to replace explicit `undefined` with `null`
-              // so that we're able to read that information on the native side.
-              value === undefined ? null : value,
-            ],
-          ];
-      }
-    }),
-  );
-
-  // passing array here -- see android implementation
-  return [nativeOptions];
-}
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -97,7 +62,7 @@ function StackHeaderConfig(
     ios: {
       setMenuItemOptions: (
         menuElementId: string,
-        options: StackHeaderMenuActionOptionsIOS,
+        options: StackHeaderMenuItemOptionsIOS,
       ) => {
         if (!nativeRef.current) {
           console.warn(
@@ -225,6 +190,50 @@ function makeItemViewFromItem(
   return (
     <StackHeaderItem key={id} itemId={id} placement={placement} {...rest} />
   );
+}
+
+function parseMenuElementOptionsToNative(
+  options: StackHeaderMenuItemOptionsIOS | StackHeaderMenuOptionsIOS,
+): NativeMenuElementOptionsIOS[] {
+  const nativeOptions: NativeMenuElementOptionsIOS = Object.fromEntries(
+    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+      const typedKey = key as keyof (
+        | StackHeaderMenuItemOptionsIOS
+        | StackHeaderMenuOptionsIOS
+      );
+      switch (typedKey) {
+        case 'icon':
+          return [
+            [
+              'icon',
+              options.icon === undefined
+                ? null
+                : resolveIconAssetSources(options.icon),
+            ],
+          ];
+        default:
+          if (
+            typeof value === 'object' &&
+            value !== null &&
+            !Array.isArray(value)
+          ) {
+            throw new Error(`[RNScreens] Unexpected nested object.`);
+          }
+
+          return [
+            [
+              key,
+              // We need to replace explicit `undefined` with `null`
+              // so that we're able to read that information on the native side.
+              value === undefined ? null : value,
+            ],
+          ];
+      }
+    }),
+  );
+
+  // passing array here -- see android implementation
+  return [nativeOptions];
 }
 
 const styles = StyleSheet.create({

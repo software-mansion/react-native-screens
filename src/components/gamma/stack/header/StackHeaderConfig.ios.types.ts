@@ -10,7 +10,7 @@ import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
  *
  * @platform ios
  */
-export interface StackHeaderMenuActionOptionsIOS {
+export interface StackHeaderMenuItemOptionsIOS {
   /**
    * @summary New title for the menu action.
    *
@@ -352,7 +352,7 @@ export interface StackHeaderConfigCommandsIOS {
    */
   setMenuItemOptions: (
     menuElementId: string,
-    options: StackHeaderMenuActionOptionsIOS,
+    options: StackHeaderMenuItemOptionsIOS,
   ) => void;
   /**
    * @summary Updates properties of a submenu at runtime.

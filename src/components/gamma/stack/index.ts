@@ -43,6 +43,8 @@ export type {
   StackHeaderMenuIOS,
   StackHeaderMenuItemIOS,
   StackHeaderMenuElementIOS,
+  StackHeaderMenuItemOptionsIOS,
+  StackHeaderMenuOptionsIOS,
 } from './header';
 
 /**

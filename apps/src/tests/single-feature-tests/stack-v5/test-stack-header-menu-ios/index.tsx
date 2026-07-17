@@ -10,12 +10,12 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/gamma/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
+import { StackHeaderConfigProps } from 'react-native-screens/experimental';
 import type {
   StackHeaderConfigRef,
-  StackHeaderMenuActionOptionsIOS,
+  StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
-} from 'react-native-screens/components/gamma/stack/header';
+} from 'react-native-screens/experimental';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
 import LongText from '@apps/shared/LongText';
 import { scenarioDescription } from './scenario-description';
@@ -62,14 +62,14 @@ const NO_CHANGE = 'NO_CHANGE';
 
 function resolveTitle(
   option: TitleOption,
-): StackHeaderMenuActionOptionsIOS['title'] | typeof NO_CHANGE {
+): StackHeaderMenuItemOptionsIOS['title'] | typeof NO_CHANGE {
   if (option === 'no change') return NO_CHANGE;
   return option === 'undefined' ? undefined : option;
 }
 
 function resolveIcon(
   option: IconOption,
-): StackHeaderMenuActionOptionsIOS['icon'] | typeof NO_CHANGE {
+): StackHeaderMenuItemOptionsIOS['icon'] | typeof NO_CHANGE {
   if (option === 'no change') return NO_CHANGE;
   if (option === 'undefined') return undefined;
   return { type: 'sfSymbol', name: option };
@@ -238,7 +238,7 @@ function ConfigScreen() {
   const [menuIcon, setMenuIcon] = useState<IconOption>('no change');
 
   const sendActionCommand = useCallback(() => {
-    const options: StackHeaderMenuActionOptionsIOS = {};
+    const options: StackHeaderMenuItemOptionsIOS = {};
     const resolvedTitle = resolveTitle(actionTitle);
     if (resolvedTitle !== NO_CHANGE) options.title = resolvedTitle;
     const resolvedIcon = resolveIcon(actionIcon);
