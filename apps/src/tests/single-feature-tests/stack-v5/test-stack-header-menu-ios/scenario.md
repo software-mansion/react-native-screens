@@ -24,7 +24,7 @@ TBD
 
 1. Launch the app and navigate to the **Stack Header Menu (iOS)** screen.
 2. Click on the Menu 1 item
-  - [ ] The bubble morphs into a menu with two items and a submenu
+  - [ ] The bubble morphs into a menu with four items and a submenu
 3. Click on Action 1-1
   - [ ] A toast "Clicked Action 1-1" is displayed
 4. Click on Toggle 1-1 inside Menu
