@@ -202,82 +202,82 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         (shouldFreeze !== undefined ? shouldFreeze : activityState === 0);
 
       return (
-        <DelayedFreeze freeze={freeze}>
-          <AnimatedScreen
-            {...props}
-            /**
-             * This messy override is to conform NativeProps used by codegen and
-             * our Public API. To see reasoning go to this PR:
-             * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
-             */
-            onAppear={onAppear as NativeProps['onAppear']}
-            onDisappear={onDisappear as NativeProps['onDisappear']}
-            onWillAppear={onWillAppear as NativeProps['onWillAppear']}
-            onWillDisappear={onWillDisappear as NativeProps['onWillDisappear']}
-            onGestureCancel={
-              (onGestureCancel as NativeProps['onGestureCancel']) ??
-              (() => {
-                // for internal use
-              })
-            }
-            //
-            // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
-            // https://github.com/software-mansion/react-native-screens/issues/2345
-            // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
-            // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
-            style={[style, { zIndex: undefined }]}
-            activityState={activityState}
-            screenId={screenId}
-            sheetAllowedDetents={resolvedSheetAllowedDetents}
-            sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
-            sheetElevation={sheetElevation}
-            sheetShouldOverflowTopInset={sheetShouldOverflowTopInset}
-            sheetDefaultResizeAnimationEnabled={
-              sheetDefaultResizeAnimationEnabled
-            }
-            sheetGrabberVisible={sheetGrabberVisible}
-            sheetCornerRadius={sheetCornerRadius}
-            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-            sheetInitialDetent={resolvedSheetInitialDetentIndex}
-            fullScreenSwipeEnabled={parseBooleanToOptionalBooleanNativeProp(
-              fullScreenSwipeEnabled,
-            )}
-            gestureResponseDistance={{
-              start: gestureResponseDistance?.start ?? -1,
-              end: gestureResponseDistance?.end ?? -1,
-              top: gestureResponseDistance?.top ?? -1,
-              bottom: gestureResponseDistance?.bottom ?? -1,
-            }}
-            // This prevents showing blank screen when navigating between multiple screens with freezing
-            // https://github.com/software-mansion/react-native-screens/pull/1208
-            ref={handleRef}
-            onTransitionProgress={
-              !isNativeStack
-                ? undefined
-                : Animated.event(
-                    [
-                      {
-                        nativeEvent: {
-                          progress,
-                          closing,
-                          goingForward,
-                        },
+        <AnimatedScreen
+          {...props}
+          /**
+           * This messy override is to conform NativeProps used by codegen and
+           * our Public API. To see reasoning go to this PR:
+           * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+           */
+          onAppear={onAppear as NativeProps['onAppear']}
+          onDisappear={onDisappear as NativeProps['onDisappear']}
+          onWillAppear={onWillAppear as NativeProps['onWillAppear']}
+          onWillDisappear={onWillDisappear as NativeProps['onWillDisappear']}
+          onGestureCancel={
+            (onGestureCancel as NativeProps['onGestureCancel']) ??
+            (() => {
+              // for internal use
+            })
+          }
+          //
+          // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
+          // https://github.com/software-mansion/react-native-screens/issues/2345
+          // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
+          // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
+          style={[style, { zIndex: undefined }]}
+          activityState={activityState}
+          screenId={screenId}
+          sheetAllowedDetents={resolvedSheetAllowedDetents}
+          sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
+          sheetElevation={sheetElevation}
+          sheetShouldOverflowTopInset={sheetShouldOverflowTopInset}
+          sheetDefaultResizeAnimationEnabled={
+            sheetDefaultResizeAnimationEnabled
+          }
+          sheetGrabberVisible={sheetGrabberVisible}
+          sheetCornerRadius={sheetCornerRadius}
+          sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+          sheetInitialDetent={resolvedSheetInitialDetentIndex}
+          fullScreenSwipeEnabled={parseBooleanToOptionalBooleanNativeProp(
+            fullScreenSwipeEnabled,
+          )}
+          gestureResponseDistance={{
+            start: gestureResponseDistance?.start ?? -1,
+            end: gestureResponseDistance?.end ?? -1,
+            top: gestureResponseDistance?.top ?? -1,
+            bottom: gestureResponseDistance?.bottom ?? -1,
+          }}
+          // This prevents showing blank screen when navigating between multiple screens with freezing
+          // https://github.com/software-mansion/react-native-screens/pull/1208
+          ref={handleRef}
+          onTransitionProgress={
+            !isNativeStack
+              ? undefined
+              : Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        progress,
+                        closing,
+                        goingForward,
                       },
-                    ],
-                    { useNativeDriver: true },
-                  )
-            }
-            bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
-            leftScrollEdgeEffect={scrollEdgeEffects?.left}
-            rightScrollEdgeEffect={scrollEdgeEffects?.right}
-            topScrollEdgeEffect={scrollEdgeEffects?.top}
-            synchronousShadowStateUpdatesEnabled={
-              featureFlags.experiment.synchronousScreenUpdatesEnabled
-            }
-            androidResetScreenShadowStateOnOrientationChangeEnabled={
-              featureFlags.experiment
-                .androidResetScreenShadowStateOnOrientationChangeEnabled
-            }>
+                    },
+                  ],
+                  { useNativeDriver: true },
+                )
+          }
+          bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
+          leftScrollEdgeEffect={scrollEdgeEffects?.left}
+          rightScrollEdgeEffect={scrollEdgeEffects?.right}
+          topScrollEdgeEffect={scrollEdgeEffects?.top}
+          synchronousShadowStateUpdatesEnabled={
+            featureFlags.experiment.synchronousScreenUpdatesEnabled
+          }
+          androidResetScreenShadowStateOnOrientationChangeEnabled={
+            featureFlags.experiment
+              .androidResetScreenShadowStateOnOrientationChangeEnabled
+          }>
+          <DelayedFreeze freeze={freeze}>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -290,8 +290,8 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                 {children}
               </TransitionProgressContext.Provider>
             )}
-          </AnimatedScreen>
-        </DelayedFreeze>
+          </DelayedFreeze>
+        </AnimatedScreen>
       );
     } else {
       // same reason as above
