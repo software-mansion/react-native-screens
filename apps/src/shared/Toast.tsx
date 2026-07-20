@@ -69,9 +69,16 @@ interface ToastProviderProps {
   anchorSide?: 'top' | 'bottom';
 }
 
-function ToastContainer({ toasts, remove, anchorSide }: { toasts: IToast[]; remove: (id: string) => void; anchorSide?: 'top' | 'bottom' }) {
+interface ToastContainerProps {
+  toasts: IToast[];
+  remove: (id: string) => void;
+  anchorSide?: 'top' | 'bottom';
+}
+
+function ToastContainer({ toasts, remove, anchorSide }: ToastContainerProps) {
   return (
     <View style={[styles.overlay, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]} pointerEvents="box-none">
+      {/* `pointerEvents` does not currently work on Android  */}
       <SafeAreaView
         pointerEvents='box-none'
         collapsable={false}
