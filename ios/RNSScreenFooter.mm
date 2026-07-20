@@ -12,6 +12,8 @@
 - (instancetype)init
 {
   if (self = [super init]) {
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenFooterProps>();
+    _props = defaultProps;
     self.translatesAutoresizingMaskIntoConstraints = false;
     _parent = nil;
   }
