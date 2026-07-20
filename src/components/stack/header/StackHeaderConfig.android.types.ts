@@ -670,6 +670,12 @@ export interface StackHeaderConfigPropsAndroid {
    * view, which can cause the lifted state to flicker while scrolling.
    *
    * @remarks
+   * Applies to the `small` header only. For `medium` and `large` headers the
+   * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
+   * installs its own content scrim and disables the app bar's lift-on-scroll,
+   * so this prop has no effect there. The collapsed appearance of those headers
+   * is instead controlled by that content scrim, which is not exposed yet.
+   *
    * Has no effect while the header is `transparent` (there is no scrolling
    * content behavior installed in that mode).
    *
