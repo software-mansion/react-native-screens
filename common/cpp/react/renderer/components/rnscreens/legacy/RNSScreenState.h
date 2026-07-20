@@ -9,7 +9,7 @@
 #include <react/renderer/mapbuffer/MapBufferBuilder.h>
 #endif // ANDROID
 
-#include "FrameCorrectionModes.h"
+#include "../FrameCorrectionModes.h"
 
 namespace facebook {
 namespace react {
