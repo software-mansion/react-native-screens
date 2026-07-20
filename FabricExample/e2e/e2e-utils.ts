@@ -186,3 +186,15 @@ export async function forceSelectTabByLabel(label: string) {
     await element(by.label(label)).tap();
   }
 }
+
+/**
+ * Dismisses a toast rendered by `ToastProvider` (see `apps/src/shared/Toast.tsx`)
+ * by waiting for its exact accessible text (index prefix included, e.g.
+ * `1. Pressed Item 1`) and tapping it away.
+ */
+export async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(3000);
+  await element(by.label(message)).tap();
+}
