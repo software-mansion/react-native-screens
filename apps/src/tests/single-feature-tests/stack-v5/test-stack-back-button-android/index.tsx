@@ -185,7 +185,7 @@ function RootScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <ConfigControls />
         <Text style={styles.heading}>Navigation</Text>
@@ -200,7 +200,7 @@ function PushedScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <ConfigControls />
         <Text style={styles.heading}>Navigation</Text>
@@ -211,6 +211,9 @@ function PushedScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

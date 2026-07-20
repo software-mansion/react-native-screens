@@ -258,7 +258,7 @@ function MainScreen() {
   }, [cmdTargetId, cmdTitle, cmdHidden, cmdMenuTitle]);
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Result</Text>
         <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
@@ -324,6 +324,9 @@ function MainScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

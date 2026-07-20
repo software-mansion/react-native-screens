@@ -251,7 +251,7 @@ function MainScreen() {
   }, [failingIcon, nextPhotoIcon]);
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Batch Commands</Text>
         <View style={styles.buttons}>
@@ -318,6 +318,9 @@ function MainScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

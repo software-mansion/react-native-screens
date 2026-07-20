@@ -78,7 +78,7 @@ function ConfigScreen() {
   }, [headerConfig, setRouteOptions, routeKey]);
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView
         nestedScrollEnabled
         style={styles.scroll}
@@ -114,6 +114,9 @@ function ConfigScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

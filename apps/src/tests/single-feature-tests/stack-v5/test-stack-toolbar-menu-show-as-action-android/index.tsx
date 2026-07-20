@@ -191,7 +191,7 @@ function MainScreen() {
   }, [cmdTargetId, cmdIcon, cmdShowAsAction]);
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Send Command</Text>
         <SettingsPicker<IdOption>
@@ -264,6 +264,9 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

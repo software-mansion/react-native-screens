@@ -225,7 +225,7 @@ function MainScreen() {
   }, [cmdTargetId, cmdDisabled]);
 
   return (
-    <ScrollViewMarker>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Last Event</Text>
         <Text style={styles.result}>{lastEvent ?? '—'}</Text>
@@ -260,6 +260,9 @@ function MainScreen() {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },
