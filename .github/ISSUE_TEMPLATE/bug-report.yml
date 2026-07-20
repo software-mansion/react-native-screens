@@ -45,7 +45,7 @@ body:
       description: |
         Please provide a Snack (https://snack.expo.io/) or a link to a repository on GitHub under your username that reproduces the issue.
         Here are some tips for providing a minimal example: https://stackoverflow.com/help/mcve.
-        Treat the reproducer as MANDATORY. Issues without a reproduction are HIGHLY likely to stale and might be closed w/o a response.
+        Treat the reproducer as mandatory. Issues without a reproduction are highly likely to go stale and might be closed without a response.
       placeholder: Link to a Snack or a GitHub repository
     validations:
       required: true
