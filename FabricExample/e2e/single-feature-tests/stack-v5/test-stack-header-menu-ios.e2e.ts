@@ -54,7 +54,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await expect(element(by.text('Submenu with Radio'))).toBeVisible();
     });
 
-    it('should dismiss the menu and emmit toast after tapping the action item "Action 1-1"', async () => {
+    it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
       await element(by.text('Action 1-1')).tap();
       await dismissToast('1. Clicked Action 1-1');
 
