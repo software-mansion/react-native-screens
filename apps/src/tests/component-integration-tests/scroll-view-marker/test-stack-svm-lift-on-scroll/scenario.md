@@ -27,7 +27,8 @@ Incomplete - we can't detect color flash with Detox.
    lift-on-scroll (small header, no flash)**.
 
 - [ ] A small header titled `Lift on scroll` is shown above a scrollable list.
-- [ ] At rest (content at top), the header sits flat — not lifted (lighter color).
+- [ ] At rest (content at top), the header sits flat — not lifted (lighter
+      color).
 
 2. Slowly scroll the list up (content moves under the header).
 

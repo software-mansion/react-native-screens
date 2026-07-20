@@ -247,6 +247,10 @@ internal class StackHeaderApplicator(
      * setter (re-read on the next layout / nested-scroll pass), so this needs
      * no header rebuild.
      *
+     * Only the small header participates: medium/large (collapsing) headers
+     * derive their elevation from the `CollapsingToolbarLayout` content scrim,
+     * not from lift-on-scroll, so we leave their app bar untouched.
+     *
      * [targetScrollView] is the resolved content scroll view (see
      * [com.swmansion.rnscreens.common.container.ContainerItem.findContentScrollView]).
      * Without it, Material's `findFirstScrollingChild` only inspects the
@@ -259,12 +263,10 @@ internal class StackHeaderApplicator(
         enabled: Boolean,
         targetScrollView: ViewGroup?,
     ) {
+        if (appBar !is StackHeaderAppBarLayout.Small) return
+
         appBar.isLiftOnScroll = enabled
         appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
-        if (!enabled) {
-            // Reset the elevation promptly when disabling while currently lifted.
-            appBar.setLifted(false)
-        }
         appBar.requestLayout()
     }
 
