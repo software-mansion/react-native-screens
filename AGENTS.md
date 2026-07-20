@@ -98,6 +98,6 @@ Be extremely frank and focused on thoroughness.
 ## Issue creation
 
 If you intend to create an issue on this repository, adhere to templates from `./.github/ISSUE_TEMPLATE/`!
-Issues that fail to conform will likely become stale or closed w/o a response.
+Issues that fail to conform will likely go stale or be closed without a response.
 
 This applies in particular to bug reports without a reproducer. A reproducer is MANDATORY.
