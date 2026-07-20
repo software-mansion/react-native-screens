@@ -18,7 +18,7 @@ import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfiguratio
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.gamma.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
@@ -66,15 +66,32 @@ internal class StackHeaderCoordinatorLayout(
         object : StackHeaderConfigurationObserver {
             override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
 
-            override fun onMenuElementUpdated(
-                id: String,
-                options: StackHeaderToolbarMenuElementOptions,
-            ) {
-                val toolbar = appBarLayout?.toolbar ?: return
-                applicator.updateToolbarMenuElement(toolbar, toolbarMenuForwardIdMap, id, options)
-                if (options.checked != null) {
-                    handleGroupItemStateChange(toolbar, id, options.checked)
+            override fun onMenuElementsUpdated(updates: List<StackHeaderToolbarMenuElementUpdate>) {
+                val toolbar = appBarLayout?.toolbar
+                if (toolbar == null) {
+                    Log.w(
+                        TAG,
+                        "[RNScreens] Dropping ${updates.size} resolved toolbar menu update(s): " +
+                            "the header toolbar is not currently attached (header hidden or detached).",
+                    )
+                    return
                 }
+                // Apply every element first, collecting the groups whose selection changed,
+                // then emit a single coalesced event per affected group.
+                val affectedGroups = LinkedHashSet<String>()
+                for (update in updates) {
+                    applicator.updateToolbarMenuElement(
+                        toolbar,
+                        toolbarMenuForwardIdMap,
+                        update.id,
+                        update.options,
+                    )
+                    val checked = update.options.checked
+                    if (checked != null) {
+                        applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
+                    }
+                }
+                affectedGroups.forEach { groupId -> emitGroupSelection(toolbar, groupId) }
             }
         }
 
@@ -241,7 +258,9 @@ internal class StackHeaderCoordinatorLayout(
                     groupDividerEnabled = provider.toolbarMenuGroupDividerEnabled,
                     onItemClicked = { id, menuItem ->
                         if (menuItem.isCheckable) {
-                            handleGroupItemStateChange(appBar.toolbar, id)
+                            applyGroupItemStateChange(appBar.toolbar, id)?.let { groupId ->
+                                emitGroupSelection(appBar.toolbar, groupId)
+                            }
                         } else {
                             currentDelegate?.onMenuItemClicked(id)
                         }
@@ -259,15 +278,22 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Group selection
 
-    private fun handleGroupItemStateChange(
+    /**
+     * Mutates the checked state of [itemId] within its group and returns the id of the group
+     * whose selection changed, or `null` when nothing changed (the item is not in a group, an
+     * invalid attempt to uncheck a single-selection item, or the item was already in the
+     * target state). Does not emit — callers decide when to emit so that batched updates can
+     * coalesce into one event per group.
+     */
+    private fun applyGroupItemStateChange(
         toolbar: MaterialToolbar,
         itemId: String,
         explicitCheckedValue: Boolean? = null,
-    ) {
-        val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return
-        val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return
-        val intId = toolbarMenuForwardIdMap[itemId] ?: return
-        val menuItem = toolbar.menu.findItem(intId) ?: return
+    ): String? {
+        val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return null
+        val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return null
+        val intId = toolbarMenuForwardIdMap[itemId] ?: return null
+        val menuItem = toolbar.menu.findItem(intId) ?: return null
 
         if (singleSelection && explicitCheckedValue == false) {
             Log.w(
@@ -275,7 +301,7 @@ internal class StackHeaderCoordinatorLayout(
                 "[RNScreens] Cannot uncheck item '$itemId' in single-selection group '$groupId'. " +
                     "Check a different item instead.",
             )
-            return
+            return null
         }
 
         val newChecked =
@@ -284,11 +310,17 @@ internal class StackHeaderCoordinatorLayout(
             } else {
                 explicitCheckedValue ?: !menuItem.isChecked
             }
-        if (menuItem.isChecked == newChecked) return
+        if (menuItem.isChecked == newChecked) return null
         menuItem.isChecked = newChecked
 
-        val selectedIds = collectSelectedIds(toolbar, groupId)
-        currentDelegate?.onGroupSelectionChanged(groupId, selectedIds)
+        return groupId
+    }
+
+    private fun emitGroupSelection(
+        toolbar: MaterialToolbar,
+        groupId: String,
+    ) {
+        currentDelegate?.onGroupSelectionChanged(groupId, collectSelectedIds(toolbar, groupId))
     }
 
     private fun collectSelectedIds(

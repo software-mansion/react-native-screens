@@ -1,8 +1,21 @@
-import React, { useCallback, useEffect } from 'react';
-import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
+import React, {
+  type ComponentRef,
+  type Ref,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import type {
+  StackHeaderConfigProps,
+  StackHeaderConfigRef,
+} from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
+  Commands as StackHeaderConfigIOSNativeCommands,
   MenuItemPressEvent,
   MenuSelectionChangeEvent,
+  NativeMenuElementOptionsIOS,
 } from '../../../../fabric/gamma/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
@@ -12,15 +25,21 @@ import { NativeSyntheticEvent, StyleSheet } from 'react-native';
 import type {
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
+  StackHeaderMenuItemOptionsIOS,
+  StackHeaderMenuOptionsIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
 import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
+import { resolveIconAssetSources } from './ios/iconUtils.ios';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-export default function StackHeaderConfig(props: StackHeaderConfigProps) {
+function StackHeaderConfig(
+  props: StackHeaderConfigProps,
+  forwardedRef: Ref<StackHeaderConfigRef>,
+) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...restProps } = props;
@@ -35,6 +54,46 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
     largeSubtitle,
     largeTitleEnabled,
   } = ios ?? {};
+
+  const nativeRef =
+    useRef<ComponentRef<typeof StackHeaderConfigIOSNativeComponent>>(null);
+
+  useImperativeHandle(forwardedRef, () => ({
+    ios: {
+      setMenuItemOptions: (
+        menuElementId: string,
+        options: StackHeaderMenuItemOptionsIOS,
+      ) => {
+        if (!nativeRef.current) {
+          console.warn(
+            '[RNScreens] Reference to native header config component has not been updated yet.',
+          );
+          return;
+        }
+        StackHeaderConfigIOSNativeCommands.setMenuItemOptions(
+          nativeRef.current,
+          menuElementId,
+          parseMenuElementOptionsToNative(options),
+        );
+      },
+      setMenuOptions: (
+        menuElementId: string,
+        options: StackHeaderMenuOptionsIOS,
+      ) => {
+        if (!nativeRef.current) {
+          console.warn(
+            '[RNScreens] Reference to native header config component has not been updated yet.',
+          );
+          return;
+        }
+        StackHeaderConfigIOSNativeCommands.setMenuOptions(
+          nativeRef.current,
+          menuElementId,
+          parseMenuElementOptionsToNative(options),
+        );
+      },
+    },
+  }));
 
   const handleMenuItemPress = useCallback(
     (event: NativeSyntheticEvent<MenuItemPressEvent>) => {
@@ -80,6 +139,7 @@ export default function StackHeaderConfig(props: StackHeaderConfigProps) {
 
   return (
     <StackHeaderConfigIOSNativeComponent
+      ref={nativeRef}
       {...restProps}
       collapsable={false}
       largeTitle={largeTitle}
@@ -132,6 +192,50 @@ function makeItemViewFromItem(
   );
 }
 
+function parseMenuElementOptionsToNative(
+  options: StackHeaderMenuItemOptionsIOS | StackHeaderMenuOptionsIOS,
+): NativeMenuElementOptionsIOS[] {
+  const nativeOptions: NativeMenuElementOptionsIOS = Object.fromEntries(
+    Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
+      const typedKey = key as keyof (
+        | StackHeaderMenuItemOptionsIOS
+        | StackHeaderMenuOptionsIOS
+      );
+      switch (typedKey) {
+        case 'icon':
+          return [
+            [
+              'icon',
+              options.icon === undefined
+                ? null
+                : resolveIconAssetSources(options.icon),
+            ],
+          ];
+        default:
+          if (
+            typeof value === 'object' &&
+            value !== null &&
+            !Array.isArray(value)
+          ) {
+            throw new Error(`[RNScreens] Unexpected nested object.`);
+          }
+
+          return [
+            [
+              key,
+              // We need to replace explicit `undefined` with `null`
+              // so that we're able to read that information on the native side.
+              value === undefined ? null : value,
+            ],
+          ];
+      }
+    }),
+  );
+
+  // passing array here -- see android implementation
+  return [nativeOptions];
+}
+
 const styles = StyleSheet.create({
   config: {
     position: 'absolute',
@@ -139,3 +243,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
 });
+
+export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
+  StackHeaderConfig,
+);

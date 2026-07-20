@@ -10,6 +10,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
+import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 
 function TestStackPreventNativeDismissSingleStack() {
   return (
@@ -64,7 +65,7 @@ function StackSetup() {
 function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
-      <RouteInformation routeName="Home" />
+      <StackRouteInformation routeName="Home" />
       <StackNavigationButtons isPopEnabled={false} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
@@ -73,7 +74,7 @@ function HomeScreen() {
 function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
-      <RouteInformation routeName="A" />
+      <StackRouteInformation routeName="A" />
       <PreventNativeDismissInfo />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
@@ -83,22 +84,11 @@ function AScreen() {
 function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
-      <RouteInformation routeName="B" />
+      <StackRouteInformation routeName="B" />
       <PreventNativeDismissInfo />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
       <TogglePreventNativeDismiss />
     </CenteredLayoutView>
-  );
-}
-
-function RouteInformation(props: { routeName: string }) {
-  const routeKey = useStackNavigationContext().routeKey;
-
-  return (
-    <View>
-      <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
-    </View>
   );
 }
 

@@ -35,6 +35,7 @@ import type {
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderTypeAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
+  StackHeaderToolbarMenuElementUpdateAndroid,
   StackHeaderToolbarMenuGroupAndroid,
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../../shared';
@@ -232,7 +233,7 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
 
   useImperativeHandle(forwardedRef, () => ({
     android: {
-      setToolbarMenuElementOptions: (id, options) => {
+      updateToolbarMenuElements: updates => {
         if (!ref.current) {
           console.warn(
             '[RNScreens] Reference to native header config component has not been updated yet.',
@@ -240,10 +241,17 @@ function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
           return;
         }
 
-        StackHeaderConfigAndroidNativeCommands.setToolbarMenuElementOptions(
-          ref.current,
+        const updatesArray: StackHeaderToolbarMenuElementUpdateAndroid[] =
+          Array.isArray(updates) ? updates : [updates];
+
+        const nativeUpdates = updatesArray.map(({ id, options }) => ({
           id,
-          parseToolbarMenuElementOptionsToNativeProps(options),
+          ...parseToolbarMenuElementOptionsToNativeProps(options),
+        }));
+
+        StackHeaderConfigAndroidNativeCommands.updateToolbarMenuElements(
+          ref.current,
+          nativeUpdates,
         );
       },
     },
@@ -516,7 +524,7 @@ function parseBaseItemToNativeProps({
 
 function parseToolbarMenuElementOptionsToNativeProps(
   options: StackHeaderToolbarMenuElementOptionsAndroid,
-): NativeToolbarMenuElementOptionsAndroid[] {
+): NativeToolbarMenuElementOptionsAndroid {
   const nativeOptions: NativeToolbarMenuElementOptionsAndroid =
     Object.fromEntries(
       Object.entries(options).flatMap(([key, value]): [string, unknown][] => {
@@ -578,8 +586,7 @@ function parseToolbarMenuElementOptionsToNativeProps(
       }),
     );
 
-  // For some reason Codegen requires passing an array (we can't use plain object).
-  return [nativeOptions];
+  return nativeOptions;
 }
 
 export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(

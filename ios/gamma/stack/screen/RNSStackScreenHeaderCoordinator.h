@@ -4,6 +4,7 @@
 #import "RNSImageLoading.h"
 #import "RNSStackHeaderConfigDataProviding.h"
 #import "RNSStackHeaderEventsDelegate.h"
+#import "RNSStackHeaderMenuData.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reapplyMenuForItemWithId:(nullable NSString *)itemId;
 
 - (void)resetTrackerForItemWithId:(nullable NSString *)itemId;
+
+- (void)setToggleState:(BOOL)state
+      forMenuElementId:(NSString *)elementId
+            withItemId:(NSString *)itemId
+            parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu;
 
 - (void)clearHeaderConfiguration;
 

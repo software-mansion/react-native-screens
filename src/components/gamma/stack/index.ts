@@ -31,6 +31,7 @@ export type {
   StackHeaderToolbarMenuItemAndroid,
   StackHeaderToolbarMenuItemBaseAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
+  StackHeaderToolbarMenuElementUpdateAndroid,
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
@@ -43,6 +44,8 @@ export type {
   StackHeaderMenuIOS,
   StackHeaderMenuItemIOS,
   StackHeaderMenuElementIOS,
+  StackHeaderMenuItemOptionsIOS,
+  StackHeaderMenuOptionsIOS,
 } from './header';
 
 /**

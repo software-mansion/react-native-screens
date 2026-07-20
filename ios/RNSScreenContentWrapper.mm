@@ -10,6 +10,7 @@
 #import "RNSSafeAreaViewComponentView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 namespace react = facebook::react;
 
@@ -51,12 +52,27 @@ namespace react = facebook::react;
         break;
       }
     } else if ([controller isKindOfClass:RNSNavigationController.class]) {
-      UINavigationBar *navigationBar = static_cast<RNSNavigationController *>(controller).navigationBar;
-      headerHeightErrata += navigationBar.frame.size.height * !navigationBar.isHidden;
+      RNSNavigationController *navigationController = static_cast<RNSNavigationController *>(controller);
+      UINavigationBar *navigationBar = navigationController.navigationBar;
+
+      RNSScreenStackHeaderConfig *headerConfig = [self headerConfigForNavigationController:navigationController];
+      if (headerConfig != nil && !headerConfig.translucent) {
+        headerHeightErrata += navigationBar.frame.size.height * !navigationBar.isHidden;
+      }
     }
 
     controller = controller.parentViewController;
   } while (controller != nil);
+}
+
+- (nullable RNSScreenStackHeaderConfig *)headerConfigForNavigationController:
+    (nonnull RNSNavigationController *)navigationController
+{
+  UIViewController *topViewController = navigationController.topViewController;
+  if (![topViewController isKindOfClass:RNSScreen.class]) {
+    return nil;
+  }
+  return [static_cast<RNSScreen *>(topViewController).screenView findHeaderConfig];
 }
 
 - (void)attachToAncestorScreenView
