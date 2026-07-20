@@ -19,6 +19,7 @@ internal interface StackHeaderConfigurationProviding {
     val scrollFlagEnterAlwaysCollapsed: Boolean
     val scrollFlagExitUntilCollapsed: Boolean
     val scrollFlagSnap: Boolean
+    val liftOnScroll: Boolean
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?

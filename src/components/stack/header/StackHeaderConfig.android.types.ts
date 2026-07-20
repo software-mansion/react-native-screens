@@ -661,6 +661,24 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagSnap?: boolean | undefined;
   /**
+   * @summary Whether the app bar lifts (applies a tonal/elevation shift) when
+   * content is scrolled beneath it.
+   *
+   * @description
+   * For reliable behavior the content scroll view should be designated with a
+   * `ScrollViewMarker`. Without it, the app bar cannot always locate the scroll
+   * view, which can cause the lifted state to flicker while scrolling.
+   *
+   * @remarks
+   * Has no effect while the header is `transparent` (there is no scrolling
+   * content behavior installed in that mode).
+   *
+   * @default true
+   *
+   * @platform android
+   */
+  liftOnScroll?: boolean | undefined;
+  /**
    * @summary Toolbar menu configuration.
    *
    * @description

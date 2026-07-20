@@ -131,6 +131,7 @@ class StackScreen(
         scrollView: ViewGroup,
     ) {
         containerItemSupport.registerScrollView(scrollView)
+        headerConfig?.onContentScrollViewChanged()
     }
 
     // endregion
