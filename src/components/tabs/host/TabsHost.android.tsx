@@ -37,7 +37,10 @@ function TabsHost(props: TabsHostProps) {
 
   return (
     <TabsHostAndroidNativeComponent
-      style={[styles.fillParent, { direction }]}
+      style={[
+        styles.fillParent,
+        direction !== undefined ? { direction } : undefined,
+      ]}
       navStateRequest={navStateRequest}
       onTabSelected={onTabSelectedCallback}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
