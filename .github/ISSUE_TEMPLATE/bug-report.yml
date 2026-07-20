@@ -45,7 +45,7 @@ body:
       description: |
         Please provide a Snack (https://snack.expo.io/) or a link to a repository on GitHub under your username that reproduces the issue.
         Here are some tips for providing a minimal example: https://stackoverflow.com/help/mcve.
-        Issues without a reproduction are likely to stale.
+        Treat the reproducer as mandatory. Issues without a reproduction are highly likely to go stale and might be closed without a response.
       placeholder: Link to a Snack or a GitHub repository
     validations:
       required: true
@@ -55,7 +55,7 @@ body:
     attributes:
       label: Screens version
       description: What version of react-native-screens are you using?
-      placeholder: 3.16.0
+      placeholder: 4.26.0
     validations:
       required: true
 
@@ -64,7 +64,7 @@ body:
     attributes:
       label: React Native version
       description: What version of react-native are you using?
-      placeholder: 0.69.0
+      placeholder: 0.86.0
     validations:
       required: true
 
@@ -109,15 +109,6 @@ body:
         - React Native (without Expo)
         - Expo bare workflow
         - Expo managed workflow
-
-  - type: dropdown
-    id: architecture
-    attributes:
-      label: Architecture
-      description: What React Native architecture your application is running on? Currently, the default architecture on React Native is Paper so if you haven't changed it in your application select this option.
-      options:
-        - Paper (Old Architecture)
-        - Fabric (New Architecture)
 
   - type: dropdown
     id: build-type

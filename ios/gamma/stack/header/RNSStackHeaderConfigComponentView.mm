@@ -4,6 +4,8 @@
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
+#import "RNSStackHeaderMenuFinder.h"
+#import "RNSStackHeaderMenuUpdateOptions.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
@@ -29,6 +31,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
             RNSStackHeaderItemComponentView.class,
             RNSStackHeaderItemSpacerComponentView.class);
 }
+
+@interface RNSStackHeaderConfigComponentView () <RCTRNSStackHeaderConfigIOSViewProtocol>
+@end
 
 @implementation RNSStackHeaderConfigComponentView {
   std::shared_ptr<const react::RNSStackHeaderConfigShadowNode::ConcreteState> _state;
@@ -187,6 +192,20 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [coordinator reapplyMenuForItemWithId:itemId];
 }
 
+/**
+ * Same as headerItemDidInvalidateWithId, but handles view commands and doesn't reset the tracker
+ */
+- (void)headerItemMenuDidUpdateFromCommandWithId:(NSString *)itemId
+{
+  if (itemId == nil) {
+    RCTLogWarn(
+        @"[RNScreens] headerItemMenuDidUpdateFromCommandWithId called with nil id, will run full header rebuild");
+    [[self headerCoordinator] rebuild];
+    return;
+  }
+  [[self headerCoordinator] reapplyMenuForItemWithId:itemId];
+}
+
 - (void)headerItemSpacerDidInvalidate
 {
   [[self headerCoordinator] rebuild];
@@ -234,6 +253,127 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   UIView *screenView = self.superview;
   CGRect navBarFrame = [navigationBar convertRect:navigationBar.bounds toView:screenView];
   [_shadowStateProxy updateShadowStateWithFrame:navBarFrame];
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSStackHeaderConfigIOSHandleCommand(self, commandName, args);
+}
+
+- (void)setMenuItemOptions:(NSString *)menuItemId options:(const NSArray *)options
+{
+  NSDictionary *dict = [self extractOptionsDict:options];
+  if (menuItemId == nil || dict == nil) {
+    return;
+  }
+
+  RNSMenuElementLocator *locator = [RNSStackHeaderMenuFinder findMenuElementWithId:menuItemId
+                                                                     inHeaderItems:[self headerItems]];
+  if (locator == nil) {
+    RCTLogWarn(@"[RNScreens] setMenuItemOptions: element with id \"%@\" not found", menuItemId);
+    return;
+  }
+  if (![locator.searchResult.element isKindOfClass:[RNSStackHeaderMenuItemData class]]) {
+    RCTLogWarn(@"[RNScreens] setMenuItemOptions: element \"%@\" is a menu, expected menuItem", menuItemId);
+    return;
+  }
+
+  RNSMenuItemUpdateOptions *updateOptions = [RNSMenuItemUpdateOptions fromDictionary:dict];
+  RNSStackHeaderMenuItemData *oldItemData = (RNSStackHeaderMenuItemData *)locator.searchResult.element;
+  RNSStackHeaderMenuItemData *newItemData = [RNSMenuItemUpdateOptions applyOptions:updateOptions
+                                                                        toMenuItem:oldItemData];
+
+  if (updateOptions.hasToggleState) {
+    BOOL isToggle = oldItemData.itemType == RNSMenuItemTypeToggle ||
+        (oldItemData.itemType == RNSMenuItemTypeAutomatic && locator.headerItem.menu != nil &&
+         [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId
+                                                                inMenu:locator.headerItem.menu] != nil);
+    if (isToggle) {
+      [[self headerCoordinator] setToggleState:updateOptions.toggleState
+                              forMenuElementId:menuItemId
+                                    withItemId:locator.headerItem.itemId
+                                    parentMenu:locator.searchResult.parentMenu];
+    }
+  }
+
+  switch (locator.position) {
+    case RNSMenuElementPositionItem:
+      RCTAssert([locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
+                @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
+      [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
+          updateMenuElementWithId:menuItemId
+                      withElement:newItemData
+                       parentMenu:locator.searchResult.parentMenu];
+      break;
+    case RNSMenuElementPositionTitle:
+    case RNSMenuElementPositionOverflow:
+      // TODO: handle title menu and overflow menu
+      break;
+  }
+}
+
+- (void)setMenuOptions:(NSString *)menuElementId options:(const NSArray *)options
+{
+  NSDictionary *dict = [self extractOptionsDict:options];
+  if (menuElementId == nil || dict == nil) {
+    return;
+  }
+
+  RNSMenuElementLocator *locator = [RNSStackHeaderMenuFinder findMenuElementWithId:menuElementId
+                                                                     inHeaderItems:[self headerItems]];
+  if (locator == nil) {
+    RCTLogWarn(@"[RNScreens] setMenuOptions: element with id \"%@\" not found", menuElementId);
+    return;
+  }
+  if (![locator.searchResult.element isKindOfClass:[RNSStackHeaderMenuData class]]) {
+    RCTLogWarn(@"[RNScreens] setMenuOptions: element \"%@\" is a menuItem, expected menu", menuElementId);
+    return;
+  }
+
+  RNSMenuUpdateOptions *updateOptions = [RNSMenuUpdateOptions fromDictionary:dict];
+  RNSStackHeaderMenuData *oldMenuItem = (RNSStackHeaderMenuData *)locator.searchResult.element;
+  RNSStackHeaderMenuData *newMenuItem = [RNSMenuUpdateOptions applyOptions:updateOptions toMenu:oldMenuItem];
+
+  switch (locator.position) {
+    case RNSMenuElementPositionItem:
+      RCTAssert([locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
+                @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
+      [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
+          updateMenuElementWithId:menuElementId
+                      withElement:newMenuItem
+                       parentMenu:locator.searchResult.parentMenu];
+      break;
+    case RNSMenuElementPositionTitle:
+    case RNSMenuElementPositionOverflow:
+      // TODO: handle title menu and overflow menu
+      break;
+  }
+}
+
+- (nullable NSDictionary *)extractOptionsDict:(const NSArray *)options
+{
+  if (options.count == 0) {
+    return nil;
+  }
+  id first = options[0];
+  if (![first isKindOfClass:[NSDictionary class]]) {
+    return nil;
+  }
+  NSDictionary *dict = (NSDictionary *)first;
+  return dict.count > 0 ? dict : nil;
+}
+
+- (NSArray<RNSStackHeaderItemComponentView *> *)headerItems
+{
+  NSMutableArray<RNSStackHeaderItemComponentView *> *items = [NSMutableArray new];
+  for (UIView *child in _children) {
+    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
+      [items addObject:(RNSStackHeaderItemComponentView *)child];
+    }
+  }
+  return items;
 }
 
 #pragma mark - RCTComponentViewProtocol
