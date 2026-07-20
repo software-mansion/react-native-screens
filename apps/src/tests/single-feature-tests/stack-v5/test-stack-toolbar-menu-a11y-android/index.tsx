@@ -7,10 +7,11 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuElementAndroid,
-  StackHeaderToolbarMenuElementOptionsAndroid,
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuElementAndroid,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
@@ -131,31 +132,33 @@ function MainScreen() {
   }, [cmdTargetId, cmdLabel]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Result</Text>
-      <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+    <ScrollViewMarker>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>Result</Text>
+        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
 
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<AllIds>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ALL_IDS]}
-        onValueChange={setCmdTargetId}
-        testID="cmd-target-picker"
-      />
-      <SettingsPicker<LabelOption>
-        label="accessibilityLabel"
-        value={cmdLabel}
-        items={LABEL_OPTIONS}
-        onValueChange={setCmdLabel}
-        testID="cmd-label-picker"
-      />
-      <Button
-        title="Send Command"
-        onPress={sendCommand}
-        testID="send-command-button"
-      />
-    </ScrollView>
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<AllIds>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ALL_IDS]}
+          onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
+        />
+        <SettingsPicker<LabelOption>
+          label="accessibilityLabel"
+          value={cmdLabel}
+          items={LABEL_OPTIONS}
+          onValueChange={setCmdLabel}
+          testID="cmd-label-picker"
+        />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 

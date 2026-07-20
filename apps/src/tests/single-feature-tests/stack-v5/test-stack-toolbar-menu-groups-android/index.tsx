@@ -12,11 +12,12 @@ import {
   useToast,
 } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuBaseAndroid,
-  StackHeaderToolbarMenuElementAndroid,
-  StackHeaderToolbarMenuElementOptionsAndroid,
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuBaseAndroid,
+  type StackHeaderToolbarMenuElementAndroid,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
@@ -283,56 +284,58 @@ function MainScreen() {
   }, [cmdTargetId, cmdChecked, cmdTitle, cmdHidden]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Last Event</Text>
-      <Text style={styles.result}>{lastEvent ?? '—'}</Text>
+    <ScrollViewMarker>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>Last Event</Text>
+        <Text style={styles.result}>{lastEvent ?? '—'}</Text>
 
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<AllIds>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ALL_IDS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdCheckedOption>
-        label="checked"
-        value={cmdChecked}
-        items={CMD_CHECKED_OPTIONS}
-        onValueChange={setCmdChecked}
-      />
-      <SettingsPicker<CmdTitleOption>
-        label="title"
-        value={cmdTitle}
-        items={CMD_TITLE_OPTIONS}
-        onValueChange={setCmdTitle}
-      />
-      <SettingsPicker<CmdHiddenOption>
-        label="hidden"
-        value={cmdHidden}
-        items={CMD_HIDDEN_OPTIONS}
-        onValueChange={setCmdHidden}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<AllIds>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ALL_IDS]}
+          onValueChange={setCmdTargetId}
+        />
+        <SettingsPicker<CmdCheckedOption>
+          label="checked"
+          value={cmdChecked}
+          items={CMD_CHECKED_OPTIONS}
+          onValueChange={setCmdChecked}
+        />
+        <SettingsPicker<CmdTitleOption>
+          label="title"
+          value={cmdTitle}
+          items={CMD_TITLE_OPTIONS}
+          onValueChange={setCmdTitle}
+        />
+        <SettingsPicker<CmdHiddenOption>
+          label="hidden"
+          value={cmdHidden}
+          items={CMD_HIDDEN_OPTIONS}
+          onValueChange={setCmdHidden}
+        />
+        <Button title="Send Command" onPress={sendCommand} />
 
-      <Text style={styles.heading}>Menu Config — Props</Text>
-      <SettingsSwitch
-        label="singleSelection on colors"
-        value={config.singleSelectionOnColors}
-        onValueChange={v =>
-          applyConfig({ ...config, singleSelectionOnColors: v })
-        }
-      />
-      <SettingsSwitch
-        label="include Blue"
-        value={config.includeBlue}
-        onValueChange={v => applyConfig({ ...config, includeBlue: v })}
-      />
-      <SettingsSwitch
-        label="divider enabled"
-        value={config.dividerEnabled}
-        onValueChange={v => applyConfig({ ...config, dividerEnabled: v })}
-      />
-    </ScrollView>
+        <Text style={styles.heading}>Menu Config — Props</Text>
+        <SettingsSwitch
+          label="singleSelection on colors"
+          value={config.singleSelectionOnColors}
+          onValueChange={v =>
+            applyConfig({ ...config, singleSelectionOnColors: v })
+          }
+        />
+        <SettingsSwitch
+          label="include Blue"
+          value={config.includeBlue}
+          onValueChange={v => applyConfig({ ...config, includeBlue: v })}
+        />
+        <SettingsSwitch
+          label="divider enabled"
+          value={config.dividerEnabled}
+          onValueChange={v => applyConfig({ ...config, dividerEnabled: v })}
+        />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 

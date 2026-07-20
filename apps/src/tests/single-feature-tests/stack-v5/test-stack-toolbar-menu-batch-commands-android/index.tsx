@@ -6,9 +6,10 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuBaseAndroid,
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuBaseAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
@@ -250,64 +251,69 @@ function MainScreen() {
   }, [failingIcon, nextPhotoIcon]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Batch Commands</Text>
-      <View style={styles.buttons}>
-        <Button title="Select All (1 event)" onPress={selectAll} />
-        <Button title="Deselect All (1 event)" onPress={deselectAll} />
-        <Button
-          title="Batch across groups (2 events)"
-          onPress={batchAcrossGroups}
-        />
-        <Button
-          title="Single object update (1 event)"
-          onPress={singleObjectUpdate}
-        />
-        <Button
-          title={
-            appleInToolbar ? 'Move Apple to overflow' : 'Move Apple to toolbar'
-          }
-          onPress={toggleAppleShowAsAction}
-        />
-        <Button
-          title="Batch: image + check (atomic)"
-          onPress={batchWithImageLoad}
-        />
-        <Button
-          title="Ordering race (last: Apple absent)"
-          onPress={runOrderingRace}
-        />
-        <Button
-          title="Failing image + follow-up"
-          onPress={runFailingImageRepro}
-        />
-        <Button
-          title="Duplicate id: merge + last icon"
-          onPress={runDuplicateIdRepro}
-        />
-        <Button title="Reset log (menu state kept)" onPress={resetLog} />
-      </View>
+    <ScrollViewMarker>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>Batch Commands</Text>
+        <View style={styles.buttons}>
+          <Button title="Select All (1 event)" onPress={selectAll} />
+          <Button title="Deselect All (1 event)" onPress={deselectAll} />
+          <Button
+            title="Batch across groups (2 events)"
+            onPress={batchAcrossGroups}
+          />
+          <Button
+            title="Single object update (1 event)"
+            onPress={singleObjectUpdate}
+          />
+          <Button
+            title={
+              appleInToolbar
+                ? 'Move Apple to overflow'
+                : 'Move Apple to toolbar'
+            }
+            onPress={toggleAppleShowAsAction}
+          />
+          <Button
+            title="Batch: image + check (atomic)"
+            onPress={batchWithImageLoad}
+          />
+          <Button
+            title="Ordering race (last: Apple absent)"
+            onPress={runOrderingRace}
+          />
+          <Button
+            title="Failing image + follow-up"
+            onPress={runFailingImageRepro}
+          />
+          <Button
+            title="Duplicate id: merge + last icon"
+            onPress={runDuplicateIdRepro}
+          />
+          <Button title="Reset log (menu state kept)" onPress={resetLog} />
+        </View>
 
-      <Text style={styles.hint}>
-        Move Apple to the toolbar to see its loaded icon (overflow items
-        don&apos;t render icons); its checkbox is only visible in the overflow
-        menu. Icon &amp; showAsAction changes emit no events. Menu checked state
-        persists across taps — Reset log clears only the counter and log.
-      </Text>
+        <Text style={styles.hint}>
+          Move Apple to the toolbar to see its loaded icon (overflow items
+          don&apos;t render icons); its checkbox is only visible in the overflow
+          menu. Icon &amp; showAsAction changes emit no events. Menu checked
+          state persists across taps — Reset log clears only the counter and
+          log.
+        </Text>
 
-      <Text style={styles.heading}>Events received: {eventCount}</Text>
-      <Text style={styles.subheading}>Newest first</Text>
-      {eventLog.length === 0 ? (
-        <Text style={styles.result}>—</Text>
-      ) : (
-        eventLog.map((entry, i) => (
-          <Text key={`${i}-${entry}`} style={styles.result}>
-            {i === 0 ? '▶ ' : '  '}
-            {entry}
-          </Text>
-        ))
-      )}
-    </ScrollView>
+        <Text style={styles.heading}>Events received: {eventCount}</Text>
+        <Text style={styles.subheading}>Newest first</Text>
+        {eventLog.length === 0 ? (
+          <Text style={styles.result}>—</Text>
+        ) : (
+          eventLog.map((entry, i) => (
+            <Text key={`${i}-${entry}`} style={styles.result}>
+              {i === 0 ? '▶ ' : '  '}
+              {entry}
+            </Text>
+          ))
+        )}
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
