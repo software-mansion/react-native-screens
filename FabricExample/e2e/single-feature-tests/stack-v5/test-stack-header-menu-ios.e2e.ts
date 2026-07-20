@@ -1,12 +1,15 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiOS,
+  dismissToast,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
 } from '../../native-class-names';
-import { dismissToast } from '../../e2e-utils';
 
 const menuOneBarButton = element(
   by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('Menu 1')),
