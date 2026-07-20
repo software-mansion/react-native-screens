@@ -8,10 +8,15 @@ such as stack, tabs, split.
 
 - `./src/` - JS side of the library
 
+  - `./src/legacy/` - V4 implementation (legacy stack components, gesture-handler,
+    reanimated integration, transition progress hooks, contexts). Re-exported
+    from `./src/index.tsx` for backward compatibility.
+
   - `./src/components/gamma/` - each directory inside contains JS code for new
     components, planned for next major release,
   - `./src/components/safe-area/` - code related to `SafeAreaView` component,
   - `./src/components/tabs/` - code related to `TabsHost` & `TabsScreen` components,
+  - `./src/components/shared/` - shared types used across component families,
 
   - `./src/fabric/` - _codegen_ specs for the components used by the
     native code generation tool

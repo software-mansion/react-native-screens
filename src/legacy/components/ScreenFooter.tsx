@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewProps } from 'react-native';
-import ScreenFooterNativeComponent from '../fabric/ScreenFooterNativeComponent';
+import ScreenFooterNativeComponent from '../../fabric/legacy/ScreenFooterNativeComponent';
 
 /**
  * Unstable API

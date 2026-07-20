@@ -2,12 +2,12 @@
 
 import { Platform, View } from 'react-native';
 import React from 'react';
-import { ScreenContainerProps } from '../types';
-import { isNativePlatformSupported, screensEnabled } from '../core';
+import { ScreenContainerProps } from '../../types';
+import { isNativePlatformSupported, screensEnabled } from '../../core';
 
 // Native components
-import ScreenContainerNativeComponent from '../fabric/ScreenContainerNativeComponent';
-import ScreenNavigationContainerNativeComponent from '../fabric/ScreenNavigationContainerNativeComponent';
+import ScreenContainerNativeComponent from '../../fabric/legacy/ScreenContainerNativeComponent';
+import ScreenNavigationContainerNativeComponent from '../../fabric/legacy/ScreenNavigationContainerNativeComponent';
 
 function ScreenContainer(props: ScreenContainerProps) {
   const { enabled = screensEnabled(), hasTwoStates, ...rest } = props;

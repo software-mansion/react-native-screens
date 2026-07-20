@@ -5,21 +5,21 @@ import { Animated, View, Platform } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
-import { ScreenProps } from '../types';
+import { ScreenProps } from '../../types';
 
 import {
   freezeEnabled,
   isNativePlatformSupported,
   screensEnabled,
-} from '../core';
+} from '../../core';
 
 // Native components
 import ScreenNativeComponent, {
   NativeProps as ScreenNativeComponentProps,
-} from '../fabric/ScreenNativeComponent';
+} from '../../fabric/legacy/ScreenNativeComponent';
 import ModalScreenNativeComponent, {
   NativeProps as ModalScreenNativeComponentProps,
-} from '../fabric/ModalScreenNativeComponent';
+} from '../../fabric/legacy/ModalScreenNativeComponent';
 
 import { usePrevious } from './helpers/usePrevious';
 import {
@@ -28,8 +28,8 @@ import {
   resolveSheetInitialDetentIndex,
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
-import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
-import featureFlags from '../flags';
+import { parseBooleanToOptionalBooleanNativeProp } from '../../utils';
+import featureFlags from '../../flags';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(

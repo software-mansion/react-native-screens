@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewProps } from 'react-native';
-import ScreenContentWrapperNativeComponent from '../fabric/ScreenContentWrapperNativeComponent';
+import ScreenContentWrapperNativeComponent from '../../fabric/legacy/ScreenContentWrapperNativeComponent';
 
 function ScreenContentWrapper(props: ViewProps) {
   return <ScreenContentWrapperNativeComponent collapsable={false} {...props} />;
