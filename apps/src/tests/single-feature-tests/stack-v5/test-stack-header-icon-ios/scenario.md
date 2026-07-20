@@ -8,15 +8,7 @@
 
 ## E2E test
 
-Incomplete: scenario is partially covered. Only the `sfSymbol` variant can be verified, via its native label
-(`favorite`); `xcasset`, `imageSource` and `templateSource` render as plain
-images with no id/label/text, so their appearance can't be asserted. Icon
-cycling is therefore checked indirectly — `favorite` must be absent while a
-non-`sfSymbol` variant is selected, and the on-screen "current" text / menu
-action title changing confirms the cycle advanced. Opening the menu on long
-press and its items becoming visible is also covered. Not covered: the actual
-rendered image of non-SF-Symbol icons, crossfade, per-item icon positioning,
-nested submenu icons, and menu layout shifts.
+Full: all steps covered.
 
 ## Prerequisites
 

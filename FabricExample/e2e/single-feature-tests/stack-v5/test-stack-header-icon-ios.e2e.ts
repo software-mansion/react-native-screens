@@ -11,7 +11,8 @@ import {
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
 
-// The icon of the header bar button item, addressed by its accessibility label.
+// The icon of the header bar button item, addressed by its icon id (SF Symbol
+// name or asset path).
 const barButtonIcon = (iconId: string) =>
   element(by.id(iconId).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)));
 
@@ -22,8 +23,8 @@ const ICON_IDS = {
   templateSource: 'assets/_apps/assets/variableIcons/icon@3x.png',
 } as const;
 
-// The icon of a single menu row, addressed by its accessibility label and its
-// position in the menu.
+// The icon of a single menu row, addressed by its icon id and its position in
+// the menu.
 const menuRowIcon = (iconId: string, index: number) =>
   element(
     by
@@ -41,19 +42,28 @@ const expectAllMenuRowIconsToBeVisible = async (
   }
 };
 
-const submenuRowIcon = (index: number) =>
+// Titles of the rows inside the nested submenu.
+const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
+
+// The icon of a single submenu row. Scoped by the row's own title rather than
+// by position: the parent menu's cells use the same class and stay in the
+// hierarchy while the submenu is open, so an index-based matcher would happily
+// match a parent row instead.
+const submenuRowIcon = (rowTitle: string) =>
   element(
     by
       .id(ICON_IDS.sfSymbol)
-      .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
-  ).atIndex(index);
+      .withAncestor(
+        by
+          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+          .and(by.label(rowTitle)),
+      ),
+  );
 
-// Asserts that every submenu row renders the 'favorite' icon.
-const expectAllSubmenuRowIconsToBeVisible = async (
-  rowCount: number = MENU_ROW_COUNT,
-) => {
-  for (let index = 0; index < rowCount; index++) {
-    await expect(submenuRowIcon(index)).toBeVisible();
+// Asserts that every submenu row renders the `sfSymbol` icon.
+const expectAllSubmenuRowIconsToBeVisible = async () => {
+  for (const rowTitle of SUBMENU_ROWS) {
+    await expect(submenuRowIcon(rowTitle)).toBeVisible();
   }
 };
 
