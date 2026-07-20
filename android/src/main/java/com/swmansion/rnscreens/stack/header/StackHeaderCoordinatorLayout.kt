@@ -175,7 +175,7 @@ internal class StackHeaderCoordinatorLayout(
     private val wrappedContext =
         ContextThemeWrapper(
             context,
-            R.style.Theme_Material3_DayNight_NoActionBar,
+            R.style.Theme_Material3Expressive_DayNight_NoActionBar,
         )
 
     private val applicator = StackHeaderApplicator(wrappedContext)
