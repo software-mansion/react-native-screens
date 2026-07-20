@@ -5,7 +5,7 @@
 #import <React/RCTViewManager.h>
 #endif // __cplusplus
 
-#import "RNSEnums.h"
+#import "RNSLegacyEnums.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"

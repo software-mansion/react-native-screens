@@ -1,88 +1,10 @@
 #pragma once
 
-typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
-  RNSScreenStackPresentationPush,
-  RNSScreenStackPresentationModal,
-  RNSScreenStackPresentationTransparentModal,
-  RNSScreenStackPresentationContainedModal,
-  RNSScreenStackPresentationContainedTransparentModal,
-  RNSScreenStackPresentationFullScreenModal,
-  RNSScreenStackPresentationFormSheet,
-  RNSScreenStackPresentationPageSheet,
-};
-
-typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
-  RNSScreenStackAnimationDefault,
-  RNSScreenStackAnimationNone,
-  RNSScreenStackAnimationFade,
-  RNSScreenStackAnimationFadeFromBottom,
-  RNSScreenStackAnimationFlip,
-  RNSScreenStackAnimationSlideFromBottom,
-  RNSScreenStackAnimationSimplePush,
-  RNSScreenStackAnimationSlideFromLeft,
-};
-
-typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
-  RNSScreenReplaceAnimationPop,
-  RNSScreenReplaceAnimationPush,
-};
-
-typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
-  RNSScreenSwipeDirectionHorizontal,
-  RNSScreenSwipeDirectionVertical,
-};
-
-typedef NS_ENUM(NSInteger, RNSActivityState) {
-  RNSActivityStateUndefined = -1,
-  RNSActivityStateInactive = 0,
-  RNSActivityStateTransitioningOrBelowTop = 1,
-  RNSActivityStateOnTop = 2
-};
-
 typedef NS_ENUM(NSInteger, RNSScrollEdgeEffect) {
   RNSScrollEdgeEffectAutomatic,
   RNSScrollEdgeEffectHard,
   RNSScrollEdgeEffectSoft,
   RNSScrollEdgeEffectHidden,
-};
-
-typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
-  RNSStatusBarStyleAuto,
-  RNSStatusBarStyleInverted,
-  RNSStatusBarStyleLight,
-  RNSStatusBarStyleDark,
-};
-
-typedef NS_ENUM(NSInteger, RNSWindowTrait) {
-  RNSWindowTraitStyle,
-  RNSWindowTraitAnimation,
-  RNSWindowTraitHidden,
-  RNSWindowTraitOrientation,
-  RNSWindowTraitHomeIndicatorHidden,
-};
-
-typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
-  RNSScreenStackHeaderSubviewTypeBackButton,
-  RNSScreenStackHeaderSubviewTypeLeft,
-  RNSScreenStackHeaderSubviewTypeRight,
-  RNSScreenStackHeaderSubviewTypeTitle,
-  RNSScreenStackHeaderSubviewTypeCenter,
-  RNSScreenStackHeaderSubviewTypeSearchBar,
-};
-
-typedef NS_ENUM(NSInteger, RNSScreenDetentType) {
-  RNSScreenDetentTypeMedium,
-  RNSScreenDetentTypeLarge,
-  RNSScreenDetentTypeAll,
-};
-
-typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
-  RNSSearchBarPlacementAutomatic,
-  RNSSearchBarPlacementInline,
-  RNSSearchBarPlacementStacked,
-  RNSSearchBarPlacementIntegrated,
-  RNSSearchBarPlacementIntegratedButton,
-  RNSSearchBarPlacementIntegratedCentered,
 };
 
 typedef NS_ENUM(NSInteger, RNSSplitScreenColumnType) {
@@ -160,12 +82,6 @@ typedef NS_ENUM(NSInteger, RNSTabsScreenSystemItem) {
   RNSTabsScreenSystemItemRecents,
   RNSTabsScreenSystemItemSearch,
   RNSTabsScreenSystemItemTopRated
-};
-
-typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
-  RNSOptionalBooleanUndefined,
-  RNSOptionalBooleanTrue,
-  RNSOptionalBooleanFalse
 };
 
 typedef NS_ENUM(NSInteger, RNSTabsBottomAccessoryEnvironment) {

@@ -10,7 +10,7 @@
 #endif
 
 #import "RNSDefines.h"
-#import "RNSEnums.h"
+#import "RNSLegacyEnums.h"
 
 @interface RNSSearchBar :
 #if defined(__cplusplus)
