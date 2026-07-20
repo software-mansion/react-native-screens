@@ -8,5 +8,5 @@ import ScrollToTopGuardNativeComponent from '../../fabric/scroll-to-top-guard/Sc
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 export function ScrollToTopGuard(props: ViewProps) {
-  return <ScrollToTopGuardNativeComponent collapsable={false} {...props} />;
+  return <ScrollToTopGuardNativeComponent {...props} collapsable={false} />;
 }

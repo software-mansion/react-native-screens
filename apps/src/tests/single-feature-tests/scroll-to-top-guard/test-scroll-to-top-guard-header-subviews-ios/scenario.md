@@ -34,8 +34,8 @@ TBD
   - [ ] Guarded Right does NOT scroll to top; unguarded Right does.
 7. Repeat steps 2–3 for the **Title** subview.
   - [ ] Guarded Title does NOT scroll to top; unguarded Title does.
-9. Set a guarded subview's `hitSlop` to `30`, `hidesSharedBackground: false`,
+8. Set a guarded subview's `hitSlop` to `30`, `hidesSharedBackground: false`,
    scroll down, and tap just outside the subview.
   - [ ] The press is registered and the list does NOT scroll to top.
-10. Repeat step 9 with `hidesSharedBackground: true`.
+9. Repeat step 9 with `hidesSharedBackground: true`.
   - [ ] The press is registered and the list does NOT scroll to top.
