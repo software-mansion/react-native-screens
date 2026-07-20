@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SearchBarCommands, SearchBarProps } from '../types';
+import { SearchBarProps } from '../types';
 import {
   parseBooleanToOptionalBooleanNativeProp,
   isSearchBarAvailableForCurrentPlatform,
@@ -10,70 +10,58 @@ import { View } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
-  Commands as SearchBarNativeCommands,
-  NativeProps as SearchBarNativeProps,
+  Commands as NativeSearchBarCommands,
   SearchBarEvent,
   SearchButtonPressedEvent,
   ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
 import type { CodegenTypes as CT } from 'react-native';
 
-const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & {
-    ref?: React.RefObject<SearchBarCommands | null> | undefined;
-  }
-> &
-  typeof NativeSearchBarCommands =
-  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
-    SearchBarCommandsType;
-const NativeSearchBarCommands: SearchBarCommandsType =
-  SearchBarNativeCommands as SearchBarCommandsType;
+type SearchBarHostInstance = React.ComponentRef<
+  typeof SearchBarNativeComponent
+>;
 
-type NativeSearchBarRef = React.ComponentRef<typeof NativeSearchBar>;
+function SearchBar(props: SearchBarProps) {
+  const searchBarRef = React.useRef<SearchBarHostInstance | null>(null);
 
-type SearchBarCommandsType = {
-  blur: (viewRef: NativeSearchBarRef) => void;
-  focus: (viewRef: NativeSearchBarRef) => void;
-  clearText: (viewRef: NativeSearchBarRef) => void;
-  toggleCancelButton: (viewRef: NativeSearchBarRef, flag: boolean) => void;
-  setText: (viewRef: NativeSearchBarRef, text: string) => void;
-  cancelSearch: (viewRef: NativeSearchBarRef) => void;
-};
-
-function SearchBar(
-  props: SearchBarProps,
-  forwardedRef: React.Ref<SearchBarCommands>,
-) {
-  const searchBarRef = React.useRef<SearchBarCommands>(null);
-
-  React.useImperativeHandle(forwardedRef, () => ({
+  React.useImperativeHandle(props.ref, () => ({
     blur: () => {
-      _callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.blur(instance),
+      );
     },
     focus: () => {
-      _callMethodWithRef(ref => NativeSearchBarCommands.focus(ref));
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.focus(instance),
+      );
     },
     toggleCancelButton: (flag: boolean) => {
-      _callMethodWithRef(ref =>
-        NativeSearchBarCommands.toggleCancelButton(ref, flag),
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.toggleCancelButton(instance, flag),
       );
     },
     clearText: () => {
-      _callMethodWithRef(ref => NativeSearchBarCommands.clearText(ref));
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.clearText(instance),
+      );
     },
     setText: (text: string) => {
-      _callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.setText(instance, text),
+      );
     },
     cancelSearch: () => {
-      _callMethodWithRef(ref => NativeSearchBarCommands.cancelSearch(ref));
+      callWithNativeInstance(instance =>
+        NativeSearchBarCommands.cancelSearch(instance),
+      );
     },
   }));
 
-  const _callMethodWithRef = React.useCallback(
-    (method: (ref: SearchBarCommands) => void) => {
-      const ref = searchBarRef.current;
-      if (ref) {
-        method(ref);
+  const callWithNativeInstance = React.useCallback(
+    (command: (instance: SearchBarHostInstance) => void) => {
+      const instance = searchBarRef.current;
+      if (instance) {
+        command(instance);
       } else {
         console.warn(
           'Reference to native search bar component has not been updated yet',
@@ -98,11 +86,13 @@ function SearchBar(
     onSearchButtonPress,
     onCancelButtonPress,
     onChangeText,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ref,
     ...rest
   } = props;
 
   return (
-    <NativeSearchBar
+    <SearchBarNativeComponent
       ref={searchBarRef}
       {...rest}
       obscureBackground={parseBooleanToOptionalBooleanNativeProp(
@@ -124,4 +114,4 @@ function SearchBar(
   );
 }
 
-export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);
+export default SearchBar;
