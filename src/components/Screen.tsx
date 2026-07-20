@@ -1,7 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Animated, View, Platform } from 'react-native';
+import {
+  Animated,
+  Platform,
+  type ViewStyle,
+  type ViewInstance,
+} from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -41,22 +46,25 @@ const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-interface ViewConfig extends View {
-  viewConfig: {
+// The `*viewConfig` fields are optional so that a bare host instance (which is
+// what the ref callbacks receive) stays assignable; they are read defensively
+// via optional chaining below.
+interface ViewConfig extends ViewInstance {
+  viewConfig?: {
     validAttributes: {
       style: {
         display: boolean | null;
       };
     };
   };
-  _viewConfig: {
+  _viewConfig?: {
     validAttributes: {
       style: {
         display: boolean | null;
       };
     };
   };
-  __viewConfig: {
+  __viewConfig?: {
     validAttributes: {
       style: {
         display: boolean | null;
@@ -65,13 +73,13 @@ interface ViewConfig extends View {
   };
 }
 
-export const InnerScreen = React.forwardRef<View, ScreenProps>(
+export const InnerScreen = React.forwardRef<ViewInstance, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
     React.useImperativeHandle(ref, () => innerRef.current!, []);
     const prevActivityState = usePrevious(props.activityState);
 
-    const setRef = (ref: ViewConfig) => {
+    const setRef = (ref: ViewConfig | null) => {
       innerRef.current = ref;
       props.onComponentRef?.(ref);
     };
@@ -175,7 +183,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       }
 
-      const handleRef = (ref: ViewConfig) => {
+      const handleRef = (ref: ViewConfig | null) => {
         // Workaround is necessary to prevent React Native from hiding frozen screens.
         // See this PR: https://github.com/grahammendick/navigation/pull/860
         if (ref?.viewConfig?.validAttributes?.style) {
@@ -225,7 +233,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             // https://github.com/software-mansion/react-native-screens/issues/2345
             // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
             // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
-            style={[style, { zIndex: undefined }]}
+            // The cast is needed because `exactOptionalPropertyTypes` forbids an explicit `undefined` on `zIndex`.
+            style={[
+              style,
+              { zIndex: undefined } as {
+                zIndex?: number | undefined;
+              } as ViewStyle,
+            ]}
             activityState={activityState}
             screenId={screenId}
             sheetAllowedDetents={resolvedSheetAllowedDetents}
@@ -322,7 +336,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
+const Screen = React.forwardRef<ViewInstance, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
   return <ScreenWrapper {...props} ref={ref} />;

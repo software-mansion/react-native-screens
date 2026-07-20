@@ -8,7 +8,7 @@ import type { StackHostProps } from './StackHost.types';
  */
 function StackHost({ children, ref }: StackHostProps) {
   return (
-    <StackHostNativeComponent ref={ref} style={styles.container}>
+    <StackHostNativeComponent ref={ref ?? null} style={styles.container}>
       {children}
     </StackHostNativeComponent>
   );

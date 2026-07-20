@@ -13,7 +13,7 @@ import {
   NativeSyntheticEvent,
   Platform,
   StyleSheet,
-  View,
+  type ViewInstance,
   ViewProps,
 } from 'react-native';
 import featureFlags from '../flags';
@@ -31,7 +31,7 @@ export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubv
   ScreenStackHeaderSubviewNativeComponent;
 
 export const ScreenStackHeaderConfig = React.forwardRef<
-  View,
+  ViewInstance,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
   const {
@@ -245,6 +245,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // We only want to center align the subviews on iOS.
     // See https://github.com/software-mansion/react-native-screens/pull/2456
-    alignItems: Platform.OS === 'ios' ? 'center' : undefined,
+    // `'stretch'` is the Yoga default, so it is equivalent to leaving
+    // `alignItems` unset https://github.com/react/react-native/blob/v0.87.0-rc.1/packages/react-native/ReactCommon/yoga/yoga/style/Style.h#L907
+    alignItems: Platform.OS === 'ios' ? 'center' : 'stretch',
   },
 });

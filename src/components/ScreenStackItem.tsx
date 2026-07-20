@@ -4,7 +4,7 @@ import {
   type StyleProp,
   StyleSheet,
   type ViewStyle,
-  View,
+  type ViewInstance,
 } from 'react-native';
 import warnOnce from 'warn-once';
 
@@ -54,7 +54,7 @@ function ScreenStackItem(
     unstable_sheetFooter,
     ...rest
   }: Props,
-  ref: React.ForwardedRef<View>,
+  ref: React.ForwardedRef<ViewInstance>,
 ) {
   const headerVisible = !headerConfig?.hidden;
   const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
@@ -65,7 +65,7 @@ function ScreenStackItem(
     headerConfig?.disableBottomInsetApplication ?? false,
   );
 
-  const currentScreenRef = React.useRef<View | null>(null);
+  const currentScreenRef = React.useRef<ViewInstance | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
   React.useImperativeHandle(ref, () => currentScreenRef.current!);
@@ -259,9 +259,7 @@ function getPositioningStyle(
 }
 
 type SplitStyleResult = {
-  screenStyles: {
-    backgroundColor?: ViewStyle['backgroundColor'] | undefined;
-  };
+  screenStyles: Pick<ViewStyle, 'backgroundColor'>;
   contentWrapperStyles: StyleProp<ViewStyle>;
 };
 
@@ -272,9 +270,8 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 
   const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
 
-  const screenStyles = {
-    backgroundColor,
-  };
+  const screenStyles: Pick<ViewStyle, 'backgroundColor'> =
+    backgroundColor !== undefined ? { backgroundColor } : {};
 
   return {
     screenStyles,

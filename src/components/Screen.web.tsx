@@ -18,8 +18,11 @@ export class NativeScreen extends React.Component<ScreenProps> {
       activityState,
       style,
       enabled = screensEnabled(),
+      ref,
       ...rest
     } = this.props;
+
+    const refProp = ref !== undefined ? { ref } : {};
 
     if (enabled) {
       if (active !== undefined && activityState === undefined) {
@@ -31,11 +34,12 @@ export class NativeScreen extends React.Component<ScreenProps> {
           hidden={activityState === 0}
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
           {...rest}
+          {...refProp}
         />
       );
     }
 
-    return <View {...rest} />;
+    return <View {...rest} {...refProp} />;
   }
 }
 

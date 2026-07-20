@@ -4,8 +4,8 @@ import {
   NativeSyntheticEvent,
   ViewProps,
   View,
+  type ViewInstance,
   TargetedEvent,
-  TextInputFocusEventData,
   ColorValue,
   ImageSourcePropType,
 } from 'react-native';
@@ -15,6 +15,16 @@ import type {
   ScrollEdgeEffect,
   UserInterfaceStyle,
 } from './components/shared/types';
+
+/**
+ * `react-native` 0.87 removed the `TextInputFocusEventData` export (in favor of `TextInputFocusEvent`).
+ * We keep a local copy of the previous data shape to keep `SearchBarProps['onChangeText']`
+ * backward compatible.
+ */
+export interface TextInputFocusEventData extends TargetedEvent {
+  eventCount: number;
+  text: string;
+}
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -357,7 +367,7 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   preventNativeDismiss?: boolean | undefined;
-  ref?: React.Ref<View> | undefined;
+  ref?: React.Ref<ViewInstance> | undefined;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -1372,7 +1382,7 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
+export type ScreensRefsHolder = Record<string, React.RefObject<ViewInstance>>;
 
 export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;

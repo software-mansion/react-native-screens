@@ -19,15 +19,27 @@ function resolveIconAssetSources(
     return undefined;
   }
   if (icon.type === 'imageSource') {
+    const resolvedSource = Image.resolveAssetSource(icon.imageSource);
+
+    if (!resolvedSource) {
+      return undefined;
+    }
+
     return {
       type: 'imageSource',
-      imageSource: Image.resolveAssetSource(icon.imageSource),
+      imageSource: resolvedSource,
     };
   }
   if (icon.type === 'templateSource') {
+    const resolvedTemplate = Image.resolveAssetSource(icon.templateSource);
+
+    if (!resolvedTemplate) {
+      return undefined;
+    }
+
     return {
       type: 'templateSource',
-      templateSource: Image.resolveAssetSource(icon.templateSource),
+      templateSource: resolvedTemplate,
     };
   }
   return icon;
