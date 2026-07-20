@@ -6,8 +6,6 @@ export type StackHostProps = {
   children: NonNullable<ViewProps['children']>;
   // TODO: Work on these types
   ref?:
-    | React.RefObject<
-        (React.Component<NativeProps> & HostInstance) | null
-      >
+    | React.RefObject<(React.Component<NativeProps> & HostInstance) | null>
     | undefined;
 };
