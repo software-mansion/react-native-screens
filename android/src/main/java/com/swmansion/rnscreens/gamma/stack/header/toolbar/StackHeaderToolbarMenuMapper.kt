@@ -247,13 +247,13 @@ internal object StackHeaderToolbarMenuMapper {
     //
     // A plain `T?` return can encode this only when the field's default is non-null,
     // so `null` unambiguously means "no change". Fields whose default is null (the
-    // string fields and tint colors) must return `StackHeaderToolbarUpdate<T>?`
+    // string fields and tint colors) must return `StackHeaderToolbarFieldUpdate<T>?`
     // instead, to tell "no change" (null) apart from "reset" (Reset).
-    private fun ReadableMap.readNullableStringUpdate(key: String): StackHeaderToolbarUpdate<String>? =
+    private fun ReadableMap.readNullableStringUpdate(key: String): StackHeaderToolbarFieldUpdate<String>? =
         when {
             !this.hasKey(key) -> null
-            this.isNull(key) -> StackHeaderToolbarUpdate.Reset
-            else -> StackHeaderToolbarUpdate.from(this.getString(key))
+            this.isNull(key) -> StackHeaderToolbarFieldUpdate.Reset
+            else -> StackHeaderToolbarFieldUpdate.from(this.getString(key))
         }
 
     private fun ReadableMap.readNullableBooleanUpdate(
@@ -282,11 +282,11 @@ internal object StackHeaderToolbarMenuMapper {
     private fun ReadableMap.readNullableColorUpdate(
         context: Context,
         key: String,
-    ): StackHeaderToolbarUpdate<Int>? =
+    ): StackHeaderToolbarFieldUpdate<Int>? =
         when {
             !this.hasKey(key) -> null
-            this.isNull(key) -> StackHeaderToolbarUpdate.Reset
-            else -> StackHeaderToolbarUpdate.from(parseColor(context, key))
+            this.isNull(key) -> StackHeaderToolbarFieldUpdate.Reset
+            else -> StackHeaderToolbarFieldUpdate.from(parseColor(context, key))
         }
 
     // endregion

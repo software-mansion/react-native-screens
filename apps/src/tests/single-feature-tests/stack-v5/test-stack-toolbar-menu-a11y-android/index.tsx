@@ -124,10 +124,10 @@ function MainScreen() {
         accessibilityLabel: cmdLabel === 'undefined' ? undefined : cmdLabel,
       }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuElementOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdLabel]);
 
   return (

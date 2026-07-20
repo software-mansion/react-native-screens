@@ -88,6 +88,16 @@ internal class ScreensCoordinatorLayout(
         }
     }
 
+    override fun clearAnimation() {
+        // Called when the system aborts a transition (e.g., fast forward/backward navigation).
+        // We must reset our manual finalization flags here to ensure our `onAnimationEnd` listener
+        // doesn't detach the view that the should be kept alive after navigating back.
+        blockFrameworkTransitionFinalization = false
+        needsTransitionFinalization = false
+
+        super.clearAnimation()
+    }
+
     /**
      * This method implements a workaround for RN's autoFocus functionality. Because of the way
      * autoFocus is implemented it dismisses soft keyboard in fragment transition
