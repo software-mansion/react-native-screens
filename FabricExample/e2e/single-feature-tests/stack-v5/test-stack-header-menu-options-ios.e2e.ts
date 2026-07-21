@@ -68,17 +68,14 @@ function paletteIcon(iconId: string) {
   return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
 }
 
-/**
- * Top edge of a palette icon in screen coordinates; smaller y is higher up.
- */
+/** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
 async function getPaletteIconTopY(iconId: string) {
   const attrs = await paletteIcon(iconId).getAttributes();
   return (attrs as IosElementAttributes).frame.y;
 }
 
 /**
- * Dismisses the presented context menu without selecting any item, and waits
- * until the platter is actually gone.
+ * Dismisses the presented context menu without selecting any item.
  *
  * The platter is anchored under the header's trailing items, so it covers the
  * centre of this full-width text: a centre tap hits the menu and only pops one
