@@ -12,6 +12,7 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_IMAGE_VIEW,
 } from '../../native-class-names';
+import { IosElementAttributes } from 'detox/detox';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
@@ -77,7 +78,12 @@ async function openMenuOne() {
  * trailing bar button, so a point near the left edge never lands on it.
  */
 async function dismissMenu() {
-  await device.tap({ x: 20, y: 500 });
+  const textAttributes = (await element(
+    by.text('setMenuOptions (Menu 1)'),
+  ).getAttributes()) as IosElementAttributes;
+  const x = textAttributes.frame.x;
+  const y = textAttributes.frame.y + textAttributes.frame.height / 2;
+  await device.tap({ x, y });
   await waitFor(contextMenu).not.toExist().withTimeout(2000);
 }
 
