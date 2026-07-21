@@ -20,7 +20,7 @@ add_compile_options(
   -Wno-dollar-in-identifier-extension
 )
 
-file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_COMPONENTS_DIR}/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/legacy/*.cpp)
+file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_COMPONENTS_DIR}/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/legacy/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/legacy/utils/*.cpp)
 file(GLOB LIB_CODEGEN_SRCS CONFIGURE_DEPENDS ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}/*.cpp)
 
 add_library(
@@ -65,4 +65,3 @@ target_include_directories(
  PUBLIC
  ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
