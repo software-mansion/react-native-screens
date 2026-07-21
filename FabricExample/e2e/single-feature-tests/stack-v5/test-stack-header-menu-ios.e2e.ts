@@ -6,6 +6,8 @@ import {
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_CELL,
+  CLASS_NAME_UI_IMAGE_VIEW,
 } from '../../native-class-names';
 import { dismissToast } from '../../e2e-utils';
 
@@ -33,10 +35,11 @@ function checkmarkFor(itemLabel: string) {
  * command. Selected toggle/radio rows render their checkmark separately (it is
  * matched by the `checkmark` identifier above), so the two never overlap.
  */
-function iconFor(itemLabel: string) {
+function iconFor(iconId: string, itemLabel: string) {
   return element(
     by
-      .type(CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW)
+      .type(CLASS_NAME_UI_IMAGE_VIEW)
+      .and(by.id(iconId))
       .withAncestor(menuCell(itemLabel)),
   );
 }
@@ -221,7 +224,7 @@ describeIfiOS(
       );
     });
 
-    it('should rename the targeted action item', async () => {
+    it('should rename the targeted menu item', async () => {
       await selectPickerOption(
         'menu-item-options-title-picker',
         'title-new title',
@@ -235,7 +238,7 @@ describeIfiOS(
     });
 
     it('should add an icon to the renamed item while keeping its title', async () => {
-      await expect(iconFor('New Title')).not.toExist();
+      await expect(iconFor('star.fill', 'New Title')).not.toExist();
       await dismissMenu();
 
       await selectPickerOption(
@@ -250,11 +253,18 @@ describeIfiOS(
 
       await openMenuOne();
 
-      await expect(element(by.text('New Title'))).toBeVisible();
-      await expect(iconFor('New Title')).toBeVisible();
+      await expect(
+        element(
+          by
+            .label('New Title')
+            .and(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW))
+            .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL)),
+        ),
+      ).toBeVisible();
+      await expect(iconFor('star.fill', 'New Title')).toBeVisible();
     });
 
-    it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true (Step 4)', async () => {
+    it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true ', async () => {
       await dismissMenu();
 
       await selectPickerOption(
@@ -274,7 +284,7 @@ describeIfiOS(
       await expect(checkmarkFor('Toggle 1-1')).toBeVisible();
     });
 
-    it('should keep Radio 1-1 selected when deselecting it in a singleSelection submenu (Step 5)', async () => {
+    it('should keep Radio 1-1 selected when deselecting it in a singleSelection submenu', async () => {
       await dismissMenu();
 
       await selectPickerOption(
@@ -293,7 +303,7 @@ describeIfiOS(
       await expect(checkmarkFor('Radio 1-1')).toBeVisible();
     });
 
-    it('should move the singleSelection checkmark from Radio 1-1 to Radio 1-2 (Step 6)', async () => {
+    it('should move the singleSelection checkmark from Radio 1-1 to Radio 1-2', async () => {
       await dismissMenu();
 
       await selectPickerOption(
@@ -339,8 +349,8 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
     await expect(element(by.text('Submenu with Radio'))).not.toExist();
   });
 
-  it('should add an icon to the renamed submenu while keeping its title (Step 3)', async () => {
-    await expect(iconFor('New Title')).not.toExist();
+  it('should add an icon to the renamed submenu while keeping its title', async () => {
+    await expect(iconFor('bell.fill', 'New Title')).not.toExist();
     await dismissMenu();
 
     await selectPickerOption('menu-options-title-picker', 'title-no change');
@@ -350,7 +360,7 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
     await openMenuOne();
 
     await expect(element(by.text('New Title'))).toBeVisible();
-    await expect(iconFor('New Title')).toBeVisible();
+    await expect(iconFor('bell.fill', 'New Title')).toBeVisible();
 
     await dismissMenu();
   });
