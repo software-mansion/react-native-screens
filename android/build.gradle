@@ -86,7 +86,22 @@ if (isRunningInContextOfScreensRepo()) {
     apply plugin: "com.facebook.react"
 }
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+def shouldEnableAgpFallback() {
+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpMajorVersion <= 8) {
+        return true
+    }
+
+    def propertyVal = providers.gradleProperty("android.builtInKotlin").orNull
+    def isBuiltInKotlinEnabled = propertyVal != null ? propertyVal.toBoolean() : true
+
+    return !isBuiltInKotlinEnabled
+}
+
+if (shouldEnableAgpFallback()) {
+    apply plugin: 'kotlin-android'
+}
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -170,16 +185,15 @@ android {
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
-        java {
-            srcDirs += [
-                "src/fabric/java",
-            ]
+        kotlin {
+            directories.add("src/fabric/java")
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
-                srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
+                directories.add("${androidResDir}/base")
+                directories.add("${androidResDir}/v33")
             } else {
-                srcDirs = ["${androidResDir}/base"]
+                directories.add("${androidResDir}/base")
             }
         }
     }
