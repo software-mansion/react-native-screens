@@ -16,6 +16,8 @@ const MENU_ROW_COUNT = 4;
 const barButtonIcon = (iconId: string) =>
   element(by.id(iconId).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)));
 
+// `imageSource` and `templateSource` ids are the bundled paths of the `require`d
+// asset files — renaming or moving those assets requires updating them here.
 const ICON_IDS = {
   sfSymbol: 'star.fill',
   xcasset: 'custom-icon-fill',
@@ -45,14 +47,14 @@ const expectAllMenuRowIconsToBeVisible = async (
 // Titles of the rows inside the nested submenu.
 const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 
-// The icon of a single submenu row. Scoped by the row's own title rather than
-// by position: the parent menu's cells use the same class and stay in the
-// hierarchy while the submenu is open, so an index-based matcher would happily
-// match a parent row instead.
-const submenuRowIcon = (rowTitle: string) =>
+// The icon of a single submenu row, addressed by its icon id and the row's own
+// title rather than by position: the parent menu's cells use the same class and
+// stay in the hierarchy while the submenu is open, so an index-based matcher
+// would happily match a parent row instead.
+const submenuRowIcon = (iconId: string, rowTitle: string) =>
   element(
     by
-      .id(ICON_IDS.sfSymbol)
+      .id(iconId)
       .withAncestor(
         by
           .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
@@ -60,10 +62,10 @@ const submenuRowIcon = (rowTitle: string) =>
       ),
   );
 
-// Asserts that every submenu row renders the `sfSymbol` icon.
-const expectAllSubmenuRowIconsToBeVisible = async () => {
+// Asserts that every submenu row renders the icon carrying `iconId`.
+const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
   for (const rowTitle of SUBMENU_ROWS) {
-    await expect(submenuRowIcon(rowTitle)).toBeVisible();
+    await expect(submenuRowIcon(iconId, rowTitle)).toBeVisible();
   }
 };
 
@@ -128,7 +130,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       await expectAllMenuRowIconsToBeVisible(ICON_IDS.sfSymbol);
 
       await element(by.text('Submenu')).tap();
-      await expectAllSubmenuRowIconsToBeVisible();
+      await expectAllSubmenuRowIconsToBeVisible(ICON_IDS.sfSymbol);
 
       // Tapping the submenu title acts as "back", returning to the parent menu
       // so the next test starts with the menu still open.
