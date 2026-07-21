@@ -31,12 +31,7 @@ function checkmarkFor(itemLabel: string) {
   return element(by.id('checkmark').withAncestor(menuCell(itemLabel)));
 }
 
-/**
- * The leading image of a menu row. A row carries at most one such image, so
- * this doubles as the assertion that an SF Symbol was applied by a view
- * command. Selected toggle/radio rows render their checkmark separately (it is
- * matched by the `checkmark` identifier above), so the two never overlap.
- */
+/** A menu row's SF Symbol, whose identifier is the symbol name. */
 function iconFor(iconId: string, itemLabel: string) {
   return element(
     by
@@ -54,9 +49,9 @@ async function scrollTo(matcher: Detox.NativeMatcher) {
 }
 
 /**
- * Opens the picker, taps the option, and closes the picker again. Option rows
- * of every picker share a `<label>-<option>` identifier, so leaving a picker
- * open would make the next selection ambiguous.
+ * Opens the picker, taps the option, closes it again. Option ids
+ * (`<label>-<option>`) repeat across both sections, so only one picker may be
+ * open at a time.
  */
 async function selectPickerOption(pickerId: string, optionId: string) {
   await scrollTo(by.id(pickerId));
@@ -78,9 +73,8 @@ async function openMenuOne() {
 }
 
 /**
- * Dismisses the presented menu by tapping the dimming layer. The menu is
- * anchored to the trailing bar button, so the lower-left corner of the screen
- * is never covered by it.
+ * Taps the dimming layer to dismiss the menu. The menu is anchored to the
+ * trailing bar button, so a point near the left edge never lands on it.
  */
 async function dismissMenu() {
   await device.tap({ x: 20, y: 500 });
