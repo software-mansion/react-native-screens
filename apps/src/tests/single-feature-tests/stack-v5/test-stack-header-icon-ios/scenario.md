@@ -8,7 +8,7 @@
 
 ## E2E test
 
-TBD
+Full: all steps covered.
 
 ## Prerequisites
 
