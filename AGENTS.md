@@ -20,10 +20,11 @@ such as stack, tabs, split.
 
   - `./src/fabric/` - _codegen_ specs for the components used by the
     native code generation tool
-
 - `./android/` - Android part of the library implementation,
 - `./ios/` - iOS part of the library implementation,
-- `./cpp/` and `./common/` - C++ layer, shared between Android and iOS parts,
+- `./cpp/` and `./common/` - C++ layer, shared between Android and iOS parts.
+  Legacy V4 shadow nodes, states, and descriptors live under `legacy/`
+  subdirectories (`cpp/legacy/`, `common/cpp/.../rnscreens/legacy/`).
 - `./FabricExample/` - contains an example application, we use it to showcase the library
   capabilities and test the library. It is not published as part of the package.
 
