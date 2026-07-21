@@ -1,5 +1,9 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiOS,
+  dismissToast,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_LABEL,
@@ -9,7 +13,6 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_IMAGE_VIEW,
 } from '../../native-class-names';
-import { dismissToast } from '../../e2e-utils';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
@@ -112,7 +115,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await expect(element(by.text('Submenu with Radio'))).toBeVisible();
     });
 
-    it('should dismiss the menu and emmit toast after tapping the action item "Action 1-1"', async () => {
+    it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
       await element(by.text('Action 1-1')).tap();
       await dismissToast('1. Clicked Action 1-1');
 
