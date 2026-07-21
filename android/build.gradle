@@ -86,7 +86,19 @@ if (isRunningInContextOfScreensRepo()) {
     apply plugin: "com.facebook.react"
 }
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+// AGP 9 ships built-in Kotlin support enabled by default. When it is active, AGP compiles 
+// our Kotlin sources itself and *additionally* applying the Kotlin Android plugin fails the build.
+// Consuming apps may opt out with `android.builtInKotlin=false` in which case AGP does NOT
+// provide Kotlin and we MUST apply the plugin ourselves.
+// AGP < 9 had no built-in Kotlin at all, so we always apply it there.
+def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.').first().toInteger()
+def isBuiltInKotlinOptOut = project.findProperty('android.builtInKotlin')?.toString()?.trim()?.toLowerCase() == 'false'
+def isBuiltInKotlinActive = agpMajorVersion >= 9 && !isBuiltInKotlinOptOut
+
+if (!isBuiltInKotlinActive) {
+    apply plugin: 'kotlin-android'
+}
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -170,6 +182,11 @@ android {
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
+        kotlin {
+            srcDirs += [
+                "src/fabric/java",
+            ]
+        }
         java {
             srcDirs += [
                 "src/fabric/java",
