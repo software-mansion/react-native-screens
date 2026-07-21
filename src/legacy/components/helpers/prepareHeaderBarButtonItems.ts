@@ -1,5 +1,8 @@
 import { Image, processColor } from 'react-native';
-import { HeaderBarButtonItem, HeaderBarButtonItemWithMenu } from '../../types';
+import type {
+  HeaderBarButtonItem,
+  HeaderBarButtonItemWithMenu,
+} from '../../types';
 
 const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
