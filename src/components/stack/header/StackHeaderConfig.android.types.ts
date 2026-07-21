@@ -5,6 +5,20 @@ import type { PlatformIconAndroid } from '../../shared/types';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
+export type StackHeaderTitleHorizontalGravityAndroid =
+  | 'start'
+  | 'center'
+  | 'end';
+
+export type StackHeaderTitleVerticalGravityAndroid =
+  | 'top'
+  | 'center'
+  | 'bottom';
+
+export type StackHeaderCollapsedTitleGravityModeAndroid =
+  | 'entireSpace'
+  | 'availableSpace';
+
 export type StackHeaderBackgroundSubviewCollapseModeAndroid =
   StackHeaderSubviewCollapseModeAndroid;
 
@@ -710,4 +724,114 @@ export interface StackHeaderConfigPropsAndroid {
    * @supported API 28 or higher
    */
   toolbarMenuGroupDividerEnabled?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the title within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only; ignored for `medium` / `large` (use
+   * `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
+   * instead). The title is centered independently of the subtitle and clamped
+   * so it does not overlap the navigation icon, menu, or leading/trailing
+   * subviews. Combining a centered title with a center subview is not
+   * recommended — they may overlap.
+   *
+   * @default false
+   * @platform android
+   */
+  titleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the subtitle within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only. The subtitle is centered independently
+   * of the title. See {@link titleCentered}.
+   *
+   * @default false
+   * @platform android
+   */
+  subtitleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small` (use
+   * `titleCentered` instead). The subtitle always follows the title's
+   * alignment.
+   *
+   * @default start
+   * @platform android
+   */
+  expandedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only. The default `bottom` matches
+   * the Material 3 expanded app bar look.
+   *
+   * @default bottom
+   * @platform android
+   */
+  expandedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * subtitle always follows the title's alignment. `center` / `end` are further
+   * affected by `collapsedTitleGravityMode`.
+   *
+   * @default start
+   * @platform android
+   */
+  collapsedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only.
+   *
+   * @default center
+   * @platform android
+   */
+  collapsedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Anchor used when resolving the collapsed title's horizontal
+   * gravity.
+   *
+   * @description
+   * The following values are available:
+   * - `availableSpace` - gravity is computed over the space left after the
+   *   navigation icon and menu are laid out,
+   * - `entireSpace` - gravity is computed over the whole app bar, so a centered
+   *   title is centered relative to the app bar and pushed aside only if it
+   *   would overlap another view (toolbar-center behavior).
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only and only affects the collapsed
+   * state; it is only visually meaningful with `center` / `end`
+   * `collapsedTitleHorizontalGravity`. Because the underlying Material field is
+   * set at construction time, changing this prop rebuilds the header.
+   *
+   * Even though Material's default value for this prop is `availableSpace`,
+   * we decided that `entireSpace` is the better default for most use cases.
+   *
+   * @default entireSpace
+   * @platform android
+   */
+  collapsedTitleGravityMode?:
+    | StackHeaderCollapsedTitleGravityModeAndroid
+    | undefined;
 }

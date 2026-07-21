@@ -13,6 +13,14 @@ import type { UnsafeMixed } from '../codegenUtils';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
+type StackHeaderTitleHorizontalGravityAndroid = 'start' | 'center' | 'end';
+
+type StackHeaderTitleVerticalGravityAndroid = 'top' | 'center' | 'bottom';
+
+type StackHeaderCollapsedTitleGravityModeAndroid =
+  | 'entireSpace'
+  | 'availableSpace';
+
 export type StackHeaderToolbarMenuItemPressEventAndroid = Readonly<{
   id: string;
 }>;
@@ -84,12 +92,37 @@ export type StackHeaderToolbarMenuElementAndroid =
 
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
+  subtitle?: string | undefined;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
   backButtonHidden?: CT.WithDefault<boolean, false>;
 
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;
+
+  titleCentered?: CT.WithDefault<boolean, false>;
+  subtitleCentered?: CT.WithDefault<boolean, false>;
+
+  expandedTitleHorizontalGravity?: CT.WithDefault<
+    StackHeaderTitleHorizontalGravityAndroid,
+    'start'
+  >;
+  expandedTitleVerticalGravity?: CT.WithDefault<
+    StackHeaderTitleVerticalGravityAndroid,
+    'bottom'
+  >;
+  collapsedTitleHorizontalGravity?: CT.WithDefault<
+    StackHeaderTitleHorizontalGravityAndroid,
+    'start'
+  >;
+  collapsedTitleVerticalGravity?: CT.WithDefault<
+    StackHeaderTitleVerticalGravityAndroid,
+    'center'
+  >;
+  collapsedTitleGravityMode?: CT.WithDefault<
+    StackHeaderCollapsedTitleGravityModeAndroid,
+    'entireSpace'
+  >;
 
   backButtonTintColorNormal?: ColorValue | undefined;
   backButtonTintColorPressed?: ColorValue | undefined;

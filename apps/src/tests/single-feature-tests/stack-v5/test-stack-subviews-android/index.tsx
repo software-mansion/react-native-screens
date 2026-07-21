@@ -21,6 +21,9 @@ import LongText from '@apps/shared/LongText';
 import {
   type StackHeaderConfigProps,
   type StackHeaderTypeAndroid,
+  type StackHeaderTitleHorizontalGravityAndroid,
+  type StackHeaderTitleVerticalGravityAndroid,
+  type StackHeaderCollapsedTitleGravityModeAndroid,
   type StackHeaderBackgroundSubviewCollapseModeAndroid,
   ScrollViewMarker,
 } from 'react-native-screens';
@@ -30,10 +33,15 @@ const LONG_TITLE = I18nManager.isRTL
   ? 'عنوان طويل جدا يجب أن يتم اقتطاعه عندما لا تتوفر مساحة كافية لعرضه بالكامل'
   : 'A Very Long Title That Should Ellipsize When There Is Not Enough Space Available';
 
-type SubviewSize = 'none' | 'sm' | 'md' | 'lg';
+const SHORT_SUBTITLE = I18nManager.isRTL ? 'عنوان فرعي' : 'Subtitle';
+const LONG_SUBTITLE = I18nManager.isRTL
+  ? 'عنوان فرعي طويل جدا يجب أن يتم اقتطاعه عندما لا تتوفر مساحة كافية لعرضه'
+  : 'A Very Long Subtitle That Should Ellipsize When There Is Not Enough Space';
+
+type SubviewSize = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 type HitSlopValue = '0' | '10' | '30';
 type PressRetentionValue = '0' | '20' | '50';
-type TitleOption = 'short' | 'long';
+type TextOption = 'undefined' | 'short' | 'long';
 type ScrollFlagValue = 'undefined' | 'true' | 'false';
 
 interface Config {
@@ -41,7 +49,15 @@ interface Config {
   type: StackHeaderTypeAndroid;
   transparent: boolean;
   hidden: boolean;
-  title: TitleOption;
+  title: TextOption;
+  subtitle: TextOption;
+  titleCentered: boolean;
+  subtitleCentered: boolean;
+  expandedTitleHorizontalGravity: StackHeaderTitleHorizontalGravityAndroid;
+  expandedTitleVerticalGravity: StackHeaderTitleVerticalGravityAndroid;
+  collapsedTitleHorizontalGravity: StackHeaderTitleHorizontalGravityAndroid;
+  collapsedTitleVerticalGravity: StackHeaderTitleVerticalGravityAndroid;
+  collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityModeAndroid;
   leadingSize: SubviewSize;
   centerSize: SubviewSize;
   trailingSize: SubviewSize;
@@ -62,6 +78,14 @@ const DEFAULT_CONFIG: Config = {
   transparent: false,
   hidden: false,
   title: 'short',
+  subtitle: 'short',
+  titleCentered: false,
+  subtitleCentered: false,
+  expandedTitleHorizontalGravity: 'start',
+  expandedTitleVerticalGravity: 'bottom',
+  collapsedTitleHorizontalGravity: 'start',
+  collapsedTitleVerticalGravity: 'center',
+  collapsedTitleGravityMode: 'entireSpace',
   leadingSize: 'none',
   centerSize: 'none',
   trailingSize: 'none',
@@ -76,7 +100,7 @@ const DEFAULT_CONFIG: Config = {
   scrollFlagSnap: 'undefined',
 };
 
-const SUBVIEW_SIZES: SubviewSize[] = ['none', 'sm', 'md', 'lg'];
+const SUBVIEW_SIZES: SubviewSize[] = ['none', 'sm', 'md', 'lg', 'xl'];
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'medium', 'large'];
 const COLLAPSE_MODES: StackHeaderBackgroundSubviewCollapseModeAndroid[] = [
   'off',
@@ -84,8 +108,22 @@ const COLLAPSE_MODES: StackHeaderBackgroundSubviewCollapseModeAndroid[] = [
 ];
 const HIT_SLOP_VALUES: HitSlopValue[] = ['0', '10', '30'];
 const PRESS_RETENTION_VALUES: PressRetentionValue[] = ['0', '20', '50'];
-const TITLE_OPTIONS: TitleOption[] = ['short', 'long'];
+const TEXT_OPTIONS: TextOption[] = ['undefined', 'short', 'long'];
 const SCROLL_FLAG_VALUES: ScrollFlagValue[] = ['undefined', 'true', 'false'];
+const HORIZONTAL_GRAVITY_OPTIONS: StackHeaderTitleHorizontalGravityAndroid[] = [
+  'start',
+  'center',
+  'end',
+];
+const VERTICAL_GRAVITY_OPTIONS: StackHeaderTitleVerticalGravityAndroid[] = [
+  'top',
+  'center',
+  'bottom',
+];
+const GRAVITY_MODE_OPTIONS: StackHeaderCollapsedTitleGravityModeAndroid[] = [
+  'availableSpace',
+  'entireSpace',
+];
 
 function resolveScrollFlag(value: ScrollFlagValue): boolean | undefined {
   switch (value) {
@@ -93,6 +131,21 @@ function resolveScrollFlag(value: ScrollFlagValue): boolean | undefined {
       return true;
     case 'false':
       return false;
+    default:
+      return undefined;
+  }
+}
+
+function resolveText(
+  value: TextOption,
+  short: string,
+  long: string,
+): string | undefined {
+  switch (value) {
+    case 'short':
+      return short;
+    case 'long':
+      return long;
     default:
       return undefined;
   }
@@ -109,6 +162,8 @@ function getSubviewDimensions(size: SubviewSize): {
       return { width: 24, height: 40 };
     case 'lg':
       return { width: 80, height: 40 };
+    case 'xl':
+      return { width: 250, height: 40 };
     default:
       return { width: 0, height: 0 };
   }
@@ -162,7 +217,8 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     : undefined;
 
   return {
-    title: config.title === 'short' ? SHORT_TITLE : LONG_TITLE,
+    title: resolveText(config.title, SHORT_TITLE, LONG_TITLE),
+    subtitle: resolveText(config.subtitle, SHORT_SUBTITLE, LONG_SUBTITLE),
     hidden: config.hidden,
     transparent: config.transparent,
     android: {
@@ -171,6 +227,13 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       leadingSubview: makeToolbarSubview(config.leadingSize, 'L'),
       centerSubview: makeToolbarSubview(config.centerSize, 'C'),
       trailingSubview: makeToolbarSubview(config.trailingSize, 'T'),
+      titleCentered: config.titleCentered,
+      subtitleCentered: config.subtitleCentered,
+      expandedTitleHorizontalGravity: config.expandedTitleHorizontalGravity,
+      expandedTitleVerticalGravity: config.expandedTitleVerticalGravity,
+      collapsedTitleHorizontalGravity: config.collapsedTitleHorizontalGravity,
+      collapsedTitleVerticalGravity: config.collapsedTitleVerticalGravity,
+      collapsedTitleGravityMode: config.collapsedTitleGravityMode,
       scrollFlagScroll: resolveScrollFlag(config.scrollFlagScroll),
       scrollFlagEnterAlways: resolveScrollFlag(config.scrollFlagEnterAlways),
       scrollFlagEnterAlwaysCollapsed: resolveScrollFlag(
@@ -250,12 +313,86 @@ function ConfigScreen() {
           value={config.hidden}
           onValueChange={v => updateConfig('hidden', v)}
         />
-        <SettingsPicker<TitleOption>
+        <SettingsPicker<TextOption>
           label="title"
           value={config.title}
           onValueChange={v => updateConfig('title', v)}
-          items={TITLE_OPTIONS}
+          items={TEXT_OPTIONS}
         />
+        <SettingsPicker<TextOption>
+          label="subtitle"
+          value={config.subtitle}
+          onValueChange={v => updateConfig('subtitle', v)}
+          items={TEXT_OPTIONS}
+        />
+        <Text style={styles.heading}>Title Positioning</Text>
+        {config.type === 'small' ? (
+          <>
+            <SettingsSwitch
+              label="titleCentered"
+              value={config.titleCentered}
+              onValueChange={v => updateConfig('titleCentered', v)}
+            />
+            <SettingsSwitch
+              label="subtitleCentered"
+              value={config.subtitleCentered}
+              onValueChange={v => updateConfig('subtitleCentered', v)}
+            />
+          </>
+        ) : (
+          <>
+            <View style={styles.row}>
+              <View style={styles.rowItem}>
+                <SettingsPicker<StackHeaderTitleHorizontalGravityAndroid>
+                  label="expanded H"
+                  value={config.expandedTitleHorizontalGravity}
+                  onValueChange={v =>
+                    updateConfig('expandedTitleHorizontalGravity', v)
+                  }
+                  items={HORIZONTAL_GRAVITY_OPTIONS}
+                />
+              </View>
+              <View style={styles.rowItem}>
+                <SettingsPicker<StackHeaderTitleVerticalGravityAndroid>
+                  label="expanded V"
+                  value={config.expandedTitleVerticalGravity}
+                  onValueChange={v =>
+                    updateConfig('expandedTitleVerticalGravity', v)
+                  }
+                  items={VERTICAL_GRAVITY_OPTIONS}
+                />
+              </View>
+            </View>
+            <View style={styles.row}>
+              <View style={styles.rowItem}>
+                <SettingsPicker<StackHeaderTitleHorizontalGravityAndroid>
+                  label="collapsed H"
+                  value={config.collapsedTitleHorizontalGravity}
+                  onValueChange={v =>
+                    updateConfig('collapsedTitleHorizontalGravity', v)
+                  }
+                  items={HORIZONTAL_GRAVITY_OPTIONS}
+                />
+              </View>
+              <View style={styles.rowItem}>
+                <SettingsPicker<StackHeaderTitleVerticalGravityAndroid>
+                  label="collapsed V"
+                  value={config.collapsedTitleVerticalGravity}
+                  onValueChange={v =>
+                    updateConfig('collapsedTitleVerticalGravity', v)
+                  }
+                  items={VERTICAL_GRAVITY_OPTIONS}
+                />
+              </View>
+            </View>
+            <SettingsPicker<StackHeaderCollapsedTitleGravityModeAndroid>
+              label="collapsedTitleGravityMode"
+              value={config.collapsedTitleGravityMode}
+              onValueChange={v => updateConfig('collapsedTitleGravityMode', v)}
+              items={GRAVITY_MODE_OPTIONS}
+            />
+          </>
+        )}
         <Text style={styles.heading}>Toolbar Subviews</Text>
         <SettingsPicker<SubviewSize>
           label="leading"
@@ -357,6 +494,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 12,
     marginBottom: 4,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  rowItem: {
+    flex: 1,
   },
   subviewLabel: {
     fontSize: 10,
