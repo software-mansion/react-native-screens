@@ -1384,7 +1384,7 @@ PODS:
     - Yoga
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (5.6.0):
+  - react-native-safe-area-context (5.8.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1396,8 +1396,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.6.0)
-    - react-native-safe-area-context/fabric (= 5.6.0)
+    - react-native-safe-area-context/common (= 5.8.0)
+    - react-native-safe-area-context/fabric (= 5.8.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1407,7 +1407,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/common (5.6.0):
+  - react-native-safe-area-context/common (5.8.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1428,7 +1428,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/fabric (5.6.0):
+  - react-native-safe-area-context/fabric (5.8.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2325,7 +2325,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 5f8d35444eab98a5b5ff8581a77bc031c4fc7e3a
   React-mutationobservernativemodule: 55a3780f0ca7eddaadf92892c2aa61da2f4ecf95
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
-  react-native-safe-area-context: 1722881b7bf7dc133262bc2c7d224c2256797294
+  react-native-safe-area-context: be530894f042a7269307dff2209e6ea66967be23
   React-NativeModulesApple: 909bc0a039d58f571a6d72382372c5e33eb03a24
   React-networking: c3978caada5c01b42fa0fc1a494b6377df68ef91
   React-oscompat: fc4e6f78d7ae42a584891b0d530cd443390c1e73
