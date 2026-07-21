@@ -13,7 +13,7 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   StackPresentationTypes,
-} from '../../types';
+} from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';

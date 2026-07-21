@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -7,14 +6,15 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  ImageSourcePropType,
 } from 'react-native';
+
 import type {
   BlurEffect,
   Direction,
+  PlatformIconIOS,
   ScrollEdgeEffect,
   UserInterfaceStyle,
-} from './components/shared/types';
+} from '../components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -26,6 +26,7 @@ export type SearchBarCommands = {
 };
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -35,6 +36,7 @@ export type StackPresentationTypes =
   | 'fullScreenModal'
   | 'formSheet'
   | 'pageSheet';
+
 export type StackAnimationTypes =
   | 'default'
   | 'fade'
@@ -47,9 +49,13 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
+
 export type BlurEffectTypes = BlurEffect;
+
 export type ScreenReplaceTypes = 'push' | 'pop';
+
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
+
 export type ScreenOrientationTypes =
   | 'default'
   | 'all'
@@ -59,6 +65,7 @@ export type ScreenOrientationTypes =
   | 'landscape'
   | 'landscape_left'
   | 'landscape_right';
+
 export type HeaderSubviewTypes =
   | 'back'
   | 'right'
@@ -90,37 +97,6 @@ export type SearchBarPlacement =
   | 'integrated'
   | 'integratedButton'
   | 'integratedCentered';
-
-export type PlatformIconShared = {
-  type: 'imageSource';
-  imageSource: ImageSourcePropType;
-};
-
-export type PlatformIconIOSSfSymbol = {
-  type: 'sfSymbol';
-  name: string;
-};
-
-export type PlatformIconIOSXcasset = {
-  type: 'xcasset';
-  name: string;
-};
-
-export type PlatformIconIOS =
-  | PlatformIconIOSSfSymbol
-  | PlatformIconIOSXcasset
-  | {
-      type: 'templateSource';
-      templateSource: ImageSourcePropType;
-    }
-  | PlatformIconShared;
-
-export type PlatformIconAndroid =
-  | {
-      type: 'drawableResource';
-      name: string;
-    }
-  | PlatformIconShared;
 
 export type ScreenStackNativeContainerStyleProps = {
   /**
@@ -906,6 +882,274 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
 }
 
+export interface ScreenStackHeaderSubviewProps {
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only applicable to type="right" and type="left" subviews.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean | undefined;
+}
+
+interface SharedHeaderBarButtonItem {
+  /**
+   * Position of the item in the navigation items array.
+   */
+  index?: number | undefined;
+  /**
+   * Title of the item.
+   */
+  title?: string | undefined;
+  /**
+   * Style for the item label.
+   */
+  titleStyle?:
+    | {
+        fontFamily?: string | undefined;
+        fontSize?: number | undefined;
+        fontWeight?: string | undefined;
+        color?: ColorValue | undefined;
+      }
+    | undefined;
+  /**
+   * Icon for the item
+   */
+  icon?: PlatformIconIOS | undefined;
+  /**
+   * The variant of the item.
+   * "Prominent" only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+   */
+  variant?: 'plain' | 'done' | 'prominent' | undefined;
+  /**
+   * The tint color to apply to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+   */
+  tintColor?: ColorValue | undefined;
+  /**
+   * A Boolean value that indicates whether the item is in a disabled state.
+   */
+  disabled?: boolean | undefined;
+  /**
+   * The width of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+   */
+  width?: number | undefined;
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean | undefined;
+  /**
+   * A boolean value indicating whether this item can share a background with other items in a navigation bar or a toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+   */
+  sharesBackground?: boolean | undefined;
+  /**
+   * An identifier used to match items across transitions in a navigation bar or toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+   */
+  identifier?: string | undefined;
+  /**
+   * A badge to be rendered on a item.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+   */
+  badge?:
+    | {
+        /**
+         * The text to display in the badge.
+         */
+        value: string;
+        /**
+         * Style of the badge.
+         */
+        style?:
+          | {
+              color?: ColorValue | undefined;
+              backgroundColor?: ColorValue | undefined;
+              fontFamily?: string | undefined;
+              fontSize?: number | undefined;
+              fontWeight?: string | undefined;
+            }
+          | undefined;
+      }
+    | undefined;
+  accessibilityLabel?: string | undefined;
+  accessibilityHint?: string | undefined;
+}
+
+export interface HeaderBarButtonItemWithAction
+  extends SharedHeaderBarButtonItem {
+  type: 'button';
+  onPress: () => void;
+  /**
+   * A Boolean value that indicates whether the item is in a selected state.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+   */
+  selected?: boolean | undefined;
+}
+
+export interface HeaderBarButtonItemMenuAction {
+  type: 'action';
+  title?: string | undefined;
+  subtitle?: string | undefined;
+  onPress: () => void;
+  icon?: PlatformIconIOS | undefined;
+  /**
+   * State of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+   */
+  state?: 'on' | 'off' | 'mixed' | undefined;
+  /**
+   * Indicates whether to apply disabled style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+   */
+  disabled?: boolean | undefined;
+  /**
+   * Indicates whether to apply destructive style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+   */
+  destructive?: boolean | undefined;
+  /**
+   * Indicates whether to apply hidden style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+   */
+  hidden?: boolean | undefined;
+  /**
+   * Indicates whether to keep the menu presented after firing the element’s action.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+   */
+  keepsMenuPresented?: boolean | undefined;
+  /**
+   * Discoverability label of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+   */
+  discoverabilityLabel?: string | undefined;
+}
+
+/**
+ * Custom Screen Transition
+ */
+
+/**
+ * copy from GestureHandler to avoid strong dependency
+ */
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+/**
+ * copy from Reanimated to avoid strong dependency
+ */
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+  belowTopScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+};
+
+export interface HeaderBarButtonItemSubmenu {
+  type: 'submenu';
+  title?: string | undefined;
+  icon?: PlatformIconIOS | undefined;
+  items: HeaderBarButtonItemWithMenu['menu']['items'];
+  displayInline?: boolean | undefined;
+  destructive?: boolean | undefined;
+  singleSelection?: boolean | undefined;
+  displayAsPalette?: boolean | undefined;
+}
+
+export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  type: 'menu';
+  menu: {
+    title?: string | undefined;
+    items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+    singleSelection?: boolean | undefined;
+    displayAsPalette?: boolean | undefined;
+  };
+  /**
+   * A Boolean value that indicates whether the button title should indicate selection or not.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean | undefined;
+}
+
+export interface HeaderBarButtonItemSpacing {
+  type: 'spacing';
+  spacing: number;
+}
+
+export type HeaderBarButtonItem =
+  | HeaderBarButtonItemWithAction
+  | HeaderBarButtonItemWithMenu
+  | HeaderBarButtonItemSpacing;
+
+export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
+
+export interface GestureProps {
+  screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;
+  currentScreenId?: string | undefined;
+  goBackGesture?: GoBackGesture | undefined;
+  transitionAnimation?: AnimatedScreenTransition | undefined;
+  screenEdgeGesture?: boolean | undefined;
+}
+
+export interface GestureProviderProps extends GestureProps {
+  children?: React.ReactNode | undefined;
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+}
+
 export interface SearchBarProps {
   /**
    * Reference to imperatively modify search bar.
@@ -1117,272 +1361,4 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean | undefined;
-}
-
-export interface ScreenStackHeaderSubviewProps {
-  /**
-   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
-   * Only applicable to type="right" and type="left" subviews.
-   * Only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
-   */
-  hidesSharedBackground?: boolean | undefined;
-}
-
-interface SharedHeaderBarButtonItem {
-  /**
-   * Position of the item in the navigation items array.
-   */
-  index?: number | undefined;
-  /**
-   * Title of the item.
-   */
-  title?: string | undefined;
-  /**
-   * Style for the item label.
-   */
-  titleStyle?:
-    | {
-        fontFamily?: string | undefined;
-        fontSize?: number | undefined;
-        fontWeight?: string | undefined;
-        color?: ColorValue | undefined;
-      }
-    | undefined;
-  /**
-   * Icon for the item
-   */
-  icon?: PlatformIconIOS | undefined;
-  /**
-   * The variant of the item.
-   * "Prominent" only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
-   */
-  variant?: 'plain' | 'done' | 'prominent' | undefined;
-  /**
-   * The tint color to apply to the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
-   */
-  tintColor?: ColorValue | undefined;
-  /**
-   * A Boolean value that indicates whether the item is in a disabled state.
-   */
-  disabled?: boolean | undefined;
-  /**
-   * The width of the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
-   */
-  width?: number | undefined;
-  /**
-   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
-   * Only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
-   */
-  hidesSharedBackground?: boolean | undefined;
-  /**
-   * A boolean value indicating whether this item can share a background with other items in a navigation bar or a toolbar.
-   * Only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
-   */
-  sharesBackground?: boolean | undefined;
-  /**
-   * An identifier used to match items across transitions in a navigation bar or toolbar.
-   * Only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
-   */
-  identifier?: string | undefined;
-  /**
-   * A badge to be rendered on a item.
-   * Only available from iOS 26.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
-   */
-  badge?:
-    | {
-        /**
-         * The text to display in the badge.
-         */
-        value: string;
-        /**
-         * Style of the badge.
-         */
-        style?:
-          | {
-              color?: ColorValue | undefined;
-              backgroundColor?: ColorValue | undefined;
-              fontFamily?: string | undefined;
-              fontSize?: number | undefined;
-              fontWeight?: string | undefined;
-            }
-          | undefined;
-      }
-    | undefined;
-  accessibilityLabel?: string | undefined;
-  accessibilityHint?: string | undefined;
-}
-
-export interface HeaderBarButtonItemWithAction
-  extends SharedHeaderBarButtonItem {
-  type: 'button';
-  onPress: () => void;
-  /**
-   * A Boolean value that indicates whether the item is in a selected state.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
-   */
-  selected?: boolean | undefined;
-}
-
-export interface HeaderBarButtonItemMenuAction {
-  type: 'action';
-  title?: string | undefined;
-  subtitle?: string | undefined;
-  onPress: () => void;
-  icon?: PlatformIconIOS | undefined;
-  /**
-   * State of the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
-   */
-  state?: 'on' | 'off' | 'mixed' | undefined;
-  /**
-   * Indicates whether to apply disabled style to the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
-   */
-  disabled?: boolean | undefined;
-  /**
-   * Indicates whether to apply destructive style to the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
-   */
-  destructive?: boolean | undefined;
-  /**
-   * Indicates whether to apply hidden style to the item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
-   */
-  hidden?: boolean | undefined;
-  /**
-   * Indicates whether to keep the menu presented after firing the element’s action.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
-   */
-  keepsMenuPresented?: boolean | undefined;
-  /**
-   * Discoverability label of the menu item.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
-   */
-  discoverabilityLabel?: string | undefined;
-}
-
-export interface HeaderBarButtonItemSubmenu {
-  type: 'submenu';
-  title?: string | undefined;
-  icon?: PlatformIconIOS | undefined;
-  items: HeaderBarButtonItemWithMenu['menu']['items'];
-  displayInline?: boolean | undefined;
-  destructive?: boolean | undefined;
-  singleSelection?: boolean | undefined;
-  displayAsPalette?: boolean | undefined;
-}
-
-export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
-  type: 'menu';
-  menu: {
-    title?: string | undefined;
-    items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
-    singleSelection?: boolean | undefined;
-    displayAsPalette?: boolean | undefined;
-  };
-  /**
-   * A Boolean value that indicates whether the button title should indicate selection or not.
-   * Only available from iOS 15.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-   */
-  changesSelectionAsPrimaryAction?: boolean | undefined;
-}
-
-export interface HeaderBarButtonItemSpacing {
-  type: 'spacing';
-  spacing: number;
-}
-
-export type HeaderBarButtonItem =
-  | HeaderBarButtonItemWithAction
-  | HeaderBarButtonItemWithMenu
-  | HeaderBarButtonItemSpacing;
-
-/**
- * Custom Screen Transition
- */
-
-/**
- * copy from GestureHandler to avoid strong dependency
- */
-export type PanGestureHandlerEventPayload = {
-  x: number;
-  y: number;
-  absoluteX: number;
-  absoluteY: number;
-  translationX: number;
-  translationY: number;
-  velocityX: number;
-  velocityY: number;
-};
-
-/**
- * copy from Reanimated to avoid strong dependency
- */
-export type GoBackGesture =
-  | 'swipeRight'
-  | 'swipeLeft'
-  | 'swipeUp'
-  | 'swipeDown'
-  | 'verticalSwipe'
-  | 'horizontalSwipe'
-  | 'twoDimensionalSwipe';
-
-export interface MeasuredDimensions {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  pageX: number;
-  pageY: number;
-}
-
-export type AnimatedScreenTransition = {
-  topScreenStyle: (
-    event: PanGestureHandlerEventPayload,
-    screenSize: MeasuredDimensions,
-  ) => Record<string, unknown>;
-  belowTopScreenStyle: (
-    event: PanGestureHandlerEventPayload,
-    screenSize: MeasuredDimensions,
-  ) => Record<string, unknown>;
-};
-
-export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
-
-export interface GestureProps {
-  screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;
-  currentScreenId?: string | undefined;
-  goBackGesture?: GoBackGesture | undefined;
-  transitionAnimation?: AnimatedScreenTransition | undefined;
-  screenEdgeGesture?: boolean | undefined;
-}
-
-export interface GestureProviderProps extends GestureProps {
-  children?: React.ReactNode | undefined;
-  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }

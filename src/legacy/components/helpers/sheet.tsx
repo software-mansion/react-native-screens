@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { ScreenProps } from '../../../types';
+import { ScreenProps } from '../../types';
 
 // This value must be kept in sync with native side.
 export const SHEET_FIT_TO_CONTENTS = [-1];

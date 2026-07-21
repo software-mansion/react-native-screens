@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import type { ColorValue } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
-import type { PlatformIconAndroid } from '../../../../types';
+import type { PlatformIconAndroid } from '../../../shared/types';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 

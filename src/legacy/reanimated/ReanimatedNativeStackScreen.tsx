@@ -6,7 +6,7 @@ import {
   ScreenProps,
   StackPresentationTypes,
   TransitionProgressEventType,
-} from '../../types';
+} from '../types';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
 import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';

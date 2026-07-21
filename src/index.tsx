@@ -4,8 +4,6 @@ import './fabric/NativeScreensModule';
 
 export * from './legacy';
 
-export * from './types';
-
 /**
  * Utils
  */
@@ -20,4 +18,4 @@ export {
 export { compatibilityFlags, featureFlags } from './flags';
 
 export * from './components/tabs';
-export type * from './components/shared/types';
+export type * from './types';

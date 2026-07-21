@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SearchBarCommands, SearchBarProps } from '../../types';
+import { SearchBarCommands, SearchBarProps } from '../types';
 import {
   parseBooleanToOptionalBooleanNativeProp,
   isSearchBarAvailableForCurrentPlatform,

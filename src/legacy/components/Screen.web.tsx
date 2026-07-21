@@ -1,6 +1,6 @@
 'use client';
 
-import { ScreenProps } from '../../types';
+import { ScreenProps } from '../types';
 import { Animated, View } from 'react-native';
 import React from 'react';
 

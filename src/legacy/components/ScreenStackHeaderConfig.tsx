@@ -6,7 +6,7 @@ import {
   HeaderBarButtonItemWithMenu,
   ScreenStackHeaderConfigProps,
   ScreenStackHeaderSubviewProps,
-} from '../../types';
+} from '../types';
 import {
   Image,
   ImageProps,

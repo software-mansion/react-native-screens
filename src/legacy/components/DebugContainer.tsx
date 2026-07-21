@@ -4,7 +4,7 @@ import { Platform, StyleProp, ViewStyle, type ViewProps } from 'react-native';
 
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import ScreenContentWrapper from './ScreenContentWrapper';
-import { StackPresentationTypes } from '../../types';
+import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
   contentStyle?: StyleProp<ViewStyle> | undefined;

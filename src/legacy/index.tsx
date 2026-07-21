@@ -9,6 +9,12 @@ export {
 } from '../core';
 
 /**
+ * Types
+ */
+
+export type * from './types';
+
+/**
  * RNS Components
  */
 export {

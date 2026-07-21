@@ -1,6 +1,6 @@
 import { Image, ImageProps, View, ViewProps } from 'react-native';
 import React from 'react';
-import { HeaderSubviewTypes, ScreenStackHeaderConfigProps } from '../../types';
+import { HeaderSubviewTypes, ScreenStackHeaderConfigProps } from '../types';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
