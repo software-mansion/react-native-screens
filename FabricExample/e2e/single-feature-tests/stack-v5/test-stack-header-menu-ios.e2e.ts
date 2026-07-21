@@ -96,7 +96,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
     );
   });
 
-  it('should display the header with a trailing item exposing a real menu (Step 1)', async () => {
+  it('should display the header with a trailing item exposing a real menu', async () => {
     await expect(
       element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu'))),
     ).toExist();
@@ -104,7 +104,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
   });
 
   describe('opening Menu 1', () => {
-    it('should open the native menu on tap and show its action, toggle, and submenu items (Step 2)', async () => {
+    it('should open the native menu on tap and show its action, toggle, and submenu items', async () => {
       await menuOneBarButton.tap();
 
       await expect(element(by.text('Action 1-1'))).toBeVisible();
@@ -124,8 +124,8 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
     });
   });
 
-  describe('toggle item selection persists across reopening the menu (Steps 4-6)', () => {
-    it('should show a checkmark next to Toggle 1-1 after selecting it and reopening the menu (Step 4)', async () => {
+  describe('toggle item selection persists across reopening the menu', () => {
+    it('should show a checkmark next to Toggle 1-1 after selecting it and reopening the menu', async () => {
       await menuOneBarButton.tap();
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-1"');
@@ -171,7 +171,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
     });
   });
 
-  describe('"Submenu with Radio" nested singleSelection menu (Steps 7-9)', () => {
+  describe('"Submenu with Radio" nested singleSelection menu', () => {
     it('should select Radio 1-1 by default when opening the submenu', async () => {
       await element(by.text('Submenu with Radio')).tap();
 
@@ -341,7 +341,7 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
     );
   });
 
-  it('should rename the targeted submenu (Step 2)', async () => {
+  it('should rename the targeted submenu', async () => {
     await selectPickerOption('menu-options-title-picker', 'title-new title');
     await tapSendButton('send-menu-options-button');
 
