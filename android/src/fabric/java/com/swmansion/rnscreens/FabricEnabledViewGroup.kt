@@ -22,6 +22,12 @@ abstract class FabricEnabledViewGroup(
         mStateWrapper = wrapper
     }
 
+    protected fun resetLastSizes() {
+        lastWidth = 0f
+        lastHeight = 0f
+        lastHeaderHeight = 0f
+    }
+
     @UiThread
     fun updateState(
         width: Int,
