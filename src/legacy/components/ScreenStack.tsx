@@ -14,7 +14,7 @@ import warnOnce from 'warn-once';
 // Native components
 import ScreenStackNativeComponent, {
   NativeProps,
-} from '../fabric/ScreenStackNativeComponent';
+} from '../../fabric/legacy/ScreenStackNativeComponent';
 const assertGHProvider = (
   ScreenGestureDetector: (
     props: PropsWithChildren<GestureProviderProps>,

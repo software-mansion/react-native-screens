@@ -1,5 +1,5 @@
 import type { PlatformIconIOS as ResolvedPlatformIconIOS } from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
-import type { PlatformIconIOS } from '../../../../../types';
+import type { PlatformIconIOS } from '../../../../shared/types';
 import { Image } from 'react-native';
 
 export function resolveIconAssetSources(

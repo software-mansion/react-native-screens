@@ -19,10 +19,10 @@ import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
-import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
-import { SafeAreaView } from './safe-area/SafeAreaView';
-import { featureFlags } from '../flags';
-import { isIOS26OrHigher } from './helpers/PlatformUtils';
+import { SafeAreaViewProps } from '../../components/safe-area/SafeAreaView.types';
+import { SafeAreaView } from '../../components/safe-area/SafeAreaView';
+import { featureFlags } from '../../flags';
+import { isIOS26OrHigher } from '../../components/helpers/PlatformUtils';
 import {
   EdgeInsetApplicationContext,
   useEdgeInsetApplication,

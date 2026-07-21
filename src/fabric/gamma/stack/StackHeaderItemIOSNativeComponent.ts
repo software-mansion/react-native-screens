@@ -45,7 +45,7 @@ export type PlatformIconShared = {
   imageSource: ImageResolvedAssetSource;
 };
 
-export type PlatformIconTemplateIOS = {
+export type PlatformIconIOSTemplate = {
   type: 'templateSource';
   templateSource: ImageResolvedAssetSource;
 };
@@ -63,7 +63,7 @@ export type PlatformIconIOSXcasset = {
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
   | PlatformIconIOSXcasset
-  | PlatformIconTemplateIOS
+  | PlatformIconIOSTemplate
   | PlatformIconShared;
 
 export interface NativeProps extends ViewProps {

@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 
 // Native components
-import FullWindowOverlayNativeComponent from '../fabric/FullWindowOverlayNativeComponent';
-import type { NativeProps } from '../fabric/FullWindowOverlayNativeComponent';
+import FullWindowOverlayNativeComponent from '../../fabric/legacy/FullWindowOverlayNativeComponent';
+import type { NativeProps } from '../../fabric/legacy/FullWindowOverlayNativeComponent';
 
 const NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
