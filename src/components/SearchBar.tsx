@@ -26,38 +26,38 @@ function SearchBar(props: SearchBarProps) {
 
   React.useImperativeHandle(props.ref, () => ({
     blur: () => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.blur(instance),
       );
     },
     focus: () => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.focus(instance),
       );
     },
     toggleCancelButton: (flag: boolean) => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.toggleCancelButton(instance, flag),
       );
     },
     clearText: () => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.clearText(instance),
       );
     },
     setText: (text: string) => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.setText(instance, text),
       );
     },
     cancelSearch: () => {
-      callWithNativeInstance(instance =>
+      _callWithNativeInstance(instance =>
         NativeSearchBarCommands.cancelSearch(instance),
       );
     },
   }));
 
-  const callWithNativeInstance = React.useCallback(
+  const _callWithNativeInstance = React.useCallback(
     (command: (instance: SearchBarHostInstance) => void) => {
       const instance = searchBarRef.current;
       if (instance) {
