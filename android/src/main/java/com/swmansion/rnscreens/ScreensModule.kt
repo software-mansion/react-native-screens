@@ -9,7 +9,9 @@ import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
-import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.legacy.ScreenFragment
+import com.swmansion.rnscreens.legacy.ScreenStack
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)
@@ -56,7 +58,7 @@ class ScreensModule(
 
     private fun setupFabric() {
         val fabricUIManager =
-            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.Companion.FABRIC) as FabricUIManager
         proxy?.apply {
             nativeAddMutationsListener(fabricUIManager)
         }
@@ -95,7 +97,7 @@ class ScreensModule(
             return
         }
         val progressFloat = progress.toFloat()
-        val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
+        val coalescingKey = ScreenFragment.Companion.getCoalescingKey(progressFloat)
         UIManagerHelper
             .getEventDispatcherForReactTag(reactContext, topScreenId)
             ?.dispatchEvent(
