@@ -318,7 +318,8 @@ open class ScreenFragment :
     override fun onDestroy() {
         super.onDestroy()
         val container = screen.container
-        if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
+        val isScreenDismissed = container == null || !container.hasScreen(this.screen.fragmentWrapper)
+        if (isScreenDismissed) {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
             if (screenContext is ReactContext) {
@@ -326,6 +327,16 @@ open class ScreenFragment :
                 UIManagerHelper
                     .getEventDispatcherForReactTag(screenContext, screen.id)
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+            }
+            // Break the Screen->fragmentWrapper retain cycle so Fabric's
+            // SurfaceMountingManager.mTagToViewState doesn't keep the destroyed
+            // ScreenFragment alive. Gated on isScreenDismissed since onDestroy
+            // can also fire in non-dismissal lifecycle paths where the wrapper
+            // must remain reachable. Identity guard avoids clobbering a wrapper
+            // that has been re-assigned to a different fragment.
+            // See: https://github.com/software-mansion/react-native-screens/issues/3755
+            if (this.screen.fragmentWrapper === this) {
+                this.screen.fragmentWrapper = null
             }
         }
         childScreenContainers.clear()
