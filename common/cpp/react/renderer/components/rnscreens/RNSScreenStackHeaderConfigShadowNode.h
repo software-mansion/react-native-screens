@@ -29,6 +29,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
 
 #pragma mark - Custom interface
 
+  void setLogicalPadding(Float start, Float end) const;
+
 #if !defined(ANDROID)
   void setImageLoader(std::weak_ptr<void> imageLoader);
 #endif // !ANDROID && !NDEBUG

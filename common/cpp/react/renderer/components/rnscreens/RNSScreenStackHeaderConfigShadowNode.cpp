@@ -34,6 +34,18 @@ void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {
 #endif // defined(ANDROID)
 }
 
+void RNSScreenStackHeaderConfigShadowNode::setLogicalPadding(
+    Float start,
+    Float end) const {
+  ensureUnsealed();
+
+  auto style = yogaNode_.style();
+  style.setPadding(yoga::Edge::Start, yoga::StyleLength::points(start));
+  style.setPadding(yoga::Edge::End, yoga::StyleLength::points(end));
+  yogaNode_.setStyle(style);
+  yogaNode_.setDirty(true);
+}
+
 #if !defined(ANDROID)
 void RNSScreenStackHeaderConfigShadowNode::setImageLoader(
     std::weak_ptr<void> imageLoader) {
