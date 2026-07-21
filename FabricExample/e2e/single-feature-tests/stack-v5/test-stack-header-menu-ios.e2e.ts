@@ -99,22 +99,23 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
 
   describe('opening Menu 1', () => {
     it('should open the native menu on tap and show its action, toggle, and submenu items', async () => {
-      await menuOneBarButton.tap();
+      await openMenuOne();
 
       await expect(element(by.text('Action 1-1'))).toBeVisible();
       await expect(element(by.text('Toggle 1-1'))).toBeVisible();
       await expect(element(by.text('Toggle 1-2'))).toBeVisible();
       await expect(element(by.text('Toggle 1-3'))).toBeVisible();
       await expect(element(by.text('Submenu with Radio'))).toBeVisible();
+
+      await dismissMenu();
     });
 
     it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
+      await openMenuOne();
       await element(by.text('Action 1-1')).tap();
       await dismissToast('1. Clicked Action 1-1');
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
     });
   });
 
@@ -124,9 +125,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-1"');
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
 
       await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
       await menuOneBarButton.tap();
@@ -138,9 +137,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-3')).tap();
       await dismissToast('1. Selected "toggle-1-1", "toggle-1-3"');
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
 
       await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
       await menuOneBarButton.tap();
@@ -153,9 +150,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-3"');
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
 
       await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
       await menuOneBarButton.tap();
@@ -177,9 +172,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await waitFor(
         element(by.label('1. Selected unique "radio-1-1"')),
       ).not.toBeVisible();
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
 
       await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
       await menuOneBarButton.tap();
@@ -193,9 +186,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Radio 1-2')).tap();
       await dismissToast('1. Selected unique "radio-1-2"');
 
-      await expect(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW)),
-      ).not.toExist();
+      await expect(contextMenu).not.toExist();
       await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
       await menuOneBarButton.tap();
       await element(by.text('Submenu with Radio')).tap();
