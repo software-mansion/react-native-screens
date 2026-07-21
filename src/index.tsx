@@ -4,6 +4,8 @@ import './fabric/NativeScreensModule';
 
 export * from './legacy';
 
+export * from './types';
+
 /**
  * Utils
  */

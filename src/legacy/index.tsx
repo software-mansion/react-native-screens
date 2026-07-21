@@ -1,8 +1,3 @@
-/*
- * V4 types
- */
-export type * from '../types';
-
 /**
  * Core
  */
