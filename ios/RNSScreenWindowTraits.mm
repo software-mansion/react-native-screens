@@ -97,11 +97,112 @@
 }
 #endif
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV && !TARGET_OS_VISION
++ (UIWindowScene *)windowSceneForOrientationUpdate API_AVAILABLE(ios(16.0))
+{
+  UIWindow *keyWindow = RCTKeyWindow();
+  if (keyWindow.windowScene != nil) {
+    return keyWindow.windowScene;
+  }
+
+  // When an app supports multiple scenes (e.g. CarPlay), it is possible that
+  // UIWindowScene is not the first scene, or it may not be present at all.
+  NSArray *connectedScenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+  for (id connectedScene in connectedScenes) {
+    if ([connectedScene isKindOfClass:[UIWindowScene class]]) {
+      return connectedScene;
+    }
+  }
+
+  return nil;
+}
+
++ (UIViewController *)topViewControllerFromRootViewController:(UIViewController *)rootViewController
+{
+  UIViewController *topController = rootViewController;
+  while (topController.presentedViewController) {
+    topController = topController.presentedViewController;
+  }
+
+  return topController;
+}
+
++ (UIViewController *)topViewControllerForOrientationUpdateInScene:(UIWindowScene *)scene API_AVAILABLE(ios(16.0))
+{
+  UIWindow *keyWindow = RCTKeyWindow();
+  if (keyWindow.windowScene == scene) {
+    return [RNSScreenWindowTraits topViewControllerFromRootViewController:keyWindow.rootViewController];
+  }
+
+  for (UIWindow *window in scene.windows) {
+    if (window.isKeyWindow) {
+      return [RNSScreenWindowTraits topViewControllerFromRootViewController:window.rootViewController];
+    }
+  }
+
+  for (UIWindow *window in scene.windows) {
+    if (window.rootViewController != nil) {
+      return [RNSScreenWindowTraits topViewControllerFromRootViewController:window.rootViewController];
+    }
+  }
+
+  return nil;
+}
+
++ (void)requestGeometryUpdateForOrientationMask:(UIInterfaceOrientationMask)orientationMask API_AVAILABLE(ios(16.0))
+{
+  if (@available(iOS 16.0, *)) {
+    UIWindowScene *scene = [RNSScreenWindowTraits windowSceneForOrientationUpdate];
+    if (scene == nil) {
+      return;
+    }
+
+    UIViewController *topController = [RNSScreenWindowTraits topViewControllerForOrientationUpdateInScene:scene];
+    if (topController == nil) {
+      return;
+    }
+
+    [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+
+    UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
+        [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
+    [scene
+        requestGeometryUpdateWithPreferences:geometryPreferences
+                                errorHandler:^(NSError *_Nonnull error) {
+                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                    [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+
+                                    UIWindowSceneGeometryPreferencesIOS *retryGeometryPreferences =
+                                        [[UIWindowSceneGeometryPreferencesIOS alloc]
+                                            initWithInterfaceOrientations:orientationMask];
+                                    [scene
+                                        requestGeometryUpdateWithPreferences:retryGeometryPreferences
+                                                                errorHandler:^(NSError *_Nonnull retryError) {
+                                                                  RCTLogWarn(
+                                                                      @"[RNScreens] Failed to update interface orientation: %@",
+                                                                      retryError);
+                                                                }];
+                                  });
+                                }];
+  }
+}
+#endif
+
 + (void)enforceDesiredDeviceOrientation
 {
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
     UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+    if (@available(iOS 16.0, *)) {
+      // On iOS 16+ geometry updates are idempotent and should be driven by the
+      // desired mask directly. The scene's current interfaceOrientation may be
+      // stale during navigation transitions or after scene restoration.
+      [RNSScreenWindowTraits requestGeometryUpdateForOrientationMask:orientationMask];
+      return;
+    }
+#endif // Check for iOS 16
 
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
@@ -128,44 +229,8 @@
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-      if (@available(iOS 16.0, *)) {
-        NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
-
-        // when an app supports multiple scenes (e.g. CarPlay), it is possible that
-        // UIWindowScene is not the first scene, or it may not be present at all
-        UIWindowScene *scene = nil;
-        for (id connectedScene in array) {
-          if ([connectedScene isKindOfClass:[UIWindowScene class]]) {
-            scene = connectedScene;
-            break;
-          }
-        }
-
-        if (scene == nil) {
-          return;
-        }
-
-        UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
-            [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
-        [scene requestGeometryUpdateWithPreferences:geometryPreferences
-                                       errorHandler:^(NSError *_Nonnull error){
-                                       }];
-
-        // `attemptRotationToDeviceOrientation` is deprecated for modern OS versions
-        // so we need to use `setNeedsUpdateOfSupportedInterfaceOrientations`
-        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-        while (topController.presentedViewController) {
-          topController = topController.presentedViewController;
-        }
-
-        [topController setNeedsUpdateOfSupportedInterfaceOrientations];
-      } else
-#endif // Check for iOS 16
-      {
-        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
-        [UIViewController attemptRotationToDeviceOrientation];
-      }
+      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+      [UIViewController attemptRotationToDeviceOrientation];
     }
   });
 #endif // !TARGET_TV_OS
