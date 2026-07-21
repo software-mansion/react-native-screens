@@ -251,7 +251,7 @@ describeIfiOS(
       await expect(iconFor('star.fill', 'New Title')).toBeVisible();
     });
 
-    it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true ', async () => {
+    it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true', async () => {
       await dismissMenu();
 
       await selectPickerOption(
