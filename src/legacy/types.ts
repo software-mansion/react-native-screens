@@ -112,219 +112,6 @@ export type ScreenStackNativeContainerStyleProps = {
   backgroundColor?: ColorValue | undefined;
 };
 
-export interface SearchBarProps {
-  /**
-   * Reference to imperatively modify search bar.
-   *
-   * Currently supported operations are:
-   *
-   * * `focus` - focuses the search bar
-   * * `blur` - removes focus from the search bar
-   * * `clearText` - removes any text present in the search bar input field
-   * * `setText` - sets the search bar's content to given value
-   * * `cancelSearch` - cancel search in search bar.
-   * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
-   */
-  ref?: React.RefObject<SearchBarCommands | null> | undefined;
-
-  /**
-   * The auto-capitalization behavior.
-   *
-   * Defaults to `systemDefault`:
-   * - on Android, it is the same as `none`,
-   * - on iOS, it is the same as `sentences`.
-   */
-  autoCapitalize?:
-    | 'systemDefault'
-    | 'none'
-    | 'words'
-    | 'sentences'
-    | 'characters'
-    | undefined;
-  /**
-   * Automatically focuses search bar on mount
-   *
-   * @platform android
-   */
-  autoFocus?: boolean | undefined;
-  /**
-   * The search field background color
-   */
-  barTintColor?: ColorValue | undefined;
-  /**
-   * The color for the cursor caret and cancel button text.
-   *
-   * @platform ios
-   */
-  tintColor?: ColorValue | undefined;
-  /**
-   * The text to be used instead of default `Cancel` button text
-   *
-   * @deprecated Starting from iOS 26, cancel button does not have any text,
-   * therefore this prop has no longer any effect.
-   *
-   * @platform ios
-   */
-  cancelButtonText?: string | undefined;
-  /**
-   * Specifies whether the back button should close search bar's text input or not.
-   *
-   * @platform android
-   */
-  disableBackButtonOverride?: boolean | undefined;
-  /**
-   * Indicates whether to hide the navigation bar.
-   *
-   * If value is `undefined`, uses native behavior:
-   * - on iOS versions prior to 26, value is `true`,
-   * - starting from iOS 26, value is determined by context.
-   *
-   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
-   *
-   * @platform ios
-   */
-  hideNavigationBar?: boolean | undefined;
-  /**
-   * Indicates whether to hide the search bar when scrolling
-   *
-   * @platform ios
-   */
-  hideWhenScrolling?: boolean | undefined;
-  /**
-   * Sets type of the input. Defaults to `text`.
-   *
-   * @platform android
-   */
-  inputType?: 'text' | 'phone' | 'number' | 'email' | undefined;
-  /**
-   * Indicates whether to obscure the underlying content.
-   *
-   * If value is `undefined`, uses native behavior:
-   * - on iOS, value is `false`,
-   * - on tvOS, value is `true`.
-   *
-   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
-   *
-   * @platform ios
-   */
-  obscureBackground?: boolean | undefined;
-  /**
-   * A callback that gets called when search bar has lost focus
-   */
-  onBlur?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
-  /**
-   * A callback that gets called when the cancel button is pressed
-   *
-   * @platform ios
-   */
-  onCancelButtonPress?:
-    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
-    | undefined;
-
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?:
-    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
-    | undefined;
-
-  /**
-   * A callback that gets called when search bar is closed
-   *
-   * @platform android
-   */
-  onClose?: (() => void) | undefined;
-  /**
-   * A callback that gets called when search bar has received focus
-   */
-  onFocus?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
-  /**
-   * A callback that gets called when search bar is opened
-   *
-   * @platform android
-   */
-  onOpen?: (() => void) | undefined;
-  /**
-   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-   */
-  onSearchButtonPress?:
-    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
-    | undefined;
-  /**
-   * Text displayed when search field is empty
-   */
-  placeholder?: string | undefined;
-  /**
-   * Position of the search bar
-   *
-   * Supported values:
-   *
-   * * `automatic` - the search bar is placed according to current layout
-   * * `stacked` - the search bar is placed below the other content in navigation bar
-   * * `integrated` - (>= iOS 26) the search bar is placed on the trailing edge of navigation bar. On iPhone,
-   *   it may be integrated into the toolbar
-   * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
-   *   the inactive search bar is always shown as a button even when space permits a search field
-   * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
-   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
-   *   respected in special cases, described in UIKit documentation
-   *
-   * There is also legacy & **deprecated** prop value available:
-   *
-   *  * `inline` - the search bar is placed on the trailing edge of navigation bar
-   *
-   * Starting from iOS 26, `inline` is the same as `integrated`. It is provided for backward
-   * compatibility and is destined for removal in future versions.
-   *
-   * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
-   * the same as `inline`.
-   *
-   * Defaults to `automatic`.
-   *
-   * Complete list of possible search bar placements is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
-   *
-   * @platform iOS (>= 16.0)
-   */
-  placement?: SearchBarPlacement | undefined;
-  /**
-   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
-   *
-   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
-   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
-   *
-   * Defaults to `true`.
-   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
-   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
-   *
-   * @platform iOS (>= 26.0)
-   */
-  allowToolbarIntegration?: boolean | undefined;
-  /**
-   * The search field text color
-   */
-  textColor?: ColorValue | undefined;
-  /**
-   * The search hint text color
-   *
-   * @plaform android
-   */
-  hintTextColor?: ColorValue | undefined;
-  /**
-   * The search and close icon color shown in the header
-   *
-   * @plaform android
-   */
-  headerIconColor?: ColorValue | undefined;
-  /**
-   * Show the search hint icon when search bar is focused
-   *
-   * @plaform android
-   * @default true
-   */
-  shouldShowHintSearchIcon?: boolean | undefined;
-}
-
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number> | undefined;
   activityState?:
@@ -1093,6 +880,219 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
+}
+
+export interface SearchBarProps {
+  /**
+   * Reference to imperatively modify search bar.
+   *
+   * Currently supported operations are:
+   *
+   * * `focus` - focuses the search bar
+   * * `blur` - removes focus from the search bar
+   * * `clearText` - removes any text present in the search bar input field
+   * * `setText` - sets the search bar's content to given value
+   * * `cancelSearch` - cancel search in search bar.
+   * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
+   */
+  ref?: React.RefObject<SearchBarCommands | null> | undefined;
+
+  /**
+   * The auto-capitalization behavior.
+   *
+   * Defaults to `systemDefault`:
+   * - on Android, it is the same as `none`,
+   * - on iOS, it is the same as `sentences`.
+   */
+  autoCapitalize?:
+    | 'systemDefault'
+    | 'none'
+    | 'words'
+    | 'sentences'
+    | 'characters'
+    | undefined;
+  /**
+   * Automatically focuses search bar on mount
+   *
+   * @platform android
+   */
+  autoFocus?: boolean | undefined;
+  /**
+   * The search field background color
+   */
+  barTintColor?: ColorValue | undefined;
+  /**
+   * The color for the cursor caret and cancel button text.
+   *
+   * @platform ios
+   */
+  tintColor?: ColorValue | undefined;
+  /**
+   * The text to be used instead of default `Cancel` button text
+   *
+   * @deprecated Starting from iOS 26, cancel button does not have any text,
+   * therefore this prop has no longer any effect.
+   *
+   * @platform ios
+   */
+  cancelButtonText?: string | undefined;
+  /**
+   * Specifies whether the back button should close search bar's text input or not.
+   *
+   * @platform android
+   */
+  disableBackButtonOverride?: boolean | undefined;
+  /**
+   * Indicates whether to hide the navigation bar.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS versions prior to 26, value is `true`,
+   * - starting from iOS 26, value is determined by context.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+   *
+   * @platform ios
+   */
+  hideNavigationBar?: boolean | undefined;
+  /**
+   * Indicates whether to hide the search bar when scrolling
+   *
+   * @platform ios
+   */
+  hideWhenScrolling?: boolean | undefined;
+  /**
+   * Sets type of the input. Defaults to `text`.
+   *
+   * @platform android
+   */
+  inputType?: 'text' | 'phone' | 'number' | 'email' | undefined;
+  /**
+   * Indicates whether to obscure the underlying content.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS, value is `false`,
+   * - on tvOS, value is `true`.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+   *
+   * @platform ios
+   */
+  obscureBackground?: boolean | undefined;
+  /**
+   * A callback that gets called when search bar has lost focus
+   */
+  onBlur?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
+  /**
+   * A callback that gets called when the cancel button is pressed
+   *
+   * @platform ios
+   */
+  onCancelButtonPress?:
+    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
+    | undefined;
+
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?:
+    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | undefined;
+
+  /**
+   * A callback that gets called when search bar is closed
+   *
+   * @platform android
+   */
+  onClose?: (() => void) | undefined;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: ((e: NativeSyntheticEvent<TargetedEvent>) => void) | undefined;
+  /**
+   * A callback that gets called when search bar is opened
+   *
+   * @platform android
+   */
+  onOpen?: (() => void) | undefined;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?:
+    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | undefined;
+  /**
+   * Text displayed when search field is empty
+   */
+  placeholder?: string | undefined;
+  /**
+   * Position of the search bar
+   *
+   * Supported values:
+   *
+   * * `automatic` - the search bar is placed according to current layout
+   * * `stacked` - the search bar is placed below the other content in navigation bar
+   * * `integrated` - (>= iOS 26) the search bar is placed on the trailing edge of navigation bar. On iPhone,
+   *   it may be integrated into the toolbar
+   * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   the inactive search bar is always shown as a button even when space permits a search field
+   * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
+   *   respected in special cases, described in UIKit documentation
+   *
+   * There is also legacy & **deprecated** prop value available:
+   *
+   *  * `inline` - the search bar is placed on the trailing edge of navigation bar
+   *
+   * Starting from iOS 26, `inline` is the same as `integrated`. It is provided for backward
+   * compatibility and is destined for removal in future versions.
+   *
+   * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
+   * the same as `inline`.
+   *
+   * Defaults to `automatic`.
+   *
+   * Complete list of possible search bar placements is available in the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
+   *
+   * @platform iOS (>= 16.0)
+   */
+  placement?: SearchBarPlacement | undefined;
+  /**
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   *
+   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
+   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
+   *
+   * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
+   *
+   * @platform iOS (>= 26.0)
+   */
+  allowToolbarIntegration?: boolean | undefined;
+  /**
+   * The search field text color
+   */
+  textColor?: ColorValue | undefined;
+  /**
+   * The search hint text color
+   *
+   * @plaform android
+   */
+  hintTextColor?: ColorValue | undefined;
+  /**
+   * The search and close icon color shown in the header
+   *
+   * @plaform android
+   */
+  headerIconColor?: ColorValue | undefined;
+  /**
+   * Show the search hint icon when search bar is focused
+   *
+   * @plaform android
+   * @default true
+   */
+  shouldShowHintSearchIcon?: boolean | undefined;
 }
 
 export interface ScreenStackHeaderSubviewProps {
