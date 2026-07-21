@@ -34,7 +34,7 @@ const menuRowIcon = (iconId: string, index: number) =>
       .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
   ).atIndex(index);
 
-// Asserts that every menu row renders the icon carrying `label`.
+// Asserts that every menu row renders the icon carrying `iconId`.
 const expectAllMenuRowIconsToBeVisible = async (
   iconId: string,
   rowCount: number = MENU_ROW_COUNT,
