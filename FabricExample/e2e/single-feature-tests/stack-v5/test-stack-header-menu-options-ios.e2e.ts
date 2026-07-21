@@ -10,6 +10,7 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
@@ -67,16 +68,17 @@ function paletteIcon(iconId: string) {
   return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
 }
 
-/** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
+/**
+ * Top edge of a palette icon in screen coordinates; smaller y is higher up.
+ */
 async function getPaletteIconTopY(iconId: string) {
-  const attr = (await paletteIcon(
-    iconId,
-  ).getAttributes()) as IosElementAttributes;
-  return attr.frame.y;
+  const attrs = await paletteIcon(iconId).getAttributes();
+  return (attrs as IosElementAttributes).frame.y;
 }
 
 /**
- * Dismisses the presented context menu without selecting any item.
+ * Dismisses the presented context menu without selecting any item, and waits
+ * until the platter is actually gone.
  *
  * The platter is anchored under the header's trailing items, so it covers the
  * centre of this full-width text: a centre tap hits the menu and only pops one
@@ -157,9 +159,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the Sort By and Rating submenus without selecting an item', async () => {
       await dismissMenu();
-
-      await expect(element(by.text('Copy'))).not.toExist();
-      await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
+      await waitFor(
+        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+      ).not.toBeVisible();
+      await expect(
+        element(by.id('toggle-display-inline-rating')),
+      ).toBeVisible();
     });
 
     it('toggles displayInline (Rating) to true', async () => {
@@ -192,9 +197,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the Sort By submenu with Rating inlined', async () => {
       await dismissMenu();
-
-      await expect(element(by.text('Copy'))).not.toExist();
-      await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
+      await waitFor(
+        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+      ).not.toBeVisible();
+      await expect(
+        element(by.id('toggle-display-inline-rating')),
+      ).toBeVisible();
     });
 
     it('toggles displayInline (Rating) back to false and displayInline (Sort By) to true', async () => {
@@ -232,9 +240,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the top-level menu with Sort By inlined', async () => {
       await dismissMenu();
-
-      await expect(element(by.text('Copy'))).not.toExist();
-      await waitFor(optionsMenuButton).toBeVisible().withTimeout(2000);
+      await waitFor(
+        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+      ).not.toBeVisible();
+      await expect(
+        element(by.id('toggle-display-inline-rating')),
+      ).toBeVisible();
     });
 
     it('toggles displayInline (Rating) to true again', async () => {
@@ -297,7 +308,10 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the Text Style submenu', async () => {
       await dismissMenu();
-      await waitFor(paletteMenuButton).toBeVisible().withTimeout(2000);
+      await waitFor(
+        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+      ).not.toBeVisible();
+      await expect(element(by.id('toggle-display-as-palette'))).toBeVisible();
     });
 
     it('toggles displayAsPalette (Text Style) to true', async () => {
@@ -339,8 +353,10 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the palette submenu', async () => {
       await dismissMenu();
-
-      await waitFor(paletteMenuButton).toBeVisible().withTimeout(2000);
+      await waitFor(
+        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
+      ).not.toBeVisible();
+      await expect(element(by.id('toggle-display-as-palette'))).toBeVisible();
     });
 
     it('toggles displayInline (Text Style) to true', async () => {
