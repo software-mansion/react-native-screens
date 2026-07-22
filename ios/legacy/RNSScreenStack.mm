@@ -19,10 +19,10 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
+#import "UINavigationBar+RNSUtility.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
-#import "utils/UINavigationBar+RNSUtility.h"
 
 namespace react = facebook::react;
 
