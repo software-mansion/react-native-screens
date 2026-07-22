@@ -10,6 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId;
 
+- (void)headerItemMenuDidUpdateFromCommandWithId:(NSString *)itemId;
+
 - (void)headerItemSpacerDidInvalidate;
 
 @end

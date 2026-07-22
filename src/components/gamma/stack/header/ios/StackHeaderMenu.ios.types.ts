@@ -8,7 +8,7 @@
  *
  * @platform ios
  */
-import type { PlatformIconIOS } from '../../../../../types';
+import type { PlatformIconIOS } from '../../../../shared/types';
 
 export interface StackHeaderMenuItemIOS {
   /**

@@ -7,7 +7,7 @@ all disable-relevant element kinds — an action button shown in the toolbar
 (`showAsAction: always`), an action item in the overflow menu (`showAsAction:
 never`), checkable items in a selection group, and a submenu — across both
 flows: the props flow (via the `toolbarMenu` prop) and the imperative command
-flow (via `setToolbarMenuItemOptions`). A disabled element is greyed out/correct
+flow (via `updateToolbarMenuElements`). A disabled element is greyed out/correct
 tint is applied and ignores interaction: it emits neither `onPress` nor
 `onSelectionChange`, a disabled submenu cannot be opened, and a disabled checked
 item keeps its checked state.

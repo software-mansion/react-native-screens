@@ -185,19 +185,29 @@ function ConfigScreen() {
       style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.label}>Bar Button Item Icon</Text>
-        <Text style={styles.current}>{itemIconVariant}</Text>
+        <Text testID="current-item-icon" style={styles.current}>
+          {itemIconVariant}
+        </Text>
         <Button
+          testID="cycle-item-icon-button"
           title="Cycle item icon"
           onPress={() => setItemIconVariant(nextVariant)}
         />
       </View>
       <View style={styles.section}>
         <Text style={styles.label}>Menu Toggles + Submenu Icon</Text>
-        <Text style={styles.current}>{menuIconVariant}</Text>
-        <Button title="Cycle menu icons" onPress={cycleMenuIcons} />
+        <Text testID="current-menu-icon" style={styles.current}>
+          {menuIconVariant}
+        </Text>
+        <Button
+          testID="cycle-menu-icons-button"
+          title="Cycle menu icons"
+          onPress={cycleMenuIcons}
+        />
       </View>
       <View style={styles.section}>
         <Button
+          testID="push-another-screen-button"
           title="Push another screen"
           onPress={() => navigation.push('Home')}
         />
