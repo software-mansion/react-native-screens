@@ -1,14 +1,37 @@
-import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  describeIfiOS26,
-  dismissToast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { device, expect, element, by, waitFor } from 'detox';
+import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
 } from '../../native-class-names';
+
+/** Highest number of toasts expected to be stacked at once in this suite. */
+const MAX_STACKED_TOASTS = 3;
+
+/**
+ * Dismisses a toast by its message, tolerating the `<n>. ` index prefix that
+ * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). A single
+ * interaction here can emit two toasts at once — the item's `onPress` and the
+ * menu's `onSelectionChange` — and their relative order is a native-dispatch
+ * detail, so the numeric prefix each toast ends up with is not guaranteed.
+ * Probing the mounted prefixes keeps the assertion independent of that order,
+ * unlike matching a hard-coded `1. ` prefix.
+ */
+async function dismissToastByMessage(message: string) {
+  for (let index = 1; index <= MAX_STACKED_TOASTS; index++) {
+    const label = `${index}. ${message}`;
+    try {
+      await waitFor(element(by.label(label)))
+        .toBeVisible()
+        .withTimeout(2000);
+    } catch {
+      continue;
+    }
+    await element(by.label(label)).tap();
+    return;
+  }
+  throw new Error(`Toast not found for message: "${message}"`);
+}
 
 function textItem(label: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(label)));
@@ -78,8 +101,8 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
       await expect(checkmarkFor('Option-0-A')).toBeVisible();
 
       await element(by.text('Option-0-B')).tap();
-      await dismissToast('1. Pressed Item 1');
-      await dismissToast('1. Item 1 [single]: "Option-0-B"');
+      await dismissToastByMessage('Pressed Item 1');
+      await dismissToastByMessage('Item 1 [single]: "Option-0-B"');
     });
 
     it('should show only Option-0-B checked when the menu is reopened', async () => {
@@ -87,26 +110,24 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
 
       await expect(checkmarkFor('Option-0-B')).toBeVisible();
       await expect(checkmarkFor('Option-0-A')).not.toExist();
-      await dismissToast('1. Pressed Item 1');
+      await dismissToastByMessage('Pressed Item 1');
     });
   });
 
-  it('should default to Option-0-A selected when Menu changes to multi and the menu is reopened', async () => {
+  it('should default to Option-0-A, add Option-0-B to the multi selection, emit a combined toast, and keep both checked on reopen', async () => {
     await setMenuMode(0, 'multi');
 
     await textItem('Bar 1').longPress();
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
-  });
 
-  it('should add Option-0-B to the multi selection, emit a combined toast, and keep both checked on reopen', async () => {
     await element(by.text('Option-0-B')).tap();
-    await dismissToast('1. Pressed Item 1');
-    await dismissToast('1. Item 1 [multi]: "Option-0-A", "Option-0-B"');
+    await dismissToastByMessage('Pressed Item 1');
+    await dismissToastByMessage('Item 1 [multi]: "Option-0-A", "Option-0-B"');
 
     await textItem('Bar 1').longPress();
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
     await expect(checkmarkFor('Option-0-B')).toBeVisible();
-    await dismissToast('1. Pressed Item 1');
+    await dismissToastByMessage('Pressed Item 1');
   });
 
   it("should replace Item 1's text button with its custom render view when Custom view is enabled, leaving Item 2 untouched", async () => {
