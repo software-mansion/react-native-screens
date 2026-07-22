@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify basic push and pop navigation on the gamma/v5
+**Description:** Verify basic push and pop navigation on the v5
 `StackContainer`. The stack starts with **Home** and can push **A** or **B**
 any number of times (including re-pushing a route already on the stack),
 each push creating a new screen instance with its own unique `routeKey`;
@@ -44,7 +44,7 @@ and are not yet implemented.
   import { TestStackSimpleNav as Example } from './src/tests/single-feature-tests';
   ```
 
-  With the gamma `StackContainer` at the root, the Android system
+  With the v5 `StackContainer` at the root, the Android system
   gesture-back pops the stack directly.
 
 - The Android system gesture-back requires **Gesture navigation** to be
