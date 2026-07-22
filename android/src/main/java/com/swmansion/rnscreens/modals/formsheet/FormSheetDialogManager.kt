@@ -63,10 +63,10 @@ class FormSheetDialogManager(
     private val nativeDismissCoordinator =
         FormSheetNativeDismissCoordinator(
             dialog = dialog,
-            bottomSheetView = bottomSheetView,
+            behaviorController = behaviorController,
             dimmingManager = dimmingManager,
-            onNativeDismiss = { presentationManager.handleNativeDismiss() },
-            onNativeDismissPrevented = { eventEmitter?.emitOnNativeDismissPreventedEvent() },
+            onDismissAllowed = { presentationManager.handleNativeDismiss() },
+            onDismissPrevented = { eventEmitter?.emitOnNativeDismissPreventedEvent() },
         )
 
     internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
@@ -113,10 +113,8 @@ class FormSheetDialogManager(
             appearanceCoordinator.updateBackgroundColor(newConfig.nativeContainerBackgroundColor)
         }
 
-        val oldShouldPreventNativeDismiss = oldConfig.preventNativeDismiss && oldConfig.isOpen
-        val newShouldPreventNativeDismiss = newConfig.preventNativeDismiss && newConfig.isOpen
-        if (oldShouldPreventNativeDismiss != newShouldPreventNativeDismiss) {
-            nativeDismissCoordinator.shouldPreventNativeDismiss = newShouldPreventNativeDismiss
+        if (oldConfig.shouldPreventNativeDismiss != newConfig.shouldPreventNativeDismiss) {
+            nativeDismissCoordinator.shouldPreventDismiss = newConfig.shouldPreventNativeDismiss
         }
 
         if (oldConfig.isOpen != newConfig.isOpen) {

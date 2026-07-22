@@ -20,7 +20,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 internal class FormSheetDialog(
     context: Context,
 ) : BottomSheetDialog(context) {
-    internal var onPreventDismissRequested: (() -> Boolean)? = null
+    internal fun interface CancelRequestInterceptor {
+        /**
+         * @return `true` when the cancel request was consumed and the dialog then stays visible.
+         */
+        fun consumeCancelRequest(): Boolean
+    }
+
+    internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +45,7 @@ internal class FormSheetDialog(
     }
 
     override fun cancel() {
-        if (onPreventDismissRequested?.invoke() == true) {
+        if (cancelRequestInterceptor?.consumeCancelRequest() == true) {
             return
         }
 
