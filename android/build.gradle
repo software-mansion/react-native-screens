@@ -34,10 +34,6 @@ def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
 }
 
-def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
-}
-
 def resolveReactNativeDirectory() {
     def userDefinedRnDirPath = safeAppExtGet("REACT_NATIVE_NODE_MODULES_DIR", null)
     if (userDefinedRnDirPath != null) {
@@ -124,7 +120,6 @@ android {
         targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())

@@ -26,15 +26,13 @@ class MainActivity : ReactActivity() {
     supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
     super.onCreate(savedInstanceState)
 
-    if (BuildConfig.RNS_GAMMA_ENABLED) {
-      try {
-        val field = ReactActivity::class.java.getDeclaredField("mBackPressedCallback")
-        field.isAccessible = true
-        val callback = field.get(this) as androidx.activity.OnBackPressedCallback
-        callback.isEnabled = false
-      } catch (e: Exception) {
-        e.printStackTrace()
-      }
+    try {
+      val field = ReactActivity::class.java.getDeclaredField("mBackPressedCallback")
+      field.isAccessible = true
+      val callback = field.get(this) as androidx.activity.OnBackPressedCallback
+      callback.isEnabled = false
+    } catch (e: Exception) {
+      e.printStackTrace()
     }
   }
 
