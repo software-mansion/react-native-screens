@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.core.view.isNotEmpty
 import androidx.core.widget.NestedScrollView
-import com.swmansion.rnscreens.ScreenStack
+import com.swmansion.rnscreens.legacy.ScreenStack
 
 object ViewFinder {
     fun findScrollViewInFirstDescendantChain(view: View): ViewGroup? {

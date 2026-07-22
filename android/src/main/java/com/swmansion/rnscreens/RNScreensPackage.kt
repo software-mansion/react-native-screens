@@ -16,8 +16,18 @@ import com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager
+import com.swmansion.rnscreens.legacy.InsetsObserverProxy
+import com.swmansion.rnscreens.legacy.ModalScreenViewManager
+import com.swmansion.rnscreens.legacy.ScreenContainerViewManager
+import com.swmansion.rnscreens.legacy.ScreenContentWrapperManager
+import com.swmansion.rnscreens.legacy.ScreenFooterManager
+import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfigViewManager
+import com.swmansion.rnscreens.legacy.ScreenStackHeaderSubviewManager
+import com.swmansion.rnscreens.legacy.ScreenStackViewManager
+import com.swmansion.rnscreens.legacy.ScreenViewManager
+import com.swmansion.rnscreens.legacy.SearchBarManager
+import com.swmansion.rnscreens.legacy.utils.ScreenDummyLayoutHelper
 import com.swmansion.rnscreens.safearea.SafeAreaViewManager
-import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
 // public class RNScreensPackage implements TurboReactPackage {

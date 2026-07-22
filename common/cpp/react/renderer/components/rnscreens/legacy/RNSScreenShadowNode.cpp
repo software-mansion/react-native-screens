@@ -28,7 +28,7 @@ findHeaderConfigChild(const YogaLayoutableShadowNode &screenShadowNode) {
 
 #ifdef ANDROID
 static constexpr const char *kScreenDummyLayoutHelperClass =
-    "com/swmansion/rnscreens/utils/ScreenDummyLayoutHelper";
+    "com/swmansion/rnscreens/legacy/utils/ScreenDummyLayoutHelper";
 
 std::optional<float> findHeaderHeight(
     const int fontSize,
@@ -59,7 +59,7 @@ std::optional<float> findHeaderHeight(
   jmethodID getInstanceMethodID = env->GetStaticMethodID(
       layoutHelperClass,
       "getInstance",
-      "()Lcom/swmansion/rnscreens/utils/ScreenDummyLayoutHelper;");
+      "()Lcom/swmansion/rnscreens/legacy/utils/ScreenDummyLayoutHelper;");
 
   if (getInstanceMethodID == nullptr) {
     LOG(ERROR) << "[RNScreens] Failed to retrieve getInstanceMethodID";
