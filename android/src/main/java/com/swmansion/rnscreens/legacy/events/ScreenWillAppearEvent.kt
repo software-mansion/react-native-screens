@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.events
+package com.swmansion.rnscreens.legacy.events
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap

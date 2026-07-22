@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.ext
+package com.swmansion.rnscreens.legacy.ext
 
 import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.legacy.ScreenStackFragment

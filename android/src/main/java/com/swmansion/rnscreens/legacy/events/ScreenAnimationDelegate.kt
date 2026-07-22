@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.legacy.events
 
 import android.animation.Animator
-import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.legacy.ScreenStackFragmentWrapper
 
 // The goal is to make this universal delegate for handling animation progress related logic.

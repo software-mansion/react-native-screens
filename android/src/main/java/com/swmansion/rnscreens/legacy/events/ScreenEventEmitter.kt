@@ -1,12 +1,8 @@
-package com.swmansion.rnscreens.events
+package com.swmansion.rnscreens.legacy.events
 
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.legacy.Screen
 import com.swmansion.rnscreens.legacy.ScreenFragment
-import com.swmansion.rnscreens.legacy.events.ScreenAppearEvent
-import com.swmansion.rnscreens.legacy.events.ScreenDisappearEvent
-import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
 
 // TODO: Consider taking weak ref here or accepting screen as argument in every method
 // to avoid reference cycle.

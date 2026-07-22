@@ -15,14 +15,14 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.swmansion.rnscreens.events.ScreenWillAppearEvent
-import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.legacy.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.legacy.events.ScreenAppearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.legacy.events.ScreenWillAppearEvent
+import com.swmansion.rnscreens.legacy.events.ScreenWillDisappearEvent
 import kotlin.math.max
 import kotlin.math.min
 
