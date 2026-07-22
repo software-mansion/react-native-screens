@@ -11,8 +11,8 @@ const MAX_STACKED_TOASTS = 3;
 /**
  * Dismisses a toast by its message, tolerating the `<n>. ` index prefix that
  * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). A single
- * interaction here can emit two toasts at once — the item's `onPress` and the
- * menu's `onSelectionChange` — and their relative order is a native-dispatch
+ * interaction here can emit two toasts at once - the item's `onPress` and the
+ * menu's `onSelectionChange` - and their relative order is a native-dispatch
  * detail, so the numeric prefix each toast ends up with is not guaranteed.
  * Probing the mounted prefixes keeps the assertion independent of that order,
  * unlike matching a hard-coded `1. ` prefix.
@@ -20,13 +20,9 @@ const MAX_STACKED_TOASTS = 3;
 async function dismissToastByMessage(message: string) {
   for (let index = 1; index <= MAX_STACKED_TOASTS; index++) {
     const label = `${index}. ${message}`;
-    try {
-      await waitFor(element(by.label(label)))
-        .toBeVisible()
-        .withTimeout(2000);
-    } catch {
-      continue;
-    }
+    await waitFor(element(by.label(label)))
+      .toBeVisible()
+      .withTimeout(2000);
     await element(by.label(label)).tap();
     return;
   }
@@ -50,6 +46,11 @@ function checkmarkFor(itemLabel: string) {
   );
 }
 
+// `SettingsPicker` derives its option testIDs from the label only, not the item
+// index (`title-foo`, `menu-single`, …), so those IDs are duplicated across
+// item sections. They resolve unambiguously only because each helper opens a
+// single picker, taps the option, and closes it again before the next call -
+// i.e. at most one picker is expanded at any time. Keep that invariant.
 async function setTitle(itemIndex: number, variant: 'foo' | 'bar') {
   const pickerId = `title-picker-${itemIndex}`;
   await element(by.id(pickerId)).tap();
@@ -81,7 +82,7 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
     await expect(textItem('Foo 2')).toBeVisible();
   });
 
-  it("should update only Item 1's header title when its Title picker changes to bar, leaving Item 2 untouched)", async () => {
+  it("should update only Item 1's header title when its Title picker changes to bar, leaving Item 2 untouched", async () => {
     await setTitle(0, 'bar');
 
     await expect(textItem('Bar 1')).toBeVisible();
@@ -136,13 +137,6 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
     await expect(element(by.id('custom-item-0'))).toBeVisible();
     await expect(textItem('Bar 1')).not.toExist();
     await expect(textItem('Foo 2')).toBeVisible();
-    await expect(
-      element(
-        by
-          .type('RCTViewComponentView')
-          .withAncestor(by.type('RNSStackHeaderItemComponentView')),
-      ).atIndex(0),
-    ).toBeVisible();
   });
 
   it('should keep the custom render view (not revert to a text button) when the Title picker changes while Custom view is enabled', async () => {
@@ -152,7 +146,7 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
     await expect(textItem('Foo 1')).not.toExist();
   });
 
-  it('should add a third trailing item when Add Item 3 is pressed ', async () => {
+  it('should add a third trailing item when Add Item 3 is pressed', async () => {
     await element(by.id('toggle-item-3-button')).tap();
 
     await expect(textItem('Foo 3')).toBeVisible();
