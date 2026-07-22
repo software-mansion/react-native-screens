@@ -19,6 +19,7 @@
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
 
+#import "RNSConversions.h"
 #import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
@@ -27,7 +28,6 @@
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
-#import "conversion/RNSConversions.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
