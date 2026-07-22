@@ -5,6 +5,7 @@
 #import "RNSStackHeaderIconMapper.h"
 #import "RNSStackHeaderItemEventEmitter.h"
 #import "RNSStackHeaderItemShadowStateProxy.h"
+#import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
 
@@ -44,17 +45,47 @@ namespace react = facebook::react;
 - (void)resetProps
 {
   _itemId = nil;
-  _title = nil;
-  _icon = nil;
-  _menu = nil;
+  [self setTitleProp:nil];
+  [self setIconProp:nil];
+  [self setMenuProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
 }
 
+- (void)setTitleProp:(NSString *)titleProp
+{
+  _titleProp = titleProp;
+  _title = titleProp;
+}
+
+- (void)setIconProp:(RNSStackHeaderIconData *)iconProp
+{
+  _iconProp = iconProp;
+  _icon = iconProp;
+}
+
+- (void)setMenuProp:(RNSStackHeaderMenuData *)menuProp
+{
+  _menuProp = menuProp;
+  _menu = menuProp;
+}
+
 - (void)emitOnPress
 {
   [_headerItemEventEmitter emitOnPress];
+}
+
+- (void)updateMenuElementWithId:(NSString *)elementId
+                    withElement:(id<RNSStackHeaderMenuElement>)newElement
+                     parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+{
+  if (parentMenu == nil) {
+    _menu = (RNSStackHeaderMenuData *)newElement;
+  } else {
+    _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+  }
+  [_invalidationDelegate headerItemMenuDidUpdateFromCommandWithId:_itemId];
 }
 
 #pragma mark - RNSStackHeaderItemDataProviding
@@ -162,19 +193,19 @@ RNS_IGNORE_SUPER_CALL_END
   _didSetHeaderItemPlacement = YES;
 
   if (oldItemProps.title != newItemProps.title) {
-    _title = RCTNSStringFromStringNilIfEmpty(newItemProps.title);
+    [self setTitleProp:RCTNSStringFromStringNilIfEmpty(newItemProps.title)];
     needsUpdate = YES;
   }
 
   if (oldItemProps.icon != newItemProps.icon) {
-    _icon = [RNSStackHeaderIconMapper
-        iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.icon)];
+    [self setIconProp:[RNSStackHeaderIconMapper
+                          iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.icon)]];
     needsUpdate = YES;
   }
 
   if (oldItemProps.menu != newItemProps.menu) {
-    _menu = [RNSStackHeaderMenuMapper
-        menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)];
+    [self setMenuProp:[RNSStackHeaderMenuMapper
+                          menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)]];
     menuDidChange = YES;
   }
 
