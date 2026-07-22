@@ -29,15 +29,15 @@ import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewFinder
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.helpers.createTransactionWithReordering
+import com.swmansion.rnscreens.safearea.EdgeInsets
+import com.swmansion.rnscreens.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
-import com.swmansion.rnscreens.safearea.EdgeInsets
-import com.swmansion.rnscreens.safearea.SafeAreaProvider
-import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 

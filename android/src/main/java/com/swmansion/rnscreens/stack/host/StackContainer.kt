@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
+import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.screen.StackScreen

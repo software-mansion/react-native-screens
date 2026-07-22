@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ContainerItemSupport
+import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener

@@ -3,8 +3,8 @@ package com.swmansion.rnscreens.stack.header.subview
 import android.annotation.SuppressLint
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.common.ShadowStateProxy
+import com.swmansion.rnscreens.ext.parentAsView
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
