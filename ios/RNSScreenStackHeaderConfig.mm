@@ -59,6 +59,10 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
   RCTImageLoader *_imageLoader;
+
+  /// Whether a header-config update is already queued behind an in-flight push/pop transition. Coalesces every prop
+  /// change that lands during one transition into a single post-transition re-apply (see updateViewControllerIfNeeded).
+  BOOL _hasDeferredTransitionUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -142,6 +146,49 @@ RNS_IGNORE_SUPER_CALL_END
     // point to the controller that is going to be revealed after transition. This check fixes the
     // problem when config gets updated while the transition is ongoing.
     nextVC = nav.topViewController;
+#if !TARGET_OS_TV
+    if (@available(iOS 26.0, *)) {
+      // On iOS 26 the navigation bar buttons use the liquid-glass appearance. Re-applying the header config while a
+      // push/pop transition is running rebuilds the `UIBarButtonItem`s from scratch, and a freshly created glass item
+      // animates its glass in from the transition's merged/expanded state — intermittently it gets stuck stretched
+      // across the whole navigation bar (see #3834, worst on interactive back-swipes). Defer the update until the
+      // transition (including a cancelled interactive pop) settles, then re-apply once.
+      //
+      // The re-apply always hops one runloop turn via `dispatch_async`: UIKit can still expose the finished
+      // coordinator inside its own completion phase, and registering a new alongside block on a finished coordinator
+      // never fires, so hopping a turn lets that coordinator tear down first. `_hasDeferredTransitionUpdate` coalesces
+      // every prop change that lands during one transition into a single re-apply (the re-run reads the config's
+      // current props, so nothing is lost). We must never apply synchronously here: a synchronous mid-transition
+      // rebuild is exactly what produces the stretched-glass artifact, so this branch always returns and only the
+      // deferred re-apply touches the bar.
+      if (_hasDeferredTransitionUpdate) {
+        return;
+      }
+      _hasDeferredTransitionUpdate = YES;
+      __weak __typeof(self) weakSelf = self;
+      void (^reapplyAfterTransition)(void) = ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+          __typeof(self) strongSelf = weakSelf;
+          if (strongSelf == nil) {
+            return;
+          }
+          strongSelf->_hasDeferredTransitionUpdate = NO;
+          [strongSelf updateViewControllerIfNeeded];
+        });
+      };
+      BOOL queued = [nav.transitionCoordinator
+          animateAlongsideTransition:nil
+                          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                            reapplyAfterTransition();
+                          }];
+      if (!queued) {
+        // The coordinator refused the block (interactive/non-animated window, or already completing), so its completion
+        // won't fire. Re-run on the next runloop turn instead of applying now mid-transition.
+        reapplyAfterTransition();
+      }
+      return;
+    }
+#endif
   }
 
   // we want updates sent to the VC directly below modal too since it is also visible
