@@ -94,7 +94,7 @@ open class CustomToolbar(
                 isLayoutEnqueued = true
                 // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
                 // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-                ReactChoreographer.Companion
+                ReactChoreographer
                     .getInstance()
                     .postFrameCallback(
                         ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
