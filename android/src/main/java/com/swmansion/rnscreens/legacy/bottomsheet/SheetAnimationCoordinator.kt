@@ -32,7 +32,7 @@ internal class SheetAnimationCoordinator(
 
     private var lastKeyboardBottomOffset: Int = 0
     private var lastScreenContainerBottomOffset: Int = 0
-    private val screenContainerRect = Rect()
+    private val screenContainerRect = android.graphics.Rect()
 
     private var lastBottomSystemBarInset: Int = 0
 

@@ -272,7 +272,7 @@ class ScreenStackFragment :
 
             val insetsAnimationCallback =
                 object : WindowInsetsAnimationCompat.Callback(
-                    DISPATCH_MODE_STOP,
+                    WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
                     override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                         super.onPrepare(animation)

@@ -41,7 +41,7 @@ class ScreenStackViewManager :
         val screen = parent.getScreenAt(index)
         prepareOutTransition(screen)
         parent.removeScreenAt(index)
-        NativeProxy.Companion.removeScreenFromMap(screen.id)
+        NativeProxy.removeScreenFromMap(screen.id)
     }
 
     private fun prepareOutTransition(screen: Screen?) {
@@ -50,7 +50,7 @@ class ScreenStackViewManager :
 
     override fun invalidate() {
         super.invalidate()
-        NativeProxy.Companion.clearMapOnInvalidate()
+        NativeProxy.clearMapOnInvalidate()
     }
 
     override fun getChildCount(parent: ScreenStack) = parent.screenCount

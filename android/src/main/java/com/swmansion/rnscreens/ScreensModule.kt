@@ -58,7 +58,7 @@ class ScreensModule(
 
     private fun setupFabric() {
         val fabricUIManager =
-            UIManagerHelper.getUIManager(reactContext, UIManagerType.Companion.FABRIC) as FabricUIManager
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
         proxy?.apply {
             nativeAddMutationsListener(fabricUIManager)
         }
@@ -97,7 +97,7 @@ class ScreensModule(
             return
         }
         val progressFloat = progress.toFloat()
-        val coalescingKey = ScreenFragment.Companion.getCoalescingKey(progressFloat)
+        val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
         UIManagerHelper
             .getEventDispatcherForReactTag(reactContext, topScreenId)
             ?.dispatchEvent(

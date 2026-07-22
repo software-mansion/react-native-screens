@@ -2,10 +2,9 @@ package com.swmansion.rnscreens.legacy.utils
 
 import android.view.View
 import android.view.WindowInsets
-import androidx.core.graphics.Insets
 import androidx.core.view.WindowInsetsCompat
 
-typealias InsetsCompat = Insets
+typealias InsetsCompat = androidx.core.graphics.Insets
 typealias InsetsPlatform = android.graphics.Insets // Available since SDK 29
 
 /**
