@@ -16,7 +16,7 @@ import type {
   TabsScreenItemStateAppearanceAndroid,
 } from './TabsScreen.android.types';
 import type { TabsScreenProps } from '../screen/TabsScreen.types';
-import type { PlatformIconAndroid } from '../../../types';
+import type { PlatformIconAndroid } from '../../shared/types';
 import { useTabsScreen } from './useTabsScreen';
 import { parseAndroidIconToNativeProps } from '../../shared';
 

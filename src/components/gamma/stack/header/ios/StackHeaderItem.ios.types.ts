@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { PlatformIconIOS } from '../../../../../types';
+import type { PlatformIconIOS } from '../../../../shared/types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
 
 export type StackHeaderItemPlacement =

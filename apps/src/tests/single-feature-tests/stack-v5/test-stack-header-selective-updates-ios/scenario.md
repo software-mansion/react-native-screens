@@ -8,23 +8,12 @@
 
 ## E2E test
 
-Incomplete: `test-stack-header-selective-updates-ios.e2e.ts` automates the
-*scoped-update* and menu-selection mechanics — Step 1 (initial titles), Step 2
-(Title picker updates only Item 1, Item 2 untouched), Step 3 (Menu picker
-attaches a native menu to Item 1), Step 4 (long-press opens the menu,
-singleSelection semantics, checkmark persists on reopen), Step 5 (multi mode
-defaults to the first option selected), Step 6 (multi-selection toast and both
-checkmarks persist), the state-change halves of Step 7 (custom view replaces
-the text button, Item 2 untouched) and Step 8 (custom view survives a title
-change instead of reverting to text), and Step 9/10 (Add/Remove Item 3 changes
-the item count).
-
-Not automated:
-
-- The core claim of Steps 2, 3, 7, 8, 9, 10 — that the affected item(s) do or
-  do not show the native iOS 26+ rebuild flash/blur. This is a transient
-  visual render effect with no observable JS-side signal, so Detox cannot
-  assert it; it requires manual verification on iOS 26+.
+Partial: `test-stack-header-selective-updates-ios.e2e.ts` covers all steps, but
+not in full scope. It asserts the observable state changes — header titles,
+attached menus, selection checkmarks/toasts, custom-view swaps, and item
+count. It cannot assert the transient iOS 26+ rebuild flash/blur (whether an
+affected item does or does not visually flash), which has no JS-side signal and
+requires manual verification on iOS 26+.
 
 ## Prerequisites
 

@@ -21,18 +21,51 @@ import java.util.Locale
 
 private const val TAG = "ImageLoader"
 
+/**
+ * Resolves an icon from a system drawable resource name or an image uri, whichever is provided
+ * ([systemDrawableResourceName] takes precedence). [onComplete] is always invoked exactly once —
+ * synchronously for drawable resources and empty sources, asynchronously on the main thread for
+ * image uris — with the resolved drawable, or `null` when the source resolves to no icon or fails
+ * to load.
+ */
+internal fun resolveImage(
+    context: Context,
+    systemDrawableResourceName: String?,
+    imageUri: String?,
+    onComplete: (Drawable?) -> Unit,
+) {
+    when {
+        systemDrawableResourceName != null ->
+            onComplete(getSystemDrawableResource(context, systemDrawableResourceName))
+
+        imageUri != null -> loadImage(context, imageUri, onComplete)
+        else -> onComplete(null)
+    }
+}
+
+/**
+ * Loads an image from [uri]. [onComplete] is always invoked exactly once on the main thread — with
+ * the loaded drawable on success, or `null` on failure, an unresolvable uri, or an unsupported
+ * (non-static-bitmap) image. Callers that must always learn the outcome (e.g. the toolbar menu
+ * update queue) rely on this "always completes" contract.
+ */
 internal fun loadImage(
     context: Context,
     uri: String,
-    onLoaded: (Drawable?) -> Unit,
+    onComplete: (Drawable?) -> Unit,
 ) {
+    val resolvedUri = ImageSource(context, uri).getUri(context)
+    if (resolvedUri == null) {
+        Handler(Looper.getMainLooper()).post { onComplete(null) }
+        return
+    }
+
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
-    // We should schedule rendering the result on the UI thread
-    val resolvedUri = ImageSource(context, uri).getUri(context) ?: return
+    // We should schedule delivering the result on the UI thread.
     loadImageInternal(context, resolvedUri) { drawable ->
         Handler(Looper.getMainLooper()).post {
-            onLoaded(drawable)
+            onComplete(drawable)
         }
     }
 }
@@ -40,7 +73,7 @@ internal fun loadImage(
 private fun loadImageInternal(
     context: Context,
     uri: Uri,
-    onLoaded: (Drawable?) -> Unit,
+    onComplete: (Drawable?) -> Unit,
 ) {
     val imageRequest =
         ImageRequestBuilder
@@ -52,23 +85,35 @@ private fun loadImageInternal(
         object : BaseDataSubscriber<CloseableReference<CloseableImage>>() {
             override fun onNewResultImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                 if (!dataSource.isFinished) return
-                val imageReference = dataSource.result ?: return
-                val closeableImage = imageReference.get()
-
-                if (closeableImage is CloseableStaticBitmap) {
-                    val bitmap = closeableImage.underlyingBitmap
-                    val drawable =
-                        bitmap
-                            ?.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
-                            ?.toDrawable(context.resources)
-                    onLoaded(drawable)
+                val imageReference = dataSource.result
+                if (imageReference == null) {
+                    onComplete(null)
+                    return
                 }
 
-                imageReference.close()
+                // Copy the bitmap so the drawable outlives the Fresco reference, then release it.
+                val drawable =
+                    imageReference.use { imageReference ->
+                        val closeableImage = imageReference.get()
+                        if (closeableImage is CloseableStaticBitmap) {
+                            val bitmap = closeableImage.underlyingBitmap
+                            bitmap
+                                ?.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
+                                ?.toDrawable(context.resources)
+                        } else {
+                            null
+                        }
+                    }
+                onComplete(drawable)
             }
 
             override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                 Log.e(TAG, "[RNScreens] Error loading image: $uri", dataSource.failureCause)
+                onComplete(null)
+            }
+
+            override fun onCancellation(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
+                onComplete(null)
             }
         },
         CallerThreadExecutor.getInstance(),

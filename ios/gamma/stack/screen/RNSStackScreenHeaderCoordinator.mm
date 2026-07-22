@@ -5,6 +5,7 @@
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
 #import "RNSStackHeaderMenuCoordinator.h"
+#import "RNSStackHeaderMenuFinder.h"
 #import "RNSStackHeaderMenuTrackerRegistry.h"
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
@@ -196,6 +197,57 @@
 {
   if (itemId != nil) {
     [_trackerRegistry resetTrackerForItemId:itemId];
+  }
+}
+
+- (void)setToggleState:(BOOL)state
+      forMenuElementId:(NSString *)elementId
+            withItemId:(NSString *)itemId
+            parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+{
+  if (_configDataProvider == nil || elementId == nil || itemId == nil) {
+    return;
+  }
+
+  RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+
+  if ([tracker toggleStateEquals:state forItemWithId:elementId]) {
+    return;
+  }
+
+  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
+  if (item == nil || item.menu == nil) {
+    return;
+  }
+
+  RNSStackHeaderMenuData *singleSelectionRoot =
+      [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:elementId inMenu:item.menu];
+
+  NSString *eventMenuId = nil;
+  NSArray<NSString *> *toggleIds = nil;
+
+  if (singleSelectionRoot != nil) {
+    if (!state) {
+      // Setting false in singleSelection is ignored — one item must always be selected.
+      return;
+    }
+    toggleIds = [RNSStackHeaderMenuCoordinator getAllToggleItemsIdsInSingleSelectionHierarchy:singleSelectionRoot];
+    [tracker selectItemWithId:elementId fromIds:toggleIds];
+    eventMenuId = singleSelectionRoot.menuElementId;
+  } else {
+    [tracker setToggleState:state forItemWithId:elementId];
+    toggleIds = parentMenu != nil ? [RNSStackHeaderMenuCoordinator getToggleItemsIdsInMenu:parentMenu] : @[ elementId ];
+    eventMenuId = parentMenu != nil ? parentMenu.menuElementId : nil;
+  }
+
+  if (eventMenuId != nil) {
+    NSMutableArray<NSString *> *selectedIds = [NSMutableArray new];
+    for (NSString *toggleId in toggleIds) {
+      if ([tracker getToggleStateForItemWithId:toggleId initialState:NO]) {
+        [selectedIds addObject:toggleId];
+      }
+    }
+    [_eventsDelegate didChangeSelectionForMenu:eventMenuId selectedMenuItemIds:selectedIds];
   }
 }
 

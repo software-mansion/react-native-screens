@@ -2,17 +2,16 @@
 
 ## Details
 
-**Description:** This test focuses on the Android toolbar menu items API
-on the gamma stack header — both the `toolbarMenu` prop and the
-imperative `setToolbarMenuElementOptions(id, options)` command. It verifies
-that the menu renders correctly from props on first mount, that the
-per-item `onPress` callback fires with the correct id, and that
-imperative commands behave as specified: fields absent from `options`
-preserve their current value, fields set to `undefined` (encoded as
-`null` over the bridge) reset to the prop's regular default (not to the
-value last seen from props), and any props update rebuilds the entire
-menu — discarding all prior command-applied state across all items, not
-just the slot whose prop changed.
+**Description:** This test focuses on the Android toolbar menu items API on the
+gamma stack header — both the `toolbarMenu` prop and the imperative
+`updateToolbarMenuElements` command. It verifies that the menu renders correctly
+from props on first mount, that the per-item `onPress` callback fires with the
+correct id, and that imperative commands behave as specified: fields absent from
+`options` preserve their current value, fields set to `undefined` (encoded as
+`null` over the bridge) reset to the prop's regular default (not to the value
+last seen from props), and any props update rebuilds the entire menu —
+discarding all prior command-applied state across all items, not just the slot
+whose prop changed.
 
 **OS test creation version:** Android: API Level 36
 

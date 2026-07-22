@@ -1,37 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
 import StackHeaderItemIOSNativeComponent from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
-import type {
-  HeaderItemPressEvent,
-  PlatformIconIOS as ResolvedPlatformIconIOS,
-} from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
+import type { HeaderItemPressEvent } from '../../../../../fabric/gamma/stack/StackHeaderItemIOSNativeComponent';
 import type { StackHeaderItemProps } from './StackHeaderItem.ios.types';
-import type { PlatformIconIOS } from '../../../../../types';
 import type {
   StackHeaderMenuIOS,
   StackHeaderMenuElementIOS,
 } from './StackHeaderMenu.ios.types';
-import { Image, NativeSyntheticEvent, StyleSheet } from 'react-native';
-
-function resolveIconAssetSources(
-  icon: PlatformIconIOS | undefined,
-): ResolvedPlatformIconIOS | undefined {
-  if (icon == null) {
-    return undefined;
-  }
-  if (icon.type === 'imageSource') {
-    return {
-      type: 'imageSource',
-      imageSource: Image.resolveAssetSource(icon.imageSource),
-    };
-  }
-  if (icon.type === 'templateSource') {
-    return {
-      type: 'templateSource',
-      templateSource: Image.resolveAssetSource(icon.templateSource),
-    };
-  }
-  return icon;
-}
+import { NativeSyntheticEvent, StyleSheet } from 'react-native';
+import { resolveIconAssetSources } from './iconUtils.ios';
 
 function resolveMenuElementIcons(
   element: StackHeaderMenuElementIOS,
