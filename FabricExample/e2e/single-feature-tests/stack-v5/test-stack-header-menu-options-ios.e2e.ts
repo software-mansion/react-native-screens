@@ -9,6 +9,7 @@ import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
@@ -22,6 +23,7 @@ import { IosElementAttributes } from 'detox/detox';
  * a row's chevron tells a collapsed submenu from an inlined one; and icon
  * frames tell a horizontal palette from a vertical list.
  */
+const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
 
 const optionsMenuButton = element(
   by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label('Options')),
@@ -92,6 +94,7 @@ async function dismissMenu() {
     x: frame.x + frame.width / 10,
     y: frame.y + frame.height / 2,
   });
+  await waitFor(contextMenu).not.toExist();
 }
 
 /** Taps a toggle and asserts the label it settles on. */
@@ -133,6 +136,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
       await expect(element(by.text('Sort By'))).toBeVisible();
+      await expect(chevronFor('Sort By')).toBeVisible();
       await expect(element(by.text('Delete'))).toBeVisible();
     });
 
@@ -156,9 +160,6 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the Sort By and Rating submenus without selecting an item', async () => {
       await dismissMenu();
-      await waitFor(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
-      ).not.toBeVisible();
       await expect(
         element(by.id('toggle-display-inline-rating')),
       ).toBeVisible();
@@ -177,6 +178,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
       await expect(element(by.text('Sort By'))).toBeVisible();
+      await expect(chevronFor('Sort By')).toBeVisible();
       await expect(element(by.text('Delete'))).toBeVisible();
     });
 
@@ -188,15 +190,12 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
       await expect(element(by.text('Best Reviews'))).toBeVisible();
       await expect(element(by.text('Most Reviews'))).toBeVisible();
       await expect(element(by.text('Highest Rated'))).toBeVisible();
-      // Rating is gone as a row once its children are inlined.
+      // Rating submenu is gone as a row once its children are inlined.
       await expect(chevronFor('Rating')).not.toExist();
     });
 
     it('dismisses the Sort By submenu with Rating inlined', async () => {
       await dismissMenu();
-      await waitFor(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
-      ).not.toBeVisible();
       await expect(
         element(by.id('toggle-display-inline-rating')),
       ).toBeVisible();
@@ -237,9 +236,6 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the top-level menu with Sort By inlined', async () => {
       await dismissMenu();
-      await waitFor(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
-      ).not.toBeVisible();
       await expect(
         element(by.id('toggle-display-inline-rating')),
       ).toBeVisible();
@@ -305,9 +301,6 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the Text Style submenu', async () => {
       await dismissMenu();
-      await waitFor(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
-      ).not.toBeVisible();
       await expect(element(by.id('toggle-display-as-palette'))).toBeVisible();
     });
 
@@ -350,9 +343,6 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
 
     it('dismisses the palette submenu', async () => {
       await dismissMenu();
-      await waitFor(
-        element(by.type(CLASS_NAME_UI_CONTEXT_MENU_VIEW)),
-      ).not.toBeVisible();
       await expect(element(by.id('toggle-display-as-palette'))).toBeVisible();
     });
 

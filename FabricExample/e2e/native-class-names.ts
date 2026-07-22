@@ -50,6 +50,7 @@ export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 // --- UIKit: context menu ---
 
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
+export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
 export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
