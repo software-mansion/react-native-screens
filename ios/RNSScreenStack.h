@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateScreenTransition:(double)progress;
 - (void)finishScreenTransition:(BOOL)canceled;
 
+- (void)headerMenuWillPresent;
+- (void)headerMenuDidDismiss;
+
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
 

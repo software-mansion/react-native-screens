@@ -167,6 +167,41 @@ namespace react = facebook::react;
 @end
 #endif
 
+@interface RNSScreenStackView (RNSHeaderMenuPrivate)
+- (void)cancelTouchesInParent;
+@end
+
+@interface RNSMenuDismissGestureRecognizer : UIGestureRecognizer
+@property (nonatomic, weak) RNSScreenStackView *stackView;
+@property (nonatomic, weak) UINavigationBar *navigationBar;
+@end
+
+@implementation RNSMenuDismissGestureRecognizer
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+  [super touchesBegan:touches withEvent:event];
+
+  UITouch *touch = touches.anyObject;
+  if (!touch) {
+    self.state = UIGestureRecognizerStateFailed;
+    return;
+  }
+
+  CGPoint point = [touch locationInView:self.stackView];
+
+  if (self.navigationBar && CGRectContainsPoint(self.navigationBar.frame, point)) {
+    self.state = UIGestureRecognizerStateFailed;
+    return;
+  }
+
+  [self.stackView cancelTouchesInParent];
+  self.state = UIGestureRecognizerStateRecognized;
+  [self.stackView headerMenuDidDismiss];
+}
+
+@end
+
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
@@ -175,6 +210,8 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+  BOOL _isMenuPresented;
+  RNSMenuDismissGestureRecognizer *_menuDismissGestureRecognizer;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -779,6 +816,38 @@ RNS_IGNORE_SUPER_CALL_END
   // gesture and onPress may fire when we release the finger.
 
   [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
+}
+
+- (void)headerMenuWillPresent
+{
+  if (_isMenuPresented) {
+    return;
+  }
+  _isMenuPresented = YES;
+
+  [self cancelTouchesInParent];
+  _controller.topViewController.view.userInteractionEnabled = NO;
+
+  _menuDismissGestureRecognizer = [[RNSMenuDismissGestureRecognizer alloc] initWithTarget:nil action:nil];
+  _menuDismissGestureRecognizer.stackView = self;
+  _menuDismissGestureRecognizer.navigationBar = _controller.navigationBar;
+  _menuDismissGestureRecognizer.cancelsTouchesInView = YES;
+  [self addGestureRecognizer:_menuDismissGestureRecognizer];
+}
+
+- (void)headerMenuDidDismiss
+{
+  if (!_isMenuPresented) {
+    return;
+  }
+  _isMenuPresented = NO;
+
+  _controller.topViewController.view.userInteractionEnabled = YES;
+
+  if (_menuDismissGestureRecognizer) {
+    [self removeGestureRecognizer:_menuDismissGestureRecognizer];
+    _menuDismissGestureRecognizer = nil;
+  }
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer

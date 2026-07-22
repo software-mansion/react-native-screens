@@ -7,6 +7,7 @@
 
 typedef void (^RNSBarButtonItemAction)(NSString *buttonId);
 typedef void (^RNSBarButtonMenuItemAction)(NSString *menuId);
+typedef void (^RNSBarButtonMenuPresentedCallback)(void);
 
 @interface RNSBarButtonItem : UIBarButtonItem
 
@@ -14,6 +15,7 @@ typedef void (^RNSBarButtonMenuItemAction)(NSString *menuId);
 - (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
                         action:(RNSBarButtonItemAction)action
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
+                menuPresented:(RNSBarButtonMenuPresentedCallback)menuPresented
                    imageLoader:(RCTImageLoader *)imageLoader;
 #endif // defined(__cplusplus)
 

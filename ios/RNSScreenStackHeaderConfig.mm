@@ -21,6 +21,7 @@
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
+#import "RNSScreenStack.h"
 #import "RNSSearchBar.h"
 #import "UINavigationBar+RNSUtility.h"
 
@@ -793,6 +794,10 @@ RNS_IGNORE_SUPER_CALL_END
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
     if (dict[@"buttonId"] || dict[@"menu"]) {
+      UIView *stackCandidate = self.screenView.controller.navigationController.view.superview;
+      __weak RNSScreenStackView *weakStackView =
+          [stackCandidate isKindOfClass:RNSScreenStackView.class] ? (RNSScreenStackView *)stackCandidate : nil;
+
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
           action:^(NSString *buttonId) {
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
@@ -804,6 +809,8 @@ RNS_IGNORE_SUPER_CALL_END
             }
           }
           menuAction:^(NSString *menuId) {
+            [weakStackView headerMenuDidDismiss];
+
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
                 self->_eventEmitter);
             if (eventEmitter && menuId) {
@@ -811,6 +818,9 @@ RNS_IGNORE_SUPER_CALL_END
                   facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
                       .menuId = std::string([menuId UTF8String])});
             }
+          }
+          menuPresented:^{
+            [weakStackView headerMenuWillPresent];
           }
           imageLoader:_imageLoader];
       NSNumber *index = dict[@"index"];
