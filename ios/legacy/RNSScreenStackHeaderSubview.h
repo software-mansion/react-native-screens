@@ -4,7 +4,7 @@
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
 #endif // __cplusplus
-#import "RNSEnums.h"
+#import "RNSLegacyEnums.h"
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN

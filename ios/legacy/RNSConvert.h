@@ -4,7 +4,7 @@
 #if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
 #endif // __cplusplus
-#import "RNSEnums.h"
+#import "RNSLegacyEnums.h"
 
 #if defined(__cplusplus)
 namespace react = facebook::react;
