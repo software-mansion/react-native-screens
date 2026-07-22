@@ -25,10 +25,9 @@ import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfigViewManager
 import com.swmansion.rnscreens.legacy.ScreenStackHeaderSubviewManager
 import com.swmansion.rnscreens.legacy.ScreenStackViewManager
 import com.swmansion.rnscreens.legacy.ScreenViewManager
-import com.swmansion.rnscreens.ScreensModule
 import com.swmansion.rnscreens.legacy.SearchBarManager
-import com.swmansion.rnscreens.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.legacy.utils.ScreenDummyLayoutHelper
+import com.swmansion.rnscreens.safearea.SafeAreaViewManager
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
 // public class RNScreensPackage implements TurboReactPackage {

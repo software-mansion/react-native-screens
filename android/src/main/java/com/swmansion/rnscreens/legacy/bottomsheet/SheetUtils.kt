@@ -6,8 +6,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPS
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-import com.swmansion.rnscreens.legacy.Screen
 import com.swmansion.rnscreens.ext.asScreenStackFragment
+import com.swmansion.rnscreens.legacy.Screen
 
 object SheetUtils {
     /**

@@ -8,11 +8,11 @@ import android.graphics.Rect
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.swmansion.rnscreens.events.ScreenEventEmitter
+import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.legacy.Screen
 import com.swmansion.rnscreens.legacy.ScreenStackFragment
 import com.swmansion.rnscreens.legacy.events.ScreenAnimationDelegate
-import com.swmansion.rnscreens.events.ScreenEventEmitter
-import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.legacy.transition.ExternalBoundaryValuesEvaluator
 import java.lang.ref.WeakReference
 

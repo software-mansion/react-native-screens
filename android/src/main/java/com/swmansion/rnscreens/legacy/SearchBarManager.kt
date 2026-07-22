@@ -11,8 +11,8 @@ import com.swmansion.rnscreens.legacy.events.SearchBarBlurEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarChangeTextEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarCloseEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarFocusEvent
-import com.swmansion.rnscreens.legacy.stack.SearchBarOpenEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarSearchButtonPressEvent
+import com.swmansion.rnscreens.legacy.stack.SearchBarOpenEvent
 
 @ReactModule(name = SearchBarManager.REACT_CLASS)
 class SearchBarManager :

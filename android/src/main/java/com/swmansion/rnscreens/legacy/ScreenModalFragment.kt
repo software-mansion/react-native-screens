@@ -16,11 +16,11 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.swmansion.rnscreens.ext.parentAsView
+import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetDialogRootView
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetDialogScreen
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.ext.parentAsView
-import com.swmansion.rnscreens.ext.recycle
 
 class ScreenModalFragment :
     BottomSheetDialogFragment,

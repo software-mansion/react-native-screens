@@ -20,9 +20,6 @@ import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.BuildConfig
-import com.swmansion.rnscreens.legacy.CustomToolbar
-import com.swmansion.rnscreens.legacy.FabricEnabledHeaderConfigViewGroup
-import com.swmansion.rnscreens.legacy.PointerEventsBoxNoneImpl
 import com.swmansion.rnscreens.legacy.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.legacy.events.HeaderDetachedEvent
 import kotlin.math.max

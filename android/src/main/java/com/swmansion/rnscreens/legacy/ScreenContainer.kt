@@ -16,8 +16,8 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 
 open class ScreenContainer(
     context: Context?,
@@ -268,7 +268,8 @@ open class ScreenContainer(
         transaction.remove(fragment)
     }
 
-    private fun getActivityState(screenFragmentWrapper: ScreenFragmentWrapper): Screen.ActivityState? = screenFragmentWrapper.screen.activityState
+    private fun getActivityState(screenFragmentWrapper: ScreenFragmentWrapper): Screen.ActivityState? =
+        screenFragmentWrapper.screen.activityState
 
     open fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean = screenWrappers.contains(screenFragmentWrapper)
 

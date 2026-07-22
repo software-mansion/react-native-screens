@@ -26,6 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.asScreenStackFragment
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.legacy.bottomsheet.fitToContentsSheetHeight
@@ -35,9 +38,6 @@ import com.swmansion.rnscreens.legacy.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.legacy.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.legacy.events.HeaderHeightChangeEvent
-import com.swmansion.rnscreens.events.SheetDetentChangedEvent
-import com.swmansion.rnscreens.ext.asScreenStackFragment
-import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 

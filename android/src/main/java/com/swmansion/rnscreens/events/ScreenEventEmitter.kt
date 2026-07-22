@@ -21,28 +21,31 @@ class ScreenEventEmitter(
 
     fun dispatchOnWillAppear() = reactEventDispatcher?.dispatchEvent(ScreenWillAppearEvent(reactSurfaceId, screen.id))
 
-    fun dispatchOnAppear() = reactEventDispatcher?.dispatchEvent(
-        ScreenAppearEvent(
-            reactSurfaceId,
-            screen.id
+    fun dispatchOnAppear() =
+        reactEventDispatcher?.dispatchEvent(
+            ScreenAppearEvent(
+                reactSurfaceId,
+                screen.id,
+            ),
         )
-    )
 
     fun dispatchOnWillDisappear() = reactEventDispatcher?.dispatchEvent(ScreenWillDisappearEvent(reactSurfaceId, screen.id))
 
-    fun dispatchOnDisappear() = reactEventDispatcher?.dispatchEvent(
-        ScreenDisappearEvent(
-            reactSurfaceId,
-            screen.id
+    fun dispatchOnDisappear() =
+        reactEventDispatcher?.dispatchEvent(
+            ScreenDisappearEvent(
+                reactSurfaceId,
+                screen.id,
+            ),
         )
-    )
 
-    fun dispatchOnDismissed() = reactEventDispatcher?.dispatchEvent(
-        ScreenDismissedEvent(
-            reactSurfaceId,
-            screen.id
+    fun dispatchOnDismissed() =
+        reactEventDispatcher?.dispatchEvent(
+            ScreenDismissedEvent(
+                reactSurfaceId,
+                screen.id,
+            ),
         )
-    )
 
     fun dispatchTransitionProgress(
         progress: Float,
@@ -58,7 +61,7 @@ class ScreenEventEmitter(
                 sanitizedProgress,
                 isExitAnimation,
                 isGoingForward,
-                coalescingKey
+                coalescingKey,
             ),
         )
     }

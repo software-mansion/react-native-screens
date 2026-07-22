@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.legacy
 
 import android.app.Activity
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.legacy.FragmentHolder
 
 interface ScreenFragmentWrapper :
     FragmentHolder,

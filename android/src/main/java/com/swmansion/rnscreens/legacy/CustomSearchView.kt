@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import com.swmansion.rnscreens.legacy.FragmentBackPressOverrider
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class CustomSearchView(

@@ -3,8 +3,6 @@ package com.swmansion.rnscreens.legacy
 import android.annotation.SuppressLint
 import android.view.View
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.legacy.CustomToolbar
-import com.swmansion.rnscreens.legacy.FabricEnabledHeaderSubviewViewGroup
 
 @SuppressLint("ViewConstructor")
 class ScreenStackHeaderSubview(

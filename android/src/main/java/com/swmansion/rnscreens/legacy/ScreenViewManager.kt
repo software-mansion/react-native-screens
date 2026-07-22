@@ -12,6 +12,9 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
+import com.swmansion.rnscreens.events.ScreenWillAppearEvent
+import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.legacy.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.legacy.events.HeaderHeightChangeEvent
@@ -19,9 +22,6 @@ import com.swmansion.rnscreens.legacy.events.ScreenAppearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
-import com.swmansion.rnscreens.events.ScreenWillAppearEvent
-import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
-import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager :
