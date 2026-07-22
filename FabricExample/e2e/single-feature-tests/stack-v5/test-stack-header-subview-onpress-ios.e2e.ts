@@ -1,10 +1,17 @@
 import { device, expect, element, by, waitFor } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiOS,
+  dismissToast,
+  getElementAttributes,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
 } from '../../native-class-names';
 
 const {
@@ -27,6 +34,8 @@ const describeIfIOS26 = isIOS26OrLater ? describe : describe.skip;
 function headerItem(title: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(title)));
 }
+
+const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
 
 /**
  * A selectable row inside a presented native UIMenu (a header-item menu, or on
@@ -53,7 +62,15 @@ const overflowButton = element(by.id('OverflowBarButtonItem'));
  * off-menu coordinate has to be computed.
  */
 async function dismissMenu() {
-  await element(by.label('Dismiss context menu')).tap();
+  const { frame } = await getElementAttributes({
+    by: 'type',
+    value: '_UIContextMenuPlatterTransitionView',
+  });
+  await device.tap({
+    x: frame.x + frame.width / 2,
+    y: frame.y + frame.height / 2,
+  });
+  await waitFor(contextMenu).not.toExist();
 }
 
 /**
@@ -61,16 +78,21 @@ async function dismissMenu() {
  * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). Each interaction
  * dismisses its toast before the next, so only one is ever stacked.
  */
-async function dismissToast(message: string) {
-  const label = `1. ${message}`;
-  await waitFor(element(by.label(label)))
-    .toBeVisible()
-    .withTimeout(2000);
-  await element(by.label(label)).tap();
-}
 
 async function toggleItemsCount() {
   await element(by.id('toggle-items-count-button')).tap();
+}
+
+function chevronFor(itemLabel: string) {
+  return element(
+    by
+      .id('chevron.forward')
+      .withAncestor(
+        by
+          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+          .and(by.label(itemLabel)),
+      ),
+  );
 }
 
 describeIfiOS('Stack Header Subview onPress (iOS)', () => {
@@ -89,7 +111,7 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
 
   it('should fire the onPress toast when tapping Item 0 (it has both onPress and a menu)', async () => {
     await headerItem('Item 0').tap();
-    await dismissToast('onPress Item 0');
+    await dismissToast('1. onPress Item 0');
   });
 
   it('should open a native menu with two actions on a single tap of Menu 1, which has no onPress', async () => {
@@ -106,9 +128,7 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
 
     await expect(menuRow('Action 0-1')).toBeVisible();
     await expect(menuRow('Action 0-2')).toBeVisible();
-    await expect(element(by.label('1. onPress Item 0'))).not.toExist();
-
-    await dismissMenu();
+    await dismissToast('1. onPress Item 0');
   });
 
   describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
@@ -130,17 +150,29 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
 
       await expect(menuRow('Item 0')).toBeVisible();
       await expect(menuRow('Menu 1')).toBeVisible();
+      await expect(chevronFor('Item 0')).toBeVisible();
+      await expect(chevronFor('Menu 1')).toBeVisible();
     });
 
     it("should open a 3-row submenu (Item 0, Action 0-1, Action 0-2) for the overflow's Item 0 entry, and fire the onPress toast when tapping its own row", async () => {
       await menuRow('Item 0').tap();
 
-      await expect(menuRow('Item 0')).toBeVisible();
+      await expect(menuRow('Item 0').atIndex(1)).toBeVisible();
+      await expect(
+        element(
+          by
+            .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+            .and(by.label('Item 0'))
+            .withAncestor(
+              by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW),
+            ),
+        ),
+      ).toBeVisible();
       await expect(menuRow('Action 0-1')).toBeVisible();
       await expect(menuRow('Action 0-2')).toBeVisible();
 
-      await menuRow('Item 0').tap();
-      await dismissToast('onPress Item 0');
+      await menuRow('Item 0').atIndex(1).tap();
+      await dismissToast('1. onPress Item 0');
     });
 
     it("should open a 2-row submenu (Action 1-1, Action 1-2) for the overflow's Menu 1 entry, which has no onPress", async () => {
