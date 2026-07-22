@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { featureFlags } from '../../flags';
+import { featureFlags } from '../../../flags';
 
 /**
  * Carries the inset-application state down the stack hierarchy for every edge.

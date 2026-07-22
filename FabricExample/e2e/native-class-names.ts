@@ -49,29 +49,22 @@ export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
 
 // --- UIKit: context menu ---
 
-// Ordered outermost to innermost, mirroring the view hierarchy a presented
-// menu builds: the container hosts a list, the list holds one cell per row,
-// and each cell wraps a content view carrying the row's label.
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
 export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
 
-// --- UIKit: generic views ---
-
-// Building blocks that appear inside many containers, so they are almost
-// always matched with `withAncestor(...)` rather than on their own.
-export const CLASS_NAME_UI_LABEL = 'UILabel';
-export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
-// The leading image of a list-style row — a tab sidebar cell or a menu row.
-export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
-
 // --- UIKit: other controls ---
 
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
+export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
+  '_UIContextMenuSubmenuTitleView';
+export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
+export const CLASS_NAME_UI_LABEL = 'UILabel';
+export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 
 // --- Android ---
 

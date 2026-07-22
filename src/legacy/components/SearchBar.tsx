@@ -5,7 +5,7 @@ import { SearchBarCommands, SearchBarProps } from '../types';
 import {
   parseBooleanToOptionalBooleanNativeProp,
   isSearchBarAvailableForCurrentPlatform,
-} from '../utils';
+} from '../../utils';
 import { View } from 'react-native';
 
 // Native components
@@ -15,7 +15,7 @@ import SearchBarNativeComponent, {
   SearchBarEvent,
   SearchButtonPressedEvent,
   ChangeTextEvent,
-} from '../fabric/SearchBarNativeComponent';
+} from '../../fabric/legacy/SearchBarNativeComponent';
 import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<

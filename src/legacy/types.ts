@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -7,14 +6,15 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  ImageSourcePropType,
 } from 'react-native';
+
 import type {
   BlurEffect,
   Direction,
+  PlatformIconIOS,
   ScrollEdgeEffect,
   UserInterfaceStyle,
-} from './components/shared/types';
+} from '../components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -26,6 +26,7 @@ export type SearchBarCommands = {
 };
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -35,6 +36,7 @@ export type StackPresentationTypes =
   | 'fullScreenModal'
   | 'formSheet'
   | 'pageSheet';
+
 export type StackAnimationTypes =
   | 'default'
   | 'fade'
@@ -47,9 +49,13 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios_from_right'
   | 'ios_from_left';
+
 export type BlurEffectTypes = BlurEffect;
+
 export type ScreenReplaceTypes = 'push' | 'pop';
+
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
+
 export type ScreenOrientationTypes =
   | 'default'
   | 'all'
@@ -59,6 +65,7 @@ export type ScreenOrientationTypes =
   | 'landscape'
   | 'landscape_left'
   | 'landscape_right';
+
 export type HeaderSubviewTypes =
   | 'back'
   | 'right'
@@ -90,37 +97,6 @@ export type SearchBarPlacement =
   | 'integrated'
   | 'integratedButton'
   | 'integratedCentered';
-
-export type PlatformIconShared = {
-  type: 'imageSource';
-  imageSource: ImageSourcePropType;
-};
-
-export type PlatformIconIOSSfSymbol = {
-  type: 'sfSymbol';
-  name: string;
-};
-
-export type PlatformIconIOSXcasset = {
-  type: 'xcasset';
-  name: string;
-};
-
-export type PlatformIconIOS =
-  | PlatformIconIOSSfSymbol
-  | PlatformIconIOSXcasset
-  | {
-      type: 'templateSource';
-      templateSource: ImageSourcePropType;
-    }
-  | PlatformIconShared;
-
-export type PlatformIconAndroid =
-  | {
-      type: 'drawableResource';
-      name: string;
-    }
-  | PlatformIconShared;
 
 export type ScreenStackNativeContainerStyleProps = {
   /**

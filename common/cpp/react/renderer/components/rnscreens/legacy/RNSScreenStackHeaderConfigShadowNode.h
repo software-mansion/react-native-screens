@@ -5,7 +5,7 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
-#include "FrameCorrectionModes.h"
+#include "../FrameCorrectionModes.h"
 #include "RNSScreenStackHeaderConfigState.h"
 
 namespace facebook::react {

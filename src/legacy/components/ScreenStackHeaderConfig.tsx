@@ -16,15 +16,15 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import featureFlags from '../flags';
+import featureFlags from '../../flags';
 
 // Native components
-import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
+import ScreenStackHeaderConfigNativeComponent from '../../fabric/legacy/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent, {
   type NativeProps as ScreenStackHeaderSubviewNativeProps,
-} from '../fabric/ScreenStackHeaderSubviewNativeComponent';
+} from '../../fabric/legacy/ScreenStackHeaderSubviewNativeComponent';
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
-import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
+import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../../utils';
 import { useEdgeInsetApplication } from './contexts/EdgeInsetApplicationContext';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
