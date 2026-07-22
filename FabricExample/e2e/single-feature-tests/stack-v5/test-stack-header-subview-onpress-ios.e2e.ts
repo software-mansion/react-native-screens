@@ -12,10 +12,9 @@ const {
 } = require('../../../../scripts/e2e/ios-devices.js');
 
 /**
- * The iOS 26 toolbar overflow ("More") button only exists once the header
- * runs out of room for its trailing items - the scenario's steps 5-8 are
- * explicitly scoped to "iPhone (iOS 26)" in scenario.md and don't apply on
- * iOS 18.
+ * The iOS 26 toolbar overflow ("More") button only appears once the header
+ * runs out of room for trailing items. Scenario steps 5-8 are scoped to
+ * iPhone (iOS 26) and don't apply on iOS 18.
  */
 const isIOS26OrLater =
   device.getPlatform() === 'ios' &&
@@ -23,21 +22,18 @@ const isIOS26OrLater =
 
 const describeIfIOS26 = isIOS26OrLater ? describe : describe.skip;
 
-/** A title-only trailing header bar button item (no custom `render`), addressed
- * by its visible title. Regardless of whether a `menu` is attached, this shape
- * resolves to `_UIButtonBarButton`. */
+/** A title-only trailing header button item, addressed by its visible title.
+ * With or without an attached `menu`, this resolves to `_UIButtonBarButton`. */
 function headerItem(title: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(title)));
 }
 
 /**
- * A row inside a presented native UIMenu, addressed by its visible title -
- * whether that's the regular header-item menu or, on iOS 26, the toolbar
- * overflow ("More") menu and its per-item submenus. Qualifying with the
- * `_UIContextMenuCell` ancestor excludes a submenu's own pinned title/back
- * row, which otherwise shares the same label as the submenu's first entry
- * whenever the underlying item also has an `onPress` (see `overflowButton`
- * usage below).
+ * A selectable row inside a presented native UIMenu (a header-item menu, or on
+ * iOS 26 the toolbar overflow menu and its submenus), addressed by its title.
+ * The `_UIContextMenuCell` ancestor excludes a submenu's pinned title/back row,
+ * which shares the label of the submenu's first entry when that item also has
+ * an `onPress`.
  */
 function menuRow(title: string) {
   return element(
@@ -51,22 +47,19 @@ function menuRow(title: string) {
 const overflowButton = element(by.id('OverflowBarButtonItem'));
 
 /**
- * Dismisses any presented native UIMenu - the regular header-item menu or,
- * on iOS 26, the toolbar overflow menu and its submenus - by tapping UIKit's
- * own full-screen "Dismiss context menu" accessibility element. Every
- * presented context menu exposes this element regardless of where it's
- * anchored, so it works without having to compute a coordinate that's
- * guaranteed to fall outside the menu's bounds.
+ * Dismisses any presented native UIMenu (header-item, or on iOS 26 the overflow
+ * menu and its submenus) by tapping UIKit's full-screen "Dismiss context menu"
+ * element, which every context menu exposes regardless of its anchor - so no
+ * off-menu coordinate has to be computed.
  */
 async function dismissMenu() {
   await element(by.label('Dismiss context menu')).tap();
 }
 
 /**
- * Dismisses a toast by its message, tolerating the `1. ` index prefix that
- * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). Every
- * interaction in this suite dismisses its toast before triggering the next
- * one, so exactly one toast is ever stacked at a time.
+ * Dismisses a toast by message, tolerating the `1. ` index prefix that
+ * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). Each interaction
+ * dismisses its toast before the next, so only one is ever stacked.
  */
 async function dismissToast(message: string) {
   const label = `1. ${message}`;

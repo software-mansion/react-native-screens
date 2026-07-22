@@ -59,17 +59,7 @@ export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
-
-// A row inside a presented native UIMenu (or, on iOS 26, the "More" toolbar
-// overflow menu) is a `_UIContextMenuCell` wrapping a `_UIContextMenuCellContentView`
-// that carries the row's accessibility label. When a submenu is entered, its
-// pinned title/back row shares the same label as the submenu's own first entry
-// (whenever the underlying item also has an `onPress`) but is wrapped by
-// `_UIContextMenuSubmenuTitleView` instead — qualify with `_UIContextMenuCell`
-// as the ancestor to target the real, selectable row unambiguously.
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
-export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
-  '_UIContextMenuCellContentView';
 
 // --- Android ---
 
