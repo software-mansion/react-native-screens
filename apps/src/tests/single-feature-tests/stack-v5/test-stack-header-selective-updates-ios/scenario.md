@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Partial: `test-stack-header-selective-updates-ios.e2e.ts` covers all steps, but
+Incomplete: e2e test covers all steps, but
 not in full scope. It asserts the observable state changes — header titles,
 attached menus, selection checkmarks/toasts, custom-view swaps, and item
 count. It cannot assert the transient iOS 26+ rebuild flash/blur (whether an
