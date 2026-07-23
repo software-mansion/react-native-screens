@@ -3,7 +3,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
-import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { StackContainer } from '@apps/shared/containers/stack';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';

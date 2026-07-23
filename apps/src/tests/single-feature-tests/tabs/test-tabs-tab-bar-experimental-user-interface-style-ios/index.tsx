@@ -4,7 +4,7 @@ import {
   StackContainer,
   StackRouteConfig,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import {
   LightRootScreen,
   LightInterfaceStyleScreen,
