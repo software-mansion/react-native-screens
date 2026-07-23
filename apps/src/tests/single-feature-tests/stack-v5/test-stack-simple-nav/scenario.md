@@ -1,4 +1,4 @@
-# Test Scenario: Simple navigation
+cd# Test Scenario: Simple navigation
 
 ## Details
 
@@ -18,11 +18,28 @@ Notes for `routeKey` behavior and how the two platforms are launched
 
 ## E2E test
 
-TBD: Automation is planned and should be straightforward for the
-button-driven push/pop steps (similar in scope to the tabs
-`test-tabs-simple-nav` suite). Native back button, iOS edge-swipe gesture,
-and Android system gesture-back steps may need platform-specific handling
-and are not yet implemented.
+Incomplete: automated
+with a per-platform suite in each block, because the two platforms behave
+differently in the example-app harness and need different matchers.
+
+- iOS: steps 1–10, including the native header back button
+  (step 8) and the edge-swipe pop (step 9). react-native-screens detaches
+  covered screens on iOS, so a `Name:` / `Key:` or button matcher resolves to
+  a single element — the top screen.
+- Android (`describeIfAndroid`): steps 1–7 and 10 only. Unlike iOS, covered
+  screens stay attached on Android, so every stacked screen renders duplicate
+  buttons and labels; the suite reads the current route, taps buttons, and
+  waits on the **topmost** match (the last one in hierarchy order). `<Button>`
+  titles also render uppercased (`PUSH A`, `POP`) and are matched in that form.
+
+**Manual only (not automated):**
+
+- For Android: Step 8 and 9
+- For iOS Step 9: the cancel-before-halfway case is not possible to be automated
+  with Detox.
+- For both platfroms: Steps 11–12 — rapid tapping before a transition finishes. Detox
+  synchronizes on UI idle between actions, so it cannot dispatch taps
+  mid-animation.
 
 ## Prerequisites
 
@@ -85,14 +102,14 @@ and are not yet implemented.
 
 2. Tap **Push A**.
 
-- [ ] Screen **A** is pushed. Background is light yellow, `Name: A`, and a
+- [ ] Screen **A** is pushed. Screen displays `Name: A`, and a
   `Key` with a new value, distinct from Home's.
   A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
   buttons are all shown. Note this `Key` value.
 
 3. While on **A**, tap **Push B**.
 
-- [ ] Screen **B** is pushed on top of **A**. Background is green, `Name:
+- [ ] Screen **B** is pushed on top of **A**. `Name:
   B`, and a new `Key`is shown.
   A native back button is visible in the header. Note this `Key` value.
 
