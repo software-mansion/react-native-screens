@@ -1,9 +1,7 @@
 import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import {
-  StackContainer,
-} from '@apps/shared/gamma/containers/stack';
+import { StackContainer } from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
@@ -72,7 +70,9 @@ function AScreen() {
 
 function BScreen() {
   return (
-    <CenteredLayoutView testID='screenB-layout-view' style={{ backgroundColor: Colors.GreenLight100 }}>
+    <CenteredLayoutView
+      testID="screenB-layout-view"
+      style={{ backgroundColor: Colors.GreenLight100 }}>
       <StackRouteInformation routeName="B" />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
