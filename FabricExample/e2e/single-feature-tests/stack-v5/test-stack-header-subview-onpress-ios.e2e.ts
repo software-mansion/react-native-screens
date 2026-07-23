@@ -124,11 +124,16 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
   });
 
   it("should require a long press (not a tap) to open Item 0's own menu, since a tap fires onPress instead", async () => {
+    // Detox limitation: `longPress` is implemented as a tap that is then held,
+    // so the initial touch-down still fires Item 0's `onPress` and surfaces its
+    // toast. The scenario expects only the native menu to appear on a real long
+    // press, so we assert the menu opened and dismiss it (rather than the toast)
+    // to leave a clean state for the following tests.
     await headerItem('Item 0').longPress();
 
     await expect(menuRow('Action 0-1')).toBeVisible();
     await expect(menuRow('Action 0-2')).toBeVisible();
-    await dismissToast('1. onPress Item 0');
+    await dismissMenu();
   });
 
   describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
