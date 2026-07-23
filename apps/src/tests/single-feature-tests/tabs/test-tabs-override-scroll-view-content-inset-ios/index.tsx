@@ -4,7 +4,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from '@react-navigation/native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import { TabsContainer } from '@apps/shared/containers/tabs';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 

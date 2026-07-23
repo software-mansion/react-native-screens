@@ -9,7 +9,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { StackHeaderConfigProps } from 'react-native-screens/experimental';
 import type {
   StackHeaderConfigRef,
@@ -244,7 +244,8 @@ function ConfigScreen() {
     const resolvedIcon = resolveIcon(actionIcon);
     if (resolvedIcon !== NO_CHANGE) options.icon = resolvedIcon;
     const resolvedToggleState = resolveToggleState(actionToggle);
-    if (resolvedToggleState !== NO_CHANGE) options.toggleState = resolvedToggleState;
+    if (resolvedToggleState !== NO_CHANGE)
+      options.toggleState = resolvedToggleState;
 
     headerConfigRef.current?.ios?.setMenuItemOptions(actionId, options);
   }, [actionId, actionTitle, actionIcon, actionToggle]);

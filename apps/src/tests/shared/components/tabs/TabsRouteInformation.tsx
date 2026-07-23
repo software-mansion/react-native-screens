@@ -1,4 +1,4 @@
-import { useTabsNavigationContext } from '@apps/shared/gamma/containers/tabs';
+import { useTabsNavigationContext } from '@apps/shared/containers/tabs';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

@@ -12,7 +12,7 @@ such as stack, tabs, split.
     reanimated integration, transition progress hooks, contexts). Re-exported
     from `./src/index.tsx` for backward compatibility.
 
-  - `./src/components/gamma/` - each directory inside contains JS code for new
+  - `./src/components/` - each directory inside contains JS code for new
     components, planned for next major release,
   - `./src/components/safe-area/` - code related to `SafeAreaView` component,
   - `./src/components/tabs/` - code related to `TabsHost` & `TabsScreen` components,

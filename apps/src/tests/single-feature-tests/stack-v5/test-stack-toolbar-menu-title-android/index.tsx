@@ -4,7 +4,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
