@@ -22,7 +22,7 @@ import type {
   StackHeaderConfigProps,
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 
 const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';
 const LONG_TITLE = I18nManager.isRTL

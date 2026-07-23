@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';

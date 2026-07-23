@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import { Colors } from '@apps/shared/styling';

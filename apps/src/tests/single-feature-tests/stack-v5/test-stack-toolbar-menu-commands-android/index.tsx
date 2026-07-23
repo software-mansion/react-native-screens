@@ -11,7 +11,7 @@ import type {
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderConfigRef,
   StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
