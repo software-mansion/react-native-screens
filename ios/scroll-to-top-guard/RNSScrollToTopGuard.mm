@@ -20,6 +20,9 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSScrollToTopGuardProps>();
+  _props = defaultProps;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // Attach the guard once on mount, only on OS versions where the system scroll-to-top
   // interaction exists. On other versions this view is a plain passthrough.
