@@ -1,4 +1,4 @@
-cd# Test Scenario: Simple navigation
+# Test Scenario: Simple navigation
 
 ## Details
 
