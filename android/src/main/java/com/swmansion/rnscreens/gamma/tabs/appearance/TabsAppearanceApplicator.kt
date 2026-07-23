@@ -27,7 +27,7 @@ internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
     // Resolved on each access: tracks the material library version and the display density.
-    private val defaultIconSizeDp: Float
+    internal val defaultIconSizeDp: Float
         get() =
             bottomNavigationView.pxToDp(
                 bottomNavigationView.resources.getDimension(R.dimen.mtrl_navigation_bar_item_default_icon_size),
@@ -36,11 +36,8 @@ internal class TabsAppearanceApplicator(
     internal fun effectiveIconSizeDp(tabsScreen: TabsScreen): Float =
         if (tabsScreen.drawableIconSize > 0f) tabsScreen.drawableIconSize else defaultIconSizeDp
 
-    // Largest effective per-tab icon size (dp); Material allows only one size for all items.
-    private var iconBoxDp: Float = defaultIconSizeDp
-
-    fun applyIconBox(boxDp: Float?) {
-        iconBoxDp = boxDp ?: defaultIconSizeDp
+    // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
+    fun applyIconBox(iconBoxDp: Float) {
         bottomNavigationView.itemIconSize = bottomNavigationView.dpToPx(iconBoxDp).toInt()
     }
 
@@ -55,15 +52,16 @@ internal class TabsAppearanceApplicator(
     private val autoIndicatorVerticalPaddingDp: Float
         get() = bottomNavigationView.pxToDp(defaultIndicatorHeightPx.toFloat()) - defaultIconSizeDp
 
-    // Reads iconBoxDp, so applyIconBox must run first.
     private fun applyActiveIndicatorSize(
         widthDp: Float?,
         heightDp: Float?,
+        iconBoxDp: Float,
     ) {
+        val autoScale = iconBoxDp > defaultIconSizeDp
         bottomNavigationView.itemActiveIndicatorWidth =
-            resolveIndicatorDimensionPx(widthDp, iconBoxDp + autoIndicatorHorizontalPaddingDp, defaultIndicatorWidthPx)
+            resolveIndicatorDimensionPx(widthDp, iconBoxDp + autoIndicatorHorizontalPaddingDp, defaultIndicatorWidthPx, autoScale)
         bottomNavigationView.itemActiveIndicatorHeight =
-            resolveIndicatorDimensionPx(heightDp, iconBoxDp + autoIndicatorVerticalPaddingDp, defaultIndicatorHeightPx)
+            resolveIndicatorDimensionPx(heightDp, iconBoxDp + autoIndicatorVerticalPaddingDp, defaultIndicatorHeightPx, autoScale)
     }
 
     // Explicit dp wins; else auto-scale to the enlarged icon box; else themed Material default.
@@ -71,10 +69,11 @@ internal class TabsAppearanceApplicator(
         explicitDp: Float?,
         autoScaledDp: Float,
         defaultPx: Int,
+        autoScale: Boolean,
     ): Int =
         when {
             explicitDp != null && explicitDp > 0f -> bottomNavigationView.dpToPx(explicitDp).toInt()
-            iconBoxDp > defaultIconSizeDp -> bottomNavigationView.dpToPx(autoScaledDp).toInt()
+            autoScale -> bottomNavigationView.dpToPx(autoScaledDp).toInt()
             else -> defaultPx
         }
 
@@ -84,6 +83,7 @@ internal class TabsAppearanceApplicator(
     private fun sizeIcon(
         icon: Drawable?,
         effectiveDp: Float,
+        iconBoxDp: Float,
     ): Drawable? {
         if (icon == null || effectiveDp >= iconBoxDp) return icon
         val larger = maxOf(icon.intrinsicWidth, icon.intrinsicHeight)
@@ -104,6 +104,7 @@ internal class TabsAppearanceApplicator(
         context: Context,
         tabBarAppearance: TabsAppearance?,
         isTabBarHidden: Boolean,
+        iconBoxDp: Float,
     ) {
         bottomNavigationView.isVisible = !isTabBarHidden
         bottomNavigationView.setBackgroundColor(
@@ -183,6 +184,7 @@ internal class TabsAppearanceApplicator(
         applyActiveIndicatorSize(
             tabBarAppearance?.tabBarItemActiveIndicatorWidth,
             tabBarAppearance?.tabBarItemActiveIndicatorHeight,
+            iconBoxDp,
         )
     }
 
@@ -249,22 +251,25 @@ internal class TabsAppearanceApplicator(
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
+        iconBoxDp: Float,
     ) {
         if (menuItem.title != tabsScreen.tabTitle) {
             menuItem.title = tabsScreen.tabTitle
         }
 
+        val iconDrawable = tabsScreen.icon.drawable
+        val selectedIconDrawable = tabsScreen.selectedIcon.drawable
         val targetIcon =
-            if (tabsScreen.selectedIcon != null && tabsScreen.icon != null) {
+            if (selectedIconDrawable != null && iconDrawable != null) {
                 StateListDrawable().apply {
-                    addState(intArrayOf(android.R.attr.state_checked), tabsScreen.selectedIcon?.mutate())
-                    addState(intArrayOf(), tabsScreen.icon?.mutate())
+                    addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
+                    addState(intArrayOf(), iconDrawable.mutate())
                 }
             } else {
-                tabsScreen.icon
+                iconDrawable
             }
 
-        val sizedIcon = sizeIcon(targetIcon, effectiveIconSizeDp(tabsScreen))
+        val sizedIcon = sizeIcon(targetIcon, effectiveIconSizeDp(tabsScreen), iconBoxDp)
 
         if (menuItem.icon != sizedIcon) {
             menuItem.icon = sizedIcon

@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs.screen
 
 import android.content.res.Configuration
-import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
@@ -9,8 +8,6 @@ import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.common.container.Container
 import com.swmansion.rnscreens.gamma.common.container.ContainerItem
 import com.swmansion.rnscreens.gamma.common.container.ContainerItemSupport
-import com.swmansion.rnscreens.gamma.helpers.NoTintDrawable
-import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
@@ -80,26 +77,13 @@ class TabsScreen(
 
     // region Icon
 
-    // Staging props: name & tinted may arrive in any order within a single update batch.
-    // Icons resolve once in resolveIconsIfNeeded(), called from onAfterUpdateTransaction.
-    var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) isIconInvalidated = true
-    }
+    internal val icon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
+    internal val selectedIcon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
 
-    var drawableIconTinted: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
-        if (newValue != oldValue) isIconInvalidated = true
+    internal fun resolveIconsIfNeeded() {
+        icon.resolveIfNeeded()
+        selectedIcon.resolveIfNeeded()
     }
-
-    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) isSelectedIconInvalidated = true
-    }
-
-    var selectedDrawableIconTinted: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
-        if (newValue != oldValue) isSelectedIconInvalidated = true
-    }
-
-    private var isIconInvalidated = false
-    private var isSelectedIconInvalidated = false
 
     // Per-tab icon size in dp; 0 means the system default.
     // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
@@ -107,34 +91,6 @@ class TabsScreen(
         if (newValue != oldValue) {
             tabsScreenDelegate.get()?.onIconSizeChange(this)
         }
-    }
-
-    // A NoTintDrawable keeps the drawable's own colors; the bar can't tint it.
-    private fun resolveIcon(
-        resourceName: String?,
-        tinted: Boolean,
-    ): Drawable? {
-        val drawable = getSystemDrawableResource(reactContext, resourceName) ?: return null
-        return if (tinted) drawable else NoTintDrawable(drawable)
-    }
-
-    internal fun resolveIconsIfNeeded() {
-        if (isIconInvalidated) {
-            isIconInvalidated = false
-            icon = resolveIcon(drawableIconResourceName, drawableIconTinted)
-        }
-        if (isSelectedIconInvalidated) {
-            isSelectedIconInvalidated = false
-            selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTinted)
-        }
-    }
-
-    var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
     // endregion

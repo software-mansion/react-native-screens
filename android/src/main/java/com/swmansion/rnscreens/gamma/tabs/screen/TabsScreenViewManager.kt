@@ -7,7 +7,6 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
-import com.swmansion.rnscreens.gamma.helpers.loadImage
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.helpers.readOptionalBoolean
 import com.swmansion.rnscreens.gamma.helpers.readOptionalColor
@@ -129,28 +128,28 @@ class TabsScreenViewManager :
         view: TabsScreen,
         value: String?,
     ) {
-        view.drawableIconResourceName = value
+        view.icon.drawableResourceName = value
     }
 
     override fun setSelectedDrawableIconResourceName(
         view: TabsScreen,
         value: String?,
     ) {
-        view.selectedDrawableIconResourceName = value
+        view.selectedIcon.drawableResourceName = value
     }
 
     override fun setDrawableIconTinted(
         view: TabsScreen,
         value: Boolean,
     ) {
-        view.drawableIconTinted = value
+        view.icon.tinted = value
     }
 
     override fun setSelectedDrawableIconTinted(
         view: TabsScreen,
         value: Boolean,
     ) {
-        view.selectedDrawableIconTinted = value
+        view.selectedIcon.tinted = value
     }
 
     override fun setDrawableIconSize(
@@ -164,24 +163,14 @@ class TabsScreenViewManager :
         view: TabsScreen,
         value: ReadableMap?,
     ) {
-        val uri = value?.getString("uri")
-        if (uri != null) {
-            loadImage(view.context, uri) { drawable ->
-                view.icon = drawable
-            }
-        }
+        view.icon.imageUri = value?.getString("uri")
     }
 
     override fun setSelectedImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
     ) {
-        val uri = value?.getString("uri")
-        if (uri != null) {
-            loadImage(view.context, uri) { drawable ->
-                view.selectedIcon = drawable
-            }
-        }
+        view.selectedIcon.imageUri = value?.getString("uri")
     }
 
     override fun setStandardAppearance(
