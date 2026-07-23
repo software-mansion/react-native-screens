@@ -5,8 +5,8 @@
 
 // Components & types
 
-export * from '../components/gamma/stack';
-export * from '../components/gamma/split';
+export * from '../components/stack';
+export * from '../components/split';
 export * from '../components/safe-area';
-export * from '../components/gamma/scroll-view-marker';
-export * from '../components/gamma/modals/form-sheet';
+export * from '../components/scroll-view-marker';
+export * from '../components/modals/form-sheet';

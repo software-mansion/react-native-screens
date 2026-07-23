@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
@@ -179,7 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(
-  TestStackLifecycleEvents,
-  scenarioDescription,
-);
+export default createScenario(TestStackLifecycleEvents, scenarioDescription);

@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify how `preventNativeDismiss` behaves across a gamma/v5
+**Description:** Verify how `preventNativeDismiss` behaves across a v5
 Stack nested inside another Stack. When a screen has the flag **Enabled**,
 native dismissal (the native header back-button chevron and the system
 gesture-back / edge swipe) is intercepted, `onNativeDismissPrevented` fires
@@ -39,7 +39,7 @@ swipe) steps may need platform-specific handling.
   import { TestStackPreventNativeDismissNestedStack as Example } from './src/tests/single-feature-tests';
   ```
 
-  With the gamma `StackContainer` at the root, native back and gesture-back
+  With the v5 `StackContainer` at the root, native back and gesture-back
   interact with the stack directly. When the screen is nested inside the
   example app's own navigation, native back navigates out to the
   system/selection menu instead of popping the stack (issue

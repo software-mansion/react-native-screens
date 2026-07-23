@@ -26,7 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.legacy.bottomsheet.fitToContentsSheetHeight

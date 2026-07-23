@@ -16,7 +16,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 
 open class ScreenContainer(

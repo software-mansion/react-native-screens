@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** This test focuses on the Android toolbar menu submenu
-support on the gamma stack header. It verifies that submenus render
+support on the v5 stack header. It verifies that submenus render
 correctly as expandable groups in the overflow menu, that `onPress`
 fires with the correct id for items at every nesting level (including
 deeply nested submenus), that imperative `updateToolbarMenuElements`
