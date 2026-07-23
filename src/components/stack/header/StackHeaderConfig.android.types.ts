@@ -730,10 +730,9 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * Applies to the `small` header only; ignored for `medium` / `large` (use
    * `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
-   * instead). The title is centered independently of the subtitle and clamped
-   * so it does not overlap the navigation icon, menu, or leading/trailing
-   * subviews. Combining a centered title with a center subview is not
-   * recommended — they may overlap.
+   * instead). The title is centered independently of the subtitle. Combining
+   * a centered title with left and/or center subviews is not recommended — they
+   * may overlap or be laid out incorrectly.
    *
    * @default false
    * @platform android
@@ -770,8 +769,7 @@ export interface StackHeaderConfigPropsAndroid {
    * state.
    *
    * @remarks
-   * Applies to `medium` / `large` headers only. The default `bottom` matches
-   * the Material 3 expanded app bar look.
+   * Applies to `medium` / `large` headers only; ignored for `small`.
    *
    * @default bottom
    * @platform android
@@ -785,8 +783,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Applies to `medium` / `large` headers only; ignored for `small`. The
-   * subtitle always follows the title's alignment. `center` / `end` are further
-   * affected by `collapsedTitleGravityMode`.
+   * subtitle always follows the title's alignment. `center` is further affected
+   * by `collapsedTitleGravityMode`.
    *
    * @default start
    * @platform android
@@ -799,7 +797,7 @@ export interface StackHeaderConfigPropsAndroid {
    * state.
    *
    * @remarks
-   * Applies to `medium` / `large` headers only.
+   * Applies to `medium` / `large` headers only; ignored for `small`.
    *
    * @default center
    * @platform android
@@ -814,14 +812,14 @@ export interface StackHeaderConfigPropsAndroid {
    * @description
    * The following values are available:
    * - `availableSpace` - gravity is computed over the space left after the
-   *   navigation icon and menu are laid out,
+   *   navigation icon, menu and subviews are laid out,
    * - `entireSpace` - gravity is computed over the whole app bar, so a centered
    *   title is centered relative to the app bar and pushed aside only if it
-   *   would overlap another view (toolbar-center behavior).
+   *   would overlap another view.
    *
    * @remarks
    * Applies to `medium` / `large` headers only and only affects the collapsed
-   * state; it is only visually meaningful with `center` / `end`
+   * state; it is only visually meaningful with `center`
    * `collapsedTitleHorizontalGravity`. Because the underlying Material field is
    * set at construction time, changing this prop rebuilds the header.
    *
