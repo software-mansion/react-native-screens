@@ -18,50 +18,69 @@ import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.utils.pxToDp
 import com.swmansion.rnscreens.utils.resolveColorAttr
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
-    // Largest effective per-tab icon size (dp); Material allows only one size for all items.
-    private var iconBoxDp: Float = TabsScreen.DEFAULT_ICON_SIZE_DP
+    // Resolved on each access: tracks the material library version and the display density.
+    private val defaultIconSizeDp: Float
+        get() =
+            bottomNavigationView.pxToDp(
+                bottomNavigationView.resources.getDimension(R.dimen.mtrl_navigation_bar_item_default_icon_size),
+            )
 
-    fun applyIconBox(boxDp: Float) {
-        iconBoxDp = boxDp
-        bottomNavigationView.itemIconSize = PixelUtil.toPixelFromDIP(boxDp).toInt()
+    internal fun effectiveIconSizeDp(tabsScreen: TabsScreen): Float =
+        if (tabsScreen.drawableIconSize > 0f) tabsScreen.drawableIconSize else defaultIconSizeDp
+
+    // Largest effective per-tab icon size (dp); Material allows only one size for all items.
+    private var iconBoxDp: Float = defaultIconSizeDp
+
+    fun applyIconBox(boxDp: Float?) {
+        iconBoxDp = boxDp ?: defaultIconSizeDp
+        bottomNavigationView.itemIconSize = bottomNavigationView.dpToPx(iconBoxDp).toInt()
     }
 
-    // Material defaults, captured before we override them so unset bars restore exactly.
-    private var defaultIndicatorWidthPx: Int = -1
-    private var defaultIndicatorHeightPx: Int = -1
+    // Theme-resolved defaults, captured at construction, before this class (the only writer) overrides them.
+    private val defaultIndicatorWidthPx: Int = bottomNavigationView.itemActiveIndicatorWidth
+    private val defaultIndicatorHeightPx: Int = bottomNavigationView.itemActiveIndicatorHeight
 
-    // Explicit dp wins; else auto-scale to the enlarged icon box; else Material
-    // default. Reads iconBoxDp, so applyIconBox must run first.
+    // Auto-scale preserves the themed default padding around the icon: default indicator minus default icon size.
+    private val autoIndicatorHorizontalPaddingDp: Float
+        get() = bottomNavigationView.pxToDp(defaultIndicatorWidthPx.toFloat()) - defaultIconSizeDp
+
+    private val autoIndicatorVerticalPaddingDp: Float
+        get() = bottomNavigationView.pxToDp(defaultIndicatorHeightPx.toFloat()) - defaultIconSizeDp
+
+    // Reads iconBoxDp, so applyIconBox must run first.
     private fun applyActiveIndicatorSize(
         widthDp: Float?,
         heightDp: Float?,
     ) {
-        if (defaultIndicatorWidthPx < 0) {
-            defaultIndicatorWidthPx = bottomNavigationView.itemActiveIndicatorWidth
-            defaultIndicatorHeightPx = bottomNavigationView.itemActiveIndicatorHeight
-        }
-        val enlarged = iconBoxDp > TabsScreen.DEFAULT_ICON_SIZE_DP
         bottomNavigationView.itemActiveIndicatorWidth =
-            when {
-                widthDp != null && widthDp > 0f -> PixelUtil.toPixelFromDIP(widthDp).toInt()
-                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 16f).toInt()
-                else -> defaultIndicatorWidthPx
-            }
+            resolveIndicatorDimensionPx(widthDp, iconBoxDp + autoIndicatorHorizontalPaddingDp, defaultIndicatorWidthPx)
         bottomNavigationView.itemActiveIndicatorHeight =
-            when {
-                heightDp != null && heightDp > 0f -> PixelUtil.toPixelFromDIP(heightDp).toInt()
-                enlarged -> PixelUtil.toPixelFromDIP(iconBoxDp + 8f).toInt()
-                else -> defaultIndicatorHeightPx
-            }
+            resolveIndicatorDimensionPx(heightDp, iconBoxDp + autoIndicatorVerticalPaddingDp, defaultIndicatorHeightPx)
     }
 
+    // Explicit dp wins; else auto-scale to the enlarged icon box; else themed Material default.
+    private fun resolveIndicatorDimensionPx(
+        explicitDp: Float?,
+        autoScaledDp: Float,
+        defaultPx: Int,
+    ): Int =
+        when {
+            explicitDp != null && explicitDp > 0f -> bottomNavigationView.dpToPx(explicitDp).toInt()
+            iconBoxDp > defaultIconSizeDp -> bottomNavigationView.dpToPx(autoScaledDp).toInt()
+            else -> defaultPx
+        }
+
     // Inset the icon so it renders at effectiveDp, centered within iconBoxDp.
+    // Intrinsic-relative on purpose: Material FIT_CENTER-scales the drawable to the icon box,
+    // so the intrinsic factor cancels and the glyph lands at effectiveDp/iconBoxDp of the box.
     private fun sizeIcon(
         icon: Drawable?,
         effectiveDp: Float,
@@ -245,7 +264,7 @@ internal class TabsAppearanceApplicator(
                 tabsScreen.icon
             }
 
-        val sizedIcon = sizeIcon(targetIcon, tabsScreen.effectiveIconSizeDp)
+        val sizedIcon = sizeIcon(targetIcon, effectiveIconSizeDp(tabsScreen))
 
         if (menuItem.icon != sizedIcon) {
             menuItem.icon = sizedIcon

@@ -79,35 +79,35 @@ class TabsScreen(
     // endregion
 
     // region Icon
+
+    // Staging props: name & tinted may arrive in any order within a single update batch.
+    // Icons resolve once in resolveIconsIfNeeded(), called from onAfterUpdateTransaction.
     var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) rebuildIcon()
+        if (newValue != oldValue) isIconInvalidated = true
     }
 
-    var drawableIconTinted: Boolean = true
-        set(value) {
-            if (field != value) {
-                field = value
-                rebuildIcon()
-            }
-        }
+    var drawableIconTinted: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
+        if (newValue != oldValue) isIconInvalidated = true
+    }
 
     var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) rebuildSelectedIcon()
+        if (newValue != oldValue) isSelectedIconInvalidated = true
     }
 
-    var selectedDrawableIconTinted: Boolean = true
-        set(value) {
-            if (field != value) {
-                field = value
-                rebuildSelectedIcon()
-            }
+    var selectedDrawableIconTinted: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
+        if (newValue != oldValue) isSelectedIconInvalidated = true
+    }
+
+    private var isIconInvalidated = false
+    private var isSelectedIconInvalidated = false
+
+    // Per-tab icon size in dp; 0 means the system default.
+    // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
+    var drawableIconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            tabsScreenDelegate.get()?.onIconSizeChange(this)
         }
-
-    // Per-tab icon size in dp; 0 means the default.
-    var drawableIconSize: Float = 0f
-
-    val effectiveIconSizeDp: Float
-        get() = if (drawableIconSize > 0f) drawableIconSize else DEFAULT_ICON_SIZE_DP
+    }
 
     // A NoTintDrawable keeps the drawable's own colors; the bar can't tint it.
     private fun resolveIcon(
@@ -118,12 +118,15 @@ class TabsScreen(
         return if (tinted) drawable else NoTintDrawable(drawable)
     }
 
-    private fun rebuildIcon() {
-        icon = resolveIcon(drawableIconResourceName, drawableIconTinted)
-    }
-
-    private fun rebuildSelectedIcon() {
-        selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTinted)
+    internal fun resolveIconsIfNeeded() {
+        if (isIconInvalidated) {
+            isIconInvalidated = false
+            icon = resolveIcon(drawableIconResourceName, drawableIconTinted)
+        }
+        if (isSelectedIconInvalidated) {
+            isSelectedIconInvalidated = false
+            selectedIcon = resolveIcon(selectedDrawableIconResourceName, selectedDrawableIconTinted)
+        }
     }
 
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
@@ -216,8 +219,5 @@ class TabsScreen(
 
     companion object {
         const val TAG = "TabsScreen"
-
-        // Material's default bottom-navigation icon size (dp).
-        internal const val DEFAULT_ICON_SIZE_DP = 24f
     }
 }

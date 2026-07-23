@@ -54,6 +54,11 @@ class TabsScreenViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
+    override fun onAfterUpdateTransaction(view: TabsScreen) {
+        super.onAfterUpdateTransaction(view)
+        view.resolveIconsIfNeeded()
+    }
+
     override fun setScreenKey(
         view: TabsScreen,
         value: String?,

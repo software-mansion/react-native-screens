@@ -25,4 +25,11 @@
                  asTemplate:(BOOL)isTemplate
             completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
+/**
+ * Loads a symbol image by name: a built-in SF Symbol if one matches, otherwise a custom
+ * symbol from the app's asset catalog (custom symbols are semantically SF Symbols, but
+ * UIKit only resolves them via `imageNamed:`).
+ */
++ (nullable UIImage *)symbolImageNamed:(nonnull NSString *)name;
+
 @end
