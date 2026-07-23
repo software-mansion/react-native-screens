@@ -176,6 +176,11 @@ internal class ScreenDummyLayoutHelper(
      * the cache while a measurement is in progress.
      *
      * @param fontSize font size value as passed from JS
+     * @param isTitleEmpty whether the header title is empty
+     * @param applyTopInset whether the native header applies the top inset (mirrors
+     * `legacyTopInsetBehavior || consumeTopInset` from [CustomToolbar]). When `false`
+     * (e.g. `disableTopInsetApplication`), the top inset must be excluded so the reported
+     * header height matches what actually renders.
      * @return header height in dp as consumed by Yoga
      */
     @DoNotStrip
@@ -183,6 +188,7 @@ internal class ScreenDummyLayoutHelper(
     private fun computeDummyLayout(
         fontSize: Int,
         isTitleEmpty: Boolean,
+        applyTopInset: Boolean,
     ): Float {
         if (!isLayoutInitialized) {
             val reactContext =
@@ -198,7 +204,7 @@ internal class ScreenDummyLayoutHelper(
             }
         }
 
-        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
+        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty, applyTopInset))) {
             return cache.headerHeight
         }
 
@@ -212,7 +218,7 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = currentActivity.window.decorView
-        val topInset = getDecorViewTopInset(topLevelDecorView)
+        val topInset = if (applyTopInset) getDecorViewTopInset(topLevelDecorView) else 0
 
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.
@@ -242,11 +248,13 @@ internal class ScreenDummyLayoutHelper(
         // scenarios when layout violates measured dimensions.
         currentCoordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
-        // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
+        // Include the top inset to account for the extra padding manually applied to the
+        // CustomToolbar. When the header opts out of the top inset (`applyTopInset == false`),
+        // `topInset` is 0 here so the measured height matches the rendered header.
         val totalAppBarLayoutHeight = currentAppBarLayout.height.toFloat() + topInset
 
         val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
-        cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
+        cache = CacheEntry(CacheKey(fontSize, isTitleEmpty, applyTopInset), headerHeight)
         return headerHeight
     }
 
@@ -359,6 +367,7 @@ internal class ScreenDummyLayoutHelper(
 private data class CacheKey(
     val fontSize: Int,
     val isTitleEmpty: Boolean,
+    val applyTopInset: Boolean,
 )
 
 private class CacheEntry(
@@ -368,6 +377,6 @@ private class CacheEntry(
     fun hasKey(key: CacheKey) = cacheKey.fontSize != Int.MIN_VALUE && cacheKey == key
 
     companion object {
-        val EMPTY = CacheEntry(CacheKey(Int.MIN_VALUE, false), 0f)
+        val EMPTY = CacheEntry(CacheKey(Int.MIN_VALUE, false, true), 0f)
     }
 }

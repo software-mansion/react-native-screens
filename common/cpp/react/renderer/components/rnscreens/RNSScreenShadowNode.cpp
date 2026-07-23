@@ -32,7 +32,8 @@ static constexpr const char *kScreenDummyLayoutHelperClass =
 
 std::optional<float> findHeaderHeight(
     const int fontSize,
-    const bool isTitleEmpty) {
+    const bool isTitleEmpty,
+    const bool applyTopInset) {
   JNIEnv *env = facebook::jni::Environment::current();
 
   if (env == nullptr) {
@@ -49,7 +50,7 @@ std::optional<float> findHeaderHeight(
   }
 
   jmethodID computeDummyLayoutID =
-      env->GetMethodID(layoutHelperClass, "computeDummyLayout", "(IZ)F");
+      env->GetMethodID(layoutHelperClass, "computeDummyLayout", "(IZZ)F");
 
   if (computeDummyLayoutID == nullptr) {
     LOG(ERROR) << "[RNScreens] Failed to retrieve computeDummyLayout method ID";
@@ -76,7 +77,7 @@ std::optional<float> findHeaderHeight(
   }
 
   jfloat headerHeight = env->CallFloatMethod(
-      packageInstance, computeDummyLayoutID, fontSize, isTitleEmpty);
+      packageInstance, computeDummyLayoutID, fontSize, isTitleEmpty, applyTopInset);
 
   return {headerHeight};
 }
@@ -101,13 +102,23 @@ void RNSScreenShadowNode::appendChild(
           *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
               headerConfigChild->getProps());
 
+      // The native CustomToolbar only pads itself with the top inset when
+      // `legacyTopInsetBehavior || consumeTopInset` holds (see CustomToolbar.kt).
+      // The dummy measurement must mirror that condition, otherwise the header
+      // height is over-reported by the top inset whenever a header opts out via
+      // `disableTopInsetApplication` (consumeTopInset == false).
+      const bool applyTopInset =
+          headerProps.legacyTopInsetBehavior || headerProps.consumeTopInset;
+
       // Translucent headers do not reserve vertical space, so applying the
       // estimated header correction can expose the previous screen at the
       // bottom during the first Fabric layout.
       const auto headerHeight = (headerProps.hidden || headerProps.translucent)
           ? 0.f
           : findHeaderHeight(
-                headerProps.titleFontSize, headerProps.title.empty())
+                headerProps.titleFontSize,
+                headerProps.title.empty(),
+                applyTopInset)
                 .value_or(0.f);
 
       screenShadowNode.setPadding({0, 0, 0, headerHeight});
