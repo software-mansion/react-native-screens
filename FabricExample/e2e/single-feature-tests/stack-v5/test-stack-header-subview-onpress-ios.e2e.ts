@@ -73,12 +73,6 @@ async function dismissMenu() {
   await waitFor(contextMenu).not.toExist();
 }
 
-/**
- * Dismisses a toast by message, tolerating the `1. ` index prefix that
- * `ToastProvider` prepends (see `apps/src/shared/Toast.tsx`). Each interaction
- * dismisses its toast before the next, so only one is ever stacked.
- */
-
 async function toggleItemsCount() {
   await element(by.id('toggle-items-count-button')).tap();
 }
