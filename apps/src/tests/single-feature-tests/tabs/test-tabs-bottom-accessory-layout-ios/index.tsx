@@ -9,7 +9,7 @@ import {
   useTabsHostConfig,
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 
 function ShortViewUL() {
   return (
@@ -210,7 +210,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TestTabsBottomAccessory() {
+function TestTabsBottomAccessoryLayout() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -259,4 +259,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestTabsBottomAccessory, scenarioDescription);
+export default createScenario(
+  TestTabsBottomAccessoryLayout,
+  scenarioDescription,
+);

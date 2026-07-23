@@ -1,6 +1,3 @@
-import com.android.Version
-import groovy.json.JsonSlurper
-
 buildscript {
     ext {
         rnsDefaultTargetSdkVersion = 34
@@ -20,9 +17,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:8.2.1')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+        def isRunningInContextOfScreensRepo = project == rootProject
+        if (isRunningInContextOfScreensRepo) {
+            classpath('com.android.tools.build:gradle:8.2.1')
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
+            classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+        }
     }
 }
 
@@ -32,10 +32,6 @@ def isRunningInContextOfScreensRepo() {
 
 def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
-}
-
-def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
 }
 
 def resolveReactNativeDirectory() {
@@ -124,7 +120,6 @@ android {
         targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
@@ -202,6 +197,6 @@ dependencies {
     implementation 'androidx.transition:transition-ktx:1.7.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation "androidx.core:core-ktx:1.17.0"
 }

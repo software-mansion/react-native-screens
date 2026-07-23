@@ -2,7 +2,6 @@
 
 #include <jsi/jsi.h>
 #include <react/renderer/graphics/Float.h>
-#include <react/renderer/graphics/Point.h>
 #include <react/renderer/graphics/Size.h>
 #ifdef ANDROID
 #include <folly/dynamic.h>
@@ -15,8 +14,7 @@ namespace facebook::react {
 class JSI_EXPORT RNSFormSheetHostState final {
  public:
   RNSFormSheetHostState() = default;
-  RNSFormSheetHostState(Size frameSize, Point contentOffset)
-      : frameSize(frameSize), contentOffset(contentOffset) {}
+  RNSFormSheetHostState(Size frameSize) : frameSize(frameSize) {}
 
 #ifdef ANDROID
   RNSFormSheetHostState(
@@ -25,11 +23,7 @@ class JSI_EXPORT RNSFormSheetHostState final {
       : frameSize(
             Size{
                 (Float)data["frameWidth"].getDouble(),
-                (Float)data["frameHeight"].getDouble()}),
-        contentOffset(
-            Point{
-                (Float)data["contentOffsetX"].getDouble(),
-                (Float)data["contentOffsetY"].getDouble()}) {}
+                (Float)data["frameHeight"].getDouble()}) {}
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
@@ -38,7 +32,6 @@ class JSI_EXPORT RNSFormSheetHostState final {
 #endif // ANDROID
 
   Size frameSize{};
-  Point contentOffset{};
 };
 
 } // namespace facebook::react

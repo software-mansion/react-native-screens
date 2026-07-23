@@ -1,6 +1,9 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
-import type { PlatformIconIOS } from '../../../types';
+import type {
+  UserInterfaceStyle,
+  BlurEffect,
+  PlatformIconIOS,
+} from '../../shared/types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 

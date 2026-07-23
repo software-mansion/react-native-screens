@@ -4,15 +4,15 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderConfigRef,
-  StackHeaderToolbarMenuItemOptionsAndroid,
+  StackHeaderToolbarMenuElementOptionsAndroid,
 } from 'react-native-screens/experimental';
-import { scenarioDescription } from './scenario-descriptions';
+import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
 type IdOption = (typeof ID_OPTIONS)[number];
@@ -152,14 +152,14 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdTitle, cmdHidden]);
 
   return (

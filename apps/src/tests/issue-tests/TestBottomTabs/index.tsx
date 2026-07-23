@@ -7,11 +7,11 @@ import {
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import { Colors } from '@apps/shared/styling';
 

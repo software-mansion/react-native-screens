@@ -4,11 +4,11 @@ import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
 import { Colors } from '@apps/shared/styling';

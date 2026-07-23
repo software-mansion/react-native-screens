@@ -44,11 +44,12 @@ export const compatibilityFlags = {
   usesNewAndroidHeaderHeightImplementation: true,
 
   /**
-   * Numerous "breaking changes" in the yet-experimental Tabs API have been
-   * introduced with version 4.25.0 of the library.
+   * Numerous breaking changes in the Tabs API (experimental at the time) were
+   * introduced with version 4.25.0 of the library. The API has since been
+   * stabilised.
    *
-   * This flag marks the shape of the API that's meant for stabilisation, and
-   * enables downstream to detect these changes.
+   * This flag marks the shape of the stable API and enables downstream
+   * to detect these changes.
    *
    * See:
    * * https://github.com/software-mansion/react-native-screens/pull/3888

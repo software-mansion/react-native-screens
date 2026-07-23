@@ -139,7 +139,7 @@ result described as expected above.
 
 ### iOS only: System RTL / RN LTR
 
-> Setup: iOS system: System language is RTL (e.g. Arabic or Hebrew). Disable RN RTL `forceRTL = false`, 
+> Setup: iOS system: System language is RTL (e.g. Arabic or Hebrew). Disable RN RTL `forceRTL = false`,
 > `allowRTL = false` and restart the app. `I18nManager.isRTL == false` and `TabsHost direction = ltr`.
 
 10. Set `TabsHost direction = inherit`.

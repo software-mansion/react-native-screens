@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
+import { useStackNavigationContext } from '@apps/shared/containers/stack';
 import { StyleSheet, Text, View } from 'react-native';
 
 export function StackRouteInformation(props: { routeName?: string }) {

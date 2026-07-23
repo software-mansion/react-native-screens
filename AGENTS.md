@@ -8,17 +8,23 @@ such as stack, tabs, split.
 
 - `./src/` - JS side of the library
 
-  - `./src/components/gamma/` - each directory inside contains JS code for new
+  - `./src/legacy/` - V4 implementation (legacy stack components, gesture-handler,
+    reanimated integration, transition progress hooks, contexts). Re-exported
+    from `./src/index.tsx` for backward compatibility.
+
+  - `./src/components/` - each directory inside contains JS code for new
     components, planned for next major release,
   - `./src/components/safe-area/` - code related to `SafeAreaView` component,
   - `./src/components/tabs/` - code related to `TabsHost` & `TabsScreen` components,
+  - `./src/components/shared/` - shared types used across component families,
 
   - `./src/fabric/` - _codegen_ specs for the components used by the
     native code generation tool
-
 - `./android/` - Android part of the library implementation,
 - `./ios/` - iOS part of the library implementation,
-- `./cpp/` and `./common/` - C++ layer, shared between Android and iOS parts,
+- `./cpp/` and `./common/` - C++ layer, shared between Android and iOS parts.
+  Legacy V4 shadow nodes, states, and descriptors live under `legacy/`
+  subdirectories (`cpp/legacy/`, `common/cpp/.../rnscreens/legacy/`).
 - `./FabricExample/` - contains an example application, we use it to showcase the library
   capabilities and test the library. It is not published as part of the package.
 
@@ -94,3 +100,10 @@ Runs `tsc --noEmit` against the root `tsconfig.json` (covers `./src/`).
 ## Code review guidelines
 
 Be extremely frank and focused on thoroughness.
+
+## Issue creation
+
+If you intend to create an issue on this repository, adhere to templates from `./.github/ISSUE_TEMPLATE/`!
+Issues that fail to conform will likely go stale or be closed without a response.
+
+This applies in particular to bug reports without a reproducer. A reproducer is MANDATORY.

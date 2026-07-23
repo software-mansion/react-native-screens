@@ -172,7 +172,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] The tab bar item shows the `heart` SF Symbol icon (custom
   icon overrides the system search icon)
-- [ ] iOS 18: The label reads  `Custom`.
+- [ ] iOS 18: The label reads `Custom`.
 - [ ] iOS 26: No visible title label; the tab bar item is
   detached from the Bookmarks item.
 
@@ -180,7 +180,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 - [ ] While Bookmarks is selected, the second tab bar item shows the unselected `heart` SF Symbol.
 - [ ] iOS 26: The second tab bar item remains detached.
-  
+
 16. Tap second tab again. Change systemItem to **history** while keeping title as
     **custom** and icon as **heart**.
 
@@ -211,7 +211,7 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 ### Orientation smoke test
 
-20.  Select **Bookmarks** tab and rotate device to landscape orientation.
+20. Select **Bookmarks** tab and rotate device to landscape orientation.
 
 - [ ] The layout adapts to landscape.
 - [ ] The tab bar switches to a compact inline layout
@@ -225,14 +225,14 @@ iPhone Pro models (for iOS 18 excluding Max).
 - [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
 - [ ] iOS 26: The icon changes to `house.fill`.
 
-22. Change systemItem to **search** and icon to **heart**. Keep title set to **custom**. 
+22. Change systemItem to **search** and icon to **heart**. Keep title set to **custom**.
 
 - [ ] The tab bar label remains `Custom`.
 - [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
 - [ ] iOS 26: The icon changes to `heart.fill`. No visible title label; the Search tab bar item is
   detached from the other items.
 
-23.  Rotate the device back to portrait orientation.
+23. Rotate the device back to portrait orientation.
 
 - [ ] The tab bar reverts to its portrait layout.
 - [ ] The second tab bar item shows the `heart.fill` icon

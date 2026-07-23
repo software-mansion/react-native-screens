@@ -33,8 +33,9 @@ internal fun pxToDp(
 internal fun View.pxToDp(px: Float): Float = pxToDp(px, resources.displayMetrics.density)
 
 /**
- * Converts a dp value to pixels using the given display [density]. Inverse of [pxToDp];
- * see its documentation for why the per-display density matters and for the `density > 0f` guard.
+ * Converts a dp value to pixels using the given display [density] — not the process-global
+ * density that [PixelUtil] reads from the device's main display.
+ * See [pxToDp] for more context.
  */
 internal fun dpToPx(
     dp: Float,
@@ -43,7 +44,8 @@ internal fun dpToPx(
 
 /**
  * Converts a dp value to pixels using the density of the display this [View] is attached to.
- * Reads the density fresh on every call. See [dpToPx].
+ * Reads the density fresh on every call, so it stays correct if the view moves between
+ * displays of differing density. See [dpToPx].
  */
 internal fun View.dpToPx(dp: Float): Float = dpToPx(dp, resources.displayMetrics.density)
 

@@ -83,6 +83,7 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
+  bottomAccessoryHidden?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {

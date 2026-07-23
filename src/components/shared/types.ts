@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from 'react-native';
+
 export type BlurEffect =
   | 'none'
   | 'extraLight'
@@ -38,3 +40,43 @@ export type InterfaceOrientation =
 export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
+export type PlatformIconShared = {
+  type: 'imageSource';
+  imageSource: ImageSourcePropType;
+};
+
+export type PlatformIconAndroidDrawableResource = {
+  type: 'drawableResource';
+  name: string;
+  /**
+   * Whether the bottom tab bar tints the icon with the item icon color.
+   * Defaults to `true`; `false` keeps the drawable's own colors.
+   */
+  tinted?: boolean;
+};
+
+export type PlatformIconIOSTemplate = {
+  type: 'templateSource';
+  templateSource: ImageSourcePropType;
+};
+
+export type PlatformIconIOSSfSymbol = {
+  type: 'sfSymbol';
+  name: string;
+};
+
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
+  name: string;
+};
+
+export type PlatformIconIOS =
+  | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcasset
+  | PlatformIconIOSTemplate
+  | PlatformIconShared;
+
+export type PlatformIconAndroid =
+  | PlatformIconAndroidDrawableResource
+  | PlatformIconShared;

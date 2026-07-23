@@ -1,14 +1,11 @@
 import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { StyleSheet, Text, View } from 'react-native';
-import {
-  StackContainer,
-  useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+import { StackContainer } from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
+import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 
 function TestStackSimpleNav() {
   return <StackSetup />;
@@ -21,17 +18,32 @@ function StackSetup() {
         {
           name: 'Home',
           Component: HomeScreen,
-          options: {},
+          // Rendering a header (via headerConfig) makes the native back
+          // button appear on non-root screens, including on Android. The
+          // root screen (Home) always hides the back button.
+          options: {
+            headerConfig: {
+              title: 'Home',
+            },
+          },
         },
         {
           name: 'A',
           Component: AScreen,
-          options: {},
+          options: {
+            headerConfig: {
+              title: 'A',
+            },
+          },
         },
         {
           name: 'B',
           Component: BScreen,
-          options: {},
+          options: {
+            headerConfig: {
+              title: 'B',
+            },
+          },
         },
       ]}
     />
@@ -41,7 +53,7 @@ function StackSetup() {
 function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
-      <RouteInformation routeName="Home" />
+      <StackRouteInformation routeName="Home" />
       <StackNavigationButtons isPopEnabled={false} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
@@ -50,7 +62,7 @@ function HomeScreen() {
 function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
-      <RouteInformation routeName="A" />
+      <StackRouteInformation routeName="A" />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
@@ -59,29 +71,10 @@ function AScreen() {
 function BScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
-      <RouteInformation routeName="B" />
+      <StackRouteInformation routeName="B" />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
 }
-
-function RouteInformation(props: { routeName: string }) {
-  const routeKey = useStackNavigationContext().routeKey;
-
-  return (
-    <View>
-      <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  routeInformation: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-});
 
 export default createScenario(TestStackSimpleNav, scenarioDescription);

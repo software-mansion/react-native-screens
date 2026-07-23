@@ -9,9 +9,6 @@ import type { TabsHostProps } from './TabsHost.types';
 import { RNSLog } from '../../../private';
 import { useTabsHost } from './useTabsHost';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function TabsHost(props: TabsHostProps) {
   RNSLog.log(`TabsHost render`);
 

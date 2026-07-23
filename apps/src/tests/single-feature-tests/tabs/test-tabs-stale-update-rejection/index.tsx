@@ -8,7 +8,7 @@ import {
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
   useTabsHostConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
@@ -131,7 +131,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TestTabsStaleStateUpdateRejection() {
+function TestTabsStaleUpdateRejection() {
   return (
     <ToastProvider>
       <AppContents />
@@ -187,6 +187,6 @@ function blockThread(ms: number) {
 }
 
 export default createScenario(
-  TestTabsStaleStateUpdateRejection,
+  TestTabsStaleUpdateRejection,
   scenarioDescription,
 );

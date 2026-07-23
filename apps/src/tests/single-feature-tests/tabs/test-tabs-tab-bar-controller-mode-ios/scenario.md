@@ -8,7 +8,17 @@
 
 ## E2E test
 
-TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in progress.
+Incomplete: iPhone steps fully automated, iPad partially: steps 1, 2, 4, and 7.
+For iPad e2e verifies: the initial `automatic` default state, `tabBar` mode keeping the floating tab bar
+visible without a sidebar toggle, and `tabSidebar` mode toggling the sidebar
+open/closed (via the "Toggle sidebar" button).
+
+Not automated:
+
+- Steps 3, 5, 8 (Split View window resizing),
+- Step 6 (landscape orientation),
+- Step 9 (mode-cycling crash check),
+- Step 10 (tab switching),
 
 ## Prerequisites
 
@@ -69,14 +79,14 @@ TBD: E2E test only makes sense on iPad to verify sidebar visibility. Research in
 
 - [ ] Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
 
-12.   Set tabBarControllerMode = `automatic`
+12. Set tabBarControllerMode = `automatic`
 
 - [ ] Tab bar displayed at the **bottom**
 
-13.  Set tabBarControllerMode = `tabBar`
+13. Set tabBarControllerMode = `tabBar`
 
 - [ ] Tab bar displayed at the **bottom**
 
-14.  Set tabBarControllerMode = `tabSidebar`
+14. Set tabBarControllerMode = `tabSidebar`
 
 - [ ] Tab bar displayed at the **bottom**

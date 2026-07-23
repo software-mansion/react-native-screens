@@ -20,7 +20,6 @@ Other properties cannot be verified using Detox since it lacks access to color
 or visibility attributes on Android views. Therefore, it is not possible to
 programmatically assert whether a label is hidden or if a specific color value has been applied.
 
-
 ## Prerequisites
 
 - Android emulator or physical device.
@@ -130,19 +129,19 @@ unconstrained yellow circle that expands and smoothly fades outward.
 - [ ] A persistent green pill-shaped indicator is visible behind the "Indicator"
 tab icon in the tab bar.
 
-13.  Tap the **Default** tab, then the **Indicator** tab.
+13. Tap the **Default** tab, then the **Indicator** tab.
 
 - [ ] The yellow ripple effect is visible on the Indicator tab item,
 contained within the pill-shaped active indicator frame.
 - [ ] After the ripple animation ends, the indicator color remains green.
 
-14.  Tap the **Indicator** tab. Then press and hold the **Default**
+14. Tap the **Indicator** tab. Then press and hold the **Default**
     tab item for approximately one second, then release.
 
 - [ ] While pressing, a transient yellow ripple is visible.
 - [ ] The ripple is contained within the pill-shaped indicator frame.
 
-15.  Rapidly tap between **Default**, **Label**, and **Ripple** tabs
+15. Rapidly tap between **Default**, **Label**, and **Ripple** tabs
     several times.
 
 - [ ] Per-tab tab bar custom appearance configurations are applied correctly while switching tabs.

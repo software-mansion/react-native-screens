@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainer.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
@@ -50,7 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Members under `#pragma mark - Internal API` are host-only (`RNSTabsHostComponentView`)
  * implementation detail and may change without notice. Do not call from third-party code.
  */
-@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving
+@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving,
+                                                     RNSContainer
 #if !TARGET_OS_TV
                                                      ,
                                                      RNSOrientationProviding

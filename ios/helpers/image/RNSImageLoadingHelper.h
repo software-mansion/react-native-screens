@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(__cplusplus)
+
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 
@@ -33,3 +35,5 @@
 + (nullable UIImage *)symbolImageNamed:(nonnull NSString *)name;
 
 @end
+
+#endif // defined(__cplusplus)

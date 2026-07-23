@@ -46,7 +46,10 @@ export function HomeScreen() {
           title={scenarioGroup.name}
           route={key}
           details={scenarioGroup.details}
-          testID={`single-feature-tests-${scenarioGroup.name}`}
+          testID={`single-feature-tests-${scenarioGroup.name.replace(
+            /\s/g,
+            '',
+          )}`}
         />
       ))}
     </ScrollView>
