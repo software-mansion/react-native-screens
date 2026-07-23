@@ -7,7 +7,7 @@ import {
   type TabRouteConfig,
   TabsContainer,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { ScrollViewMarker } from 'react-native-screens/experimental';
@@ -15,7 +15,7 @@ import { type ScrollEdgeEffect } from 'react-native-screens';
 import {
   StackContainer,
   type StackRouteConfig,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 
 export function TestStackSvmTabsSpecialEffects() {
   return <TabsNavigation />;

@@ -2,7 +2,6 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 debug_logging_enabled = ENV['RNS_DEBUG_LOGGING'] == '1'
 use_cxxbridge = ENV['RNS_USE_CXXBRIDGE'] == '1'
 
@@ -21,7 +20,6 @@ if debug_logging_enabled
   rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1"
   rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING"
 end
-rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
 rnscreens_cpp_flags << "-DRNS_USE_CXXBRIDGE=1" if use_cxxbridge
 
 rnscreens_config  =  {
@@ -29,15 +27,7 @@ rnscreens_config  =  {
   'OTHER_SWIFT_FLAGS' => rnscreens_swift_flags.join(" ")
 }
 
-if gamma_project_enabled
-  # This setting is required to make Swift code build. However we have 
-  # dependency on `React-RCTImage` pod, which does not set `DEFINES_MODULE` 
-  # and therefore it fails to build. Currently we do patch react-native source
-  # code to make it work & the fix is already merged, however it'll be most likely released 
-  # with 0.81. We can not expect users to patch the react-native sources, thus 
-  # we can not have Swift code in stable package. 
-  rnscreens_config['DEFINES_MODULE'] = 'YES'
-end
+rnscreens_config['DEFINES_MODULE'] = 'YES'
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
@@ -54,13 +44,6 @@ Pod::Spec.new do |s|
   s.source_files = source_files
   s.project_header_files = "ios/bridging/Swift-Bridging.h"
   s.requires_arc = true
-
-  if !gamma_project_enabled
-    s.exclude_files = "ios/gamma/**/*.#{source_files_exts}"
-  else
-    s.exclude_files = "ios/stubs/**/*.#{source_files_exts}"
-    Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
-  end
 
   if debug_logging_enabled
     Pod::UI.puts "[RNScreens] Debug logging enabled."

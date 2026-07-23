@@ -7,7 +7,7 @@ import {
   type TabRouteConfig,
   TabsContainer,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { ScrollViewMarker } from 'react-native-screens/experimental';

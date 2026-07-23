@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-screens/experimental';
 import {
   type TabRouteConfig,
   TabsContainer,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 
 const Stack = createNativeStackNavigator();
 

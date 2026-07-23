@@ -3,7 +3,7 @@ import { Button, PlatformColor, Text, View } from 'react-native';
 import {
   TabsContainer,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 import {
@@ -47,9 +47,13 @@ const TAB4_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
     tabBarItemTitleFontColor: PlatformColor('@android:color/holo_green_dark'),
   },
   tabBarItemActiveIndicatorEnabled: true,
-  tabBarItemActiveIndicatorColor: PlatformColor('@android:color/system_accent1_100'),
+  tabBarItemActiveIndicatorColor: PlatformColor(
+    '@android:color/system_accent1_100',
+  ),
   tabBarItemBadgeTextColor: PlatformColor('@android:color/white'),
-  tabBarItemBadgeBackgroundColor: PlatformColor('@android:color/holo_orange_dark'),
+  tabBarItemBadgeBackgroundColor: PlatformColor(
+    '@android:color/holo_orange_dark',
+  ),
 };
 
 const DEFAULT_APPEARANCE_IOS: TabsScreenAppearanceIOS = {

@@ -3,8 +3,8 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
+} from '@apps/shared/containers/stack';
+import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
 import { Button, ScrollView, Text, View, StyleSheet } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { ToastProvider, useToast } from '@apps/shared';

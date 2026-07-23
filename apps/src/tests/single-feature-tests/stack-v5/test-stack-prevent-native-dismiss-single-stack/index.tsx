@@ -5,7 +5,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
