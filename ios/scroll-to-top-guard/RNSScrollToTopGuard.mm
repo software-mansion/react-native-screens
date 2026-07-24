@@ -37,11 +37,6 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScrollToTopGuardComponentDescriptor>();
 }
 
-Class<RCTComponentViewProtocol> RNSScrollToTopGuardCls(void)
-{
-  return RNSScrollToTopGuard.class;
-}
-
 #pragma mark - Dynamic frameworks support
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -53,3 +48,10 @@ Class<RCTComponentViewProtocol> RNSScrollToTopGuardCls(void)
 #endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
+
+#pragma mark - View class exposure
+
+Class<RCTComponentViewProtocol> RNSScrollToTopGuardCls(void)
+{
+  return RNSScrollToTopGuard.class;
+}
