@@ -103,7 +103,10 @@ function buildHeaderConfig(
         type: 'item',
         id: `trailing-${i}`,
         render: () => (
-          <PressableWithFeedback style={{ width: 30, height: 30 }} />
+          <PressableWithFeedback
+            testID={`custom-item-${i}`}
+            style={{ width: 30, height: 30 }}
+          />
         ),
         menu,
       });
@@ -206,17 +209,20 @@ function ConfigScreen() {
         <View key={i} style={styles.itemSection}>
           <Text style={styles.heading}>Item {i + 1}</Text>
           <SettingsPicker<'foo' | 'bar'>
+            testID={`title-picker-${i}`}
             label="Title"
             value={item.titleVariant}
             onValueChange={v => updateItem(i, { titleVariant: v })}
             items={['foo', 'bar']}
           />
           <SettingsSwitch
+            testID={`custom-view-switch-${i}`}
             label="Custom view"
             value={item.customView}
             onValueChange={v => updateItem(i, { customView: v })}
           />
           <SettingsPicker<MenuMode>
+            testID={`menu-picker-${i}`}
             label="Menu"
             value={item.menuMode}
             onValueChange={v => updateItem(i, { menuMode: v })}
@@ -225,6 +231,7 @@ function ConfigScreen() {
         </View>
       ))}
       <Button
+        testID="toggle-item-3-button"
         title={showThirdItem ? 'Remove Item 3' : 'Add Item 3'}
         onPress={() => setShowThirdItem(prev => !prev)}
       />
