@@ -64,6 +64,18 @@ jobs:
           cache: "yarn"
           registry-url: https://registry.npmjs.org/
 
+      # With validation bypassed there is no release branch to infer the
+      # version from, so an explicit version is required. The publish action
+      # would fail on this anyway, but only after checkout and setup — fail
+      # fast here with a clear message instead. Nightly is exempt: it infers
+      # the version from the npm latest tag.
+      - name: Require explicit version when bypassing validation
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.bypass-branch-validation-rules && inputs.release-type != 'nightly' && inputs.version == '' }}
+        shell: bash
+        run: |
+          echo "::error::bypass-branch-validation-rules requires an explicit 'version' input for ${{ inputs.release-type }} releases."
+          exit 1
+
       # Guards against publishing a stable / beta / rc release from an
       # inappropriate target. Intentionally skipped for nightly releases,
       # which are published from main by design.
