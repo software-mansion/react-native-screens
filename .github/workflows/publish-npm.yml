@@ -28,6 +28,13 @@ on:
         type: string
         required: false
         default: ""
+      bypass-branch-validation-rules:
+        description: >-
+          [DANGER ZONE] Make sure you know what you're doing! This skips
+          the publish-target validation (branch and version checks),
+          allowing a publish from any branch, including main.
+        type: boolean
+        default: false
 
 jobs:
   npm-publish:
@@ -61,7 +68,7 @@ jobs:
       # inappropriate target. Intentionally skipped for nightly releases,
       # which are published from main by design.
       - name: Validate publish target
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' && !inputs.bypass-branch-validation-rules }}
         shell: bash
         env:
           BRANCH: ${{ github.ref_name }}
