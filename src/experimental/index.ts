@@ -6,3 +6,4 @@
 // Components & types
 
 export * from '../components/safe-area';
+export * from '../components/scroll-to-top-guard';
