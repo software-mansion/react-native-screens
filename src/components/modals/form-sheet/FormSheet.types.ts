@@ -183,7 +183,7 @@ export interface FormSheetProps {
    *
    * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
