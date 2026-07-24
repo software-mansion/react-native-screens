@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests onPress on header items with a simple menu. Tap fires onPress toast, long-press shows menu.',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };
