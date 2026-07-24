@@ -77,11 +77,7 @@ std::optional<float> findHeaderHeight(
   }
 
   jfloat headerHeight = env->CallFloatMethod(
-      packageInstance,
-      computeDummyLayoutID,
-      fontSize,
-      isTitleEmpty,
-      applyTopInset);
+      packageInstance, computeDummyLayoutID, fontSize, isTitleEmpty, applyTopInset);
 
   return {headerHeight};
 }
@@ -107,11 +103,10 @@ void RNSScreenShadowNode::appendChild(
               headerConfigChild->getProps());
 
       // The native CustomToolbar only pads itself with the top inset when
-      // `legacyTopInsetBehavior || consumeTopInset` holds (see
-      // CustomToolbar.kt). The dummy measurement must mirror that condition,
-      // otherwise the header height is over-reported by the top inset whenever
-      // a header opts out via `disableTopInsetApplication` (consumeTopInset ==
-      // false).
+      // `legacyTopInsetBehavior || consumeTopInset` holds (see CustomToolbar.kt).
+      // The dummy measurement must mirror that condition, otherwise the header
+      // height is over-reported by the top inset whenever a header opts out via
+      // `disableTopInsetApplication` (consumeTopInset == false).
       const bool applyTopInset =
           headerProps.legacyTopInsetBehavior || headerProps.consumeTopInset;
 
