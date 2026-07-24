@@ -50,7 +50,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-- (void)setViewToSnapshot;
+
+/**
+ * Overlays the screen view with a snapshot of its current contents, keeping `controller.view`
+ * unchanged so that an ongoing native transition can tear the view down consistently.
+ *
+ * @return YES if the snapshot was applied — the screen view is still part of the window
+ * hierarchy and its removal must be left to UIKit. NO if the view is already detached
+ * and the caller should remove it from its superview as usual.
+ */
+- (BOOL)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;
@@ -90,6 +99,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
+
+/**
+ * Whether React has already deleted this component. The view may still be part of the view
+ * hierarchy at that point, backing the remainder of an ongoing native transition.
+ */
+@property (nonatomic, readonly, getter=isInvalidated) BOOL invalidated;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;
