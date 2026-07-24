@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - main-labs
+      - v4-main
     paths:
       - 'android/**'
       - 'common/**'
@@ -15,6 +16,7 @@ on:
     branches:
       - main
       - main-labs
+      - v4-main
   workflow_dispatch:
 jobs:
   build:
