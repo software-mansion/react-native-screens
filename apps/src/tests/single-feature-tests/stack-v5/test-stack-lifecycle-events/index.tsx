@@ -104,7 +104,7 @@ function HomeScreen() {
 
 function AScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
+    <CenteredLayoutView testID='screenA-layout-view' style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
       <StackNavigationButtons isPopEnabled routeNames={['A', 'NestedStack']} />
     </CenteredLayoutView>
@@ -144,7 +144,7 @@ function NestedStackScreen() {
 
 function NestedHomeScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
+    <CenteredLayoutView testID='nested-home-screen-layout-view'style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedHome" />
       <StackNavigationButtons isPopEnabled routeNames={['NestedA']} />
     </CenteredLayoutView>
@@ -153,7 +153,7 @@ function NestedHomeScreen() {
 
 function NestedAScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
+    <CenteredLayoutView testID='nested-screenA-layout-view' style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedA" />
       <StackNavigationButtons isPopEnabled routeNames={['NestedA']} />
     </CenteredLayoutView>

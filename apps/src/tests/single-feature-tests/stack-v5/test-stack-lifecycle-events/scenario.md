@@ -14,7 +14,38 @@ stack), exercising every dismissal method available at each level.
 
 ## E2E test
 
-- **TBD:** E2E test has to be implemented in the future.
+Incomplete: Each block contains a per-platform suite, as the two platforms fire
+a different lifecycle event set and require distinct matchers within the example
+app harness.
+
+- iOS: steps 1–14. react-native-screens detaches covered screens on iOS, so
+  every `Name:` and button matcher resolves to a single element (the top
+  screen). Both the leaving and the entering screen fire on every transition,
+  and each transition is exercised through **all** of its dismissal methods —
+  the on-screen **Pop** button, the **native header back button** (steps 3, 8,
+  12), the **edge-swipe / system gesture-back** (steps 4, 9, 11), and the
+  **outer NestedStack header back button's** cross-boundary shortcut that pops
+  `NestedA → Home` in one step (step 14) — each asserted to produce the
+  identical toast event set.
+
+- Android (`describeIfAndroid`): steps 1, 2, 5, 6, 7, 10, and 13 — the
+  Pop-button-driven push/pop path only (top level, inner nested stack, and the
+  nested-stack-root-bubbles-to-container-pop case). Unlike iOS, covered screens
+  remain attached on Android, so stacked screens render duplicate buttons and
+  labels; the suite taps and asserts on the topmost match (the last item in the
+  hierarchy). Additionally, `<Button>` titles render uppercased (`PUSH A`,
+  `POP`) and are matched in that form. Only the entering or leaving screen
+  fires.
+
+**Manual only (not automated):**
+
+- Android: Steps 3, 4, 8, 9, 11, 12, and 14 (the native header back button, the
+  edge-swipe / system gesture-back, and the outer-back boundary case). Within
+  the shared e2e app the screen is reached through the example app's own
+  navigation, where native back and gesture-back navigate out to the selection
+  menu instead of popping the nested `StackContainer` (issue #1459). Verify
+  these via the direct `App.tsx` launch documented below; each produces an event
+  set already automated via the equivalent Pop-button dismissals and on iOS.
 
 ## Prerequisites
 
