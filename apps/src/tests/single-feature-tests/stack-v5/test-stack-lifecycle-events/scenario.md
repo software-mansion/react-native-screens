@@ -32,7 +32,7 @@ stack), exercising every dismissal method available at each level.
   import { TestStackLifecycleEvents as Example } from './src/tests/single-feature-tests';
   ```
 
-  With the gamma `StackContainer` at the root, native back and gesture-back
+  With the v5 `StackContainer` at the root, native back and gesture-back
   interact with the stack directly. When the screen is nested inside the
   example app's own navigation, native back navigates out to the
   system/selection menu instead of popping the stack (issue

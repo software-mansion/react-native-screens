@@ -1,7 +1,5 @@
 #import "RNSConversions-ScrollViewMarker.h"
 
-#if RNS_GAMMA_ENABLED
-
 #import <React/RCTLog.h>
 
 namespace react = facebook::react;
@@ -40,5 +38,3 @@ EDGE_EFFECT_CONV_FUNC_IMPL(Bottom);
 
 #undef EDGE_EFFECT_CONV_FUNC_IMPL
 #undef SWITCH_EDGE_EFFECT
-
-#endif // RNS_GAMMA_ENABLED

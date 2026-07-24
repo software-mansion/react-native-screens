@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { Split, SplitHostCommands } from 'react-native-screens/experimental';
+import { Split, SplitHostCommands } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 
 const SplitShowColumn = () => {

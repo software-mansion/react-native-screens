@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** Verify the `preventNativeDismiss` route option on the
-gamma/v5 `StackContainer`. When **Enabled**, native dismissal (the Android
+v5 `StackContainer`. When **Enabled**, native dismissal (the Android
 system/hardware back button, the native header back-button chevron, and the
 system gesture-back / edge swipe) is blocked and `onNativeDismissPrevented`
 fires (a green toast is shown); the screen stays put. When **Disabled**,
@@ -38,7 +38,7 @@ Android - but no e2e test has been implemented yet. The system gesture-back
   import { TestStackPreventNativeDismissSingleStack as Example } from './src/tests/single-feature-tests';
   ```
 
-  With the gamma `StackContainer` at the root, the Android system back button
+  With the v5 `StackContainer` at the root, the Android system back button
   and gesture-back interact with the stack directly. When the screen is
   nested inside the example app's own navigation, native back navigates out
   to the system/selection menu instead of popping the stack (issue

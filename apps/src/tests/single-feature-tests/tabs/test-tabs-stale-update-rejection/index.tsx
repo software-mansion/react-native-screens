@@ -8,7 +8,7 @@ import {
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
   useTabsHostConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';

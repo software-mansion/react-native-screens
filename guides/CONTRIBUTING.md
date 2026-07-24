@@ -163,16 +163,6 @@ To find the native source code of `react-native-screens` navigate to `Pods > Dev
 
 Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`.
 
-### Project Gamma
-
-If you wish to work on next major, 5.0 version of Screens (codename: "Project Gamma") or just test the new components you need to do some additional configuration.
-
-"Project Gamma" files are excluded from regular library builds, therefore any usage of "Gamma" components will crash in runtime when React Native discovers that
-component implementation is missing. To include the implementation files **you need to set `RNS_GAMMA_ENABLED` environment variable to `1` before installing pods**.
-
-The recommended approach is to set up [direnv](https://direnv.net/) as suggested [here](https://github.com/software-mansion/react-native-screens-labs/pull/197/files),
-so that you don't have to do this manually each time.
-
 ### Preparing Pull Request
 
 When your code changes are ready, it is time to open your Pull Request. GitHub already has a template that helps you properly post your changes. The most crucial are:

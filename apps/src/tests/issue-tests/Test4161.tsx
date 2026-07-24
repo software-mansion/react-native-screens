@@ -7,7 +7,7 @@ import {
   type TabRouteConfig,
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 const Stack = createNativeStackNavigator();

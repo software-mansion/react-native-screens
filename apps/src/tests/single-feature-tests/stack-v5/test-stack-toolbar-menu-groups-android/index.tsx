@@ -4,7 +4,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import {
   SettingsPicker,
   SettingsSwitch,
@@ -17,7 +17,7 @@ import type {
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
 const ALL_IDS = [

@@ -20,7 +20,7 @@ import type {
   TabsScreenItemStateAppearanceIOS,
 } from './TabsScreen.ios.types';
 import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconIOS } from '../../../types';
+import type { PlatformIconIOS } from '../../shared/types';
 import { useTabsScreen } from './useTabsScreen';
 
 function TabsScreen(props: TabsScreenProps) {
