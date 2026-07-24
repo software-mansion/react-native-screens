@@ -1,5 +1,6 @@
 #import "RNSStackScreenHeaderCoordinator.h"
-#import "RCTAssert.h"
+#import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 #import "RNSDefines.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
@@ -10,7 +11,6 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
-#import "React/RCTLog.h"
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
