@@ -6,7 +6,6 @@ import {
   Dimensions,
   View,
   ViewStyle,
-  Platform,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -39,7 +38,7 @@ const Toast = ({
 
   return (
     <TouchableOpacity
-      style={{ ...styles.container, ...style }}
+      style={[styles.container, style]}
       onPress={() => remove(id)}>
       <View style={{ ...styles.alert, backgroundColor }}>
         <Text style={styles.text}>
@@ -67,9 +66,34 @@ const ToastContext = createContext({
 
 interface ToastProviderProps {
   children: React.ReactNode;
+  anchorSide?: 'top' | 'bottom';
 }
 
-export const ToastProvider = ({ children }: ToastProviderProps) => {
+interface ToastContainerProps {
+  toasts: IToast[];
+  remove: (id: string) => void;
+  anchorSide?: 'top' | 'bottom';
+}
+
+function ToastContainer({ toasts, remove, anchorSide }: ToastContainerProps) {
+  return (
+    <View style={[styles.overlay, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]} pointerEvents="box-none">
+      {/* `pointerEvents` does not currently work on Android  */}
+      <SafeAreaView
+        pointerEvents='box-none'
+        collapsable={false}
+        edges={{ top: true, bottom: true, }}
+        style={styles.toastArea}
+      >
+        {toasts.map((toast, i) => (
+          <Toast index={i} key={toast.id} {...toast} remove={remove} />
+        ))}
+      </SafeAreaView>
+    </View>
+  );
+}
+
+export function ToastProvider({ children, anchorSide }: ToastProviderProps) {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
@@ -82,33 +106,31 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   };
 
   return (
-    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
-      <ToastContext.Provider value={{ push }}>
-        <>
-          {children}
-          {toasts.map((toast, i) => (
-            <Toast
-              index={i}
-              key={toast.id}
-              style={{ marginBottom: i * 25 }}
-              {...toast}
-              remove={remove}
-            />
-          ))}
-        </>
-      </ToastContext.Provider>
-    </SafeAreaView>
+    <ToastContext.Provider value={{ push }}>
+      {children}
+      <ToastContainer toasts={toasts} remove={remove} anchorSide={anchorSide ?? 'bottom'} />
+    </ToastContext.Provider>
   );
-};
+
+}
 
 export const useToast = () => useContext(ToastContext);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  overlay: {
     position: 'absolute',
-    alignSelf: 'center',
-    bottom: 5,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+  },
+  toastArea: {
+    flex: 0,
+    alignItems: 'center',
+  },
+  container: {
+    marginBottom: 5,
   },
   alert: {
     alignItems: 'center',
