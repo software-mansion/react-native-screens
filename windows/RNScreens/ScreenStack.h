@@ -1,23 +1,17 @@
 #pragma once
-#include "Screen.h"
+#include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-class ScreenStack
-    : public winrt::Windows::UI::Xaml::Controls::ContentControlT<ScreenStack> {
- public:
-  ScreenStack(winrt::Microsoft::ReactNative::IReactContext reactContext);
-  void addScreen(Screen &screen, int64_t index);
-  void removeAllChildren();
-  void removeChildAt(int64_t index);
-  void replaceChild(
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
-
-  winrt::Windows::Foundation::Collections::IVector<Windows::UI::Xaml::UIElement>
-      m_children;
-
- private:
-  void onChildModified(int64_t index);
-  winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
-};
+// RNSScreenStack - stub. Child ordering and screen transitions are managed
+// entirely by JS and the Fabric reconciler.
+//
+// The JS spec declares onFinishTransitioning (topFinishTransitioning). To
+// implement it when native push/pop animations are added:
+//   1. Add ScreenStackUserData storing an EventEmitter (see Screen.cpp for
+//      the established pattern).
+//   2. Register SetViewComponentViewInitializer + SetUpdateEventEmitterHandler.
+//   3. Dispatch topFinishTransitioning at the end of each transition.
+void RegisterScreenStack(
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
+  noexcept;
 } // namespace winrt::RNScreens::implementation

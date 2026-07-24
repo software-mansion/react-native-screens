@@ -1,14 +1,12 @@
 #pragma once
+#include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-class SearchBar
-    : public winrt::Windows::UI::Xaml::Controls::StackPanelT<
-          SearchBar> {
- public:
-  SearchBar(
-      winrt::Microsoft::ReactNative::IReactContext reactContext);
-
- private:
-  winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
-};
+// RNSSearchBar - stub. No native visual is rendered.
+//
+// TODO: implement using WinUI AutoSuggestBox; wire search text and cancel
+// events through a SearchBarUserData event emitter.
+void RegisterSearchBar(
+    const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
+  noexcept;
 } // namespace winrt::RNScreens::implementation
