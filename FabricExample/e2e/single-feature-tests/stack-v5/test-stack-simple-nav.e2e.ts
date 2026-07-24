@@ -20,8 +20,8 @@ import {
  *
  * - iOS: react-native-screens detaches covered screens, so every matcher
  *   resolves unambiguously to the top screen. The full scenario is covered,
- *   including the native header back button and the edge (gesture) back swipe  *   except rapid tapping.
- *
+ *   including the native header back button and the edge (gesture) back swipe
+ *   except rapid tapping.
  * - Android: covered screens stay attached, so a matcher can resolve to one
  *   element per stacked screen and must be normalized to the topmost match.
  *   In addition, this screen is opened through the example app's own
