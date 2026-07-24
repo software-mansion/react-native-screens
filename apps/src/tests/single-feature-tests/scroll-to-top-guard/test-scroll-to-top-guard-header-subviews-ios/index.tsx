@@ -6,11 +6,11 @@ import React, {
 } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ScrollToTopGuard } from 'react-native-screens/experimental';
-import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
+import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsSwitch, SettingsPicker } from '@apps/shared';
 import LongText from '@apps/shared/LongText';
 import { Colors } from '@apps/shared/styling';
