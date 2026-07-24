@@ -18,28 +18,26 @@ Notes for `routeKey` behavior and how the two platforms are launched
 
 ## E2E test
 
-Incomplete: automated
-with a per-platform suite in each block, because the two platforms behave
-differently in the example-app harness and need different matchers.
+Incomplete: Each block contains a per-platform suite, as the two platforms behave
+differently within the example app harness and require distinct matchers.
 
 - iOS: steps 1–10, including the native header back button
-  (step 8) and the edge-swipe pop (step 9). react-native-screens detaches
-  covered screens on iOS, so a `Name:` / `Key:` or button matcher resolves to
-  a single element — the top screen.
-- Android (`describeIfAndroid`): steps 1–7 and 10 only. Unlike iOS, covered
-  screens stay attached on Android, so every stacked screen renders duplicate
-  buttons and labels; the suite reads the current route, taps buttons, and
-  waits on the **topmost** match (the last one in hierarchy order). `<Button>`
+  (step 8) and the edge-swipe pop (step 9). Since react-native-screens detaches
+  covered screens on iOS, `Name:` / `Key:` or button matcher resolves to
+  a single element - the top screen.
+- Android (`describeIfAndroid`): steps 1–7 and 10 only.Unlike iOS, covered screens
+  remain attached on Android, causing stacked screens to render duplicate buttons and labels.
+  Consequently, the suite inspects the current route, taps buttons, and asserts on
+  the topmost match (the last item in the hierarchy). Additionally, `<Button>`
   titles also render uppercased (`PUSH A`, `POP`) and are matched in that form.
 
 **Manual only (not automated):**
 
-- For Android: Step 8 and 9
-- For iOS Step 9: the cancel-before-halfway case is not possible to be automated
-  with Detox.
-- For both platfroms: Steps 11–12 — rapid tapping before a transition finishes. Detox
-  synchronizes on UI idle between actions, so it cannot dispatch taps
-  mid-animation.
+- Android: Steps 8 and 9.
+- iOS: Step 9 (canceling the swipe gesture before the halfway threshold cannot
+  be automated with Detox).
+- Both platforms: Steps 11–12 (rapid tapping prior to transition completion).
+  Because Detox synchronizes on UI idle states between actions, it cannot dispatch taps mid-animation.
 
 ## Prerequisites
 
@@ -75,11 +73,11 @@ differently in the example-app harness and need different matchers.
   tell apart multiple stacked instances of the same route name.
 - `Key` values use a session-global counterthat increments on every push and is **never reset** for
   the lifetime of the app session (it is shared across all Stack
-  containers). Only the **relationships** matter — every push produces a strictly
+  containers). Only the **relationships** matter - every push produces a strictly
   new `Key`, and a preserved (not recreated) screen keeps the same `Key`.
 - **Android:** when the screen is launched **directly** via `App.tsx` (see
   the Android launch prerequisite),both the **native header back button** and
-  the **system gesture-back** work — the same as on iOS. These only fail when the screen
+  the **system gesture-back** work - the same as on iOS. These only fail when the screen
   is nested inside the example app's own navigation (issue
   [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
   which is exactly why Android is tested via the direct launch. On both
@@ -102,8 +100,8 @@ differently in the example-app harness and need different matchers.
 
 2. Tap **Push A**.
 
-- [ ] Screen **A** is pushed. Screen displays `Name: A`, and a
-  `Key` with a new value, distinct from Home's.
+- [ ] Screen **A** is pushed. The Screen displays `Name: A` and a `Key` with a
+  new value distinct from the Home screen's key.
   A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
   buttons are all shown. Note this `Key` value.
 
