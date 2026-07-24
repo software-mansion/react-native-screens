@@ -45,14 +45,12 @@
       return YES;
     }
   }
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   // ...and was extended to iPhone in iOS 27.
   if (@available(iOS 27.0, *)) {
     if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
       return YES;
     }
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   return NO;
 }
 
