@@ -9,7 +9,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 

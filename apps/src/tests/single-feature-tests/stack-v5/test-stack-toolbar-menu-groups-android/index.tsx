@@ -17,7 +17,7 @@ import type {
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
 const ALL_IDS = [

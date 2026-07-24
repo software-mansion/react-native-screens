@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { TestBottomTabs, TestScreenStack } from '..';
 import { SplitBaseConfig } from './helpers/types';

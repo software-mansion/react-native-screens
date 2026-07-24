@@ -8,7 +8,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { SplitBaseConfig } from './helpers/types';
 

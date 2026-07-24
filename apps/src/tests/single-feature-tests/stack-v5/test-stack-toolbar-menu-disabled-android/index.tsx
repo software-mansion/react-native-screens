@@ -11,7 +11,7 @@ import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 

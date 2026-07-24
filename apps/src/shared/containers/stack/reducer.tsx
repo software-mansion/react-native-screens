@@ -1,4 +1,4 @@
-import type { StackScreenActivityMode } from 'react-native-screens/experimental';
+import type { StackScreenActivityMode } from 'react-native-screens';
 import type {
   NavigationAction,
   NavigationActionBatch,

@@ -11,7 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigProps,
   StackHeaderConfigPropsAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 
 type TintColorOption = 'default' | 'purple' | 'red' | 'green';
 type IconOption = 'default' | 'imageSource' | 'drawableResource';
