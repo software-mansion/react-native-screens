@@ -58,6 +58,7 @@ class FormSheetDialogManager(
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
             onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
+            onDismiss = { eventEmitter?.emitOnDismissEvent() },
         )
 
     internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->

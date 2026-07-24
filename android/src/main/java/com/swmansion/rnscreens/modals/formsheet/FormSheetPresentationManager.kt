@@ -12,11 +12,14 @@ internal class FormSheetPresentationManager(
     private val bottomSheetView: View?,
     private val dimmingManager: DimmingViewManager,
     private val onNativeDismiss: () -> Unit,
+    private val onDismiss: () -> Unit,
 ) {
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
 
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
+
+    private var dismissalOrigin = FormSheetDismissalOrigin.PROGRAMMATIC
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
@@ -159,6 +162,15 @@ internal class FormSheetPresentationManager(
         if (state == FormSheetPresentationState.DISMISSING) {
             state = FormSheetPresentationState.DISMISSED
             appearanceEventEmitter?.emitOnDidDisappear()
+
+            when (dismissalOrigin) {
+                FormSheetDismissalOrigin.NATIVE -> onNativeDismiss()
+                FormSheetDismissalOrigin.PROGRAMMATIC -> onDismiss()
+            }
+            // Reset so any subsequent dismissal defaults to programmatic unless a
+            // native dismissal detection `handleNativeDismiss()` is caught.
+            dismissalOrigin = FormSheetDismissalOrigin.PROGRAMMATIC
+
             // ensure state hasn't updated during dismissal
             resolvePresentationState()
         }
@@ -169,7 +181,7 @@ internal class FormSheetPresentationManager(
             return
         }
 
-        onNativeDismiss()
+        dismissalOrigin = FormSheetDismissalOrigin.NATIVE
         updatePresentationState(isOpen = false)
     }
 
