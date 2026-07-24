@@ -14,7 +14,7 @@ import TestFormSheetNativeContainerStyle from './test-form-sheet-native-containe
 import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
-import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss-ios';
+import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
 import TestFormSheetStacking from './test-form-sheet-stacking-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
@@ -31,7 +31,7 @@ export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-
 export { default as TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed';
 export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius';
 export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
-export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss-ios';
+export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking-ios';
 
 const scenarios = {
