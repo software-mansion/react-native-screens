@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - v4-main
     paths:
       - 'windows/**'
       - '.github/workflows/windows-build-test.yml'
@@ -11,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - v4-main
     paths:
       - 'windows/**'
       - '.github/workflows/windows-build-test.yml'
@@ -80,7 +82,7 @@ jobs:
         run: |
           New-Item yarn.lock
           yarn add react-native-windows react-native-screens
-      
+
       - name: Init example app
         working-directory: WindowsExample
         run: npx react-native init-windows --overwrite

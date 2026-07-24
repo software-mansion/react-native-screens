@@ -4,10 +4,12 @@ on:
     branches:
       - main
       - main-labs
+      - v4-main
   pull_request:
     branches:
       - main
       - main-labs
+      - v4-main
   workflow_dispatch:
 jobs:
   lint-js:

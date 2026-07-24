@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - v4-main
     paths:
       - '.github/workflows/android-e2e-test-fabric.yml'
       - 'package.json'
@@ -13,6 +14,7 @@ on:
   push:
     branches:
       - main
+      - v4-main
   workflow_dispatch:
 jobs:
   test:
