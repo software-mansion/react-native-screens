@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.header.toolbar
+package com.swmansion.rnscreens.stack.header.toolbar.model
 
 internal sealed interface StackHeaderToolbarMenuElementConfig {
     val item: StackHeaderToolbarMenuItemConfig

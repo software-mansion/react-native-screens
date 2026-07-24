@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.header
+package com.swmansion.rnscreens.stack.header.appbar
 
 import android.annotation.SuppressLint
 import android.content.Context

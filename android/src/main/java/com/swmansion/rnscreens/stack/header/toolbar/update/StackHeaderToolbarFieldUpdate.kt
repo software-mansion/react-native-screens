@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.header.toolbar
+package com.swmansion.rnscreens.stack.header.toolbar.update
 
 internal sealed interface StackHeaderToolbarFieldUpdate<out T> {
     object Reset : StackHeaderToolbarFieldUpdate<Nothing>

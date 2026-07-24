@@ -1,6 +1,7 @@
-package com.swmansion.rnscreens.stack.header.toolbar
+package com.swmansion.rnscreens.stack.header.toolbar.update
 
 import android.graphics.drawable.Drawable
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemShowAsAction
 
 /**
  * Partial update for a toolbar menu element.

@@ -12,16 +12,23 @@ import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationObserver
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.stack.header.config.StackHeaderInvalidationFlags
-import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuApplicator
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuSelectionController
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.stack.screen.StackScreen
 
+/**
+ * Root CoordinatorLayout for a screen's header: hosts the app bar and the
+ * content wrapper, wires header-config attach/observe, routes config
+ * invalidations to the applicators, and owns header lifecycle/teardown.
+ */
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
     context: Context,
@@ -80,15 +87,15 @@ internal class StackHeaderCoordinatorLayout(
                 // then emit a single coalesced event per affected group.
                 val affectedGroups = LinkedHashSet<String>()
                 for (update in updates) {
-                    applicator.updateToolbarMenuElement(
+                    StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
                         toolbar,
-                        toolbarMenuForwardIdMap,
+                        selectionController.forwardIdMap,
                         update.id,
                         update.options,
                     )
                     val checked = update.options.checked
                     if (checked != null) {
-                        applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
+                        selectionController.applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
                     }
                 }
                 affectedGroups.forEach { groupId -> emitGroupSelection(toolbar, groupId) }
@@ -123,49 +130,7 @@ internal class StackHeaderCoordinatorLayout(
         val delegate = currentDelegate ?: return
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
-
-        // When config is transparent, the StackScreen is static so we need to offset the header
-        // config by the offset of the AppBarLayout (which is 0 or is negative). When config is
-        // opaque, the Screen always moves with the config, that's why we need to offset the
-        // header config by the negative value of AppBarLayout's height.
-        val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
-
-        delegate.onHeaderFrameChanged(
-            appBar.width,
-            appBar.height,
-            configOffset,
-        )
-
-        updateSubviewOffsets(appBar, provider)
-    }
-
-    private fun updateSubviewOffsets(
-        appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
-    ) {
-        config.leadingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.centerSubview?.let { updateSubviewOffset(it, appBar) }
-        config.trailingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.backgroundSubview?.let { updateSubviewOffset(it, appBar) }
-    }
-
-    private fun updateSubviewOffset(
-        subview: StackHeaderSubviewProviding,
-        appBar: StackHeaderAppBarLayout,
-    ) {
-        val view = subview.view
-        if (view.width == 0 && view.height == 0) return
-
-        val appBarPos = IntArray(2)
-        val subviewPos = IntArray(2)
-        appBar.getLocationInWindow(appBarPos)
-        view.getLocationInWindow(subviewPos)
-
-        currentDelegate?.onSubviewOriginChanged(
-            subview.type,
-            x = subviewPos[0] - appBarPos[0],
-            y = subviewPos[1] - appBarPos[1],
-        )
+        StackHeaderFrameSynchronizer.sync(appBar, provider, delegate)
     }
 
     // endregion
@@ -180,10 +145,9 @@ internal class StackHeaderCoordinatorLayout(
 
     private val applicator = StackHeaderApplicator(wrappedContext)
 
-    private var appBarLayout: StackHeaderAppBarLayout? = null
+    private val selectionController = StackHeaderToolbarMenuSelectionController()
 
-    private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
-    private var toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
+    private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private val onNavigationIconClick: () -> Unit = {
         val activity =
@@ -232,24 +196,23 @@ internal class StackHeaderCoordinatorLayout(
 
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 val (forwardIdMap, reverseIdMap) =
-                    applicator.generateToolbarMenuItemMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenu,
                     )
                 val forwardGroupIdMap =
-                    applicator.generateToolbarMenuGroupMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuGroupMappings(
                         provider.toolbarMenu,
                     )
                 val groupMetadata =
-                    applicator.computeGroupMetadata(
+                    StackHeaderToolbarMenuApplicator.computeGroupMetadata(
                         provider.toolbarMenu,
                     )
 
-                applicator.validateRadioInitialSelection(provider.toolbarMenu)
+                StackHeaderToolbarMenuApplicator.validateRadioInitialSelection(provider.toolbarMenu)
 
-                toolbarMenuForwardIdMap = forwardIdMap
-                toolbarMenuGroupMetadata = groupMetadata
+                selectionController.setMenuMaps(forwardIdMap, groupMetadata)
 
-                applicator.rebuildToolbarMenu(
+                StackHeaderToolbarMenuApplicator.rebuildToolbarMenu(
                     appBar.toolbar,
                     provider.toolbarMenu,
                     forwardIdMap,
@@ -258,7 +221,7 @@ internal class StackHeaderCoordinatorLayout(
                     groupDividerEnabled = provider.toolbarMenuGroupDividerEnabled,
                     onItemClicked = { id, menuItem ->
                         if (menuItem.isCheckable) {
-                            applyGroupItemStateChange(appBar.toolbar, id)?.let { groupId ->
+                            selectionController.applyGroupItemStateChange(appBar.toolbar, id)?.let { groupId ->
                                 emitGroupSelection(appBar.toolbar, groupId)
                             }
                         } else {
@@ -278,62 +241,12 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Group selection
 
-    /**
-     * Mutates the checked state of [itemId] within its group and returns the id of the group
-     * whose selection changed, or `null` when nothing changed (the item is not in a group, an
-     * invalid attempt to uncheck a single-selection item, or the item was already in the
-     * target state). Does not emit — callers decide when to emit so that batched updates can
-     * coalesce into one event per group.
-     */
-    private fun applyGroupItemStateChange(
-        toolbar: MaterialToolbar,
-        itemId: String,
-        explicitCheckedValue: Boolean? = null,
-    ): String? {
-        val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return null
-        val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return null
-        val intId = toolbarMenuForwardIdMap[itemId] ?: return null
-        val menuItem = toolbar.menu.findItem(intId) ?: return null
-
-        if (singleSelection && explicitCheckedValue == false) {
-            Log.w(
-                TAG,
-                "[RNScreens] Cannot uncheck item '$itemId' in single-selection group '$groupId'. " +
-                    "Check a different item instead.",
-            )
-            return null
-        }
-
-        val newChecked =
-            if (singleSelection) {
-                true
-            } else {
-                explicitCheckedValue ?: !menuItem.isChecked
-            }
-        if (menuItem.isChecked == newChecked) return null
-        menuItem.isChecked = newChecked
-
-        return groupId
-    }
-
     private fun emitGroupSelection(
         toolbar: MaterialToolbar,
         groupId: String,
     ) {
-        currentDelegate?.onGroupSelectionChanged(groupId, collectSelectedIds(toolbar, groupId))
+        currentDelegate?.onGroupSelectionChanged(groupId, selectionController.collectSelectedIds(toolbar, groupId))
     }
-
-    private fun collectSelectedIds(
-        toolbar: MaterialToolbar,
-        groupId: String,
-    ): List<String> =
-        toolbarMenuGroupMetadata
-            .groupMemberItems[groupId]
-            .orEmpty()
-            .filter { memberId ->
-                val intId = toolbarMenuForwardIdMap[memberId] ?: return@filter false
-                toolbar.menu.findItem(intId)?.isChecked == true
-            }
 
     // endregion
 
@@ -345,8 +258,7 @@ internal class StackHeaderCoordinatorLayout(
             removeView(it)
         }
         appBarLayout = null
-        toolbarMenuForwardIdMap = emptyMap()
-        toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
+        selectionController.clear()
     }
 
     private fun removeHeader() {

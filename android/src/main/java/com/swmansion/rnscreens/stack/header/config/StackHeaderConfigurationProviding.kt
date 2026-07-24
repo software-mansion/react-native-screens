@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.header.config
 
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 
 internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
