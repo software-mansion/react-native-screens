@@ -49,6 +49,11 @@ export type PlatformIconShared = {
 export type PlatformIconAndroidDrawableResource = {
   type: 'drawableResource';
   name: string;
+  /**
+   * Whether the bottom tab bar tints the icon with the item icon color.
+   * Defaults to `true`; `false` keeps the drawable's own colors.
+   */
+  tinted?: boolean;
 };
 
 export type PlatformIconIOSTemplate = {

@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.tabs.screen
 
 import android.content.res.Configuration
-import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
@@ -9,7 +8,6 @@ import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ContainerItemSupport
-import com.swmansion.rnscreens.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
@@ -78,24 +76,21 @@ class TabsScreen(
     // endregion
 
     // region Icon
-    var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
+
+    internal val icon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
+    internal val selectedIcon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
+
+    internal fun resolveIconsIfNeeded() {
+        icon.resolveIfNeeded()
+        selectedIcon.resolveIfNeeded()
+    }
+
+    // Per-tab icon size in dp; 0 means the system default.
+    // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
+    var drawableIconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
         if (newValue != oldValue) {
-            icon = getSystemDrawableResource(reactContext, newValue)
+            tabsScreenDelegate.get()?.onIconSizeChange(this)
         }
-    }
-
-    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            selectedIcon = getSystemDrawableResource(reactContext, newValue)
-        }
-    }
-
-    var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
     // endregion
