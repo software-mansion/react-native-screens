@@ -228,15 +228,17 @@ function ConfigScreen() {
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <Text style={styles.label}>
+      <Text testID="text-display-inline" style={styles.label}>
         To test <Text style={styles.code}>displayInline</Text> (iOS 17.0+) try
         different combinations with nested menus:
       </Text>
       <Button
+        testID="toggle-display-inline-sort-by"
         title={`displayInline (Sort By): ${displayInline}`}
         onPress={() => setDisplayInline(prev => !prev)}
       />
       <Button
+        testID="toggle-display-inline-rating"
         title={`displayInline (Rating): ${nestedDisplayInline}`}
         onPress={() => setNestedDisplayInline(prev => !prev)}
       />
@@ -245,10 +247,12 @@ function ConfigScreen() {
         with <Text style={styles.code}>displayInline</Text>:
       </Text>
       <Button
+        testID="toggle-display-as-palette"
         title={`displayAsPalette (Text Style): ${displayAsPalette}`}
         onPress={() => setDisplayAsPalette(prev => !prev)}
       />
       <Button
+        testID="toggle-display-inline-text-style"
         title={`displayInline (Text Style): ${paletteDisplayInline}`}
         onPress={() => setPaletteDisplayInline(prev => !prev)}
       />
