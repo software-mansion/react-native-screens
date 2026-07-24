@@ -18,8 +18,8 @@ import com.swmansion.rnscreens.legacy.ScreenStackViewManager
 import com.swmansion.rnscreens.legacy.ScreenViewManager
 import com.swmansion.rnscreens.legacy.SearchBarManager
 import com.swmansion.rnscreens.legacy.utils.ScreenDummyLayoutHelper
-import com.swmansion.rnscreens.modals.formsheet.FormSheetContentWrapperViewManager
-import com.swmansion.rnscreens.modals.formsheet.FormSheetHostViewManager
+import com.swmansion.rnscreens.modals.formsheet.react.contentwrapper.FormSheetContentWrapperViewManager
+import com.swmansion.rnscreens.modals.formsheet.react.host.FormSheetHostViewManager
 import com.swmansion.rnscreens.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarkerViewManager
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigViewManager
