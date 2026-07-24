@@ -28,6 +28,7 @@ import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-i
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
+import TestTabsSuspenseAndroid from './test-tabs-suspense-android';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
@@ -57,6 +58,7 @@ export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-acc
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
 export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
+export { default as TestTabsSuspenseAndroid } from './test-tabs-suspense-android';
 
 const scenarios = {
   TestTabsSimpleNav,
@@ -85,6 +87,7 @@ const scenarios = {
   TestTabsBottomAccessoryVisibility,
   TestTabsScreenOrientation,
   TestTabsTabBarExperimentalUserInterfaceStyle,
+  TestTabsSuspenseAndroid,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
