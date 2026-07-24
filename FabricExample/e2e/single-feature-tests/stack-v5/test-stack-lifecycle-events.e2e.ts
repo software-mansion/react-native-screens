@@ -7,6 +7,7 @@ import {
   dismissToast,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
 
 /**
  * Stack v5 lifecycle events.
@@ -139,7 +140,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
   it('should fire the inner pop event set when popping NestedA via the inner NestedA header back button', async () => {
     await element(
-      by.type('_UIButtonBarButton').withAncestor(by.id('NestedA')),
+      by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).withAncestor(by.id('NestedA')),
     ).tap();
 
     await waitForRoute('NestedHome');
@@ -263,7 +264,9 @@ describeIfiOS('Stack v5: lifecycle events', () => {
     await dismissToast('1. NestedHome: onWillDisappear');
 
     await element(
-      by.type('_UIButtonBarButton').withAncestor(by.id('NestedStack')),
+      by
+        .type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)
+        .withAncestor(by.id('NestedStack')),
     ).tap();
 
     await waitForRoute('Home');
