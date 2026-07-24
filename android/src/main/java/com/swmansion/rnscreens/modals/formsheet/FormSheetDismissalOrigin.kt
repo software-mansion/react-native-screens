@@ -8,7 +8,7 @@ internal enum class FormSheetDismissalOrigin {
     PROGRAMMATIC,
 
     /**
-     * The dismissal was initiated by the user (swiping the sheet down, 
+     * The dismissal was initiated by the user (swiping the sheet down,
      * triggering the native back button, or tapping the backdrop).
      * Emits `onNativeDismiss`.
      */
