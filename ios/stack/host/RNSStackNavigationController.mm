@@ -1,11 +1,11 @@
 #import "RNSStackNavigationController.h"
+#import <React/RCTAssert.h>
 #import "RNSContainer.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
-#import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
