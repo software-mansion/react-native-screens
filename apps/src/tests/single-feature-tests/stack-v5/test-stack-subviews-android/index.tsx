@@ -85,7 +85,7 @@ const DEFAULT_CONFIG: Config = {
   expandedTitleVerticalGravity: 'bottom',
   collapsedTitleHorizontalGravity: 'start',
   collapsedTitleVerticalGravity: 'center',
-  collapsedTitleGravityMode: 'entireSpace',
+  collapsedTitleGravityMode: 'availableSpace',
   leadingSize: 'none',
   centerSize: 'none',
   trailingSize: 'none',
