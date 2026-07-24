@@ -16,6 +16,7 @@ on:
         options:
           - stable
           - nightly
+          - alpha
           - beta
           - rc
         default: stable
@@ -27,6 +28,13 @@ on:
         type: string
         required: false
         default: ""
+      bypass-branch-validation-rules:
+        description: >-
+          [DANGER ZONE] Make sure you know what you're doing! This skips
+          the publish-target validation (branch and version checks),
+          allowing a publish from any branch, including main.
+        type: boolean
+        default: false
 
 jobs:
   npm-publish:
@@ -56,11 +64,23 @@ jobs:
           cache: "yarn"
           registry-url: https://registry.npmjs.org/
 
-      # Guards against publishing a stable / beta / rc release from an
+      # With validation bypassed there is no release branch to infer the
+      # version from, so an explicit version is required. The publish action
+      # would fail on this anyway, but only after checkout and setup — fail
+      # fast here with a clear message instead. Nightly is exempt: it infers
+      # the version from the npm latest tag.
+      - name: Require explicit version when bypassing validation
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.bypass-branch-validation-rules && inputs.release-type != 'nightly' && inputs.version == '' }}
+        shell: bash
+        run: |
+          echo "::error::bypass-branch-validation-rules requires an explicit 'version' input for ${{ inputs.release-type }} releases."
+          exit 1
+
+      # Guards against publishing a stable / alpha / beta / rc release from an
       # inappropriate target. Intentionally skipped for nightly releases,
-      # which are published from main by design.
+      # which are published from main by design, and when explicit bypass is toggled on.
       - name: Validate publish target
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release-type != 'nightly' && !inputs.bypass-branch-validation-rules }}
         shell: bash
         env:
           BRANCH: ${{ github.ref_name }}
@@ -69,7 +89,7 @@ jobs:
 
       - name: Publish manual release
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
+        uses: software-mansion/npm-package-publish@d347fc2b353b9ffc6e80ac7a149a49171274d1a4
         with:
           package-name: "react-native-screens"
           package-json-path: "package.json"
@@ -81,7 +101,7 @@ jobs:
 
       - name: Publish automatic nightly release
         if: ${{ github.event_name == 'schedule' }}
-        uses: software-mansion/npm-package-publish@264013301cc21350186b190f1f6dd10ae4c8ee04
+        uses: software-mansion/npm-package-publish@d347fc2b353b9ffc6e80ac7a149a49171274d1a4
         with:
           package-name: "react-native-screens"
           package-json-path: "package.json"
