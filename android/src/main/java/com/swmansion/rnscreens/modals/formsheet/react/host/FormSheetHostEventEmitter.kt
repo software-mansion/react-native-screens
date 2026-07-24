@@ -17,6 +17,12 @@ internal class FormSheetHostEventEmitter(
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag),
     FormSheetDialogEventEmitter {
+    override fun emitOnDismissEvent() {
+        reactEventDispatcher.dispatchEvent(
+            FormSheetDismissEvent(surfaceId, viewTag),
+        )
+    }
+
     override fun emitOnNativeDismissEvent() {
         reactEventDispatcher.dispatchEvent(
             FormSheetNativeDismissEvent(surfaceId, viewTag),

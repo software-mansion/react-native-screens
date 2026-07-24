@@ -134,6 +134,7 @@ class FormSheetHostViewManager :
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
+            makeEventRegistrationInfo(FormSheetDismissEvent),
             makeEventRegistrationInfo(FormSheetNativeDismissEvent),
             makeEventRegistrationInfo(FormSheetSyncFlushEvent),
             makeEventRegistrationInfo(FormSheetWillAppearEvent),
