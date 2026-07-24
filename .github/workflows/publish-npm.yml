@@ -16,6 +16,7 @@ on:
         options:
           - stable
           - nightly
+          - alpha
           - beta
           - rc
         default: stable
