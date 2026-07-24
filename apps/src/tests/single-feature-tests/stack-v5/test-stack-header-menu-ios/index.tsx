@@ -261,7 +261,9 @@ function ConfigScreen() {
   }, [menuId, menuTitle, menuIcon]);
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      testID="header-menu-scrollview"
+      contentInsetAdjustmentBehavior="automatic">
       <Button
         title={`Toggle trailing items count (${trailingItemsCount}/4)`}
         onPress={() => setTrailingItemsCount(count => (count + 1) % 5)}
@@ -273,51 +275,66 @@ function ConfigScreen() {
 
       <Text style={styles.heading}>setMenuItemOptions (Menu 1)</Text>
       <SettingsPicker<ActionId>
+        testID="menu-item-options-target-id-picker"
         label="target id"
         value={actionId}
         items={[...ACTION_IDS]}
         onValueChange={setActionId}
       />
       <SettingsPicker<TitleOption>
+        testID="menu-item-options-title-picker"
         label="title"
         value={actionTitle}
         items={[...TITLE_OPTIONS]}
         onValueChange={setActionTitle}
       />
       <SettingsPicker<IconOption>
+        testID="menu-item-options-icon-picker"
         label="icon"
         value={actionIcon}
         items={[...ICON_OPTIONS]}
         onValueChange={setActionIcon}
       />
       <SettingsPicker<ToggleStateOption>
+        testID="menu-item-options-toggle-state-picker"
         label="toggleState"
         value={actionToggle}
         items={[...TOGGLE_STATE_OPTIONS]}
         onValueChange={setActionToggle}
       />
-      <Button title="Send setMenuItemOptions" onPress={sendActionCommand} />
+      <Button
+        testID="send-menu-item-options-button"
+        title="Send setMenuItemOptions"
+        onPress={sendActionCommand}
+      />
 
       <Text style={styles.heading}>setMenuOptions (Menu 1)</Text>
       <SettingsPicker<MenuId>
+        testID="menu-options-target-id-picker"
         label="target id"
         value={menuId}
         items={[...MENU_IDS]}
         onValueChange={setMenuId}
       />
       <SettingsPicker<TitleOption>
+        testID="menu-options-title-picker"
         label="title"
         value={menuTitle}
         items={[...TITLE_OPTIONS]}
         onValueChange={setMenuTitle}
       />
       <SettingsPicker<IconOption>
+        testID="menu-options-icon-picker"
         label="icon"
         value={menuIcon}
         items={[...ICON_OPTIONS]}
         onValueChange={setMenuIcon}
       />
-      <Button title="Send setMenuOptions" onPress={sendMenuCommand} />
+      <Button
+        testID="send-menu-options-button"
+        title="Send setMenuOptions"
+        onPress={sendMenuCommand}
+      />
 
       <LongText />
     </ScrollView>
