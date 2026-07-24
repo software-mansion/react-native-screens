@@ -12,6 +12,7 @@ internal class FormSheetBehaviorController(
 
     private var currentDetentsCount: Int = 1
     private var lastEmittedDetentIndex: Int = FORM_SHEET_UNKNOWN_DETENT_INDEX
+    private var lastStableState: Int = BottomSheetBehavior.STATE_COLLAPSED
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -19,6 +20,8 @@ internal class FormSheetBehaviorController(
                 bottomSheet: View,
                 newState: Int,
             ) {
+                rememberStateIfStable(newState)
+
                 val index = mapStateToDetentIndex(newState)
                 if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
                     lastEmittedDetentIndex = index
@@ -34,6 +37,7 @@ internal class FormSheetBehaviorController(
 
     init {
         behavior.isHideable = true
+        rememberStateIfStable(behavior.state)
     }
 
     internal fun setup() {
@@ -42,6 +46,25 @@ internal class FormSheetBehaviorController(
 
     internal fun destroy() {
         behavior.removeBottomSheetCallback(bottomSheetCallback)
+    }
+
+    internal fun restoreLastStableState() {
+        if (behavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            return
+        }
+
+        behavior.state = lastStableState
+    }
+
+    private fun rememberStateIfStable(state: Int) {
+        val isVisibleRestingState =
+            state == BottomSheetBehavior.STATE_EXPANDED ||
+                state == BottomSheetBehavior.STATE_COLLAPSED ||
+                state == BottomSheetBehavior.STATE_HALF_EXPANDED
+
+        if (isVisibleRestingState) {
+            lastStableState = state
+        }
     }
 
     /**

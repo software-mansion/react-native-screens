@@ -20,6 +20,19 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 internal class FormSheetDialog(
     context: Context,
 ) : BottomSheetDialog(context) {
+    internal fun interface CancelRequestInterceptor {
+        /**
+         * Invoked in place of the dialog's default cancellation whenever an interceptor is attached.
+         *
+         * The interceptor fully owns the outcome - either for native dismissal prevention or for driving
+         * a custom animated dismissal when allowed. Either way, the dialog skips
+         * [BottomSheetDialog.cancel], which would tear the window down synchronously.
+         */
+        fun handleCancelRequest()
+    }
+
+    internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,6 +46,16 @@ internal class FormSheetDialog(
         super.onAttachedToWindow()
 
         forceEdgeToEdge()
+    }
+
+    override fun cancel() {
+        val interceptor = cancelRequestInterceptor
+        if (interceptor == null) {
+            super.cancel()
+            return
+        }
+
+        interceptor.handleCancelRequest()
     }
 
     /**

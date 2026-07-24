@@ -4,7 +4,7 @@
 
 **Description:** Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` event of the `FormSheet` component. This test ensures that when the property is set to `true`, the user cannot dismiss the sheet natively by swiping it down or tapping the backdrop behind the sheet. Instead, the sheet fires an event that displays an Alert. However, the user can still swipe between detents, and programmatic dismissals triggered by React state changes will still work. When set to `false`, the sheet can be dismissed natively without triggering the prevented event.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ Other: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator (iPhone)
+- Android emulator
 
 ## Steps
 
