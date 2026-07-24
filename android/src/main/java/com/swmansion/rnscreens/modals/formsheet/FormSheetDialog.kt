@@ -24,8 +24,8 @@ internal class FormSheetDialog(
         /**
          * Invoked in place of the dialog's default cancellation whenever an interceptor is attached.
          *
-         * The interceptor fully owns the outcome - either for native dismissal prevention or driving
-         * a custom animated dismissal when is allowed. Either way the dialog skips
+         * The interceptor fully owns the outcome - either for native dismissal prevention or for driving
+         * a custom animated dismissal when allowed. Either way, the dialog skips
          * [BottomSheetDialog.cancel], which would tear the window down synchronously.
          */
         fun handleCancelRequest()
