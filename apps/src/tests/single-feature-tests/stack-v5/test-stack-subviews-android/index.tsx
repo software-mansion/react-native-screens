@@ -13,7 +13,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Colors } from '@apps/shared/styling';
@@ -22,7 +22,7 @@ import type {
   StackHeaderConfigProps,
   StackHeaderTypeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 
 const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';
 const LONG_TITLE = I18nManager.isRTL

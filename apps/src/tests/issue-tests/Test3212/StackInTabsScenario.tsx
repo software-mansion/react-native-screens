@@ -6,11 +6,11 @@ import {
   useScrollEdgeEffectsConfigContext,
 } from './context';
 import { NavigationContainer } from '@react-navigation/native';
-import { TabsContainer } from '@apps/shared/gamma/containers/tabs';
+import { TabsContainer } from '@apps/shared/containers/tabs';
 import { Config } from './Config';
 import { StackScenario } from './StackScenario';
 import { ScrollView } from 'react-native';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 
 function ConfigComponent() {
   const { config } = useScrollEdgeEffectsConfigContext();

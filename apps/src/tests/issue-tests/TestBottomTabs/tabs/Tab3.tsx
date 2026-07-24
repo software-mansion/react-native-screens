@@ -1,7 +1,7 @@
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 
 export function Tab3() {
   return (

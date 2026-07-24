@@ -19,12 +19,12 @@ import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import LongText from '@apps/shared/LongText';
 import { someExtensiveComputation } from './TestBottomTabs/utils';
 

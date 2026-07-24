@@ -17,7 +17,7 @@ import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors, DarkColors, Palette } from '@apps/shared/styling';
 
 type RouteParamList = {

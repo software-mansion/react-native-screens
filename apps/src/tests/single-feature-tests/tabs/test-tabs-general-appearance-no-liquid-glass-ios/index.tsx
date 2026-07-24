@@ -3,7 +3,7 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';

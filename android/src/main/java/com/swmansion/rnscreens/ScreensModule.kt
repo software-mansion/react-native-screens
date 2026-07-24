@@ -9,7 +9,9 @@ import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
-import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.legacy.ScreenFragment
+import com.swmansion.rnscreens.legacy.ScreenStack
+import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)

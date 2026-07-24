@@ -12,7 +12,7 @@ import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
 function StaticSystemItemScreen() {
