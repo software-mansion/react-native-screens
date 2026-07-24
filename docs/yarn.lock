@@ -4934,12 +4934,12 @@ __metadata:
   linkType: hard
 
 "brace-expansion@npm:^1.1.7":
-  version: 1.1.13
-  resolution: "brace-expansion@npm:1.1.13"
+  version: 1.1.16
+  resolution: "brace-expansion@npm:1.1.16"
   dependencies:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
-  checksum: 10c0/384c61bb329b6adfdcc0cbbdd108dc19fb5f3e84ae15a02a74f94c6c791b5a9b035aae73b2a51929a8a478e2f0f212a771eb6a8b5b514cccfb8d0c9f2ce8cbd8
+  checksum: 10c0/b2a915bbedbf4e45840d1fb9a4d391bbf26a79475bd134714d3cee34f1f0edb0ce982738028843be5fbaf8039429f71fa487df8c915b6065ced542c83e58fae6
   languageName: node
   linkType: hard
 
@@ -13006,8 +13006,8 @@ __metadata:
   linkType: hard
 
 "svgo@npm:^3.0.2, svgo@npm:^3.2.0":
-  version: 3.3.3
-  resolution: "svgo@npm:3.3.3"
+  version: 3.3.4
+  resolution: "svgo@npm:3.3.4"
   dependencies:
     commander: "npm:^7.2.0"
     css-select: "npm:^5.1.0"
@@ -13018,7 +13018,7 @@ __metadata:
     sax: "npm:^1.5.0"
   bin:
     svgo: ./bin/svgo
-  checksum: 10c0/06568c6b0430f96748c557f0b17dc7de79b19fa16d13d7523527ede0ec727fc6d8e6a10e13ff106dc4372d2e6063a1dca7c455c495efb1b83857480425f9b965
+  checksum: 10c0/4aeb29f2dc1923e4332ad3b702aca901c0a55692b9e3884fc932ca1d76b7db0dc8ce4b2f493bbf79b16a961c288fa720628fc78bb91915645967dcaa8f92d499
   languageName: node
   linkType: hard
 
