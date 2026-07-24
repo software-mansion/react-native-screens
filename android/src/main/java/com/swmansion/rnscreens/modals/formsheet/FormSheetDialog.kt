@@ -22,9 +22,13 @@ internal class FormSheetDialog(
 ) : BottomSheetDialog(context) {
     internal fun interface CancelRequestInterceptor {
         /**
-         * @return `true` when the cancel request was consumed and the dialog then stays visible.
+         * Invoked in place of the dialog's default cancellation whenever an interceptor is attached.
+         *
+         * The interceptor fully owns the outcome - either for native dismissal prevention or driving
+         * a custom animated dismissal when is allowed. Either way the dialog skips
+         * [BottomSheetDialog.cancel], which would tear the window down synchronously.
          */
-        fun consumeCancelRequest(): Boolean
+        fun handleCancelRequest()
     }
 
     internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
@@ -45,11 +49,13 @@ internal class FormSheetDialog(
     }
 
     override fun cancel() {
-        if (cancelRequestInterceptor?.consumeCancelRequest() == true) {
+        val interceptor = cancelRequestInterceptor
+        if (interceptor == null) {
+            super.cancel()
             return
         }
 
-        super.cancel()
+        interceptor.handleCancelRequest()
     }
 
     /**

@@ -13,7 +13,7 @@ internal class FormSheetNativeDismissCoordinator(
     private val preventNativeDismissBackPressCallback =
         object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
-                consumeCancelRequest()
+                handleCancelRequest()
             }
         }
 
@@ -26,7 +26,6 @@ internal class FormSheetNativeDismissCoordinator(
     internal fun setup() {
         dialog.cancelRequestInterceptor = this
         dialog.onBackPressedDispatcher.addCallback(preventNativeDismissBackPressCallback)
-        dialog.setOnCancelListener { onDismissAllowed() }
         // Backdrop taps go through `cancel()` rather than dismissing directly, so that they are
         // subject to the very same interception as the back press and the swipe down.
         dimmingManager.setOnBackdropClickListener { dialog.cancel() }
@@ -35,18 +34,16 @@ internal class FormSheetNativeDismissCoordinator(
     internal fun destroy() {
         dialog.cancelRequestInterceptor = null
         preventNativeDismissBackPressCallback.remove()
-        dialog.setOnCancelListener(null)
         dimmingManager.setOnBackdropClickListener(null)
     }
 
-    override fun consumeCancelRequest(): Boolean {
-        if (!shouldPreventDismiss) {
-            return false
+    override fun handleCancelRequest() {
+        if (shouldPreventDismiss) {
+            onDismissPrevented()
+            behaviorController?.restoreLastStableState()
+            return
         }
 
-        onDismissPrevented()
-        behaviorController?.restoreLastStableState()
-
-        return true
+        onDismissAllowed()
     }
 }
