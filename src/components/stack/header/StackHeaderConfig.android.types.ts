@@ -820,13 +820,16 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * Applies to `medium` / `large` headers only and only affects the collapsed
    * state; it is only visually meaningful with `center`
-   * `collapsedTitleHorizontalGravity`. Because the underlying Material field is
-   * set at construction time, changing this prop rebuilds the header.
+   * `collapsedTitleHorizontalGravity`.
    *
-   * Even though Material's default value for this prop is `availableSpace`,
-   * we decided that `entireSpace` is the better default for most use cases.
+   * Because the underlying Material field is set at construction time, changing
+   * this prop rebuilds the header.
    *
-   * @default entireSpace
+   * If header is laid out during screen transition, due to native bug, title
+   * and subtitle might be laid out incorrectly when `entireSpace` gravity mode
+   * is used.
+   *
+   * @default availableSpace
    * @platform android
    */
   collapsedTitleGravityMode?:

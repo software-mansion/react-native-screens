@@ -121,7 +121,7 @@ export interface NativeProps extends ViewProps {
   >;
   collapsedTitleGravityMode?: CT.WithDefault<
     StackHeaderCollapsedTitleGravityModeAndroid,
-    'entireSpace'
+    'availableSpace'
   >;
 
   backButtonTintColorNormal?: ColorValue | undefined;

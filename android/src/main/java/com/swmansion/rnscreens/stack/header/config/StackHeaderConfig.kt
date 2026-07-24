@@ -194,7 +194,7 @@ internal class StackHeaderConfig(
         internal set
 
     override var collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
-        by Delegates.observable(StackHeaderCollapsedTitleGravityMode.ENTIRE_SPACE) { _, old, new ->
+        by Delegates.observable(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE) { _, old, new ->
             if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
         }
         internal set
