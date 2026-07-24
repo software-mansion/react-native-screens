@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.stack.header.config
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
+import android.view.Gravity
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
@@ -81,6 +82,11 @@ internal class StackHeaderConfig(
     }
         internal set
 
+    override var subtitle: String by Delegates.observable("") { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE)
+    }
+        internal set
+
     override var hidden: Boolean by Delegates.observable(false) { _, old, new ->
         if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
     }
@@ -155,6 +161,42 @@ internal class StackHeaderConfig(
     override var toolbarMenuGroupDividerEnabled: Boolean by Delegates.observable(false) { _, old, new ->
         if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
     }
+        internal set
+
+    override var titleCentered: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var subtitleCentered: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var expandedTitleHorizontalGravity: Int by Delegates.observable(Gravity.START) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var expandedTitleVerticalGravity: Int by Delegates.observable(Gravity.BOTTOM) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var collapsedTitleHorizontalGravity: Int by Delegates.observable(Gravity.START) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var collapsedTitleVerticalGravity: Int by Delegates.observable(Gravity.CENTER_VERTICAL) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+    }
+        internal set
+
+    override var collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+        by Delegates.observable(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE) { _, old, new ->
+            if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
+        }
         internal set
 
     override val isRTL: Boolean

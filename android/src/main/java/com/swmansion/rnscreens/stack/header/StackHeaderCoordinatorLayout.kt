@@ -180,8 +180,13 @@ internal class StackHeaderCoordinatorLayout(
         val appBar = appBarLayout
         if (appBar != null) {
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
-                applicator.applyTitle(appBar, provider)
+                applicator.applyTitleAndSubtitle(appBar, provider)
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE_POSITIONING)) {
+                applicator.applyTitlePositioning(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_POSITIONING)
             }
 
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
