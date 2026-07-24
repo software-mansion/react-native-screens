@@ -141,6 +141,11 @@ internal class StackHeaderConfig(
     }
         internal set
 
+    override var liftOnScroll: Boolean by Delegates.observable(true) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+    }
+        internal set
+
     override var toolbarMenu: StackHeaderToolbarMenuConfig
         by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList(), emptyList())) { _, old, new ->
             if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
@@ -154,6 +159,23 @@ internal class StackHeaderConfig(
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL
+
+    // endregion
+
+    // region Content scroll view
+
+    /**
+     * Called by the owning [com.swmansion.rnscreens.stack.screen.StackScreen]
+     * when its content scroll view changes (e.g. a `ScrollViewMarker` registered
+     * one). Re-triggers lift-on-scroll so the coordinator can resolve and apply
+     * the up-to-date `liftOnScrollTargetView`.
+     */
+    internal fun onContentScrollViewChanged() {
+        invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+        if (!isInsideMountTransaction) {
+            flushUpdates()
+        }
+    }
 
     // endregion
 

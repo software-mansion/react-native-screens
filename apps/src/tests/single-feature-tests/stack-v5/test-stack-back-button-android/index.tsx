@@ -8,9 +8,10 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigPropsAndroid,
+import {
+  type StackHeaderConfigProps,
+  type StackHeaderConfigPropsAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 
 type TintColorOption = 'default' | 'purple' | 'red' | 'green';
@@ -184,11 +185,13 @@ function RootScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push screen" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push screen" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -197,15 +200,20 @@ function PushedScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push another" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push another" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
@@ -239,6 +240,34 @@ internal class StackHeaderApplicator(
         target.layoutParams = params
         // Snap back to expanded so the visible state matches the new flags.
         appBar.setExpanded(true, false)
+    }
+
+    /**
+     * Applies lift-on-scroll in-place. `setLiftOnScroll` is a plain field
+     * setter (re-read on the next layout / nested-scroll pass), so this needs
+     * no header rebuild.
+     *
+     * Only the small header participates: medium/large (collapsing) headers
+     * derive their elevation from the `CollapsingToolbarLayout` content scrim,
+     * not from lift-on-scroll, so we leave their app bar untouched.
+     *
+     * [targetScrollView] is the resolved content scroll view (see
+     * [com.swmansion.rnscreens.common.container.ContainerItem.findContentScrollView]).
+     * Without it, Material's `findFirstScrollingChild` only inspects the
+     * CoordinatorLayout's direct children — which is our wrapper `FrameLayout`,
+     * not the (deeply nested) scroll view — so the lifted state is miscomputed
+     * and the small header flashes while scrolling.
+     */
+    internal fun applyLiftOnScroll(
+        appBar: StackHeaderAppBarLayout,
+        enabled: Boolean,
+        targetScrollView: ViewGroup?,
+    ) {
+        if (appBar !is StackHeaderAppBarLayout.Small) return
+
+        appBar.isLiftOnScroll = enabled
+        appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
+        appBar.requestLayout()
     }
 
     // endregion

@@ -24,11 +24,6 @@ internal sealed class StackHeaderAppBarLayout(
                 behavior = StackHeaderAppBarLayoutBehavior()
             }
 
-        // TODO: this should be exposed in the future via prop. Also, it might not work correctly
-        //       until we set liftOnScrollView manually. Also, we should disable it in transparent
-        //       mode or set elevation higher.
-        isLiftOnScroll = true
-
         // TODO: this won't work with nested header but there were some problems with lift on scroll
         //       without it when I was researching this.
         fitsSystemWindows = true

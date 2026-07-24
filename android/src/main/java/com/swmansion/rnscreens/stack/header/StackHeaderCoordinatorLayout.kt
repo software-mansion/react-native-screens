@@ -194,6 +194,17 @@ internal class StackHeaderCoordinatorLayout(
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.SCROLL_FLAGS)
             }
 
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)) {
+                // Lift-on-scroll is disabled in transparent mode: there is no content
+                // scrolling behavior installed and the app bar overlays the content.
+                applicator.applyLiftOnScroll(
+                    appBar,
+                    enabled = provider.liftOnScroll && !provider.transparent,
+                    targetScrollView = stackScreen.findContentScrollView(),
+                )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+            }
+
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 val (forwardIdMap, reverseIdMap) =
                     StackHeaderToolbarMenuApplicator.generateToolbarMenuItemMappings(

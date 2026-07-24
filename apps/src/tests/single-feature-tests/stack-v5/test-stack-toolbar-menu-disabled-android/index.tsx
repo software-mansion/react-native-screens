@@ -7,10 +7,11 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuBaseAndroid,
-  StackHeaderToolbarMenuElementOptionsAndroid,
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuBaseAndroid,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
@@ -224,39 +225,44 @@ function MainScreen() {
   }, [cmdTargetId, cmdDisabled]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Last Event</Text>
-      <Text style={styles.result}>{lastEvent ?? '—'}</Text>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>Last Event</Text>
+        <Text style={styles.result}>{lastEvent ?? '—'}</Text>
 
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<AllIds>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ALL_IDS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdDisabledOption>
-        label="disabled"
-        value={cmdDisabled}
-        items={CMD_DISABLED_OPTIONS}
-        onValueChange={setCmdDisabled}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
-
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      {ALL_IDS.map(id => (
-        <SettingsSwitch
-          key={id}
-          label={`disable ${ITEM_LABELS[id]}`}
-          value={disabledById[id]}
-          onValueChange={v => applyDisabled({ ...disabledById, [id]: v })}
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<AllIds>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ALL_IDS]}
+          onValueChange={setCmdTargetId}
         />
-      ))}
-    </ScrollView>
+        <SettingsPicker<CmdDisabledOption>
+          label="disabled"
+          value={cmdDisabled}
+          items={CMD_DISABLED_OPTIONS}
+          onValueChange={setCmdDisabled}
+        />
+        <Button title="Send Command" onPress={sendCommand} />
+
+        <Text style={styles.heading}>Menu Items — Props</Text>
+        {ALL_IDS.map(id => (
+          <SettingsSwitch
+            key={id}
+            label={`disable ${ITEM_LABELS[id]}`}
+            value={disabledById[id]}
+            onValueChange={v => applyDisabled({ ...disabledById, [id]: v })}
+          />
+        ))}
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

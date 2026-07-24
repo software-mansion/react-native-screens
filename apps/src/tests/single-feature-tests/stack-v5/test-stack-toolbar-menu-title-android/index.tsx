@@ -7,11 +7,12 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderToolbarMenuElementAndroid,
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuElementOptionsAndroid,
-  StackHeaderToolbarMenuItemShowAsActionAndroid,
+import {
+  type StackHeaderToolbarMenuElementAndroid,
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  type StackHeaderToolbarMenuItemShowAsActionAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
@@ -235,43 +236,45 @@ function MainScreen() {
   }, [cmdTargetId, cmdTitle, cmdCondensed, cmdTooltip]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<IdOption>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ID_OPTIONS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdTitleOption>
-        label="title"
-        value={cmdTitle}
-        items={CMD_TITLE_OPTIONS}
-        onValueChange={setCmdTitle}
-      />
-      <SettingsPicker<CmdCondensedOption>
-        label="titleCondensed"
-        value={cmdCondensed}
-        items={CMD_CONDENSED_OPTIONS}
-        onValueChange={setCmdCondensed}
-      />
-      <SettingsPicker<CmdTooltipOption>
-        label="tooltipText"
-        value={cmdTooltip}
-        items={CMD_TOOLTIP_OPTIONS}
-        onValueChange={setCmdTooltip}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<IdOption>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ID_OPTIONS]}
+          onValueChange={setCmdTargetId}
+        />
+        <SettingsPicker<CmdTitleOption>
+          label="title"
+          value={cmdTitle}
+          items={CMD_TITLE_OPTIONS}
+          onValueChange={setCmdTitle}
+        />
+        <SettingsPicker<CmdCondensedOption>
+          label="titleCondensed"
+          value={cmdCondensed}
+          items={CMD_CONDENSED_OPTIONS}
+          onValueChange={setCmdCondensed}
+        />
+        <SettingsPicker<CmdTooltipOption>
+          label="tooltipText"
+          value={cmdTooltip}
+          items={CMD_TOOLTIP_OPTIONS}
+          onValueChange={setCmdTooltip}
+        />
+        <Button title="Send Command" onPress={sendCommand} />
 
-      <Text style={styles.heading}>Result</Text>
-      <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        <Text style={styles.heading}>Result</Text>
+        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
 
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      <SlotControls
-        slots={slots}
-        updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-      />
-    </ScrollView>
+        <Text style={styles.heading}>Menu Items — Props</Text>
+        <SlotControls
+          slots={slots}
+          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+        />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -319,6 +322,9 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

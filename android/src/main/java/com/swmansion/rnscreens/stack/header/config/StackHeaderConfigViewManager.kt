@@ -218,6 +218,13 @@ internal open class StackHeaderConfigViewManager :
         view.scrollFlagSnap = value
     }
 
+    override fun setLiftOnScroll(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.liftOnScroll = value
+    }
+
     override fun setToolbarMenuGroupDividerEnabled(
         view: StackHeaderConfig,
         value: Boolean,

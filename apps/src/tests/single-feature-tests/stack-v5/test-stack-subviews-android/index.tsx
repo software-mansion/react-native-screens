@@ -18,10 +18,11 @@ import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Colors } from '@apps/shared/styling';
 import LongText from '@apps/shared/LongText';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderTypeAndroid,
-  StackHeaderBackgroundSubviewCollapseModeAndroid,
+import {
+  type StackHeaderConfigProps,
+  type StackHeaderTypeAndroid,
+  type StackHeaderBackgroundSubviewCollapseModeAndroid,
+  ScrollViewMarker,
 } from 'react-native-screens';
 
 const SHORT_TITLE = I18nManager.isRTL ? 'مرحبا' : 'Hello';
@@ -222,123 +223,128 @@ function ConfigScreen() {
   }, [headerConfig, setRouteOptions, routeKey]);
 
   return (
-    <ScrollView
-      nestedScrollEnabled
-      style={styles.scroll}
-      contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>General</Text>
-      <SettingsSwitch
-        label="headerConfig enabled"
-        value={config.enabled}
-        onValueChange={v => updateConfig('enabled', v)}
-      />
-      <SettingsPicker<StackHeaderTypeAndroid>
-        label="type"
-        value={config.type}
-        onValueChange={v => updateConfig('type', v)}
-        items={HEADER_TYPES}
-      />
-      <SettingsSwitch
-        label="transparent"
-        value={config.transparent}
-        onValueChange={v => updateConfig('transparent', v)}
-      />
-      <SettingsSwitch
-        label="hidden"
-        value={config.hidden}
-        onValueChange={v => updateConfig('hidden', v)}
-      />
-      <SettingsPicker<TitleOption>
-        label="title"
-        value={config.title}
-        onValueChange={v => updateConfig('title', v)}
-        items={TITLE_OPTIONS}
-      />
-      <Text style={styles.heading}>Toolbar Subviews</Text>
-      <SettingsPicker<SubviewSize>
-        label="leading"
-        value={config.leadingSize}
-        onValueChange={v => updateConfig('leadingSize', v)}
-        items={SUBVIEW_SIZES}
-      />
-      <SettingsPicker<SubviewSize>
-        label="center"
-        value={config.centerSize}
-        onValueChange={v => updateConfig('centerSize', v)}
-        items={SUBVIEW_SIZES}
-      />
-      <SettingsPicker<SubviewSize>
-        label="trailing"
-        value={config.trailingSize}
-        onValueChange={v => updateConfig('trailingSize', v)}
-        items={SUBVIEW_SIZES}
-      />
-      <Text style={styles.heading}>Background Subview</Text>
-      <SettingsSwitch
-        label="background enabled"
-        value={config.backgroundEnabled}
-        onValueChange={v => updateConfig('backgroundEnabled', v)}
-      />
-      <SettingsPicker<StackHeaderBackgroundSubviewCollapseModeAndroid>
-        label="collapseMode"
-        value={config.backgroundCollapseMode}
-        onValueChange={v => updateConfig('backgroundCollapseMode', v)}
-        items={COLLAPSE_MODES}
-      />
-      <Text style={styles.heading}>Scroll Flags</Text>
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagScroll"
-        value={config.scrollFlagScroll}
-        onValueChange={v => updateConfig('scrollFlagScroll', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagEnterAlways"
-        value={config.scrollFlagEnterAlways}
-        onValueChange={v => updateConfig('scrollFlagEnterAlways', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagEnterAlwaysCollapsed"
-        value={config.scrollFlagEnterAlwaysCollapsed}
-        onValueChange={v => updateConfig('scrollFlagEnterAlwaysCollapsed', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagExitUntilCollapsed"
-        value={config.scrollFlagExitUntilCollapsed}
-        onValueChange={v => updateConfig('scrollFlagExitUntilCollapsed', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <SettingsPicker<ScrollFlagValue>
-        label="scrollFlagSnap"
-        value={config.scrollFlagSnap}
-        onValueChange={v => updateConfig('scrollFlagSnap', v)}
-        items={SCROLL_FLAG_VALUES}
-      />
-      <Text style={styles.heading}>Pressable Settings</Text>
-      <SettingsPicker<HitSlopValue>
-        label="hitSlop"
-        value={config.hitSlop}
-        onValueChange={v => updateConfig('hitSlop', v)}
-        items={HIT_SLOP_VALUES}
-      />
-      <SettingsPicker<PressRetentionValue>
-        label="pressRetentionOffset"
-        value={config.pressRetentionOffset}
-        onValueChange={v => updateConfig('pressRetentionOffset', v)}
-        items={PRESS_RETENTION_VALUES}
-      />
-      <Text style={styles.heading}>Push screen</Text>
-      <Button title="Push screen" onPress={() => push('Home')} />
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView
+        nestedScrollEnabled
+        style={styles.scroll}
+        contentContainerStyle={styles.content}>
+        <Text style={styles.heading}>General</Text>
+        <SettingsSwitch
+          label="headerConfig enabled"
+          value={config.enabled}
+          onValueChange={v => updateConfig('enabled', v)}
+        />
+        <SettingsPicker<StackHeaderTypeAndroid>
+          label="type"
+          value={config.type}
+          onValueChange={v => updateConfig('type', v)}
+          items={HEADER_TYPES}
+        />
+        <SettingsSwitch
+          label="transparent"
+          value={config.transparent}
+          onValueChange={v => updateConfig('transparent', v)}
+        />
+        <SettingsSwitch
+          label="hidden"
+          value={config.hidden}
+          onValueChange={v => updateConfig('hidden', v)}
+        />
+        <SettingsPicker<TitleOption>
+          label="title"
+          value={config.title}
+          onValueChange={v => updateConfig('title', v)}
+          items={TITLE_OPTIONS}
+        />
+        <Text style={styles.heading}>Toolbar Subviews</Text>
+        <SettingsPicker<SubviewSize>
+          label="leading"
+          value={config.leadingSize}
+          onValueChange={v => updateConfig('leadingSize', v)}
+          items={SUBVIEW_SIZES}
+        />
+        <SettingsPicker<SubviewSize>
+          label="center"
+          value={config.centerSize}
+          onValueChange={v => updateConfig('centerSize', v)}
+          items={SUBVIEW_SIZES}
+        />
+        <SettingsPicker<SubviewSize>
+          label="trailing"
+          value={config.trailingSize}
+          onValueChange={v => updateConfig('trailingSize', v)}
+          items={SUBVIEW_SIZES}
+        />
+        <Text style={styles.heading}>Background Subview</Text>
+        <SettingsSwitch
+          label="background enabled"
+          value={config.backgroundEnabled}
+          onValueChange={v => updateConfig('backgroundEnabled', v)}
+        />
+        <SettingsPicker<StackHeaderBackgroundSubviewCollapseModeAndroid>
+          label="collapseMode"
+          value={config.backgroundCollapseMode}
+          onValueChange={v => updateConfig('backgroundCollapseMode', v)}
+          items={COLLAPSE_MODES}
+        />
+        <Text style={styles.heading}>Scroll Flags</Text>
+        <SettingsPicker<ScrollFlagValue>
+          label="scrollFlagScroll"
+          value={config.scrollFlagScroll}
+          onValueChange={v => updateConfig('scrollFlagScroll', v)}
+          items={SCROLL_FLAG_VALUES}
+        />
+        <SettingsPicker<ScrollFlagValue>
+          label="scrollFlagEnterAlways"
+          value={config.scrollFlagEnterAlways}
+          onValueChange={v => updateConfig('scrollFlagEnterAlways', v)}
+          items={SCROLL_FLAG_VALUES}
+        />
+        <SettingsPicker<ScrollFlagValue>
+          label="scrollFlagEnterAlwaysCollapsed"
+          value={config.scrollFlagEnterAlwaysCollapsed}
+          onValueChange={v => updateConfig('scrollFlagEnterAlwaysCollapsed', v)}
+          items={SCROLL_FLAG_VALUES}
+        />
+        <SettingsPicker<ScrollFlagValue>
+          label="scrollFlagExitUntilCollapsed"
+          value={config.scrollFlagExitUntilCollapsed}
+          onValueChange={v => updateConfig('scrollFlagExitUntilCollapsed', v)}
+          items={SCROLL_FLAG_VALUES}
+        />
+        <SettingsPicker<ScrollFlagValue>
+          label="scrollFlagSnap"
+          value={config.scrollFlagSnap}
+          onValueChange={v => updateConfig('scrollFlagSnap', v)}
+          items={SCROLL_FLAG_VALUES}
+        />
+        <Text style={styles.heading}>Pressable Settings</Text>
+        <SettingsPicker<HitSlopValue>
+          label="hitSlop"
+          value={config.hitSlop}
+          onValueChange={v => updateConfig('hitSlop', v)}
+          items={HIT_SLOP_VALUES}
+        />
+        <SettingsPicker<PressRetentionValue>
+          label="pressRetentionOffset"
+          value={config.pressRetentionOffset}
+          onValueChange={v => updateConfig('pressRetentionOffset', v)}
+          items={PRESS_RETENTION_VALUES}
+        />
+        <Text style={styles.heading}>Push screen</Text>
+        <Button title="Push screen" onPress={() => push('Home')} />
 
-      <Text style={styles.heading}>ScrollView content</Text>
-      <LongText size="xl" />
-    </ScrollView>
+        <Text style={styles.heading}>ScrollView content</Text>
+        <LongText size="xl" />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },
