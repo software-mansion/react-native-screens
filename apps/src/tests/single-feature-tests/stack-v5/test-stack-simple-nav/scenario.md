@@ -8,7 +8,7 @@ any number of times (including re-pushing a route already on the stack),
 each push creating a new screen instance with its own unique `routeKey`;
 non-root screens expose a **Pop** button. The test validates that push/pop
 via the on-screen buttons, the native header back button, and the
-edge-swipe-back / system gesture-back produce
+edge-swipe-back / system gesture-back produce a
 consistent stack state, that `routeKey` values are unique per pushed
 instance, and that the root screen (**Home**) cannot be popped. See the
 Notes for `routeKey` behavior and how the two platforms are launched
@@ -18,11 +18,26 @@ Notes for `routeKey` behavior and how the two platforms are launched
 
 ## E2E test
 
-TBD: Automation is planned and should be straightforward for the
-button-driven push/pop steps (similar in scope to the tabs
-`test-tabs-simple-nav` suite). Native back button, iOS edge-swipe gesture,
-and Android system gesture-back steps may need platform-specific handling
-and are not yet implemented.
+Incomplete: Each block contains a per-platform suite, as the two platforms behave
+differently within the example app harness and require distinct matchers.
+
+- iOS: steps 1–10, including the native header back button
+  (step 8) and the edge-swipe pop (step 9). Since react-native-screens detaches
+  covered screens on iOS, `Name:` / `Key:` or button matcher resolves to
+  a single element - the top screen.
+- Android (`describeIfAndroid`): steps 1–7 and 10 only. Unlike iOS, covered screens
+  remain attached on Android, causing stacked screens to render duplicate buttons and labels.
+  Consequently, the suite inspects the current route, taps buttons, and asserts on
+  the topmost match (the last item in the hierarchy). Additionally, `<Button>`
+  titles also render uppercased (`PUSH A`, `POP`) and are matched in that form.
+
+**Manual only (not automated):**
+
+- Android: Steps 8 and 9.
+- iOS: Step 9 (canceling the swipe gesture before the halfway threshold cannot
+  be automated with Detox).
+- Both platforms: Steps 11–12 (rapid tapping prior to transition completion).
+  Because Detox synchronizes on UI idle states between actions, it cannot dispatch taps mid-animation.
 
 ## Prerequisites
 
@@ -56,17 +71,17 @@ and are not yet implemented.
 - Each screen shows two labels: `Name` (the route name: `Home`, `A`, or
   `B`) and `Key` (the route's unique `routeKey`). Use the `Key` value to
   tell apart multiple stacked instances of the same route name.
-- `Key` values use a session-global counterthat increments on every push and is **never reset** for
+- `Key` values use a session-global counter that increments on every push and is **never reset** for
   the lifetime of the app session (it is shared across all Stack
-  containers). Only the **relationships** matter — every push produces a strictly
+  containers). Only the **relationships** matter - every push produces a strictly
   new `Key`, and a preserved (not recreated) screen keeps the same `Key`.
 - **Android:** when the screen is launched **directly** via `App.tsx` (see
-  the Android launch prerequisite),both the **native header back button** and
-  the **system gesture-back** work — the same as on iOS. These only fail when the screen
+  the Android launch prerequisite), both the **native header back button** and
+  the **system gesture-back** work - the same as on iOS. These only fail when the screen
   is nested inside the example app's own navigation (issue
   [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
   which is exactly why Android is tested via the direct launch. On both
-  platforms the on-screen **Pop** button always works.
+  platforms, the on-screen **Pop** button always works.
 
 ## Steps
 
@@ -85,15 +100,15 @@ and are not yet implemented.
 
 2. Tap **Push A**.
 
-- [ ] Screen **A** is pushed. Background is light yellow, `Name: A`, and a
-  `Key` with a new value, distinct from Home's.
+- [ ] Screen **A** is pushed. The screen displays `Name: A` and a `Key` with a
+  new value distinct from the Home screen's key.
   A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
   buttons are all shown. Note this `Key` value.
 
 3. While on **A**, tap **Push B**.
 
-- [ ] Screen **B** is pushed on top of **A**. Background is green, `Name:
-  B`, and a new `Key`is shown.
+- [ ] Screen **B** is pushed on top of **A**. Displays `Name:
+  B`, and a new `Key`.
   A native back button is visible in the header. Note this `Key` value.
 
 ### Re-pushing an already-present route
@@ -101,7 +116,7 @@ and are not yet implemented.
 4. While on **B**, tap **Push A** again.
 
 - [ ] A new instance of screen **A** is pushed on top of the stack (stack
-  is now Home, A, B, A). `Name: A` and a new
+  is now Home, A, B, A). Displays `Name: A` and a new
   `Key` that is **different** from the `Key` shown in step 2.
 
 ### Pop via the on-screen button
@@ -123,8 +138,7 @@ and are not yet implemented.
 
 ### Native header back button
 
-8. Tap **Push A**, then tap **Push B**. Then tap the native back button in the
-header.
+8. Tap **Push A**, then tap **Push B**. Then tap the native back button in the header.
 
 - [ ] Tapping the native back button behaves the same as tapping **Pop**:
   returns to screen **A** with its `Key` unchanged. No crash and no
