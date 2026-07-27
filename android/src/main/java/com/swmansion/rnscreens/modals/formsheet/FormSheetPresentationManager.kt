@@ -40,7 +40,7 @@ internal class FormSheetPresentationManager(
         // does not accumulate across stacked sheets. Whenever this sheet's dim changes, the
         // sheet directly below receives the notification.
         dimmingManager.onDimmingViewAlphaChange = { alpha ->
-            sheetBelowForDimming()?.dimmingManager?.setDimmingViewAlphaSync(dimmingManager.maxAlpha - alpha)
+            sheetBelowForDimming()?.dimmingManager?.coverageRatio = alpha / dimmingManager.maxAlpha
         }
 
         nativeDismissCoordinator.setup()
@@ -128,6 +128,10 @@ internal class FormSheetPresentationManager(
         currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
+
+        // Skipping the exit animation means the alpha is never driven to 0, so the sheet
+        // below would stay covered by a sheet that is already gone.
+        dimmingManager.dimmingViewAlpha = 0f
 
         bottomSheetView?.let { syncBehaviorStateAfterExitAnimationComplete(it) }
         performDismiss()
