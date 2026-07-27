@@ -1990,7 +1990,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // If flag is enabled, we're doing same evaluation as `[self supportedInterfaceOrientations]`
   // but we fall back to `RNSOrientationInherit` if orientation is not set in order not to
   // override parent's orientation. For more details see:
-  // https://github.com/software-mansion/react-native-screens/issues/4351
+  // https://github.com/software-mansion/react-native-screens/pull/4408
   if (self.screenView.iosOrientationInheritanceFixEnabled) {
     UIViewController *orientationVC = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
     if ([orientationVC isKindOfClass:[RNSScreen class]]) {

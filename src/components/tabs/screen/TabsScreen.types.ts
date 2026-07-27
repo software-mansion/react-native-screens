@@ -116,7 +116,7 @@ export interface TabsScreenPropsBase {
    *   and `featureFlags.experiment.iosOrientationInheritanceFixEnabled` is
    *   enabled (the default), in which case it returns `inherit` and no longer
    *   overrides the parent (see
-   *   https://github.com/software-mansion/react-native-screens/issues/4351).
+   *   https://github.com/software-mansion/react-native-screens/pull/4408).
    *
    * The following values are currently supported:
    *

@@ -199,7 +199,7 @@ Defaults to `default` on iOS.
 > orientation instead of forcing `UIInterfaceOrientationMaskAllButUpsideDown`,
 > ultimately falling back to the orientations declared in `Info.plist`. Setting
 > `screenOrientation` to `default` explicitly keeps the previous behavior. See
-> [#4351](https://github.com/software-mansion/react-native-screens/issues/4351).
+> [#4408](https://github.com/software-mansion/react-native-screens/pull/4408).
 
 ### `sheetAllowedDetents`
 

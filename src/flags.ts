@@ -221,7 +221,7 @@ export const featureFlags = {
      * hosting bottom tabs). With the fix enabled, such a screen defers to its
      * parent screen / the app's `Info.plist` supported orientations instead.
      *
-     * Issue: https://github.com/software-mansion/react-native-screens/issues/4351
+     * PR: https://github.com/software-mansion/react-native-screens/pull/4408
      * @platform ios
      */
     get iosOrientationInheritanceFixEnabled() {

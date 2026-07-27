@@ -371,7 +371,7 @@ export interface ScreenProps extends ViewProps {
    * orientation, ultimately falling back to the app's `Info.plist` supported
    * orientations. Setting `screenOrientation: "default"` explicitly keeps the
    * previous "all-but-upside-down" (iPhone) / "all" (iPad) behavior.
-   * See https://github.com/software-mansion/react-native-screens/issues/4351
+   * See https://github.com/software-mansion/react-native-screens/pull/4408
    */
   screenOrientation?: ScreenOrientationTypes | undefined;
   /**
