@@ -1315,11 +1315,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // If the screen view is still attached to a window (e.g. an ongoing dismiss transition), it
-  // stays `controller.view` with a snapshot overlaid and UIKit removes it on transition teardown.
-  // Detaching it here would desync UIKit's transition bookkeeping — on iOS 26 that left the
-  // removed screen view back in the hierarchy, where it invisibly blocked all touches.
-  BOOL shouldKeepNativeView = [screenChildComponent.controller setViewToSnapshot];
+  [screenChildComponent.controller setViewToSnapshot];
 
   RCTAssert(screenChildComponent.reactSuperview == self,
             @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
@@ -1336,7 +1332,8 @@ RNS_IGNORE_SUPER_CALL_END
       @([[_reactSubviews objectAtIndex:index] tag]));
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
-  if (!shouldKeepNativeView) {
+
+  if (screenChildComponent.window == nil) {
     [screenChildComponent removeFromSuperview];
   }
 }

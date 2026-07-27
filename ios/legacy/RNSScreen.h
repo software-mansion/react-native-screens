@@ -50,16 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-
-/**
- * Overlays the screen view with a snapshot of its current contents, keeping `controller.view`
- * unchanged so that an ongoing native transition can tear the view down consistently.
- *
- * @return YES if the snapshot was applied — the screen view is still part of the window
- * hierarchy and its removal must be left to UIKit. NO if the view is already detached
- * and the caller should remove it from its superview as usual.
- */
-- (BOOL)setViewToSnapshot;
+- (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;

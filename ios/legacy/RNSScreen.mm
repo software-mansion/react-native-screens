@@ -1991,27 +1991,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Fabric specific
 
-- (BOOL)setViewToSnapshot
+- (void)setViewToSnapshot
 {
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window == nil) {
-    return NO;
-  }
-
-  UIView *_Nullable snapshot = [self.view snapshotViewAfterScreenUpdates:self.screenView.snapshotAfterUpdates];
-  if (snapshot == nil) {
-    return NO;
+    return;
   }
 
   // The snapshot is added inside the screen view instead of replacing it, so `self.view` remains
   // the view UIKit captured for the ongoing transition and is torn down (with the snapshot)
   // consistently. Replacing the view mid-transition made iOS 26 teardown re-insert the original
   // view into the hierarchy and remove only the snapshot, leaving a view that blocked all touches.
+  UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:self.screenView.snapshotAfterUpdates];
   snapshot.frame = self.view.bounds;
   snapshot.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   snapshot.userInteractionEnabled = NO;
   [self.view addSubview:snapshot];
-  return YES;
 }
 
 @end
