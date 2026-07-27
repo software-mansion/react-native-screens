@@ -226,6 +226,10 @@
 
   RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:trackerItemId];
 
+  if ([tracker toggleStateEquals:state forItemWithId:elementId]) {
+    return;
+  }
+
   RNSStackHeaderMenuData *singleSelectionRoot = [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:elementId
                                                                                                        inMenu:rootMenu];
 
