@@ -47,6 +47,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+        FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
@@ -62,6 +63,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
@@ -188,6 +190,8 @@ internal class FormSheetPresentationManager(
     }
 
     internal fun destroy() {
+        FormSheetStackRegistry.unregister(this)
+
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 
