@@ -17,11 +17,20 @@ class DimmingViewManager(
 
     internal var isTransitionAnimationRunning: Boolean = false
 
+    internal var onDimmingViewAlphaChange: ((Float) -> Unit)? = null
+
     internal var dimmingViewAlpha: Float
         get() = dimmingView.alpha
         set(value) {
             dimmingView.alpha = value
+            onDimmingViewAlphaChange?.invoke(value)
         }
+
+    // Bypasses the change notification, so alpha imposed by another dimming view
+    // does not propagate further.
+    internal fun setDimmingViewAlphaSync(value: Float) {
+        dimmingView.alpha = value
+    }
 
     private val dimmingView =
         DimmingView(context, initialAlpha = 0f).apply {
@@ -60,7 +69,7 @@ class DimmingViewManager(
                     }
 
                     val fraction = if (slideOffset >= 0) 1f else 1f + slideOffset
-                    dimmingView.alpha = fraction * maxAlpha
+                    dimmingViewAlpha = fraction * maxAlpha
                 }
             },
         )
