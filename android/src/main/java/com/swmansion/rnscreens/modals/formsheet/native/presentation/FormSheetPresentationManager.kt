@@ -20,6 +20,8 @@ internal class FormSheetPresentationManager(
     private var targetIsOpen = false
     private var shouldSkipExitAnimation = false
 
+    private var coupledSheetBelow: FormSheetPresentationManager? = null
+
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
 
@@ -27,7 +29,16 @@ internal class FormSheetPresentationManager(
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
         }
+
+        // Only the topmost sheet's dimming view should be visible (iOS parity), so total dim
+        // does not accumulate across stacked sheets. Whenever this sheet's dim changes, the
+        // sheet directly below receives the notification.
+        dimmingManager.onDimmingViewAlphaChange = { alpha ->
+            sheetBelowForDimming()?.dimmingManager?.setDimmingViewAlphaSync(dimmingManager.maxAlpha - alpha)
+        }
     }
+
+    private fun sheetBelowForDimming(): FormSheetPresentationManager? = FormSheetStackRegistry.sheetBelow(this) ?: coupledSheetBelow
 
     internal fun updatePresentationState(isOpen: Boolean) {
         targetIsOpen = isOpen
@@ -65,6 +76,7 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.DISMISSING
         dismissSheetsAbove()
+        coupledSheetBelow = FormSheetStackRegistry.sheetBelow(this)
         FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
@@ -172,6 +184,7 @@ internal class FormSheetPresentationManager(
 
     private fun performDismiss() {
         shouldSkipExitAnimation = false
+        coupledSheetBelow = null
         dialog.dismiss()
         onDismissComplete()
     }
@@ -226,6 +239,8 @@ internal class FormSheetPresentationManager(
 
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
+        coupledSheetBelow = null
+        dimmingManager.onDimmingViewAlphaChange = null
 
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
