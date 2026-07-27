@@ -318,6 +318,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
     await expect(element(by.text(POP))).toBeVisible();
   });
 
+  // eslint-disable-next-line jest/no-identical-title -- Android and iOS have separate test suites
   it('should push B on top of A with a new key', async () => {
     await tapTopmostButton(PUSH_B);
     await waitForRoute('B');
