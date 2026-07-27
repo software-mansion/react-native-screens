@@ -112,10 +112,10 @@ export interface TabsScreenPropsBase {
    *   its child components,
    * - Stack v4 (legacy) implementation returns some supported orientations,
    *   overriding orientation from the tab screen **unless** the Stack v4
-   *   screen has no explicit `orientation`
-   *   and `featureFlags.experiment.iosOrientationInheritanceFixEnabled` is
-   *   enabled (the default), in which case it returns `inherit` and no longer
-   *   overrides the parent (see
+   *   screen has no explicit `screenOrientation` prop and
+   *   `featureFlags.experiment.iosOrientationInheritanceFixEnabled` is
+   *   enabled (the default), in which case it returns `inherit` and no
+   *   longer overrides the parent (see
    *   https://github.com/software-mansion/react-native-screens/pull/4408).
    *
    * The following values are currently supported:
