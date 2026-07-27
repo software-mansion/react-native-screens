@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     padding: 24,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   sheetTitle: {
