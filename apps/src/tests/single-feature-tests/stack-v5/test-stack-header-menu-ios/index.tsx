@@ -198,8 +198,6 @@ function buildHeaderConfig(
       titleMenu: {
         type: 'menu',
         id: 'title-menu',
-        onSelectionChange: selection =>
-          showToast('Title menu selected "' + selection.join('", "') + '"'),
         children: [
           {
             id: 'title-action-1',

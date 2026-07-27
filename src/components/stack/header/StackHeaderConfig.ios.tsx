@@ -31,11 +31,7 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import {
-  findMenuElementById,
-  findMenuElementByIdInItems,
-  validateMenuCallbacks,
-} from './utils';
+import { findMenuElementByIdInMenus, validateMenuCallbacks } from './utils';
 import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 
 /**
@@ -101,59 +97,49 @@ function StackHeaderConfig(
     },
   }));
 
+  const allMenus = useMemo(
+    () =>
+      [
+        ...(leadingItems ?? [])
+          .filter(it => it && it.type === 'item')
+          .map(it => it.menu),
+        ...(trailingItems ?? [])
+          .filter(it => it && it.type === 'item')
+          .map(it => it.menu),
+        titleMenu,
+      ].filter(it => !!it),
+    [leadingItems, trailingItems, titleMenu],
+  );
+
   const handleMenuItemPress = useCallback(
     (event: NativeSyntheticEvent<MenuItemPressEvent>) => {
-      const items = Array.of(
-        ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
-        ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
-      );
-      let menuElement = findMenuElementByIdInItems(
-        items,
+      const menuElement = findMenuElementByIdInMenus(
+        allMenus,
         event.nativeEvent.menuItemId,
       );
-      if (!menuElement && titleMenu) {
-        menuElement = findMenuElementById(
-          titleMenu,
-          event.nativeEvent.menuItemId,
-        );
-      }
       if (menuElement && menuElement.type === 'menuItem') {
         menuElement.onPress?.();
       }
     },
-    [leadingItems, trailingItems, titleMenu],
+    [allMenus],
   );
-
-  const allMenuItems = [
-    ...(leadingItems ?? []),
-    ...(trailingItems ?? []),
-  ].filter(it => it && it.type === 'item');
 
   const handleSelectionChange = useCallback(
     (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
       const { menuId, selectedMenuItemIds } = event.nativeEvent;
-      let menu = findMenuElementByIdInItems(allMenuItems, menuId);
-      if (!menu && titleMenu) {
-        menu = findMenuElementById(titleMenu, menuId);
-      }
+      const menu = findMenuElementByIdInMenus(allMenus, menuId);
       if (menu && menu.type === 'menu') {
         menu.onSelectionChange?.(selectedMenuItemIds);
       }
     },
-    [allMenuItems, titleMenu],
+    [allMenus],
   );
 
   useEffect(() => {
-    for (const item of allMenuItems) {
-      if ('menu' in item && item.menu) {
-        validateMenuCallbacks(item.menu);
-      }
+    for (const menu of allMenus) {
+      validateMenuCallbacks(menu);
     }
-    if (titleMenu) {
-      validateMenuCallbacks(titleMenu);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leadingItems, trailingItems, titleMenu]);
+  }, [allMenus]);
 
   const resolvedTitleMenu = useMemo(
     () => (titleMenu != null ? resolveMenuIcons(titleMenu) : undefined),

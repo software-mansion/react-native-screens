@@ -220,7 +220,7 @@
               rootMenu:(RNSStackHeaderMenuData *)rootMenu
             parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
 {
-  if (_configDataProvider == nil || elementId == nil || trackerItemId == nil) {
+  if (_configDataProvider == nil || elementId == nil || trackerItemId == nil || rootMenu == nil) {
     return;
   }
 
