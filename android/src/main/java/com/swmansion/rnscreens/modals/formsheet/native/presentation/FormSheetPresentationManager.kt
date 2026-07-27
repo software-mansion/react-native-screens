@@ -108,6 +108,7 @@ internal class FormSheetPresentationManager(
         currentSheetAnimator?.removeAllListeners()
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
+        dimmingManager.isTransitionAnimationRunning = false
 
         // Skipping the exit animation means the alpha is never driven to 0, so the sheet
         // below would stay covered by a sheet that is already gone.
