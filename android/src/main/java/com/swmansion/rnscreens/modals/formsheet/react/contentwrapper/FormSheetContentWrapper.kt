@@ -2,8 +2,8 @@ package com.swmansion.rnscreens.modals.formsheet.react.contentwrapper
 
 import android.content.Context
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetContentSizeChangeDelegate
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetContentSizeChangeProvider
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeProvider
 
 class FormSheetContentWrapper(
     context: Context,

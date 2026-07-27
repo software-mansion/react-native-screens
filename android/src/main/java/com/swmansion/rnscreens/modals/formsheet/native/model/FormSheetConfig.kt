@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet.shared.model
+package com.swmansion.rnscreens.modals.formsheet.native.model
 
 internal data class FormSheetConfig(
     val isOpen: Boolean = false,

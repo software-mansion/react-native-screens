@@ -7,8 +7,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetContentSizeChangeDelegate
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetDetents
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 
 internal class FormSheetDimensionsCoordinator(
     private val dialog: BottomSheetDialog,

@@ -7,7 +7,7 @@ import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialogManager
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetConfig
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,

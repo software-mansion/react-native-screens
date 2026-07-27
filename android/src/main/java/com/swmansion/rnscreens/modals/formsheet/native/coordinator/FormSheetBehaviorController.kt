@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.modals.formsheet.native.coordinator
 import android.view.View
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetDetents
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 
 internal class FormSheetBehaviorController(
     private val sheetView: FrameLayout,

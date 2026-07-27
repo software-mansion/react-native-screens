@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet.shared.model
+package com.swmansion.rnscreens.modals.formsheet.native.model
 
 internal class FormSheetDetents(
     rawDetents: List<Double>,

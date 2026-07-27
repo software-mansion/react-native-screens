@@ -11,10 +11,10 @@ import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBeha
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDimensionsCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetNativeDismissCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetPresentationManager
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetContentSizeChangeDelegate
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetDialogEventEmitter
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetConfig
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetDetents
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 import kotlin.properties.Delegates
 
 class FormSheetDialogManager(

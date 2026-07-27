@@ -6,7 +6,7 @@ import androidx.core.view.doOnNextLayout
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.modals.formsheet.shared.model.FormSheetConfig
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
 import com.swmansion.rnscreens.utils.dpToPx
 
 internal class FormSheetAppearanceCoordinator(

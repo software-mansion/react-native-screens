@@ -10,7 +10,7 @@ import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetNativeDismi
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetSyncFlushEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetWillAppearEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetWillDisappearEvent
-import com.swmansion.rnscreens.modals.formsheet.shared.contracts.FormSheetDialogEventEmitter
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
 
 internal class FormSheetHostEventEmitter(
     reactContext: ReactContext,

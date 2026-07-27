@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet.shared.contracts
+package com.swmansion.rnscreens.modals.formsheet.native.interfaces
 
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
 
