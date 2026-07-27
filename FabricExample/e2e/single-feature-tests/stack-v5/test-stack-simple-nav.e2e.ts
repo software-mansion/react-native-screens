@@ -4,6 +4,7 @@ import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
+  getElementAttributes,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
@@ -43,13 +44,11 @@ describeIfiOS('Stack v5: simple navigation', () => {
    * unambiguously to the current screen.
    */
   async function readRouteKey(): Promise<string> {
-    const attrs = (await element(
-      by.id('stack-route-key'),
-    ).getAttributes()) as AnyAttributes;
-    const value =
-      (attrs as { text?: string }).text ??
-      (attrs as { label?: string }).label ??
-      '';
+    const attrs = await getElementAttributes({
+      by: 'id',
+      value: 'stack-route-key',
+    });
+    const value = attrs.text ?? attrs.label ?? '';
     return value.trim();
   }
 
