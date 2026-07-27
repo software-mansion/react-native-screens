@@ -13,14 +13,17 @@ internal class FormSheetPresentationManager(
     private val bottomSheetView: View?,
     private val dimmingManager: DimmingViewManager,
     private val onNativeDismiss: () -> Unit,
-) {
+) : FormSheetStackEntry {
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
 
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
     private var shouldSkipExitAnimation = false
 
-    private var coupledSheetBelow: FormSheetPresentationManager? = null
+    override val dimmingRatio: Float
+        get() = dimmingManager.dimmingViewAlpha / dimmingManager.maxAlpha
+
+    override var coverageRatio: Float by dimmingManager::coverageRatio
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
@@ -30,15 +33,10 @@ internal class FormSheetPresentationManager(
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
         }
 
-        // Only the topmost sheet's dimming view should be visible (iOS parity), so total dim
-        // does not accumulate across stacked sheets. Whenever this sheet's dim changes, the
-        // sheet directly below receives the notification.
-        dimmingManager.onDimmingViewAlphaChange = { alpha ->
-            sheetBelowForDimming()?.dimmingManager?.coverageRatio = alpha / dimmingManager.maxAlpha
+        dimmingManager.onDimmingViewAlphaChange = {
+            FormSheetStackCoordinator.onDimmingRatioChanged(this)
         }
     }
-
-    private fun sheetBelowForDimming(): FormSheetPresentationManager? = FormSheetStackRegistry.sheetBelow(this) ?: coupledSheetBelow
 
     internal fun updatePresentationState(isOpen: Boolean) {
         targetIsOpen = isOpen
@@ -59,7 +57,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
-        FormSheetStackRegistry.register(this)
+        FormSheetStackCoordinator.onSheetPresentationStart(this)
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
@@ -75,9 +73,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
-        dismissSheetsAbove()
-        coupledSheetBelow = FormSheetStackRegistry.sheetBelow(this)
-        FormSheetStackRegistry.unregister(this)
+        FormSheetStackCoordinator.onSheetDismissalStart(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
@@ -98,15 +94,7 @@ internal class FormSheetPresentationManager(
         startExitAnimation()
     }
 
-    // Dismissing a sheet from the middle of the stack should dismiss all sheets above it,
-    // mirroring the iOS presentation chain teardown. Sheets are dismissed top-down.
-    private fun dismissSheetsAbove() {
-        FormSheetStackRegistry.sheetsAbove(this).asReversed().forEach {
-            it.handleDismissFromCascade()
-        }
-    }
-
-    private fun handleDismissFromCascade() {
+    override fun onSheetBelowDismissed() {
         if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
             return
         }
@@ -188,7 +176,7 @@ internal class FormSheetPresentationManager(
 
     private fun performDismiss() {
         shouldSkipExitAnimation = false
-        coupledSheetBelow = null
+        FormSheetStackCoordinator.onSheetDismissalEnd(this)
         dialog.dismiss()
         onDismissComplete()
     }
@@ -242,8 +230,7 @@ internal class FormSheetPresentationManager(
     }
 
     internal fun destroy() {
-        FormSheetStackRegistry.unregister(this)
-        coupledSheetBelow = null
+        FormSheetStackCoordinator.onSheetDismissalEnd(this)
         dimmingManager.onDimmingViewAlphaChange = null
 
         currentSheetAnimator?.cancel()
