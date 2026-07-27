@@ -59,25 +59,34 @@ describeIfiOS('Stack v5: simple navigation', () => {
   }
 
   /**
-   * Waits until the topmost route's `Key` differs from `previousKey`. Every push
-   * mints a new key and every pop reveals a screen with a different key, so this
-   * gates a transition between two same-named screens (e.g. A → A), which
-   * `waitForRoute` cannot detect because the route name is unchanged. The
-   * empty-string guard skips the brief window mid-transition where two
-   * `stack-route-key` elements coexist and the read is ambiguous.
+   * Waits until a screen with the same route name as `previousKey` but a
+   * different key is visible. Route keys are minted as `r-<routeName>-<id>`
+   * with a monotonically increasing `id`, so every push and every pop lands on
+   * a screen whose key differs from the one that was on top. This gates a
+   * transition between two same-named screens (e.g. A → A), which
+   * `waitForRoute` cannot detect because the route name is unchanged.
+   *
+   * The wait is expressed as a single regex matcher — same route name, any id
+   * except the previous one — rather than polling `readRouteKey()`. Because the
+   * outgoing screen is excluded by the pattern itself, the matcher stays
+   * unambiguous even in the brief mid-transition window where two
+   * `stack-route-key` elements coexist.
    */
   async function waitForKeyChange(previousKey: string): Promise<void> {
-    const deadline = Date.now() + 3000;
-    while (Date.now() <= deadline) {
-      const key = await readRouteKey();
-      if (key !== '' && key !== previousKey) {
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
+    const parsed = /^Key: r-(.+)-(\d+)$/.exec(previousKey);
+    if (parsed === null) {
+      throw new Error(
+        `waitForKeyChange got an unparsable route key: "${previousKey}"`,
+      );
     }
-    throw new Error(
-      `waitForKeyChange timed out; topmost key is still "${previousKey}"`,
+    const [, routeName, previousId] = parsed;
+    const sameRouteWithAnotherId = new RegExp(
+      `^Key: r-${routeName}-(?!${previousId}$)\\d+$`,
     );
+
+    await waitFor(element(by.text(sameRouteWithAnotherId)))
+      .toBeVisible()
+      .withTimeout(3000);
   }
 
   const backButtonIcon = element(
