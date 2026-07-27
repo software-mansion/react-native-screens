@@ -238,11 +238,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   async function readTopmostText(testID: string): Promise<string> {
     const matches = await getMatches(by.id(testID));
     const top = matches[matches.length - 1];
-    return (
-      (top as { text?: string }).text ??
-      (top as { label?: string }).label ??
-      ''
-    ).trim();
+    return (top.text ?? top.label ?? '').trim();
   }
 
   /** Reads the topmost route's unique `routeKey`. */
@@ -330,6 +326,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
     await expect(element(by.text(POP))).toBeVisible();
   });
 
+  // eslint-disable-next-line jest/no-identical-title -- Android and iOS have separate test suites
   it('should push B on top of A with a new key', async () => {
     await tapTopmostButton(PUSH_B);
     await waitForRoute('B');
