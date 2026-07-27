@@ -230,11 +230,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   async function readTopmostText(testID: string): Promise<string> {
     const matches = await getMatches(by.id(testID));
     const top = matches[matches.length - 1];
-    return (
-      (top as { text?: string }).text ??
-      (top as { label?: string }).label ??
-      ''
-    ).trim();
+    return (top.text ?? top.label ?? '').trim();
   }
 
   /** Reads the topmost route's unique `routeKey`. */
