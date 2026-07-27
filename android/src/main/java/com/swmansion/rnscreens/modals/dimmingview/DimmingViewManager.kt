@@ -17,13 +17,13 @@ class DimmingViewManager(
 
     internal var isTransitionAnimationRunning: Boolean = false
 
-    internal var onDimmingViewAlphaChange: ((Float) -> Unit)? = null
+    internal var onDimmingViewAlphaChange: (() -> Unit)? = null
 
     internal var dimmingViewAlpha: Float = 0f
         set(value) {
             field = value
             applyEffectiveAlpha()
-            onDimmingViewAlphaChange?.invoke(value)
+            onDimmingViewAlphaChange?.invoke()
         }
 
     // How much another dimming view is stacked on top of this one: 0 uncovered, 1 fully covered.
