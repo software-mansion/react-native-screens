@@ -20,6 +20,7 @@ internal class FormSheetPresentationManager(
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
+    private var shouldSkipExitAnimation = false
 
     private var dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
@@ -101,6 +102,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        dismissSheetsAbove()
         FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
@@ -114,7 +116,39 @@ internal class FormSheetPresentationManager(
             return
         }
 
+        if (shouldSkipExitAnimation) {
+            performInstantDismiss()
+            return
+        }
+
         startExitAnimation()
+    }
+
+    // Dismissing a sheet from the middle of the stack should dismiss all sheets above it,
+    // mirroring the iOS presentation chain teardown. Sheets are dismissed top-down.
+    private fun dismissSheetsAbove() {
+        FormSheetStackRegistry.sheetsAbove(this).asReversed().forEach {
+            it.handleDismissFromCascade()
+        }
+    }
+
+    private fun handleDismissFromCascade() {
+        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
+            return
+        }
+
+        shouldSkipExitAnimation = true
+        onNativeDismiss()
+        updatePresentationState(isOpen = false)
+    }
+
+    private fun performInstantDismiss() {
+        currentSheetAnimator?.removeAllListeners()
+        currentSheetAnimator?.cancel()
+        currentSheetAnimator = null
+
+        bottomSheetView?.let { syncBehaviorStateAfterExitAnimationComplete(it) }
+        performDismiss()
     }
 
     private fun startEnterAnimation() {
@@ -175,6 +209,7 @@ internal class FormSheetPresentationManager(
     }
 
     private fun performDismiss() {
+        shouldSkipExitAnimation = false
         dialog.dismiss()
         onDismissComplete()
     }
