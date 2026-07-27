@@ -18,18 +18,11 @@ Notes for `routeKey` behavior and how the two platforms are launched
 
 ## E2E test
 
-Incomplete: Each block contains a per-platform suite, as the two platforms behave
-differently within the example app harness and require distinct matchers.
+Incomplete.
 
-- iOS: steps 1–10, including the native header back button
-  (step 8) and the edge-swipe pop (step 9). Since react-native-screens detaches
-  covered screens on iOS, `Name:` / `Key:` or button matcher resolves to
-  a single element - the top screen.
-- Android (`describeIfAndroid`): steps 1–7 and 10 only. Unlike iOS, covered screens
-  remain attached on Android, causing stacked screens to render duplicate buttons and labels.
-  Consequently, the suite inspects the current route, taps buttons, and asserts on
-  the topmost match (the last item in the hierarchy). Additionally, `<Button>`
-  titles also render uppercased (`PUSH A`, `POP`) and are matched in that form.
+- iOS: Steps 1–10, including the native header back button (step 8). For step 9,
+  only the edge-swipe pop gesture is automated.
+- Android (`describeIfAndroid`): steps 1–7 and 10 only.
 
 **Manual only (not automated):**
 
