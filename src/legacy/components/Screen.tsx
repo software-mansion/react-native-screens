@@ -277,6 +277,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             androidResetScreenShadowStateOnOrientationChangeEnabled={
               featureFlags.experiment
                 .androidResetScreenShadowStateOnOrientationChangeEnabled
+            }
+            iosOrientationInheritanceFixEnabled={
+              featureFlags.experiment.iosOrientationInheritanceFixEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children

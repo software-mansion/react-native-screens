@@ -122,6 +122,7 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
+  iosOrientationInheritanceFixEnabled?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {

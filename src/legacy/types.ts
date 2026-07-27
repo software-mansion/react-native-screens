@@ -362,6 +362,16 @@ export interface ScreenProps extends ViewProps {
    * - "landscape" – landscape orientations are permitted
    * - "landscape_left" – landscape-left orientation is permitted
    * - "landscape_right" – landscape-right orientation is permitted
+   *
+   * @remarks
+   * iOS only: when `screenOrientation` is omitted entirely and the
+   * `featureFlags.experiment.iosOrientationInheritanceFixEnabled` flag is
+   * enabled (the default), a legacy `Screen` no longer forces
+   * "all-but-upside-down". Instead it defers to its parent screen's
+   * orientation, ultimately falling back to the app's `Info.plist` supported
+   * orientations. Setting `screenOrientation: "default"` explicitly keeps the
+   * previous "all-but-upside-down" (iPhone) / "all" (iPad) behavior.
+   * See https://github.com/software-mansion/react-native-screens/issues/4351
    */
   screenOrientation?: ScreenOrientationTypes | undefined;
   /**

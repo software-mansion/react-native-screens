@@ -192,6 +192,15 @@ exception for iPad devices, where it resolves to [UIInterfaceOrientationMaskAll]
 
 Defaults to `default` on iOS.
 
+> [!NOTE]
+> iOS only: when `screenOrientation` is **not set at all** and the
+> `featureFlags.experiment.iosOrientationInheritanceFixEnabled` flag is enabled
+> (the default), a legacy (Stack v4) screen defers to its parent screen's
+> orientation instead of forcing `UIInterfaceOrientationMaskAllButUpsideDown`,
+> ultimately falling back to the orientations declared in `Info.plist`. Setting
+> `screenOrientation` to `default` explicitly keeps the previous behavior. See
+> [#4351](https://github.com/software-mansion/react-native-screens/issues/4351).
+
 ### `sheetAllowedDetents`
 
 Describes heights where a sheet can rest.

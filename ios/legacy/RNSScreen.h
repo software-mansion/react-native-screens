@@ -87,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
+@property (nonatomic, readwrite) BOOL iosOrientationInheritanceFixEnabled;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
