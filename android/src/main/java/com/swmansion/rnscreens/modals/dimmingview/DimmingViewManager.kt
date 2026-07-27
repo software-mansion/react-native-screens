@@ -19,17 +19,23 @@ class DimmingViewManager(
 
     internal var onDimmingViewAlphaChange: ((Float) -> Unit)? = null
 
-    internal var dimmingViewAlpha: Float
-        get() = dimmingView.alpha
+    internal var dimmingViewAlpha: Float = 0f
         set(value) {
-            dimmingView.alpha = value
+            field = value
+            applyEffectiveAlpha()
             onDimmingViewAlphaChange?.invoke(value)
         }
 
-    // Bypasses the change notification, so alpha imposed by another dimming view
-    // does not propagate further.
-    internal fun setDimmingViewAlphaSync(value: Float) {
-        dimmingView.alpha = value
+    // How much another dimming view is stacked on top of this one: 0 uncovered, 1 fully covered.
+    // A covered view stops drawing its own dim, so dim does not accumulate across the stack.
+    internal var coverageRatio: Float = 0f
+        set(value) {
+            field = value
+            applyEffectiveAlpha()
+        }
+
+    private fun applyEffectiveAlpha() {
+        dimmingView.alpha = dimmingViewAlpha * (1f - coverageRatio)
     }
 
     private val dimmingView =
