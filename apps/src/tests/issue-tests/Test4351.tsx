@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  type ParamListBase,
+} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
-  NativeStackNavigationProp,
+  type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
