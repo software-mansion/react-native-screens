@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-- (void)setViewToSnapshot;
+- (void)addSnapshotToView;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;

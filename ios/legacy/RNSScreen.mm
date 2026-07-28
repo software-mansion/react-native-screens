@@ -1991,7 +1991,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot
+- (void)addSnapshotToView
 {
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window == nil) {
@@ -2005,7 +2005,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:self.screenView.snapshotAfterUpdates];
   snapshot.frame = self.view.bounds;
   snapshot.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  snapshot.userInteractionEnabled = NO;
   [self.view addSubview:snapshot];
 }
 

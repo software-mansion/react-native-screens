@@ -1315,7 +1315,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  [screenChildComponent.controller setViewToSnapshot];
+  [screenChildComponent.controller addSnapshotToView];
 
   RCTAssert(screenChildComponent.reactSuperview == self,
             @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
