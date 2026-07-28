@@ -60,6 +60,15 @@ class FormSheetDialogManager(
             onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
         )
 
+    private val nativeDismissCoordinator =
+        FormSheetNativeDismissCoordinator(
+            dialog = dialog,
+            behaviorController = behaviorController,
+            dimmingManager = dimmingManager,
+            onDismissAllowed = { presentationManager.handleNativeDismiss() },
+            onDismissPrevented = { eventEmitter?.emitOnNativeDismissPreventedEvent() },
+        )
+
     internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
         presentationManager.appearanceEventEmitter = newValue
     }
@@ -69,6 +78,7 @@ class FormSheetDialogManager(
 
     init {
         presentationManager.setup()
+        nativeDismissCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
         behaviorController?.setup()
@@ -103,6 +113,10 @@ class FormSheetDialogManager(
             appearanceCoordinator.updateBackgroundColor(newConfig.nativeContainerBackgroundColor)
         }
 
+        if (oldConfig.shouldPreventNativeDismiss != newConfig.shouldPreventNativeDismiss) {
+            nativeDismissCoordinator.shouldPreventDismiss = newConfig.shouldPreventNativeDismiss
+        }
+
         if (oldConfig.isOpen != newConfig.isOpen) {
             presentationManager.updatePresentationState(newConfig.isOpen)
         }
@@ -127,6 +141,7 @@ class FormSheetDialogManager(
 
     internal fun destroy() {
         behaviorController?.destroy()
+        nativeDismissCoordinator.destroy()
         presentationManager.destroy()
         dimensionsCoordinator.destroy()
         dialog.dismiss()

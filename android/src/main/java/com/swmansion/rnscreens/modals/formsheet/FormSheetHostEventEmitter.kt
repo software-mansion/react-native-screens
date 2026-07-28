@@ -49,4 +49,10 @@ internal class FormSheetHostEventEmitter(
             FormSheetDetentChangedEvent(surfaceId, viewTag, index),
         )
     }
+
+    override fun emitOnNativeDismissPreventedEvent() {
+        reactEventDispatcher.dispatchEvent(
+            FormSheetNativeDismissPreventedEvent(surfaceId, viewTag),
+        )
+    }
 }

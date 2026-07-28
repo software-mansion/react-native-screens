@@ -114,7 +114,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Boolean,
     ) {
-        // TODO: @t0maboro - implement later
+        view.preventNativeDismiss = value
     }
 
     override fun setNativeContainerBackgroundColor(
@@ -133,6 +133,7 @@ class FormSheetHostViewManager :
             makeEventRegistrationInfo(FormSheetWillDisappearEvent),
             makeEventRegistrationInfo(FormSheetDidDisappearEvent),
             makeEventRegistrationInfo(FormSheetDetentChangedEvent),
+            makeEventRegistrationInfo(FormSheetNativeDismissPreventedEvent),
         )
 
     override fun updateState(
