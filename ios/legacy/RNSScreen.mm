@@ -1753,9 +1753,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
+  if (![self.view isKindOfClass:[RNSScreenView class]]) {
+    return;
+  }
+
   // if the screen was already deleted by React, there is no sense in sending progress
   // since on JS side the component is already not present
-  if ([self.view isKindOfClass:[RNSScreenView class]] && !((RNSScreenView *)self.view).isInvalidated) {
+  if (!static_cast<RNSScreenView *>(self.view).isInvalidated) {
     [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
@@ -2004,6 +2008,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // view into the hierarchy and remove only the snapshot, leaving a view that blocked all touches.
   UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:self.screenView.snapshotAfterUpdates];
   snapshot.frame = self.view.bounds;
+  // fill the whole screen view with the snapshot
   snapshot.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.view addSubview:snapshot];
 }
