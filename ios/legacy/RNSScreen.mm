@@ -1409,7 +1409,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
-  RNSScreenView *_initialView;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
@@ -1430,7 +1429,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView = [UIView new];
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
-    _initialView = (RNSScreenView *)view;
   }
   return self;
 }
@@ -1915,7 +1913,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (RNSScreenView *)screenView
 {
-  return _initialView;
+  return static_cast<RNSScreenView *>(self.view);
 }
 
 - (void)hideHeaderIfNecessary
