@@ -17,11 +17,26 @@ class DimmingViewManager(
 
     internal var isTransitionAnimationRunning: Boolean = false
 
-    internal var dimmingViewAlpha: Float
-        get() = dimmingView.alpha
+    internal var onDimmingViewAlphaChange: (() -> Unit)? = null
+
+    internal var dimmingViewAlpha: Float = 0f
         set(value) {
-            dimmingView.alpha = value
+            field = value
+            applyEffectiveAlpha()
+            onDimmingViewAlphaChange?.invoke()
         }
+
+    // How much another dimming view is stacked on top of this one: 0 uncovered, 1 fully covered.
+    // A covered view stops drawing its own dim, so dim does not accumulate across the stack.
+    internal var coverageRatio: Float = 0f
+        set(value) {
+            field = value
+            applyEffectiveAlpha()
+        }
+
+    private fun applyEffectiveAlpha() {
+        dimmingView.alpha = dimmingViewAlpha * (1f - coverageRatio)
+    }
 
     private val dimmingView =
         DimmingView(context, initialAlpha = 0f).apply {
@@ -60,7 +75,7 @@ class DimmingViewManager(
                     }
 
                     val fraction = if (slideOffset >= 0) 1f else 1f + slideOffset
-                    dimmingView.alpha = fraction * maxAlpha
+                    dimmingViewAlpha = fraction * maxAlpha
                 }
             },
         )

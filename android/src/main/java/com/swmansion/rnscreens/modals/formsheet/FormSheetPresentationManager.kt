@@ -12,11 +12,17 @@ internal class FormSheetPresentationManager(
     private val bottomSheetView: View?,
     private val dimmingManager: DimmingViewManager,
     private val onNativeDismiss: () -> Unit,
-) {
+) : FormSheetStackEntry {
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
 
     private var state = FormSheetPresentationState.DISMISSED
     private var targetIsOpen = false
+    private var shouldSkipExitAnimation = false
+
+    override val dimmingRatio: Float
+        get() = dimmingManager.dimmingViewAlpha / dimmingManager.maxAlpha
+
+    override var coverageRatio: Float by dimmingManager::coverageRatio
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
@@ -32,6 +38,11 @@ internal class FormSheetPresentationManager(
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
         }
+
+        dimmingManager.onDimmingViewAlphaChange = {
+            FormSheetStackCoordinator.onDimmingRatioChanged(this)
+        }
+
         nativeDismissCoordinator.setup()
     }
 
@@ -54,6 +65,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+        FormSheetStackCoordinator.onSheetPresentationStart(this)
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
@@ -69,6 +81,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        FormSheetStackCoordinator.onSheetDismissalStart(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
@@ -81,7 +94,36 @@ internal class FormSheetPresentationManager(
             return
         }
 
+        if (shouldSkipExitAnimation) {
+            performInstantDismiss()
+            return
+        }
+
         startExitAnimation()
+    }
+
+    override fun onSheetBelowDismissed() {
+        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
+            return
+        }
+
+        shouldSkipExitAnimation = true
+        onNativeDismiss()
+        updatePresentationState(isOpen = false)
+    }
+
+    private fun performInstantDismiss() {
+        currentSheetAnimator?.removeAllListeners()
+        currentSheetAnimator?.cancel()
+        currentSheetAnimator = null
+        dimmingManager.isTransitionAnimationRunning = false
+
+        // Skipping the exit animation means the alpha is never driven to 0, so the sheet
+        // below would stay covered by a sheet that is already gone.
+        dimmingManager.dimmingViewAlpha = 0f
+
+        bottomSheetView?.let { syncBehaviorStateAfterExitAnimationComplete(it) }
+        performDismiss()
     }
 
     private fun startEnterAnimation() {
@@ -142,6 +184,8 @@ internal class FormSheetPresentationManager(
     }
 
     private fun performDismiss() {
+        shouldSkipExitAnimation = false
+        FormSheetStackCoordinator.onSheetDismissalEnd(this)
         dialog.dismiss()
         onDismissComplete()
     }
@@ -195,6 +239,9 @@ internal class FormSheetPresentationManager(
     }
 
     internal fun destroy() {
+        FormSheetStackCoordinator.onSheetDismissalEnd(this)
+        dimmingManager.onDimmingViewAlphaChange = null
+
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 
