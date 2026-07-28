@@ -8,19 +8,16 @@ import { CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW } from '../../native-class-
 const SCROLLVIEW_ID = 'toolbar-menu-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
-/**
- * Budget for the overflow popup's open / dismiss animation. Detox's idle sync
- * does not cover popup window animations, so every assertion that straddles one
- * has to wait it out explicitly instead of asserting on the spot.
- */
+// Detox's idle sync does not cover popup window animations, so every wait that
+// straddles the overflow menu opening or dismissing has to be explicit.
 const MENU_ANIMATION_TIMEOUT = 2000;
 
-/**
- * Every title this scenario can ever put into the toolbar menu. Each assertion
- * checks the full set — the expected titles must be visible and every other one
- * must not exist — so a stale/leaked menu entry fails the test instead of
- * slipping through an "only check what I expect" assertion.
- */
+// Probes an already-settled popup rather than an animation — by the time it is
+// used the menu is either up or was never opened.
+const MENU_PRESENCE_TIMEOUT = 250;
+
+// Every title this scenario can put into the menu. Assertions check the full
+// set — expected titles visible, all others absent — so a leaked entry fails.
 const ALL_TITLES = [
   'Title A',
   'Title B',
@@ -31,18 +28,14 @@ const ALL_TITLES = [
 
 type MenuTitle = (typeof ALL_TITLES)[number];
 
-/**
- * Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
- * @see apps/src/shared/SettingsPicker.tsx
- */
+// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
+// @see apps/src/shared/SettingsPicker.tsx
 function optionId(pickerLabel: string, option: string): string {
   return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
 }
 
-/**
- * Rewinds to the top before scrolling down, so a target that sits *above* the
- * current offset is still reachable (`whileElement` only scrolls one way).
- */
+// Rewinds to the top first, so a target above the current offset is still
+// reachable — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
   await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
   await waitFor(element(by.id(id)))
@@ -51,11 +44,8 @@ async function scrollIntoView(id: string) {
     .scroll(300, 'down', Number.NaN, 0.85);
 }
 
-/**
- * Opens the picker, taps an option, closes it again. Closing matters: an open
- * picker leaves its option rows in the hierarchy, where they would collide with
- * the `by.text` matchers used for the toolbar menu items.
- */
+// Closing the picker again matters: its option rows stay in the hierarchy and
+// would collide with the `by.text` matchers used for the toolbar menu items.
 async function selectOption(
   pickerId: string,
   pickerLabel: string,
@@ -103,12 +93,8 @@ async function setSlotTitle(slot: number, title: string) {
   await selectOption(`slot-${slot}-title-picker`, `slot ${slot} title`, title);
 }
 
-/**
- * Flips a slot's `include` switch and verifies the resulting state. The switch
- * only toggles, so `include` is what the caller expects to see afterwards — a
- * swallowed tap fails here instead of surfacing as a confusing wrong-menu
- * assertion several steps later.
- */
+// The switch only toggles, so `include` is the state expected afterwards — a
+// swallowed tap fails here instead of as a wrong-menu assertion steps later.
 async function setSlotInclude(slot: number, include: boolean) {
   const switchId = `slot-${slot}-include-switch`;
   await scrollIntoView(switchId);
@@ -119,15 +105,10 @@ async function setSlotInclude(slot: number, include: boolean) {
   ).toBeVisible();
 }
 
-/**
- * Taps the overflow button. The popup animates in, so the caller must wait for
- * an entry it expects before asserting anything.
- */
 async function openMenu() {
   await element(by.label('More options')).tap();
 }
 
-/** Waits out the popup's open animation by gating on an entry it must contain. */
 async function waitForMenuItem(title: MenuTitle) {
   await waitFor(
     element(
@@ -140,21 +121,15 @@ async function waitForMenuItem(title: MenuTitle) {
     .withTimeout(MENU_ANIMATION_TIMEOUT);
 }
 
-/**
- * Waits until the popup window is gone and the screen behind it is addressable
- * again. Espresso resolves matchers against a single window — while the popup
- * holds focus, nothing in the screen below it is in the searched hierarchy, so
- * the menu entry disappearing is not enough: the next action against the screen
- * would fail with "No views in hierarchy found". Gating on the scroll view
- * retries until the root switches back.
- */
+// Detox resolves matchers against a single window: while the popup holds focus
+// nothing behind it is in the searched hierarchy, so the entry going away is
+// not enough — the screen itself has to become addressable again.
 async function waitForScreen() {
   await waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT);
 }
 
-/** Taps a menu entry and waits for the popup to finish dismissing. */
 async function tapMenuItem(title: MenuTitle) {
   await waitForMenuItem(title);
   await element(
@@ -174,23 +149,40 @@ async function tapMenuItem(title: MenuTitle) {
   await waitForScreen();
 }
 
-/**
- * Asserts the exact contents of the overflow menu, then closes it. Every
- * expected title is checked for visibility and every other known title for
- * absence, so neither a missing entry nor a leaked one can slip through.
- *
- * `expectedVisible` is a non-empty list of `ALL_TITLES` members: a title
- * outside that set would otherwise go unasserted, and the first entry gates the
- * open animation.
- */
+// Presses Back only when the popup is actually up: a menu that never opened
+// would otherwise take the Back press itself and pop the test screen.
+async function closeMenuIfOpen() {
+  const isOpen = await waitFor(
+    element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
+  )
+    .toExist()
+    .withTimeout(MENU_PRESENCE_TIMEOUT)
+    .then(
+      () => true,
+      () => false,
+    );
+
+  if (!isOpen) {
+    return;
+  }
+
+  await device.pressBack();
+  await waitForScreen();
+}
+
+// Asserts the exact menu contents, then closes it. `expectedVisible` is a
+// non-empty subset of ALL_TITLES — a title outside that set would go unasserted,
+// and the first entry gates the open animation.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
 ): Promise<void> {
   await openMenu();
 
+  let assertionFailed = false;
+
   try {
-    // The menu is populated in a single layout pass, so once the first expected
-    // entry is up the `not.toExist()` checks below cannot pass prematurely.
+    // Populated in a single layout pass, so once the first expected entry is up
+    // the `not.toExist()` checks below cannot pass prematurely.
     await waitForMenuItem(expectedVisible[0]);
 
     for (const title of expectedVisible) {
@@ -216,12 +208,20 @@ async function expectMenuItems(
         ).not.toExist();
       }
     }
+  } catch (error) {
+    assertionFailed = true;
+    throw error;
   } finally {
-    // Closed in `finally` so a failed assertion — including the gate above —
-    // does not leave the popup covering the screen. This suite is stateful, so
-    // every later step would otherwise fail on an unrelated error.
-    await device.pressBack();
-    await waitForScreen();
+    // Closed here so a failed assertion does not leave the popup covering the
+    // screen — this suite is stateful and every later step would then fail.
+    try {
+      await closeMenuIfOpen();
+    } catch (cleanupError) {
+      // A throw from `finally` would replace the error that actually failed.
+      if (!assertionFailed) {
+        throw cleanupError;
+      }
+    }
   }
 }
 
