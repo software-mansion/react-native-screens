@@ -3,7 +3,6 @@ import styles from './styles.module.css';
 
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import usePageType from '@site/src/hooks/usePageType';
 
 const Sponsors = () => {
   const sponsorsLogos = {
