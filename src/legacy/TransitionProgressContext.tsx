@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 
-type TransitionProgressContextBody = {
+export type TransitionProgressContextBody = {
   progress: Animated.Value;
   closing: Animated.Value;
   goingForward: Animated.Value;
