@@ -17,11 +17,13 @@ import {
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
+// The option types below are exported for the e2e test covering this screen,
+// which derives its picker values from them instead of restating the lists.
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
-type IdOption = (typeof ID_OPTIONS)[number];
+export type IdOption = (typeof ID_OPTIONS)[number];
 
 const ICON_OPTIONS = ['undefined', 'searchIcon'] as const;
-type IconOption = (typeof ICON_OPTIONS)[number];
+export type IconOption = (typeof ICON_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = [
   'undefined',
@@ -31,24 +33,26 @@ const SHOW_AS_ACTION_OPTIONS = [
   'ifRoom',
   'ifRoomWithText',
 ] as const;
-type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
+export type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
 const TITLE_CONDENSED_OPTIONS = ['undefined', 'Cond', 'Short'] as const;
-type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
+export type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
 
 const TOOLTIP_OPTIONS = ['undefined', 'Tooltip text', 'Hi!'] as const;
-type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
+export type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
 
 // Title is fixed per id so the condensed/tooltip fallbacks are easy to spot.
-const ITEM_TITLES: Record<IdOption, string> = {
+const ITEM_TITLES = {
   'item-1': 'First Item',
   'item-2': 'Second Item Title',
   'item-3': 'Third Item Long Title',
-};
+} as const satisfies Record<IdOption, string>;
 
-type CmdTitleOption = 'no change' | 'Cmd Title' | 'undefined';
-type CmdCondensedOption = 'no change' | TitleCondensedOption;
-type CmdTooltipOption = 'no change' | TooltipOption;
+export type ItemTitle = (typeof ITEM_TITLES)[IdOption];
+
+export type CmdTitleOption = 'no change' | 'Cmd Title' | 'undefined';
+export type CmdCondensedOption = 'no change' | TitleCondensedOption;
+export type CmdTooltipOption = 'no change' | TooltipOption;
 
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
@@ -154,6 +158,8 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Title / Condensed / Tooltip';
 
+export type HeaderTitle = typeof HEADER_TITLE;
+
 function TestStackToolbarMenuTitle() {
   return (
     <StackContainer
@@ -237,33 +243,47 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        testID="toolbar-menu-title-scrollview"
+        style={styles.scroll}
+        contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Send Command</Text>
+        {/* The labels are prefixed with `cmd` so that the option testIDs
+            derived from them by `SettingsPicker` do not clash with the
+            per-slot pickers below. */}
         <SettingsPicker<IdOption>
-          label="target id"
+          label="cmd target id"
           value={cmdTargetId}
           items={[...ID_OPTIONS]}
           onValueChange={setCmdTargetId}
+          testID="cmd-target-id-picker"
         />
         <SettingsPicker<CmdTitleOption>
-          label="title"
+          label="cmd title"
           value={cmdTitle}
           items={CMD_TITLE_OPTIONS}
           onValueChange={setCmdTitle}
+          testID="cmd-title-picker"
         />
         <SettingsPicker<CmdCondensedOption>
-          label="titleCondensed"
+          label="cmd titleCondensed"
           value={cmdCondensed}
           items={CMD_CONDENSED_OPTIONS}
           onValueChange={setCmdCondensed}
+          testID="cmd-titlecondensed-picker"
         />
         <SettingsPicker<CmdTooltipOption>
-          label="tooltipText"
+          label="cmd tooltipText"
           value={cmdTooltip}
           items={CMD_TOOLTIP_OPTIONS}
           onValueChange={setCmdTooltip}
+          testID="cmd-tooltiptext-picker"
         />
-        <Button title="Send Command" onPress={sendCommand} />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
         <Text style={styles.heading}>Result</Text>
         <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
@@ -291,29 +311,35 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <Text style={styles.slotLabel}>
             Slot {i + 1} ({slot.id}) — title "{ITEM_TITLES[slot.id]}"
           </Text>
+          {/* The labels carry the slot number so that the option testIDs
+              derived from them by `SettingsPicker` stay unique across slots. */}
           <SettingsPicker<IconOption>
-            label="icon"
+            label={`Slot ${i + 1} icon`}
             value={slot.icon}
             items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
+            testID={`slot-${i + 1}-icon-picker`}
           />
           <SettingsPicker<ShowAsActionOption>
-            label="showAsAction"
+            label={`Slot ${i + 1} showAsAction`}
             value={slot.showAsAction}
             items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
+            testID={`slot-${i + 1}-showasaction-picker`}
           />
           <SettingsPicker<TitleCondensedOption>
-            label="titleCondensed"
+            label={`Slot ${i + 1} titleCondensed`}
             value={slot.titleCondensed}
             items={[...TITLE_CONDENSED_OPTIONS]}
             onValueChange={v => updateSlot(i, { titleCondensed: v })}
+            testID={`slot-${i + 1}-titlecondensed-picker`}
           />
           <SettingsPicker<TooltipOption>
-            label="tooltipText"
+            label={`Slot ${i + 1} tooltipText`}
             value={slot.tooltipText}
             items={[...TOOLTIP_OPTIONS]}
             onValueChange={v => updateSlot(i, { tooltipText: v })}
+            testID={`slot-${i + 1}-tooltiptext-picker`}
           />
         </React.Fragment>
       ))}

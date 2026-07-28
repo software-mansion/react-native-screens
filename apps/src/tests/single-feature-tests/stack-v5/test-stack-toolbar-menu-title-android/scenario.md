@@ -16,7 +16,13 @@ in portrait on a phone).
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Incomplete: covers steps 1–8 and 12–16.
+
+Not automated:
+
+- Steps 9–11 and 17–18 (long-press tooltips). An Android tooltip is shown in
+  a separate, non-focusable window that Espresso — and therefore Detox — does
+  not match, so the tooltip text cannot be asserted.
 
 ## Prerequisites
 
