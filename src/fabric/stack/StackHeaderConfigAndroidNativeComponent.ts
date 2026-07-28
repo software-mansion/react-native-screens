@@ -124,9 +124,6 @@ export interface NativeProps extends ViewProps {
     'availableSpace'
   >;
 
-  // Title/subtitle text appearance. Font size defaults to -1 (unset). Font weight
-  // arrives pre-stringified. title*/subtitle* apply to the small header;
-  // expanded*/collapsed* apply to medium & large.
   titleColor?: ColorValue | undefined;
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.WithDefault<CT.Float, -1>;
