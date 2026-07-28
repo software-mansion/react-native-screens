@@ -98,4 +98,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   ],
 });
 
-export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});
+export default codegenNativeComponent<NativeProps>(
+  'RNSSearchBar',
+  {},
+) as HostComponent<NativeProps>;

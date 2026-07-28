@@ -121,4 +121,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: ['showColumn'],
 });
 
-export default codegenNativeComponent<NativeProps>('RNSSplitHost', {});
+export default codegenNativeComponent<NativeProps>(
+  'RNSSplitHost',
+  {},
+) as HostComponent<NativeProps>;
