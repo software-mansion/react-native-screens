@@ -163,6 +163,13 @@
   if ([screenParentViewController isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)screenParentViewController;
     [tabBarVC.tabBar setNeedsLayout];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (@available(iOS 26, *)) {
+      // Without this the deferred pass can measure the label slot before the
+      // image lands, truncating the label until a tab is tapped.
+      [tabBarVC.tabBar layoutIfNeeded];
+    }
+#endif // Check for iOS >= 26.0
   }
 }
 
