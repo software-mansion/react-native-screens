@@ -65,7 +65,12 @@ interface ViewConfig extends ViewInstance {
   };
 }
 
-export const InnerScreen = React.forwardRef<ViewInstance, ScreenProps>(
+// Nominal instance type for screen refs. RN's `ViewInstance` is an alias that
+// declaration emit resolves down to the non-public `ReactNativeElement` class.
+// An interface stops that resolution at a name this package can emit.
+export interface ScreenInstance extends ViewInstance {}
+
+export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
     React.useImperativeHandle(ref, () => innerRef.current!, []);
@@ -325,7 +330,7 @@ export const InnerScreen = React.forwardRef<ViewInstance, ScreenProps>(
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-const Screen = React.forwardRef<ViewInstance, ScreenProps>((props, ref) => {
+const Screen = React.forwardRef<ScreenInstance, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
   return <ScreenWrapper {...props} ref={ref} />;
