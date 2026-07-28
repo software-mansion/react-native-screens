@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -38,8 +39,33 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
+        // MaterialToolbar creates its title/subtitle TextViews lazily and exposes no getters.
+        // We force them into existence in a fixed order (title first, subtitle second) so we can
+        // hold stable references — identifying them by text is ambiguous when the title and
+        // subtitle share the same string. Both instances persist for the toolbar's lifetime, so
+        // these references stay valid even while the text is cleared.
+        internal val titleTextView: TextView
+        internal val subtitleTextView: TextView
+
         init {
             addView(toolbar)
+
+            toolbar.title = FORCE_CREATE_PLACEHOLDER
+            val title = toolbar.toolbarTextViews().single()
+            toolbar.subtitle = FORCE_CREATE_PLACEHOLDER
+            val subtitle = toolbar.toolbarTextViews().first { it !== title }
+            toolbar.title = ""
+            toolbar.subtitle = ""
+
+            titleTextView = title
+            subtitleTextView = subtitle
+        }
+
+        private fun MaterialToolbar.toolbarTextViews(): List<TextView> = (0 until childCount).mapNotNull { getChildAt(it) as? TextView }
+
+        private companion object {
+            // Any non-empty string forces the TextViews into existence; cleared before layout.
+            private const val FORCE_CREATE_PLACEHOLDER = "\u200B"
         }
     }
 

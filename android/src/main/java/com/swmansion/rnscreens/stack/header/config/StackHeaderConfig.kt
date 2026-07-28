@@ -6,9 +6,11 @@ import android.util.LayoutDirection
 import android.view.Gravity
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.common.ReactConstants
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.views.text.ReactTypefaceUtils
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.helpers.IconResolution
@@ -72,152 +74,179 @@ internal class StackHeaderConfig(
 
     // region Properties
 
-    override var type: StackHeaderType by Delegates.observable(StackHeaderType.SMALL) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    override var type: StackHeaderType by invalidatingProperty(StackHeaderType.SMALL, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var title: String by Delegates.observable("") { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE)
-    }
+    override var title: String by invalidatingProperty("", StackHeaderInvalidationFlags.TITLE)
         internal set
 
-    override var subtitle: String by Delegates.observable("") { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE)
-    }
+    override var subtitle: String by invalidatingProperty("", StackHeaderInvalidationFlags.TITLE)
         internal set
 
-    override var hidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    override var hidden: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var transparent: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    override var transparent: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var backButtonHidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonHidden: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonTintColorNormal: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonTintColorPressed: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonTintColorFocused: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonIcon: Drawable? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonIcon: Drawable? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var overflowIconTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
-    }
+    override var overflowIconTintColorNormal: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var overflowIconTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
-    }
+    override var overflowIconTintColorPressed: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var overflowIconTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
-    }
+    override var overflowIconTintColorFocused: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var overflowIcon: Drawable? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
-    }
+    override var overflowIcon: Drawable? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var scrollFlagScroll: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var scrollFlagScroll: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
         internal set
 
-    override var scrollFlagEnterAlways: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var scrollFlagEnterAlways: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
         internal set
 
-    override var scrollFlagEnterAlwaysCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var scrollFlagEnterAlwaysCollapsed: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
         internal set
 
-    override var scrollFlagExitUntilCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var scrollFlagExitUntilCollapsed: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
         internal set
 
-    override var scrollFlagSnap: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var scrollFlagSnap: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
         internal set
 
-    override var liftOnScroll: Boolean by Delegates.observable(true) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
-    }
+    override var liftOnScroll: Boolean by invalidatingProperty(true, StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
         internal set
 
     override var toolbarMenu: StackHeaderToolbarMenuConfig
-        by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList(), emptyList())) { _, old, new ->
-            if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        }
+        by invalidatingProperty(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
 
-    override var toolbarMenuGroupDividerEnabled: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-    }
+    override var toolbarMenuGroupDividerEnabled: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
 
-    override var titleCentered: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var titleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
-    override var subtitleCentered: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var subtitleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
-    override var expandedTitleHorizontalGravity: Int by Delegates.observable(Gravity.START) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var expandedTitleHorizontalGravity: Int by invalidatingProperty(Gravity.START, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
-    override var expandedTitleVerticalGravity: Int by Delegates.observable(Gravity.BOTTOM) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var expandedTitleVerticalGravity: Int by invalidatingProperty(Gravity.BOTTOM, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
-    override var collapsedTitleHorizontalGravity: Int by Delegates.observable(Gravity.START) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var collapsedTitleHorizontalGravity: Int by invalidatingProperty(Gravity.START, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
-    override var collapsedTitleVerticalGravity: Int by Delegates.observable(Gravity.CENTER_VERTICAL) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE_POSITIONING)
-    }
+    override var collapsedTitleVerticalGravity: Int by invalidatingProperty(
+        Gravity.CENTER_VERTICAL,
+        StackHeaderInvalidationFlags.TITLE_POSITIONING,
+    )
         internal set
 
     override var collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
-        by Delegates.observable(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE) { _, old, new ->
-            if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-        }
+        by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
+
+    // Text appearance. Raw font family/weight/style are held here (React-side) and
+    // exposed to the native applicator only as a React-agnostic TypefaceTransform.
+    override var titleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var titleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var titleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var titleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var titleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    override val titleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(titleFontFamily, titleFontWeight, titleFontStyle)
+
+    override var subtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var subtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var subtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var subtitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var subtitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    override val subtitleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(subtitleFontFamily, subtitleFontWeight, subtitleFontStyle)
+
+    override var expandedTitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var expandedTitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var expandedTitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var expandedTitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var expandedTitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    override val expandedTitleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(expandedTitleFontFamily, expandedTitleFontWeight, expandedTitleFontStyle)
+
+    override var collapsedTitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var collapsedTitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var collapsedTitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var collapsedTitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var collapsedTitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    override val collapsedTitleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(collapsedTitleFontFamily, collapsedTitleFontWeight, collapsedTitleFontStyle)
+
+    override var expandedSubtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var expandedSubtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var expandedSubtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var expandedSubtitleFontWeight: Int by invalidatingProperty(
+        ReactConstants.UNSET,
+        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
+    )
+    internal var expandedSubtitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    override val expandedSubtitleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(expandedSubtitleFontFamily, expandedSubtitleFontWeight, expandedSubtitleFontStyle)
+
+    override var collapsedSubtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    override var collapsedSubtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+        internal set
+    internal var collapsedSubtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    internal var collapsedSubtitleFontWeight: Int by invalidatingProperty(
+        ReactConstants.UNSET,
+        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
+    )
+    internal var collapsedSubtitleFontStyle: Int by invalidatingProperty(
+        ReactConstants.UNSET,
+        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
+    )
+    override val collapsedSubtitleTypefaceTransform: TypefaceTransform?
+        get() = buildTypefaceTransform(collapsedSubtitleFontFamily, collapsedSubtitleFontWeight, collapsedSubtitleFontStyle)
+
+    private fun buildTypefaceTransform(
+        fontFamily: String?,
+        fontWeight: Int,
+        fontStyle: Int,
+    ): TypefaceTransform? {
+        if (fontFamily == null && fontWeight == ReactConstants.UNSET && fontStyle == ReactConstants.UNSET) {
+            return null
+        }
+        return { base -> ReactTypefaceUtils.applyStyles(base, fontStyle, fontWeight, fontFamily, reactContext.assets) }
+    }
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL
@@ -356,24 +385,16 @@ internal class StackHeaderConfig(
 
     // region Subviews
 
-    override var backgroundSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var backgroundSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var leadingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var leadingSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var centerSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var centerSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var trailingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var trailingSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
     override fun onStackHeaderSubviewChanged() {
@@ -554,6 +575,17 @@ internal class StackHeaderConfig(
         menuUpdateQueue.tearDown()
         invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
+    }
+
+    // endregion
+
+    // region Helpers
+
+    private fun <T> invalidatingProperty(
+        initialValue: T,
+        flag: StackHeaderInvalidationFlags,
+    ) = Delegates.observable(initialValue) { _, old, new ->
+        if (old != new) invalidate(flag)
     }
 
     // endregion

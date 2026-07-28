@@ -2,18 +2,23 @@ package com.swmansion.rnscreens.stack.header
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
+import android.widget.TextView
+import androidx.annotation.AttrRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
+import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
@@ -25,8 +30,13 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
+import com.swmansion.rnscreens.stack.header.config.StackHeaderType
+import com.swmansion.rnscreens.stack.header.config.TypefaceTransform
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
+import com.swmansion.rnscreens.utils.resolveStyleResAttr
+import com.swmansion.rnscreens.utils.spToPx
 
 /**
  * Builds and applies the Material app bar — type, subviews, title, back button,
@@ -194,6 +204,141 @@ internal class StackHeaderApplicator(
                     config.collapsedTitleHorizontalGravity or config.collapsedTitleVerticalGravity
             }
         }
+    }
+
+    @SuppressLint("PrivateResource") // Material's default appearance/color theme attrs.
+    internal fun applyTitleAndSubtitleAppearance(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                val toolbar = appBar.toolbar
+                applyToolbarSlot(
+                    textView = appBar.titleTextView,
+                    setAppearance = { toolbar.setTitleTextAppearance(wrappedContext, it) },
+                    setColor = { toolbar.setTitleTextColor(it) },
+                    appearanceAttr = R.attr.textAppearanceTitleLarge,
+                    colorAttr = R.attr.colorOnSurface,
+                    typefaceTransform = config.titleTypefaceTransform,
+                    color = config.titleColor,
+                    fontSizeSp = config.titleFontSize,
+                )
+                applyToolbarSlot(
+                    textView = appBar.subtitleTextView,
+                    setAppearance = { toolbar.setSubtitleTextAppearance(wrappedContext, it) },
+                    setColor = { toolbar.setSubtitleTextColor(it) },
+                    appearanceAttr = R.attr.textAppearanceLabelMedium,
+                    colorAttr = R.attr.colorOnSurfaceVariant,
+                    typefaceTransform = config.subtitleTypefaceTransform,
+                    color = config.subtitleColor,
+                    fontSizeSp = config.subtitleFontSize,
+                )
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                val ctl = appBar.collapsingToolbarLayout
+                val isLarge = appBar.type == StackHeaderType.LARGE
+                val expandedTitleAttr =
+                    if (isLarge) R.attr.textAppearanceDisplaySmall else R.attr.textAppearanceHeadlineMedium
+                val expandedSubtitleAttr =
+                    if (isLarge) R.attr.textAppearanceTitleMedium else R.attr.textAppearanceLabelLarge
+
+                applyCtlSlot(
+                    ctl = ctl,
+                    setAppearance = ctl::setExpandedTitleTextAppearance,
+                    setColor = { ctl.setExpandedTitleTextColor(ColorStateList.valueOf(it)) },
+                    getTypeface = ctl::getExpandedTitleTypeface,
+                    setTypeface = ctl::setExpandedTitleTypeface,
+                    setSizePx = ctl::setExpandedTitleTextSize,
+                    appearanceAttr = expandedTitleAttr,
+                    colorAttr = R.attr.colorOnSurface,
+                    typefaceTransform = config.expandedTitleTypefaceTransform,
+                    color = config.expandedTitleColor,
+                    fontSizeSp = config.expandedTitleFontSize,
+                )
+                applyCtlSlot(
+                    ctl = ctl,
+                    setAppearance = ctl::setCollapsedTitleTextAppearance,
+                    setColor = { ctl.setCollapsedTitleTextColor(ColorStateList.valueOf(it)) },
+                    getTypeface = ctl::getCollapsedTitleTypeface,
+                    setTypeface = ctl::setCollapsedTitleTypeface,
+                    setSizePx = ctl::setCollapsedTitleTextSize,
+                    appearanceAttr = R.attr.textAppearanceTitleLarge,
+                    colorAttr = R.attr.colorOnSurface,
+                    typefaceTransform = config.collapsedTitleTypefaceTransform,
+                    color = config.collapsedTitleColor,
+                    fontSizeSp = config.collapsedTitleFontSize,
+                )
+                applyCtlSlot(
+                    ctl = ctl,
+                    setAppearance = ctl::setExpandedSubtitleTextAppearance,
+                    setColor = { ctl.setExpandedSubtitleTextColor(ColorStateList.valueOf(it)) },
+                    getTypeface = ctl::getExpandedSubtitleTypeface,
+                    setTypeface = ctl::setExpandedSubtitleTypeface,
+                    setSizePx = ctl::setExpandedSubtitleTextSize,
+                    appearanceAttr = expandedSubtitleAttr,
+                    colorAttr = R.attr.colorOnSurfaceVariant,
+                    typefaceTransform = config.expandedSubtitleTypefaceTransform,
+                    color = config.expandedSubtitleColor,
+                    fontSizeSp = config.expandedSubtitleFontSize,
+                )
+                applyCtlSlot(
+                    ctl = ctl,
+                    setAppearance = ctl::setCollapsedSubtitleTextAppearance,
+                    setColor = { ctl.setCollapsedSubtitleTextColor(ColorStateList.valueOf(it)) },
+                    getTypeface = ctl::getCollapsedSubtitleTypeface,
+                    setTypeface = ctl::setCollapsedSubtitleTypeface,
+                    setSizePx = ctl::setCollapsedSubtitleTextSize,
+                    appearanceAttr = R.attr.textAppearanceLabelMedium,
+                    colorAttr = R.attr.colorOnSurfaceVariant,
+                    typefaceTransform = config.collapsedSubtitleTypefaceTransform,
+                    color = config.collapsedSubtitleColor,
+                    fontSizeSp = config.collapsedSubtitleFontSize,
+                )
+            }
+        }
+    }
+
+    private fun applyToolbarSlot(
+        textView: TextView?,
+        setAppearance: (Int) -> Unit,
+        setColor: (Int) -> Unit,
+        @AttrRes appearanceAttr: Int,
+        @AttrRes colorAttr: Int,
+        typefaceTransform: TypefaceTransform?,
+        color: Int?,
+        fontSizeSp: Float?,
+    ) {
+        // Reset to default
+        setAppearance(resolveStyleResAttr(wrappedContext, appearanceAttr))
+
+        // Apply props
+        setColor(color ?: resolveColorAttr(wrappedContext, colorAttr))
+        typefaceTransform?.let { transform -> textView?.let { it.typeface = transform(it.typeface) } }
+        fontSizeSp?.let { textView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, it) }
+    }
+
+    private fun applyCtlSlot(
+        ctl: CollapsingToolbarLayout,
+        setAppearance: (Int) -> Unit,
+        setColor: (Int) -> Unit,
+        getTypeface: () -> Typeface?,
+        setTypeface: (Typeface?) -> Unit,
+        setSizePx: (Float) -> Unit,
+        @AttrRes appearanceAttr: Int,
+        @AttrRes colorAttr: Int,
+        typefaceTransform: TypefaceTransform?,
+        color: Int?,
+        fontSizeSp: Float?,
+    ) {
+        // Reset to default
+        setAppearance(resolveStyleResAttr(wrappedContext, appearanceAttr))
+
+        // Apply props
+        setColor(color ?: resolveColorAttr(wrappedContext, colorAttr))
+        typefaceTransform?.let { setTypeface(it(getTypeface())) }
+        fontSizeSp?.let { setSizePx(ctl.spToPx(it)) }
     }
 
     internal fun applyBackButton(

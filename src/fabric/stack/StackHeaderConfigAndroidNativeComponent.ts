@@ -124,6 +124,40 @@ export interface NativeProps extends ViewProps {
     'availableSpace'
   >;
 
+  // Title/subtitle text appearance. Font size defaults to -1 (unset). Font weight
+  // arrives pre-stringified. title*/subtitle* apply to the small header;
+  // expanded*/collapsed* apply to medium & large.
+  titleColor?: ColorValue | undefined;
+  titleFontFamily?: string | undefined;
+  titleFontSize?: CT.WithDefault<CT.Float, -1>;
+  titleFontWeight?: string | undefined;
+  titleFontStyle?: string | undefined;
+  subtitleColor?: ColorValue | undefined;
+  subtitleFontFamily?: string | undefined;
+  subtitleFontSize?: CT.WithDefault<CT.Float, -1>;
+  subtitleFontWeight?: string | undefined;
+  subtitleFontStyle?: string | undefined;
+  expandedTitleColor?: ColorValue | undefined;
+  expandedTitleFontFamily?: string | undefined;
+  expandedTitleFontSize?: CT.WithDefault<CT.Float, -1>;
+  expandedTitleFontWeight?: string | undefined;
+  expandedTitleFontStyle?: string | undefined;
+  collapsedTitleColor?: ColorValue | undefined;
+  collapsedTitleFontFamily?: string | undefined;
+  collapsedTitleFontSize?: CT.WithDefault<CT.Float, -1>;
+  collapsedTitleFontWeight?: string | undefined;
+  collapsedTitleFontStyle?: string | undefined;
+  expandedSubtitleColor?: ColorValue | undefined;
+  expandedSubtitleFontFamily?: string | undefined;
+  expandedSubtitleFontSize?: CT.WithDefault<CT.Float, -1>;
+  expandedSubtitleFontWeight?: string | undefined;
+  expandedSubtitleFontStyle?: string | undefined;
+  collapsedSubtitleColor?: ColorValue | undefined;
+  collapsedSubtitleFontFamily?: string | undefined;
+  collapsedSubtitleFontSize?: CT.WithDefault<CT.Float, -1>;
+  collapsedSubtitleFontWeight?: string | undefined;
+  collapsedSubtitleFontStyle?: string | undefined;
+
   backButtonTintColorNormal?: ColorValue | undefined;
   backButtonTintColorPressed?: ColorValue | undefined;
   backButtonTintColorFocused?: ColorValue | undefined;

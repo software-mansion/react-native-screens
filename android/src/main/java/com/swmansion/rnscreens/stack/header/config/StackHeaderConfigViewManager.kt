@@ -15,6 +15,7 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
+import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuMapper
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
@@ -191,6 +192,221 @@ internal open class StackHeaderConfigViewManager :
                 )
             }
     }
+
+    // region Text appearance
+    // Font size arrives as a float defaulting to -1 (unset); non-positive means "use default".
+
+    override fun setTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.titleColor = value
+    }
+
+    override fun setTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleFontFamily = value
+    }
+
+    override fun setTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.titleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    override fun setSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.subtitleColor = value
+    }
+
+    override fun setSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleFontFamily = value
+    }
+
+    override fun setSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.subtitleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    override fun setExpandedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedTitleColor = value
+    }
+
+    override fun setExpandedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleFontFamily = value
+    }
+
+    override fun setExpandedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedTitleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setExpandedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    override fun setCollapsedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedTitleColor = value
+    }
+
+    override fun setCollapsedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleFontFamily = value
+    }
+
+    override fun setCollapsedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedTitleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setCollapsedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    override fun setExpandedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedSubtitleColor = value
+    }
+
+    override fun setExpandedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleFontFamily = value
+    }
+
+    override fun setExpandedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedSubtitleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setExpandedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    override fun setCollapsedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedSubtitleColor = value
+    }
+
+    override fun setCollapsedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleFontFamily = value
+    }
+
+    override fun setCollapsedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedSubtitleFontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleFontWeight = ReactTypefaceUtils.parseFontWeight(value)
+    }
+
+    override fun setCollapsedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleFontStyle = ReactTypefaceUtils.parseFontStyle(value)
+    }
+
+    // endregion
 
     override fun setHidden(
         view: StackHeaderConfig,

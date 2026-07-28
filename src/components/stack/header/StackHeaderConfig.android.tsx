@@ -9,6 +9,7 @@ import {
   type NativeSyntheticEvent,
   processColor,
   StyleSheet,
+  type TextStyle,
 } from 'react-native';
 import type {
   StackHeaderConfigProps,
@@ -66,8 +67,26 @@ function StackHeaderConfig(
     scrollFlagSnap,
     toolbarMenu,
     toolbarMenuGroupDividerEnabled,
+    titleFontWeight,
+    subtitleFontWeight,
+    expandedTitleFontWeight,
+    collapsedTitleFontWeight,
+    expandedSubtitleFontWeight,
+    collapsedSubtitleFontWeight,
     ...filteredAndroidProps
   } = android ?? {};
+
+  // Native expects font weight as a string; RN allows numeric weights too.
+  const fontWeightProps = {
+    titleFontWeight: fontWeightToNative(titleFontWeight),
+    subtitleFontWeight: fontWeightToNative(subtitleFontWeight),
+    expandedTitleFontWeight: fontWeightToNative(expandedTitleFontWeight),
+    collapsedTitleFontWeight: fontWeightToNative(collapsedTitleFontWeight),
+    expandedSubtitleFontWeight: fontWeightToNative(expandedSubtitleFontWeight),
+    collapsedSubtitleFontWeight: fontWeightToNative(
+      collapsedSubtitleFontWeight,
+    ),
+  };
 
   const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
   const handleToolbarMenuItemPress = (
@@ -111,6 +130,7 @@ function StackHeaderConfig(
       onToolbarMenuGroupSelectionChange={handleToolbarMenuGroupSelectionChange}
       {...baseProps}
       {...filteredAndroidProps}
+      {...fontWeightProps}
       {...backButtonIconProps}
       {...overflowIconProps}
       {...scrollFlagProps}>
@@ -142,6 +162,12 @@ function StackHeaderConfig(
       )}
     </StackHeaderConfigAndroidNativeComponent>
   );
+}
+
+function fontWeightToNative(
+  fontWeight: TextStyle['fontWeight'],
+): string | undefined {
+  return fontWeight == null ? undefined : String(fontWeight);
 }
 
 function parseBackButtonIconToNativeProps(

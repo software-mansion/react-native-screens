@@ -1,8 +1,16 @@
 package com.swmansion.rnscreens.stack.header.config
 
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
+
+/**
+ * Applies font family / weight / style overrides onto a base [Typeface]. The base
+ * is the slot's Material default (read after resetting the default text appearance),
+ * so unset dimensions inherit the default rather than the system font.
+ */
+internal typealias TypefaceTransform = (Typeface?) -> Typeface
 
 internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
@@ -39,6 +47,27 @@ internal interface StackHeaderConfigurationProviding {
     val collapsedTitleHorizontalGravity: Int
     val collapsedTitleVerticalGravity: Int
     val collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+
+    val titleColor: Int?
+    val titleTypefaceTransform: TypefaceTransform?
+    val titleFontSize: Float?
+    val subtitleColor: Int?
+    val subtitleTypefaceTransform: TypefaceTransform?
+    val subtitleFontSize: Float?
+
+    val expandedTitleColor: Int?
+    val expandedTitleTypefaceTransform: TypefaceTransform?
+    val expandedTitleFontSize: Float?
+    val collapsedTitleColor: Int?
+    val collapsedTitleTypefaceTransform: TypefaceTransform?
+    val collapsedTitleFontSize: Float?
+
+    val expandedSubtitleColor: Int?
+    val expandedSubtitleTypefaceTransform: TypefaceTransform?
+    val expandedSubtitleFontSize: Float?
+    val collapsedSubtitleColor: Int?
+    val collapsedSubtitleTypefaceTransform: TypefaceTransform?
+    val collapsedSubtitleFontSize: Float?
 
     val isRTL: Boolean
 
