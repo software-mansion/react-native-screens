@@ -191,10 +191,6 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
     );
   });
 
-  afterAll(async () => {
-    await device.setOrientation('portrait');
-  });
-
   describe('baseline', () => {
     it('should render both action items as icon-only buttons in portrait', async () => {
       await expect(element(by.text(HEADER_TITLE))).toBeVisible();
@@ -243,32 +239,11 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
     });
   });
 
-  describe('titleCondensed next to an icon depends on the available room', () => {
-    it('should hide the label next to the icon in portrait', async () => {
-      await selectItemProp('item-1', 'icon', 'searchIcon');
-      await selectItemProp('item-1', 'showAsAction', 'alwaysWithText');
-      await selectItemProp('item-1', 'titleCondensed', 'Cond');
-
-      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).toBeVisible();
-      await expect(element(toolbarButtonByText('Cond'))).not.toExist();
-    });
-
-    it('should show the label next to the icon in landscape', async () => {
-      await device.setOrientation('landscape');
-
-      await expect(element(toolbarButtonByText('Cond'))).toBeVisible();
-      // Once the text label shows, the button drops the content description it
-      // fell back to while it was icon-only.
-      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).not.toExist();
-    });
-
-    it('should hide the label again after rotating back to portrait', async () => {
-      await device.setOrientation('portrait');
-
-      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).toBeVisible();
-      await expect(element(toolbarButtonByText('Cond'))).not.toExist();
-    });
-  });
+  // Scenario steps 6-8 — the text label appearing next to the icon only when
+  // there is room — are not covered here. They require rotating the device, and
+  // `device.setOrientation` leaves the app without a resumed activity on the
+  // headless emulator CI runs, which takes down every test after it. The repo
+  // restricts orientation tests to iOS for the same reason (see Test528).
 
   describe('setting tooltipText does not affect overflow rows', () => {
     it('should render the overflow row with the full title', async () => {
