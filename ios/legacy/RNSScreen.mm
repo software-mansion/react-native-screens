@@ -770,6 +770,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
+  _invalidated = YES;
+
   // Since the scroll view might get immediately recycled we remove ourselves
   // immediately.
   if (_sheetsScrollView != nil) {
@@ -1410,7 +1412,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
-  RNSScreenView *_initialView;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
@@ -1431,7 +1432,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView = [UIView new];
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
-    _initialView = (RNSScreenView *)view;
   }
   return self;
 }
@@ -1754,9 +1754,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-  if ([self.view isKindOfClass:[RNSScreenView class]]) {
-    // if the view is already snapshot, there is not sense in sending progress since on JS side
-    // the component is already not present
+  if (![self.view isKindOfClass:[RNSScreenView class]]) {
+    return;
+  }
+
+  // if the screen was already deleted by React, there is no sense in sending progress
+  // since on JS side the component is already not present
+  if (!static_cast<RNSScreenView *>(self.view).isInvalidated) {
     [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
@@ -1910,11 +1914,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return (int)[[self.screenView.reactSuperview reactSubviews] indexOfObject:view];
 }
 
-// Since the view of the controller can be a snapshot of type `UIView`,
-// when we want to check props of ScreenView, we need to get them from _initialView
 - (RNSScreenView *)screenView
 {
-  return _initialView;
+  return static_cast<RNSScreenView *>(self.view);
 }
 
 - (void)hideHeaderIfNecessary
@@ -2007,18 +2009,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot
+- (void)addSnapshotToView
 {
-  UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
-  if (self.view.window != nil) {
-    auto afterUpdates = self.screenView.snapshotAfterUpdates;
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
-    snapshot.frame = self.view.frame;
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-    [superView addSubview:snapshot];
+  if (self.view.window == nil) {
+    return;
   }
+
+  // The snapshot is added inside the screen view instead of replacing it, so `self.view` remains
+  // the view UIKit captured for the ongoing transition and is torn down (with the snapshot)
+  // consistently. Replacing the view mid-transition made iOS 26 teardown re-insert the original
+  // view into the hierarchy and remove only the snapshot, leaving a view that blocked all touches.
+  UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:self.screenView.snapshotAfterUpdates];
+  snapshot.frame = self.view.bounds;
+  // fill the whole screen view with the snapshot
+  snapshot.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.view addSubview:snapshot];
 }
 
 @end
