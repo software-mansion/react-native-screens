@@ -13,9 +13,10 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
-import RNRestart from 'react-native-restart';
+
 import { Button, SettingsSwitch } from '@apps/shared';
 import { SettingsMultiInput } from '@apps/shared/SettingsMultiInput';
+import RNRestart from '../../react-native-restart-interop.windows';
 
 type StackParamList = {
   Main: undefined;
