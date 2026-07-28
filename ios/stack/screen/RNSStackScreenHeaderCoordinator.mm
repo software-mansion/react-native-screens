@@ -450,7 +450,7 @@
 
     navItem.titleMenuProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
       if (weakEventsDelegate == nil || weakImageLoader == nil) {
-        return [UIMenu menuWithChildren:@[]];
+        return nil;
       }
       return [RNSStackHeaderMenuCoordinator buildUIMenuFromData:titleMenuData
                                        withHeaderEventsDelegate:weakEventsDelegate

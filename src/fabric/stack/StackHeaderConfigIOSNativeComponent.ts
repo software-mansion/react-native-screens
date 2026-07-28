@@ -6,7 +6,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
-import {
+import type {
   PlatformIconIOS,
   StackHeaderMenuIOS,
 } from './StackHeaderItemIOSNativeComponent';
