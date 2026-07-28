@@ -70,7 +70,9 @@ function AScreen() {
 
 function BScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
+    <CenteredLayoutView
+      testID="screenB-layout-view"
+      style={{ backgroundColor: Colors.GreenLight100 }}>
       <StackRouteInformation routeName="B" />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
