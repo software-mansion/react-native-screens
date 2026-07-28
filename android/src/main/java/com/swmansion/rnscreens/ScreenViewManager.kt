@@ -323,6 +323,11 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setIosOrientationInheritanceFixEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
     // END mark: iOS-only
 
     override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
