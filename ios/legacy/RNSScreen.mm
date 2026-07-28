@@ -102,6 +102,7 @@ struct ContentWrapperBox {
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
   _synchronousShadowStateUpdatesEnabled = YES;
+  _iosOrientationInheritanceFixEnabled = YES;
 }
 
 - (BOOL)getFullScreenSwipeShadowEnabled
@@ -1259,6 +1260,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
+  [self setIosOrientationInheritanceFixEnabled:newScreenProps.iosOrientationInheritanceFixEnabled];
+
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -1982,6 +1985,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (childOrientation != RNSOrientationInherit) {
       return childOrientation;
     }
+  }
+
+  // If flag is enabled, we're doing same evaluation as `[self supportedInterfaceOrientations]`
+  // but we fall back to `RNSOrientationInherit` if orientation is not set in order not to
+  // override parent's orientation. For more details see:
+  // https://github.com/software-mansion/react-native-screens/pull/4408
+  if (self.screenView.iosOrientationInheritanceFixEnabled) {
+    UIViewController *orientationVC = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
+    if ([orientationVC isKindOfClass:[RNSScreen class]]) {
+      return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask(
+          ((RNSScreen *)orientationVC).screenView.screenOrientation);
+    }
+    return RNSOrientationInherit;
   }
 
   return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
