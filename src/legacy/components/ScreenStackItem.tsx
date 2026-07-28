@@ -259,7 +259,9 @@ function getPositioningStyle(
 }
 
 type SplitStyleResult = {
-  screenStyles: Pick<ViewStyle, 'backgroundColor'>;
+  screenStyles: {
+    backgroundColor?: ViewStyle['backgroundColor'] | undefined;
+  };
   contentWrapperStyles: StyleProp<ViewStyle>;
 };
 
@@ -270,8 +272,9 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 
   const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
 
-  const screenStyles: Pick<ViewStyle, 'backgroundColor'> =
-    backgroundColor !== undefined ? { backgroundColor } : {};
+  const screenStyles = {
+    backgroundColor,
+  };
 
   return {
     screenStyles,

@@ -243,10 +243,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // We only want to center align the subviews on iOS.
-    // See https://github.com/software-mansion/react-native-screens/pull/2456
-    // `'stretch'` is the Yoga default, so it is equivalent to leaving
-    // `alignItems` unset https://github.com/react/react-native/blob/v0.87.0-rc.1/packages/react-native/ReactCommon/yoga/yoga/style/Style.h#L907
-    alignItems: Platform.OS === 'ios' ? 'center' : 'stretch',
+    alignItems: Platform.OS === 'ios' ? 'center' : undefined,
   },
 });

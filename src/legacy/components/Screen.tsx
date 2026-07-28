@@ -1,12 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Animated,
-  Platform,
-  type ViewStyle,
-  type ViewInstance,
-} from 'react-native';
+import { Animated, Platform, type ViewInstance } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -230,14 +225,7 @@ export const InnerScreen = React.forwardRef<ViewInstance, ScreenProps>(
             // https://github.com/software-mansion/react-native-screens/issues/2345
             // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
             // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
-            style={[
-              style,
-              // The cast is needed because `exactOptionalPropertyTypes` forbids an explicit `undefined` on `zIndex`
-              // after enabling strict types in RN 0.87 where it is typed as `zIndex?: number`.
-              { zIndex: undefined } as {
-                zIndex?: number | undefined;
-              } as ViewStyle,
-            ]}
+            style={[style, { zIndex: undefined }]}
             activityState={activityState}
             screenId={screenId}
             sheetAllowedDetents={resolvedSheetAllowedDetents}
