@@ -21,7 +21,9 @@ export function resolveIconAssetSources(
     };
   }
   if (icon.type === 'templateSource') {
-    const resolvedTemplateSource = Image.resolveAssetSource(icon.templateSource);
+    const resolvedTemplateSource = Image.resolveAssetSource(
+      icon.templateSource,
+    );
 
     if (!resolvedTemplateSource) {
       return undefined;
