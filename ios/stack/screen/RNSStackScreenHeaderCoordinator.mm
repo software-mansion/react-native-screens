@@ -59,10 +59,12 @@
 
       switch (item.placement) {
         case RNSHeaderItemPlacementLeading:
-          [_leadingBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
+          [_leadingBarButtonItems addObject:[self buildBarButtonItemForItem:item
+                                                                    atIndex:_leadingBarButtonItems.count]];
           break;
         case RNSHeaderItemPlacementTrailing:
-          [_trailingBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
+          [_trailingBarButtonItems addObject:[self buildBarButtonItemForItem:item
+                                                                     atIndex:_trailingBarButtonItems.count]];
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.customView != nil) {
@@ -136,10 +138,12 @@
 
   switch (targetItem.placement) {
     case RNSHeaderItemPlacementLeading: {
-      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem];
+      NSUInteger index =
+          oldBarButtonItem != nil ? [_leadingBarButtonItems indexOfObject:oldBarButtonItem] : NSNotFound;
+      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem
+                                                                  atIndex:index != NSNotFound ? index : 0];
 
       if (oldBarButtonItem != nil) {
-        NSUInteger index = [_leadingBarButtonItems indexOfObject:oldBarButtonItem];
         if (index != NSNotFound) {
           _leadingBarButtonItems[index] = newBarButtonItem;
         } else {
@@ -151,10 +155,12 @@
       break;
     }
     case RNSHeaderItemPlacementTrailing: {
-      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem];
+      NSUInteger index =
+          oldBarButtonItem != nil ? [_trailingBarButtonItems indexOfObject:oldBarButtonItem] : NSNotFound;
+      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem
+                                                                  atIndex:index != NSNotFound ? index : 0];
 
       if (oldBarButtonItem != nil) {
-        NSUInteger index = [_trailingBarButtonItems indexOfObject:oldBarButtonItem];
         if (index != NSNotFound) {
           _trailingBarButtonItems[index] = newBarButtonItem;
         } else {
@@ -416,11 +422,24 @@
 }
 
 - (UIBarButtonItem *)buildBarButtonItemForItem:(id<RNSStackHeaderItemDataProviding>)item
+                                      atIndex:(NSUInteger)index
 {
   UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
                                                                     withFrameChangeDelegate:_frameChangeDelegate
                                                                    withHeaderEventsDelegate:_eventsDelegate
                                                                             withImageLoader:_imageLoader];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    // Give every item a stable identifier derived from the slot it occupies. Without it UIKit falls
+    // back to content-based heuristics and treats the items of the pushed screen as a brand new set,
+    // replaying the item appear animation on every transition instead of morphing them in place.
+    barButtonItem.identifier = [NSString
+        stringWithFormat:@"rns-header-item-%@-%lu",
+                         item.placement == RNSHeaderItemPlacementLeading ? @"leading" : @"trailing",
+                         (unsigned long)index];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
