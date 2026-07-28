@@ -17,7 +17,10 @@ whose prop changed.
 
 ## E2E test
 
-Other — automation is not implemented yet.
+Incomplete.
+
+- All steps are covered, except for checking the order of the overflow entries
+("Title A", "Title B", "Title C"). Presence and visibility are checked instead.
 
 ## Prerequisites
 

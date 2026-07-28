@@ -64,3 +64,5 @@ export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
+export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
+  'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
