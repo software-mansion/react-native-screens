@@ -6,7 +6,7 @@ import {
   ScreenStackHeaderConfig,
 } from 'react-native-screens';
 
-type ScreenKey = 'home' | 'datailWithBackTitle' | 'datailWithoutBackTitle';
+type ScreenKey = 'home' | 'detailWithBackTitle' | 'detailWithoutBackTitle';
 
 export default function App() {
   const [pushedScreenKey, setPushedScreenKey] =
@@ -18,48 +18,37 @@ export default function App() {
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <Button
             title="Push with back title"
-            onPress={() => setPushedScreenKey('datailWithBackTitle')}
+            onPress={() => setPushedScreenKey('detailWithBackTitle')}
           />
           <Button
             title="Push without back title"
-            onPress={() => setPushedScreenKey('datailWithoutBackTitle')}
+            onPress={() => setPushedScreenKey('detailWithoutBackTitle')}
           />
         </View>
       </Screen>
-      {pushedScreenKey === 'datailWithBackTitle' && (
+      {(pushedScreenKey === 'detailWithBackTitle' ||
+        pushedScreenKey === 'detailWithoutBackTitle') && (
         <Screen
-          key="datailWithBackTitle"
+          key={pushedScreenKey}
           activityState={2}
           isNativeStack
           onDismissed={() => {
             setPushedScreenKey('home');
           }}>
           <ScreenStackHeaderConfig
-            title="Detail with back title"
-            backTitleVisible={true}
+            title={
+              pushedScreenKey === 'detailWithBackTitle'
+                ? 'Detail with back title'
+                : 'Detail without back title'
+            }
+            backTitleVisible={pushedScreenKey === 'detailWithBackTitle'}
             backTitle="Hi"
           />
           <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text>Back chevron should have title</Text>
-            <Button title="Pop" onPress={() => setPushedScreenKey('home')} />
-          </View>
-        </Screen>
-      )}
-      {pushedScreenKey === 'datailWithoutBackTitle' && (
-        <Screen
-          key="datailWithBackTitle"
-          activityState={2}
-          isNativeStack
-          onDismissed={() => {
-            setPushedScreenKey('home');
-          }}>
-          <ScreenStackHeaderConfig
-            title="Detail without back title"
-            backTitleVisible={false}
-            backTitle="Hi"
-          />
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text>Back chevron should have no title</Text>
+            <Text>
+              Back chevron should have{' '}
+              {pushedScreenKey === 'detailWithBackTitle' ? 'title' : 'no title'}
+            </Text>
             <Button title="Pop" onPress={() => setPushedScreenKey('home')} />
           </View>
         </Screen>
