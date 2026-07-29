@@ -106,21 +106,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+  [super viewWillAppear:animated];
   [[self reactEventEmitter] emitOnWillAppear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  [super viewDidAppear:animated];
   [[self reactEventEmitter] emitOnDidAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+  [super viewWillDisappear:animated];
   [[self reactEventEmitter] emitOnWillDisappear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+  [super viewDidDisappear:animated];
   [[self reactEventEmitter] emitOnDidDisappear];
 }
 
