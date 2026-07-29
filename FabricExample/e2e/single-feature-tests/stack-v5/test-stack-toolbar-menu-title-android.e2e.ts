@@ -1,6 +1,7 @@
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfAndroid,
+  getElementAttributes,
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -8,8 +9,7 @@ import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
-// Type-only import: it is erased at compile time, so no screen code — and none
-// of its React Native dependencies — is pulled into the Detox test bundle.
+// Type-only: erased at compile time, so no screen code reaches the test bundle.
 import type {
   CmdCondensedOption,
   CmdTitleOption,
@@ -23,19 +23,18 @@ import type {
   TooltipOption,
 } from '@apps/tests/single-feature-tests/stack-v5/test-stack-toolbar-menu-title-android';
 
-// testIDs the screen assigns.
 const SCROLL_VIEW = 'toolbar-menu-title-scrollview';
 const SEND_COMMAND_BUTTON = 'send-command-button';
+const RESULT_LABEL = 'last-clicked-result';
 
-// Strings the screen — or Android itself — renders. The imported types tie
-// these to the screen, so renaming a title there fails to compile here.
+const DISMISS_TIMEOUT_MS = 5000;
+
 const HEADER_TITLE: HeaderTitle = 'Title / Condensed / Tooltip';
 const ITEM_1_TITLE: ItemTitle = 'First Item';
 const ITEM_2_TITLE: ItemTitle = 'Second Item Title';
 const ITEM_3_TITLE: ItemTitle = 'Third Item Long Title';
 const OVERFLOW_BUTTON = 'More options';
 
-/** The props each menu item exposes as a picker, and the values it offers. */
 interface ItemProps {
   icon: IconOption;
   showAsAction: ShowAsActionOption;
@@ -43,7 +42,6 @@ interface ItemProps {
   tooltipText: TooltipOption;
 }
 
-/** The props the "Send Command" section exposes, and the values it offers. */
 interface CommandProps {
   targetId: IdOption;
   title: CmdTitleOption;
@@ -51,27 +49,18 @@ interface CommandProps {
   tooltipText: CmdTooltipOption;
 }
 
-/**
- * Every string a Toolbar button or an overflow row can display. `undefined` and
- * `no change` are picker sentinels for "unset" and "leave alone", so they are
- * never rendered and are excluded here.
- */
+/** Every string a Toolbar button or overflow row can display. */
 type MenuText = Exclude<
   ItemTitle | TitleCondensedOption | CmdTitleOption | TooltipOption,
   'undefined' | 'no change'
 >;
 
-/** Brings a control into view; the screen's settings list is scrollable. */
 async function scrollToControl(id: string) {
   await element(by.id(SCROLL_VIEW)).scrollTo('top');
   await scrollUntilVisible(id, SCROLL_VIEW);
 }
 
-/**
- * Opens a picker, taps one of its options and closes it again. The picker is
- * left closed so that option rows never interfere with the `by.text` matchers
- * used to assert the Toolbar item labels.
- */
+/** Opens a picker, taps an option and closes the picker again. */
 async function selectOption(pickerId: string, optionId: string) {
   await scrollToControl(pickerId);
   await element(by.id(pickerId)).tap();
@@ -83,18 +72,13 @@ async function selectOption(pickerId: string, optionId: string) {
   await element(by.id(pickerId)).tap();
 }
 
-/**
- * `SettingsPicker` derives the testID of its label and of every option row from
- * the `label` it is given, replacing spaces with dashes and lowercasing the
- * result. The screen labels its per-item pickers `Slot <n> <prop>` and its
- * command pickers `cmd <prop>`, so the two builders below are that same
- * derivation — renaming a label on the screen breaks the ids here.
- */
+// `SettingsPicker` derives its testIDs from the label it is given, replacing
+// spaces with dashes and lowercasing; renaming a label on the screen breaks the
+// ids built below.
 const pickerId = (label: string) => `${label}-picker`.toLowerCase();
 const optionId = (label: string, value: string) =>
   `${label}-${value}`.toLowerCase();
 
-/** The screen renders the three menu items as slots 1–3, in id order. */
 const SLOT_NUMBER = {
   'item-1': 1,
   'item-2': 2,
@@ -110,11 +94,6 @@ async function selectItemProp<Prop extends keyof ItemProps>(
   await selectOption(pickerId(label), optionId(label, value));
 }
 
-/**
- * The label fragment each command picker uses. All but `targetId` are the prop
- * name itself; the screen spells that one "target id", which dashes to
- * `target-id`.
- */
 const COMMAND_LABELS = {
   targetId: 'target-id',
   title: 'title',
@@ -137,48 +116,48 @@ async function sendCommand() {
 
 const openOverflowMenu = () => element(by.label(OVERFLOW_BUTTON)).tap();
 
+/** A point on the inert result label, left of the right-anchored popup. */
+async function pointOutsideOverflowMenu() {
+  await element(by.id(SCROLL_VIEW)).scrollTo('top');
+  const { frame } = await getElementAttributes({
+    by: 'id',
+    value: RESULT_LABEL,
+  });
+
+  return { x: frame.x + frame.width / 10, y: frame.y + frame.height / 2 };
+}
+
 /**
- * Opens the overflow menu, runs `assertions` against it and always dismisses it
- * afterwards — including when an assertion throws, so a failing test cannot
- * leak an open popup into the next one. Opening happens outside the `try` so
- * that a failure to open never triggers a dismissal that has nothing to close.
- *
- * `assertions` can only address views inside the popup: while it is open,
- * Espresso resolves matchers against the popup's window, so the Toolbar and the
- * settings list below are out of scope. Dismissal has to be a back press for
- * the same reason — there is no view outside the popup left to tap.
+ * While the menu is open, Espresso resolves matchers against its window, so
+ * `assertions` can only address rows inside it — and the dismissal point has to
+ * be measured beforehand and tapped by coordinates.
  */
 async function withOverflowMenu(assertions: () => Promise<void>) {
+  const dismissPoint = await pointOutsideOverflowMenu();
+
   await openOverflowMenu();
   try {
     await assertions();
   } finally {
-    await device.pressBack();
+    // `frame` is in screen coordinates, so the status bar must not be skipped.
+    await device.tap(dismissPoint, false);
+    await waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
+      .not.toExist()
+      .withTimeout(DISMISS_TIMEOUT_MS);
   }
 }
 
-/**
- * A row of the Toolbar's overflow menu popup, addressed by its title. Scoping
- * to the popup's list keeps the matcher from resolving a Toolbar action button
- * — or the settings controls below it — that happens to carry the same text.
- */
 const overflowRow = (title: MenuText): Detox.NativeMatcher =>
   by
     .text(title)
     .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
 
-/**
- * A Toolbar action button addressed by its content description, which is what
- * an icon-only button exposes (it falls back to the item's full `title`).
- */
+// An action button exposes its full title as content description while it is
+// icon-only, and renders text — `titleCondensed` when set — instead once there
+// is room for a label. It never has both.
 const toolbarButtonByLabel = (label: MenuText): Detox.NativeMatcher =>
   by.label(label).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
 
-/**
- * A Toolbar action button addressed by the text it renders — `titleCondensed`
- * when set, the full `title` otherwise. A button only carries text when it has
- * no icon, or when there is room to show both.
- */
 const toolbarButtonByText = (text: MenuText): Detox.NativeMatcher =>
   by.text(text).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
 
@@ -189,6 +168,10 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
       'Stackv5',
       'test-stack-toolbar-menu-title-android',
     );
+  });
+
+  afterAll(async () => {
+    await device.setOrientation('portrait');
   });
 
   describe('baseline', () => {
@@ -239,11 +222,30 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
     });
   });
 
-  // Scenario steps 6-8 — the text label appearing next to the icon only when
-  // there is room — are not covered here. They require rotating the device, and
-  // `device.setOrientation` leaves the app without a resumed activity on the
-  // headless emulator CI runs, which takes down every test after it. The repo
-  // restricts orientation tests to iOS for the same reason (see Test528).
+  describe('titleCondensed next to an icon depends on the available room', () => {
+    it('should hide the label next to the icon in portrait', async () => {
+      await selectItemProp('item-1', 'icon', 'searchIcon');
+      await selectItemProp('item-1', 'showAsAction', 'alwaysWithText');
+      await selectItemProp('item-1', 'titleCondensed', 'Cond');
+
+      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).toBeVisible();
+      await expect(element(toolbarButtonByText('Cond'))).not.toExist();
+    });
+
+    it('should show the label next to the icon in landscape', async () => {
+      await device.setOrientation('landscape');
+
+      await expect(element(toolbarButtonByText('Cond'))).toBeVisible();
+      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).not.toExist();
+    });
+
+    it('should hide the label again after rotating back to portrait', async () => {
+      await device.setOrientation('portrait');
+
+      await expect(element(toolbarButtonByLabel(ITEM_1_TITLE))).toBeVisible();
+      await expect(element(toolbarButtonByText('Cond'))).not.toExist();
+    });
+  });
 
   describe('setting tooltipText does not affect overflow rows', () => {
     it('should render the overflow row with the full title', async () => {

@@ -17,8 +17,7 @@ import {
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
-// The option types below are exported for the e2e test covering this screen,
-// which derives its picker values from them instead of restating the lists.
+// The option types are exported for the e2e test covering this screen.
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
 export type IdOption = (typeof ID_OPTIONS)[number];
 
@@ -248,9 +247,6 @@ function MainScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Send Command</Text>
-        {/* The labels are prefixed with `cmd` so that the option testIDs
-            derived from them by `SettingsPicker` do not clash with the
-            per-slot pickers below. */}
         <SettingsPicker<IdOption>
           label="cmd target id"
           value={cmdTargetId}
@@ -286,7 +282,11 @@ function MainScreen() {
         />
 
         <Text style={styles.heading}>Result</Text>
-        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        {/* The e2e test taps this label to dismiss the overflow menu, so it
+            must stay non-interactive. */}
+        <Text testID="last-clicked-result" style={styles.result}>
+          Last clicked: {lastClicked ?? '—'}
+        </Text>
 
         <Text style={styles.heading}>Menu Items — Props</Text>
         <SlotControls
@@ -311,8 +311,8 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <Text style={styles.slotLabel}>
             Slot {i + 1} ({slot.id}) — title "{ITEM_TITLES[slot.id]}"
           </Text>
-          {/* The labels carry the slot number so that the option testIDs
-              derived from them by `SettingsPicker` stay unique across slots. */}
+          {/* Labels carry the slot number to keep the testIDs `SettingsPicker`
+              derives from them unique across slots. */}
           <SettingsPicker<IconOption>
             label={`Slot ${i + 1} icon`}
             value={slot.icon}

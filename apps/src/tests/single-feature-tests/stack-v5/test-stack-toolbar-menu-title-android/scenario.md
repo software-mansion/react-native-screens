@@ -16,11 +16,10 @@ in portrait on a phone).
 
 ## E2E test
 
-Incomplete: covers steps 1–5 and 12–16.
+Incomplete: covers steps 1–8 and 12–16.
 
 Not automated:
 
-- Steps 6–8 (orientation),
 - Steps 9–11 and 17–18 (long-press tooltips).
 
 ## Prerequisites
