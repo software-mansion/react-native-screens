@@ -12,7 +12,7 @@
 
 - (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView
 {
-  if (self = [super initWithNibName:nil bundle:nil]) {
+  if (self = [super init]) {
     _splitScreenComponentView = splitScreenComponentView;
   }
 
