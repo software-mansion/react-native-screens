@@ -48,17 +48,14 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
     Component: FirstStackScreen,
-    options: {},
   },
   {
     name: 'Second',
     Component: SecondStackScreen,
-    options: {},
   },
   {
     name: 'Third',
     Component: ThirdStackScreen,
-    options: {},
   },
 ];
 
