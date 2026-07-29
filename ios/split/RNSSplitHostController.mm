@@ -354,7 +354,9 @@ static const NSInteger maxNumberOfInspectors = 1;
               @"[RNScreens] Expected RNSSplitScreenController but got %@",
               NSStringFromClass(maybeSplitScreenController.class));
 
-    [splitScreenControllers addObject:(RNSSplitScreenController *)maybeSplitScreenController];
+    if ([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class]) {
+      [splitScreenControllers addObject:(RNSSplitScreenController *)maybeSplitScreenController];
+    }
   }
 
   return splitScreenControllers;
