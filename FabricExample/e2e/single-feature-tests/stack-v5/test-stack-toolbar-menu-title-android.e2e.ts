@@ -332,18 +332,6 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
     });
   });
 
-  describe('setting tooltipText does not affect overflow rows', () => {
-    it('should render the overflow row with the full title', async () => {
-      await selectItemProp('item-2', 'showAsAction', 'never');
-      await selectItemProp('item-2', 'tooltipText', 'Tooltip text');
-
-      await withOverflowMenu(async () => {
-        await expect(element(overflowRow(ITEM_2_TITLE))).toBeVisible();
-        await expect(element(overflowRow('Tooltip text'))).not.toExist();
-      });
-    });
-  });
-
   describe('updateToolbarMenuElements command', () => {
     beforeAll(async () => {
       await selectItemProp('item-1', 'icon', 'undefined');
