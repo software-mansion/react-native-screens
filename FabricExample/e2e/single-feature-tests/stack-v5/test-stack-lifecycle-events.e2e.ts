@@ -189,7 +189,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
     // bubbles up to pop the whole NestedStack container rather than a screen
     // within it. The native gesture, the native header back button, and the Pop
     // button (the following tests) must all produce this identical container-pop
-    // event set — see issue #1459 and the E2E section in scenario.md.
+    // event set.
     await element(by.id('nested-home-screen-layout-view')).swipe('right');
 
     await waitForRoute('Home');
