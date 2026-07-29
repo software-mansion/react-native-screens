@@ -1,3 +1,4 @@
+import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
@@ -170,11 +171,36 @@ async function closeMenuIfOpen() {
   await waitForScreen();
 }
 
+// Rows are stacked vertically, so their on-screen positions carry the order the
+// menu was built in. Only callable while the menu is open.
+async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
+  const rows: { title: MenuTitle; top: number }[] = [];
+
+  for (const title of titles) {
+    const attributes = await element(
+      by
+        .text(title)
+        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
+    ).getAttributes();
+
+    if ('elements' in attributes) {
+      throw new Error(`Expected a single menu row titled "${title}".`);
+    }
+
+    rows.push({ title, top: attributes.frame.y });
+  }
+
+  const topToBottom = [...rows].sort((a, b) => a.top - b.top).map(r => r.title);
+  jestExpect(topToBottom).toEqual([...titles]);
+}
+
 // Asserts the exact menu contents, then closes it. `expectedVisible` is a
 // non-empty subset of ALL_TITLES — a title outside that set would go unasserted,
-// and the first entry gates the open animation.
+// and the first entry gates the open animation. With `checkOrder`, the entries
+// must also appear top to bottom in the order given.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
+  { checkOrder = false }: { checkOrder?: boolean } = {},
 ): Promise<void> {
   await openMenu();
 
@@ -193,6 +219,10 @@ async function expectMenuItems(
             .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
         ),
       ).toBeVisible();
+    }
+
+    if (checkOrder) {
+      await expectMenuOrder(expectedVisible);
     }
 
     for (const title of ALL_TITLES) {
@@ -242,9 +272,11 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
   });
 
   describe('baseline — initial render from props', () => {
-    it('renders the header title and the three prop-configured menu items', async () => {
+    it('renders the header title and the three prop-configured menu items in order', async () => {
       await expect(element(by.text(HEADER_TITLE))).toBeVisible();
-      await expectMenuItems(['Title A', 'Title B', 'Title C']);
+      await expectMenuItems(['Title A', 'Title B', 'Title C'], {
+        checkOrder: true,
+      });
     });
 
     it('closes the menu and reports item-1 when tapping "Title A"', async () => {

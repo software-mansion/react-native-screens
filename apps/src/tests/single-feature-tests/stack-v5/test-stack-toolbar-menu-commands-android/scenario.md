@@ -17,10 +17,7 @@ whose prop changed.
 
 ## E2E test
 
-Incomplete.
-
-- All steps are covered, except for checking the order of the overflow entries
-("Title A", "Title B", "Title C"). Presence and visibility are checked instead.
+Full: All steps are covered.
 
 ## Prerequisites
 
