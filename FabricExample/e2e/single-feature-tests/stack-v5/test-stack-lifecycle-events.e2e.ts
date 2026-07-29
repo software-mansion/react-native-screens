@@ -5,6 +5,7 @@ import {
   describeIfiOS,
   selectSingleFeatureTestsScreen,
   dismissToast,
+  getMatches,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
@@ -286,21 +287,6 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   const PUSH_NESTED_STACK = 'PUSH NESTEDSTACK';
   const PUSH_NESTED_A = 'PUSH NESTEDA';
   const POP = 'POP';
-
-  /**
-   * Returns every element matching `matcher`. Unlike iOS, react-native-screens
-   * keeps covered screens attached on Android, so a matcher can resolve to one
-   * element per stacked screen. When more than one matches, `getAttributes()`
-   * returns a `{ elements: [...] }` wrapper instead of a flat attributes
-   * object; this normalizes both cases to an array ordered so the topmost
-   * stacked screen is last.
-   */
-  async function getMatches(
-    matcher: Detox.NativeMatcher,
-  ): Promise<AnyAttributes[]> {
-    const attrs = await element(matcher).getAttributes();
-    return 'elements' in attrs ? (attrs.elements as AnyAttributes[]) : [attrs];
-  }
 
   /** Taps a Push/Pop button on the topmost stacked screen (the last match). */
   async function tapTopmostButton(title: string): Promise<void> {

@@ -5,6 +5,7 @@ import {
   describeIfAndroid,
   describeIfiOS,
   getElementAttributes,
+  getMatches,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
@@ -218,21 +219,6 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   const PUSH_A = 'PUSH A';
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
-
-  /**
-   * Returns every element matching `matcher`. Unlike iOS, react-native-screens
-   * keeps covered screens attached on Android, so a matcher can resolve to one
-   * element per stacked screen. When more than one matches, `getAttributes()`
-   * returns a `{ elements: [...] }` wrapper instead of a flat attributes
-   * object; this normalizes both cases to an array ordered so the topmost
-   * stacked screen is last.
-   */
-  async function getMatches(
-    matcher: Detox.NativeMatcher,
-  ): Promise<AnyAttributes[]> {
-    const attrs = await element(matcher).getAttributes();
-    return 'elements' in attrs ? (attrs.elements as AnyAttributes[]) : [attrs];
-  }
 
   /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
   async function readTopmostText(testID: string): Promise<string> {

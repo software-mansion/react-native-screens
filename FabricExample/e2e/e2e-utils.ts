@@ -1,5 +1,9 @@
 import { device, expect, element, by } from 'detox';
-import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
+import {
+  AndroidElementAttributes,
+  IosElementAttributes,
+  NativeMatcher,
+} from 'detox/detox';
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -192,4 +196,16 @@ export async function dismissToast(message: string) {
     .toBeVisible()
     .withTimeout(3000);
   await element(by.label(message)).tap();
+}
+
+/**
+ * Returns every element matching `matcher`, normalizing `getAttributes()`'s
+ * single-element object and multi-element `{ elements: [...] }` wrapper to one
+ * array. Ordered by view hierarchy, so the topmost stacked screen is last.
+ */
+export async function getMatches(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes[]> {
+  const attrs = await element(matcher).getAttributes();
+  return 'elements' in attrs ? attrs.elements : [attrs];
 }
