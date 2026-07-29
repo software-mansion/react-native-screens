@@ -4,6 +4,8 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
+  getMatches,
+  getSingleMatch,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
@@ -11,9 +13,7 @@ import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
   top: number;
 }> {
-  const attrs = (await element(
-    by.id(testID),
-  ).getAttributes()) as IosElementAttributes;
+  const attrs = (await getSingleMatch(by.id(testID))) as IosElementAttributes;
   return { top: attrs.safeAreaInsets.top };
 }
 
@@ -30,8 +30,7 @@ async function getTabBarFrame(): Promise<{
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.type(CLASS_NAME_UI_TAB_BAR)).getAttributes();
-  return (attrs as IosElementAttributes).frame;
+  return (await getMatches(by.type(CLASS_NAME_UI_TAB_BAR)))[0].frame;
 }
 
 async function getElementFrame(testID: string): Promise<{
@@ -40,14 +39,7 @@ async function getElementFrame(testID: string): Promise<{
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.id(testID)).getAttributes();
-
-  if ('elements' in attrs) {
-    throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for testID: "${testID}".`,
-    );
-  }
-  return (attrs as IosElementAttributes).frame;
+  return (await getSingleMatch(by.id(testID))).frame;
 }
 
 function isAboveTabBar(

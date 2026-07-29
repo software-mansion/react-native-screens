@@ -1,29 +1,24 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { IosElementAttributes } from 'detox/detox';
-import { selectSingleFeatureTestsScreen, describeIfiOS } from '../../e2e-utils';
-import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+import {
+  selectSingleFeatureTestsScreen,
+  describeIfiOS,
+  getMatches,
+  isIOSVersionAtLeast,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LABEL,
   CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY,
 } from '../../native-class-names';
-const {
-  getIOSVersionNumber,
-} = require('../../../../scripts/e2e/ios-devices.js');
 
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
 }
 
 async function getTabBarItemFrameX(tabLabel: string): Promise<number> {
-  const attrs = (await element(by.label(tabLabel))
-    .atIndex(0)
-    .getAttributes()) as
-    | IosElementAttributes
-    | { elements: IosElementAttributes[] };
-  const frame = 'frame' in attrs ? attrs.frame : attrs.elements[0]?.frame;
+  const frame = (await getMatches(by.label(tabLabel)))[0]?.frame;
   if (!frame) {
     throw new Error(`Could not read frame for tab labelled "${tabLabel}"`);
   }
@@ -36,13 +31,6 @@ async function tapSystemTitleOption() {
 
 async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
-}
-
-function isIOSVersionAtLeast(version: string): boolean {
-  return (
-    device.getPlatform() === 'ios' &&
-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
-  );
 }
 
 const tabBarButtonType = isIOSVersionAtLeast('26.0')

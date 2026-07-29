@@ -1,16 +1,10 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
-
-type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
-
-async function getElementAttributes(
-  testLabel: string,
-): Promise<ElementAttributes> {
-  const attrs = await element(by.label(testLabel)).getAttributes();
-  return attrs as ElementAttributes;
-}
+import {
+  describeIfiOS,
+  getSingleMatch,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 
 async function scrollTo(selector: { id: string } | { text: string }) {
   const el =
@@ -36,8 +30,8 @@ async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
 }
 
 async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
-  const t1 = await getElementAttributes('tab-bar-item-1-label');
-  const t2 = await getElementAttributes('tab-bar-item-2-label');
+  const t1 = await getSingleMatch(by.label('tab-bar-item-1-label'));
+  const t2 = await getSingleMatch(by.label('tab-bar-item-2-label'));
   if (shouldBeLeft) {
     jestExpect(t2.frame.x).toBeGreaterThan(t1.frame.x);
   } else {

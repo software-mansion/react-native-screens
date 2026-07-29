@@ -1,11 +1,12 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
-  getElementAttributes,
+  getSingleMatch,
+  readTopmostText,
   selectSingleFeatureTestsScreen,
+  tapTopmostButton,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
@@ -34,8 +35,6 @@ import {
  *   launch documented in the scenario.
  */
 
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
 describeIfiOS('Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
@@ -44,10 +43,7 @@ describeIfiOS('Stack v5: simple navigation', () => {
    * unambiguously to the current screen.
    */
   async function readRouteKey(): Promise<string> {
-    const attrs = await getElementAttributes({
-      by: 'id',
-      value: 'stack-route-key',
-    });
+    const attrs = await getSingleMatch(by.id('stack-route-key'));
     const value = attrs.text ?? attrs.label ?? '';
     return value.trim();
   }
@@ -219,40 +215,9 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
 
-  /**
-   * Returns every element matching `matcher`. Unlike iOS, react-native-screens
-   * keeps covered screens attached on Android, so a matcher can resolve to one
-   * element per stacked screen. When more than one matches, `getAttributes()`
-   * returns a `{ elements: [...] }` wrapper instead of a flat attributes
-   * object; this normalizes both cases to an array ordered so the topmost
-   * stacked screen is last.
-   */
-  async function getMatches(
-    matcher: Detox.NativeMatcher,
-  ): Promise<AnyAttributes[]> {
-    const attrs = await element(matcher).getAttributes();
-    return 'elements' in attrs ? (attrs.elements as AnyAttributes[]) : [attrs];
-  }
-
-  /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
-  async function readTopmostText(testID: string): Promise<string> {
-    const matches = await getMatches(by.id(testID));
-    const top = matches[matches.length - 1];
-    return (top.text ?? top.label ?? '').trim();
-  }
-
   /** Reads the topmost route's unique `routeKey`. */
   async function readRouteKey(): Promise<string> {
     return readTopmostText('stack-route-key');
-  }
-
-  /** Taps a Push/Pop button on the topmost stacked screen (the last match). */
-  async function tapTopmostButton(title: string): Promise<void> {
-    const matcher = by.text(title);
-    const count = (await getMatches(matcher)).length;
-    await element(matcher)
-      .atIndex(count - 1)
-      .tap();
   }
 
   /**
