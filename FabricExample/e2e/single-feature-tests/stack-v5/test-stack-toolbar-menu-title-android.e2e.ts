@@ -25,10 +25,24 @@ import type {
 const SCROLL_VIEW = 'toolbar-menu-title-scrollview';
 const SEND_COMMAND_BUTTON = 'send-command-button';
 
-const DISMISS_TIMEOUT_MS = 5000;
-// Only probes whether the popup is up, so it must not sit through a long wait
-// on the common "already closed" path.
-const MENU_PRESENCE_TIMEOUT_MS = 1000;
+// Detox's idle sync does not cover popup window animations, so every wait that
+// straddles the overflow menu opening or dismissing has to be explicit.
+const MENU_ANIMATION_TIMEOUT_MS = 5000;
+
+// Probes an already-settled popup rather than an animation — by the time it is
+// used the menu is either up or was never opened.
+const MENU_PRESENCE_TIMEOUT_MS = 250;
+
+/**
+ * The app draws edge to edge, so the bottom of the settings list is covered by
+ * the system navigation bar. Detox stops scrolling the moment a view is 75%
+ * visible, which parks it in exactly that strip — and a tap there lands on the
+ * Home button, sends the app to the launcher and fails every later step with
+ * "No activities in stage RESUMED". Keep this fraction of the list's height
+ * free below a control before tapping it; it is comfortably more than a
+ * navigation bar is tall.
+ */
+const NAV_BAR_CLEARANCE_RATIO = 0.1;
 
 const HEADER_TITLE: HeaderTitle = 'Title / Condensed / Tooltip';
 const ITEM_1_TITLE: ItemTitle = 'First Item';
@@ -56,9 +70,42 @@ type MenuText = Exclude<
   'undefined' | 'no change'
 >;
 
+async function frameOf(id: string): Promise<Detox.ElementAttributeFrame> {
+  const attributes = await element(by.id(id)).getAttributes();
+
+  if ('elements' in attributes) {
+    throw new Error(`Expected a single view with testID "${id}".`);
+  }
+
+  return attributes.frame;
+}
+
+/**
+ * Brings a control into view and, when Detox left it under the navigation bar,
+ * scrolls just far enough for it to clear it — see `NAV_BAR_CLEARANCE_RATIO`.
+ */
+async function scrollIntoTappableView(id: string) {
+  await scrollUntilVisible(id, SCROLL_VIEW);
+
+  const list = await frameOf(SCROLL_VIEW);
+  const control = await frameOf(id);
+  const clearance = list.height * NAV_BAR_CLEARANCE_RATIO;
+  const overlap = Math.ceil(
+    control.y + control.height + clearance - (list.y + list.height),
+  );
+
+  if (overlap > 0) {
+    // Starts the swipe at mid-list: a gesture beginning in the navigation bar
+    // strip would be swallowed by the system just like a tap there.
+    await element(by.id(SCROLL_VIEW)).scroll(overlap, 'down', Number.NaN, 0.5);
+  }
+}
+
+// Rewinds to the top first, so a target above the current offset is still
+// reachable — `scrollUntilVisible` only scrolls one way.
 async function scrollToControl(id: string) {
   await element(by.id(SCROLL_VIEW)).scrollTo('top');
-  await scrollUntilVisible(id, SCROLL_VIEW);
+  await scrollIntoTappableView(id);
 }
 
 /** Opens a picker, taps an option and closes the picker again. */
@@ -66,7 +113,9 @@ async function selectOption(pickerId: string, optionId: string) {
   await scrollToControl(pickerId);
   await element(by.id(pickerId)).tap();
 
-  await scrollUntilVisible(optionId, SCROLL_VIEW);
+  // The rows open directly below the picker, so they land in the navigation bar
+  // strip even more readily than the picker itself did.
+  await scrollIntoTappableView(optionId);
   await element(by.id(optionId)).tap();
 
   await scrollToControl(pickerId);
@@ -120,11 +169,21 @@ const openOverflowMenu = () => element(by.label(OVERFLOW_BUTTON)).tap();
 const overflowMenu = () =>
   element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
 
+// Detox resolves matchers against a single window: while the popup holds focus
+// nothing behind it is in the searched hierarchy, so the popup going away is
+// not enough — the screen itself has to become addressable again.
+async function waitForScreen() {
+  await waitFor(element(by.id(SCROLL_VIEW)))
+    .toBeVisible()
+    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+}
+
 /**
- * Dismisses the overflow popup with the back button. A left-over popup is not a
- * local failure: Espresso resolves every later matcher against the popup window
- * instead of the activity, so the whole rest of the suite fails on views that
- * are plainly there.
+ * Presses Back only when the popup is actually up: a menu that never opened
+ * would otherwise take the Back press itself and pop the test screen. A
+ * left-over popup is not a local failure either — every later matcher would
+ * resolve against the popup window instead of the activity, so the whole rest
+ * of the suite fails on views that are plainly there.
  */
 async function closeOverflowMenuIfOpen() {
   const isOpen = await waitFor(overflowMenu())
@@ -140,7 +199,7 @@ async function closeOverflowMenuIfOpen() {
   }
 
   await device.pressBack();
-  await waitFor(overflowMenu()).not.toExist().withTimeout(DISMISS_TIMEOUT_MS);
+  await waitForScreen();
 }
 
 /**
@@ -149,10 +208,23 @@ async function closeOverflowMenuIfOpen() {
  */
 async function withOverflowMenu(assertions: () => Promise<void>) {
   await openOverflowMenu();
+
+  let assertionFailed = false;
+
   try {
     await assertions();
+  } catch (error) {
+    assertionFailed = true;
+    throw error;
   } finally {
-    await closeOverflowMenuIfOpen();
+    try {
+      await closeOverflowMenuIfOpen();
+    } catch (cleanupError) {
+      // A throw from `finally` would replace the error that actually failed.
+      if (!assertionFailed) {
+        throw cleanupError;
+      }
+    }
   }
 }
 
