@@ -373,13 +373,20 @@ static const NSInteger maxNumberOfInspectors = 1;
 - (NSArray<RNSSplitScreenComponentView *> *)splitReactSubviews
 {
   NSArray<RNSSplitScreenComponentView *> *reactSubviews = [_splitHostComponentView reactSubviews];
+  NSMutableArray<RNSSplitScreenComponentView *> *splitReactSubviews =
+      [NSMutableArray arrayWithCapacity:reactSubviews.count];
+
   for (RNSSplitScreenComponentView *subview in reactSubviews) {
     RCTAssert([subview isKindOfClass:RNSSplitScreenComponentView.class],
               @"[RNScreens] Expected RNSSplitScreenComponentView but got %@",
               NSStringFromClass(subview.class));
+
+    if ([subview isKindOfClass:RNSSplitScreenComponentView.class]) {
+      [splitReactSubviews addObject:subview];
+    }
   }
 
-  return reactSubviews;
+  return splitReactSubviews;
 }
 
 #pragma mark - RNSSplitNavigationControllerViewFrameObserver
