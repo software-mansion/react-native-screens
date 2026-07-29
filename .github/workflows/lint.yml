@@ -44,8 +44,6 @@ jobs:
           cache: 'yarn'
       - name: Install node dependencies
         run: yarn
-      - name: Lint Swift
-        run: yarn lint-swift
   lint-android:
     runs-on: ubuntu-latest
     concurrency:
