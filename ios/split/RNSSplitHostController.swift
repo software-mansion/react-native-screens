@@ -413,7 +413,8 @@ extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver 
   ///
   /// @param splitNavCtrl The navigation controller whose frame origin changed.
   ///
-  func splitNavCtrlViewDidChangeFrameOrigin(
+  @objc
+  public func splitNavCtrlViewDidChangeFrameOrigin(
     _ splitNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {
