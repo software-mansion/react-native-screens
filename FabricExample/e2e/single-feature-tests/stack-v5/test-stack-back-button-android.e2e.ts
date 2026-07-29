@@ -9,12 +9,8 @@ import {
   CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
 } from '../../native-class-names';
 
-/**
- * Covers `backButtonHidden`, and the root screen staying back-button-free once
- * an icon and tint are configured. Icon identity and tint colors are not
- * assertable through Detox on Android — see `scenario.md` next to the test
- * screen.
- */
+// Icon identity and tint colors are not assertable through Detox — see
+// `scenario.md` next to the test screen for the manual-only steps.
 
 // `<Button>` uppercases its title on Android.
 const PUSH_SCREEN = 'PUSH SCREEN';
@@ -24,48 +20,49 @@ const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
 
-// `getAttributes()` wraps multiple matches in `{ elements }` and throws on
-// none. The catch cannot tell "no match" from a crashed app, so a zero is only
-// used to pick an index or compare counts, never to assert absence.
+// Multiple matches come back wrapped in `{ elements }`. Throws on no match —
+// left uncaught so a crash is not misreported as "found 0".
 async function countMatches(matcher: Detox.NativeMatcher): Promise<number> {
-  try {
-    const attrs = await element(matcher).getAttributes();
-    return 'elements' in attrs ? attrs.elements.length : 1;
-  } catch {
-    return 0;
-  }
+  const attrs = await element(matcher).getAttributes();
+  return 'elements' in attrs ? attrs.elements.length : 1;
 }
 
-// Android keeps covered screens attached, so every stacked screen's controls
+// Covered screens stay attached on Android, so every stacked screen's controls
 // match at once; the topmost screen's copy is the last match.
 async function tapTopmost(matcher: Detox.NativeMatcher): Promise<void> {
   const count = await countMatches(matcher);
   await element(matcher)
-    .atIndex(Math.max(count - 1, 0))
+    .atIndex(count - 1)
     .tap();
 }
 
 // Controls have no testID, so they are addressed by their rendered
-// `"<label>: <value>"` text. The picker is closed again afterwards so its
-// expanded options never push later controls out of the viewport.
+// `"<label>: <value>"` text.
 async function selectOption(label: string, from: string, to: string) {
   await tapTopmost(by.text(`${label}: ${from}`));
-  // `SettingsPicker` derives option testIDs as `<label>-<item>`, lowercased.
+  // `SettingsPicker` lowercases `<label>-<item>` (and dashes any spaces in the
+  // label — no label here has one).
   await tapTopmost(by.id(`${label}-${to}`.toLowerCase()));
+  // Closes the picker so its options do not push later controls off-screen.
   await tapTopmost(by.text(`${label}: ${to}`));
 }
 
-// `Toolbar` removes the navigation icon from the hierarchy when it is set to
-// `null`, so "hidden" is "does not exist" rather than "exists but invisible".
+// A hidden navigation icon leaves the hierarchy, so "hidden" is "does not
+// exist". The toolbar is asserted first, otherwise a header that never
+// rendered would pass too. Each screen builds its own toolbar, hence the index.
 async function expectNoBackButton() {
+  const toolbarMatcher = by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
+  const count = await countMatches(toolbarMatcher);
+  await expect(element(toolbarMatcher).atIndex(count - 1)).toBeVisible();
   await expect(element(backButtonMatcher)).not.toExist();
 }
 
-// The count states "exactly one" — a stacked screen's toolbar contributing a
-// second icon would otherwise surface as an opaque Espresso ambiguity error.
+// The icon can lag the pushed screen's content, so wait before counting — a
+// settle race would otherwise read as "the back button is missing". The count
+// names the ambiguity a second stacked toolbar's icon would cause.
 async function expectSingleVisibleBackButton() {
+  await waitFor(element(backButtonMatcher)).toBeVisible().withTimeout(3000);
   jestExpect(await countMatches(backButtonMatcher)).toBe(1);
-  await expect(element(backButtonMatcher)).toBeVisible();
 }
 
 async function openScreen() {
