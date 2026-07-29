@@ -1,7 +1,6 @@
 import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfAndroid,
-  getElementAttributes,
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -25,9 +24,11 @@ import type {
 
 const SCROLL_VIEW = 'toolbar-menu-title-scrollview';
 const SEND_COMMAND_BUTTON = 'send-command-button';
-const RESULT_LABEL = 'last-clicked-result';
 
 const DISMISS_TIMEOUT_MS = 5000;
+// Only probes whether the popup is up, so it must not sit through a long wait
+// on the common "already closed" path.
+const MENU_PRESENCE_TIMEOUT_MS = 1000;
 
 const HEADER_TITLE: HeaderTitle = 'Title / Condensed / Tooltip';
 const ITEM_1_TITLE: ItemTitle = 'First Item';
@@ -116,34 +117,42 @@ async function sendCommand() {
 
 const openOverflowMenu = () => element(by.label(OVERFLOW_BUTTON)).tap();
 
-/** A point on the inert result label, left of the right-anchored popup. */
-async function pointOutsideOverflowMenu() {
-  await element(by.id(SCROLL_VIEW)).scrollTo('top');
-  const { frame } = await getElementAttributes({
-    by: 'id',
-    value: RESULT_LABEL,
-  });
+const overflowMenu = () =>
+  element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
 
-  return { x: frame.x + frame.width / 10, y: frame.y + frame.height / 2 };
+/**
+ * Dismisses the overflow popup with the back button. A left-over popup is not a
+ * local failure: Espresso resolves every later matcher against the popup window
+ * instead of the activity, so the whole rest of the suite fails on views that
+ * are plainly there.
+ */
+async function closeOverflowMenuIfOpen() {
+  const isOpen = await waitFor(overflowMenu())
+    .toExist()
+    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
+    .then(
+      () => true,
+      () => false,
+    );
+
+  if (!isOpen) {
+    return;
+  }
+
+  await device.pressBack();
+  await waitFor(overflowMenu()).not.toExist().withTimeout(DISMISS_TIMEOUT_MS);
 }
 
 /**
  * While the menu is open, Espresso resolves matchers against its window, so
- * `assertions` can only address rows inside it — and the dismissal point has to
- * be measured beforehand and tapped by coordinates.
+ * `assertions` can only address rows inside it.
  */
 async function withOverflowMenu(assertions: () => Promise<void>) {
-  const dismissPoint = await pointOutsideOverflowMenu();
-
   await openOverflowMenu();
   try {
     await assertions();
   } finally {
-    // `frame` is in screen coordinates, so the status bar must not be skipped.
-    await device.tap(dismissPoint, false);
-    await waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
-      .not.toExist()
-      .withTimeout(DISMISS_TIMEOUT_MS);
+    await closeOverflowMenuIfOpen();
   }
 }
 
@@ -169,6 +178,10 @@ describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
       'test-stack-toolbar-menu-title-android',
     );
   });
+
+  // Safety net: a test that fails mid-menu must not leave the popup up and
+  // take every following test down with it.
+  afterEach(closeOverflowMenuIfOpen);
 
   afterAll(async () => {
     await device.setOrientation('portrait');
