@@ -15,8 +15,8 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHeaderConfigAndroidManagerInterface
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuElementRawUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuMapper
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
 
 @ReactModule(name = StackHeaderConfigViewManager.REACT_CLASS)
 internal open class StackHeaderConfigViewManager :
@@ -216,6 +216,13 @@ internal open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.scrollFlagSnap = value
+    }
+
+    override fun setLiftOnScroll(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.liftOnScroll = value
     }
 
     override fun setToolbarMenuGroupDividerEnabled(

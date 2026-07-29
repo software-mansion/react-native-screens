@@ -173,6 +173,9 @@
         "RNSScreenFooter": {
           "className": "RNSScreenFooter"
         },
+        "RNSScrollToTopGuard": {
+          "className": "RNSScrollToTopGuard"
+        },
         "RNSScreen": {
           "className": "RNSScreenView"
         },

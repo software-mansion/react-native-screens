@@ -48,9 +48,6 @@ export type {
   StackHeaderMenuOptionsIOS,
 } from './header';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 export const Stack = {
   Host: StackHost,
   Screen: StackScreen,

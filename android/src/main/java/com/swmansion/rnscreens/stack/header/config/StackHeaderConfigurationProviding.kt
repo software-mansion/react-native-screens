@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.header.config
 
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 
 internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
@@ -19,6 +19,7 @@ internal interface StackHeaderConfigurationProviding {
     val scrollFlagEnterAlwaysCollapsed: Boolean
     val scrollFlagExitUntilCollapsed: Boolean
     val scrollFlagSnap: Boolean
+    val liftOnScroll: Boolean
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?

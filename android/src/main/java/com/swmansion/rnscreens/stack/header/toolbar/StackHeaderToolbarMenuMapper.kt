@@ -11,11 +11,25 @@ import com.swmansion.rnscreens.helpers.readColor
 import com.swmansion.rnscreens.helpers.readImageUri
 import com.swmansion.rnscreens.helpers.readOptionalString
 import com.swmansion.rnscreens.helpers.requireNotNullString
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuGroupConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemDefaults
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemShowAsAction
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemType
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
 
+/**
+ * Parses React toolbar-menu props (Dynamic / ReadableMap) into the native menu
+ * config and element-update models.
+ */
 internal object StackHeaderToolbarMenuMapper {
     // region Menu prop parsing
 
-    fun parseMenu(
+    internal fun parseMenu(
         context: Context,
         value: Dynamic,
     ): Pair<StackHeaderToolbarMenuConfig, Map<String, StackHeaderToolbarMenuItemIconSource>> {
@@ -34,7 +48,7 @@ internal object StackHeaderToolbarMenuMapper {
 
     // region Menu element command parsing
 
-    fun parseMenuElementOptions(
+    internal fun parseMenuElementOptions(
         context: Context,
         map: ReadableMap,
     ): StackHeaderToolbarMenuElementOptions =
@@ -63,7 +77,7 @@ internal object StackHeaderToolbarMenuMapper {
             menuTitle = map.readNullableStringUpdate("menuTitle"),
         )
 
-    fun parseMenuElementIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
+    internal fun parseMenuElementIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
         if (!map.hasKey("drawableIconResourceName") && !map.hasKey("imageIconResource")) {
             return null
         }

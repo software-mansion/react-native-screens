@@ -103,6 +103,8 @@ export interface NativeProps extends ViewProps {
   scrollFlagExitUntilCollapsed?: CT.WithDefault<boolean, false>;
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
+  liftOnScroll?: CT.WithDefault<boolean, true>;
+
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
   toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;
   onToolbarMenuItemPress?:

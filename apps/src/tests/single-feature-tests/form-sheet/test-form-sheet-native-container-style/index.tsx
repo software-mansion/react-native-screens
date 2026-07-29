@@ -8,7 +8,7 @@ import {
   ColorValue,
   Platform,
 } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';

@@ -3,7 +3,7 @@ import {
   StackScreenProps,
   StackHeaderConfigProps,
   StackHeaderConfigRef,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 
 /// Route definition
 

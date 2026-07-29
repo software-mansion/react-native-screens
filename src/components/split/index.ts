@@ -20,9 +20,6 @@ export type {
   SplitScreenProps,
 } from './SplitScreen.types';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 export const Split = {
   Host: SplitHost,
   Column: SplitScreen.Column,

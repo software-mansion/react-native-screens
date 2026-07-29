@@ -10,12 +10,12 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/experimental';
+import { StackHeaderConfigProps } from 'react-native-screens';
 import type {
   StackHeaderConfigRef,
   StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
 import LongText from '@apps/shared/LongText';
 import { scenarioDescription } from './scenario-description';

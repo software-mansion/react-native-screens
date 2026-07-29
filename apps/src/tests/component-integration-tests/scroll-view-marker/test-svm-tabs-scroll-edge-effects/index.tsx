@@ -10,7 +10,7 @@ import {
 } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 import { type ScrollEdgeEffect } from 'react-native-screens';
 
 export function TestSvmTabsScrollEdgeEffects() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack } from 'react-native-screens/experimental';
+import { Stack } from 'react-native-screens';
 import type {
   NavigationAction,
   StackContainerProps,

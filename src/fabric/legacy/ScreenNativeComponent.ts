@@ -126,6 +126,7 @@ export interface NativeProps extends ViewProps {
     boolean,
     true
   >;
+  iosOrientationInheritanceFixEnabled?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
