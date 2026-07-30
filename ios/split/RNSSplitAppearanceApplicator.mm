@@ -50,15 +50,15 @@
                          }];
 }
 
-///
-/// @brief Function that applies all basic updates.
-///
-/// It calls all setters on RNSSplitHostController that doesn't require any custom logic and conditions to be met.
-///
-/// @param splitHost The view representing JS component which is sending updates.
-/// @param splitHostController The controller associated with the SplitView component which receives updates and
-/// manages the native layer.
-///
+/**
+ * @brief Function that applies all basic updates.
+ *
+ * It calls all setters on RNSSplitHostController that doesn't require any custom logic and conditions to be met.
+ *
+ * @param splitHost The view representing JS component which is sending updates.
+ * @param splitHostController The controller associated with the SplitView component which receives updates and
+ * manages the native layer.
+ */
 - (void)updateSplitViewConfigurationFor:(RNSSplitHostComponentView *)splitHost
                          withController:(RNSSplitHostController *)splitHostController
 {
@@ -152,18 +152,18 @@
   [splitHostController toggleSplitViewInspector:splitHost.showInspector];
 }
 
-///
-/// @brief Function that updates `preferredDisplayMode` property on SplitView.
-///
-/// `preferredDisplayMode` needs to have a dedicated flag to prevent updates from the JS, when other props updates the
-/// appearance. It is crucial in the case, when `preferredDisplayMode` has changed due to some transition that was
-/// executed natively, e. g. after showing/hiding a column by a swipe. In that case, any prop update incoming, would
-/// reset `preferredDisplayMode` to the state from JS, what doesn't look good.
-///
-/// @param splitHost The view representing JS component which is sending updates.
-/// @param splitHostController The controller associated with the SplitView component which receives updates and
-/// manages the native layer.
-///
+/**
+ * @brief Function that updates `preferredDisplayMode` property on SplitView.
+ *
+ * `preferredDisplayMode` needs to have a dedicated flag to prevent updates from the JS, when other props updates the
+ * appearance. It is crucial in the case, when `preferredDisplayMode` has changed due to some transition that was
+ * executed natively, e. g. after showing/hiding a column by a swipe. In that case, any prop update incoming, would
+ * reset `preferredDisplayMode` to the state from JS, what doesn't look good.
+ *
+ * @param splitHost The view representing JS component which is sending updates.
+ * @param splitHostController The controller associated with the SplitView component which receives updates and
+ * manages the native layer.
+ */
 - (void)updateSplitViewDisplayModeFor:(RNSSplitHostComponentView *)splitHost
                        withController:(RNSSplitHostController *)splitHostController
 {

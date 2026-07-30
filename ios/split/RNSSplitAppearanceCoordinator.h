@@ -5,12 +5,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///
-/// @brief - A class that is responsible for coordinating SplitHost appearance updates.
-///
-/// It collects flags for Split appearance update actions and invalidates them.
-/// It's also responsible for executing callbacks when the action is requested.
-///
+/**
+ * @brief - A class that is responsible for coordinating SplitHost appearance updates.
+ *
+ * It collects flags for Split appearance update actions and invalidates them.
+ * It's also responsible for executing callbacks when the action is requested.
+ */
 @interface RNSSplitAppearanceCoordinator : NSObject
 
 @property (nonatomic) RNSSplitAppearanceUpdateFlags updateFlags;

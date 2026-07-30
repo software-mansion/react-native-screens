@@ -27,15 +27,15 @@ public class RNSSplitScreenController: UIViewController {
     return nil
   }
 
-  ///
-  /// @brief Searching for the SplitHost controller
-  ///
-  /// It checks whether the parent controller is our host controller.
-  /// If we're outside the structure, e. g. for inspector represented as a modal,
-  /// we're searching for that controller using a reference that Screen keeps for Host component view.
-  ///
-  /// @return If found - a RNSSplitHostController instance, otherwise nil.
-  ///
+  /**
+   * @brief Searching for the SplitHost controller
+   *
+   * It checks whether the parent controller is our host controller.
+   * If we're outside the structure, e. g. for inspector represented as a modal,
+   * we're searching for that controller using a reference that Screen keeps for Host component view.
+   *
+   * @return If found - a RNSSplitHostController instance, otherwise nil.
+   */
   func findSplitHostController() -> RNSSplitHostController? {
     if let splitHostController = self.splitViewController as? RNSSplitHostController {
       return splitHostController
@@ -48,13 +48,13 @@ public class RNSSplitScreenController: UIViewController {
     return nil
   }
 
-  ///
-  /// @brief Determines if this controller is nested inside a SplitHost hierarchy.
-  ///
-  /// Used to differentiate between screens embedded in the native host and modal presentations.
-  ///
-  /// @return true if inside RNSSplitHostController, false otherwise.
-  ///
+  /**
+   * @brief Determines if this controller is nested inside a SplitHost hierarchy.
+   *
+   * Used to differentiate between screens embedded in the native host and modal presentations.
+   *
+   * @return true if inside RNSSplitHostController, false otherwise.
+   */
   @objc
   public func isInSplitHostSubtree() -> Bool {
     return self.splitViewController is RNSSplitHostController
@@ -76,13 +76,13 @@ public class RNSSplitScreenController: UIViewController {
     updateShadowTreeState()
   }
 
-  ///
-  /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
-  ///
-  /// Requests for the ShadowNode updates through the shadow state proxy.
-  /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
-  /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
-  ///
+  /**
+   * @brief Handles frame layout changes and updates Shadow Tree accordingly.
+   *
+   * Requests for the ShadowNode updates through the shadow state proxy.
+   * Differentiates cases when we're in the Host hierarchy to calculate frame relatively
+   * to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
+   */
   private func updateShadowTreeState() {
     // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
     // we're attaching our touch handler and we don't need to apply any offset corrections,
@@ -102,11 +102,11 @@ public class RNSSplitScreenController: UIViewController {
       ofComponent: splitScreenComponentView, inContextOfAncestorView: ancestorView)
   }
 
-  ///
-  /// @brief Request ShadowNode state update when the Split screen frame origin has changed.
-  ///
-  /// @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitHostController.
-  ///
+  /**
+   * @brief Request ShadowNode state update when the Split screen frame origin has changed.
+   *
+   * @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitHostController.
+   */
   func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
     shadowStateProxy.updateShadowState(
       ofComponent: splitScreenComponentView, inContextOfAncestorView: splitViewController.view
