@@ -13,14 +13,15 @@ using namespace facebook::react;
 struct RNSScreenRemovalListener : public MountingOverrideDelegate {
   RNSScreenRemovalListener() = default;
 
-  // This instance is process-immortal (see NativeProxy.cpp): MountingCoordinator
-  // keeps a weak_ptr to it for the lifetime of every surface and react-native
-  // core has no removeMountingOverrideDelegate (as of 0.87), so destroying it
-  // leaves an entry that can still be locked and virtual-dispatched. Swap the
-  // callback instead.
-  // setListener returns an ownership token; clearListener is a no-op unless the token
-  // matches the latest install, so a stale proxy's teardown (second ReactHost, late
-  // finalization) cannot disarm the callback a newer proxy installed.
+  // This instance is process-immortal (see NativeProxy.cpp): every
+  // MountingCoordinator keeps a weak_ptr to it for the life of its surface and
+  // react-native core has no removeMountingOverrideDelegate (as of 0.87).
+  // Swapping the callback instead of replacing the object means registration
+  // never re-runs, so there is no lazy init left to race.
+  // setListener returns an ownership token; clearListener is a no-op unless the
+  // token matches the latest install, so a stale proxy's late teardown (second
+  // ReactHost, late finalization) cannot disarm the callback a newer proxy
+  // installed.
   uint64_t setListener(std::function<void(int)> &&listenerFunction);
   void clearListener(uint64_t token);
 
