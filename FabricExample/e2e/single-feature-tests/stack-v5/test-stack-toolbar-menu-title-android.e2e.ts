@@ -8,7 +8,6 @@ import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
-// Type-only: erased at compile time, so no screen code reaches the test bundle.
 import type {
   CmdCondensedOption,
   CmdTitleOption,
