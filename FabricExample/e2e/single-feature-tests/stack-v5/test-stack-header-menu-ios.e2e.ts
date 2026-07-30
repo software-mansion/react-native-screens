@@ -20,6 +20,10 @@ const menuOneBarButton = element(
   by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('Menu 1')),
 );
 
+const headerTitle = element(
+  by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu')),
+);
+
 const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
 
 function menuCell(itemLabel: string) {
@@ -74,6 +78,18 @@ async function openMenuOne() {
 }
 
 /**
+ * Opens the title menu. The control UIKit wraps the title in fails Detox's
+ * visibility threshold, so the title label is tapped by coordinates.
+ */
+async function openTitleMenu() {
+  const titleAttributes =
+    (await headerTitle.getAttributes()) as IosElementAttributes;
+  const { x, y, width, height } = titleAttributes.frame;
+  await device.tap({ x: x + width / 2, y: y + height / 2 });
+  await waitFor(contextMenu).toBeVisible().withTimeout(2000);
+}
+
+/**
  * Taps the dimming layer to dismiss the menu. The menu is anchored to the
  * trailing bar button, so a point near the left edge never lands on it.
  */
@@ -97,9 +113,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
   });
 
   it('should display the header with a trailing item exposing a real menu', async () => {
-    await expect(
-      element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu'))),
-    ).toExist();
+    await expect(headerTitle).toExist();
     await expect(menuOneBarButton).toBeVisible();
   });
 
@@ -202,6 +216,32 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('SubSubMenu with Radio')).tap();
 
       await expect(checkmarkFor('Radio 1-2')).toBeVisible();
+    });
+  });
+
+  describe('title menu', () => {
+    it('should open a menu with both title actions when the header title is tapped', async () => {
+      await dismissMenu();
+
+      await openTitleMenu();
+
+      await expect(element(by.text('Title Action 1'))).toBeVisible();
+      await expect(element(by.text('Title Action 2'))).toBeVisible();
+    });
+
+    it('should dismiss the title menu and emit a toast after tapping "Title Action 1"', async () => {
+      await element(by.text('Title Action 1')).tap();
+      await dismissToast('1. Clicked "Title Action 1"');
+
+      await expect(contextMenu).not.toExist();
+    });
+
+    it('should dismiss the title menu and emit a toast after tapping "Title Action 2"', async () => {
+      await openTitleMenu();
+      await element(by.text('Title Action 2')).tap();
+      await dismissToast('1. Clicked "Title Action 2"');
+
+      await expect(contextMenu).not.toExist();
     });
   });
 });

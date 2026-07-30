@@ -64,7 +64,6 @@ export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
-export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 
 // --- Android ---
 
