@@ -401,11 +401,6 @@ static const NSInteger maxNumberOfInspectors = 1;
   }
 }
 
-/**
- * This extension is a workaround for missing UISplitViewController symbols introduced in iOS 26,
- * allowing the project to compile and run on iOS 18 or earlier versions.
- */
-
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 /**
