@@ -5,85 +5,82 @@ import {
   dismissToast,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import {
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
+  CLASS_NAME_ANDROID_CHECK_BOX,
+  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_RADIO_BUTTON,
+} from '../../native-class-names';
 
-/**
- * The cases below follow `scenario.md` as one continuous flow, exactly like a
- * manual run: each one starts from the state the previous one left behind, and
- * the menu is only rebuilt where the scenario itself flips a props switch.
- */
+// The cases follow `scenario.md` as one continuous flow: each starts from the
+// state the previous one left.
 
 const SCROLLVIEW_ID = 'toolbar-menu-groups-scrollview';
 const OVERFLOW_MENU_LABEL = 'More options';
 
-/**
- * A row of an AppCompat popup menu. Each one holds a `title` text view plus the
- * lazily inserted widgets below, so it is the anchor for addressing an item's
- * decorations by its title.
- */
-const LIST_MENU_ITEM_VIEW = 'androidx.appcompat.view.menu.ListMenuItemView';
-
-/**
- * `setGroupCheckable(group, true, exclusive)` renders a multi-toggle group with
- * check boxes and a single-selection group with radio buttons, so the widget
- * class is itself an assertion about the group type. `by.type` matches
- * subclasses, which covers the `AppCompat*` variants actually inflated, and
- * only matches effectively visible views — an item that is not checkable never
- * inflates the widget, and a recycled row hides it.
- */
-const CHECK_BOX = 'android.widget.CheckBox';
-const RADIO_BUTTON = 'android.widget.RadioButton';
-const IMAGE_VIEW = 'android.widget.ImageView';
-
-type ToggleWidget = typeof CHECK_BOX | typeof RADIO_BUTTON;
+// A multi-toggle group renders check boxes and a single-selection one radio
+// buttons, so the class asserts the group type.
+type ToggleWidget =
+  | typeof CLASS_NAME_ANDROID_CHECK_BOX
+  | typeof CLASS_NAME_ANDROID_RADIO_BUTTON;
 
 function menuItemRow(title: string): NativeMatcher {
-  return by.type(LIST_MENU_ITEM_VIEW).withDescendant(by.text(title));
+  return by
+    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
+    .withDescendant(by.text(title));
 }
 
 function menuItemToggle(title: string, widget: ToggleWidget): NativeMatcher {
   return by.type(widget).withAncestor(menuItemRow(title));
 }
 
-/**
- * Anchors an assertion that is otherwise made only of `not.toExist` — without
- * it, a menu that failed to open satisfies every one of them.
- */
+/** Anchors blocks made only of `not.toExist`, which a closed menu would satisfy. */
 async function expectMenuItemRow(title: string) {
-  await expect(element(menuItemRow(title))).toExist();
+  await expect(element(menuItemRow(title))).toBeVisible();
 }
 
 async function expectCheckBox(title: string, checked: boolean) {
-  await expect(element(menuItemToggle(title, RADIO_BUTTON))).not.toExist();
-  await expect(element(menuItemToggle(title, CHECK_BOX))).toHaveToggleValue(
-    checked,
-  );
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
+  ).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
+  ).toHaveToggleValue(checked);
 }
 
 async function expectRadioButton(title: string, checked: boolean) {
-  await expect(element(menuItemToggle(title, CHECK_BOX))).not.toExist();
-  await expect(element(menuItemToggle(title, RADIO_BUTTON))).toHaveToggleValue(
-    checked,
-  );
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
+  ).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
+  ).toHaveToggleValue(checked);
 }
 
 async function expectNoCheckmark(title: string) {
   await expectMenuItemRow(title);
-  await expect(element(menuItemToggle(title, CHECK_BOX))).not.toExist();
-  await expect(element(menuItemToggle(title, RADIO_BUTTON))).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
+  ).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
+  ).not.toExist();
 }
 
 /**
- * The `group_divider` of a row. Every row inflates one, so it is never removed —
- * only flipped between `VISIBLE` and `GONE`. `by.type` matches effectively
- * visible views only, which makes a `GONE` divider unmatchable, so `not.toExist`
- * here reads as "the divider is not visible".
- *
- * The divider is the only image view that can be visible in these rows — none
- * of the items carry an icon, and `submenuarrow` is hidden for everything but
- * `More`, which is therefore never passed here.
+ * `group_divider` and `submenuarrow` share this class and differ only by
+ * resource id, which Detox cannot match — so a row is asserted to hold at most
+ * one visible image view at a time.
  */
+function menuItemImage(title: string): NativeMatcher {
+  return by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
+    .withAncestor(menuItemRow(title));
+}
+
+/** `by.type` matches visible views only, so `not.toExist` means "not visible". */
 async function expectGroupDivider(title: string, visible: boolean) {
-  const divider = element(by.type(IMAGE_VIEW).withAncestor(menuItemRow(title)));
+  const divider = element(menuItemImage(title));
   if (visible) {
     await expect(divider).toBeVisible();
   } else {
@@ -92,26 +89,19 @@ async function expectGroupDivider(title: string, visible: boolean) {
   }
 }
 
-/**
- * `onSelectionChange` reports the full set of selected ids of a group and
- * toasts it, which is how the callback payload — as opposed to the rendered
- * checkmark — is verified.
- *
- * Each toast is dismissed as soon as it is asserted, so the queue is always
- * empty afterwards and the next one is always numbered `1.`.
- */
+/** `More` follows `Share` in the same group, so it never also shows a divider. */
+async function expectSubmenuArrow(title: string) {
+  await expect(element(menuItemImage(title))).toBeVisible();
+}
+
+/** Each toast is dismissed as it is asserted, so the next is always `1.`. */
 async function expectToast(message: string) {
   await dismissToast(`1. ${message}`);
 }
 
 /**
- * The scenario's "no toast is displayed" checks. Toasts are the only numbered
- * text on this screen, so nothing may match once the previous one was
- * dismissed. Matched the same way `dismissToast` matches them, so the assertion
- * is known to be capable of matching a toast rather than silently vacuous.
- *
- * Detox compares a regex against the *whole* string, hence the trailing `.*` —
- * shortening this to `/^\d+\. /` makes it match nothing and always pass.
+ * Detox matches a regex against the *whole* string — without the trailing `.*`
+ * this matches nothing and always passes.
  */
 async function expectNoToast() {
   await expect(element(by.label(/\d+\. .*/))).not.toExist();
@@ -121,6 +111,7 @@ async function scrollToTop() {
   await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
 }
 
+/** Small steps — a larger one can scroll a short picker item past the viewport. */
 async function scrollToId(id: string) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
@@ -133,10 +124,25 @@ async function tapById(id: string) {
   await element(by.id(id)).tap();
 }
 
-/**
- * `SettingsPicker` keeps its item list expanded after a selection, so it has to
- * be collapsed explicitly to keep the elements below it reachable.
- */
+const SWITCHES = {
+  singleSelection: {
+    id: 'single-selection-switch',
+    label: 'singleSelection on colors',
+  },
+  includeBlue: { id: 'include-blue-switch', label: 'include Blue' },
+  divider: { id: 'divider-switch', label: 'divider enabled' },
+} as const;
+
+/** Confirms the new value — a missed tap would rebuild the wrong menu. */
+async function toggleSwitch(
+  { id, label }: (typeof SWITCHES)[keyof typeof SWITCHES],
+  to: boolean,
+) {
+  await tapById(id);
+  await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
+}
+
+/** `SettingsPicker` stays expanded after a selection, so it is collapsed again. */
 async function selectPickerValue(pickerId: string, itemId: string) {
   await scrollToTop();
   await tapById(pickerId);
@@ -165,10 +171,7 @@ type CommandSpec = {
   hidden?: 'true' | 'false' | 'undefined';
 };
 
-/**
- * Every picker is set on each call — the screen keeps the previously selected
- * values, so unspecified fields must be reset to `no change` explicitly.
- */
+/** All four pickers keep their last value, so unset fields are reset explicitly. */
 async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
   await selectPickerValue('cmd-target-picker', `target-id-${id}`);
   await selectPickerValue(
@@ -209,11 +212,7 @@ async function tapSubmenuItem(title: string) {
   await tapMenuItem(title);
 }
 
-/**
- * The menu is closed even when an assertion throws. The cases share state, so
- * leaving a popup open turns one real failure into a cascade of unrelated ones
- * that point nowhere near the defect.
- */
+/** Closes the menu even on failure; a leaked popup would fail every later case. */
 async function withOverflowMenu(assertions: () => Promise<void>) {
   await openOverflowMenu();
   try {
@@ -242,7 +241,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     );
   });
 
-  // Step 1.
   it('should render the whole menu with both groups', async () => {
     await expect(element(by.text('Toolbar Menu Groups Test'))).toBeVisible();
 
@@ -270,10 +268,10 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
 
       await expectNoCheckmark('Share');
       await expectNoCheckmark('More');
+      await expectSubmenuArrow('More');
     });
   });
 
-  // Step 2.
   it('should render the submenu with its own group', async () => {
     await withSubmenu(async () => {
       await expectRadioButton('Light', true);
@@ -282,7 +280,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 3-6.
   it('should toggle items independently in a multi-toggle group', async () => {
     await tapOverflowItem('Green');
     await expectToast('colors: ["red","green"]');
@@ -313,7 +310,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 7-8.
   it('should keep a single selection in a single-selection group', async () => {
     await tapOverflowItem('Small');
     await expectToast('size: ["small"]');
@@ -330,7 +326,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Step 9.
   it('should not emit when re-selecting the checked single-selection item', async () => {
     await tapOverflowItem('Large');
     await expectNoToast();
@@ -340,7 +335,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Step 10.
   it('should emit a press for an action item without toggling it', async () => {
     await tapOverflowItem('Share');
     await expectToast('Pressed: share');
@@ -350,7 +344,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 11-13.
   it('should handle groups and action items inside a submenu', async () => {
     await tapSubmenuItem('Dark');
     await expectToast('theme: ["dark"]');
@@ -373,36 +366,30 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 14-15.
   it('should draw a divider on every group boundary only while enabled', async () => {
-    await tapById('divider-switch');
+    await toggleSwitch(SWITCHES.divider, true);
     await withOverflowMenu(async () => {
-      // A divider is drawn on the row that opens a new group, so `Red` never
-      // gets one — nothing precedes it — and the rows that continue a group
-      // keep theirs hidden.
       await expectGroupDivider('Red', false);
       await expectGroupDivider('Green', false);
       await expectGroupDivider('Blue', false);
-      // colors -> size.
+
       await expectGroupDivider('Small', true);
       await expectGroupDivider('Medium', false);
       await expectGroupDivider('Large', false);
-      // size -> the ungrouped items.
+
       await expectGroupDivider('Share', true);
     });
 
-    await tapById('divider-switch');
+    await toggleSwitch(SWITCHES.divider, false);
     await withOverflowMenu(async () => {
       await expectGroupDivider('Small', false);
       await expectGroupDivider('Share', false);
     });
   });
 
-  // Steps 16-18.
   it('should switch the colors group between multi-toggle and single-selection', async () => {
-    await tapById('single-selection-switch');
-    // The props update rebuilt the menu, so the check boxes became radio
-    // buttons and `initialToggleState` is back in effect.
+    await toggleSwitch(SWITCHES.singleSelection, true);
+    // Rebuilt: check boxes became radio buttons, `initialToggleState` restored.
     await withOverflowMenu(async () => {
       await expectRadioButton('Red', true);
       await expectRadioButton('Green', false);
@@ -416,7 +403,7 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
       await expectRadioButton('Red', false);
     });
 
-    await tapById('single-selection-switch');
+    await toggleSwitch(SWITCHES.singleSelection, false);
     await withOverflowMenu(async () => {
       await expectCheckBox('Red', true);
       await expectCheckBox('Green', false);
@@ -424,16 +411,15 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 19-20.
   it('should add and remove group items on a props update', async () => {
-    await tapById('include-blue-switch');
+    await toggleSwitch(SWITCHES.includeBlue, false);
     await withOverflowMenu(async () => {
       await expect(element(by.text('Blue'))).not.toExist();
       await expectCheckBox('Red', true);
       await expectCheckBox('Green', false);
     });
 
-    await tapById('include-blue-switch');
+    await toggleSwitch(SWITCHES.includeBlue, true);
     await withOverflowMenu(async () => {
       // `blue` comes back unchecked — it has no initialToggleState.
       await expectCheckBox('Blue', false);
@@ -441,7 +427,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 21-22.
   it('should set checked via command in a multi-toggle group', async () => {
     await sendCommand({ id: 'green', checked: 'true' });
     await expectToast('colors: ["red","green"]');
@@ -458,7 +443,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 23-24.
   it('should auto-uncheck the sibling when setting checked via command in a single-selection group', async () => {
     await sendCommand({ id: 'large', checked: 'true' });
     await expectToast('size: ["large"]');
@@ -475,9 +459,8 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Step 25.
   it('should ignore checked=false on a single-selection group item', async () => {
-    // The step's precondition — the previous one leaves `small` selected.
+    // The step's precondition — the previous case leaves `small` selected.
     await sendCommand({ id: 'medium', checked: 'true' });
     await expectToast('size: ["medium"]');
 
@@ -488,7 +471,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Step 26.
   it('should update the title of a grouped item without losing its state', async () => {
     await sendCommand({ id: 'red', title: 'Changed' });
     await withOverflowMenu(async () => {
@@ -497,7 +479,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 27-28.
   it('should hide and show a grouped item', async () => {
     await sendCommand({ id: 'green', hidden: 'true' });
     await withOverflowMenu(async () => {
@@ -507,11 +488,11 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
 
     await sendCommand({ id: 'green', hidden: 'false' });
     await withOverflowMenu(async () => {
+      await expect(element(by.text('Green'))).toBeVisible();
       await expectCheckBox('Green', false);
     });
   });
 
-  // Steps 29-31.
   it('should keep a hidden item selected in the reported selection', async () => {
     await sendCommand({ id: 'green', checked: 'true' });
     await expectToast('colors: ["red","green"]');
@@ -532,10 +513,9 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Step 32.
   it('should discard command state on a props rebuild', async () => {
-    await tapById('include-blue-switch');
-    await tapById('include-blue-switch');
+    await toggleSwitch(SWITCHES.includeBlue, false);
+    await toggleSwitch(SWITCHES.includeBlue, true);
 
     await withOverflowMenu(async () => {
       await expect(element(by.text('Changed'))).not.toExist();
@@ -546,7 +526,6 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     });
   });
 
-  // Steps 33-34.
   it('should set checked via command in a submenu group', async () => {
     await sendCommand({ id: 'dark', checked: 'true' });
     await expectToast('theme: ["dark"]');

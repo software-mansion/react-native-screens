@@ -64,3 +64,16 @@ export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
+
+// A row of a popup menu — the anchor for addressing its widgets by item title.
+export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ListMenuItemView';
+
+// A menu row's `group_divider` and `submenuarrow`.
+export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW =
+  'androidx.appcompat.widget.AppCompatImageView';
+
+// A grouped menu item's checkmark. `by.type` matches subclasses, so these also
+// cover the `AppCompat*` variants the platform inflates.
+export const CLASS_NAME_ANDROID_CHECK_BOX = 'android.widget.CheckBox';
+export const CLASS_NAME_ANDROID_RADIO_BUTTON = 'android.widget.RadioButton';
