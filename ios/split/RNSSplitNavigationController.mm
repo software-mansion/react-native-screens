@@ -6,12 +6,12 @@ static void *RNSSplitNavigationControllerViewFrameContext = &RNSSplitNavigationC
   BOOL _isObservingViewFrame;
 }
 
-///
-/// @brief Called after the view controller’s view has been loaded.
-///
-/// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to
-/// RNSSplitHostController.
-///
+/**
+ * @brief Called after the view controller’s view has been loaded.
+ *
+ * Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to
+ * RNSSplitHostController.
+ */
 - (void)viewDidLoad
 {
   [super viewDidLoad];
