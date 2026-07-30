@@ -21,11 +21,11 @@ public class RNSSplitNavigationController: UINavigationController {
   private var viewFrameObservation: NSKeyValueObservation?
   weak var viewFrameOriginChangeObserver: RNSSplitNavigationControllerViewFrameObserver?
 
-  /**
-   * @brief Called after the view controller’s view has been loaded.
-   *
-   * Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to RNSSplitHostController.
-   */
+  ///
+  /// @brief Called after the view controller’s view has been loaded.
+  ///
+  /// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to RNSSplitHostController.
+  ///
   override public func viewDidLoad() {
     super.viewDidLoad()
 
