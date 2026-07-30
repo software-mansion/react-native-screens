@@ -31,8 +31,6 @@ namespace react = facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
-    _props = defaultProps;
     [self initState];
   }
   return self;
@@ -40,6 +38,9 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
+  _props = defaultProps;
+
   _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
