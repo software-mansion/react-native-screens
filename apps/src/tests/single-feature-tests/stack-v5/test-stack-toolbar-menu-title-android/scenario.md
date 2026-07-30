@@ -20,10 +20,7 @@ Incomplete: covers steps 1–8 and 13–16.
 
 Not automated:
 
-- Steps 9–12 and 17–18 — every `tooltipText` step. The long-press tooltip
-  itself (steps 9–11, 17–18) renders in its own window and cannot be
-  asserted from Detox, and step 12 is left manual with them so the whole
-  prop is verified in one pass.
+- Steps 9–12 and 17–18 (`tooltipText` steps).
 
 ## Prerequisites
 
