@@ -29,15 +29,15 @@
   return [_splitScreenComponentView reactEventEmitter];
 }
 
-///
-/// @brief Searching for the SplitHost controller
-///
-/// It checks whether the parent controller is our host controller.
-/// If we're outside the structure, e. g. for inspector represented as a modal,
-/// we're searching for that controller using a reference that Screen keeps for Host component view.
-///
-/// @return If found - a RNSSplitHostController instance, otherwise nil.
-///
+/**
+ * @brief Searching for the SplitHost controller
+ *
+ * It checks whether the parent controller is our host controller.
+ * If we're outside the structure, e. g. for inspector represented as a modal,
+ * we're searching for that controller using a reference that Screen keeps for Host component view.
+ *
+ * @return If found - a RNSSplitHostController instance, otherwise nil.
+ */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
   if ([self.splitViewController isKindOfClass:RNSSplitHostController.class]) {
@@ -73,13 +73,13 @@
   [self updateShadowTreeState];
 }
 
-///
-/// @brief Handles frame layout changes and updates Shadow Tree accordingly.
-///
-/// Requests for the ShadowNode updates through the shadow state proxy.
-/// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
-/// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
-///
+/**
+ * @brief Handles frame layout changes and updates Shadow Tree accordingly.
+ *
+ * Requests for the ShadowNode updates through the shadow state proxy.
+ * Differentiates cases when we're in the Host hierarchy to calculate frame relatively
+ * to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
+ */
 - (void)updateShadowTreeState
 {
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
