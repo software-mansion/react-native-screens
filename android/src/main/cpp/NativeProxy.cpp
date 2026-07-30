@@ -13,13 +13,17 @@ using namespace react;
 namespace rnscreens {
 
 namespace {
-// Process-lifetime owner. MountingCoordinator::mountingOverrideDelegates_ is
-// append-only with no removal API in react-native core (as of 0.87), so a
-// listener that is destroyed (here: by Java GC finalizing the NativeProxy
-// hybrid) leaves a stale weak_ptr that can still be locked and
-// virtual-dispatched from MountingCoordinator::pullTransaction on the JS
-// thread -> SIGSEGV.
-// Function-local static: thread-safe init, no static-init-order dependency.
+// Process-lifetime owner. Two threads can reach nativeAddMutationsListener
+// concurrently on a cold launch: ScreensModule.initialize() on the module-init
+// thread, and onHostResume() on the UI thread (queued before setupFabric()
+// returns). The previous lazy `if (!screenRemovalListener_)` init raced there:
+// concurrent shared_ptr assignments are UB and can leave the registered
+// delegate pointing at freed memory while its control block still reports it
+// alive, so the next MountingCoordinator::pullTransaction locks the weak_ptr
+// successfully and virtual-calls into recycled heap -> SIGSEGV.
+// A function-local static leaves nothing to race (thread-safe init, no
+// static-init-order dependency), and a process-immortal instance also suits
+// core's delegate list, which is append-only with no removal API (as of 0.87).
 const std::shared_ptr<RNSScreenRemovalListener> &removalListener() {
   static const std::shared_ptr<RNSScreenRemovalListener> instance =
       std::make_shared<RNSScreenRemovalListener>();
@@ -48,14 +52,20 @@ void NativeProxy::nativeAddMutationsListener(
   auto uiManager =
       fabricUIManager->getBinding()->getScheduler()->getUIManager();
 
-  // Capture a copy of the global ref, never `this`: the listener outlives this
-  // NativeProxy, which Java GC destroys on the finalizer thread.
-  removalListenerToken_ =
-      removalListener()->setListener([javaPart = javaPart_](int tag) {
-        static const auto method =
-            javaPart->getClass()->getMethod<void(jint)>("notifyScreenRemoved");
-        method(javaPart, tag);
-      });
+  {
+    // Capture a copy of the global ref, never `this`: the listener outlives
+    // this NativeProxy, and the old live read of javaPart_ at call time raced
+    // invalidateNative(). installMutex_ keeps the copy from racing the
+    // invalidation write and keeps the stored token matching the last install.
+    std::lock_guard<std::mutex> lock(installMutex_);
+    removalListenerToken_ =
+        removalListener()->setListener([javaPart = javaPart_](int tag) {
+          static const auto method =
+              javaPart->getClass()->getMethod<void(jint)>(
+                  "notifyScreenRemoved");
+          method(javaPart, tag);
+        });
+  }
 
   cleanupExpiredMountingCoordinators();
 
@@ -106,7 +116,9 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
 
 void NativeProxy::invalidateNative() {
   // Disarm before the hybrid is collected; also releases the captured global
-  // ref so the Java NativeProxy stays collectable.
+  // ref so the Java NativeProxy stays collectable. Serialized with the install
+  // path so the token is never stale and javaPart_ is not nulled mid-capture.
+  std::lock_guard<std::mutex> lock(installMutex_);
   removalListener()->clearListener(removalListenerToken_);
   javaPart_ = nullptr;
 }
