@@ -195,7 +195,6 @@ function StackSetup() {
         {
           name: 'Home',
           Component: ConfigScreen,
-          options: {},
         },
       ]}
     />

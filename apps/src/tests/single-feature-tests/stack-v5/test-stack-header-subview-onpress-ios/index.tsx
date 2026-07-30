@@ -21,7 +21,6 @@ export function TestStackHeaderSubviewsOnpressIOS() {
           {
             name: 'Home',
             Component: ConfigScreen,
-            options: {},
           },
         ]}
       />

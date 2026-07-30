@@ -118,12 +118,10 @@ function TestStackBackButton() {
           {
             name: 'Root',
             Component: RootScreen,
-            options: {},
           },
           {
             name: 'Pushed',
             Component: PushedScreen,
-            options: {},
           },
         ]}
       />
