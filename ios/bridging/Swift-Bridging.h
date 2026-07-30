@@ -2,6 +2,7 @@
 
 #import "RNSReactMountingTransactionObserving.h"
 #import "RNSSplitNavigationController.h"
+#import "RNSViewFrameOriginChangeDelegate.h"
 
 #if __has_include(<RNScreens/RNScreens-Swift.h>)
 #import <RNScreens/RNScreens-Swift.h>

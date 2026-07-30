@@ -135,7 +135,7 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
     #endif
 
     for controller in currentViewControllers {
-      controller.viewFrameOriginChangeObserver = self
+      controller.viewFrameOriginChangeDelegate = self
     }
 
     needsChildViewControllersUpdate = false
@@ -404,7 +404,7 @@ extension RNSSplitHostController {
   }
 }
 
-extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver {
+extension RNSSplitHostController: RNSViewFrameOriginChangeDelegate {
 
   ///
   /// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
@@ -414,7 +414,7 @@ extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver 
   /// @param splitNavCtrl The navigation controller whose frame origin changed.
   ///
   @objc
-  public func splitNavCtrlViewDidChangeFrameOrigin(
+  public func viewFrameOriginDidChange(
     _ splitNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {

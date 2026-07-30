@@ -60,14 +60,8 @@ static void *RNSSplitNavigationViewFrameContext = &RNSSplitNavigationViewFrameCo
   CGRect newFrame = [newValue CGRectValue];
 
   if (!CGPointEqualToPoint(oldFrame.origin, newFrame.origin)) {
-    [self notifyViewFrameOriginDidChange];
+    [_navigationController viewFrameOriginDidChange];
   }
-}
-
-- (void)notifyViewFrameOriginDidChange
-{
-  RNSSplitNavigationController *navigationController = _navigationController;
-  [navigationController.viewFrameOriginChangeObserver splitNavCtrlViewDidChangeFrameOrigin:navigationController];
 }
 
 - (void)dealloc

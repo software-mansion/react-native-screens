@@ -4,18 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSSplitNavigationController;
-
-/**
- * @brief A protocol that observes origin changes in a RNSSplitNavigationController’s view frame.
- *
- * The subscriber will be notified when the view's origin changes.
- */
-@protocol RNSSplitNavigationControllerViewFrameObserver <NSObject>
-
-- (void)splitNavCtrlViewDidChangeFrameOrigin:(RNSSplitNavigationController *)splitNavCtrl;
-
-@end
+@protocol RNSViewFrameOriginChangeDelegate;
 
 /**
  * @class RNSSplitNavigationController
@@ -29,7 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitNavigationController : UINavigationController
 
-@property (nonatomic, weak, nullable) id<RNSSplitNavigationControllerViewFrameObserver> viewFrameOriginChangeObserver;
+@property (nonatomic, weak, nullable) id<RNSViewFrameOriginChangeDelegate> viewFrameOriginChangeDelegate;
+
+/**
+ * Notifies `viewFrameOriginChangeDelegate` that the origin of this controller's view frame has changed.
+ * Called by the frame observer helper when it detects the change.
+ */
+- (void)viewFrameOriginDidChange;
 
 @end
 
