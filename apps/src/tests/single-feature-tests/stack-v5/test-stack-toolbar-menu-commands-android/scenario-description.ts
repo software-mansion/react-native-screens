@@ -8,6 +8,6 @@ export const scenarioDescription: ScenarioDescription = {
     'It focuses on the flow of updates rather than testing specific props ' +
     'but it covers the hidden prop.',
   platforms: ['android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };
