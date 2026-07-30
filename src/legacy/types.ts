@@ -21,7 +21,7 @@ import type {
  * We keep a local copy of the previous data shape to keep `SearchBarProps['onChangeText']`
  * backward compatible.
  */
-export interface TextInputFocusEventData extends TargetedEvent {
+export interface SearchBarTextEventData extends TargetedEvent {
   eventCount: number;
   text: string;
 }
@@ -1015,7 +1015,7 @@ export interface SearchBarProps {
    * A callback that gets called when the text changes. It receives the current text value of the search bar.
    */
   onChangeText?:
-    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | ((e: NativeSyntheticEvent<SearchBarTextEventData>) => void)
     | undefined;
 
   /**
@@ -1038,7 +1038,7 @@ export interface SearchBarProps {
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
   onSearchButtonPress?:
-    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | ((e: NativeSyntheticEvent<SearchBarTextEventData>) => void)
     | undefined;
   /**
    * Text displayed when search field is empty
