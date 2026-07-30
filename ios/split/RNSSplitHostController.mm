@@ -24,16 +24,20 @@ static const NSInteger maxNumberOfInspectors = 1;
 
   RNSSplitHostComponentView *_splitHostComponentView;
 
-  /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation,
-  /// because Split doesn't support changing number of columns dynamically.
+  /**
+   * This variable is keeping the value of how many columns were set in the initial render. It's used for validation,
+   * because Split doesn't support changing number of columns dynamically.
+   */
   NSInteger _fixedColumnsCount;
 
-  /// Tracks currently visible columns of the UISplitViewController.
-  ///
-  /// This set is kept in sync via `UISplitViewControllerDelegate` methods (`willShow` / `willHide`)
-  /// to reflect which columns are currently rendered in the UI.
-  /// It ensures that only visible columns are considered (e.g. for accessing topViewController),
-  /// avoiding crashes when certain columns are collapsed or hidden.
+  /**
+   * Tracks currently visible columns of the UISplitViewController.
+   *
+   * This set is kept in sync via `UISplitViewControllerDelegate` methods (`willShow` / `willHide`)
+   * to reflect which columns are currently rendered in the UI.
+   * It ensures that only visible columns are considered (e.g. for accessing topViewController),
+   * avoiding crashes when certain columns are collapsed or hidden.
+   */
   NSMutableSet<NSNumber *> *_visibleColumns;
 }
 
@@ -155,21 +159,21 @@ static const NSInteger maxNumberOfInspectors = 1;
             NSStringFromClass(secondaryViewController.class));
   UINavigationController *navigationController = (UINavigationController *)secondaryViewController;
 
-  /// The assumption is that it should come in a single batch and it won't cause any delays in rendering the content.
+  /** The assumption is that it should come in a single batch and it won't cause any delays in rendering the content. */
   [navigationController setNavigationBarHidden:YES animated:NO];
   [navigationController setNavigationBarHidden:NO animated:NO];
 }
 
 #pragma mark - Helpers
 
-///
-/// @brief Gets the appropriate style for a specified number of columns.
-///
-/// This utility maps a given number of columns to the corresponding UISplitViewController.Style.
-///
-/// @param numberOfColumns The number of columns for the SplitView.
-/// @return A UISplitViewController.Style corresponding to the provided column count.
-///
+/**
+ * @brief Gets the appropriate style for a specified number of columns.
+ *
+ * This utility maps a given number of columns to the corresponding UISplitViewController.Style.
+ *
+ * @param numberOfColumns The number of columns for the SplitView.
+ * @return A UISplitViewController.Style corresponding to the provided column count.
+ */
 + (UISplitViewControllerStyle)styleByNumberOfColumns:(NSInteger)numberOfColumns
 {
   switch (numberOfColumns) {
@@ -182,16 +186,16 @@ static const NSInteger maxNumberOfInspectors = 1;
   }
 }
 
-///
-/// @brief Filters the given subviews array by a specific column type.
-///
-/// Iterates over the provided subviews array and returns only the elements that match
-/// the specified RNSSplitScreenColumnType (e.g., .column, .inspector).
-///
-/// @param type The target RNSSplitScreenColumnType to filter for.
-/// @param subviews The array of RNSSplitScreenComponentView elements to filter.
-/// @return A filtered array of RNSSplitScreenComponentView objects with the specified column type.
-///
+/**
+ * @brief Filters the given subviews array by a specific column type.
+ *
+ * Iterates over the provided subviews array and returns only the elements that match
+ * the specified RNSSplitScreenColumnType (e.g., .column, .inspector).
+ *
+ * @param type The target RNSSplitScreenColumnType to filter for.
+ * @param subviews The array of RNSSplitScreenComponentView elements to filter.
+ * @return A filtered array of RNSSplitScreenComponentView objects with the specified column type.
+ */
 - (NSArray<RNSSplitScreenComponentView *> *)filterSubviewsOfType:(RNSSplitScreenColumnType)type
                                                               in:(NSArray<RNSSplitScreenComponentView *> *)subviews
 {
@@ -231,12 +235,12 @@ static const NSInteger maxNumberOfInspectors = 1;
   [self showColumn:(UISplitViewControllerColumn)column.integerValue];
 }
 
-///
-/// @brief Maps a string column name to its corresponding `UISplitViewController.Column` value.
-///
-/// @param name The column name string: `"primary"`, `"supplementary"`, or `"secondary"`.
-/// @return The corresponding `UISplitViewController.Column`, or `nil` if the name is not recognized.
-///
+/**
+ * @brief Maps a string column name to its corresponding `UISplitViewController.Column` value.
+ *
+ * @param name The column name string: `"primary"`, `"supplementary"`, or `"secondary"`.
+ * @return The corresponding `UISplitViewController.Column`, or `nil` if the name is not recognized.
+ */
 - (nullable NSNumber *)splitViewColumnFromString:(NSString *)name
 {
   if ([name isEqualToString:@"primary"]) {
@@ -254,19 +258,17 @@ static const NSInteger maxNumberOfInspectors = 1;
 
 #pragma mark - RNSReactMountingTransactionObserving
 
-///
-/// @brief Called before mounting transaction.
-///
+/** @brief Called before mounting transaction. */
 - (void)reactMountingTransactionWillMount
 {
   // noop
 }
 
-///
-/// @brief Called after mounting transaction.
-///
-/// Updates children and the appearance, checks if the hierarchy is valid after applying updates.
-///
+/**
+ * @brief Called after mounting transaction.
+ *
+ * Updates children and the appearance, checks if the hierarchy is valid after applying updates.
+ */
 - (void)reactMountingTransactionDidMount
 {
   [self updateChildViewControllersIfNeeded];
@@ -283,9 +285,7 @@ static const NSInteger maxNumberOfInspectors = 1;
 
 #pragma mark - Validators
 
-///
-/// @brief Validates that child structure meets required constraints defined for columns and the inspector.
-///
+/** @brief Validates that child structure meets required constraints defined for columns and the inspector. */
 - (void)validateSplitViewHierarchy
 {
   NSArray<RNSSplitScreenComponentView *> *columns = [self filterSubviewsOfType:RNSSplitScreenColumnTypeColumn
@@ -297,9 +297,7 @@ static const NSInteger maxNumberOfInspectors = 1;
   [self validateInspectors:inspectors];
 }
 
-///
-/// @brief Ensures that number of columns is valid and hasn't changed dynamically.
-///
+/** @brief Ensures that number of columns is valid and hasn't changed dynamically. */
 - (void)validateColumns:(NSArray<RNSSplitScreenComponentView *> *)columns
 {
   RCTAssert((NSInteger)columns.count >= minNumberOfColumns && (NSInteger)columns.count <= maxNumberOfColumns,
@@ -311,9 +309,7 @@ static const NSInteger maxNumberOfInspectors = 1;
             @"[RNScreens] Split number of columns shouldn't change dynamically");
 }
 
-///
-/// @brief Ensures that at most one inspector is present.
-///
+/** @brief Ensures that at most one inspector is present. */
 - (void)validateInspectors:(NSArray<RNSSplitScreenComponentView *> *)inspectors
 {
   RCTAssert((NSInteger)inspectors.count <= maxNumberOfInspectors,
@@ -321,14 +317,14 @@ static const NSInteger maxNumberOfInspectors = 1;
             (long)maxNumberOfInspectors);
 }
 
-///
-/// @brief Gets the children RNSSplitScreenController instances.
-///
-/// Accesses Split controllers associated with presented columns. It asserts that each view controller is a navigation
-/// controller and its topViewController is of type RNSSplitScreenController.
-///
-/// @return An array of RNSSplitScreenController corresponding to current split view columns.
-///
+/**
+ * @brief Gets the children RNSSplitScreenController instances.
+ *
+ * Accesses Split controllers associated with presented columns. It asserts that each view controller is a navigation
+ * controller and its topViewController is of type RNSSplitScreenController.
+ *
+ * @return An array of RNSSplitScreenController corresponding to current split view columns.
+ */
 - (NSArray<RNSSplitScreenController *> *)splitScreenControllers
 {
   NSMutableArray<RNSSplitScreenController *> *splitScreenControllers =
@@ -362,14 +358,14 @@ static const NSInteger maxNumberOfInspectors = 1;
   return splitScreenControllers;
 }
 
-///
-/// @brief Gets all React subviews of type RNSSplitScreenComponentView.
-///
-/// Accesses all the subviews from the reactSubviews collection. It asserts that each one is a
-/// RNSSplitScreenComponentView.
-///
-/// @return An array of RNSSplitScreenComponentView subviews which are children of the host component view.
-///
+/**
+ * @brief Gets all React subviews of type RNSSplitScreenComponentView.
+ *
+ * Accesses all the subviews from the reactSubviews collection. It asserts that each one is a
+ * RNSSplitScreenComponentView.
+ *
+ * @return An array of RNSSplitScreenComponentView subviews which are children of the host component view.
+ */
 - (NSArray<RNSSplitScreenComponentView *> *)splitReactSubviews
 {
   NSArray<RNSSplitScreenComponentView *> *reactSubviews = [_splitHostComponentView reactSubviews];
@@ -391,13 +387,13 @@ static const NSInteger maxNumberOfInspectors = 1;
 
 #pragma mark - RNSSplitNavigationControllerViewFrameObserver
 
-///
-/// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
-///
-/// It iterates over children controllers and notifies them for the layout update.
-///
-/// @param splitNavCtrl The navigation controller whose frame origin changed.
-///
+/**
+ * @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
+ *
+ * It iterates over children controllers and notifies them for the layout update.
+ *
+ * @param splitNavCtrl The navigation controller whose frame origin changed.
+ */
 - (void)splitNavCtrlViewDidChangeFrameOrigin:(RNSSplitNavigationController *)splitNavCtrl
 {
   for (RNSSplitScreenController *controller in self.splitScreenControllers) {
@@ -405,19 +401,21 @@ static const NSInteger maxNumberOfInspectors = 1;
   }
 }
 
-/// This extension is a workaround for missing UISplitViewController symbols introduced in iOS 26,
-/// allowing the project to compile and run on iOS 18 or earlier versions.
+/**
+ * This extension is a workaround for missing UISplitViewController symbols introduced in iOS 26,
+ * allowing the project to compile and run on iOS 18 or earlier versions.
+ */
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-///
-/// @brief Sets up the inspector column if available.
-/// @remarks Inspector columns is available only on iOS 26 or higher.
-///
-/// Attaches a view controller for the inspector column.
-///
-/// @param inspectors An array of inspector-type RNSSplitScreenComponentView subviews.
-///
+/**
+ * @brief Sets up the inspector column if available.
+ * @remarks Inspector columns is available only on iOS 26 or higher.
+ *
+ * Attaches a view controller for the inspector column.
+ *
+ * @param inspectors An array of inspector-type RNSSplitScreenComponentView subviews.
+ */
 - (void)maybeSetupInspector:(NSArray<RNSSplitScreenComponentView *> *)inspectors
 {
 #if !TARGET_OS_TV
@@ -432,12 +430,12 @@ static const NSInteger maxNumberOfInspectors = 1;
 #endif
 }
 
-///
-/// @brief Shows the inspector column when available.
-/// @remarks Inspector columns is available only on iOS 26 or higher.
-///
-/// Uses the UISplitViewController's new API introduced in iOS 26 to show the inspector column.
-///
+/**
+ * @brief Shows the inspector column when available.
+ * @remarks Inspector columns is available only on iOS 26 or higher.
+ *
+ * Uses the UISplitViewController's new API introduced in iOS 26 to show the inspector column.
+ */
 - (void)maybeShowInspector
 {
 #if !TARGET_OS_TV
@@ -447,12 +445,12 @@ static const NSInteger maxNumberOfInspectors = 1;
 #endif
 }
 
-///
-/// @brief Hides the inspector column when available.
-/// @remarks Inspector columns is available only on iOS 26 or higher.
-///
-/// Uses the UISplitViewController's new API introduced in iOS 26 to hide the inspector column.
-///
+/**
+ * @brief Hides the inspector column when available.
+ * @remarks Inspector columns is available only on iOS 26 or higher.
+ *
+ * Uses the UISplitViewController's new API introduced in iOS 26 to hide the inspector column.
+ */
 - (void)maybeHideInspector
 {
 #if !TARGET_OS_TV
@@ -488,14 +486,14 @@ static const NSInteger maxNumberOfInspectors = 1;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-///
-/// @brief Called after a column in the split view controller has been hidden from the interface.
-///
-/// Currently emits onHideInspector event for the inspector if applicable.
-///
-/// @param svc The split view controller that just hid the column.
-/// @param column The column that was hidden.
-///
+/**
+ * @brief Called after a column in the split view controller has been hidden from the interface.
+ *
+ * Currently emits onHideInspector event for the inspector if applicable.
+ *
+ * @param svc The split view controller that just hid the column.
+ * @param column The column that was hidden.
+ */
 - (void)splitViewController:(UISplitViewController *)svc didHideColumn:(UISplitViewControllerColumn)column
 {
 #if !TARGET_OS_TV
