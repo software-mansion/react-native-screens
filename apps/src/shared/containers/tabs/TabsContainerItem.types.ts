@@ -6,5 +6,5 @@ export type TabsContainerItemProps = {
   navMethods: TabsNavigationMethods;
   isSelected: boolean;
   pendingForUpdate: boolean;
-  Component: React.ComponentType;
+  element: React.ReactElement;
 };

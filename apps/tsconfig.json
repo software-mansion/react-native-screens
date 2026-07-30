@@ -10,5 +10,6 @@
       "@react-navigation/*": ["../react-navigation/packages/*/src"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
+  "exclude": ["src/tests/**"]
 }

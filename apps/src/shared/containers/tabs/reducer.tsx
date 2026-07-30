@@ -139,7 +139,7 @@ function tabsActionSetOptionsHandler(
 
 function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { Component, ...rest } = config;
+  const { element, ...rest } = config;
   return {
     ...rest,
     // Tab names are required to be unique (enforced by useSanitizeRouteConfigs),
