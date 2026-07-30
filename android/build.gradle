@@ -186,14 +186,20 @@ android {
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         kotlin {
-            directories.add("src/fabric/java")
+            srcDirs += [
+                "src/fabric/java",
+            ]
+        }
+        java {
+            srcDirs += [
+                "src/fabric/java",
+            ]
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
-                directories.add("${androidResDir}/base")
-                directories.add("${androidResDir}/v33")
+                srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
             } else {
-                directories.add("${androidResDir}/base")
+                srcDirs = ["${androidResDir}/base"]
             }
         }
     }
