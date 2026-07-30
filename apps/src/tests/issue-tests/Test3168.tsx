@@ -18,14 +18,11 @@ import { Button, ScrollView, Text, View } from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
 import { ListItem, SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
-import {
-  TabsContainer,
-  TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+import { TabsContainer, TabRouteConfig } from '@apps/shared/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;

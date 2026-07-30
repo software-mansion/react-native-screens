@@ -9,7 +9,7 @@ import {
   useTabsNavigationContext,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 function ConfigScreen() {

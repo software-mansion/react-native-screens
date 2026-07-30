@@ -56,7 +56,7 @@ export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
 
 // --- UIKit: other controls ---
-
+export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
@@ -70,3 +70,5 @@ export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
+export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
+  'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';

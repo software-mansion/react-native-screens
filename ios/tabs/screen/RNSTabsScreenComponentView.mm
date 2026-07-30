@@ -16,19 +16,15 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#if RNS_GAMMA_ENABLED
 #import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewSeeking.h"
-#endif
 
 namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-#if RNS_GAMMA_ENABLED
 @interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
 @end
-#endif
 
 @implementation RNSTabsScreenComponentView {
   RNSTabsScreenViewController *_controller;
@@ -121,7 +117,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark RNSScrollViewSeeking
 
-#if RNS_GAMMA_ENABLED
 - (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
 {
   // Native iOS-26 scroll-edge behavior (status-bar tap scroll-to-top, scroll edge appearance).
@@ -129,7 +124,6 @@ RNS_IGNORE_SUPER_CALL_END
   // Cache used by the container-nesting content-scroll-view resolution.
   _contentScrollView = scrollView;
 }
-#endif // RNS_GAMMA_ENABLED
 
 - (nullable UIScrollView *)cachedContentScrollView
 {

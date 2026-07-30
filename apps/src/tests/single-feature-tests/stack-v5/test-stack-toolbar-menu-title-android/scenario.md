@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** This test focuses on the title-related Android toolbar
-menu item props on the gamma stack header: `title`, `titleCondensed` and
+menu item props on the v5 stack header: `title`, `titleCondensed` and
 `tooltipText`. It verifies where each one renders and how they relate:
 `titleCondensed` is the label shown on the **Toolbar action button**
 (falling back to `title`), `tooltipText` is the **long-press / hover

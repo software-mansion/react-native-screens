@@ -3,12 +3,12 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import type {
   StackHeaderConfigProps,
   StackHeaderMenuIOS,
   StackHeaderMenuElementIOS,
-} from 'react-native-screens/components/gamma/stack/header';
+} from 'react-native-screens/components/stack/header';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
@@ -252,4 +252,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackHeaderSelectiveUpdatesIOS, scenarioDescription);
+export default createScenario(
+  TestStackHeaderSelectiveUpdatesIOS,
+  scenarioDescription,
+);

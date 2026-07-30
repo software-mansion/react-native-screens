@@ -11,8 +11,8 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
+} from '@apps/shared/containers/stack';
+import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Button, ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';

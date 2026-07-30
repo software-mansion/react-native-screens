@@ -4,6 +4,7 @@ import android.util.Log
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.fabric.FabricUIManager
+import com.swmansion.rnscreens.legacy.Screen
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 

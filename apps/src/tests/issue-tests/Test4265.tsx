@@ -11,7 +11,7 @@ import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 const TILE_SIZE = Math.floor((Dimensions.get('window').width - 24) / 2);
