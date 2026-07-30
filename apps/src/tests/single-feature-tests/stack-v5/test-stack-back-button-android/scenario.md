@@ -15,8 +15,7 @@ changing props in runtime and ensure consistent behavior.
 Incomplete.
 
 - Steps 1-2, 9-10 and 22-23, asserting only that the back button is absent or present.
-- Step 22 is reached by reloading the screen rather than navigating back — the
-  header back button does not pop this nested stack (issue #1459).
+- Step 22 is reached by reloading the screen rather than navigating back.
 
 **Manual only (not automated):**
 
@@ -40,7 +39,7 @@ Incomplete.
 
   With the v5 `StackContainer` at the root, the header back button pops the
   stack. Opened through the in-app menu it does not, because the surrounding
-  react-navigation stack consumes the back press (issue #1459).
+  react-navigation stack consumes the back press (issue [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)).
 
 ## Note
 
