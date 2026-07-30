@@ -356,10 +356,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 10,
-    // The list draws edge to edge, so its last rows would otherwise sit under
-    // the system navigation bar, out of reach of a tap. Deep enough to leave
-    // every control scrollable clear of it.
-    paddingBottom: 160,
+    paddingBottom: 50,
     gap: 6,
   },
   heading: {
