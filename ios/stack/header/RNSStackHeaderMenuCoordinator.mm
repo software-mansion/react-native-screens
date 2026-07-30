@@ -88,6 +88,21 @@
   return [UIMenu menuWithTitle:data.title image:menuImage identifier:nil options:options children:elements];
 }
 
++ (UIMenu *)buildUIMenuFromData:(RNSStackHeaderMenuData *)data
+       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                   stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                withImageLoader:(id<RNSImageLoading>)imageLoader
+        menuInvalidatedCallback:(nullable void (^)(void))onMenuInvalidated
+{
+  return [self buildMenuFromData:data
+                withHeaderEventsDelegate:delegate
+                            stateTracker:tracker
+                     singleSelectionRoot:nil
+      initialSingleSelectionStateClaimed:NULL
+                         withImageLoader:imageLoader
+                 menuInvalidatedCallback:onMenuInvalidated];
+}
+
 + (nullable UIMenuElement *)buildElementFromData:(id<RNSStackHeaderMenuElement>)element
                         withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
                                     stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker

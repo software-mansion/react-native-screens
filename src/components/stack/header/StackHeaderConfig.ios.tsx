@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from 'react';
 import type {
@@ -30,8 +31,8 @@ import type {
   StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
-import { findMenuElementByIdInItems, validateMenuCallbacks } from './utils';
-import { resolveIconAssetSources } from './ios/iconUtils.ios';
+import { findMenuElementByIdInMenus, validateMenuCallbacks } from './utils';
+import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -48,6 +49,7 @@ function StackHeaderConfig(
     leadingItems,
     trailingItems,
     titleItem,
+    titleMenu,
     subtitleItem,
     largeSubtitleItem,
     largeTitle,
@@ -95,47 +97,54 @@ function StackHeaderConfig(
     },
   }));
 
+  const allMenus = useMemo(
+    () =>
+      [
+        ...(leadingItems ?? [])
+          .filter(it => it && it.type === 'item')
+          .map(it => it.menu),
+        ...(trailingItems ?? [])
+          .filter(it => it && it.type === 'item')
+          .map(it => it.menu),
+        titleMenu,
+      ].filter(it => !!it),
+    [leadingItems, trailingItems, titleMenu],
+  );
+
   const handleMenuItemPress = useCallback(
     (event: NativeSyntheticEvent<MenuItemPressEvent>) => {
-      const items = Array.of(
-        ...(leadingItems ?? []).filter(it => it && it.type === 'item'),
-        ...(trailingItems ?? []).filter(it => it && it.type === 'item'),
-      );
-      const menuElement = findMenuElementByIdInItems(
-        items,
+      const menuElement = findMenuElementByIdInMenus(
+        allMenus,
         event.nativeEvent.menuItemId,
       );
       if (menuElement && menuElement.type === 'menuItem') {
         menuElement.onPress?.();
       }
     },
-    [leadingItems, trailingItems],
+    [allMenus],
   );
-
-  const allMenuItems = [
-    ...(leadingItems ?? []),
-    ...(trailingItems ?? []),
-  ].filter(it => it && it.type === 'item');
 
   const handleSelectionChange = useCallback(
     (event: NativeSyntheticEvent<MenuSelectionChangeEvent>) => {
       const { menuId, selectedMenuItemIds } = event.nativeEvent;
-      const menu = findMenuElementByIdInItems(allMenuItems, menuId);
+      const menu = findMenuElementByIdInMenus(allMenus, menuId);
       if (menu && menu.type === 'menu') {
         menu.onSelectionChange?.(selectedMenuItemIds);
       }
     },
-    [allMenuItems],
+    [allMenus],
   );
 
   useEffect(() => {
-    for (const item of allMenuItems) {
-      if ('menu' in item && item.menu) {
-        validateMenuCallbacks(item.menu);
-      }
+    for (const menu of allMenus) {
+      validateMenuCallbacks(menu);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leadingItems, trailingItems]);
+  }, [allMenus]);
+
+  const resolvedTitleMenu = useMemo(
+    () => (titleMenu != null ? resolveMenuIcons(titleMenu) : undefined),
+    [titleMenu],
+  );
 
   return (
     <StackHeaderConfigIOSNativeComponent
@@ -145,6 +154,7 @@ function StackHeaderConfig(
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
+      titleMenu={resolvedTitleMenu}
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}
       onMenuSelectionChange={handleSelectionChange}>

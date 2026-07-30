@@ -48,6 +48,9 @@ TBD
   - [ ] A toast "Selected unique "radio 1-2"" is displayed
   - [ ] When Menu 1 > Submenu with Radio is reopened, Radio 1-1 is no longer checked
   - [ ] When Menu 1 > Submenu with Radio > SubSubmenu with Radio is reopened, Radio 1-2 is checked
+10. Click on screen title
+  - [ ] The title should transform into a menu with two actions
+  - [ ] Clicking either actions should display a toast
 
 ### setMenuItemOptions view command
 
