@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView;
 
+#pragma mark - Signals
+
 /**
  * @brief Determines if this controller is nested inside a SplitHost hierarchy.
  *
@@ -27,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isInSplitHostSubtree;
 
 - (void)setNeedsLifecycleStateUpdate;
+
+#pragma mark - Layout
 
 /**
  * @brief Request ShadowNode state update when the Split screen frame origin has changed.
