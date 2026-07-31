@@ -34,10 +34,6 @@ def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
 }
 
-def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
-}
-
 def resolveReactNativeDirectory() {
     def userDefinedRnDirPath = safeAppExtGet("REACT_NATIVE_NODE_MODULES_DIR", null)
     if (userDefinedRnDirPath != null) {
@@ -86,7 +82,27 @@ if (isRunningInContextOfScreensRepo()) {
     apply plugin: "com.facebook.react"
 }
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+// AGP 9 ships built-in Kotlin support enabled by default. When it is active, AGP compiles 
+// our Kotlin sources itself and *additionally* applying the Kotlin Android plugin fails the build.
+// Consuming apps may opt out with `android.builtInKotlin=false` in which case AGP does NOT
+// provide Kotlin and we MUST apply the plugin ourselves.
+// AGP < 9 had no built-in Kotlin at all, so we always apply it there.
+def shouldEnableAgpFallback() {
+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpMajorVersion <= 8) {
+        return true
+    }
+
+    def propertyVal = providers.gradleProperty("android.builtInKotlin").orNull
+    def isBuiltInKotlinEnabled = propertyVal != null ? propertyVal.toBoolean() : true
+
+    return !isBuiltInKotlinEnabled
+}
+
+if (shouldEnableAgpFallback()) {
+    apply plugin: 'kotlin-android'
+}
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -124,7 +140,6 @@ android {
         targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
@@ -170,6 +185,11 @@ android {
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
+        kotlin {
+            srcDirs += [
+                "src/fabric/java",
+            ]
+        }
         java {
             srcDirs += [
                 "src/fabric/java",
@@ -202,6 +222,6 @@ dependencies {
     implementation 'androidx.transition:transition-ktx:1.7.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation "androidx.core:core-ktx:1.17.0"
 }

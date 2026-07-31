@@ -119,11 +119,7 @@ RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitS
 
 }; // namespace rnscreens::conversion
 
-#if RNS_GAMMA_ENABLED
-
 #import "RNSConversions-ScrollViewMarker.h"
 #import "RNSConversions-Stack.h"
-
-#endif // RNS_GAMMA_ENABLED
 
 #endif // defined(__cplusplus)

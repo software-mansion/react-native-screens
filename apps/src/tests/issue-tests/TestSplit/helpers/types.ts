@@ -1,3 +1,3 @@
-import { SplitHostProps } from 'react-native-screens/experimental';
+import { SplitHostProps } from 'react-native-screens';
 
 export type SplitBaseConfig = SplitHostProps;

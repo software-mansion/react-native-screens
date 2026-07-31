@@ -12,7 +12,6 @@
 
 #import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
-#import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"

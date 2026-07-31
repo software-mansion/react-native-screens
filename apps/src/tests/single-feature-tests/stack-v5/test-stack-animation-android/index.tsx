@@ -1,7 +1,7 @@
 import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { StackContainer } from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
@@ -17,22 +17,18 @@ function StackSetup() {
         {
           name: 'Home',
           Component: HomeScreen,
-          options: {},
         },
         {
           name: 'Blue',
           Component: BlueScreen,
-          options: {},
         },
         {
           name: 'Red',
           Component: RedScreen,
-          options: {},
         },
         {
           name: 'NestedHost',
           Component: NestedHostScreen,
-          options: {},
         },
       ]}
     />
@@ -79,17 +75,14 @@ function NestedHostScreen() {
         {
           name: 'NestedHome',
           Component: NestedHomeScreen,
-          options: {},
         },
         {
           name: 'NestedBlue',
           Component: NestedBlueScreen,
-          options: {},
         },
         {
           name: 'NestedRed',
           Component: NestedRedScreen,
-          options: {},
         },
       ]}
     />
