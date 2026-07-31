@@ -48,7 +48,7 @@ export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
 export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 
 // --- UIKit: other controls ---
-
+export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
@@ -64,6 +64,8 @@ export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
+export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
+  'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
 
 // The toolbar the Stack v5 (gamma) header builds. The legacy v4 header uses
 // `CustomToolbar`, which extends `Toolbar` but not `MaterialToolbar`, so this

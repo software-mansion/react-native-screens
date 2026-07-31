@@ -7,7 +7,7 @@ import UIKit
 /// Manages a collection of RNSSplitScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
-public class RNSSplitHostController: UISplitViewController, ReactMountingTransactionObserving,
+public class RNSSplitHostController: UISplitViewController, RNSReactMountingTransactionObserving,
   RNSOrientationProvidingSwift
 {
   private var needsChildViewControllersUpdate = false
@@ -143,7 +143,8 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
 
   func updateSplitAppearanceIfNeeded() {
     splitAppearanceApplicator.updateAppearanceIfNeeded(
-      self.splitHostComponentView, self, self.splitAppearanceCoordinator)
+      self.splitHostComponentView, splitHostController: self,
+      appearanceCoordinator: self.splitAppearanceCoordinator)
   }
 
   ///
@@ -152,6 +153,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   /// It validates that the secondary VC is valid UINavigationController and it updates the navbar
   /// state by toggling it's visibility, what should be performed in a single batch of updates.
   ///
+  @objc
   public func refreshSecondaryNavBar() {
     let secondaryViewController = viewController(for: .secondary)
     assert(
@@ -259,7 +261,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     }
   }
 
-  // MARK: ReactMountingTransactionObserving
+  // MARK: RNSReactMountingTransactionObserving
 
   ///
   /// @brief Called before mounting transaction.
