@@ -33,14 +33,16 @@ TBD.
 3. Tap "Next"
   - [ ] The numbered item swaps position with right item and now shows "3"
   - [ ] The two food items change their symbols and don't flash
-4. Go back to screen One, toggle "Identifiers" OFF, then repeat steps 2–3
+4. Go back to screen One, toggle "Custom views" to `true`, repeat steps 2–3
+  - [ ] Observe the same behavior as for sfSymbols
+5. Go back to screen One, toggle "Custom views" to `false`, "Identifiers" to `false`, repeat steps 2–3
   - [ ] Without `identifier`, matching falls back to the heuristic: items crossfade /
         mis-match on transition instead of the numbered item cleanly moving
 
 ## Steps with separators
 
-5. Go back to screen One, toggle "Identifiers" back ON and "Separators" ON
+6. Go back to screen One, toggle "Identifiers" and "Separators" to `true`
   - [ ] Each header item now sits in its own liquid-glass bubble
-6. Tap "Next" through the screens (One → Two → Three)
+7. Tap "Next" through the screens (One → Two → Three)
   - [ ] On each transition, the two items that swap positions blur / crossfade
   - [ ] The item that keeps its position does not flash
