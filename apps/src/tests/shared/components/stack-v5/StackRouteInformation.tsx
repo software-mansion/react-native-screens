@@ -8,9 +8,13 @@ export function StackRouteInformation(props: { routeName?: string }) {
   return (
     <View>
       {props.routeName ? (
-        <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
+        <Text style={styles.routeInformation} testID="stack-route-name">
+          Name: {props.routeName}
+        </Text>
       ) : null}
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
+      <Text style={styles.routeInformation} testID="stack-route-key">
+        Key: {routeKey}
+      </Text>
     </View>
   );
 }

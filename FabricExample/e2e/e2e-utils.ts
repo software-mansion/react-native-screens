@@ -1,5 +1,9 @@
 import { device, expect, element, by } from 'detox';
-import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
+import {
+  AndroidElementAttributes,
+  IosElementAttributes,
+  NativeMatcher,
+} from 'detox/detox';
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -185,4 +189,46 @@ export async function forceSelectTabByLabel(label: string) {
   } else {
     await element(by.label(label)).tap();
   }
+}
+
+export async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(3000);
+  await element(by.label(message)).tap();
+}
+
+/**
+ * Returns every element matching `matcher`, normalizing `getAttributes()`'s
+ * single-element object and multi-element `{ elements: [...] }` wrapper to one
+ * array. Ordered by view hierarchy, so the topmost stacked screen is last.
+ *
+ * Throws when nothing matches — left uncaught so a crash is not misreported
+ * as "found 0".
+ */
+export async function getMatches(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes[]> {
+  const attrs = await element(matcher).getAttributes();
+  return 'elements' in attrs ? attrs.elements : [attrs];
+}
+
+/** How many elements `matcher` resolves to. */
+export async function countMatches(matcher: NativeMatcher): Promise<number> {
+  return (await getMatches(matcher)).length;
+}
+
+/** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
+export async function getTopmostMatch(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes> {
+  const matches = await getMatches(matcher);
+  return matches[matches.length - 1];
+}
+
+/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
+  await element(matcher)
+    .atIndex((await countMatches(matcher)) - 1)
+    .tap();
 }

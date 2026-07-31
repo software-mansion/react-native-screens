@@ -1,8 +1,13 @@
 import { Image, processColor } from 'react-native';
+import type { ImageResolvedAssetSource } from 'react-native';
 import type {
   HeaderBarButtonItem,
   HeaderBarButtonItemWithMenu,
 } from '../../types';
+
+// Local nominal type so declaration emit doesn't resolve the RN alias down to
+// the non-public `types_generated/.../AssetSourceResolver#ResolvedAssetSource`.
+export interface ResolvedImageAsset extends ImageResolvedAssetSource {}
 
 const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
@@ -57,7 +62,8 @@ export const prepareHeaderBarButtonItems = (
     if (item.type === 'spacing') {
       return item;
     }
-    let imageSource, templateSource;
+    let imageSource: ResolvedImageAsset | undefined,
+      templateSource: ResolvedImageAsset | undefined;
     if (item.icon?.type === 'imageSource') {
       imageSource = Image.resolveAssetSource(item.icon.imageSource);
     } else if (item.icon?.type === 'templateSource') {

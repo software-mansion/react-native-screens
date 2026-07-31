@@ -48,7 +48,7 @@ export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
 export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 
 // --- UIKit: other controls ---
-
+export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
@@ -64,8 +64,10 @@ export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
-export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
-  'androidx.appcompat.view.menu.ActionMenuItemView';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
+export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
+  'com.google.android.material.appbar.MaterialToolbar';
+export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ActionMenuItemView';
 export const CLASS_NAME_ANDROID_LINEAR_LAYOUT = 'android.widget.LinearLayout';

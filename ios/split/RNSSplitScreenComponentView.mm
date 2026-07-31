@@ -97,13 +97,13 @@ namespace react = facebook::react;
 
 #pragma mark - Layout
 
-///
-/// This override **should be considered as a workaround** for which I made some assumptions:
-/// 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
-/// 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
-/// new stack implementations, however, it will have an impact on any other native component which will be extending
-/// from the same class.
-///
+/**
+ * This override **should be considered as a workaround** for which I made some assumptions:
+ * 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
+ * 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
+ * new stack implementations, however, it will have an impact on any other native component which will be extending
+ * from the same class.
+ */
 - (void)layoutSubviews
 {
   [super layoutSubviews];

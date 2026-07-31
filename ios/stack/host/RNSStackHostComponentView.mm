@@ -15,7 +15,6 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
-#import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
@@ -38,6 +37,9 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
+  _props = defaultProps;
+
   _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];

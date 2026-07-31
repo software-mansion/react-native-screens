@@ -1,6 +1,10 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 type StackHeaderSubviewTypeAndroid =
@@ -24,4 +28,4 @@ export default codegenNativeComponent<NativeProps>(
     interfaceOnly: true,
     excludedPlatforms: ['iOS'],
   },
-);
+) as HostComponent<NativeProps>;
