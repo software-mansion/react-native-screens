@@ -1,10 +1,13 @@
 #import "RNSStackHeaderConfigComponentView.h"
+#import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
+#import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuFinder.h"
+#import "RNSStackHeaderMenuMapper.h"
 #import "RNSStackHeaderMenuUpdateOptions.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
@@ -64,6 +67,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeTitle = nil;
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
+  _titleMenu = nil;
 }
 
 - (NSArray<id> *)children
@@ -270,7 +274,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   RNSMenuElementLocator *locator = [RNSStackHeaderMenuFinder findMenuElementWithId:menuItemId
-                                                                     inHeaderItems:[self headerItems]];
+                                                                     inHeaderItems:[self headerItems]
+                                                                         titleMenu:_titleMenu];
   if (locator == nil) {
     RCTLogWarn(@"[RNScreens] setMenuItemOptions: element with id \"%@\" not found", menuItemId);
     return;
@@ -285,15 +290,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderMenuItemData *newItemData = [RNSMenuItemUpdateOptions applyOptions:updateOptions
                                                                         toMenuItem:oldItemData];
 
-  if (updateOptions.hasToggleState) {
+  if (updateOptions.hasToggleState && locator.rootMenu != nil && locator.trackerItemId != nil) {
     BOOL isToggle = oldItemData.itemType == RNSMenuItemTypeToggle ||
-        (oldItemData.itemType == RNSMenuItemTypeAutomatic && locator.headerItem.menu != nil &&
-         [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId
-                                                                inMenu:locator.headerItem.menu] != nil);
+        (oldItemData.itemType == RNSMenuItemTypeAutomatic &&
+         [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId inMenu:locator.rootMenu] != nil);
     if (isToggle) {
       [[self headerCoordinator] setToggleState:updateOptions.toggleState
                               forMenuElementId:menuItemId
-                                    withItemId:locator.headerItem.itemId
+                                 trackerItemId:locator.trackerItemId
+                                      rootMenu:locator.rootMenu
                                     parentMenu:locator.searchResult.parentMenu];
     }
   }
@@ -308,8 +313,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                        parentMenu:locator.searchResult.parentMenu];
       break;
     case RNSMenuElementPositionTitle:
+      if (locator.searchResult.parentMenu != nil) {
+        _titleMenu = [RNSStackHeaderMenuCoordinator menu:_titleMenu
+                                    replacingChildWithId:menuItemId
+                                             withElement:newItemData];
+      }
+      [[self headerCoordinator] reapplyTitleMenu];
+      break;
     case RNSMenuElementPositionOverflow:
-      // TODO: handle title menu and overflow menu
+      // TODO: handle overflow menu
       break;
   }
 }
@@ -322,7 +334,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   RNSMenuElementLocator *locator = [RNSStackHeaderMenuFinder findMenuElementWithId:menuElementId
-                                                                     inHeaderItems:[self headerItems]];
+                                                                     inHeaderItems:[self headerItems]
+                                                                         titleMenu:_titleMenu];
   if (locator == nil) {
     RCTLogWarn(@"[RNScreens] setMenuOptions: element with id \"%@\" not found", menuElementId);
     return;
@@ -346,8 +359,17 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                        parentMenu:locator.searchResult.parentMenu];
       break;
     case RNSMenuElementPositionTitle:
+      if (locator.searchResult.parentMenu == nil) {
+        _titleMenu = (RNSStackHeaderMenuData *)newMenuItem;
+      } else {
+        _titleMenu = [RNSStackHeaderMenuCoordinator menu:_titleMenu
+                                    replacingChildWithId:menuElementId
+                                             withElement:newMenuItem];
+      }
+      [[self headerCoordinator] reapplyTitleMenu];
+      break;
     case RNSMenuElementPositionOverflow:
-      // TODO: handle title menu and overflow menu
+      // TODO: handle overflow menu
       break;
   }
 }
@@ -396,6 +418,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   const auto &newHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigIOSProps>(props);
   const auto &oldHeaderProps = *std::static_pointer_cast<const react::RNSStackHeaderConfigIOSProps>(_props);
 
+  BOOL titleMenuDidChange = NO;
+
   if (oldHeaderProps.title != newHeaderProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newHeaderProps.title);
   }
@@ -420,9 +444,23 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _largeTitleEnabled = newHeaderProps.largeTitleEnabled;
   }
 
+  if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {
+    _titleMenu = [RNSStackHeaderMenuMapper
+        menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.titleMenu)];
+    titleMenuDidChange = YES;
+  }
+
   [super updateProps:props oldProps:oldProps];
 
   [[self headerCoordinator] applyConfigProperties];
+
+  if (titleMenuDidChange) {
+    // title menu is a prop on the navigation item, not on one of the bar button items
+    // thus it is not configured with matching RNSStackHeaderItemComponentView
+    // but here directly
+    [[self headerCoordinator] resetTitleMenuTracker];
+    [[self headerCoordinator] reapplyTitleMenu];
+  }
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
