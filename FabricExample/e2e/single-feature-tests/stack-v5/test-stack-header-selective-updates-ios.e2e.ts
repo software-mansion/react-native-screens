@@ -13,7 +13,7 @@ function textItem(label: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(label)));
 }
 
-/** A checked toggle/singleSelection row inside the presented native UIMenu. */
+// A checked toggle/singleSelection row inside the presented native UIMenu.
 function checkmarkFor(itemLabel: string) {
   return element(
     by
