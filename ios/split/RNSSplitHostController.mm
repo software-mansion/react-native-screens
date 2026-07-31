@@ -6,6 +6,7 @@
 #import "RNSSplitAppearanceCoordinator.h"
 #import "RNSSplitHostComponentView.h"
 #import "RNSSplitNavigationController.h"
+#import "RNSSplitNavigationControllerFrameOriginChangeDelegate.h"
 #import "RNSSplitScreenComponentView.h"
 #import "RNSSplitScreenController.h"
 
@@ -13,7 +14,8 @@ static const NSInteger minNumberOfColumns = 2;
 static const NSInteger maxNumberOfColumns = 3;
 static const NSInteger maxNumberOfInspectors = 1;
 
-@interface RNSSplitHostController () <UISplitViewControllerDelegate, RNSSplitNavigationControllerViewFrameObserver>
+@interface RNSSplitHostController () <UISplitViewControllerDelegate,
+                                      RNSSplitNavigationControllerFrameOriginChangeDelegate>
 @end
 
 @implementation RNSSplitHostController {
@@ -123,8 +125,8 @@ static const NSInteger maxNumberOfInspectors = 1;
   NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenComponentView *column in currentColumns) {
-    [currentViewControllers
-        addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:column.controller]];
+    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:column.controller
+                                                                             frameOriginChangeDelegate:self]];
   }
 
   self.viewControllers = currentViewControllers;
@@ -134,10 +136,6 @@ static const NSInteger maxNumberOfInspectors = 1;
     [self maybeSetupInspector:currentInspectors];
   }
 #endif
-
-  for (RNSSplitNavigationController *controller in currentViewControllers) {
-    controller.viewFrameOriginChangeObserver = self;
-  }
 
   _needsChildViewControllersUpdate = NO;
 }
@@ -385,7 +383,7 @@ static const NSInteger maxNumberOfInspectors = 1;
   return splitReactSubviews;
 }
 
-#pragma mark - RNSSplitNavigationControllerViewFrameObserver
+#pragma mark - RNSSplitNavigationControllerFrameOriginChangeDelegate
 
 /**
  * @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
@@ -394,7 +392,7 @@ static const NSInteger maxNumberOfInspectors = 1;
  *
  * @param splitNavCtrl The navigation controller whose frame origin changed.
  */
-- (void)splitNavCtrlViewDidChangeFrameOrigin:(RNSSplitNavigationController *)splitNavCtrl
+- (void)splitNavigationControllerFrameOriginDidChange:(RNSSplitNavigationController *)splitNavCtrl
 {
   for (RNSSplitScreenController *controller in self.splitScreenControllers) {
     [controller columnPositioningDidChangeInSplitViewController:self];
