@@ -73,4 +73,4 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfigIOS', {
   interfaceOnly: true,
   excludedPlatforms: ['android'],
-});
+}) as HostComponent<NativeProps>;

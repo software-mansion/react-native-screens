@@ -37,6 +37,9 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
+  _props = defaultProps;
+
   _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
