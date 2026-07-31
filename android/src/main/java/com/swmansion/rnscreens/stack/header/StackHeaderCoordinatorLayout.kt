@@ -144,7 +144,7 @@ internal class StackHeaderCoordinatorLayout(
 
     private fun evaluateCollapseState(
         appBar: AppBarLayout,
-        verticalOffset: Int
+        verticalOffset: Int,
     ) {
         val totalScrollRange = appBar.totalScrollRange
         isAppBarFullyCollapsed = totalScrollRange > 0 && -verticalOffset >= totalScrollRange
