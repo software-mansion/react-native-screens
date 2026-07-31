@@ -906,7 +906,7 @@ export interface StackHeaderConfigPropsAndroid {
    * A value less than `1` is invalid and falls back to `1`.
    *
    * Changing this value at runtime rebuilds the header. This is required due to
-   * native platfom limitation.
+   * a native platform limitation.
    *
    * @default 1
    * @platform android
