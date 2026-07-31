@@ -5,13 +5,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol RNSSplitNavigationControllerFrameOriginChangeDelegate;
+
 /**
  * @class RNSSplitNavigationControllerFrameObserver
  * @brief Class responsible for observing frame origin changes of RNSSplitNavigationController's view.
  */
 @interface RNSSplitNavigationControllerFrameObserver : NSObject
 
-- (instancetype)initWithSplitNavigationController:(RNSSplitNavigationController *)navigationController;
+- (instancetype)initWithSplitNavigationController:(RNSSplitNavigationController *)navigationController
+                                         delegate:(nullable id<RNSSplitNavigationControllerFrameOriginChangeDelegate>)
+                                                      frameOriginChangeDelegate;
 
 /**
  * Registers KVO for the frame of navigation controller's view.

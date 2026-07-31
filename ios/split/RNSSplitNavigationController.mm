@@ -4,6 +4,18 @@
 
 @implementation RNSSplitNavigationController {
   RNSSplitNavigationControllerFrameObserver *_frameObserver;
+  id<RNSSplitNavigationControllerFrameOriginChangeDelegate> __weak _frameOriginChangeDelegate;
+}
+
+- (instancetype)initWithRootViewController:(UIViewController *)rootViewController
+                 frameOriginChangeDelegate:
+                     (id<RNSSplitNavigationControllerFrameOriginChangeDelegate>)frameOriginChangeDelegate
+{
+  if (self = [super initWithRootViewController:rootViewController]) {
+    _frameOriginChangeDelegate = frameOriginChangeDelegate;
+  }
+
+  return self;
 }
 
 /**
@@ -17,14 +29,11 @@
   [super viewDidLoad];
 
   if (_frameObserver == nil) {
-    _frameObserver = [[RNSSplitNavigationControllerFrameObserver alloc] initWithSplitNavigationController:self];
+    _frameObserver = [[RNSSplitNavigationControllerFrameObserver alloc]
+        initWithSplitNavigationController:self
+                                 delegate:_frameOriginChangeDelegate];
   }
   [_frameObserver registerForViewFrameChanges];
-}
-
-- (void)viewFrameOriginDidChange
-{
-  [self.viewFrameOriginChangeDelegate splitNavigationControllerFrameOriginDidChange:self];
 }
 
 - (void)dealloc
