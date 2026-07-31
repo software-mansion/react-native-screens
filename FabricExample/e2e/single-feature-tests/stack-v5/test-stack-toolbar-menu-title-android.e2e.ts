@@ -11,14 +11,12 @@ import {
 import type {
   CmdCondensedOption,
   CmdTitleOption,
-  CmdTooltipOption,
   HeaderTitle,
   IconOption,
   IdOption,
   ItemTitle,
   ShowAsActionOption,
   TitleCondensedOption,
-  TooltipOption,
 } from '@apps/tests/single-feature-tests/stack-v5/test-stack-toolbar-menu-title-android';
 
 const SCROLL_VIEW = 'toolbar-menu-title-scrollview';
@@ -32,79 +30,37 @@ const MENU_ANIMATION_TIMEOUT_MS = 5000;
 // used the menu is either up or was never opened.
 const MENU_PRESENCE_TIMEOUT_MS = 250;
 
-/**
- * The app draws edge to edge, so the bottom of the settings list is covered by
- * the system navigation bar. Detox stops scrolling the moment a view is 75%
- * visible, which parks it in exactly that strip — and a tap there lands on the
- * Home button, sends the app to the launcher and fails every later step with
- * "No activities in stage RESUMED". Keep this fraction of the list's height
- * free below a control before tapping it; it is comfortably more than a
- * navigation bar is tall.
- */
-const NAV_BAR_CLEARANCE_RATIO = 0.1;
-
 const HEADER_TITLE: HeaderTitle = 'Title / Condensed / Tooltip';
 const ITEM_1_TITLE: ItemTitle = 'First Item';
 const ITEM_2_TITLE: ItemTitle = 'Second Item Title';
 const ITEM_3_TITLE: ItemTitle = 'Third Item Long Title';
 const OVERFLOW_BUTTON = 'More options';
 
+// Only the props the test drives are listed; the screen's tooltip pickers are
+// exercised manually (see `scenario.md`), so they have no entry here.
 interface ItemProps {
   icon: IconOption;
   showAsAction: ShowAsActionOption;
   titleCondensed: TitleCondensedOption;
-  tooltipText: TooltipOption;
 }
 
 interface CommandProps {
   targetId: IdOption;
   title: CmdTitleOption;
   titleCondensed: CmdCondensedOption;
-  tooltipText: CmdTooltipOption;
 }
 
 /** Every string a Toolbar button or overflow row can display. */
 type MenuText = Exclude<
-  ItemTitle | TitleCondensedOption | CmdTitleOption | TooltipOption,
+  ItemTitle | TitleCondensedOption | CmdTitleOption,
   'undefined' | 'no change'
 >;
-
-async function frameOf(id: string): Promise<Detox.ElementAttributeFrame> {
-  const attributes = await element(by.id(id)).getAttributes();
-
-  if ('elements' in attributes) {
-    throw new Error(`Expected a single view with testID "${id}".`);
-  }
-
-  return attributes.frame;
-}
-
-/**
- * Brings a control into view and, when Detox left it under the navigation bar,
- * scrolls just far enough for it to clear it — see `NAV_BAR_CLEARANCE_RATIO`.
- */
-async function scrollIntoTappableView(id: string) {
-  await scrollUntilVisible(id, SCROLL_VIEW);
-
-  const list = await frameOf(SCROLL_VIEW);
-  const control = await frameOf(id);
-  const clearance = list.height * NAV_BAR_CLEARANCE_RATIO;
-  const overlap = Math.ceil(
-    control.y + control.height + clearance - (list.y + list.height),
-  );
-
-  if (overlap > 0) {
-    // Starts the swipe at mid-list: a gesture beginning in the navigation bar
-    // strip would be swallowed by the system just like a tap there.
-    await element(by.id(SCROLL_VIEW)).scroll(overlap, 'down', Number.NaN, 0.5);
-  }
-}
 
 // Rewinds to the top first, so a target above the current offset is still
 // reachable — `scrollUntilVisible` only scrolls one way.
 async function scrollToControl(id: string) {
   await element(by.id(SCROLL_VIEW)).scrollTo('top');
-  await scrollIntoTappableView(id);
+  await scrollUntilVisible(id, SCROLL_VIEW);
 }
 
 /** Opens a picker, taps an option and closes the picker again. */
@@ -112,9 +68,9 @@ async function selectOption(pickerId: string, optionId: string) {
   await scrollToControl(pickerId);
   await element(by.id(pickerId)).tap();
 
-  // The rows open directly below the picker, so they land in the navigation bar
-  // strip even more readily than the picker itself did.
-  await scrollIntoTappableView(optionId);
+  // The rows open directly below the picker, so the lower ones can start off
+  // screen.
+  await scrollUntilVisible(optionId, SCROLL_VIEW);
   await element(by.id(optionId)).tap();
 
   await scrollToControl(pickerId);
@@ -147,7 +103,6 @@ const COMMAND_LABELS = {
   targetId: 'target-id',
   title: 'title',
   titleCondensed: 'titleCondensed',
-  tooltipText: 'tooltipText',
 } as const satisfies Record<keyof CommandProps, string>;
 
 async function selectCommandProp<Prop extends keyof CommandProps>(

@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -15,6 +15,7 @@ import {
   ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
 // The option types are exported for the e2e test covering this screen.
@@ -37,8 +38,9 @@ export type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 const TITLE_CONDENSED_OPTIONS = ['undefined', 'Cond', 'Short'] as const;
 export type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
 
+// Tooltips are manual-only, so the two types below stay local to the screen.
 const TOOLTIP_OPTIONS = ['undefined', 'Tooltip text', 'Hi!'] as const;
-export type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
+type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
 
 // Title is fixed per id so the condensed/tooltip fallbacks are easy to spot.
 const ITEM_TITLES = {
@@ -241,60 +243,62 @@ function MainScreen() {
   }, [cmdTargetId, cmdTitle, cmdCondensed, cmdTooltip]);
 
   return (
-    <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView
-        testID="toolbar-menu-title-scrollview"
-        style={styles.scroll}
-        contentContainerStyle={styles.content}>
-        <Text style={styles.heading}>Send Command</Text>
-        <SettingsPicker<IdOption>
-          label="cmd target id"
-          value={cmdTargetId}
-          items={[...ID_OPTIONS]}
-          onValueChange={setCmdTargetId}
-          testID="cmd-target-id-picker"
-        />
-        <SettingsPicker<CmdTitleOption>
-          label="cmd title"
-          value={cmdTitle}
-          items={CMD_TITLE_OPTIONS}
-          onValueChange={setCmdTitle}
-          testID="cmd-title-picker"
-        />
-        <SettingsPicker<CmdCondensedOption>
-          label="cmd titleCondensed"
-          value={cmdCondensed}
-          items={CMD_CONDENSED_OPTIONS}
-          onValueChange={setCmdCondensed}
-          testID="cmd-titlecondensed-picker"
-        />
-        <SettingsPicker<CmdTooltipOption>
-          label="cmd tooltipText"
-          value={cmdTooltip}
-          items={CMD_TOOLTIP_OPTIONS}
-          onValueChange={setCmdTooltip}
-          testID="cmd-tooltiptext-picker"
-        />
-        <Button
-          title="Send Command"
-          onPress={sendCommand}
-          testID="send-command-button"
-        />
+    // The app draws edge to edge, so without the bottom inset the list's
+    // viewport runs under the navigation bar and its lowest row cannot be
+    // tapped — neither by hand nor by Detox.
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollViewMarker style={styles.scrollViewMarker}>
+        <ScrollView
+          testID="toolbar-menu-title-scrollview"
+          style={styles.scroll}
+          contentContainerStyle={styles.content}>
+          <Text style={styles.heading}>Send Command</Text>
+          <SettingsPicker<IdOption>
+            label="cmd target id"
+            value={cmdTargetId}
+            items={[...ID_OPTIONS]}
+            onValueChange={setCmdTargetId}
+            testID="cmd-target-id-picker"
+          />
+          <SettingsPicker<CmdTitleOption>
+            label="cmd title"
+            value={cmdTitle}
+            items={CMD_TITLE_OPTIONS}
+            onValueChange={setCmdTitle}
+            testID="cmd-title-picker"
+          />
+          <SettingsPicker<CmdCondensedOption>
+            label="cmd titleCondensed"
+            value={cmdCondensed}
+            items={CMD_CONDENSED_OPTIONS}
+            onValueChange={setCmdCondensed}
+            testID="cmd-titlecondensed-picker"
+          />
+          <SettingsPicker<CmdTooltipOption>
+            label="cmd tooltipText"
+            value={cmdTooltip}
+            items={CMD_TOOLTIP_OPTIONS}
+            onValueChange={setCmdTooltip}
+          />
+          <Button
+            title="Send Command"
+            onPress={sendCommand}
+            testID="send-command-button"
+          />
 
-        <Text style={styles.heading}>Result</Text>
-        {/* The e2e test taps this label to dismiss the overflow menu, so it
-            must stay non-interactive. */}
-        <Text testID="last-clicked-result" style={styles.result}>
-          Last clicked: {lastClicked ?? '—'}
-        </Text>
+          <Text style={styles.heading}>Result</Text>
+          {/* The e2e test taps this label to dismiss the overflow menu, so it
+              must stay non-interactive. */}
+          <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
 
-        <Text style={styles.heading}>Menu Items — Props</Text>
-        <SlotControls
-          slots={slots}
-          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-        />
-      </ScrollView>
-    </ScrollViewMarker>
+          <Text style={styles.heading}>Menu Items — Props</Text>
+          <SlotControls
+            slots={slots}
+            updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+          />
+        </ScrollView>
+      </ScrollViewMarker>
+    </SafeAreaView>
   );
 }
 
@@ -339,7 +343,6 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             value={slot.tooltipText}
             items={[...TOOLTIP_OPTIONS]}
             onValueChange={v => updateSlot(i, { tooltipText: v })}
-            testID={`slot-${i + 1}-tooltiptext-picker`}
           />
         </React.Fragment>
       ))}
