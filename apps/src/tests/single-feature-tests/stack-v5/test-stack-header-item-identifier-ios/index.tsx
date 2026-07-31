@@ -13,8 +13,10 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
 import { SettingsSwitch } from '@apps/shared';
+import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigProps,
+  StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderSpacerItemIOS,
 } from 'react-native-screens/components/stack/header';
@@ -28,9 +30,20 @@ const SYMBOL_CYCLES: Record<ItemId, string[]> = {
   charlie: ['carrot.fill', 'fish.fill', 'birthday.cake.fill'],
 };
 
+const COLOR_CYCLES: Record<ItemId, string[]> = {
+  alpha: [Colors.RedLight100, Colors.YellowLight100, Colors.NavyLight100],
+  bravo: [Colors.GreenLight100, Colors.BlueLight100, Colors.PurpleLight100],
+  charlie: [Colors.BlueLight100, Colors.PurpleLight100, Colors.GreenLight100],
+};
+
 function iconForItem(id: ItemId, screenIndex: number): PlatformIconIOS {
   const cycle = SYMBOL_CYCLES[id];
   return { type: 'sfSymbol', name: cycle[screenIndex % cycle.length]! };
+}
+
+function colorForItem(id: ItemId, screenIndex: number): string {
+  const cycle = COLOR_CYCLES[id];
+  return cycle[screenIndex % cycle.length]!;
 }
 
 const ROUTE_NAMES = ['One', 'Two', 'Three'];
@@ -44,27 +57,44 @@ const LAYOUTS: Record<string, ItemId[]> = {
 type Toggles = {
   identifiersEnabled: boolean;
   separatorsEnabled: boolean;
+  customViewsEnabled: boolean;
   setIdentifiersEnabled: (value: boolean) => void;
   setSeparatorsEnabled: (value: boolean) => void;
+  setCustomViewsEnabled: (value: boolean) => void;
 };
 
 const ToggleContext = createContext<Toggles>({
   identifiersEnabled: true,
   separatorsEnabled: false,
+  customViewsEnabled: false,
   setIdentifiersEnabled: () => {},
   setSeparatorsEnabled: () => {},
+  setCustomViewsEnabled: () => {},
 });
+
+type HeaderItem = StackHeaderInlineItemIOS | StackHeaderInlineCustomItemIOS;
 
 function makeItem(
   id: ItemId,
   screenIndex: number,
   withIdentifier: boolean,
-): StackHeaderInlineItemIOS {
+  withCustomView: boolean,
+): HeaderItem {
+  const identifierProp = withIdentifier ? { identifier: id } : {};
+  if (withCustomView) {
+    const color = colorForItem(id, screenIndex);
+    return {
+      type: 'item',
+      id,
+      render: () => <View style={[styles.customItem, { backgroundColor: color }]} />,
+      ...identifierProp,
+    };
+  }
   return {
     type: 'item',
     id,
     icon: iconForItem(id, screenIndex),
-    ...(withIdentifier ? { identifier: id } : {}),
+    ...identifierProp,
   };
 }
 
@@ -73,8 +103,9 @@ function buildItems(
   screenIndex: number,
   withIdentifier: boolean,
   withSeparators: boolean,
-): (StackHeaderInlineItemIOS | StackHeaderSpacerItemIOS)[] {
-  const result: (StackHeaderInlineItemIOS | StackHeaderSpacerItemIOS)[] = [];
+  withCustomView: boolean,
+): (HeaderItem | StackHeaderSpacerItemIOS)[] {
+  const result: (HeaderItem | StackHeaderSpacerItemIOS)[] = [];
   ids.forEach((id, index) => {
     if (withSeparators && index > 0) {
       result.push({
@@ -84,7 +115,7 @@ function buildItems(
         width: 12,
       });
     }
-    result.push(makeItem(id, screenIndex, withIdentifier));
+    result.push(makeItem(id, screenIndex, withIdentifier, withCustomView));
   });
   return result;
 }
@@ -94,8 +125,10 @@ function makeScreen(routeName: string) {
     const {
       identifiersEnabled,
       separatorsEnabled,
+      customViewsEnabled,
       setIdentifiersEnabled,
       setSeparatorsEnabled,
+      setCustomViewsEnabled,
     } = useContext(ToggleContext);
     const navigation = useStackNavigationContext();
     const { setRouteOptions, routeKey } = navigation;
@@ -110,10 +143,11 @@ function makeScreen(routeName: string) {
             screenIndex,
             identifiersEnabled,
             separatorsEnabled,
+            customViewsEnabled,
           ),
         },
       }),
-      [identifiersEnabled, separatorsEnabled, screenIndex],
+      [identifiersEnabled, separatorsEnabled, customViewsEnabled, screenIndex],
     );
 
     useLayoutEffect(() => {
@@ -136,6 +170,12 @@ function makeScreen(routeName: string) {
           value={separatorsEnabled}
           onValueChange={setSeparatorsEnabled}
         />
+        <SettingsSwitch
+          label="Custom views"
+          testID="toggle-custom-views"
+          value={customViewsEnabled}
+          onValueChange={setCustomViewsEnabled}
+        />
         {nextRoute && (
           <Button title="Next" onPress={() => navigation.push(nextRoute)} />
         )}
@@ -150,15 +190,18 @@ function makeScreen(routeName: string) {
 function TestStackHeaderItemIdentifierIOS() {
   const [identifiersEnabled, setIdentifiersEnabled] = useState(true);
   const [separatorsEnabled, setSeparatorsEnabled] = useState(false);
+  const [customViewsEnabled, setCustomViewsEnabled] = useState(false);
 
   const toggles = useMemo<Toggles>(
     () => ({
       identifiersEnabled,
       separatorsEnabled,
+      customViewsEnabled,
       setIdentifiersEnabled,
       setSeparatorsEnabled,
+      setCustomViewsEnabled,
     }),
-    [identifiersEnabled, separatorsEnabled],
+    [identifiersEnabled, separatorsEnabled, customViewsEnabled],
   );
 
   const routeConfigs = useMemo(
@@ -181,6 +224,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+  },
+  customItem: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
   },
 });
 
