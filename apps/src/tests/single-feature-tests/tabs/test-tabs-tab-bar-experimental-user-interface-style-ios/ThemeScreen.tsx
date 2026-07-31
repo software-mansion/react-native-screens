@@ -1,7 +1,7 @@
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import React from 'react';
 import { Button, View, Text, ScrollView, StyleSheet } from 'react-native';
 import { ThemedText } from '@apps/shared';

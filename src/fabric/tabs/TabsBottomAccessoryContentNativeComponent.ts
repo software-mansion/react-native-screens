@@ -1,7 +1,11 @@
 'use client';
 
 import { codegenNativeComponent } from 'react-native';
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 
 type BottomAccessoryEnvironment = 'regular' | 'inline';
 
@@ -12,4 +16,4 @@ export interface NativeProps extends ViewProps {
 export default codegenNativeComponent<NativeProps>(
   'RNSTabsBottomAccessoryContent',
   {},
-);
+) as HostComponent<NativeProps>;

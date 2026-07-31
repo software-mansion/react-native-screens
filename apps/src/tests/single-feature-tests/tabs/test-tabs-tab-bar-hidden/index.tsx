@@ -8,7 +8,7 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();

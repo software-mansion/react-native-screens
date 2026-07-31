@@ -6,7 +6,7 @@ import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
 function TintTab() {
