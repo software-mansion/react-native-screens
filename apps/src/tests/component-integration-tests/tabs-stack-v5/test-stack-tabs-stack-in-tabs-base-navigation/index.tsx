@@ -5,11 +5,11 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
   type TabRouteConfig,
   TabsContainer,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import {
   StackContainer,
   type StackRouteConfig,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { StyleSheet, View } from 'react-native';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
@@ -48,17 +48,14 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
     Component: FirstStackScreen,
-    options: {},
   },
   {
     name: 'Second',
     Component: SecondStackScreen,
-    options: {},
   },
   {
     name: 'Third',
     Component: ThirdStackScreen,
-    options: {},
   },
 ];
 

@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-- (void)setViewToSnapshot;
+- (void)addSnapshotToView;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;
@@ -87,9 +87,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
+@property (nonatomic, readwrite) BOOL iosOrientationInheritanceFixEnabled;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
+
+/**
+ * Whether React has already deleted this component. The view may still be part of the view
+ * hierarchy at that point, backing the remainder of an ongoing native transition.
+ */
+@property (nonatomic, readonly, getter=isInvalidated) BOOL invalidated;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;

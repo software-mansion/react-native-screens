@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
+import { useStackNavigationContext } from '@apps/shared/containers/stack';
 import { StyleSheet, Text, View } from 'react-native';
 
 export function StackRouteInformation(props: { routeName?: string }) {
@@ -8,9 +8,13 @@ export function StackRouteInformation(props: { routeName?: string }) {
   return (
     <View>
       {props.routeName ? (
-        <Text style={styles.routeInformation}>Name: {props.routeName}</Text>
+        <Text style={styles.routeInformation} testID="stack-route-name">
+          Name: {props.routeName}
+        </Text>
       ) : null}
-      <Text style={styles.routeInformation}>Key: {routeKey}</Text>
+      <Text style={styles.routeInformation} testID="stack-route-key">
+        Key: {routeKey}
+      </Text>
     </View>
   );
 }

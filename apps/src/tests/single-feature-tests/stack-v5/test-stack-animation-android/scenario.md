@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify screen transition animations on the gamma/v5
+**Description:** Verify screen transition animations on the v5
 `StackContainer` on Android, which are driven by the Android **Transition
 API** (see [PR #3629](https://github.com/software-mansion/react-native-screens/pull/3629)).
 The screen uses deliberately high-contrast, full-bleed screens — **Home**
@@ -49,7 +49,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
   import { TestStackAnimationAndroid as Example } from './src/tests/single-feature-tests';
   ```
 
-  With the gamma `StackContainer` at the root, the system back button and
+  With the v5 `StackContainer` at the root, the system back button and
   gesture-back pop the stack directly. When the screen is nested inside the
   example app's own navigation, native back navigates out to the
   system/selection menu instead of popping the stack (issue

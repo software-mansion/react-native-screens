@@ -3,11 +3,11 @@ import { View, Text, Button, ScrollView } from 'react-native';
 import {
   BatchableNavigationAction,
   StackRouteConfig,
-} from '@apps/shared/gamma/containers/stack/StackContainer.types';
+} from '@apps/shared/containers/stack/StackContainer.types';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { Colors } from '@apps/shared/styling';
 
 type ScenarioConfig = {
@@ -176,12 +176,10 @@ const routeConfigs: StackRouteConfig[] = [
   {
     name: 'Menu',
     Component: MenuScreen,
-    options: {},
   },
   ...ALPHABET.map(name => ({
     name,
     Component: TemplateScreen,
-    options: {},
   })),
 ];
 

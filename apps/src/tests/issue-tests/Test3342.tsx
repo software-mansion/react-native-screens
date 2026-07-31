@@ -12,11 +12,8 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '@apps/shared/gamma/containers/tabs/ConfigWrapperContext';
-import {
-  TabsContainer,
-  TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
+import { TabsContainer, TabRouteConfig } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
 type RouteParamList = {
