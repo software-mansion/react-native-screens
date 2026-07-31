@@ -138,7 +138,6 @@ export function TestStackHeaderSelectiveUpdatesIOS() {
           {
             name: 'Home',
             Component: ConfigScreen,
-            options: {},
           },
         ]}
       />

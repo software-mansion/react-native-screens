@@ -1,6 +1,10 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 type SpacerSize = 'fixed' | 'flexible';
@@ -17,4 +21,4 @@ export default codegenNativeComponent<NativeProps>(
   {
     excludedPlatforms: ['android'],
   },
-);
+) as HostComponent<NativeProps>;

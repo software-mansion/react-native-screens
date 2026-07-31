@@ -84,7 +84,6 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'Tabs',
     Component: TabsScreen,
-    options: {},
   },
   {
     name: 'Test',

@@ -3,10 +3,10 @@ import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfAndroid,
   describeIfiOS,
-  getSingleMatch,
-  readTopmostText,
+  getElementAttributes,
+  getTopmostMatch,
   selectSingleFeatureTestsScreen,
-  tapTopmostButton,
+  tapTopmost,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
@@ -215,9 +215,20 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
 
+  /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
+  async function readTopmostText(testID: string): Promise<string> {
+    const top = await getTopmostMatch(by.id(testID));
+    return (top.text ?? top.label ?? '').trim();
+  }
+
   /** Reads the topmost route's unique `routeKey`. */
   async function readRouteKey(): Promise<string> {
     return readTopmostText('stack-route-key');
+  }
+
+  /** Taps a Push/Pop button on the topmost stacked screen. */
+  async function tapTopmostButton(title: string): Promise<void> {
+    await tapTopmost(by.text(title));
   }
 
   /**

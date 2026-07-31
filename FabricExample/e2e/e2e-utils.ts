@@ -235,3 +235,180 @@ export async function selectIssueTestScreen(screenName: string) {
   await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
+
+export async function selectComponentIntegrationTestsScreen(
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
+  await scrollUntilVisible(
+    'root-screen-component-integration-tests',
+    'root-screen-examples-scrollview',
+  );
+  await element(by.id('root-screen-component-integration-tests')).tap();
+
+  await waitFor(element(by.id('component-integration-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `component-integration-tests-${scenarioGroupId}`,
+    'component-integration-tests-scrollview',
+  );
+
+  await element(by.id(`component-integration-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `${screenKey}`,
+    `${scenarioGroupId}-scenarios-scrollview`,
+  );
+  await element(by.id(`${screenKey}`)).tap();
+}
+
+export async function selectSingleFeatureTestsScreen(
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
+  await scrollUntilVisible(
+    'root-screen-single-feature-tests',
+    'root-screen-examples-scrollview',
+  );
+  await element(by.id('root-screen-single-feature-tests')).tap();
+  await waitFor(element(by.id('single-feature-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `single-feature-tests-${scenarioGroupId}`,
+    'single-feature-tests-scrollview',
+  );
+  await element(by.id(`single-feature-tests-${scenarioGroupId}`)).tap();
+  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
+    .toBeVisible()
+    .withTimeout(3000);
+
+  await scrollUntilVisible(
+    `${screenKey}`,
+    `${scenarioGroupId}-scenarios-scrollview`,
+  );
+  await element(by.id(`${screenKey}`)).tap();
+}
+
+type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+
+type ElementMatcher = {
+  /** Which matcher to resolve the element by. */
+  by: 'label' | 'id' | 'type';
+  /** The label text, testID, or native type name to match. */
+  value: string;
+  /** Disambiguate when the matcher resolves to multiple elements. */
+  index?: number;
+};
+
+function resolveMatcher({ by: matcher, value }: ElementMatcher) {
+  switch (matcher) {
+    case 'label':
+      return by.label(value);
+    case 'id':
+      return by.id(value);
+    case 'type':
+      return by.type(value);
+    default: {
+      const _exhaustive: never = matcher;
+      throw new Error(`Unsupported matcher: ${_exhaustive}`);
+    }
+  }
+}
+
+/**
+ * Reads the attributes of a single element on either platform. Cast the result
+ * to `IosElementAttributes` / `AndroidElementAttributes` at the call site when
+ * you need platform-specific fields.
+ */
+export async function getElementAttributes(
+  matcher: ElementMatcher,
+): Promise<ElementAttributes> {
+  const target = element(resolveMatcher(matcher));
+  const attrs = await (matcher.index === undefined
+    ? target
+    : target.atIndex(matcher.index)
+  ).getAttributes();
+
+  if ('elements' in attrs) {
+    throw new Error(
+      `Multiple elements (${attrs.elements.length}) found for ${matcher.by}: "${matcher.value}". ` +
+        `Pass an \`index\` to disambiguate.`,
+    );
+  }
+
+  return attrs as ElementAttributes;
+}
+/**
+ * Performs a coordinate-based tap on iOS to interact with an element that may be
+ * obstructed by other UI layers, bypassing Detox's default visibility checks.
+ */
+export async function forceTapByLabeliOS(testLabel: string) {
+  const elementAttributes = await getElementAttributes({
+    by: 'label',
+    value: testLabel,
+  });
+  const { x, y, width, height } = elementAttributes.frame;
+  await device.tap({
+    x: x + width / 2,
+    y: y + height / 2,
+  });
+}
+
+export async function forceSelectTabByLabel(label: string) {
+  if (device.getPlatform() === 'ios') {
+    await forceTapByLabeliOS(label);
+  } else {
+    await element(by.label(label)).tap();
+  }
+}
+
+export async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(3000);
+  await element(by.label(message)).tap();
+}
+
+/**
+ * Returns every element matching `matcher`, normalizing `getAttributes()`'s
+ * single-element object and multi-element `{ elements: [...] }` wrapper to one
+ * array. Ordered by view hierarchy, so the topmost stacked screen is last.
+ *
+ * Throws when nothing matches — left uncaught so a crash is not misreported
+ * as "found 0".
+ */
+export async function getMatches(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes[]> {
+  const attrs = await element(matcher).getAttributes();
+  return 'elements' in attrs ? attrs.elements : [attrs];
+}
+
+/** How many elements `matcher` resolves to. */
+export async function countMatches(matcher: NativeMatcher): Promise<number> {
+  return (await getMatches(matcher)).length;
+}
+
+/** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
+export async function getTopmostMatch(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes> {
+  const matches = await getMatches(matcher);
+  return matches[matches.length - 1];
+}
+
+/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
+  await element(matcher)
+    .atIndex((await countMatches(matcher)) - 1)
+    .tap();
+}

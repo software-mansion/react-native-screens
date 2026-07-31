@@ -109,12 +109,10 @@ const ROUTE_CONFIGS_NESTED_STACK: StackRouteConfig[] = [
   {
     name: 'NestedA',
     Component: NestedTemplateScreen,
-    options: {},
   },
   {
     name: 'NestedB',
     Component: NestedTemplateScreen,
-    options: {},
   },
 ];
 

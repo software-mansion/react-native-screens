@@ -1,7 +1,11 @@
 'use client';
 
 import { codegenNativeComponent } from 'react-native';
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 
 export type HeaderSubviewTypes =
   | 'back'
@@ -22,4 +26,4 @@ export default codegenNativeComponent<NativeProps>(
   {
     interfaceOnly: true,
   },
-);
+) as HostComponent<NativeProps>;

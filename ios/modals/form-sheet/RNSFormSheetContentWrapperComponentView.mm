@@ -7,6 +7,15 @@ namespace react = facebook::react;
 
 @implementation RNSFormSheetContentWrapperComponentView
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const react::RNSFormSheetContentWrapperProps>();
+    _props = defaultProps;
+  }
+  return self;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

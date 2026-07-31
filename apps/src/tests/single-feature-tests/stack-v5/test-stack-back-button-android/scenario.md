@@ -12,7 +12,16 @@ changing props in runtime and ensure consistent behavior.
 
 ## E2E test
 
-TBD: Automation is planned in limited scope but not yet implemented.
+Incomplete.
+
+- Steps 1-2, 9-10 and 22-23, asserting only that the back button is absent or present.
+- Step 22 is reached by reloading the screen rather than navigating back.
+
+**Manual only (not automated):**
+
+- Steps 3-8, 11-13, 17-19: tint colors and icon identity.
+- Steps 14-16 and 20-21: the `backButtonHidden` toggle already covered by
+  steps 9-10 for default button settings.
 
 ## Prerequisites
 
@@ -20,8 +29,19 @@ TBD: Automation is planned in limited scope but not yet implemented.
 - To test `backButtonTintColorFocused`: enable **Hardware Input** in the
   emulator settings, then use arrow keys to enable keyboard focus and press
   **Ctrl+Tab** to move keyboard focus into the header toolbar.
+- To use the back button (step 22), run the screen **directly** by editing
+  [apps/App.tsx](../../../../../App.tsx): import and render
+  `TestStackBackButton` as the root component instead of `Example`, e.g.:
 
-## Note (Optional)
+  ```tsx
+  import { TestStackBackButton as Example } from './src/tests/single-feature-tests';
+  ```
+
+  With the v5 `StackContainer` at the root, the header back button pops the
+  stack. Opened through the in-app menu it does not, because the surrounding
+  react-navigation stack consumes the back press (issue [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)).
+
+## Note
 
 Interaction with prevent native dismiss mechanism is tested in separate tests
 (`prevent-native-dismiss-single-stack` and
