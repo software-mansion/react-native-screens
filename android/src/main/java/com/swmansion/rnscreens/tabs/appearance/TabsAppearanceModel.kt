@@ -10,6 +10,8 @@ internal data class TabsAppearance(
     val disabled: ItemStateAppearance? = null,
     val tabBarItemActiveIndicatorColor: Int? = null,
     val tabBarItemActiveIndicatorEnabled: Boolean? = null,
+    val tabBarItemActiveIndicatorWidth: Float? = null,
+    val tabBarItemActiveIndicatorHeight: Float? = null,
     val tabBarItemTitleFontFamily: String? = null,
     val tabBarItemTitleSmallLabelFontSize: Float? = null,
     val tabBarItemTitleLargeLabelFontSize: Float? = null,

@@ -63,6 +63,7 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       {...filteredBaseProps}
       // Android-specific
+      drawableIconSize={android?.drawableIconSize}
       standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
@@ -127,14 +128,22 @@ function mapItemStateAppearanceToNativeProp(
   };
 }
 
+function drawableTintedOf(
+  icon: PlatformIconAndroid | undefined,
+): boolean | undefined {
+  return icon?.type === 'drawableResource' ? icon.tinted : undefined;
+}
+
 function parseIconsToNativeProps(
   icon: PlatformIconAndroid | undefined,
   selectedIcon: PlatformIconAndroid | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
+  drawableIconTinted?: boolean | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
+  selectedDrawableIconTinted?: boolean | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -142,9 +151,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
+    drawableIconTinted: drawableTintedOf(icon),
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
+    selectedDrawableIconTinted: drawableTintedOf(selectedIcon),
   };
 }
 

@@ -420,6 +420,14 @@ class TabsContainer internal constructor(
         }
     }
 
+    override fun onIconSizeChange(tabsScreen: TabsScreen) {
+        // Icon box is bar-wide, so this must run even when the changed tab is not selected.
+        invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+        post {
+            this.flushPendingUpdates()
+        }
+    }
+
     override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
         tabsModel.find {
             it.tabsScreen ===
