@@ -2,6 +2,7 @@
 
 import type {
   CodegenTypes as CT,
+  HostComponent,
   ImageResolvedAssetSource,
   ViewProps,
 } from 'react-native';
@@ -79,4 +80,4 @@ export interface NativeProps extends ViewProps {
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderItemIOS', {
   interfaceOnly: true,
   excludedPlatforms: ['android'],
-});
+}) as HostComponent<NativeProps>;

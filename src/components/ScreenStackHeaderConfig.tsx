@@ -13,7 +13,7 @@ import {
   NativeSyntheticEvent,
   Platform,
   StyleSheet,
-  View,
+  type ViewInstance,
   ViewProps,
 } from 'react-native';
 import featureFlags from '../flags';
@@ -30,8 +30,13 @@ import { useEdgeInsetApplication } from './contexts/EdgeInsetApplicationContext'
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
 
+// Nominal instance type for header config refs. RN's `ViewInstance` is an alias that
+// declaration emit resolves down to the non-public `ReactNativeElement` class.
+// An interface stops that resolution at a name this package can emit.
+export interface ScreenStackHeaderConfigInstance extends ViewInstance {}
+
 export const ScreenStackHeaderConfig = React.forwardRef<
-  View,
+  ScreenStackHeaderConfigInstance,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
   const {
