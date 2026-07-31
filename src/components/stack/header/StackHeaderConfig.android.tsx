@@ -59,6 +59,7 @@ function StackHeaderConfig(
     centerSubview,
     trailingSubview,
     backButtonIcon,
+    overflowIcon,
     scrollFlagScroll,
     scrollFlagEnterAlways,
     scrollFlagEnterAlwaysCollapsed,
@@ -91,6 +92,7 @@ function StackHeaderConfig(
   };
 
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
+  const overflowIconProps = parseOverflowIconToNativeProps(overflowIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
     scrollFlagEnterAlways,
@@ -111,6 +113,7 @@ function StackHeaderConfig(
       {...baseProps}
       {...filteredAndroidProps}
       {...backButtonIconProps}
+      {...overflowIconProps}
       {...scrollFlagProps}>
       {/*
         Please note that the order of the subviews MUST match
@@ -165,6 +168,37 @@ function parseBackButtonIconToNativeProps(
   } else if (icon.type === 'drawableResource') {
     return {
       backButtonDrawableIconResourceName: icon.name,
+    };
+  } else {
+    throw new Error(
+      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
+    );
+  }
+}
+
+function parseOverflowIconToNativeProps(
+  icon: StackHeaderConfigPropsAndroid['overflowIcon'],
+): Pick<
+  StackHeaderConfigAndroidNativeComponentProps,
+  'overflowIconImageIconResource' | 'overflowIconDrawableIconResourceName'
+> {
+  if (!icon) {
+    return {};
+  }
+
+  if (icon.type === 'imageSource') {
+    const resolved = Image.resolveAssetSource(icon.imageSource);
+    if (!resolved) {
+      console.error(
+        '[RNScreens] failed to resolve an asset for overflow menu icon',
+      );
+    }
+    return {
+      overflowIconImageIconResource: resolved || undefined,
+    };
+  } else if (icon.type === 'drawableResource') {
+    return {
+      overflowIconDrawableIconResourceName: icon.name,
     };
   } else {
     throw new Error(

@@ -97,6 +97,12 @@ export interface NativeProps extends ViewProps {
   backButtonDrawableIconResourceName?: string | undefined;
   backButtonImageIconResource?: ImageSource | undefined;
 
+  overflowIconTintColorNormal?: ColorValue | undefined;
+  overflowIconTintColorPressed?: ColorValue | undefined;
+  overflowIconTintColorFocused?: ColorValue | undefined;
+  overflowIconDrawableIconResourceName?: string | undefined;
+  overflowIconImageIconResource?: ImageSource | undefined;
+
   scrollFlagScroll?: CT.WithDefault<boolean, false>;
   scrollFlagEnterAlways?: CT.WithDefault<boolean, false>;
   scrollFlagEnterAlwaysCollapsed?: CT.WithDefault<boolean, false>;
