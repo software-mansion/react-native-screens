@@ -1317,6 +1317,16 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [screenChildComponent.controller addSnapshotToView];
 
+  // Break the RNSScreenView <-> RNSScreen (controller) retain cycle when a screen
+  // is popped. `invalidateImpl` nils `_controller` on the next main-queue tick, so
+  // the running pop animation (which uses the snapshot added above) is unaffected;
+  // once it completes and the navigation controller releases the RNSScreen, the
+  // whole screen (view + controller + its React subtree) deallocates. Its usual
+  // trigger `-invalidate` (RCTInvalidating) is never called on the New
+  // Architecture, so without this the cycle leaks every pushed screen (see #1754).
+  // `+shouldBeRecycled` is NO, so the view is never reused after this.
+  [screenChildComponent invalidateImpl];
+
   RCTAssert(screenChildComponent.reactSuperview == self,
             @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
             self,
