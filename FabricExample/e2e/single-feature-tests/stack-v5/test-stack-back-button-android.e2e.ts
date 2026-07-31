@@ -18,19 +18,19 @@ import {
 const PUSH_SCREEN = 'PUSH SCREEN';
 const PUSH_ANOTHER = 'PUSH ANOTHER';
 
+const BACK_BUTTON_HIDDEN_SWITCH = 'back-button-hidden-switch';
+
 const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
 
-// Controls have no testID, so they are addressed by their rendered
-// `"<label>: <value>"` text.
-async function selectOption(label: string, from: string, to: string) {
-  await tapTopmost(by.text(`${label}: ${from}`));
-  // `SettingsPicker` lowercases `<label>-<item>` (and dashes any spaces in the
-  // label — no label here has one).
-  await tapTopmost(by.id(`${label}-${to}`.toLowerCase()));
-  // Closes the picker so its options do not push later controls off-screen.
-  await tapTopmost(by.text(`${label}: ${to}`));
+// Option ids are `SettingsPicker`'s own `<label>-<item>`, lowercased. The
+// second tap on the picker closes it, so its options do not push later
+// controls off-screen.
+async function selectOption(pickerId: string, optionId: string) {
+  await tapTopmost(by.id(pickerId));
+  await tapTopmost(by.id(optionId));
+  await tapTopmost(by.id(pickerId));
 }
 
 // A hidden navigation icon leaves the hierarchy, so "hidden" is "does not
@@ -79,10 +79,10 @@ describeIfAndroid('Stack v5: back button', () => {
   });
 
   it('should remove and restore the back button with backButtonHidden', async () => {
-    await tapTopmost(by.text('backButtonHidden: false'));
+    await tapTopmost(by.id(BACK_BUTTON_HIDDEN_SWITCH));
     await expectNoBackButton();
 
-    await tapTopmost(by.text('backButtonHidden: true'));
+    await tapTopmost(by.id(BACK_BUTTON_HIDDEN_SWITCH));
     await expectSingleVisibleBackButton();
   });
 });
@@ -91,8 +91,8 @@ describeIfAndroid('Stack v5: back button configured before the push', () => {
   beforeAll(openScreen);
 
   it('should keep the root screen back-button-free with an icon and tint set', async () => {
-    await selectOption('icon', 'default', 'imageSource');
-    await selectOption('tintColorNormal', 'default', 'purple');
+    await selectOption('icon-picker', 'icon-imagesource');
+    await selectOption('tint-color-normal-picker', 'tintcolornormal-purple');
     await expectNoBackButton();
   });
 
