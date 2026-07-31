@@ -20,6 +20,9 @@ const PUSH_ANOTHER = 'PUSH ANOTHER';
 
 const BACK_BUTTON_HIDDEN_SWITCH = 'back-button-hidden-switch';
 
+// Scoped to the toolbar the Stack v5 (gamma) header builds — the legacy v4
+// header uses `CustomToolbar`, which extends `Toolbar` but not
+// `MaterialToolbar`.
 const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));

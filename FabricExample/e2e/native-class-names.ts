@@ -66,9 +66,5 @@ export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
-
-// The toolbar the Stack v5 (gamma) header builds. The legacy v4 header uses
-// `CustomToolbar`, which extends `Toolbar` but not `MaterialToolbar`, so this
-// class scopes a matcher to the v5 header only.
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
