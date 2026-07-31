@@ -1,5 +1,8 @@
 import { device, expect, element, by } from 'detox';
 import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
+import isVersionEqualOrHigherThan from './helpers/isVersionEqualOrHigherThan';
+
+const { getIOSVersionNumber } = require('../../scripts/e2e/ios-devices.js');
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -20,6 +23,18 @@ export const isIPadTarget =
   /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
 
 export const describeIfiPad = isIPadTarget ? describe : describe.skip;
+
+/**
+ * True when running on iOS at `version` or newer. Use it to pick between the
+ * legacy and iOS 26 variants of the private UIKit class names in
+ * ./native-class-names.
+ */
+export function isIOSVersionAtLeast(version: string): boolean {
+  return (
+    device.getPlatform() === 'ios' &&
+    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
+  );
+}
 
 export async function scrollUntilVisible(id: string, scrollViewId: string) {
   await waitFor(element(by.id(id)))

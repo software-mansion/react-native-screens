@@ -3,9 +3,9 @@ import {
   describeIfiOS,
   dismissToast,
   getElementAttributes,
+  isIOSVersionAtLeast,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
@@ -14,20 +14,12 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
 } from '../../native-class-names';
 
-const {
-  getIOSVersionNumber,
-} = require('../../../../scripts/e2e/ios-devices.js');
-
 /**
  * The iOS 26 toolbar overflow ("More") button only appears once the header
  * runs out of room for trailing items. Scenario steps 5-8 are scoped to
  * iPhone (iOS 26) and don't apply on iOS 18.
  */
-const isIOS26OrLater =
-  device.getPlatform() === 'ios' &&
-  isVersionEqualOrHigherThan(getIOSVersionNumber(), '26.0');
-
-const describeIfIOS26 = isIOS26OrLater ? describe : describe.skip;
+const describeIfIOS26 = isIOSVersionAtLeast('26.0') ? describe : describe.skip;
 
 /** A title-only trailing header button item, addressed by its visible title.
  * With or without an attached `menu`, this resolves to `_UIButtonBarButton`. */
