@@ -1,7 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-// 1. CREATE ROUTER CONTEXT (like in a real app)
 const RouteContext = createContext<{
   paramsId: number;
   setParamsId: (val: number) => void;
@@ -52,7 +51,12 @@ const SLOTS = [
   {
     slotKey: 'i1',
     kind: 'element',
-    element: <View style={{ backgroundColor: '#FFAA00', flex: 1 }} />,
+    element: <StatefulScreen title="Inline 1" backgroundColor="#E6E6FA" />,
+  },
+  {
+    slotKey: 'i2',
+    kind: 'element',
+    element: <StatefulScreen title="Inline 2" backgroundColor="#E6E6FA" />,
   },
 ];
 
@@ -61,6 +65,7 @@ const ROUTES = [
   { name: 'SharedOne', short: 'S1', slotKey: 's1' },
   { name: 'SharedTwo', short: 'S2', slotKey: 's2' },
   { name: 'InlineOne', short: 'I1', slotKey: 'i1' },
+  { name: 'InlineTwo', short: 'I2', slotKey: 'i2' },
 ] as const;
 
 export default function TestPoC() {
@@ -71,6 +76,8 @@ export default function TestPoC() {
     c1: 100,
     s1: 100,
     s2: 100,
+    i1: 100,
+    i2: 100,
   });
 
   const activeSlotKey = ROUTES.find(r => r.name === routeName)!.slotKey;
