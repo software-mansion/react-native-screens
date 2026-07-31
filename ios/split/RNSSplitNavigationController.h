@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @brief A subclass of UINavigationController, creates a view that wraps view associated with
  * RNSSplitScreenController.
  *
- * This subclass is responsible for tracking when the underlying view's frame origin changes,
- * allowing for syncing the ShadowTree layout.
- *
- * It observes origin changes via key-value observer and notifies a delegate.
+ * UISplitViewController resizes column views natively - on display mode change or column resize, so
+ * these updates should be passed to React to allow syncing the ShadowTree layout of SplitViewScreen
+ * subtree. This controller observes its own view's frame via KVO and notifies `viewFrameOriginChangeDelegate`
+ * whenever the frame origin changes.
  */
 @interface RNSSplitNavigationController : UINavigationController
 
