@@ -48,12 +48,10 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
     Component: StackContents,
-    options: {},
   },
   {
     name: 'Second',
     Component: StackContents,
-    options: {},
   },
 ];
 

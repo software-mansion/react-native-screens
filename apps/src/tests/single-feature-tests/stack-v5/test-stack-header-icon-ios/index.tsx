@@ -224,7 +224,6 @@ function TestStackHeaderIconIOS() {
           {
             name: 'Home',
             Component: ConfigScreen,
-            options: {},
           },
         ]}
       />

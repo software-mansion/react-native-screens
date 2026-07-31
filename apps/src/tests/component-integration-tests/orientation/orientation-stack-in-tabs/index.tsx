@@ -58,7 +58,6 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'Screen1',
     Component: ConfigScreen,
-    options: {},
   },
 ];
 

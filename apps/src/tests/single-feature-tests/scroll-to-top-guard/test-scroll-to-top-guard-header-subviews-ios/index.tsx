@@ -152,7 +152,6 @@ function TestScrollToTopGuardHeaderSubviewsIOS() {
         {
           name: 'Screen1',
           Component: Screen1,
-          options: {},
         },
       ]}
     />

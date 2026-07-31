@@ -151,12 +151,10 @@ function StackSetup() {
           {
             name: 'Home',
             Component: ConfigScreen,
-            options: {},
           },
           {
             name: 'Second',
             Component: ConfigScreen,
-            options: {},
           },
         ]}
       />

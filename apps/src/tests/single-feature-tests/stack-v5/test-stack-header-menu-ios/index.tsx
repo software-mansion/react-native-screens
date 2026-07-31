@@ -92,7 +92,6 @@ function TestStackHeaderMenuIOS() {
           {
             name: 'Home',
             Component: ConfigScreen,
-            options: {},
           },
         ]}
       />

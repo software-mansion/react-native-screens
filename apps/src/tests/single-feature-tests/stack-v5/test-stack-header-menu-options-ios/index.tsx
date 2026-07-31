@@ -16,7 +16,6 @@ function TestStackHeaderMenuOptionsIOS() {
         {
           name: 'Home',
           Component: ConfigScreen,
-          options: {},
         },
       ]}
     />
