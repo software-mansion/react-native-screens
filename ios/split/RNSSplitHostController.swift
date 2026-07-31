@@ -404,7 +404,7 @@ extension RNSSplitHostController {
   }
 }
 
-extension RNSSplitHostController: RNSViewFrameOriginChangeDelegate {
+extension RNSSplitHostController: RNSSplitNavigationControllerFrameOriginChangeDelegate {
 
   ///
   /// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
@@ -414,7 +414,7 @@ extension RNSSplitHostController: RNSViewFrameOriginChangeDelegate {
   /// @param splitNavCtrl The navigation controller whose frame origin changed.
   ///
   @objc
-  public func viewFrameOriginDidChange(
+  public func splitNavigationControllerFrameOriginDidChange(
     _ splitNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {

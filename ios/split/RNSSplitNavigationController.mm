@@ -1,6 +1,6 @@
 #import "RNSSplitNavigationController.h"
 #import "RNSSplitNavigationControllerFrameObserver.h"
-#import "RNSViewFrameOriginChangeDelegate.h"
+#import "RNSSplitNavigationControllerFrameOriginChangeDelegate.h"
 
 @implementation RNSSplitNavigationController {
   RNSSplitNavigationControllerFrameObserver *_frameObserver;
@@ -24,7 +24,7 @@
 
 - (void)viewFrameOriginDidChange
 {
-  [self.viewFrameOriginChangeDelegate viewFrameOriginDidChange:self];
+  [self.viewFrameOriginChangeDelegate splitNavigationControllerFrameOriginDidChange:self];
 }
 
 - (void)dealloc

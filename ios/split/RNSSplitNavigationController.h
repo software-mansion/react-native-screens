@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol RNSViewFrameOriginChangeDelegate;
+@protocol RNSSplitNavigationControllerFrameOriginChangeDelegate;
 
 /**
  * @class RNSSplitNavigationController
@@ -18,7 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitNavigationController : UINavigationController
 
-@property (nonatomic, weak, nullable) id<RNSViewFrameOriginChangeDelegate> viewFrameOriginChangeDelegate;
+@property (nonatomic, weak, nullable) id<RNSSplitNavigationControllerFrameOriginChangeDelegate>
+    viewFrameOriginChangeDelegate;
 
 /**
  * Notifies `viewFrameOriginChangeDelegate` that the origin of this controller's view frame has changed.
