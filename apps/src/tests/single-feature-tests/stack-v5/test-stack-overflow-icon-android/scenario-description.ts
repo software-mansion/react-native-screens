@@ -1,9 +1,10 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Back Button',
-  key: 'test-stack-back-button-android',
-  details: 'Tests back button customization: hidden, tint color, custom icon.',
+  name: 'Stack Overflow Icon',
+  key: 'test-stack-overflow-icon-android',
+  details:
+    'Tests overflow menu icon customization: custom icon and tint colors.',
   platforms: ['android'],
   e2eCoverage: 'tbd',
   smokeTest: false,
