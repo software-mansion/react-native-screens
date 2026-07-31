@@ -1,8 +1,10 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import {
+  countMatches,
   describeIfAndroid,
   selectSingleFeatureTestsScreen,
+  tapTopmost,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
@@ -19,22 +21,6 @@ const PUSH_ANOTHER = 'PUSH ANOTHER';
 const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
-
-// Multiple matches come back wrapped in `{ elements }`. Throws on no match —
-// left uncaught so a crash is not misreported as "found 0".
-async function countMatches(matcher: Detox.NativeMatcher): Promise<number> {
-  const attrs = await element(matcher).getAttributes();
-  return 'elements' in attrs ? attrs.elements.length : 1;
-}
-
-// Covered screens stay attached on Android, so every stacked screen's controls
-// match at once; the topmost screen's copy is the last match.
-async function tapTopmost(matcher: Detox.NativeMatcher): Promise<void> {
-  const count = await countMatches(matcher);
-  await element(matcher)
-    .atIndex(count - 1)
-    .tap();
-}
 
 // Controls have no testID, so they are addressed by their rendered
 // `"<label>: <value>"` text.
