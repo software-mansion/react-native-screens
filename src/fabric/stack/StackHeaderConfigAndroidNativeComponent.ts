@@ -93,6 +93,7 @@ export type StackHeaderToolbarMenuElementAndroid =
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
   subtitle?: string | undefined;
+  maxLines?: CT.WithDefault<CT.Int32, 1>;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
   backButtonHidden?: CT.WithDefault<boolean, false>;

@@ -107,7 +107,8 @@ internal class StackHeaderCoordinatorLayout(
     // region Layout callbacks
 
     private val appBarOffsetListener =
-        AppBarLayout.OnOffsetChangedListener { _, _ ->
+        AppBarLayout.OnOffsetChangedListener { appBar, verticalOffset ->
+            evaluateCollapseState(appBar, verticalOffset)
             onMaybeHeaderLayoutChanged()
         }
 
@@ -131,6 +132,20 @@ internal class StackHeaderCoordinatorLayout(
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
         StackHeaderFrameSynchronizer.sync(appBar, provider, delegate)
+    }
+
+    // Tracks whether the app bar is currently scrolled to its fully collapsed offset. Used to work
+    // around a Material offset bug when the title/subtitle changes at runtime — see
+    // StackHeaderApplicator.applyTitleAndSubtitle. This should be equivalent to Material's
+    // `collapsingTitleHelper.getExpansionFraction() == 1f` condition.
+    private var isAppBarFullyCollapsed = false
+
+    private fun evaluateCollapseState(
+        appBar: AppBarLayout,
+        verticalOffset: Int
+    ) {
+        val totalScrollRange = appBar.totalScrollRange
+        isAppBarFullyCollapsed = totalScrollRange > 0 && -verticalOffset >= totalScrollRange
     }
 
     // endregion
@@ -180,7 +195,7 @@ internal class StackHeaderCoordinatorLayout(
         val appBar = appBarLayout
         if (appBar != null) {
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
-                applicator.applyTitleAndSubtitle(appBar, provider)
+                applicator.applyTitleAndSubtitle(appBar, provider, isAppBarFullyCollapsed)
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
             }
 
@@ -280,6 +295,8 @@ internal class StackHeaderCoordinatorLayout(
             removeView(it)
         }
         appBarLayout = null
+        // A rebuilt header starts fully expanded; drop any stale collapsed state from the old one.
+        isAppBarFullyCollapsed = false
         selectionController.clear()
     }
 
