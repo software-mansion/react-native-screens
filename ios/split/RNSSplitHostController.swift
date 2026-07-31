@@ -125,7 +125,8 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
     validateInspectors(currentInspectors)
 
     let currentViewControllers = currentColumns.map {
-      RNSSplitNavigationController(rootViewController: $0.controller, frameOriginChangeDelegate: self)
+      RNSSplitNavigationController(
+        rootViewController: $0.controller, frameOriginChangeDelegate: self)
     }
 
     viewControllers = currentViewControllers
