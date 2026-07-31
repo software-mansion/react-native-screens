@@ -70,6 +70,7 @@ export type PlatformIconIOS =
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;
   itemId?: string | undefined;
+  identifier?: string | undefined;
   title?: string | undefined;
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
