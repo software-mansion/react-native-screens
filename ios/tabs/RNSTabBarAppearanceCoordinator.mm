@@ -169,7 +169,7 @@
       // image lands, truncating the label until a tab is tapped.
       [tabBarVC.tabBar layoutIfNeeded];
     }
-#endif // Check for iOS >= 26.0
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   }
 }
 
