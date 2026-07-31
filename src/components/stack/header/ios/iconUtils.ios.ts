@@ -13,15 +13,29 @@ export function resolveIconAssetSources(
     return undefined;
   }
   if (icon.type === 'imageSource') {
+    const resolvedImageSource = Image.resolveAssetSource(icon.imageSource);
+
+    if (!resolvedImageSource) {
+      return undefined;
+    }
+
     return {
       type: 'imageSource',
-      imageSource: Image.resolveAssetSource(icon.imageSource),
+      imageSource: resolvedImageSource,
     };
   }
   if (icon.type === 'templateSource') {
+    const resolvedTemplateSource = Image.resolveAssetSource(
+      icon.templateSource,
+    );
+
+    if (!resolvedTemplateSource) {
+      return undefined;
+    }
+
     return {
       type: 'templateSource',
-      templateSource: Image.resolveAssetSource(icon.templateSource),
+      templateSource: resolvedTemplateSource,
     };
   }
   return icon;
