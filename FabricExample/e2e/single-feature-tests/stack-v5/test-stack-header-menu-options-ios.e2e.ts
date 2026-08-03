@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfiOS,
   getFrame,
