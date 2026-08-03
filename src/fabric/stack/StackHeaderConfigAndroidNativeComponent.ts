@@ -144,4 +144,4 @@ export default codegenNativeComponent<NativeProps>(
     interfaceOnly: true,
     excludedPlatforms: ['iOS'],
   },
-);
+) as HostComponent<NativeProps>;

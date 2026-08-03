@@ -66,7 +66,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
         ({
-          options: { headerConfig, headerConfigRef, ...options },
+          options: { headerConfig, headerConfigRef, ...options } = {},
           activityMode,
           routeKey,
           name,
