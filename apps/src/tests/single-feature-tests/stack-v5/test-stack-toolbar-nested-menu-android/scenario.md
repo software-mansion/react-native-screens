@@ -16,11 +16,21 @@ command-applied state at every level.
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Incomplete: covers steps 1–18, 20–26 and 28–37.
+
+Not automated:
+
+- Steps 19 and 27, where both `title` and `menuTitle` are undefined.
+  The submenu entry then carries no text at all, so there is nothing
+  for Detox to match and tap. The e2e test asserts that the labelled
+  entry disappears from the overflow menu, but not that the untitled
+  submenu opens without a header.
 
 ## Prerequisites
 
-- Android emulator or device
+- Android emulator or device (phone form factor — from 720dp
+  smallest-width up, AppCompat opens submenus as cascading popups
+  next to their parent instead of replacing it)
 
 ## Note
 

@@ -66,7 +66,6 @@ export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
-export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 
 // --- Android ---
 
@@ -78,3 +77,11 @@ export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ActionMenuItemView';
+
+// A row of a popup menu — the anchor for addressing its widgets by item title.
+export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ListMenuItemView';
+
+// A menu row's `group_divider` and `submenuarrow`.
+export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW =
+  'androidx.appcompat.widget.AppCompatImageView';
