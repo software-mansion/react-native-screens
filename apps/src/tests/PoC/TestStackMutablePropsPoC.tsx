@@ -15,9 +15,10 @@ const ROUTE_NAMES = [
 
 type MutableBag = { value: number };
 
-// Shared by SharedOne + SharedTwo via the same element props object.
-// Mutating this from one screen is visible on the other after re-render —
-// there is no props isolation for mutable object props on a shared element.
+// Passed to every screen (shared element + both inline elements).
+// Mutating this from any screen is visible on the others after re-render —
+// there is no props isolation for mutable object props, even across
+// distinct element trees that receive the same object reference.
 const sharedMutableProp: MutableBag = { value: 0 };
 
 function StatefulScreen({
@@ -52,7 +53,9 @@ function StatefulScreen({
       />
       <Button
         title="Re-read mutable prop"
-        onPress={() => {forceRender(n => n + 1)}
+        onPress={() => {
+          forceRender(n => n + 1);
+        }}
       />
 
       <View style={styles.row}>
@@ -70,8 +73,9 @@ function StatefulScreen({
   );
 }
 
-// Same element object reused by SharedOne + SharedTwo — both receive the
-// exact same `mutable` prop reference baked into this blueprint.
+// Same element object reused by SharedOne + SharedTwo — both share this
+// blueprint (and thus the same `mutable` prop reference). InlineOne /
+// InlineTwo use distinct elements but also receive `sharedMutableProp`.
 const SharedRef = (
   <StatefulScreen
     title="Shared Ref (same object)"
