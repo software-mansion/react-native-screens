@@ -76,3 +76,5 @@ export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
+export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ActionMenuItemView';
