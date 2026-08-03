@@ -192,30 +192,42 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-show-as-action-scrollview">
         <Text style={styles.heading}>Send Command</Text>
         <SettingsPicker<IdOption>
           label="target id"
           value={cmdTargetId}
           items={[...ID_OPTIONS]}
           onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
         />
         <SettingsPicker<CmdIconOption>
-          label="icon"
+          label="cmd icon"
           value={cmdIcon}
           items={CMD_ICON_OPTIONS}
           onValueChange={setCmdIcon}
+          testID="cmd-icon-picker"
         />
         <SettingsPicker<CmdShowAsActionOption>
-          label="showAsAction"
+          label="cmd showAsAction"
           value={cmdShowAsAction}
           items={CMD_SHOW_AS_ACTION_OPTIONS}
           onValueChange={setCmdShowAsAction}
+          testID="cmd-show-as-action-picker"
         />
-        <Button title="Send Command" onPress={sendCommand} />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
         <Text style={styles.heading}>Result</Text>
-        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        <Text testID="last-clicked-text" style={styles.result}>
+          Last clicked: {lastClicked ?? '—'}
+        </Text>
 
         <Text style={styles.heading}>Menu Items — Props</Text>
         <SlotControls
@@ -241,21 +253,24 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             Slot {i + 1} (item-{i + 1})
           </Text>
           <SettingsSwitch
-            label="include"
+            label={`slot ${i + 1} include`}
             value={slot.include}
             onValueChange={v => updateSlot(i, { include: v })}
+            testID={`slot-${i + 1}-include-switch`}
           />
           <SettingsPicker<IconOption>
-            label="icon"
+            label={`slot ${i + 1} icon`}
             value={slot.icon}
             items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
+            testID={`slot-${i + 1}-icon-picker`}
           />
           <SettingsPicker<ShowAsActionOption>
-            label="showAsAction"
+            label={`slot ${i + 1} showAsAction`}
             value={slot.showAsAction}
             items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
+            testID={`slot-${i + 1}-show-as-action-picker`}
           />
         </React.Fragment>
       ))}

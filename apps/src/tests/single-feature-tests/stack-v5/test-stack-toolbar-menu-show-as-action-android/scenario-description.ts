@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-toolbar-menu-show-as-action-android',
   details: 'Tests the showAsAction prop on toolbar menu items.',
   platforms: ['android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };
