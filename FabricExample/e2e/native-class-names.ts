@@ -54,14 +54,16 @@ export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
+export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
+  '_UIContextMenuHeaderView';
+export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
+  '_UIContextMenuSubmenuTitleView';
 
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
 export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
-export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
-  '_UIContextMenuSubmenuTitleView';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
 
@@ -71,3 +73,5 @@ export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
+export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
+  'com.google.android.material.appbar.MaterialToolbar';

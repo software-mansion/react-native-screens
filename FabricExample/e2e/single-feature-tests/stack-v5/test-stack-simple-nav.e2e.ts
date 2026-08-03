@@ -5,8 +5,9 @@ import {
   describeIfAndroid,
   describeIfiOS,
   getElementAttributes,
-  getMatches,
+  getTopmostMatch,
   selectSingleFeatureTestsScreen,
+  tapTopmost,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
@@ -222,8 +223,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
 
   /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
   async function readTopmostText(testID: string): Promise<string> {
-    const matches = await getMatches(by.id(testID));
-    const top = matches[matches.length - 1];
+    const top = await getTopmostMatch(by.id(testID));
     return (top.text ?? top.label ?? '').trim();
   }
 
@@ -232,13 +232,9 @@ describeIfAndroid('Stack v5: simple navigation', () => {
     return readTopmostText('stack-route-key');
   }
 
-  /** Taps a Push/Pop button on the topmost stacked screen (the last match). */
+  /** Taps a Push/Pop button on the topmost stacked screen. */
   async function tapTopmostButton(title: string): Promise<void> {
-    const matcher = by.text(title);
-    const count = (await getMatches(matcher)).length;
-    await element(matcher)
-      .atIndex(count - 1)
-      .tap();
+    await tapTopmost(by.text(title));
   }
 
   /**
