@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests header item menus and title menu: action items, toggle items, singleSelection, and nested menus.',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };
