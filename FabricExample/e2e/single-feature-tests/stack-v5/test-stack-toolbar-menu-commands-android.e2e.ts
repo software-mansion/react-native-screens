@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by, waitFor } from 'detox';
+import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
   rewindAndScrollUntilVisible,
