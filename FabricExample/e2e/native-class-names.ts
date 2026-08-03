@@ -66,6 +66,7 @@ export const CLASS_NAME_UI_REFRESH_CONTROL = 'UIRefreshControl';
 export const CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD = 'UISearchBarTextField';
 export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
+export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 
 // --- Android ---
 
