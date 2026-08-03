@@ -6,7 +6,10 @@ import type {
   ViewProps,
 } from 'react-native';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
-import { PlatformIconIOS } from './StackHeaderItemIOSNativeComponent';
+import type {
+  PlatformIconIOS,
+  StackHeaderMenuIOS,
+} from './StackHeaderItemIOSNativeComponent';
 import { UnsafeMixed } from '../codegenUtils';
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
@@ -27,6 +30,8 @@ export interface NativeProps extends ViewProps {
   largeTitle?: string | undefined;
   largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
+
+  titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 
   onMenuItemPress?: CT.DirectEventHandler<MenuItemPressEvent> | undefined;
   onMenuSelectionChange?:
@@ -68,4 +73,4 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
 export default codegenNativeComponent<NativeProps>('RNSStackHeaderConfigIOS', {
   interfaceOnly: true,
   excludedPlatforms: ['android'],
-});
+}) as HostComponent<NativeProps>;

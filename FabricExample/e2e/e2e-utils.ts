@@ -138,13 +138,17 @@ export async function readTopmostText(testID: string): Promise<string> {
   return (topmost.text ?? topmost.label ?? '').trim();
 }
 
-/** Taps the button labelled `title` on the topmost stacked screen. */
-export async function tapTopmostButton(title: string): Promise<void> {
-  const matcher = by.text(title);
+/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   const count = (await getMatches(matcher)).length;
   await element(matcher)
     .atIndex(count - 1)
     .tap();
+}
+
+/** Taps the button labelled `title` on the topmost stacked screen. */
+export async function tapTopmostButton(title: string): Promise<void> {
+  await tapTopmost(by.text(title));
 }
 
 // ---------------------------------------------------------------------------

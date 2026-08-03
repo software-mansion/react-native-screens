@@ -7,7 +7,7 @@ import UIKit
 /// Manages a collection of RNSSplitScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
-public class RNSSplitHostController: UISplitViewController, ReactMountingTransactionObserving,
+public class RNSSplitHostController: UISplitViewController, RNSReactMountingTransactionObserving,
   RNSOrientationProvidingSwift
 {
   private var needsChildViewControllersUpdate = false
@@ -125,7 +125,8 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     validateInspectors(currentInspectors)
 
     let currentViewControllers = currentColumns.map {
-      RNSSplitNavigationController(rootViewController: $0.controller)
+      RNSSplitNavigationController(
+        rootViewController: $0.controller, frameOriginChangeDelegate: self)
     }
 
     viewControllers = currentViewControllers
@@ -134,16 +135,13 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
       maybeSetupInspector(currentInspectors)
     #endif
 
-    for controller in currentViewControllers {
-      controller.viewFrameOriginChangeObserver = self
-    }
-
     needsChildViewControllersUpdate = false
   }
 
   func updateSplitAppearanceIfNeeded() {
     splitAppearanceApplicator.updateAppearanceIfNeeded(
-      self.splitHostComponentView, self, self.splitAppearanceCoordinator)
+      self.splitHostComponentView, splitHostController: self,
+      appearanceCoordinator: self.splitAppearanceCoordinator)
   }
 
   ///
@@ -152,6 +150,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   /// It validates that the secondary VC is valid UINavigationController and it updates the navbar
   /// state by toggling it's visibility, what should be performed in a single batch of updates.
   ///
+  @objc
   public func refreshSecondaryNavBar() {
     let secondaryViewController = viewController(for: .secondary)
     assert(
@@ -259,7 +258,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     }
   }
 
-  // MARK: ReactMountingTransactionObserving
+  // MARK: RNSReactMountingTransactionObserving
 
   ///
   /// @brief Called before mounting transaction.
@@ -402,7 +401,7 @@ extension RNSSplitHostController {
   }
 }
 
-extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver {
+extension RNSSplitHostController: RNSSplitNavigationControllerFrameOriginChangeDelegate {
 
   ///
   /// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
@@ -411,7 +410,8 @@ extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver 
   ///
   /// @param splitNavCtrl The navigation controller whose frame origin changed.
   ///
-  func splitNavCtrlViewDidChangeFrameOrigin(
+  @objc
+  public func splitNavigationControllerFrameOriginDidChange(
     _ splitNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {

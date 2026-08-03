@@ -8,7 +8,12 @@
 
 ## E2E test
 
-TBD
+Incomplete: e2e test covers all steps, but
+not in full scope. It asserts the observable state changes — header titles,
+attached menus, selection checkmarks/toasts, custom-view swaps, and item
+count. It cannot assert the transient iOS 26+ rebuild flash/blur (whether an
+affected item does or does not visually flash), which has no JS-side signal and
+requires manual verification on iOS 26+.
 
 ## Prerequisites
 
