@@ -5,6 +5,7 @@ import {
   describeIfiOS,
   forceTapByLabeliOS,
   getMatches,
+  getFrame,
   getSingleMatch,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -33,15 +34,6 @@ async function getTabBarFrame(): Promise<{
   return (await getMatches(by.type(CLASS_NAME_UI_TAB_BAR)))[0].frame;
 }
 
-async function getElementFrame(testID: string): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> {
-  return (await getSingleMatch(by.id(testID))).frame;
-}
-
 function isAboveTabBar(
   itemFrame: { y: number; height: number },
   tabBarFrame: { y: number },
@@ -50,7 +42,7 @@ function isAboveTabBar(
 }
 
 async function assertLastItemAboveTabBar(tabPrefix: string, expected: boolean) {
-  const lastItemFrame = await getElementFrame(`${tabPrefix}-item-30`);
+  const lastItemFrame = await getFrame(by.id(`${tabPrefix}-item-30`));
   const tabFrame = await getTabBarFrame();
   jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(expected);
 }
@@ -59,7 +51,7 @@ async function assertHeaderBehindStatusBar(
   tabPrefix: string,
   expected: boolean,
 ) {
-  const informationFrame = await getElementFrame(`${tabPrefix}-header`);
+  const informationFrame = await getFrame(by.id(`${tabPrefix}-header`));
   const scrollViewSAVInsetTop = await getScrollViewSafeAreaInsetsTop(
     `${tabPrefix}-scrollview`,
   );

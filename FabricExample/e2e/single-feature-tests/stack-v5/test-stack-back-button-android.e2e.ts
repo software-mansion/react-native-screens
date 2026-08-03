@@ -3,6 +3,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfAndroid,
   getMatches,
+  pickerOptionId,
   selectSingleFeatureTestsScreen,
   tapTopmost,
   tapTopmostButton,
@@ -28,12 +29,17 @@ const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
 
-// Option ids are `SettingsPicker`'s own `<label>-<item>`, lowercased. The
-// second tap on the picker closes it, so its options do not push later
-// controls off-screen.
-async function selectOption(pickerId: string, optionId: string) {
+// Taps the topmost match rather than using `selectPickerOption`: each stacked
+// screen keeps its own copy of these controls on Android, so a plain `by.id`
+// tap is ambiguous. The second tap on the picker closes it, so its options do
+// not push later controls off-screen.
+async function selectOption(
+  pickerId: string,
+  pickerLabel: string,
+  option: string,
+) {
   await tapTopmost(by.id(pickerId));
-  await tapTopmost(by.id(optionId));
+  await tapTopmost(by.id(pickerOptionId(pickerLabel, option)));
   await tapTopmost(by.id(pickerId));
 }
 
@@ -95,8 +101,8 @@ describeIfAndroid('Stack v5: back button configured before the push', () => {
   beforeAll(openScreen);
 
   it('should keep the root screen back-button-free with an icon and tint set', async () => {
-    await selectOption('icon-picker', 'icon-imagesource');
-    await selectOption('tint-color-normal-picker', 'tintcolornormal-purple');
+    await selectOption('icon-picker', 'icon', 'imageSource');
+    await selectOption('tint-color-normal-picker', 'tintColorNormal', 'purple');
     await expectNoBackButton();
   });
 

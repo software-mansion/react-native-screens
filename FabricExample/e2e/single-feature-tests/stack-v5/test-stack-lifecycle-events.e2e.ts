@@ -1,4 +1,4 @@
-import { device, element, by, waitFor } from 'detox';
+import { device, element, by } from 'detox';
 import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
@@ -6,6 +6,7 @@ import {
   selectSingleFeatureTestsScreen,
   dismissToast,
   tapTopmostButton,
+  waitForRoute,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
@@ -41,12 +42,6 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  */
 
 type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
-async function waitForRoute(routeName: string): Promise<void> {
-  await waitFor(element(by.text(`Name: ${routeName}`)))
-    .toBeVisible()
-    .withTimeout(3000);
-}
 
 describeIfiOS('Stack v5: lifecycle events', () => {
   beforeAll(async () => {

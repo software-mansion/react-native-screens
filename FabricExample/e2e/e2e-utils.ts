@@ -83,15 +83,43 @@ export async function getSingleMatch(
   return matches[0];
 }
 
+/**
+ * The screen-coordinate frame of the single element matching `matcher`.
+ * Throws when the matcher is ambiguous — pass a narrower one, or read
+ * `getMatches()` and pick the element you mean.
+ */
+export async function getFrame(
+  matcher: NativeMatcher,
+): Promise<{ x: number; y: number; width: number; height: number }> {
+  return (await getSingleMatch(matcher)).frame;
+}
+
 // ---------------------------------------------------------------------------
 // Interactions
 // ---------------------------------------------------------------------------
 
-export async function scrollUntilVisible(id: string, scrollViewId: string) {
+export async function scrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  pixelsPerStep = 600,
+) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(600, 'down', Number.NaN, 0.85);
+    .scroll(pixelsPerStep, 'down', Number.NaN, 0.85);
+}
+
+/**
+ * Rewinds to the top first, so a target above the current offset is still
+ * reachable — `whileElement` only scrolls one way.
+ */
+export async function rewindAndScrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  pixelsPerStep = 600,
+) {
+  await element(by.id(scrollViewId)).scrollTo('top');
+  await scrollUntilVisible(id, scrollViewId, pixelsPerStep);
 }
 
 /**
@@ -124,6 +152,69 @@ export async function dismissToast(message: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Settings controls
+// ---------------------------------------------------------------------------
+
+/**
+ * The `testID` `SettingsPicker` gives one of its option rows.
+ *
+ * This mirrors the expression in the component, so a picker's `label` prop and
+ * its option ids stay in step. Hardcoding the derived id in a test instead
+ * makes a later `label` rename fail at runtime with no compile error.
+ *
+ * @see apps/src/shared/SettingsPicker.tsx
+ */
+export function pickerOptionId(label: string, option: string): string {
+  return `${label.split(' ').join('-')}-${option}`.toLowerCase();
+}
+
+export type PickerSelection = {
+  pickerId: string;
+  /** The picker's `label` prop — its option `testID`s are derived from it. */
+  label: string;
+  option: string;
+};
+
+/** Set when the picker or its rows can sit outside the viewport. */
+export type PickerScrollOptions = {
+  scrollViewId: string;
+  /** Pixels per scroll step. Smaller steps avoid overshooting a short row. */
+  pixelsPerStep?: number;
+};
+
+/**
+ * Opens `pickerId`, taps `option`, closes the picker again, then asserts the
+ * value it settled on — a swallowed tap fails here rather than as a puzzling
+ * assertion further down the test.
+ *
+ * Closing matters: option rows stay in the hierarchy while a picker is open,
+ * and their ids are derived from the label alone, so two pickers sharing a
+ * label would expose the same option id twice. Keeping at most one picker open
+ * is what makes those ids unambiguous.
+ */
+export async function selectPickerOption(
+  { pickerId, label, option }: PickerSelection,
+  scroll?: PickerScrollOptions,
+) {
+  const tapById = async (id: string) => {
+    if (scroll !== undefined) {
+      await rewindAndScrollUntilVisible(
+        id,
+        scroll.scrollViewId,
+        scroll.pixelsPerStep,
+      );
+    }
+    await element(by.id(id)).tap();
+  };
+
+  await tapById(pickerId);
+  await tapById(pickerOptionId(label, option));
+  await tapById(pickerId);
+
+  await expect(element(by.id(pickerId))).toHaveLabel(`${label}: ${option}`);
+}
+
+// ---------------------------------------------------------------------------
 // Stacked screens
 //
 // Unlike iOS, react-native-screens keeps covered screens attached on Android,
@@ -149,6 +240,24 @@ export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
 /** Taps the button labelled `title` on the topmost stacked screen. */
 export async function tapTopmostButton(title: string): Promise<void> {
   await tapTopmost(by.text(title));
+}
+
+/**
+ * Waits until a screen showing `Name: <routeName>` is visible — the label the
+ * stack test screens render for their route.
+ *
+ * Safe only where covered screens leave the hierarchy, i.e. iOS. On Android
+ * they stay attached, so this matcher can resolve to one element per stacked
+ * screen and `toBeVisible()` throws "matches N views"; poll
+ * `readTopmostText('stack-route-name')` there instead.
+ */
+export async function waitForRoute(
+  routeName: string,
+  timeout = 3000,
+): Promise<void> {
+  await waitFor(element(by.text(`Name: ${routeName}`)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 // ---------------------------------------------------------------------------

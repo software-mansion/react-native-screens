@@ -1,6 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
+  getFrame,
   getSingleMatch,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -15,7 +16,6 @@ import {
   CLASS_NAME_UI_IMAGE_VIEW,
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
-import { IosElementAttributes } from 'detox/detox';
 
 /**
  * UIKit exposes no way to query a presented menu, so structure and layout are
@@ -66,14 +66,17 @@ const paletteTitleChevron = element(
 );
 
 /** A palette item rendered as an icon, matched by its SF Symbol name. */
+function paletteIconMatcher(iconId: string) {
+  return by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId));
+}
+
 function paletteIcon(iconId: string) {
-  return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
+  return element(paletteIconMatcher(iconId));
 }
 
 /** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
 async function getPaletteIconTopY(iconId: string) {
-  const attrs = await paletteIcon(iconId).getAttributes();
-  return (attrs as IosElementAttributes).frame.y;
+  return (await getFrame(paletteIconMatcher(iconId))).y;
 }
 
 /**

@@ -3,29 +3,28 @@ import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
   getSingleMatch,
+  scrollUntilVisible,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
-async function scrollTo(selector: { id: string } | { text: string }) {
-  const el =
-    'text' in selector
-      ? element(by.text(selector.text))
-      : element(by.id(selector.id));
+const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 
-  await waitFor(el)
-    .toBeVisible()
-    .whileElement(by.id('tab-bar-layout-direction-scrollview'))
-    .scroll(100, 'down');
+// Small steps — a larger one can scroll a short picker row past the viewport.
+const SCROLL_STEP = 100;
+
+async function scrollTo(id: string) {
+  await scrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
 async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
-  await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-  await element(by.id('tab-bar-layout-direction-picker')).tap();
-  await scrollTo({ text: direction });
-  await element(by.text(direction)).tap();
-  await element(by.id('tab-bar-layout-direction-picker')).tap();
-  await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-    `direction: ${direction}`,
+  await selectPickerOption(
+    {
+      pickerId: 'tab-bar-layout-direction-picker',
+      label: 'direction',
+      option: direction,
+    },
+    { scrollViewId: SCROLLVIEW_ID, pixelsPerStep: SCROLL_STEP },
   );
 }
 
@@ -64,7 +63,7 @@ describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
       'I18nManager.isRTL == false',
     );
 
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+    await scrollTo('tab-bar-layout-direction-picker');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: ltr',
     );
@@ -148,7 +147,7 @@ describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
       'I18nManager.isRTL == true',
     );
 
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+    await scrollTo('tab-bar-layout-direction-picker');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: rtl',
     );
@@ -227,7 +226,7 @@ describeIfiOS(
         'I18nManager.isRTL == false',
       );
 
-      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await scrollTo('tab-bar-layout-direction-picker');
       await expect(
         element(by.id('tab-bar-layout-direction-picker')),
       ).toHaveLabel('direction: ltr');
@@ -302,7 +301,7 @@ describeIfiOS(
         'I18nManager.isRTL == true',
       );
 
-      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await scrollTo('tab-bar-layout-direction-picker');
       await expect(
         element(by.id('tab-bar-layout-direction-picker')),
       ).toHaveLabel('direction: rtl');
