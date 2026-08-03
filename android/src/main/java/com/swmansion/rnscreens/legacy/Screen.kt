@@ -463,9 +463,9 @@ class Screen(
     }
 
     fun endRemovalTransition() {
-        isBeingRemoved = false
         if (isRemovalTransitionStarted) {
             isRemovalTransitionStarted = false
+            isBeingRemoved = false
             endTransitionRecursive(this)
         }
     }
