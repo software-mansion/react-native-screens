@@ -8,8 +8,8 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
-#import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
