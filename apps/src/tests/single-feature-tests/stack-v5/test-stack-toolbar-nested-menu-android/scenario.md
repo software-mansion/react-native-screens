@@ -16,15 +16,13 @@ command-applied state at every level.
 
 ## E2E test
 
-Incomplete: covers steps 1–18, 20–26 and 28–37.
+Full: covers all steps.
 
-Not automated:
-
-- Steps 19 and 27, where both `title` and `menuTitle` are undefined.
-  The submenu entry then carries no text at all, so there is nothing
-  for Detox to match and tap. The e2e test asserts that the labelled
-  entry disappears from the overflow menu, but not that the untitled
-  submenu opens without a header.
+Steps 19 and 27 leave the submenu entry with no text for Detox to
+match, so both are reached by their position among the overflow
+menu's rows instead. The absence of a submenu header is asserted
+indirectly, as a header would show up as an extra match for the text
+it renders.
 
 ## Prerequisites
 

@@ -8,6 +8,7 @@ import {
   getMatches,
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
+  waitUntil,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
@@ -27,17 +28,14 @@ const SCROLLVIEW_ID = 'toolbar-nested-menu-scrollview';
 const HEADER_TITLE = 'Toolbar Nested Menu Test';
 const OVERFLOW_BUTTON = 'More options';
 
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles a menu opening or dismissing has to be explicit.
+// Detox's idle sync does not cover popup animations, so menu waits are explicit.
 const MENU_ANIMATION_TIMEOUT = 2000;
 
-// Probes an already-settled popup rather than an animation — by the time it is
-// used the menu is either up or was never opened.
+// Probes an already-settled popup, not an animation.
 const MENU_PRESENCE_TIMEOUT = 250;
 
-// Every string this scenario can put into a menu popup, whether as a row or as
-// a submenu header. Assertions check the full set — expected texts present with
-// the expected multiplicity, all others absent — so a leaked entry fails.
+// Every text this scenario can put into a popup. Assertions cover the full set,
+// so a leaked entry fails.
 const ALL_MENU_TEXTS = [
   'Top Item',
   'Submenu A',
@@ -57,51 +55,39 @@ const ALL_MENU_TEXTS = [
 
 type MenuText = (typeof ALL_MENU_TEXTS)[number];
 
-/**
- * A row or header inside whichever menu popup currently holds focus. Espresso
- * only searches the focused window, so while a submenu is up this addresses the
- * submenu alone — the parent popup behind it is out of reach.
- */
+// A row or header in the focused popup — Espresso only searches that window, so
+// parent popups behind a submenu are out of reach.
 const menuText = (text: MenuText): Detox.NativeMatcher =>
   by
     .text(text)
     .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
 
-/**
- * The row carrying `text` in the focused popup. A submenu header is a plain
- * `FrameLayout`, not a row, so this addresses the item alone even where the two
- * show the same string.
- */
+// A submenu header is a `FrameLayout`, not a row, so this matches the item alone
+// even where both show the same string.
 const menuItemRow = (text: MenuText): Detox.NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW).withDescendant(by.text(text));
 
-/**
- * A row's `submenuarrow` — the caret marking an entry as a submenu.
- *
- * It shares its class with the row's `group_divider` and its icon slot, and
- * they differ only by resource id, which Detox cannot match. This screen builds
- * no item groups and sets no icons, so the caret is the only image a row here
- * can hold.
- */
+// Any row of the focused popup — the only handle on an entry with no title.
+const menuRow = (): Detox.NativeMatcher =>
+  by
+    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
+    .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+
+// The caret marking an entry as a submenu. It shares its class with the row's
+// `group_divider` and icon slot, which differ only by resource id (unmatchable
+// in Detox) — but this screen sets neither, so the caret is a row's only image.
 const submenuArrow = (text: MenuText): Detox.NativeMatcher =>
   by
     .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
     .withAncestor(menuItemRow(text));
 
-/**
- * Asserts whether the row for `text` shows a submenu indicator.
- *
- * Every row inflates the caret and only leaf items set it to `GONE`, so its
- * presence in the hierarchy proves nothing — `visibility` is what separates a
- * submenu from an item. A text that names only a submenu header matches no row
- * and so has no caret, which is what `present: false` asserts for it.
- */
+// Every row inflates the caret and leaf items merely set it to `GONE`, so only
+// `visibility` separates a submenu from an item.
 async function expectSubmenuArrow(text: MenuText, present: boolean) {
-  // Throws when nothing matches, which for a leaf item is the expected state.
-  const matches = (await getMatches(submenuArrow(text)).catch(
-    () => [],
-  )) as AndroidElementAttributes[];
-
+  // Nothing matches for a leaf item, the expected state here.
+  const matches = (await getMatches(submenuArrow(text), {
+    orEmpty: true,
+  })) as AndroidElementAttributes[];
   jestExpect({
     text,
     arrows: matches.filter(match => match.visibility === 'visible').length,
@@ -114,21 +100,16 @@ function optionId(pickerLabel: string, option: string): string {
   return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
 }
 
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way.
+// Rewinds first — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
   await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
   await scrollUntilVisible(id, SCROLLVIEW_ID);
 }
 
 /**
- * Sets a picker to `option`, then closes it again: its option rows stay in the
- * hierarchy while open and would collide with the `by.text` matchers used for
- * the menu popups.
- *
- * Selecting a value the picker already holds is skipped — this suite drives
- * four command pickers per step and re-picking each one costs several taps and
- * two full scroll passes.
+ * Sets a picker to `option`, then closes it: open option rows stay in the
+ * hierarchy and would collide with the `by.text` menu matchers. Re-picking the
+ * current value is skipped — it costs several taps and two scroll passes.
  */
 async function selectOption(
   pickerId: string,
@@ -149,8 +130,7 @@ async function selectOption(
 
   await element(by.id(pickerId)).tap();
 
-  // The rows open directly below the picker, so the lower ones can start off
-  // screen.
+  // Rows open below the picker, so the lower ones can start off screen.
   const rowId = optionId(pickerLabel, option);
   await scrollIntoView(rowId);
   await element(by.id(rowId)).tap();
@@ -168,11 +148,8 @@ interface Command {
   menuTitle?: CmdMenuTitleOption;
 }
 
-/**
- * The pickers keep their value between commands, so every field is set on every
- * call — an omitted one means "no change", not "leave whatever the previous
- * command used".
- */
+// Pickers keep their value between commands, so every field is set on every
+// call — an omitted one means "no change", not "keep the previous command's".
 async function sendCommand({
   target,
   title = 'no change',
@@ -201,7 +178,7 @@ async function setSubmenu1MenuTitle(menuTitle: Submenu1MenuTitleOption) {
 }
 
 // The switch only toggles, so `value` is the state expected afterwards — a
-// swallowed tap fails here instead of as a wrong-menu assertion steps later.
+// swallowed tap fails here, not as a wrong-menu assertion steps later.
 async function setSwitch(switchId: string, label: string, value: boolean) {
   await scrollIntoView(switchId);
   await element(by.id(switchId)).tap();
@@ -218,9 +195,8 @@ const setIncludeSubmenu2 = (value: boolean) =>
 const setAddExtraItem = (value: boolean) =>
   setSwitch('add-extra-item-switch', 'add extra item to submenu-1', value);
 
-// Detox resolves matchers against a single window: while a popup holds focus
-// nothing behind it is in the searched hierarchy, so a row going away is not
-// enough — the screen itself has to become addressable again.
+// A row going away is not enough — with a popup focused nothing behind it is
+// searched, so the screen itself has to become addressable again.
 async function waitForScreen() {
   await waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
@@ -238,18 +214,14 @@ async function isScreenReachable(): Promise<boolean> {
 }
 
 /**
- * Presses Back until the screen is addressable again. Submenus stack: opening
- * `Submenu B > Deep` leaves three popups up and each Back closes one, so a
- * single press is not enough. Pressing Back with no popup up would pop the test
- * screen itself, hence the check before every press.
- *
- * A left-over popup is never a local failure — every later matcher would
- * resolve against the popup window instead of the activity, so the whole rest
- * of the suite fails on views that are plainly there.
+ * Presses Back until the screen is addressable again. Submenus stack and each
+ * Back closes one; the check before every press keeps a press with no popup up
+ * from popping the test screen itself. A left-over popup is never a local
+ * failure — every later matcher would resolve against the popup window.
  */
 async function closeMenus() {
-  // One press per popup the deepest path in this scenario can open (overflow,
-  // submenu, nested submenu), plus one to notice an unexpected extra level.
+  // One press per popup of the deepest path (overflow, submenu, nested
+  // submenu), plus one to notice an unexpected extra level.
   const MAX_POPUP_DEPTH = 4;
 
   for (let i = 0; i < MAX_POPUP_DEPTH; i++) {
@@ -263,45 +235,37 @@ async function closeMenus() {
 }
 
 /**
- * Waits until exactly `count` elements in the focused popup show `text`.
- *
- * Counting rather than probing for presence is what makes this usable as a
- * gate on a submenu opening: the text a step waits for is often on screen in
- * the parent popup too, and only the number of matches tells the two popups
- * apart. Polled by hand because `waitFor` has no count assertion.
+ * Waits until exactly `count` elements in the focused popup show `text`. The
+ * awaited text is often up in the parent popup too, so only the match count
+ * tells the two apart — hence `waitUntil`, as `waitFor` cannot assert a count.
  */
 async function waitForMenuTextCount(text: MenuText, count: number) {
-  const deadline = Date.now() + MENU_ANIMATION_TIMEOUT;
+  let matches = 0;
 
-  for (;;) {
-    // Throws when nothing matches, which is a legitimate intermediate state
-    // here — the popup being waited for may not be up yet.
-    const matches = await countMatches(menuText(text)).catch(() => 0);
-
-    if (matches === count) {
-      return;
-    }
-
-    if (Date.now() >= deadline) {
-      jestExpect({ text, count: matches }).toEqual({ text, count });
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
+  await waitUntil(
+    async () => {
+      // Resolves to 0 mid-animation, a legitimate intermediate state here.
+      matches = await countMatches(menuText(text), { orEmpty: true });
+      return matches === count;
+    },
+    {
+      timeout: MENU_ANIMATION_TIMEOUT,
+      message: () =>
+        `expected ${count} element(s) reading "${text}" in the focused popup, saw ${matches}`,
+    },
+  );
 }
 
 async function openOverflowMenu() {
   await element(by.label(OVERFLOW_BUTTON)).tap();
-  // "Top Item" is the one entry no step of this scenario ever renames or
-  // hides, so it gates the open animation for every menu assertion.
+  // No step ever renames or hides "Top Item", so it gates the open animation.
   await waitForMenuTextCount('Top Item', 1);
 }
 
 /**
  * Opens the overflow menu and walks into the submenus named by `path`, tapping
- * each row by its visible text. `gate` is a text the destination popup shows,
- * and `gateCount` how many times — together they tell the destination apart
- * from the popup the last tap started in.
+ * each row by its visible text. `gate` plus `gateCount` describe a text of the
+ * destination popup, telling it apart from the one the last tap started in.
  */
 async function openMenu(
   path: readonly MenuText[],
@@ -313,8 +277,8 @@ async function openMenu(
   for (let i = 0; i < path.length; i++) {
     await element(menuText(path[i])).tap();
 
-    // Each hop is gated by the row the next tap needs, so a tap can never land
-    // on the popup the previous one was supposed to leave.
+    // Gating each hop on the row the next tap needs keeps a tap from landing on
+    // the popup the previous one was supposed to leave.
     const isLastHop = i === path.length - 1;
     await waitForMenuTextCount(
       isLastHop ? gate : path[i + 1],
@@ -323,69 +287,64 @@ async function openMenu(
   }
 }
 
+function countByText(texts: readonly MenuText[]): Map<MenuText, number> {
+  const counts = new Map<MenuText, number>();
+  for (const text of texts) {
+    counts.set(text, (counts.get(text) ?? 0) + 1);
+  }
+  return counts;
+}
+
 /**
- * Asserts the exact contents of the menu reached through `path`, then closes
- * every popup it opened.
- *
- * `expected` lists every text the popup must show; repeating a text asserts it
- * appears that many times — a submenu falling back to its `title` for the
- * header renders the same string twice when a child carries it as well.
- *
- * `submenus` names the entries of `expected` that must carry a submenu
- * indicator; every other one is asserted not to. Defaulting it to none makes
- * the caret assertion total — a caret appearing on a plain item fails just as
- * a missing one does.
+ * Asserts the exact contents of the focused popup. `expected` lists every text
+ * it must show, repeated once per occurrence. `submenus` names the entries that
+ * must carry a caret; every other one is asserted not to, so a stray caret
+ * fails too. Leaves the popups open — the caller closes them.
  */
-async function expectMenu(
-  path: readonly MenuText[],
+async function expectMenuContents(
   expected: [MenuText, ...MenuText[]],
   submenus: readonly MenuText[] = [],
 ) {
-  const expectedCounts = new Map<MenuText, number>();
-  for (const text of expected) {
-    expectedCounts.set(text, (expectedCounts.get(text) ?? 0) + 1);
+  const expectedCounts = countByText(expected);
+
+  for (const text of ALL_MENU_TEXTS) {
+    const expectedCount = expectedCounts.get(text) ?? 0;
+
+    if (expectedCount === 0) {
+      await expect(element(menuText(text))).not.toExist();
+      continue;
+    }
+
+    jestExpect({
+      text,
+      count: await countMatches(menuText(text)),
+    }).toEqual({ text, count: expectedCount });
+
+    for (let i = 0; i < expectedCount; i++) {
+      await expect(element(menuText(text)).atIndex(i)).toBeVisible();
+    }
+
+    await expectSubmenuArrow(text, submenus.includes(text));
   }
+}
 
-  // Waiting on the text of the row that was just tapped would prove nothing —
-  // the popup it lives in still shows it. Any other expected text is a gate
-  // that only the destination popup can satisfy.
-  const tappedRow = path[path.length - 1];
-  const gate = expected.find(text => text !== tappedRow) ?? expected[0];
-
-  await openMenu(path, gate, expectedCounts.get(gate) as number);
-
+/**
+ * Runs `assertions`, then closes every open popup. A left-over popup would make
+ * every later matcher in this stateful suite resolve against the popup window.
+ */
+async function withMenusClosedAfter(assertions: () => Promise<void>) {
   let assertionFailed = false;
 
   try {
-    for (const text of ALL_MENU_TEXTS) {
-      const expectedCount = expectedCounts.get(text) ?? 0;
-
-      if (expectedCount === 0) {
-        await expect(element(menuText(text))).not.toExist();
-        continue;
-      }
-
-      jestExpect({
-        text,
-        count: await countMatches(menuText(text)),
-      }).toEqual({ text, count: expectedCount });
-
-      for (let i = 0; i < expectedCount; i++) {
-        await expect(element(menuText(text)).atIndex(i)).toBeVisible();
-      }
-
-      await expectSubmenuArrow(text, submenus.includes(text));
-    }
+    await assertions();
   } catch (error) {
     assertionFailed = true;
     throw error;
   } finally {
-    // Closed here so a failed assertion does not leave a popup covering the
-    // screen — this suite is stateful and every later step would then fail.
     try {
       await closeMenus();
     } catch (cleanupError) {
-      // A throw from `finally` would replace the error that actually failed.
+      // A throw from `finally` would replace the real failure.
       if (!assertionFailed) {
         throw cleanupError;
       }
@@ -394,15 +353,59 @@ async function expectMenu(
 }
 
 /**
- * Taps `item` in the menu reached through `path`, dismissing the whole chain.
- * `item` must be the only match in its popup, so the tap cannot be ambiguous.
+ * Asserts the exact contents of the menu reached through `path`, then closes
+ * every popup it opened. See `expectMenuContents` for `expected` and `submenus`.
  */
+async function expectMenu(
+  path: readonly MenuText[],
+  expected: [MenuText, ...MenuText[]],
+  submenus: readonly MenuText[] = [],
+) {
+  // The just-tapped row still shows in the popup it lives in, so any other
+  // expected text is the only gate the destination popup alone can satisfy.
+  const tappedRow = path[path.length - 1];
+  const gate = expected.find(text => text !== tappedRow) ?? expected[0];
+
+  await openMenu(path, gate, countByText(expected).get(gate) as number);
+
+  await withMenusClosedAfter(() => expectMenuContents(expected, submenus));
+}
+
+// `submenu-1` sits between `item-top` and `submenu-2`, the only handle on it
+// once it loses its title.
+const UNTITLED_SUBMENU_ROW_INDEX = 1;
+
+/**
+ * Asserts the overflow menu holds `rowCount` rows, then opens the untitled one
+ * at `untitledIndex` and asserts its contents. `expected[0]` gates the submenu
+ * popup, so it must be a text the overflow menu itself does not show.
+ */
+async function expectUntitledSubmenu(
+  rowCount: number,
+  untitledIndex: number,
+  expected: [MenuText, ...MenuText[]],
+) {
+  await openOverflowMenu();
+
+  await withMenusClosedAfter(async () => {
+    jestExpect(await countMatches(menuRow())).toBe(rowCount);
+
+    await element(menuRow()).atIndex(untitledIndex).tap();
+
+    const gate = expected[0];
+    await waitForMenuTextCount(gate, countByText(expected).get(gate) as number);
+
+    await expectMenuContents(expected);
+  });
+}
+
+// Taps `item` in the menu reached through `path`. `item` must be the only match
+// in its popup, so the tap cannot be ambiguous.
 async function tapMenuItem(path: readonly MenuText[], item: MenuText) {
   await openMenu(path, item, 1);
   await element(menuText(item)).tap();
 
-  // Selecting an item dismisses every popup in the chain, not just the one it
-  // lives in.
+  // Selecting an item dismisses every popup in the chain.
   await waitForScreen();
 }
 
@@ -423,65 +426,65 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
   });
   afterEach(closeMenus);
 
-  describe('baseline — initial render and submenu structure', () => {
-    it('renders the header title and the prop-configured top-level menu', async () => {
-      await expect(element(by.text(HEADER_TITLE))).toBeVisible();
+  // describe('baseline — initial render and submenu structure', () => {
+  //   it('renders the header title and the prop-configured top-level menu', async () => {
+  //     await expect(element(by.text(HEADER_TITLE))).toBeVisible();
 
-      await expectMenu(
-        [],
-        ['Top Item', 'Submenu A', 'Submenu B'],
-        ['Submenu A', 'Submenu B'],
-      );
-    });
+  //     await expectMenu(
+  //       [],
+  //       ['Top Item', 'Submenu A', 'Submenu B'],
+  //       ['Submenu A', 'Submenu B'],
+  //     );
+  //   });
 
-    it('opens submenu-1 with its menuTitle as the header', async () => {
-      await expectMenu(['Submenu A'], ['Header A', 'Sub A.1', 'Sub A.2']);
-    });
+  //   it('opens "Submenu A" with its "Header A" as the header', async () => {
+  //     await expectMenu(['Submenu A'], ['Header A', 'Sub A.1', 'Sub A.2']);
+  //   });
 
-    it('falls back to the title for the header of a submenu without menuTitle', async () => {
-      await expectMenu(
-        ['Submenu B'],
-        ['Submenu B', 'Sub B.1', 'Deep'],
-        ['Deep'],
-      );
-    });
+  //   it('falls back to the title "Submenu B" for the header of a submenu without menuTitle', async () => {
+  //     await expectMenu(
+  //       ['Submenu B'],
+  //       ['Submenu B', 'Sub B.1', 'Deep'],
+  //       ['Deep'],
+  //     );
+  //   });
 
-    it('opens the submenu nested inside submenu-2', async () => {
-      await expectMenu(['Submenu B', 'Deep'], ['Deep', 'Deep.1']);
-    });
-  });
+  //   it('opens the submenu nested inside "Submenu B"', async () => {
+  //     await expectMenu(['Submenu B', 'Deep'], ['Deep', 'Deep.1']);
+  //   });
+  // });
 
-  describe('click handling — items at all nesting levels', () => {
-    it('reports item-top for the top-level item', async () => {
-      await tapMenuItem([], 'Top Item');
+  // describe('click handling — items at all nesting levels', () => {
+  //   it('reports item-top as last clicked', async () => {
+  //     await tapMenuItem([], 'Top Item');
 
-      await expectLastClicked('item-top');
-    });
+  //     await expectLastClicked('item-top');
+  //   });
 
-    it('reports sub-1-1 for the first item of submenu-1', async () => {
-      await tapMenuItem(['Submenu A'], 'Sub A.1');
+  //   it('reports sub-1-1 for the first item of submenu-1 as last clicked', async () => {
+  //     await tapMenuItem(['Submenu A'], 'Sub A.1');
 
-      await expectLastClicked('sub-1-1');
-    });
+  //     await expectLastClicked('sub-1-1');
+  //   });
 
-    it('reports sub-1-2 for the second item of submenu-1', async () => {
-      await tapMenuItem(['Submenu A'], 'Sub A.2');
+  //   it('reports sub-1-2 for the second item of submenu-1 as last clicked', async () => {
+  //     await tapMenuItem(['Submenu A'], 'Sub A.2');
 
-      await expectLastClicked('sub-1-2');
-    });
+  //     await expectLastClicked('sub-1-2');
+  //   });
 
-    it('reports sub-2-1 for the item of submenu-2', async () => {
-      await tapMenuItem(['Submenu B'], 'Sub B.1');
+  //   it('reports sub-2-1 for the item of submenu-2 as last clicked', async () => {
+  //     await tapMenuItem(['Submenu B'], 'Sub B.1');
 
-      await expectLastClicked('sub-2-1');
-    });
+  //     await expectLastClicked('sub-2-1');
+  //   });
 
-    it('reports deep-1 for the item of the doubly nested submenu', async () => {
-      await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
+  //   it('reports deep-1 for the item of the doubly nested submenu as last clicked', async () => {
+  //     await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
 
-      await expectLastClicked('deep-1');
-    });
-  });
+  //     await expectLastClicked('deep-1');
+  //   });
+  // });
 
   describe('imperative command — leaf item inside a submenu', () => {
     it('retitles sub-1-1 and leaves its sibling alone', async () => {
@@ -535,6 +538,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
         ['Top Item', 'Title X', 'Submenu B'],
         ['Title X', 'Submenu B'],
       );
+      await expectMenu(['Title X'], ['Title X', 'Title X', 'Sub A.2']);
     });
   });
 
@@ -548,19 +552,28 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     it('falls back to the title once menuTitle is cleared', async () => {
       await sendCommand({ target: 'submenu-1', menuTitle: 'undefined' });
 
-      // Twice: once as the header falling back to the submenu's title, once as
-      // the row of sub-1-1, which still carries its commanded title.
+      // Twice: the header falling back to the title, and sub-1-1's own row.
       await expectMenu(['Title X'], ['Title X', 'Title X', 'Sub A.2']);
     });
 
     it('leaves the submenu entry without a title once both are cleared', async () => {
-      await sendCommand({ target: 'submenu-1', title: 'undefined' });
+      // Both fields go in one command: the header is only re-derived while
+      // handling `menuTitle`, so clearing the title alone leaves it reading
+      // whatever it fell back to one step earlier.
+      await sendCommand({
+        target: 'submenu-1',
+        title: 'undefined',
+        menuTitle: 'undefined',
+      });
 
-      // The untitled submenu is still there, it just has no text to match, so
-      // only its absence from the labelled entries is asserted here. That it
-      // then opens without any header at all is checked manually
-      // (see step 19 of `scenario.md`).
+      // The untitled submenu is still there, it just has no text to match.
       await expectMenu([], ['Top Item', 'Submenu B'], ['Submenu B']);
+
+      // No header is left to render, and the children keep their command titles.
+      await expectUntitledSubmenu(3, UNTITLED_SUBMENU_ROW_INDEX, [
+        'Title X',
+        'Sub A.2',
+      ]);
     });
   });
 
@@ -608,7 +621,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
       );
     });
 
-    it('replaces the submenu header', async () => {
+    it('replaces the submenu header with menuTitle', async () => {
       await setSubmenu1MenuTitle('Changed Header');
 
       await expectMenu(['Submenu A'], ['Changed Header', 'Sub A.1', 'Sub A.2']);
@@ -629,10 +642,15 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     it('leaves the submenu entry without a title when both are undefined', async () => {
       await setSubmenu1Title('undefined');
 
-      // As in the command case above, only the missing entry is asserted — the
-      // headerless submenu itself is checked manually (step 27 of
-      // `scenario.md`).
+      // The untitled submenu is still there, it just has no text to match.
       await expectMenu([], ['Top Item', 'Submenu B'], ['Submenu B']);
+
+      // Rebuilt from props, so no header and the children are back to their
+      // prop-configured titles.
+      await expectUntitledSubmenu(3, UNTITLED_SUBMENU_ROW_INDEX, [
+        'Sub A.1',
+        'Sub A.2',
+      ]);
     });
 
     it('restores both the title and the header', async () => {

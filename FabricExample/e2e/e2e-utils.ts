@@ -213,24 +213,43 @@ export async function dismissToast(message: string) {
   await element(by.label(message)).tap();
 }
 
+type MatchOptions = {
+  /**
+   * Resolve to no matches instead of throwing when nothing matches. Pass it
+   * only where absence is an expected state: it also swallows a crashed app
+   * and a dropped Detox connection.
+   */
+  orEmpty?: boolean;
+};
+
 /**
- * Returns every element matching `matcher`, normalizing `getAttributes()`'s
- * single-element object and multi-element `{ elements: [...] }` wrapper to one
- * array. Ordered by view hierarchy, so the topmost stacked screen is last.
+ * Every element matching `matcher`, with `getAttributes()`'s single- and
+ * multi-element shapes normalized to one array. Ordered by view hierarchy, so
+ * the topmost stacked screen is last.
  *
- * Throws when nothing matches — left uncaught so a crash is not misreported
- * as "found 0".
+ * Throws when nothing matches, so a crash is not misreported as "found 0".
  */
 export async function getMatches(
   matcher: NativeMatcher,
+  { orEmpty = false }: MatchOptions = {},
 ): Promise<ElementAttributes[]> {
-  const attrs = await element(matcher).getAttributes();
-  return 'elements' in attrs ? attrs.elements : [attrs];
+  try {
+    const attrs = await element(matcher).getAttributes();
+    return 'elements' in attrs ? attrs.elements : [attrs];
+  } catch (error) {
+    if (orEmpty) {
+      return [];
+    }
+    throw error;
+  }
 }
 
-/** How many elements `matcher` resolves to. */
-export async function countMatches(matcher: NativeMatcher): Promise<number> {
-  return (await getMatches(matcher)).length;
+/** How many elements `matcher` resolves to; `0` with `orEmpty` and no match. */
+export async function countMatches(
+  matcher: NativeMatcher,
+  options?: MatchOptions,
+): Promise<number> {
+  return (await getMatches(matcher, options)).length;
 }
 
 /** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
@@ -246,4 +265,40 @@ export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
     .tap();
+}
+
+type WaitUntilOptions = {
+  /** How long to keep polling before failing, in milliseconds. */
+  timeout?: number;
+  /** Delay between two `predicate` calls, in milliseconds. */
+  interval?: number;
+  /** What was awaited, appended to the timeout error. A function can build it
+   * from whatever the last `predicate` call observed. */
+  message: string | (() => string);
+};
+
+/**
+ * Polls `predicate` until it resolves `true`, or fails once `timeout` elapses.
+ * Prefer Detox's `waitFor(...).withTimeout(...)`, which syncs with the app
+ * instead of sampling it; this is for conditions it cannot express, such as how
+ * many elements a matcher resolves to.
+ */
+export async function waitUntil(
+  predicate: () => Promise<boolean>,
+  { timeout = 3000, interval = 100, message }: WaitUntilOptions,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
+
+  while (Date.now() <= deadline) {
+    if (await predicate()) {
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, interval));
+  }
+
+  throw new Error(
+    `waitUntil timed out after ${timeout}ms: ${
+      typeof message === 'function' ? message() : message
+    }`,
+  );
 }
