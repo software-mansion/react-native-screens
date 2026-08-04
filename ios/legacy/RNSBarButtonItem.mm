@@ -189,14 +189,16 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                }];
 
   UIMenu *menu = [UIMenu menuWithTitle:dict[@"title"]
-                                image:image
-                           identifier:nil
-                              options:RNSMakeUIMenuOptionsFromConfig(dict)
-                             children:elements];
+                                 image:image
+                            identifier:nil
+                               options:RNSMakeUIMenuOptionsFromConfig(dict)
+                              children:elements];
+
   NSString *subtitle = dict[@"subtitle"];
-  if (subtitle != nil && @available(iOS 15.0, *)) {
+  if (subtitle != nil) {
     menu.subtitle = subtitle;
   }
+
   return menu;
 }
 
