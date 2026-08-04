@@ -4,6 +4,7 @@ import android.util.Log
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.fabric.FabricUIManager
+import com.swmansion.rnscreens.legacy.Screen
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
@@ -63,6 +64,11 @@ class NativeProxy {
 
         val screen = weakScreeRef.get()
         if (screen is Screen) {
+            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
+            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
+            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
+            // we must set this flag synchronously here.
+            screen.markAsBeingRemoved()
             val isScheduled =
                 screen.post {
                     screen.startRemovalTransition()

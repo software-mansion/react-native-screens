@@ -1,12 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
-
-async function dismissToast(message: string) {
-  await waitFor(element(by.label(message)))
-    .toBeVisible()
-    .withTimeout(3000);
-  await element(by.label(message)).tap();
-}
+import { selectSingleFeatureTestsScreen, dismissToast } from '../../e2e-utils';
 
 // These scenarios are split into two separate suites using `device.reloadReactNative()`.
 // Running these scenarios sequentially within a single app lifecycle caused deterministic
@@ -22,7 +15,7 @@ async function dismissToast(message: string) {
 // separate runs with a full JS reload in between. No further effort was made
 // to fix these runtime state transitions in Detox.
 
-describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
+describe('@smoke Stale update rejection - rejectStaleNavStateUpdates:true', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -87,7 +80,7 @@ describe('Stale update rejection - rejectStaleNavStateUpdates:true', () => {
   });
 });
 
-describe('Stale update rejection - rejectStaleNavStateUpdates:false', () => {
+describe('@smoke Stale update rejection - rejectStaleNavStateUpdates:false', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

@@ -1,5 +1,5 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { PlatformIconAndroid } from '../../../types';
+import type { PlatformIconAndroid } from '../../shared/types';
 
 export type TabBarItemLabelVisibilityMode =
   | 'auto'

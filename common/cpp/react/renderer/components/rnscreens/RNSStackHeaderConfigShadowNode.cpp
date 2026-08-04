@@ -16,6 +16,30 @@ Point RNSStackHeaderConfigShadowNode::getContentOriginOffset(
   auto stateData = getStateData();
   return stateData.contentOffset;
 }
-#endif // ANDROID
+#else // ANDROID
+void RNSStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
+  YogaLayoutableShadowNode::layout(layoutContext);
+  applyFrameCorrections();
+}
 
+void RNSStackHeaderConfigShadowNode::applyFrameCorrections() {
+  ensureUnsealed();
+
+  const auto &stateData = getStateData();
+  layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
+  layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
+}
+
+void RNSStackHeaderConfigShadowNode::setImageLoader(
+    std::weak_ptr<void> imageLoader) {
+  getStateDataMutable().setImageLoader(imageLoader);
+}
+
+RNSStackHeaderConfigShadowNode::StateData &
+RNSStackHeaderConfigShadowNode::getStateDataMutable() {
+  ensureUnsealed();
+  return const_cast<RNSStackHeaderConfigShadowNode::StateData &>(
+      getStateData());
+}
+#endif // ANDROID
 } // namespace facebook::react

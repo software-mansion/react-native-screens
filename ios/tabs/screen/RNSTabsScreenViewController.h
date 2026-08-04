@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainerItem.h"
 #import "RNSTabsScreenComponentView.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
@@ -10,10 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSTabsScreenViewController : UIViewController
+@interface RNSTabsScreenViewController : UIViewController <RNSContainerItem
 #if !TARGET_OS_TV
-                                         <RNSOrientationProviding>
+                                                           ,
+                                                           RNSOrientationProviding
 #endif // !TARGET_OS_TV
+                                                           >
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;

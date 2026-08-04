@@ -6,14 +6,14 @@ import {
   TabsContainer,
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 interface ScrollScreenProps {
   tabName: string;
 }
 
-export function ScrollScreen({ tabName }: ScrollScreenProps) {
+function ScrollScreen({ tabName }: ScrollScreenProps) {
   return (
     <SafeAreaView
       edges={{
@@ -77,11 +77,14 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsSpecialEffectsScrollToTop() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsSpecialEffectsScrollToTop,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   config: {

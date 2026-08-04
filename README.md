@@ -1,5 +1,9 @@
 <img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-1?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-1&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-2?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-2&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-3?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-3&n=1)
+
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
 ## Fabric
@@ -121,6 +125,7 @@ Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.26.0+         | 0.84.0+              |
 | 4.25.0+         | 0.82.0+              |
 | 4.19.0+         | 0.81.0+              |
 | 4.14.0+         | 0.79.0+              |
@@ -251,9 +256,8 @@ React native screens library is licensed under [The MIT License](LICENSE).
 
 ## Credits
 
-This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io), and [Software Mansion](https://swmansion.com).
+This project has been built and is maintained thanks to the support from [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com).
 
-[![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
 [![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)
 [![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-reanimated-github 'Software Mansion')](https://swmansion.com)
 

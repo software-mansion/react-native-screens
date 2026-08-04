@@ -8,13 +8,13 @@ import {
   StackContainer,
   type StackRouteConfig,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 
 function ConfigScreen() {
   const {
@@ -58,7 +58,6 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'Screen1',
     Component: ConfigScreen,
-    options: {},
   },
 ];
 
@@ -85,8 +84,8 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestOrientationStackInTabs() {
   return <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} />;
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestOrientationStackInTabs, scenarioDescription);

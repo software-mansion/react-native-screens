@@ -7,7 +7,7 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
@@ -76,7 +76,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsMoreNavigationController() {
   return (
     <ToastProvider>
       <AppContents />
@@ -118,4 +118,7 @@ function AppContents() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsMoreNavigationController,
+  scenarioDescription,
+);

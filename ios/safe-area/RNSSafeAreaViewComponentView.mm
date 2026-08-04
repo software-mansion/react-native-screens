@@ -7,7 +7,6 @@
 #import "RNSSafeAreaProviding.h"
 #import "RNSSafeAreaViewNotifications.h"
 
-#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>

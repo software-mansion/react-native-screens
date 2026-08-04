@@ -1,0 +1,25 @@
+'use client';
+
+import { codegenNativeComponent } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+  ColorValue,
+} from 'react-native';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type FinishTransitioningEvent = Readonly<{}>;
+
+export interface NativeProps extends ViewProps {
+  nativeContainerBackgroundColor?: ColorValue | undefined;
+
+  onFinishTransitioning?:
+    | CT.DirectEventHandler<FinishTransitioningEvent>
+    | undefined;
+}
+
+export default codegenNativeComponent<NativeProps>(
+  'RNSScreenStack',
+  {},
+) as HostComponent<NativeProps>;

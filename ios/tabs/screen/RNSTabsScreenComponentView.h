@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <React/RCTImageSource.h>
+#endif // defined(__cplusplus)
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
@@ -45,10 +47,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSTabsIconType iconType;
 
+#if defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
+#endif // defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) NSString *iconResourceName;
 
+#if defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
+#endif // defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) NSString *selectedIconResourceName;
 
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;
@@ -89,6 +95,18 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSTabsScreenEventEmitter *)reactEventEmitter;
+
+@end
+
+#pragma mark - Content scroll view
+
+@interface RNSTabsScreenComponentView ()
+
+/**
+ * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
+ * none has been registered. Queried by the owning controller (`RNSContainerItem`).
+ */
+- (nullable UIScrollView *)cachedContentScrollView;
 
 @end
 

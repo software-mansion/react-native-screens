@@ -16,16 +16,17 @@
  *
  * See: https://github.com/software-mansion/react-native-screens/pull/1585
  */
-#include <react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h>
-#include <react/renderer/components/rnscreens/RNSModalScreenComponentDescriptor.h>
-#include <react/renderer/components/rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
-#include <react/renderer/components/rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
-#include <react/renderer/components/rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/legacy/RNSScreenComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/legacy/RNSModalScreenComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderSubviewComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderConfigComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/legacy/RNSFullWindowOverlayComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSSafeAreaViewComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSStackHeaderSubviewComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSFormSheetHostComponentDescriptor.h>
 
 namespace facebook {
 namespace react {

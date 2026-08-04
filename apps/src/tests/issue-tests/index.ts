@@ -194,6 +194,21 @@ export { default as Test3885 } from './Test3885';
 export { default as Test3910 } from './Test3910';
 export { default as Test4027 } from './Test4027';
 export { default as Test4064 } from './Test4064';
+export { default as Test4090 } from './Test4090';
+export { default as Test4155 } from './Test4155';
+export { default as Test4161 } from './Test4161';
+export { default as Test4220 } from './Test4220';
+export { default as Test4240 } from './Test4240';
+export { default as Test4244 } from './Test4244';
+export { default as Test4258 } from './Test4258';
+export { default as Test4264 } from './Test4264';
+export { default as Test4265 } from './Test4265';
+export { default as Test4276 } from './Test4276';
+export { default as Test4314 } from './Test4314';
+export { default as Test4351 } from './Test4351';
+export { default as Test4357 } from './Test4357';
+export { default as Test4361 } from './Test4361';
+export { default as Test4423 } from './Test4423';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -214,4 +229,4 @@ export { default as TestScreenStack } from './TestScreenStack';
 export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
-export { default as Test4090 } from './Test4090';
+export { default as TestScreenFooterKeyboardInsets } from './TestScreenFooterKeyboardInsets';

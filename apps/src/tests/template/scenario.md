@@ -10,11 +10,14 @@ Example: Test Scenario: colorScheme
 
 ## E2E test
 
-Yes/No/Other
+Full/Incomplete/TBD
 
-- If **Yes:** Add a description of what is covered by automated E2E tests and what remains manual only.
-- If **No:** - If the scenario cannot be automated, include an explanation why.
-- If **Other:** Add relevant information e.g. research is required, or automation is possible and planned but not yet implemented.
+- **Full:** The scenario is completely covered by E2E tests.
+- **Incomplete:** The scenario is only partially covered or not covered at all.
+Include an explanation why.
+- **TBD:** The E2E coverage is yet to be determined or implemented. Add relevant
+information e.g. research is required, or automation is possible and planned but
+not yet implemented.
 
 ## Prerequisites
 
@@ -22,7 +25,7 @@ List of devices or platforms required to run this test.
 
 Example: iOS physical device, Android emulator
 
-## Note (Optional)
+## Note
 
 Include any critical information for scenario execution not covered elsewhere. Use this section to document Known Issues (KI) or specific behaviors that might appear misleading but are considered expected results. Define rules that apply to the entire scenario to avoid repetition in individual steps.
 
@@ -30,16 +33,18 @@ Include any critical information for scenario execution not covered elsewhere. U
 
 Step-by-step instructions for a tester to manually verify the scenario.
 
-You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step sections for different device types if their execution paths differ significantly.
+**Format Convention:** Action steps are numbered (e.g., 1. Action). The expected results for that action immediately
+follow as Markdown checkboxes (- [ ] Expected result). You can use multiple checkboxes to separate distinct outcomes or
+to differentiate between OS/app versions.
+
+You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step
+sections for different device or OS types if their execution paths differ significantly (## Steps - iOS or ## Steps - iPad).
 
 1. Navigate to ...
 
-- [ ] Expected:
+- [ ] Description of expected behavior after the navigation action.
 
 2. Tap ...
 
-- [ ] Expected:
-
-3. Verify that ...
-
-- [ ] Expected:
+- [ ] iOS18: expected behavior on this OS version.
+- [ ] iOS26: expected behavior on this OS version.

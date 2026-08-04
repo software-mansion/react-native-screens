@@ -1,10 +1,10 @@
 import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { Split, SplitHostCommands } from 'react-native-screens/experimental';
+import { Split, SplitHostCommands } from 'react-native-screens';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-export function App() {
+function TestSplitCommandShowColumn() {
   const hostRef = React.useRef<SplitHostCommands>(null);
 
   return (
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestSplitCommandShowColumn, scenarioDescription);

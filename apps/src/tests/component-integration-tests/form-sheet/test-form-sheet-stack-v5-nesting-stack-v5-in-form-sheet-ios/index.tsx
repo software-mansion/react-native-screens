@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { StackContainer } from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
-export function App() {
+function TestFormSheetWithNestedStackV5() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -31,14 +31,13 @@ export function App() {
   );
 }
 
-export function StackSetup() {
+function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
         {
           name: 'Home',
           Component: HomeScreen,
-          options: {},
         },
         {
           name: 'A',
@@ -52,7 +51,7 @@ export function StackSetup() {
   );
 }
 
-export function HomeScreen() {
+function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <Text style={styles.screenText}>Home Screen</Text>
@@ -61,7 +60,7 @@ export function HomeScreen() {
   );
 }
 
-export function AScreen() {
+function AScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <Text style={styles.screenText}>Screen A</Text>
@@ -96,4 +95,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetWithNestedStackV5,
+  scenarioDescription,
+);

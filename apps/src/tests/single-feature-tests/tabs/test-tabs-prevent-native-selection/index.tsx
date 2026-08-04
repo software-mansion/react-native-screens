@@ -8,7 +8,7 @@ import {
   useTabsNavigationContext,
   TabsContainerWithHostConfigContext,
   TabRouteOptions,
-} from '../../../../shared/gamma/containers/tabs';
+} from '../../../../shared/containers/tabs';
 import { CenteredLayoutView } from '../../../../shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '../../../../shared/';
 import { Colors } from '@apps/shared/styling';
@@ -128,7 +128,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsPreventNativeSelection() {
   return (
     <ToastProvider>
       <AppContents />
@@ -157,4 +157,7 @@ function AppContents() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsPreventNativeSelection,
+  scenarioDescription,
+);

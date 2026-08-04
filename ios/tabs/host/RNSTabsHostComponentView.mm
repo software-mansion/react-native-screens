@@ -10,8 +10,8 @@
 #import <rnscreens/RNSTabsHostComponentDescriptor.h>
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
+#import "RNSContainerHelpers.h"
 #import "RNSConversions.h"
-#import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
@@ -49,6 +49,10 @@ namespace react = facebook::react;
   BOOL _needsTabBarAppearanceUpdate;
 
   RNSTabsNavigationStateUpdateRequest *_Nullable _navStateRequest;
+
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+  UIView *_Nullable _bottomAccessoryWrapperView;
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -80,6 +84,10 @@ namespace react = facebook::react;
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
+
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+  _bottomAccessoryWrapperView = nil;
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 }
 
 - (void)resetProps
@@ -90,6 +98,7 @@ namespace react = facebook::react;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
   _rejectStaleNavStateUpdates = NO;
+  _bottomAccessoryHidden = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -115,36 +124,13 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  if ([self window] != nil) {
-    [self reactAddControllerToClosestParent:_controller];
-  }
-}
-
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
-{
-  if (!controller.parentViewController) {
-    UIView *parentView = (UIView *)self.reactSuperview;
-    while (parentView) {
-      if (parentView.reactViewController) {
-        [parentView.reactViewController addChildViewController:controller];
-        [self addSubview:controller.view];
-
-        // Enable auto-layout to ensure valid size of tabBarController.view.
-        // In host tree, tabBarController.view is the only child of HostComponentView.
-        controller.view.translatesAutoresizingMaskIntoConstraints = NO;
-        [NSLayoutConstraint activateConstraints:@[
-          [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
-          [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-          [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-          [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
-        ]];
-
-        [controller didMoveToParentViewController:parentView.reactViewController];
-        break;
-      }
-      parentView = (UIView *)parentView.reactSuperview;
+  if (self.window != nil && _controller.parentViewController == nil) {
+    BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
+                                          toViewControllerManaging:self.reactSuperview
+                                                 withContainerView:self];
+    if (mountResult) {
+      [self setupViewConstraintsForController:_controller];
     }
-    return;
   }
 }
 
@@ -180,7 +166,7 @@ namespace react = facebook::react;
 
   if (_hasModifiedBottomAccessoryInCurrentTransation) {
     RNSLog(@"updateContainer: bottomAccessory: %@", bottomAccessory);
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
     if (@available(iOS 26.0, *)) {
       if (bottomAccessory != nil) {
         // We wrap RNSTabsBottomAccessoryComponentView in plain UIView to maintain native
@@ -189,13 +175,14 @@ namespace react = facebook::react;
         // to default corner radius.
         UIView *wrapperView = [UIView new];
         [wrapperView addSubview:bottomAccessory];
-
-        [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+        _bottomAccessoryWrapperView = wrapperView;
       } else {
-        [_controller setBottomAccessory:nil animated:YES];
+        _bottomAccessoryWrapperView = nil;
       }
+
+      [self applyBottomAccessoryVisibility];
     }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
 }
 
@@ -262,6 +249,15 @@ namespace react = facebook::react;
     {
       _controller.tabBar.hidden = _tabBarHidden;
     }
+  }
+
+  if (newComponentProps.bottomAccessoryHidden != oldComponentProps.bottomAccessoryHidden) {
+    _bottomAccessoryHidden = newComponentProps.bottomAccessoryHidden;
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+    if (@available(iOS 26.0, *)) {
+      [self applyBottomAccessoryVisibility];
+    }
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
 
   if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
@@ -408,6 +404,18 @@ namespace react = facebook::react;
   }
 }
 
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+- (void)applyBottomAccessoryVisibility API_AVAILABLE(ios(26.0))
+{
+  if (_bottomAccessoryWrapperView != nil && !_bottomAccessoryHidden) {
+    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:_bottomAccessoryWrapperView]
+                           animated:YES];
+  } else {
+    [_controller setBottomAccessory:nil animated:YES];
+  }
+}
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+
 - (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
 {
   _layoutDirection = layoutDirection;
@@ -425,6 +433,19 @@ namespace react = facebook::react;
       [_controller updateLayoutDirectionBelowIOS17IfNeeded];
     }
   }
+}
+
+- (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
+{
+  // Enable auto-layout to ensure valid size of tabBarController.view.
+  // In host tree, tabBarController.view is the only child of HostComponentView.
+  controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+  [NSLayoutConstraint activateConstraints:@[
+    [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+    [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+    [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+    [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  ]];
 }
 
 #pragma mark - React Image Loader

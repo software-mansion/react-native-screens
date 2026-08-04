@@ -12,8 +12,17 @@ import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
 import ScrollViewMarkerScenarioGroup from './scroll-view-marker';
 import FormSheetScenarioGroup from './form-sheet';
+import ScrollToTopGuardScenarioGroup from './scroll-to-top-guard';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
+
+export * from './tabs';
+export * from './split';
+export * from './stack-v5';
+export * from './stack-v4';
+export * from './scroll-view-marker';
+export * from './form-sheet';
+export * from './scroll-to-top-guard';
 
 export const COMPONENT_SCENARIOS = {
   Tabs: TabsScenarioGroup,
@@ -22,13 +31,14 @@ export const COMPONENT_SCENARIOS = {
   StackV4: StackV4ScenarioGroup,
   ScrollViewMarker: ScrollViewMarkerScenarioGroup,
   FormSheet: FormSheetScenarioGroup,
+  ScrollToTopGuard: ScrollToTopGuardScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -39,7 +49,10 @@ function HomeScreen() {
           title={scenarioGroup.name}
           route={key}
           details={scenarioGroup.details}
-          testID={`single-feature-tests-${scenarioGroup.name}`}
+          testID={`single-feature-tests-${scenarioGroup.name.replace(
+            /\s/g,
+            '',
+          )}`}
         />
       ))}
     </ScrollView>

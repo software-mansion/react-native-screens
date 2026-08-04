@@ -13,11 +13,12 @@ function ScenarioSelect(props: {
   scenarios: Record<string, Scenario>;
   groupName: string;
 }) {
+  const scenarioGroupName = props.groupName.replace(/\s/g, '');
   return (
     <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        testID={`${props.groupName}-scenarios-scrollview`}>
+        testID={`${scenarioGroupName}-scenarios-scrollview`}>
         {Object.values(props.scenarios).map(
           ({ scenarioDescription }: Scenario) => {
             const { name, key, details, platforms, smokeTest, e2eCoverage } =

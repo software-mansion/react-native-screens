@@ -1,50 +1,39 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
-import {
-  createScenario,
-  ScenarioDescription,
-} from '@apps/tests/shared/helpers';
+import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import {
+  type StackHeaderToolbarMenuElementAndroid,
   type StackHeaderConfigRef,
-  type StackHeaderToolbarMenuItemOptionsAndroid,
-} from 'react-native-screens/experimental';
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
+import { scenarioDescription } from './scenario-description';
 
-const scenarioDescription: ScenarioDescription = {
-  name: 'Stack Toolbar Menu Commands',
-  key: 'test-stack-toolbar-menu-commands-android',
-  details: 'Tests toolbar menu items prop config and imperative commands.',
-  platforms: ['android'],
-};
+const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
+type IdOption = (typeof ID_OPTIONS)[number];
 
-type IdOption = 'item-1' | 'item-2' | 'item-3';
-type TitleOption =
-  | 'Title A'
-  | 'Title B'
-  | 'Title C'
-  | 'Long Title'
-  | 'Changed'
-  | 'undefined';
-type HiddenOption = 'true' | 'false' | 'undefined';
-
-type CmdTitleOption = TitleOption | 'no change';
-type CmdHiddenOption = HiddenOption | 'no change';
-
-const ID_OPTIONS: IdOption[] = ['item-1', 'item-2', 'item-3'];
-const TITLE_OPTIONS: TitleOption[] = [
+const TITLE_OPTIONS = [
   'Title A',
   'Title B',
   'Title C',
   'Long Title',
   'Changed',
   'undefined',
-];
-const HIDDEN_OPTIONS: HiddenOption[] = ['true', 'false', 'undefined'];
+] as const;
+type TitleOption = (typeof TITLE_OPTIONS)[number];
+
+const HIDDEN_OPTIONS = ['true', 'false', 'undefined'] as const;
+type HiddenOption = (typeof HIDDEN_OPTIONS)[number];
+
+type CmdTitleOption = TitleOption | 'no change';
+type CmdHiddenOption = HiddenOption | 'no change';
+
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = ['no change', ...TITLE_OPTIONS];
 const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = ['no change', ...HIDDEN_OPTIONS];
 
@@ -71,14 +60,25 @@ function resolveHidden(h: HiddenOption): boolean | undefined {
   return h === 'undefined' ? undefined : h === 'true';
 }
 
-function buildItems(slots: Slots) {
+function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots
     .filter(s => s.include)
     .map(({ id, title, hidden }) => ({
+      type: 'menuItem',
       id,
       title: resolveTitle(title),
       hidden: resolveHidden(hidden),
     }));
+}
+
+function withOnPress(
+  items: ReturnType<typeof buildItems>,
+  onPress: (id: string) => void,
+) {
+  return items.map(item => ({
+    ...item,
+    onPress: () => onPress(item.id),
+  }));
 }
 
 function updateSlotAt(
@@ -91,7 +91,7 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
-export function App() {
+function TestStackToolbarMenuCommands() {
   return (
     <StackContainer
       routeConfigs={[
@@ -101,7 +101,7 @@ export function App() {
           options: {
             headerConfig: {
               title: HEADER_TITLE,
-              android: { toolbarMenuItems: buildItems(DEFAULT_SLOTS) },
+              android: { toolbarMenu: { children: buildItems(DEFAULT_SLOTS) } },
             },
           },
         },
@@ -126,9 +126,9 @@ function MainScreen() {
       headerConfig: {
         title: HEADER_TITLE,
         android: {
-          toolbarMenuItems: buildItems(DEFAULT_SLOTS),
-          onToolbarMenuItemClicked: event =>
-            setLastClicked(event.nativeEvent.id),
+          toolbarMenu: {
+            children: withOnPress(buildItems(DEFAULT_SLOTS), setLastClicked),
+          },
         },
       },
       headerConfigRef,
@@ -142,9 +142,9 @@ function MainScreen() {
         headerConfig: {
           title: HEADER_TITLE,
           android: {
-            toolbarMenuItems: buildItems(next),
-            onToolbarMenuItemClicked: event =>
-              setLastClicked(event.nativeEvent.id),
+            toolbarMenu: {
+              children: withOnPress(buildItems(next), setLastClicked),
+            },
           },
         },
       });
@@ -153,48 +153,62 @@ function MainScreen() {
   );
 
   const sendCommand = useCallback(() => {
-    const options: StackHeaderToolbarMenuItemOptionsAndroid = {
+    const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdTitle !== 'no change' && { title: resolveTitle(cmdTitle) }),
       ...(cmdHidden !== 'no change' && { hidden: resolveHidden(cmdHidden) }),
     };
-    headerConfigRef.current?.android?.setToolbarMenuItemOptions(
-      cmdTargetId,
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: cmdTargetId,
       options,
-    );
+    });
   }, [cmdTargetId, cmdTitle, cmdHidden]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<IdOption>
-        label="target id"
-        value={cmdTargetId}
-        items={ID_OPTIONS}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdTitleOption>
-        label="title"
-        value={cmdTitle}
-        items={CMD_TITLE_OPTIONS}
-        onValueChange={setCmdTitle}
-      />
-      <SettingsPicker<CmdHiddenOption>
-        label="hidden"
-        value={cmdHidden}
-        items={CMD_HIDDEN_OPTIONS}
-        onValueChange={setCmdHidden}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-commands-scrollview">
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<IdOption>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ID_OPTIONS]}
+          onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
+        />
+        <SettingsPicker<CmdTitleOption>
+          label="cmd title"
+          value={cmdTitle}
+          items={CMD_TITLE_OPTIONS}
+          onValueChange={setCmdTitle}
+          testID="cmd-title-picker"
+        />
+        <SettingsPicker<CmdHiddenOption>
+          label="cmd hidden"
+          value={cmdHidden}
+          items={CMD_HIDDEN_OPTIONS}
+          onValueChange={setCmdHidden}
+          testID="cmd-hidden-picker"
+        />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
-      <Text style={styles.heading}>Result</Text>
-      <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        <Text style={styles.heading}>Result</Text>
+        <Text testID="last-clicked-text" style={styles.result}>
+          Last clicked: {lastClicked ?? '—'}
+        </Text>
 
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      <SlotControls
-        slots={slots}
-        updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-      />
-    </ScrollView>
+        <Text style={styles.heading}>Menu Items — Props</Text>
+        <SlotControls
+          slots={slots}
+          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+        />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -212,21 +226,24 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             Slot {i + 1} (item-{i + 1})
           </Text>
           <SettingsSwitch
-            label="include"
+            label={`slot ${i + 1} include`}
             value={slot.include}
             onValueChange={v => updateSlot(i, { include: v })}
+            testID={`slot-${i + 1}-include-switch`}
           />
           <SettingsPicker<TitleOption>
-            label="title"
+            label={`slot ${i + 1} title`}
             value={slot.title}
-            items={TITLE_OPTIONS}
+            items={[...TITLE_OPTIONS]}
             onValueChange={v => updateSlot(i, { title: v })}
+            testID={`slot-${i + 1}-title-picker`}
           />
           <SettingsPicker<HiddenOption>
-            label="hidden"
+            label={`slot ${i + 1} hidden`}
             value={slot.hidden}
-            items={HIDDEN_OPTIONS}
+            items={[...HIDDEN_OPTIONS]}
             onValueChange={v => updateSlot(i, { hidden: v })}
+            testID={`slot-${i + 1}-hidden-picker`}
           />
         </React.Fragment>
       ))}
@@ -235,6 +252,9 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },
@@ -260,4 +280,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestStackToolbarMenuCommands,
+  scenarioDescription,
+);

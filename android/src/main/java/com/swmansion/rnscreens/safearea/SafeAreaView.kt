@@ -11,10 +11,10 @@ import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.utils.pxToDp
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Should never be recreated
@@ -165,10 +165,10 @@ class SafeAreaView(
         val stateWrapper = getStateWrapper()
         if (stateWrapper != null) {
             val insets = Arguments.createMap()
-            insets.putDouble("left", PixelUtil.toDIPFromPixel(safeAreaInsets.left).toDouble())
-            insets.putDouble("top", PixelUtil.toDIPFromPixel(safeAreaInsets.top).toDouble())
-            insets.putDouble("right", PixelUtil.toDIPFromPixel(safeAreaInsets.right).toDouble())
-            insets.putDouble("bottom", PixelUtil.toDIPFromPixel(safeAreaInsets.bottom).toDouble())
+            insets.putDouble("left", pxToDp(safeAreaInsets.left).toDouble())
+            insets.putDouble("top", pxToDp(safeAreaInsets.top).toDouble())
+            insets.putDouble("right", pxToDp(safeAreaInsets.right).toDouble())
+            insets.putDouble("bottom", pxToDp(safeAreaInsets.bottom).toDouble())
 
             val newState = Arguments.createMap()
             newState.putMap("insets", insets)

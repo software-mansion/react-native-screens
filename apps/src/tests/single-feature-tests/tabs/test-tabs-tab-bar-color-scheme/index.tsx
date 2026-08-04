@@ -18,7 +18,7 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
@@ -103,7 +103,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsTabBarColorScheme() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -134,4 +134,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsTabBarColorScheme, scenarioDescription);

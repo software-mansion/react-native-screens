@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-special-effects-scroll-to-top',
   details: 'Test settings of specialEffect scrollToTop.',
   platforms: ['ios', 'android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };

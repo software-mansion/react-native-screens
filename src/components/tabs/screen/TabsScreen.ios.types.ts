@@ -1,6 +1,9 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
-import type { PlatformIconIOS } from '../../../types';
+import type {
+  UserInterfaceStyle,
+  BlurEffect,
+  PlatformIconIOS,
+} from '../../shared/types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -223,10 +226,6 @@ export interface TabsScreenPropsIOS {
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
    *
-   * @remarks
-   * When `scrollEdgeAppearance.tabBarBackgroundColor` is non-opaque (alpha < 1) and
-   * `scrollEdgeAppearance.tabBarBlurEffect` is `none`, the `tabBarBackgroundColor`
-   * from `standardAppearance` will show through from beneath.
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
@@ -266,8 +265,11 @@ export interface TabsScreenPropsIOS {
    *
    * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads) with
    * standard iOS styling and localized titles. Custom `icon` or `selectedIcon`
-   * properties will override the system icon, but the system-defined title cannot
-   * be customized.
+   * properties will override the system icon, and the system-defined title can be
+   * overridden by providing a custom `title`.
+   *
+   * @remarks
+   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display any title (system or custom).
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    *

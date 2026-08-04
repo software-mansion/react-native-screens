@@ -2,20 +2,19 @@ import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
-import { StackContainer } from '@apps/shared/gamma/containers/stack';
+import { ScrollViewMarker } from 'react-native-screens';
+import { StackContainer } from '@apps/shared/containers/stack';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
 import { generateNextColor } from '@apps/shared/utils/color-generator';
 
-export function App() {
+function TestSvmConfiguresScrollView() {
   return (
     <StackContainer
       routeConfigs={[
         {
           name: 'Content',
           Component: ContentScreen,
-          options: {},
         },
       ]}
     />
@@ -66,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestSvmConfiguresScrollView, scenarioDescription);

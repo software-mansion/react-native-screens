@@ -1,7 +1,9 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import Orientation from './stack-v4-orientation';
+import TestStackV4Orientation from './stack-v4-orientation';
 
-const scenarios = { Orientation };
+export { default as TestStackV4Orientation } from './stack-v4-orientation';
+
+const scenarios = { TestStackV4Orientation };
 
 const StackV4ScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'Stack v4',

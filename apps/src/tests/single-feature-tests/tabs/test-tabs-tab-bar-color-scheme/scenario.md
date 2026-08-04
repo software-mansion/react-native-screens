@@ -8,7 +8,7 @@
 
 ## E2E test
 
-No: Detox does not have access to color attributes, so it is impossible to verify if the color has changed in response to a style update.
+Incomplete: Not automated. Detox does not have access to color attributes, so it is impossible to verify if the color has changed in response to a style update.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ No: Detox does not have access to color attributes, so it is impossible to verif
 
 - Each of the below steps must be executed twice: once with a system color scheme setting, and once with the color scheme forced via the React Native API.
 - For React Native settings, use the toggle displayed on the test screen.
-  
+
 Assumption:
 
 - System and RN color scheme settings are working correctly.
@@ -32,48 +32,48 @@ Assumption:
 ### Baseline
 
 1. Launch the app and navigate to the **Tab Bar Color Scheme** screen.
-   
-- [ ] Expected: Config tab is shown. Pickers default to `unspecified` / `inherit`
+
+- [ ] Config tab is shown. Pickers default to `unspecified` / `inherit`
 
 ---
 
 ### TabsHost `inherit` — follows RN/system
 
 2. Set system/RN to **light**, TabsHost colorScheme = `inherit`
-   
-- [ ] Expected: Tab bar appears **light**
+
+- [ ] Tab bar appears **light**
 
 3. Set system/RN to **dark**, keep TabsHost colorScheme = `inherit`
-   
-- [ ] Expected: Tab bar appears **dark** — TabsHost defers to RN/system
+
+- [ ] Tab bar appears **dark** — TabsHost defers to RN/system
 
 ---
 
 ### TabsHost `light` — overrides RN/system
 
 4. Set system/RN to **dark**, set TabsHost colorScheme = `light`
-   
-- [ ] Expected: Tab bar appears **light** — TabsHost overrides dark from RN/system
+
+- [ ] Tab bar appears **light** — TabsHost overrides dark from RN/system
 
 5. Set system/RN to **light**, keep TabsHost colorScheme = `light`
-   
-- [ ] Expected: Tab bar stays **light**
+
+- [ ] Tab bar stays **light**
 
 6. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
-   
-- [ ] Expected: Tab bar color scheme updates immediately with each change, no crash or layout freeze
+
+- [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 
 ### TabsHost `dark` — overrides RN/system
 
 7. Set system/RN to **light**, set TabsHost colorScheme = `dark`
-   
-- [ ] Expected: Tab bar appears **dark** — TabsHost overrides light from RN/system
+
+- [ ] Tab bar appears **dark** — TabsHost overrides light from RN/system
 
 8. Set system/RN to **dark**, keep TabsHost colorScheme = `dark`
-   
-- [ ] Expected: Tab bar stays **dark**
+
+- [ ] Tab bar stays **dark**
 
 9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
@@ -82,5 +82,6 @@ Assumption:
 ### Keyboard tab — simple check
 
 10. Switch to the **Keyboard** tab, open the keyboard via TextInput (or Cmd+K on iOS simulator)
-   
-- [ ] Expected: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
+
+- [ ] iOS: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
+- [ ] Android: Keyboard appearance matches the system color scheme.

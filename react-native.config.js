@@ -18,7 +18,8 @@ module.exports = {
           'RNSSafeAreaViewComponentDescriptor',
           'RNSStackScreenComponentDescriptor',
           'RNSStackHeaderConfigComponentDescriptor',
-          'RNSStackHeaderSubviewComponentDescriptor'
+          'RNSStackHeaderSubviewComponentDescriptor',
+          'RNSFormSheetHostComponentDescriptor'
         ],
         cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
       },

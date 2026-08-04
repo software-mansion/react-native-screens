@@ -3,11 +3,11 @@
 # Validates that the current branch and package.json version are appropriate
 # for publishing the requested release.
 #
-# Handles all four release types:
+# Handles all five release types:
 #   - nightly: always valid — nightly publishes are allowed from any branch
 #     per the release guide; the script returns success without running the
 #     branch/version checks.
-#   - stable / beta / rc: rejects the main-branch sentinel version, refuses
+#   - stable / alpha / beta / rc: rejects the main-branch sentinel version, refuses
 #     publishes from `main`, and requires the branch to match a documented
 #     release-branch pattern.
 #
@@ -21,7 +21,7 @@
 # Requires `jq` on PATH (pre-installed on GitHub-hosted ubuntu runners).
 #
 # Usage: scripts/validate-publish-target.sh <branch> <release-type>
-#   <release-type>: one of stable | beta | rc | nightly
+#   <release-type>: one of stable | alpha | beta | rc | nightly
 
 set -euo pipefail
 
@@ -34,9 +34,9 @@ BRANCH="$1"
 RELEASE_TYPE="$2"
 
 case "$RELEASE_TYPE" in
-  stable|beta|rc|nightly) ;;
+  stable|alpha|beta|rc|nightly) ;;
   *)
-    echo "error: unknown release-type '$RELEASE_TYPE' (expected: stable | beta | rc | nightly)" >&2
+    echo "error: unknown release-type '$RELEASE_TYPE' (expected: stable | alpha | beta | rc | nightly)" >&2
     exit 2
     ;;
 esac

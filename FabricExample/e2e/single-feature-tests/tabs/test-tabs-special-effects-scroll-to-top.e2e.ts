@@ -2,19 +2,9 @@ import { device, expect, element, by } from 'detox';
 import {
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
-  forceTapByLabeliOS,
+  forceSelectTabByLabel,
 } from '../../e2e-utils';
-/**
- * Selects a tab bar item. On iOS, this uses a forced coordinate tap to
- * ensure the tab is selected even if it is obstructed by the iOS 26 Liquid Glass lens.
- */
-async function forceSelectTabByLabel(label: string) {
-  if (device.getPlatform() === 'ios') {
-    await forceTapByLabeliOS(label);
-  } else {
-    await element(by.label(label)).tap();
-  }
-}
+import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
@@ -29,7 +19,7 @@ describe('Tabs specialEffects — scrollToTop', () => {
     await expect(element(by.id('tab1-scrollview'))).toBeVisible();
     await expect(element(by.id('tab1-item-1'))).toBeVisible();
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.type('UITabBar'))).toBeVisible();
+      await expect(element(by.type(CLASS_NAME_UI_TAB_BAR))).toBeVisible();
     } else {
       await expect(element(by.id('tab1-tab-item'))).toBeVisible();
       await expect(element(by.id('tab2-tab-item'))).toBeVisible();

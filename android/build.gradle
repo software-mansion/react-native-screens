@@ -1,6 +1,3 @@
-import com.android.Version
-import groovy.json.JsonSlurper
-
 buildscript {
     ext {
         rnsDefaultTargetSdkVersion = 34
@@ -20,9 +17,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:8.2.1')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+        def isRunningInContextOfScreensRepo = project == rootProject
+        if (isRunningInContextOfScreensRepo) {
+            classpath('com.android.tools.build:gradle:8.2.1')
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
+            classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+        }
     }
 }
 
@@ -32,10 +32,6 @@ def isRunningInContextOfScreensRepo() {
 
 def areDebugLogsEnabled() {
     return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
-}
-
-def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
 }
 
 def resolveReactNativeDirectory() {
@@ -86,7 +82,27 @@ if (isRunningInContextOfScreensRepo()) {
     apply plugin: "com.facebook.react"
 }
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+// AGP 9 ships built-in Kotlin support enabled by default. When it is active, AGP compiles 
+// our Kotlin sources itself and *additionally* applying the Kotlin Android plugin fails the build.
+// Consuming apps may opt out with `android.builtInKotlin=false` in which case AGP does NOT
+// provide Kotlin and we MUST apply the plugin ourselves.
+// AGP < 9 had no built-in Kotlin at all, so we always apply it there.
+def shouldEnableAgpFallback() {
+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpMajorVersion <= 8) {
+        return true
+    }
+
+    def propertyVal = providers.gradleProperty("android.builtInKotlin").orNull
+    def isBuiltInKotlinEnabled = propertyVal != null ? propertyVal.toBoolean() : true
+
+    return !isBuiltInKotlinEnabled
+}
+
+if (shouldEnableAgpFallback()) {
+    apply plugin: 'kotlin-android'
+}
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -124,7 +140,6 @@ android {
         targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
@@ -153,28 +168,28 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     packagingOptions {
-        // For some reason gradle only complains about the duplicated version of libreact_render libraries
-        // while there are more libraries copied in intermediates folder of the lib build directory, we exclude
-        // only the ones that make the build fail (ideally we should only include librnscreens_modules but we
-        // are only allowed to specify exclude patterns)
+        // Several RN-provided .so are copied into this library's build intermediates and can collide when
+        // the app merges native libs. We can only specify exclude (not include) patterns, so we exclude
+        // these (ideally we'd keep only librnscreens.so).
         excludes = [
                 "META-INF",
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so",
-                "**/libreactnativejni.so",
-                "**/libreact_performance_timeline.so",
-                // In 0.76 multiple react-native's libraries were merged and these are the main new artifacts we're using.
-                // Some of above lib* names could be removed after we remove support for 0.76.
-                // https://github.com/facebook/react-native/pull/43909
-                // https://github.com/facebook/react-native/pull/46059
                 "**/libfbjni.so",
+                // RN's renderer / jni / performance-timeline libs (libreact_render*.so, libreactnativejni.so,
+                // libreact_performance_timeline.so) are merged into libreactnative.so since RN 0.76
+                // (facebook/react-native#46059), so on supported RN (>= 0.82) only libreactnative.so needs excluding.
                 "**/libreactnative.so"
         ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
+        kotlin {
+            srcDirs += [
+                "src/fabric/java",
+            ]
+        }
         java {
             srcDirs += [
                 "src/fabric/java",
@@ -207,12 +222,6 @@ dependencies {
     implementation 'androidx.transition:transition-ktx:1.7.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation "androidx.core:core-ktx:1.17.0"
-
-    constraints {
-        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
-            because("on older React Native versions this dependency conflicts with react-native-screens")
-        }
-    }
 }

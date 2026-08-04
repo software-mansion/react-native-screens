@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStackNavigationContext } from '@apps/shared/gamma/containers/stack';
+import { useStackNavigationContext } from '@apps/shared/containers/stack';
 import { Button } from 'react-native';
 
 export function StackNavigationButtons(props: {

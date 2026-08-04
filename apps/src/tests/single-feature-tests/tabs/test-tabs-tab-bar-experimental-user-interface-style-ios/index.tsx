@@ -4,7 +4,7 @@ import {
   StackContainer,
   StackRouteConfig,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import {
   LightRootScreen,
   LightInterfaceStyleScreen,
@@ -14,7 +14,7 @@ import {
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
-export function HomeScreen() {
+function HomeScreen() {
   const navigation = useStackNavigationContext();
   return (
     <View style={styles.container}>
@@ -29,25 +29,25 @@ export function HomeScreen() {
   );
 }
 
-export function DarkRootScreenContent() {
+function DarkRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <DarkRootScreen onPush={() => navigation.push('darkPushed')} />;
 }
 
-export function LightRootScreenContent() {
+function LightRootScreenContent() {
   const navigation = useStackNavigationContext();
   return <LightRootScreen onPush={() => navigation.push('lightPushed')} />;
 }
 
 const ROUTE_CONFIGS: StackRouteConfig[] = [
-  { name: 'home', Component: HomeScreen, options: {} },
-  { name: 'darkRoot', Component: DarkRootScreenContent, options: {} },
-  { name: 'darkPushed', Component: DarkInterfaceStyleScreen, options: {} },
-  { name: 'lightRoot', Component: LightRootScreenContent, options: {} },
-  { name: 'lightPushed', Component: LightInterfaceStyleScreen, options: {} },
+  { name: 'home', Component: HomeScreen },
+  { name: 'darkRoot', Component: DarkRootScreenContent },
+  { name: 'darkPushed', Component: DarkInterfaceStyleScreen },
+  { name: 'lightRoot', Component: LightRootScreenContent },
+  { name: 'lightPushed', Component: LightInterfaceStyleScreen },
 ];
 
-export function App() {
+function TestTabsTabBarExperimentalUserInterfaceStyle() {
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
       <StackContainer routeConfigs={ROUTE_CONFIGS} />
@@ -55,7 +55,10 @@ export function App() {
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarExperimentalUserInterfaceStyle,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   container: {

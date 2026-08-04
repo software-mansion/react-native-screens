@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
@@ -20,7 +20,7 @@ const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
 };
 
-export function App() {
+function TestFormSheetExpandScrollView() {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldExpand, setShouldExpand] = useState(true);
 
@@ -167,4 +167,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestFormSheetExpandScrollView,
+  scenarioDescription,
+);

@@ -4,8 +4,8 @@ project(rnscreens)
 
 add_library(rnscreens
     SHARED
-    ../cpp/RNScreensTurboModule.cpp
-    ../cpp/RNSScreenRemovalListener.cpp
+    ../cpp/legacy/RNScreensTurboModule.cpp
+    ../cpp/legacy/RNSScreenRemovalListener.cpp
     ./src/main/cpp/jni-adapter.cpp
     ./src/main/cpp/NativeProxy.cpp
     ./src/main/cpp/OnLoad.cpp
@@ -13,6 +13,7 @@ add_library(rnscreens
 
 include_directories(
     ../cpp
+    ../cpp/legacy
 )
 
 set_target_properties(rnscreens PROPERTIES

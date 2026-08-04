@@ -1,8 +1,10 @@
 #pragma once
 
-#if defined(__cplusplus) && RNS_GAMMA_ENABLED
+#if defined(__cplusplus)
 
 #import <react/renderer/components/rnscreens/Props.h>
+#import "RNSHeaderItemPlacement.h"
+#import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSStackScreenComponentView.h"
 #import "always_false.h"
 
@@ -18,6 +20,13 @@ TargetType convert(InputType) {
 template <>
 RNSStackScreenActivityMode convert(react::RNSStackScreenActivityMode mode);
 
+template <>
+RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement);
+
+template <>
+RNSHeaderItemSpacerPlacement convert(
+    react::RNSStackHeaderItemSpacerIOSPlacement placement);
+
 }; // namespace rnscreens::conversion
 
-#endif // defined(__cplusplus) && RNS_GAMMA_ENABLED
+#endif // defined(__cplusplus)

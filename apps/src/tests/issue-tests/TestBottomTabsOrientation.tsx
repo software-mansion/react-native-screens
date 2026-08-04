@@ -8,7 +8,7 @@ import {
 import {
   TabsContainer,
   type TabRouteConfig,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Button, ScrollView, Text, View } from 'react-native';
 import {

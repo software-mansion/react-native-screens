@@ -3,7 +3,7 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { scenarioDescription } from './scenario-description';
@@ -67,7 +67,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsTabBarMinimizeBehavior() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -112,4 +112,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarMinimizeBehavior,
+  scenarioDescription,
+);

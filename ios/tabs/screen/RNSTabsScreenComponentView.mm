@@ -16,15 +16,26 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import "RNSScrollViewMarkerComponentView.h"
+#import "RNSScrollViewSeeking.h"
+
 namespace react = facebook::react;
 
 #pragma mark - View implementation
+
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@end
 
 @implementation RNSTabsScreenComponentView {
   RNSTabsScreenViewController *_controller;
   RNSTabsHostComponentView *__weak _Nullable _reactSuperview;
 
   RNSTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
+
+  // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
+  // the owning `RNSTabsScreenViewController` (as `RNSContainerItem`) when resolving the content
+  // scroll view for special effects.
+  __weak UIScrollView *_Nullable _contentScrollView;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
@@ -102,6 +113,21 @@ RNS_IGNORE_SUPER_CALL_END
       strongSelf->_controller = nil;
     }
   });
+}
+
+#pragma mark RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  // Native iOS-26 scroll-edge behavior (status-bar tap scroll-to-top, scroll edge appearance).
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  // Cache used by the container-nesting content-scroll-view resolution.
+  _contentScrollView = scrollView;
+}
+
+- (nullable UIScrollView *)cachedContentScrollView
+{
+  return _contentScrollView;
 }
 
 #pragma mark - Events

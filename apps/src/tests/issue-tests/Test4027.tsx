@@ -8,7 +8,7 @@ import { Button } from 'react-native';
 import {
   DEFAULT_TAB_ROUTE_OPTIONS,
   TabsContainer,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 type RouteParamList = {

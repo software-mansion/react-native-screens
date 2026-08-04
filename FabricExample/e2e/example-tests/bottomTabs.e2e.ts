@@ -1,4 +1,5 @@
 import { device, expect, element, by } from 'detox';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../native-class-names';
 
 describe('Bottom tabs and native stack', () => {
   beforeEach(async () => {
@@ -31,7 +32,7 @@ describe('Bottom tabs and native stack', () => {
       element(by.id('bottom-tabs-A-more-details-button')),
     ).toHaveLabel('More details 1');
     if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).tap();
+      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
     } else {
       await device.pressBack();
     }

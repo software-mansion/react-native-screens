@@ -16,7 +16,7 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { DummyScreen } from '@apps/tests/shared/DummyScreens';
 
 function ConfigScreen() {
@@ -145,7 +145,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-export function App() {
+function TestTabsTabBarLayoutDirection() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
@@ -180,4 +180,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(
+  TestTabsTabBarLayoutDirection,
+  scenarioDescription,
+);

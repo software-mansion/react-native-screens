@@ -1,10 +1,21 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSContainer.h"
+#import "RNSContainerItemSupport.h"
 #import "RNSLog.h"
-#import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
-@implementation RNSTabsScreenViewController
+@implementation RNSTabsScreenViewController {
+  RNSContainerItemSupport *_Nonnull _containerItemSupport;
+}
+
+- (instancetype)init
+{
+  if (self = [super init]) {
+    _containerItemSupport = [RNSContainerItemSupport new];
+  }
+  return self;
+}
 
 - (nullable RNSTabBarController *)findTabBarController
 {
@@ -97,12 +108,34 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
-    return [scrollView rnscreens_scrollToTop];
+    return [[self findContentScrollView] rnscreens_scrollToTop];
   }
 
   return false;
+}
+
+#pragma mark - RNSContainerItem
+
+- (void)registerNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport registerNestedContainer:container];
+}
+
+- (void)unregisterNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport unregisterNestedContainer:container];
+}
+
+- (nullable id<RNSContainer>)resolveNestedContainer
+{
+  return [_containerItemSupport resolveNestedContainer];
+}
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  return [_containerItemSupport
+      findContentScrollViewWithCachedScrollView:[self.tabScreenComponentView cachedContentScrollView]
+                                  heuristicRoot:self.tabScreenComponentView];
 }
 
 #if !TARGET_OS_TV

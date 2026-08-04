@@ -7,7 +7,7 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
-} from '@apps/shared/gamma/containers/tabs';
+} from '@apps/shared/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { ToastProvider, useToast } from '@apps/shared/';
 import { Colors } from '@apps/shared/styling';
@@ -98,15 +98,15 @@ function AppContents() {
   return <TabsContainer routeConfigs={TAB_CONFIGS} />;
 }
 
-export function App() {
+function TestTabsLifecycleEvents() {
   return (
-    <ToastProvider>
+    <ToastProvider anchorSide="top">
       <AppContents />
     </ToastProvider>
   );
 }
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestTabsLifecycleEvents, scenarioDescription);
 
 const styles = StyleSheet.create({
   tabLabel: {

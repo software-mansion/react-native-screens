@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(ANDROID)
-
 #include <jsi/jsi.h>
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
@@ -21,9 +19,11 @@ class JSI_EXPORT RNSFormSheetHostShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
-  Point getContentOriginOffset(bool includeTransform) const override;
+  static ShadowNodeTraits BaseTraits() {
+    auto traits = ConcreteViewShadowNode::BaseTraits();
+    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
+    return traits;
+  }
 };
 
 } // namespace facebook::react
-
-#endif // !defined(ANDROID)

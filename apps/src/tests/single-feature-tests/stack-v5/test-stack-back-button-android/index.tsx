@@ -5,13 +5,14 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigPropsAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderConfigProps,
+  type StackHeaderConfigPropsAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 
 type TintColorOption = 'default' | 'purple' | 'red' | 'green';
 type IconOption = 'default' | 'imageSource' | 'drawableResource';
@@ -31,13 +32,17 @@ const ICON_OPTIONS: IconOption[] = [
 
 interface Config {
   backButtonHidden: boolean;
-  tintColor: TintColorOption;
+  tintColorNormal: TintColorOption;
+  tintColorPressed: TintColorOption;
+  tintColorFocused: TintColorOption;
   icon: IconOption;
 }
 
 const DEFAULT_CONFIG: Config = {
   backButtonHidden: false,
-  tintColor: 'default',
+  tintColorNormal: 'default',
+  tintColorPressed: 'default',
+  tintColorFocused: 'default',
   icon: 'default',
 };
 
@@ -51,7 +56,7 @@ const ConfigContext = React.createContext<{
 
 function resolveTintColor(
   option: TintColorOption,
-): StackHeaderConfigPropsAndroid['backButtonTintColor'] {
+): StackHeaderConfigPropsAndroid['backButtonTintColorNormal'] {
   switch (option) {
     case 'purple':
       return Colors.PurpleLight100;
@@ -88,13 +93,15 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps {
     title: 'Back Button Test',
     backButtonHidden: config.backButtonHidden,
     android: {
-      backButtonTintColor: resolveTintColor(config.tintColor),
+      backButtonTintColorNormal: resolveTintColor(config.tintColorNormal),
+      backButtonTintColorPressed: resolveTintColor(config.tintColorPressed),
+      backButtonTintColorFocused: resolveTintColor(config.tintColorFocused),
       backButtonIcon: resolveIcon(config.icon),
     },
   };
 }
 
-export function App() {
+function TestStackBackButton() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
   const updateConfig = useCallback(
@@ -111,12 +118,10 @@ export function App() {
           {
             name: 'Root',
             Component: RootScreen,
-            options: {},
           },
           {
             name: 'Pushed',
             Component: PushedScreen,
-            options: {},
           },
         ]}
       />
@@ -131,17 +136,34 @@ function ConfigControls() {
     <>
       <Text style={styles.heading}>Back Button</Text>
       <SettingsSwitch
+        testID="back-button-hidden-switch"
         label="backButtonHidden"
         value={config.backButtonHidden}
         onValueChange={v => updateConfig('backButtonHidden', v)}
       />
       <SettingsPicker<TintColorOption>
-        label="tintColor"
-        value={config.tintColor}
-        onValueChange={v => updateConfig('tintColor', v)}
+        testID="tint-color-normal-picker"
+        label="tintColorNormal"
+        value={config.tintColorNormal}
+        onValueChange={v => updateConfig('tintColorNormal', v)}
+        items={TINT_COLOR_OPTIONS}
+      />
+      <SettingsPicker<TintColorOption>
+        testID="tint-color-pressed-picker"
+        label="tintColorPressed"
+        value={config.tintColorPressed}
+        onValueChange={v => updateConfig('tintColorPressed', v)}
+        items={TINT_COLOR_OPTIONS}
+      />
+      <SettingsPicker<TintColorOption>
+        testID="tint-color-focused-picker"
+        label="tintColorFocused"
+        value={config.tintColorFocused}
+        onValueChange={v => updateConfig('tintColorFocused', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<IconOption>
+        testID="icon-picker"
         label="icon"
         value={config.icon}
         onValueChange={v => updateConfig('icon', v)}
@@ -166,11 +188,13 @@ function RootScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push screen" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push screen" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -179,15 +203,20 @@ function PushedScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push another" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push another" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },
@@ -203,4 +232,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(App, scenarioDescription);
+export default createScenario(TestStackBackButton, scenarioDescription);
