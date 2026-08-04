@@ -43,14 +43,14 @@ function TabsContainerItemImpl(props: TabsContainerItemProps) {
   return (
     <Tabs.Screen key={screenKey} {...nativeOptions} screenKey={screenKey}>
       <TabsNavigationContext value={tabsNavigationContext}>
-        {getContent(props.Component, safeAreaConfiguration)}
+        {getContent(props.element, safeAreaConfiguration)}
       </TabsNavigationContext>
     </Tabs.Screen>
   );
 }
 
 function getContent(
-  Component: TabRouteConfig['Component'],
+  element: TabRouteConfig['element'],
   safeAreaConfiguration: SafeAreaViewProps | undefined,
 ) {
   const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
@@ -62,14 +62,10 @@ function getContent(
   );
 
   if (anySAVEdgeSet) {
-    return (
-      <SafeAreaView {...safeAreaConfiguration}>
-        <Component />
-      </SafeAreaView>
-    );
+    return <SafeAreaView {...safeAreaConfiguration}>{element}</SafeAreaView>;
   }
 
-  return <Component />;
+  return element;
 }
 
 function getSafeAreaViewEdges(

@@ -20,11 +20,11 @@ export type StackRouteOptions = Omit<
  */
 export type StackRouteConfig = {
   name: string;
-  Component: React.ComponentType;
+  element: React.ReactElement;
   options?: StackRouteOptions;
 };
 
-export type StackRoute = Omit<StackRouteConfig, 'Component'> & {
+export type StackRoute = Omit<StackRouteConfig, 'element'> & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
   isMarkedForDismissal: boolean; // whether this route is during or after dismissal process
