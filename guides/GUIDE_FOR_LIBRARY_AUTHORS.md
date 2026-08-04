@@ -672,6 +672,7 @@ menu?: {
     | {
       label?: string;
       type: 'submenu';
+      subtitle?: string; // Subtitle of the submenu, displayed below its label - https://developer.apple.com/documentation/uikit/uimenuelement/subtitle?language=objc
       icon?: PlatformIconIOSSfSymbol;
       displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
       destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive
