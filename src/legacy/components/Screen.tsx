@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Animated, Platform, type ViewInstance } from 'react-native';
+import { Animated, Platform, View } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -41,7 +41,7 @@ const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-interface ViewConfig extends ViewInstance {
+interface ViewConfig extends React.ComponentRef<typeof View> {
   viewConfig: {
     validAttributes: {
       style: {
@@ -65,10 +65,10 @@ interface ViewConfig extends ViewInstance {
   };
 }
 
-// Nominal instance type for screen refs. RN's `ViewInstance` is an alias that
+// Nominal instance type for screen refs. `React.ComponentRef<typeof View>`
 // declaration emit resolves down to the non-public `ReactNativeElement` class.
 // An interface stops that resolution at a name this package can emit.
-export interface ScreenInstance extends ViewInstance {}
+export interface ScreenInstance extends React.ComponentRef<typeof View> {}
 
 export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
   function InnerScreen(props, ref) {
