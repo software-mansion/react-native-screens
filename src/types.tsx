@@ -4,7 +4,6 @@ import {
   NativeSyntheticEvent,
   ViewProps,
   View,
-  type ViewInstance,
   TargetedEvent,
   ColorValue,
   ImageSourcePropType,
@@ -367,7 +366,7 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   preventNativeDismiss?: boolean | undefined;
-  ref?: React.Ref<ViewInstance> | undefined;
+  ref?: React.Ref<React.ComponentRef<typeof View>> | undefined;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -1393,7 +1392,10 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = Record<string, React.RefObject<ViewInstance>>;
+export type ScreensRefsHolder = Record<
+  string,
+  React.RefObject<React.ComponentRef<typeof View>>
+>;
 
 export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;
