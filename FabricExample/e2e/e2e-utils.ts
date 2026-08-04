@@ -284,8 +284,14 @@ type WaitUntilOptions = {
 /**
  * Polls `predicate` until it resolves `true`, or fails once `timeout` elapses.
  * Prefer Detox's `waitFor(...).withTimeout(...)`, which syncs with the app
- * instead of sampling it; this is for conditions it cannot express, such as how
- * many elements a matcher resolves to.
+ * instead of sampling it; this is for conditions it cannot express.
+ *
+ * On Android `waitFor` is one native call retrying inside the app, not a JS
+ * loop, so it asserts one property of one view — the matcher must resolve to a
+ * single view or carry a literal `atIndex`. That rules out anything about the
+ * match *set*: its size, or its last element while the size is still settling.
+ * Even a count of one needs polling, as a matcher transiently resolving to two
+ * views raises an ambiguous-match error that is terminal, not retried.
  */
 export async function waitUntil(
   predicate: () => Promise<boolean>,
