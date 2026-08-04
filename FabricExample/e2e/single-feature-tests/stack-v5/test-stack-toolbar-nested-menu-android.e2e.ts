@@ -55,12 +55,13 @@ const ALL_MENU_TEXTS = [
 
 type MenuText = (typeof ALL_MENU_TEXTS)[number];
 
-// A row or header in the focused popup — Espresso only searches that window, so
-// parent popups behind a submenu are out of reach.
+// Espresso only searches the focused window, so parent popups behind a submenu
+// are out of reach of anything anchored here.
+const focusedPopup = by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
+
+// A row or header in the focused popup.
 const menuText = (text: MenuText): Detox.NativeMatcher =>
-  by
-    .text(text)
-    .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+  by.text(text).withAncestor(focusedPopup);
 
 // A submenu header is a `FrameLayout`, not a row, so this matches the item alone
 // even where both show the same string.
@@ -68,10 +69,11 @@ const menuItemRow = (text: MenuText): Detox.NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW).withDescendant(by.text(text));
 
 // Any row of the focused popup — the only handle on an entry with no title.
+// Built per call, never hoisted to a const: Detox's `atIndex` rewrites the
+// matcher it is given, so a shared one would stay pinned to the index it was
+// last tapped at.
 const menuRow = (): Detox.NativeMatcher =>
-  by
-    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
-    .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+  by.type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW).withAncestor(focusedPopup);
 
 // The caret marking an entry as a submenu. It shares its class with the row's
 // `group_divider` and icon slot, which differ only by resource id (unmatchable
@@ -287,13 +289,8 @@ async function openMenu(
   }
 }
 
-function countByText(texts: readonly MenuText[]): Map<MenuText, number> {
-  const counts = new Map<MenuText, number>();
-  for (const text of texts) {
-    counts.set(text, (counts.get(text) ?? 0) + 1);
-  }
-  return counts;
-}
+const countOf = (texts: readonly MenuText[], text: MenuText): number =>
+  texts.filter(candidate => candidate === text).length;
 
 /**
  * Asserts the exact contents of the focused popup. `expected` lists every text
@@ -305,10 +302,8 @@ async function expectMenuContents(
   expected: [MenuText, ...MenuText[]],
   submenus: readonly MenuText[] = [],
 ) {
-  const expectedCounts = countByText(expected);
-
   for (const text of ALL_MENU_TEXTS) {
-    const expectedCount = expectedCounts.get(text) ?? 0;
+    const expectedCount = countOf(expected, text);
 
     if (expectedCount === 0) {
       await expect(element(menuText(text))).not.toExist();
@@ -317,7 +312,7 @@ async function expectMenuContents(
 
     jestExpect({
       text,
-      count: await countMatches(menuText(text)),
+      count: await countMatches(menuText(text), { orEmpty: true }),
     }).toEqual({ text, count: expectedCount });
 
     for (let i = 0; i < expectedCount; i++) {
@@ -366,7 +361,7 @@ async function expectMenu(
   const tappedRow = path[path.length - 1];
   const gate = expected.find(text => text !== tappedRow) ?? expected[0];
 
-  await openMenu(path, gate, countByText(expected).get(gate) as number);
+  await openMenu(path, gate, countOf(expected, gate));
 
   await withMenusClosedAfter(() => expectMenuContents(expected, submenus));
 }
@@ -376,24 +371,23 @@ async function expectMenu(
 const UNTITLED_SUBMENU_ROW_INDEX = 1;
 
 /**
- * Asserts the overflow menu holds `rowCount` rows, then opens the untitled one
- * at `untitledIndex` and asserts its contents. `expected[0]` gates the submenu
- * popup, so it must be a text the overflow menu itself does not show.
+ * Asserts the overflow menu holds `rowCount` rows, then opens the untitled
+ * `submenu-1` among them and asserts its contents. `expected[0]` gates the
+ * submenu popup, so it must be a text the overflow menu itself does not show.
  */
 async function expectUntitledSubmenu(
   rowCount: number,
-  untitledIndex: number,
   expected: [MenuText, ...MenuText[]],
 ) {
   await openOverflowMenu();
 
   await withMenusClosedAfter(async () => {
-    jestExpect(await countMatches(menuRow())).toBe(rowCount);
+    jestExpect(await countMatches(menuRow(), { orEmpty: true })).toBe(rowCount);
 
-    await element(menuRow()).atIndex(untitledIndex).tap();
+    await element(menuRow()).atIndex(UNTITLED_SUBMENU_ROW_INDEX).tap();
 
     const gate = expected[0];
-    await waitForMenuTextCount(gate, countByText(expected).get(gate) as number);
+    await waitForMenuTextCount(gate, countOf(expected, gate));
 
     await expectMenuContents(expected);
   });
@@ -426,65 +420,65 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
   });
   afterEach(closeMenus);
 
-  // describe('baseline — initial render and submenu structure', () => {
-  //   it('renders the header title and the prop-configured top-level menu', async () => {
-  //     await expect(element(by.text(HEADER_TITLE))).toBeVisible();
+  describe('baseline — initial render and submenu structure', () => {
+    it('renders the header title and the prop-configured top-level menu', async () => {
+      await expect(element(by.text(HEADER_TITLE))).toBeVisible();
 
-  //     await expectMenu(
-  //       [],
-  //       ['Top Item', 'Submenu A', 'Submenu B'],
-  //       ['Submenu A', 'Submenu B'],
-  //     );
-  //   });
+      await expectMenu(
+        [],
+        ['Top Item', 'Submenu A', 'Submenu B'],
+        ['Submenu A', 'Submenu B'],
+      );
+    });
 
-  //   it('opens "Submenu A" with its "Header A" as the header', async () => {
-  //     await expectMenu(['Submenu A'], ['Header A', 'Sub A.1', 'Sub A.2']);
-  //   });
+    it('opens "Submenu A" with its "Header A" as the header', async () => {
+      await expectMenu(['Submenu A'], ['Header A', 'Sub A.1', 'Sub A.2']);
+    });
 
-  //   it('falls back to the title "Submenu B" for the header of a submenu without menuTitle', async () => {
-  //     await expectMenu(
-  //       ['Submenu B'],
-  //       ['Submenu B', 'Sub B.1', 'Deep'],
-  //       ['Deep'],
-  //     );
-  //   });
+    it('falls back to the title "Submenu B" for the header of a submenu without menuTitle', async () => {
+      await expectMenu(
+        ['Submenu B'],
+        ['Submenu B', 'Sub B.1', 'Deep'],
+        ['Deep'],
+      );
+    });
 
-  //   it('opens the submenu nested inside "Submenu B"', async () => {
-  //     await expectMenu(['Submenu B', 'Deep'], ['Deep', 'Deep.1']);
-  //   });
-  // });
+    it('opens the submenu nested inside "Submenu B"', async () => {
+      await expectMenu(['Submenu B', 'Deep'], ['Deep', 'Deep.1']);
+    });
+  });
 
-  // describe('click handling — items at all nesting levels', () => {
-  //   it('reports item-top as last clicked', async () => {
-  //     await tapMenuItem([], 'Top Item');
+  describe('click handling — items at all nesting levels', () => {
+    it('reports item-top as last clicked', async () => {
+      await tapMenuItem([], 'Top Item');
 
-  //     await expectLastClicked('item-top');
-  //   });
+      await expectLastClicked('item-top');
+    });
 
-  //   it('reports sub-1-1 for the first item of submenu-1 as last clicked', async () => {
-  //     await tapMenuItem(['Submenu A'], 'Sub A.1');
+    it('reports sub-1-1 for the first item of submenu-1 as last clicked', async () => {
+      await tapMenuItem(['Submenu A'], 'Sub A.1');
 
-  //     await expectLastClicked('sub-1-1');
-  //   });
+      await expectLastClicked('sub-1-1');
+    });
 
-  //   it('reports sub-1-2 for the second item of submenu-1 as last clicked', async () => {
-  //     await tapMenuItem(['Submenu A'], 'Sub A.2');
+    it('reports sub-1-2 for the second item of submenu-1 as last clicked', async () => {
+      await tapMenuItem(['Submenu A'], 'Sub A.2');
 
-  //     await expectLastClicked('sub-1-2');
-  //   });
+      await expectLastClicked('sub-1-2');
+    });
 
-  //   it('reports sub-2-1 for the item of submenu-2 as last clicked', async () => {
-  //     await tapMenuItem(['Submenu B'], 'Sub B.1');
+    it('reports sub-2-1 for the item of submenu-2 as last clicked', async () => {
+      await tapMenuItem(['Submenu B'], 'Sub B.1');
 
-  //     await expectLastClicked('sub-2-1');
-  //   });
+      await expectLastClicked('sub-2-1');
+    });
 
-  //   it('reports deep-1 for the item of the doubly nested submenu as last clicked', async () => {
-  //     await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
+    it('reports deep-1 for the item of the doubly nested submenu as last clicked', async () => {
+      await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
 
-  //     await expectLastClicked('deep-1');
-  //   });
-  // });
+      await expectLastClicked('deep-1');
+    });
+  });
 
   describe('imperative command — leaf item inside a submenu', () => {
     it('retitles sub-1-1 and leaves its sibling alone', async () => {
@@ -570,10 +564,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
       await expectMenu([], ['Top Item', 'Submenu B'], ['Submenu B']);
 
       // No header is left to render, and the children keep their command titles.
-      await expectUntitledSubmenu(3, UNTITLED_SUBMENU_ROW_INDEX, [
-        'Title X',
-        'Sub A.2',
-      ]);
+      await expectUntitledSubmenu(3, ['Title X', 'Sub A.2']);
     });
   });
 
@@ -647,10 +638,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
 
       // Rebuilt from props, so no header and the children are back to their
       // prop-configured titles.
-      await expectUntitledSubmenu(3, UNTITLED_SUBMENU_ROW_INDEX, [
-        'Sub A.1',
-        'Sub A.2',
-      ]);
+      await expectUntitledSubmenu(3, ['Sub A.1', 'Sub A.2']);
     });
 
     it('restores both the title and the header', async () => {

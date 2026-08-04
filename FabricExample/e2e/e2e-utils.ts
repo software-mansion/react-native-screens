@@ -260,7 +260,11 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
-/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+/**
+ * Taps `matcher`'s last match — the topmost stacked screen's copy. Hand it a
+ * freshly built matcher: Detox's `atIndex` rewrites the matcher in place on
+ * Android, so a reused one stays pinned to the index tapped here.
+ */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
