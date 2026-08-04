@@ -85,6 +85,12 @@ class ScreenStackFragment :
 
     private var lastInsetsCompat: WindowInsetsCompat? = null
 
+    // Container reference is captured at registration, because `screen.container` is already
+    // null during teardown. Necessary for unregistering inset & layout listeners in `onDestroyView`.
+    private var containerWithSheetListeners: ScreenContainer? = null
+    private var containerOnLayoutChangeListener: View.OnLayoutChangeListener? = null
+    private var containerOnApplyWindowInsetsListener: View.OnApplyWindowInsetsListener? = null
+
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
 
@@ -337,6 +343,7 @@ class ScreenStackFragment :
         // - Screen.fragment
         lastActiveHeaderConfig?.clearActionBarIfOwned(activity as? AppCompatActivity)
         lastActiveHeaderConfig = null
+        detachInsetsAndLayoutListenersFromContainer()
         super.onDestroyView()
     }
 
@@ -522,15 +529,20 @@ class ScreenStackFragment :
     // Mark: Avoiding top inset by BottomSheet
 
     private fun attachInsetsAndLayoutListenersToBottomSheet(sheetTransitionCoordinator: BottomSheetTransitionCoordinator) {
-        screen.container?.apply {
+        screen.container?.let { container ->
+            containerWithSheetListeners = container
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                setOnApplyWindowInsetsListener { _, insets ->
-                    val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
-                    handleInsetsUpdateAndNotifyTransition(
-                        insetsCompat,
-                    )
-                    insets
-                }
+                val insetsListener =
+                    View.OnApplyWindowInsetsListener { _, insets ->
+                        val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, container)
+                        handleInsetsUpdateAndNotifyTransition(
+                            insetsCompat,
+                        )
+                        insets
+                    }
+                containerOnApplyWindowInsetsListener = insetsListener
+                container.setOnApplyWindowInsetsListener(insetsListener)
             } else {
                 val bottomSheetWindowInsetListenerChain = requireBottomSheetWindowInsetsListenerChain()
                 bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
@@ -540,11 +552,28 @@ class ScreenStackFragment :
                     windowInsets
                 }
             }
-        }
 
-        screen.container?.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+            val layoutChangeListener =
+                View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                    sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+                }
+            containerOnLayoutChangeListener = layoutChangeListener
+            container.addOnLayoutChangeListener(layoutChangeListener)
         }
+    }
+
+    private fun detachInsetsAndLayoutListenersFromContainer() {
+        containerWithSheetListeners?.let { container ->
+            if (containerOnLayoutChangeListener != null) {
+                container.removeOnLayoutChangeListener(containerOnLayoutChangeListener)
+            }
+            if (containerOnApplyWindowInsetsListener != null) {
+                container.setOnApplyWindowInsetsListener(null)
+            }
+        }
+        containerWithSheetListeners = null
+        containerOnLayoutChangeListener = null
+        containerOnApplyWindowInsetsListener = null
     }
 
     private fun handleInsetsUpdateAndNotifyTransition(insetsCompat: WindowInsetsCompat) {
