@@ -54,8 +54,6 @@ typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeXcasset,
 };
 
-// TODO: investigate objc - swift interop and deduplicate this code
-// This enum needs to be compatible with the RNSOrientationSwift enum.
 typedef NS_ENUM(NSInteger, RNSOrientation) {
   RNSOrientationInherit,
   RNSOrientationAll,

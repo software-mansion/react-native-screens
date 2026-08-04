@@ -16,7 +16,11 @@ in portrait on a phone).
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Incomplete: covers steps 1–8 and 13–16.
+
+Not automated:
+
+- Steps 9–12 and 17–18 (`tooltipText` steps).
 
 ## Prerequisites
 

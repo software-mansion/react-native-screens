@@ -8,7 +8,7 @@
 
 ## E2E test
 
-TBD
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 
