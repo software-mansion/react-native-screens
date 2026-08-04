@@ -188,11 +188,18 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                  image = img;
                }];
 
-  return [UIMenu menuWithTitle:dict[@"title"]
-                         image:image
-                    identifier:nil
-                       options:RNSMakeUIMenuOptionsFromConfig(dict)
-                      children:elements];
+  UIMenu *menu = [UIMenu menuWithTitle:dict[@"title"]
+                                 image:image
+                            identifier:nil
+                               options:RNSMakeUIMenuOptionsFromConfig(dict)
+                              children:elements];
+
+  NSString *subtitle = dict[@"subtitle"];
+  if (subtitle != nil) {
+    menu.subtitle = subtitle;
+  }
+
+  return menu;
 }
 
 + (UIAction *)createActionItemFromConfig:(NSDictionary *)dict
