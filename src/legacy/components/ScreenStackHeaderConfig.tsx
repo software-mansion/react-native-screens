@@ -13,7 +13,7 @@ import {
   NativeSyntheticEvent,
   Platform,
   StyleSheet,
-  type View,
+  View,
   ViewProps,
 } from 'react-native';
 import featureFlags from '../../flags';
