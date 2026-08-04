@@ -1,7 +1,7 @@
 'use strict';
 
 import type { ComponentRef } from 'react';
-import { View } from 'react-native';
+import type { View } from 'react-native';
 
 /* eslint-disable */
 
