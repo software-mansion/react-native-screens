@@ -55,7 +55,7 @@ export default function App() {
             1. "Submenu with subtitle" shows its subtitle below the label.
           </Text>
           <Text>
-            2. Inside the submenu, the nested submenu show subtitle as well.
+            2. Inside the submenu, the nested submenu shows a subtitle as well.
           </Text>
         </View>
       </Screen>
