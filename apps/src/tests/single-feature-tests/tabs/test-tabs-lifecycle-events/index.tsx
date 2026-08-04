@@ -100,7 +100,7 @@ function AppContents() {
 
 function TestTabsLifecycleEvents() {
   return (
-    <ToastProvider anchorSide='top'>
+    <ToastProvider anchorSide="top">
       <AppContents />
     </ToastProvider>
   );

@@ -72,19 +72,25 @@ interface ToastProviderProps {
 interface ToastContainerProps {
   toasts: IToast[];
   remove: (id: string) => void;
-  anchorSide?: 'top' | 'bottom';
+  anchorSide: 'top' | 'bottom';
 }
 
 function ToastContainer({ toasts, remove, anchorSide }: ToastContainerProps) {
   return (
-    <View style={[styles.overlay, anchorSide === 'top' ? { justifyContent: 'flex-start' } : { justifyContent: 'flex-end' }]} pointerEvents="box-none">
+    <View
+      style={[
+        styles.overlay,
+        anchorSide === 'top'
+          ? { justifyContent: 'flex-start' }
+          : { justifyContent: 'flex-end' },
+      ]}
+      pointerEvents="box-none">
       {/* `pointerEvents` does not currently work on Android  */}
       <SafeAreaView
-        pointerEvents='box-none'
+        pointerEvents="box-none"
         collapsable={false}
-        edges={{ top: true, bottom: true, }}
-        style={styles.toastArea}
-      >
+        edges={{ top: true, bottom: true }}
+        style={styles.toastArea}>
         {toasts.map((toast, i) => (
           <Toast index={i} key={toast.id} {...toast} remove={remove} />
         ))}
@@ -93,7 +99,10 @@ function ToastContainer({ toasts, remove, anchorSide }: ToastContainerProps) {
   );
 }
 
-export function ToastProvider({ children, anchorSide }: ToastProviderProps) {
+export function ToastProvider({
+  children,
+  anchorSide = 'bottom',
+}: ToastProviderProps) {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
@@ -108,10 +117,9 @@ export function ToastProvider({ children, anchorSide }: ToastProviderProps) {
   return (
     <ToastContext.Provider value={{ push }}>
       {children}
-      <ToastContainer toasts={toasts} remove={remove} anchorSide={anchorSide ?? 'bottom'} />
+      <ToastContainer toasts={toasts} remove={remove} anchorSide={anchorSide} />
     </ToastContext.Provider>
   );
-
 }
 
 export const useToast = () => useContext(ToastContext);
