@@ -167,16 +167,8 @@ runTask('Initializing React Native app', () => {
   );
 });
 
-// runTask('Copying example App file', () => {
-//   fs.copyFileSync(EXAMPLE_APP_FILE, APP_MAIN_FILE);
-//   fs.appendFileSync(
-//     LOG_FILE,
-//     `Copied ${EXAMPLE_APP_FILE} to ${APP_MAIN_FILE}\n`,
-//   );
-// });
-
 if (config['example-app'] === 'empty') {
-  console.log(`\n🔍 No example app selected. Skipping...\n`);
+  console.log(`🔍 No example app selected. Skipping...\n`);
 } else {
   runTask(`Copying example App file and src directory`, () => {
     const exampleDir = path.join(
@@ -299,6 +291,7 @@ if (config['screens-version'] === 'local') {
         LOG_FILE,
         `Copied packed file from tmp to: ${packFile}\n`,
       );
+      fs.rmSync(tempCloneDir, { recursive: true, force: true });
     },
   );
 
