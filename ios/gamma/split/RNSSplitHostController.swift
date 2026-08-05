@@ -143,7 +143,8 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
 
   func updateSplitAppearanceIfNeeded() {
     splitAppearanceApplicator.updateAppearanceIfNeeded(
-      self.splitHostComponentView, self, self.splitAppearanceCoordinator)
+      self.splitHostComponentView, splitHostController: self,
+      appearanceCoordinator: self.splitAppearanceCoordinator)
   }
 
   ///
@@ -152,6 +153,7 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
   /// It validates that the secondary VC is valid UINavigationController and it updates the navbar
   /// state by toggling it's visibility, what should be performed in a single batch of updates.
   ///
+  @objc
   public func refreshSecondaryNavBar() {
     let secondaryViewController = viewController(for: .secondary)
     assert(
