@@ -125,7 +125,8 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
     validateInspectors(currentInspectors)
 
     let currentViewControllers = currentColumns.map {
-      RNSSplitNavigationController(rootViewController: $0.controller)
+      RNSSplitNavigationController(
+        rootViewController: $0.controller, frameOriginChangeDelegate: self)
     }
 
     viewControllers = currentViewControllers
@@ -133,10 +134,6 @@ public class RNSSplitHostController: UISplitViewController, RNSReactMountingTran
     #if compiler(>=6.2)
       maybeSetupInspector(currentInspectors)
     #endif
-
-    for controller in currentViewControllers {
-      controller.viewFrameOriginChangeObserver = self
-    }
 
     needsChildViewControllersUpdate = false
   }
@@ -404,7 +401,7 @@ extension RNSSplitHostController {
   }
 }
 
-extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver {
+extension RNSSplitHostController: RNSSplitNavigationControllerFrameOriginChangeDelegate {
 
   ///
   /// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
@@ -413,7 +410,8 @@ extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver 
   ///
   /// @param splitNavCtrl The navigation controller whose frame origin changed.
   ///
-  func splitNavCtrlViewDidChangeFrameOrigin(
+  @objc
+  public func splitNavigationControllerFrameOriginDidChange(
     _ splitNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {
