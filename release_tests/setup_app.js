@@ -92,9 +92,9 @@ const capitalizedVariant =
   config.variant.charAt(0).toUpperCase() +
   config.variant.slice(1).toLowerCase();
 
-// console.log('⚙️  Script started with configuration:');
-// console.table(config);
-// console.log('--------------------------------------------------');
+console.log('⚙️  Script started with configuration:');
+console.table(config);
+console.log('--------------------------------------------------');
 
 // ========================================================
 const RELEASE_TESTS_DIR = __dirname;
@@ -302,10 +302,26 @@ if (config['screens-version'] === 'local') {
 }
 
 runTask('Installing iOS Pods', () => {
-  runCommand(
-    'bundle install && bundle exec pod install',
-    path.join(APP_DIR, 'ios'),
-  );
+  const iosDir = path.join(APP_DIR, 'ios');
+
+  try {
+    runCommand('bundle install && bundle exec pod install', iosDir, true);
+  } catch (error) {
+    const errorMessage =
+      (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
+
+    if (errorMessage.includes('cannot load such file -- kconv')) {
+      console.log(
+        '\n⚠️ Detected missing kconv (Ruby 3.4+). Adding nkf gem and retrying...',
+      );
+
+      runCommand('bundle add nkf', APP_DIR);
+
+      runCommand('bundle install && bundle exec pod install', iosDir);
+    } else {
+      throw error;
+    }
+  }
 });
 
 runTask(`Building Android APK (${capitalizedVariant})`, () => {
