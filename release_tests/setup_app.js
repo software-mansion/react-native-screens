@@ -114,6 +114,11 @@ const APP_NAME = 'PlaygroundApp';
 const APP_DIR = path.join(RELEASE_TESTS_DIR, APP_NAME);
 const LOG_FILE = path.join(RELEASE_TESTS_DIR, 'setup.log');
 
+fs.writeFileSync(
+  LOG_FILE,
+  `Script started at ${new Date().toLocaleString()}\n`,
+);
+
 console.log(`📋 All logs are being written to: ${LOG_FILE}`);
 console.log('--------------------------------------------------');
 
@@ -280,9 +285,15 @@ if (config['screens-version'] === 'local') {
             stdio: 'ignore',
           });
         } catch (remoteError) {
-          console.error(
-            `\n❌ FATAL ERROR: Version '${targetVersion}' was not found locally or on the network.`,
-          );
+          if (config['force-fetch']) {
+            console.error(
+              `\n❌ FATAL ERROR: Version '${targetVersion}' was not found on the network.`,
+            );
+          } else {
+            console.error(
+              `\n❌ FATAL ERROR: Version '${targetVersion}' was not found locally or on the network.`,
+            );
+          }
           fs.rmSync(tempCloneDir, { recursive: true, force: true });
           process.exit(1);
         }
