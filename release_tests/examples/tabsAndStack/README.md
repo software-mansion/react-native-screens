@@ -20,5 +20,5 @@ Tabs + Stack v5 from the main `react-native-screens` export.
 ```bash
 node setup_app.js -s local -e tabsAndStack
 # or
-node setup_app.js -s 5.0.0-alpha.1 -r 0.84.0 -f -e tabsAndStack
+node setup_app.js -s 5.0.0-alpha.1 -r 0.84.0 -e tabsAndStack
 ```
