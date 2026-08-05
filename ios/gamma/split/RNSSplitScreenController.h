@@ -38,9 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param splitViewController The UISplitViewController whose layout positioning changed, represented by
  * RNSSplitHostController.
  */
-- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController
-    // TODO: @t0maboro - NS_SWIFT_NAME is temporal and will be removed while working on RNSSplitHostController migration
-    NS_SWIFT_NAME(columnPositioningDidChangeIn(splitViewController:));
+- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController;
 
 @end
 
