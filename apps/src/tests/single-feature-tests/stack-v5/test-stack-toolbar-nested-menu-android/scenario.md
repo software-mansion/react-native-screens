@@ -26,9 +26,7 @@ it renders.
 
 ## Prerequisites
 
-- Android emulator or device (phone form factor — from 720dp
-  smallest-width up, AppCompat opens submenus as cascading popups
-  next to their parent instead of replacing it)
+- Android emulator or device
 
 ## Note
 
