@@ -15,7 +15,6 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
-#import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
