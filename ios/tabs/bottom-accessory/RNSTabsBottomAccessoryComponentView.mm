@@ -32,6 +32,9 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSTabsBottomAccessoryProps>();
+  _props = defaultProps;
+
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   if (@available(iOS 26, *)) {
     _helper = [[RNSTabsBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
