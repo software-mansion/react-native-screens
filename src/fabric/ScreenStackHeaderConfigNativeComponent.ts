@@ -47,7 +47,7 @@ export interface NativeProps extends ViewProps {
   backTitle?: string | undefined;
   backTitleFontFamily?: string | undefined;
   backTitleFontSize?: CT.Int32 | undefined;
-  backTitleVisible?: CT.WithDefault<boolean, 'true'>;
+  backTitleVisible?: CT.WithDefault<boolean, true>;
   color?: ColorValue | undefined;
   direction?: CT.WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean | undefined;
