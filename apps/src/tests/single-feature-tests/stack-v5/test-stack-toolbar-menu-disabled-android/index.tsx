@@ -226,9 +226,14 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-disabled-scrollview">
         <Text style={styles.heading}>Last Event</Text>
-        <Text style={styles.result}>{lastEvent ?? '—'}</Text>
+        <Text testID="last-event-text" style={styles.result}>
+          {lastEvent ?? '—'}
+        </Text>
 
         <Text style={styles.heading}>Send Command</Text>
         <SettingsPicker<AllIds>
@@ -236,14 +241,20 @@ function MainScreen() {
           value={cmdTargetId}
           items={[...ALL_IDS]}
           onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
         />
         <SettingsPicker<CmdDisabledOption>
           label="disabled"
           value={cmdDisabled}
           items={CMD_DISABLED_OPTIONS}
           onValueChange={setCmdDisabled}
+          testID="cmd-disabled-picker"
         />
-        <Button title="Send Command" onPress={sendCommand} />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
         <Text style={styles.heading}>Menu Items — Props</Text>
         {ALL_IDS.map(id => (
@@ -252,6 +263,7 @@ function MainScreen() {
             label={`disable ${ITEM_LABELS[id]}`}
             value={disabledById[id]}
             onValueChange={v => applyDisabled({ ...disabledById, [id]: v })}
+            testID={`disable-${id}-switch`}
           />
         ))}
       </ScrollView>
