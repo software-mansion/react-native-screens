@@ -75,6 +75,8 @@ export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
+export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ActionMenuItemView';
 
 // A row of a popup menu — the anchor for addressing its widgets by item title.
 export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =
