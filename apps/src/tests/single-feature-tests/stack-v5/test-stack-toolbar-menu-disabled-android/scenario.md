@@ -16,7 +16,7 @@ item keeps its checked state.
 
 ## E2E test
 
-Incomplete: every step (1–22) is automated,except the greyed-out appearance.
+Incomplete: every step (1–22) is automated, except the greyed-out appearance.
 
 Not automated:
 
