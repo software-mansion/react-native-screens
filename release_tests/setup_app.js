@@ -26,36 +26,40 @@ const { values: config } = parseArgs({
       short: 'h',
       default: false,
     },
+    'force-fetch': {
+      type: 'boolean',
+      short: 'f',
+      default: false,
+    },
   },
   strict: false,
 });
 
 if (config.help) {
   console.log(`
-  Usage: node setup.js [options]
-  
-  Options:
-    -r, --rn-version <version>       React Native version to install (default: 'latest')
-    -s, --screens-version <version>  react-native-screens version (currently supports only: 'local')
-    -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
-    -h, --help                       Display this help message
-  
-  Examples:
-    node setup.js                                   # Runs with defaults (latest, local, debug)
-    node setup.js -r 0.81.0                         # Tests specific RN version
-    node setup.js -v release                        # Builds release APK/App
-    node setup.js -r 0.74.0 -v release              # Combine short flags
+      Usage: node setup.js [options]
+      
+      Options:
+        -r, --rn-version <version>       React Native version to install (default: 'latest')
+        -s, --screens-version <version>  react-native-screens version (branch, tag, or commit). Default: 'local'.
+                                         If a specific version is provided, the script will try to clone it 
+                                         from your local git repository first. 
+                                         Note: If using a specific commit hash, it must be already fetched 
+                                         in your local repository.
+        -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
+                                         Use this to bypass the local git cache (e.g., after force pushes).
+                                         Mutually exclusive with --screens-version 'local'.
+        -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
+        -h, --help                       Display this help message
+      
+      Examples:
+        node setup.js                                   # Runs with defaults (latest, local, debug)
+        node setup.js -s main                           # Clones the local 'main' branch of screens
+        node setup.js -s 8b939b9                        # Clones a specific commit (must be fetched locally)
+        node setup.js -s fix-bug -f                     # Forces fetching 'fix-bug' branch from remote origin
+        node setup.js -r 0.74.0 -v release              # Combine short flags
     `);
   process.exit(0);
-}
-
-if (config['screens-version'] !== 'local') {
-  console.error(
-    `\n❌ FATAL ERROR: Fetching a version from the network is not supported yet.`,
-  );
-  console.error(`Received: --screens-version ${config['screens-version']}`);
-  console.error(`Currently only the value 'local' is supported.\n`);
-  process.exit(1);
 }
 
 if (!['debug', 'release'].includes(config.variant.toLowerCase())) {
@@ -65,13 +69,23 @@ if (!['debug', 'release'].includes(config.variant.toLowerCase())) {
   process.exit(1);
 }
 
+if (config['screens-version'] === 'local' && config['force-fetch']) {
+  console.error(
+    `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'local'.`,
+  );
+  console.error(
+    `Explanation: The 'local' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s main -f).\n`,
+  );
+  process.exit(1);
+}
+
 const capitalizedVariant =
   config.variant.charAt(0).toUpperCase() +
   config.variant.slice(1).toLowerCase();
 
-console.log('⚙️  Script started with configuration:');
-console.table(config);
-console.log('--------------------------------------------------');
+// console.log('⚙️  Script started with configuration:');
+// console.table(config);
+// console.log('--------------------------------------------------');
 
 // ========================================================
 const RELEASE_TESTS_DIR = __dirname;
@@ -81,9 +95,6 @@ const APP_DIR = path.join(RELEASE_TESTS_DIR, APP_NAME);
 const EXAMPLE_APP_FILE = path.join(RELEASE_TESTS_DIR, 'example_App.txt');
 const APP_MAIN_FILE = path.join(APP_DIR, 'App.tsx');
 const LOG_FILE = path.join(RELEASE_TESTS_DIR, 'setup.log');
-
-const PACK_FILE_NAME = 'screens-local.tgz';
-const PACK_FILE = path.join(APP_DIR, PACK_FILE_NAME);
 
 console.log(`📋 All logs are being written to: ${LOG_FILE}`);
 console.log('--------------------------------------------------');
@@ -157,26 +168,107 @@ runTask('Copying example App file', () => {
   );
 });
 
-runTask('Installing screens library dependencies', () => {
-  runCommand('yarn install', SCREENS_DIR);
-});
+if (config['screens-version'] === 'local') {
+  const packFileName = 'screens-local.tgz';
+  const packFile = path.join(APP_DIR, packFileName);
 
-runTask('Building screens library', () => {
-  runCommand('yarn prepare', SCREENS_DIR);
-});
+  runTask(
+    'Installing screens library dependencies from local directory',
+    () => {
+      runCommand('yarn install', SCREENS_DIR);
+    },
+  );
 
-runTask('Packing local screens library', () => {
-  const output = runCommand('npm pack', SCREENS_DIR, true);
-  const rawPackFile = output.trim().split('\n').pop();
+  runTask('Building screens library', () => {
+    runCommand('yarn prepare', SCREENS_DIR);
+  });
 
-  fs.renameSync(path.join(SCREENS_DIR, rawPackFile), PACK_FILE);
-  fs.appendFileSync(LOG_FILE, `Moved packed file to: ${PACK_FILE}\n`);
-});
+  runTask('Packing local screens library', () => {
+    const output = runCommand('npm pack', SCREENS_DIR, true);
+    const rawPackFile = output.trim().split('\n').pop();
 
-runTask('Installing packed package in app', () => {
-  fs.writeFileSync(path.join(APP_DIR, 'yarn.lock'), '');
-  runCommand(`yarn add ./${PACK_FILE_NAME}`, APP_DIR);
-});
+    fs.renameSync(path.join(SCREENS_DIR, rawPackFile), packFile);
+    fs.appendFileSync(LOG_FILE, `Moved packed file to: ${packFile}\n`);
+  });
+
+  runTask('Installing packed package in app', () => {
+    fs.writeFileSync(path.join(APP_DIR, 'yarn.lock'), '');
+    runCommand(`yarn add ./${packFileName}`, APP_DIR);
+  });
+} else {
+  const tempCloneDir = fs.mkdtempSync(path.join(os.tmpdir(), 'screens-clone-'));
+  const targetVersion = config['screens-version'];
+  const packFileName = 'screens-remote.tgz';
+  const packFile = path.join(APP_DIR, packFileName);
+
+  runTask(
+    `Preparing target version (${targetVersion}) in temporary directory`,
+    () => {
+      let needsFetch = config['force-fetch'];
+
+      const remoteUrl = execSync('git config --get remote.origin.url', {
+        cwd: SCREENS_DIR,
+      })
+        .toString()
+        .trim();
+
+      runCommand(
+        `git clone "${SCREENS_DIR}" "${tempCloneDir}"`,
+        RELEASE_TESTS_DIR,
+      );
+
+      if (!needsFetch) {
+        try {
+          execSync(`git rev-parse --verify ${targetVersion}`, {
+            cwd: tempCloneDir,
+            stdio: 'ignore',
+          });
+        } catch (localError) {
+          needsFetch = true;
+        }
+      }
+
+      if (needsFetch) {
+        console.log(
+          `\n☁️ Fetching version '${targetVersion}' from the network (${remoteUrl})...`,
+        );
+
+        try {
+          execSync(`git fetch ${remoteUrl} ${targetVersion}:${targetVersion}`, {
+            cwd: tempCloneDir,
+            stdio: 'ignore',
+          });
+        } catch (remoteError) {
+          console.error(
+            `\n❌ FATAL ERROR: Version '${targetVersion}' was not found locally or on the network.`,
+          );
+          fs.rmSync(tempCloneDir, { recursive: true, force: true });
+          process.exit(1);
+        }
+      }
+
+      runCommand(`git checkout ${targetVersion}`, tempCloneDir);
+
+      console.log(`\n📦 Building package in an isolated environment...\n`);
+      runCommand('yarn install', tempCloneDir);
+      runCommand('yarn prepare', tempCloneDir);
+
+      const output = runCommand('npm pack', tempCloneDir, true);
+      const rawPackFile = output.trim().split('\n').pop();
+
+      fs.copyFileSync(path.join(tempCloneDir, rawPackFile), packFile);
+      fs.appendFileSync(
+        LOG_FILE,
+        `Copied packed file from tmp to: ${packFile}\n`,
+      );
+    },
+  );
+
+  runTask('Installing packed package in app', () => {
+    fs.writeFileSync(path.join(APP_DIR, 'yarn.lock'), '');
+    runCommand(`yarn add ./${packFileName}`, APP_DIR);
+  });
+}
 
 runTask('Installing iOS Pods', () => {
   runCommand(
@@ -199,6 +291,6 @@ runTask(`Building iOS App (${capitalizedVariant})`, () => {
   );
 });
 
-console.log('🎉 All steps completed successfully!');
+console.log(`🎉 All steps completed successfully!\n`);
 
 console.timeEnd('⏳ Total execution time');
