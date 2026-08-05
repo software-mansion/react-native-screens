@@ -31,6 +31,11 @@ const { values: config } = parseArgs({
       short: 'f',
       default: false,
     },
+    'example-app': {
+      type: 'string',
+      short: 'e',
+      default: 'tabsAndStack',
+    },
   },
   strict: false,
 });
@@ -50,6 +55,10 @@ if (config.help) {
                                          Use this to bypass the local git cache (e.g., after force pushes).
                                          Mutually exclusive with --screens-version 'local'.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
+        -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
+                                         Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory 
+                                         exists, it will also be copied. Use 'empty' to skip copying 
+                                         and keep the default RN App.tsx.
         -h, --help                       Display this help message
       
       Examples:
@@ -92,8 +101,6 @@ const RELEASE_TESTS_DIR = __dirname;
 const SCREENS_DIR = path.resolve(RELEASE_TESTS_DIR, '..');
 const APP_NAME = 'PlaygroundApp';
 const APP_DIR = path.join(RELEASE_TESTS_DIR, APP_NAME);
-const EXAMPLE_APP_FILE = path.join(RELEASE_TESTS_DIR, 'example_App.txt');
-const APP_MAIN_FILE = path.join(APP_DIR, 'App.tsx');
 const LOG_FILE = path.join(RELEASE_TESTS_DIR, 'setup.log');
 
 console.log(`📋 All logs are being written to: ${LOG_FILE}`);
@@ -160,13 +167,44 @@ runTask('Initializing React Native app', () => {
   );
 });
 
-runTask('Copying example App file', () => {
-  fs.copyFileSync(EXAMPLE_APP_FILE, APP_MAIN_FILE);
-  fs.appendFileSync(
-    LOG_FILE,
-    `Copied ${EXAMPLE_APP_FILE} to ${APP_MAIN_FILE}\n`,
-  );
-});
+// runTask('Copying example App file', () => {
+//   fs.copyFileSync(EXAMPLE_APP_FILE, APP_MAIN_FILE);
+//   fs.appendFileSync(
+//     LOG_FILE,
+//     `Copied ${EXAMPLE_APP_FILE} to ${APP_MAIN_FILE}\n`,
+//   );
+// });
+
+if (config['example-app'] === 'empty') {
+  console.log(`\n🔍 No example app selected. Skipping...\n`);
+} else {
+  runTask(`Copying example App file and src directory`, () => {
+    const exampleDir = path.join(
+      RELEASE_TESTS_DIR,
+      'examples',
+      config['example-app'],
+    );
+
+    const sourceAppFile = path.join(exampleDir, 'App.tsx');
+    const targetAppFile = path.join(APP_DIR, 'App.tsx');
+
+    if (!fs.existsSync(sourceAppFile)) {
+      console.error(
+        `\n❌ FATAL ERROR: File ${sourceAppFile} not found. Please ensure the example exists.`,
+      );
+      process.exit(1);
+    } else {
+      fs.copyFileSync(sourceAppFile, targetAppFile);
+    }
+
+    const sourceSrcDir = path.join(exampleDir, 'src');
+    const targetSrcDir = path.join(APP_DIR, 'src');
+
+    if (fs.existsSync(sourceSrcDir)) {
+      fs.cpSync(sourceSrcDir, targetSrcDir, { recursive: true, force: true });
+    }
+  });
+}
 
 if (config['screens-version'] === 'local') {
   const packFileName = 'screens-local.tgz';
