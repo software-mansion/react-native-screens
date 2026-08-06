@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests the disabled prop on toolbar menu items (action items, checkable group items, and submenus), both via props and via the updateToolbarMenuElements view command.',
   platforms: ['android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };
