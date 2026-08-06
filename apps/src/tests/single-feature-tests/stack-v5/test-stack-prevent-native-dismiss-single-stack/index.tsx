@@ -82,7 +82,7 @@ function AScreen() {
 
 function BScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
+    <CenteredLayoutView testID="b-screen" style={{ backgroundColor: Colors.GreenLight100 }}>
       <StackRouteInformation routeName="B" />
       <PreventNativeDismissInfo />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
@@ -111,7 +111,9 @@ function PreventNativeDismissInfo() {
 
   return (
     <View>
-      <Text style={styles.routeInformation}>
+      <Text
+        style={styles.routeInformation}
+        testID="prevent-native-dismiss-info">
         Prevent native dismiss:{' '}
         {navContext.routeOptions.preventNativeDismiss ? 'Enabled' : 'Disabled'}
       </Text>

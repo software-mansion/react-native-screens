@@ -18,10 +18,26 @@ directly to work around issue #1459.
 
 ## E2E test
 
-TBD: Automation is plausible - the system back button, the native header
-back-button chevron, and the on-screen buttons are all Detox-drivable on
-Android - but no e2e test has been implemented yet. The system gesture-back
-(edge swipe) step may need platform-specific handling.
+Incomplete: Covered on **Android** (steps 1-4, 6, 9, 11-13): pushing A/B, the per-route
+flag labels, the native header back-button chevron being intercepted while
+Enabled (toast shown, no pop, `Key` unchanged) including repeated presses,
+the runtime toggle, the edge case in step 13, and the on-screen **Pop**
+bypassing the flag.
+
+**Not** covered, and still manual:
+
+- **Steps 7, 8, 10 (the Disabled half).** The e2e opens this screen through
+  the example app's own navigation rather than the direct `App.tsx` launch, so
+  a back press the screen does not intercept escapes to the outer navigator
+  instead of popping the stack (issue
+  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459))
+  and leaves the test screen entirely. Interception itself is unaffected,
+  which is why the Enabled half automates fine.
+- **The system gesture-back (edge swipe) on Android, steps 5 and 8.** Detox
+  cannot perform the OS-level edge gesture.
+
+The suite is Android-only - `preventNativeDismiss` is not implemented for
+stack v5 on iOS, so there is nothing to assert there.
 
 ## Prerequisites
 
