@@ -1,0 +1,129 @@
+const fs = require('fs');
+const { execSync } = require('child_process');
+
+function getRemoteUrl(screensPath) {
+  return execSync('git config --get remote.origin.url', {
+    cwd: screensPath,
+  })
+    .toString()
+    .trim();
+}
+
+function refExistsLocally(screensPath, target) {
+  try {
+    execSync(`git rev-parse --verify "${target}^{commit}"`, {
+      cwd: screensPath,
+      stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isBranchOrTag(screensPath, target) {
+  try {
+    execSync(`git show-ref --verify --quiet "refs/heads/${target}"`, {
+      cwd: screensPath,
+      stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    // not a local branch
+  }
+  try {
+    execSync(`git show-ref --verify --quiet "refs/tags/${target}"`, {
+      cwd: screensPath,
+      stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function looksLikeCommitHash(ref) {
+  return /^[0-9a-f]{7,40}$/i.test(ref);
+}
+
+function failRemoteClone({ target, forceFetch, tempCloneDir, refType }) {
+  if (forceFetch) {
+    console.error(
+      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
+    );
+  } else {
+    console.error(
+      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally or on the network.`,
+    );
+  }
+  if (refType === 'unknown' && looksLikeCommitHash(target)) {
+    console.error(
+      `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
+    );
+  }
+  fs.rmSync(tempCloneDir, { recursive: true, force: true });
+  process.exit(1);
+}
+
+function cloneScreensRef({
+  refType,
+  target,
+  screensPath,
+  remoteUrl,
+  useLocal,
+  tempCloneDir,
+  releaseTestsPath,
+  logPath,
+  runCommand,
+  forceFetch,
+}) {
+  const git = (cmd, cwd = releaseTestsPath) => runCommand(cmd, cwd, logPath);
+
+  function cloneBranch(source) {
+    git(
+      `git clone --single-branch --branch "${target}" "${source}" "${tempCloneDir}"`,
+    );
+  }
+
+  function checkoutCommit(source, { fetch = false } = {}) {
+    git(`git clone --no-checkout "${source}" "${tempCloneDir}"`);
+    if (fetch) {
+      git(`git fetch origin "${target}"`, tempCloneDir);
+    }
+    git(`git checkout "${target}"`, tempCloneDir);
+  }
+
+  if (useLocal) {
+    if (refType === 'branch' || refType === 'tag') {
+      cloneBranch(screensPath);
+      return;
+    }
+    if (refType === 'commit') {
+      checkoutCommit(screensPath);
+      return;
+    }
+    if (isBranchOrTag(screensPath, target)) {
+      cloneBranch(screensPath);
+    } else {
+      checkoutCommit(screensPath);
+    }
+    return;
+  }
+
+  try {
+    if (refType === 'commit') {
+      checkoutCommit(remoteUrl, { fetch: true });
+    } else {
+      // branch / tag / unknown — clone --branch (bare commit hashes need commit:<sha>)
+      cloneBranch(remoteUrl);
+    }
+  } catch {
+    failRemoteClone({ target, forceFetch, tempCloneDir, refType });
+  }
+}
+
+module.exports = {
+  getRemoteUrl,
+  refExistsLocally,
+  cloneScreensRef,
+};
