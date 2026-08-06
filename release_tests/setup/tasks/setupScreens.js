@@ -7,7 +7,11 @@ const logger = require('../logger');
 function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   runTask('Installing packed package in app', config.paths.log, () => {
     fs.writeFileSync(path.join(config.paths.app, 'yarn.lock'), '');
-    runCommand(`yarn add ./${packFileName}`, config.paths.app, config.paths.log);
+    runCommand(
+      `yarn add ./${packFileName}`,
+      config.paths.app,
+      config.paths.log,
+    );
   });
 }
 
@@ -69,22 +73,31 @@ function setupGitScreens(config, utils) {
         config.paths.log,
       );
 
-      if (!needsFetch) {
+      if (config['force-fetch']) {
+        console.log(
+          `\n☁️ Force-fetching version '${targetVersion}' from the network (${remoteUrl})...`,
+        );
+      } else {
+        console.log(
+          `\n🔍 Checking if version '${targetVersion}' exists in the local repository...`,
+        );
         try {
           execSync(`git rev-parse --verify ${targetVersion}`, {
             cwd: tempCloneDir,
             stdio: 'ignore',
           });
+          console.log(
+            `\n📂 Using version '${targetVersion}' from the local repository.`,
+          );
         } catch (localError) {
           needsFetch = true;
+          console.log(
+            `\n☁️ Version '${targetVersion}' not found locally. Fetching from the network (${remoteUrl})...`,
+          );
         }
       }
 
       if (needsFetch) {
-        console.log(
-          `\n☁️ Fetching version '${targetVersion}' from the network (${remoteUrl})...`,
-        );
-
         try {
           execSync(`git fetch ${remoteUrl} ${targetVersion}:${targetVersion}`, {
             cwd: tempCloneDir,
