@@ -167,13 +167,13 @@ function prepareClone(
   cloneFromRemoteAsBranch(remoteUrl, target, tempCloneDir, config, runCommand);
 }
 
-function setupLocalScreens(config, utils) {
+function setupCurrentScreens(config, utils) {
   const { runTask, runCommand } = utils;
-  const packFileName = 'screens-local.tgz';
+  const packFileName = 'screens-current.tgz';
   const packFile = path.join(config.paths.app, packFileName);
 
   runTask(
-    'Installing screens library dependencies from local directory',
+    'Installing screens library dependencies from current working tree',
     config.paths.log,
     () => {
       runCommand('yarn install', config.paths.screens, config.paths.log);
@@ -184,7 +184,7 @@ function setupLocalScreens(config, utils) {
     runCommand('yarn prepare', config.paths.screens, config.paths.log);
   });
 
-  runTask('Packing local screens library', config.paths.log, () => {
+  runTask('Packing screens library from current working tree', config.paths.log, () => {
     const output = runCommand(
       'npm pack',
       config.paths.screens,
@@ -280,8 +280,8 @@ function setupGitScreens(config, utils) {
 }
 
 function setupScreens(config, utils) {
-  if (config['screens-ref-type'] === 'local') {
-    setupLocalScreens(config, utils);
+  if (config['screens-ref-type'] === 'current') {
+    setupCurrentScreens(config, utils);
   } else {
     setupGitScreens(config, utils);
   }

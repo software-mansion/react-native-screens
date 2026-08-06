@@ -5,8 +5,8 @@ const { parseArgs } = require('util');
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 
 function parseScreensVersion(screensVersion) {
-  if (screensVersion === 'local') {
-    return { type: 'local', target: 'local' };
+  if (screensVersion === 'current') {
+    return { type: 'current', target: 'current' };
   }
 
   const separatorIndex = screensVersion.indexOf(':');
@@ -42,7 +42,7 @@ function getConfig() {
       'screens-version': {
         type: 'string',
         short: 's',
-        default: 'local',
+        default: 'current',
       },
       variant: {
         type: 'string',
@@ -89,18 +89,18 @@ function getConfig() {
       
       Options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
-        -s, --screens-version <version>  react-native-screens version. Default: 'local'.
+        -s, --screens-version <version>  react-native-screens version. Default: 'current'.
                                          Accepts:
-                                           local                         — current working tree
+                                           current                       — current working tree
                                            branch:<name> | tag:<name>    — clone that branch or tag
                                            commit:<sha>                  — from local repo; use -f to fetch from remote
                                            <ref>                         — auto-detect branch, tag, or commit
-                                         Non-local versions prefer the local git repository when the ref
+                                         Ref versions prefer the local git repository when the ref
                                          exists there; otherwise they are taken from origin.
         -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
                                          Use this to bypass the local git cache (e.g., after force pushes).
                                          Required to fetch a commit from remote (-s commit:<sha> -f).
-                                         Mutually exclusive with --screens-version 'local'.
+                                         Mutually exclusive with --screens-version 'current'.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
         -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
@@ -117,7 +117,7 @@ function getConfig() {
         -h, --help                       Display this help message
       
       Examples:
-        node setup_app.js                                   # Runs with defaults (latest, local, debug)
+        node setup_app.js                                   # Runs with defaults (latest, current, debug)
         node setup_app.js -s branch:main                    # Clone branch
         node setup_app.js -s tag:4.16.0                     # Clone tag
         node setup_app.js -s commit:8b939b9                 # Commit from local repo
@@ -156,12 +156,12 @@ function getConfig() {
   const { type: screensRefType, target: screensRefTarget } =
     parseScreensVersion(config['screens-version']);
 
-  if (screensRefType === 'local' && config['force-fetch']) {
+  if (screensRefType === 'current' && config['force-fetch']) {
     console.error(
-      `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'local'.`,
+      `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'current'.`,
     );
     console.error(
-      `Explanation: The 'local' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
+      `Explanation: The 'current' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
     );
     process.exit(1);
   }
