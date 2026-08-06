@@ -13,6 +13,7 @@ console.table({
   'rn-version': config['rn-version'],
   'screens-version': config['screens-version'],
   variant: config.variant,
+  platform: config.platform,
   'force-fetch': config['force-fetch'],
   'example-app': config['example-app'],
   gamma: config.gamma,

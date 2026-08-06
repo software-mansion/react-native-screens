@@ -40,6 +40,11 @@ function getConfig() {
         short: 'g',
         default: false,
       },
+      platform: {
+        type: 'string',
+        short: 'p',
+        default: 'both',
+      },
     },
     strict: false,
   });
@@ -59,6 +64,7 @@ function getConfig() {
                                          Use this to bypass the local git cache (e.g., after force pushes).
                                          Mutually exclusive with --screens-version 'local'.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
+        -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
                                          Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory 
                                          exists, it will also be copied. Use 'empty' to skip copying 
@@ -77,6 +83,7 @@ function getConfig() {
         node setup_app.js -s fix-bug -f                     # Forces fetching 'fix-bug' branch from remote origin
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
         node setup_app.js -r 0.74.0 -v release              # Combine short flags
+        node setup_app.js -p ios                            # Build iOS only
     `);
     process.exit(0);
   }
@@ -84,6 +91,13 @@ function getConfig() {
   if (!['debug', 'release'].includes(config.variant.toLowerCase())) {
     console.error(
       `\n❌ FATAL ERROR: Unknown build variant: ${config.variant}. Allowed: 'debug', 'release'.\n`,
+    );
+    process.exit(1);
+  }
+
+  if (!['ios', 'android', 'both'].includes(config.platform.toLowerCase())) {
+    console.error(
+      `\n❌ FATAL ERROR: Unknown platform: ${config.platform}. Allowed: 'ios', 'android', 'both'.\n`,
     );
     process.exit(1);
   }
@@ -118,6 +132,7 @@ function getConfig() {
 
   return {
     ...config,
+    platform: config.platform.toLowerCase(),
     capitalizedVariant:
       config.variant.charAt(0).toUpperCase() +
       config.variant.slice(1).toLowerCase(),
