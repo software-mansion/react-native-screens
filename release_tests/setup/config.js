@@ -91,18 +91,15 @@ function getConfig() {
         -r, --rn-version <version>       React Native version to install (default: 'latest')
         -s, --screens-version <version>  react-native-screens version. Default: 'local'.
                                          Accepts:
-                                           local
-                                           branch:<name> | tag:<name> | commit:<sha>
-                                           <ref>  (bare value; type is auto-detected)
-                                         Typed forms skip ref-type probing and use only that path.
-                                         Bare values keep backward-compatible detection (branch/tag vs commit).
-                                         To target a commit from remote you must use -s commit:<sha>.
-                                         The commit must already exist in your local repository
-                                         (do not use -f for commits).
-                                         If a specific version is provided, the script will try to clone it
-                                         from your local git repository first.
+                                           local                         — current working tree
+                                           branch:<name> | tag:<name>    — clone that branch or tag
+                                           commit:<sha>                  — from local repo; use -f to fetch from remote
+                                           <ref>                         — auto-detect branch, tag, or commit
+                                         Non-local versions prefer the local git repository when the ref
+                                         exists there; otherwise they are taken from origin.
         -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
                                          Use this to bypass the local git cache (e.g., after force pushes).
+                                         Required to fetch a commit from remote (-s commit:<sha> -f).
                                          Mutually exclusive with --screens-version 'local'.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
@@ -121,13 +118,12 @@ function getConfig() {
       
       Examples:
         node setup_app.js                                   # Runs with defaults (latest, local, debug)
-        node setup_app.js -s branch:main                    # Typed branch (no probing)
-        node setup_app.js -s tag:4.16.0                     # Typed tag
-        node setup_app.js -s commit:8b939b9                 # Typed commit (must exist locally)
-        node setup_app.js -s main                           # Bare ref; auto-detect type (current behavior)
-        node setup_app.js -s 8b939b9                        # Bare commit (must be fetched locally)
-        node setup_app.js -s branch:fix-bug -f              # Force-fetch typed branch from remote origin
-        node setup_app.js -s fix-bug -f                     # Force-fetch bare branch from remote origin
+        node setup_app.js -s branch:main                    # Clone branch
+        node setup_app.js -s tag:4.16.0                     # Clone tag
+        node setup_app.js -s commit:8b939b9                 # Commit from local repo
+        node setup_app.js -s commit:8b939b9 -f              # Commit from remote origin
+        node setup_app.js -s main                           # Auto-detect ref type
+        node setup_app.js -s branch:fix-bug -f              # Force-fetch branch from remote origin
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
         node setup_app.js -r 0.74.0 -v release              # Combine short flags
         node setup_app.js -p ios                            # Build iOS only

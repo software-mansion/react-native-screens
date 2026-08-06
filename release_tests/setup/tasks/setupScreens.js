@@ -75,12 +75,7 @@ function cloneCommitLocal(
   runCommand(`git checkout "${target}"`, tempCloneDir, config.paths.log);
 }
 
-function failRemoteClone(
-  target,
-  config,
-  tempCloneDir,
-  { typedCommit = false } = {},
-) {
+function failRemoteClone(target, config, tempCloneDir, refType) {
   if (config['force-fetch']) {
     console.error(
       `\n❌ FATAL ERROR: Version '${target}' was not found on the network.`,
@@ -90,13 +85,27 @@ function failRemoteClone(
       `\n❌ FATAL ERROR: Version '${target}' was not found locally or on the network.`,
     );
   }
-  if (typedCommit || looksLikeCommitHash(target)) {
+  if (refType == null && looksLikeCommitHash(target)) {
     console.error(
-      `Hint: '${target}' looks like a commit hash. git clone --branch cannot fetch a bare commit from the network; use -s commit:<sha> and ensure the commit exists locally (without -f). Remote commit fetch is not supported yet.`,
+      `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
     );
   }
   fs.rmSync(tempCloneDir, { recursive: true, force: true });
   process.exit(1);
+}
+
+function cloneCommitRemote(remoteUrl, target, tempCloneDir, config, runCommand) {
+  try {
+    runCommand(
+      `git clone --no-checkout "${remoteUrl}" "${tempCloneDir}"`,
+      config.paths.releaseTests,
+      config.paths.log,
+    );
+    runCommand(`git fetch origin "${target}"`, tempCloneDir, config.paths.log);
+    runCommand(`git checkout "${target}"`, tempCloneDir, config.paths.log);
+  } catch {
+    failRemoteClone(target, config, tempCloneDir, 'commit');
+  }
 }
 
 function cloneFromRemoteAsBranch(
@@ -105,12 +114,11 @@ function cloneFromRemoteAsBranch(
   tempCloneDir,
   config,
   runCommand,
-  options,
 ) {
   try {
     cloneBranchOrTag(remoteUrl, target, tempCloneDir, config, runCommand);
   } catch {
-    failRemoteClone(target, config, tempCloneDir, options);
+    failRemoteClone(target, config, tempCloneDir);
   }
 }
 
@@ -150,11 +158,13 @@ function prepareClone(
     return;
   }
 
-  // Remote path: branch/tag/commit/unknown all currently use clone --branch
-  // (commit remote fetch is intentionally unchanged / not supported yet).
-  cloneFromRemoteAsBranch(remoteUrl, target, tempCloneDir, config, runCommand, {
-    typedCommit: refType === 'commit',
-  });
+  if (refType === 'commit') {
+    cloneCommitRemote(remoteUrl, target, tempCloneDir, config, runCommand);
+    return;
+  }
+
+  // branch / tag / unknown — clone --branch (bare commit hashes need commit:<sha>)
+  cloneFromRemoteAsBranch(remoteUrl, target, tempCloneDir, config, runCommand);
 }
 
 function setupLocalScreens(config, utils) {
