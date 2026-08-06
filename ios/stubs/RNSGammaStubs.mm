@@ -29,3 +29,6 @@
 
 @implementation RNSStackHeaderItemSpacerComponentView
 @end
+
+@implementation RNSScrollToTopGuard
+@end

@@ -39,4 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackHeaderItemSpacerComponentView : NSObject
 @end
 
+@interface RNSScrollToTopGuard : NSObject
+@end
+
 NS_ASSUME_NONNULL_END
