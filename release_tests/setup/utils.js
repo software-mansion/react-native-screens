@@ -2,12 +2,19 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const logger = require('./logger');
 
+// xcodebuild output routinely exceeds Node's default 1MB execSync maxBuffer.
+const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
+
 function runCommand(cmd, cwd, logFile, captureOutput = false) {
   logger.append(logFile, `=== COMMAND: ${cmd} ===\n`);
   console.log(`🔍 Running command: ${cmd}`);
   if (captureOutput) {
     try {
-      const output = execSync(cmd, { cwd, stdio: 'pipe' }).toString();
+      const output = execSync(cmd, {
+        cwd,
+        stdio: 'pipe',
+        maxBuffer: CAPTURE_MAX_BUFFER,
+      }).toString();
       logger.append(logFile, output + '\n');
       return output;
     } catch (error) {
