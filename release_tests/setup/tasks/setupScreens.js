@@ -15,9 +15,9 @@ function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   });
 }
 
-function refExistsLocally(screensPath, targetVersion) {
+function refExistsLocally(screensPath, target) {
   try {
-    execSync(`git rev-parse --verify "${targetVersion}^{commit}"`, {
+    execSync(`git rev-parse --verify "${target}^{commit}"`, {
       cwd: screensPath,
       stdio: 'ignore',
     });
@@ -27,9 +27,9 @@ function refExistsLocally(screensPath, targetVersion) {
   }
 }
 
-function isBranchOrTag(screensPath, targetVersion) {
+function isBranchOrTag(screensPath, target) {
   try {
-    execSync(`git show-ref --verify --quiet "refs/heads/${targetVersion}"`, {
+    execSync(`git show-ref --verify --quiet "refs/heads/${target}"`, {
       cwd: screensPath,
       stdio: 'ignore',
     });
@@ -38,7 +38,7 @@ function isBranchOrTag(screensPath, targetVersion) {
     // not a local branch
   }
   try {
-    execSync(`git show-ref --verify --quiet "refs/tags/${targetVersion}"`, {
+    execSync(`git show-ref --verify --quiet "refs/tags/${target}"`, {
       cwd: screensPath,
       stdio: 'ignore',
     });
@@ -50,6 +50,111 @@ function isBranchOrTag(screensPath, targetVersion) {
 
 function looksLikeCommitHash(ref) {
   return /^[0-9a-f]{7,40}$/i.test(ref);
+}
+
+function cloneBranchOrTag(source, target, tempCloneDir, config, runCommand) {
+  runCommand(
+    `git clone --single-branch --branch "${target}" "${source}" "${tempCloneDir}"`,
+    config.paths.releaseTests,
+    config.paths.log,
+  );
+}
+
+function cloneCommitLocal(
+  screensPath,
+  target,
+  tempCloneDir,
+  config,
+  runCommand,
+) {
+  runCommand(
+    `git clone --no-checkout "${screensPath}" "${tempCloneDir}"`,
+    config.paths.releaseTests,
+    config.paths.log,
+  );
+  runCommand(`git checkout "${target}"`, tempCloneDir, config.paths.log);
+}
+
+function failRemoteClone(
+  target,
+  config,
+  tempCloneDir,
+  { typedCommit = false } = {},
+) {
+  if (config['force-fetch']) {
+    console.error(
+      `\n❌ FATAL ERROR: Version '${target}' was not found on the network.`,
+    );
+  } else {
+    console.error(
+      `\n❌ FATAL ERROR: Version '${target}' was not found locally or on the network.`,
+    );
+  }
+  if (typedCommit || looksLikeCommitHash(target)) {
+    console.error(
+      `Hint: '${target}' looks like a commit hash. git clone --branch cannot fetch a bare commit from the network; use -s commit:<sha> and ensure the commit exists locally (without -f). Remote commit fetch is not supported yet.`,
+    );
+  }
+  fs.rmSync(tempCloneDir, { recursive: true, force: true });
+  process.exit(1);
+}
+
+function cloneFromRemoteAsBranch(
+  remoteUrl,
+  target,
+  tempCloneDir,
+  config,
+  runCommand,
+  options,
+) {
+  try {
+    cloneBranchOrTag(remoteUrl, target, tempCloneDir, config, runCommand);
+  } catch {
+    failRemoteClone(target, config, tempCloneDir, options);
+  }
+}
+
+function cloneUnknownLocal(
+  screensPath,
+  target,
+  tempCloneDir,
+  config,
+  runCommand,
+) {
+  if (isBranchOrTag(screensPath, target)) {
+    cloneBranchOrTag(screensPath, target, tempCloneDir, config, runCommand);
+  } else {
+    cloneCommitLocal(screensPath, target, tempCloneDir, config, runCommand);
+  }
+}
+
+function prepareClone(
+  refType,
+  target,
+  screensPath,
+  remoteUrl,
+  useLocal,
+  tempCloneDir,
+  config,
+  runCommand,
+) {
+  if (useLocal) {
+    if (refType === 'branch' || refType === 'tag') {
+      cloneBranchOrTag(screensPath, target, tempCloneDir, config, runCommand);
+    } else if (refType === 'commit') {
+      cloneCommitLocal(screensPath, target, tempCloneDir, config, runCommand);
+    } else {
+      // unknown — heuristic behavior
+      cloneUnknownLocal(screensPath, target, tempCloneDir, config, runCommand);
+    }
+    return;
+  }
+
+  // Remote path: branch/tag/commit/unknown all currently use clone --branch
+  // (commit remote fetch is intentionally unchanged / not supported yet).
+  cloneFromRemoteAsBranch(remoteUrl, target, tempCloneDir, config, runCommand, {
+    typedCommit: refType === 'commit',
+  });
 }
 
 function setupLocalScreens(config, utils) {
@@ -88,13 +193,14 @@ function setupLocalScreens(config, utils) {
 function setupGitScreens(config, utils) {
   const { runTask, runCommand } = utils;
   const tempCloneDir = fs.mkdtempSync(path.join(os.tmpdir(), 'screens-clone-'));
-  const targetVersion = config['screens-version'];
-  const packFileName = `screens-${targetVersion.replace(/\//g, '-')}.tgz`;
+  const refType = config['screens-ref-type'];
+  const target = config['screens-ref-target'];
+  const packFileName = `screens-${target.replace(/\//g, '-')}.tgz`;
   const packFile = path.join(config.paths.app, packFileName);
   const screensPath = config.paths.screens;
 
   runTask(
-    `Preparing target version (${targetVersion}) in temporary directory`,
+    `Preparing target version (${refType}:${target}) in temporary directory`,
     config.paths.log,
     () => {
       const remoteUrl = execSync('git config --get remote.origin.url', {
@@ -103,74 +209,39 @@ function setupGitScreens(config, utils) {
         .toString()
         .trim();
 
-      const existsLocally = refExistsLocally(screensPath, targetVersion);
+      const existsLocally = refExistsLocally(screensPath, target);
       const useLocal = !config['force-fetch'] && existsLocally;
 
       if (config['force-fetch']) {
         console.log(
-          `\n☁️ Force-fetching version '${targetVersion}' from the network (${remoteUrl})...`,
+          `\n☁️ Force-fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
         );
       } else {
         console.log(
-          `\n🔍 Checking if version '${targetVersion}' exists in the local repository...`,
+          `\n🔍 Checking if version '${target}' (${refType}) exists in the local repository...`,
         );
         if (useLocal) {
           console.log(
-            `\n📂 Using version '${targetVersion}' from the local repository.`,
+            `\n📂 Using version '${target}' (${refType}) from the local repository.`,
           );
         } else {
           console.log(
-            `\n☁️ Version '${targetVersion}' not found locally. Fetching from the network (${remoteUrl})...`,
+            `\n☁️ Version '${target}' (${refType}) not found locally. Fetching from the network (${remoteUrl})...`,
           );
         }
       }
 
       try {
-        if (useLocal) {
-          if (isBranchOrTag(screensPath, targetVersion)) {
-            runCommand(
-              `git clone --single-branch --branch "${targetVersion}" "${screensPath}" "${tempCloneDir}"`,
-              config.paths.releaseTests,
-              config.paths.log,
-            );
-          } else {
-            runCommand(
-              `git clone --no-checkout "${screensPath}" "${tempCloneDir}"`,
-              config.paths.releaseTests,
-              config.paths.log,
-            );
-            runCommand(
-              `git checkout "${targetVersion}"`,
-              tempCloneDir,
-              config.paths.log,
-            );
-          }
-        } else {
-          try {
-            runCommand(
-              `git clone --single-branch --branch "${targetVersion}" "${remoteUrl}" "${tempCloneDir}"`,
-              config.paths.releaseTests,
-              config.paths.log,
-            );
-          } catch (remoteError) {
-            if (config['force-fetch']) {
-              console.error(
-                `\n❌ FATAL ERROR: Version '${targetVersion}' was not found on the network.`,
-              );
-            } else {
-              console.error(
-                `\n❌ FATAL ERROR: Version '${targetVersion}' was not found locally or on the network.`,
-              );
-            }
-            if (looksLikeCommitHash(targetVersion)) {
-              console.error(
-                `Hint: '${targetVersion}' looks like a commit hash. git clone --branch cannot fetch a bare commit from the network; use a branch/tag, or ensure the commit exists locally (without -f).`,
-              );
-            }
-            fs.rmSync(tempCloneDir, { recursive: true, force: true });
-            process.exit(1);
-          }
-        }
+        prepareClone(
+          refType,
+          target,
+          screensPath,
+          remoteUrl,
+          useLocal,
+          tempCloneDir,
+          config,
+          runCommand,
+        );
 
         console.log(`\n📦 Building package in an isolated environment...\n`);
         runCommand('yarn install', tempCloneDir, config.paths.log);
@@ -199,7 +270,7 @@ function setupGitScreens(config, utils) {
 }
 
 function setupScreens(config, utils) {
-  if (config['screens-version'] === 'local') {
+  if (config['screens-ref-type'] === 'local') {
     setupLocalScreens(config, utils);
   } else {
     setupGitScreens(config, utils);

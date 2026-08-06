@@ -2,6 +2,35 @@ const fs = require('fs');
 const path = require('path');
 const { parseArgs } = require('util');
 
+const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
+
+function parseScreensVersion(screensVersion) {
+  if (screensVersion === 'local') {
+    return { type: 'local', target: 'local' };
+  }
+
+  const separatorIndex = screensVersion.indexOf(':');
+  if (separatorIndex === -1) {
+    return { type: 'unknown', target: screensVersion };
+  }
+
+  const type = screensVersion.slice(0, separatorIndex);
+  const target = screensVersion.slice(separatorIndex + 1);
+
+  if (!KNOWN_REF_TYPES.includes(type)) {
+    return { type: 'unknown', target: screensVersion };
+  }
+
+  if (!target) {
+    console.error(
+      `\n❌ FATAL ERROR: Invalid --screens-version '${screensVersion}'. Expected '${type}:<ref>' with a non-empty ref.\n`,
+    );
+    process.exit(1);
+  }
+
+  return { type, target };
+}
+
 function getConfig() {
   const { values: config } = parseArgs({
     options: {
@@ -60,11 +89,18 @@ function getConfig() {
       
       Options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
-        -s, --screens-version <version>  react-native-screens version (branch, tag, or commit). Default: 'local'.
-                                         If a specific version is provided, the script will try to clone it 
-                                         from your local git repository first. 
-                                         Note: If using a specific commit hash, it must be already fetched 
-                                         in your local repository.
+        -s, --screens-version <version>  react-native-screens version. Default: 'local'.
+                                         Accepts:
+                                           local
+                                           branch:<name> | tag:<name> | commit:<sha>
+                                           <ref>  (bare value; type is auto-detected)
+                                         Typed forms skip ref-type probing and use only that path.
+                                         Bare values keep backward-compatible detection (branch/tag vs commit).
+                                         To target a commit from remote you must use -s commit:<sha>.
+                                         The commit must already exist in your local repository
+                                         (do not use -f for commits).
+                                         If a specific version is provided, the script will try to clone it
+                                         from your local git repository first.
         -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
                                          Use this to bypass the local git cache (e.g., after force pushes).
                                          Mutually exclusive with --screens-version 'local'.
@@ -85,9 +121,13 @@ function getConfig() {
       
       Examples:
         node setup_app.js                                   # Runs with defaults (latest, local, debug)
-        node setup_app.js -s main                           # Clones the local 'main' branch of screens
-        node setup_app.js -s 8b939b9                        # Clones a specific commit (must be fetched locally)
-        node setup_app.js -s fix-bug -f                     # Forces fetching 'fix-bug' branch from remote origin
+        node setup_app.js -s branch:main                    # Typed branch (no probing)
+        node setup_app.js -s tag:4.16.0                     # Typed tag
+        node setup_app.js -s commit:8b939b9                 # Typed commit (must exist locally)
+        node setup_app.js -s main                           # Bare ref; auto-detect type (current behavior)
+        node setup_app.js -s 8b939b9                        # Bare commit (must be fetched locally)
+        node setup_app.js -s branch:fix-bug -f              # Force-fetch typed branch from remote origin
+        node setup_app.js -s fix-bug -f                     # Force-fetch bare branch from remote origin
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
         node setup_app.js -r 0.74.0 -v release              # Combine short flags
         node setup_app.js -p ios                            # Build iOS only
@@ -117,12 +157,15 @@ function getConfig() {
     process.exit(1);
   }
 
-  if (config['screens-version'] === 'local' && config['force-fetch']) {
+  const { type: screensRefType, target: screensRefTarget } =
+    parseScreensVersion(config['screens-version']);
+
+  if (screensRefType === 'local' && config['force-fetch']) {
     console.error(
       `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'local'.`,
     );
     console.error(
-      `Explanation: The 'local' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s main -f).\n`,
+      `Explanation: The 'local' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
     );
     process.exit(1);
   }
@@ -148,6 +191,8 @@ function getConfig() {
 
   return {
     ...config,
+    'screens-ref-type': screensRefType,
+    'screens-ref-target': screensRefTarget,
     platform: config.platform.toLowerCase(),
     capitalizedVariant:
       config.variant.charAt(0).toUpperCase() +

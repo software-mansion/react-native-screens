@@ -12,6 +12,8 @@ console.log('⚙️  Script started with configuration:');
 console.table({
   'rn-version': config['rn-version'],
   'screens-version': config['screens-version'],
+  'screens-ref-type': config['screens-ref-type'],
+  'screens-ref-target': config['screens-ref-target'],
   variant: config.variant,
   platform: config.platform,
   'app-name': config['app-name'],
