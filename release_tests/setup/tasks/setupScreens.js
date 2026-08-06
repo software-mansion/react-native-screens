@@ -78,14 +78,14 @@ function cloneCommitLocal(
 function failRemoteClone(target, config, tempCloneDir, refType) {
   if (config['force-fetch']) {
     console.error(
-      `\n❌ FATAL ERROR: Version '${target}' was not found on the network.`,
+      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
     );
   } else {
     console.error(
-      `\n❌ FATAL ERROR: Version '${target}' was not found locally or on the network.`,
+      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally or on the network.`,
     );
   }
-  if (refType == null && looksLikeCommitHash(target)) {
+  if (refType === 'unknown' && looksLikeCommitHash(target)) {
     console.error(
       `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
     );
@@ -114,11 +114,12 @@ function cloneFromRemoteAsBranch(
   tempCloneDir,
   config,
   runCommand,
+  refType,
 ) {
   try {
     cloneBranchOrTag(remoteUrl, target, tempCloneDir, config, runCommand);
   } catch {
-    failRemoteClone(target, config, tempCloneDir);
+    failRemoteClone(target, config, tempCloneDir, refType);
   }
 }
 
@@ -164,7 +165,14 @@ function prepareClone(
   }
 
   // branch / tag / unknown — clone --branch (bare commit hashes need commit:<sha>)
-  cloneFromRemoteAsBranch(remoteUrl, target, tempCloneDir, config, runCommand);
+  cloneFromRemoteAsBranch(
+    remoteUrl,
+    target,
+    tempCloneDir,
+    config,
+    runCommand,
+    refType,
+  );
 }
 
 function setupCurrentScreens(config, utils) {
