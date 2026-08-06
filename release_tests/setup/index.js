@@ -14,6 +14,7 @@ console.table({
   'screens-version': config['screens-version'],
   variant: config.variant,
   platform: config.platform,
+  'app-name': config['app-name'],
   'force-fetch': config['force-fetch'],
   'example-app': config['example-app'],
   gamma: config.gamma,

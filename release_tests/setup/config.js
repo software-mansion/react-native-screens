@@ -45,6 +45,11 @@ function getConfig() {
         short: 'p',
         default: 'both',
       },
+      'app-name': {
+        type: 'string',
+        short: 'a',
+        default: 'PlaygroundApp',
+      },
     },
     strict: false,
   });
@@ -65,6 +70,8 @@ function getConfig() {
                                          Mutually exclusive with --screens-version 'local'.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
+        -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
+                                         Must start with a letter and contain only letters and digits.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
                                          Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory 
                                          exists, it will also be copied. Use 'empty' to skip copying 
@@ -84,6 +91,7 @@ function getConfig() {
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
         node setup_app.js -r 0.74.0 -v release              # Combine short flags
         node setup_app.js -p ios                            # Build iOS only
+        node setup_app.js -a MyPlayground                   # Generate app under playground/MyPlayground
     `);
     process.exit(0);
   }
@@ -102,6 +110,13 @@ function getConfig() {
     process.exit(1);
   }
 
+  if (!/^[A-Za-z][A-Za-z0-9]*$/.test(config['app-name'])) {
+    console.error(
+      `\n❌ FATAL ERROR: Invalid app name: ${config['app-name']}. Must start with a letter and contain only letters and digits.\n`,
+    );
+    process.exit(1);
+  }
+
   if (config['screens-version'] === 'local' && config['force-fetch']) {
     console.error(
       `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'local'.`,
@@ -113,7 +128,8 @@ function getConfig() {
   }
 
   const releaseTests = path.resolve(__dirname, '..');
-  const appName = 'PlaygroundApp';
+  const appName = config['app-name'];
+  const playground = path.join(releaseTests, 'playground');
 
   if (config['example-app'] !== 'empty') {
     const exampleAppFile = path.join(
@@ -139,8 +155,9 @@ function getConfig() {
     appName,
     paths: {
       releaseTests,
+      playground,
       screens: path.resolve(releaseTests, '..'),
-      app: path.join(releaseTests, appName),
+      app: path.join(playground, appName),
       log: path.join(releaseTests, 'setup.log'),
     },
   };
