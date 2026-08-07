@@ -84,6 +84,10 @@ function getConfig() {
         short: 'a',
         default: 'PlaygroundApp',
       },
+      build: {
+        type: 'boolean',
+        default: false,
+      },
       run: {
         type: 'boolean',
         default: false,
@@ -135,8 +139,11 @@ function getConfig() {
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x, no gamma).
         -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
                                          Required when testing experimental Stack implementation in RNS 4.x.
-            --run                        Build, install, and launch the app (starts Metro).
-                                         Without this flag the script only compiles (no launch).
+            --build                      After setup, compile native apps (gradlew / xcodebuild).
+                                         Mutually exclusive with --run.
+            --run                        After setup, build, install, and launch the app (starts Metro).
+                                         Mutually exclusive with --build.
+                                         Default (neither flag): setup only — no native compile, no launch.
             --ios-simulator <name>       Optional iOS simulator name for --run.
                                          Without any iOS target flag, RN CLI picks the device.
                                          Mutually exclusive with --ios-device and --ios-udid.
@@ -148,10 +155,11 @@ function getConfig() {
         -h, --help                       Display this help message
       
       Examples:
-        node setup_app.js                                   # Build only (latest, current, debug)
-        node setup_app.js -v release                        # Build only, release variant
-        node setup_app.js --run                             # Build + run (debug)
-        node setup_app.js --run -v release                  # Build + run, release variant
+        node setup_app.js                                   # Setup only (init, example, screens, iOS pods)
+        node setup_app.js --build                           # Setup + native compile (debug)
+        node setup_app.js --build -v release                # Setup + native compile (release)
+        node setup_app.js --run                             # Setup + build & launch (debug)
+        node setup_app.js --run -v release                  # Setup + build & launch (release)
         node setup_app.js --run -p ios --ios-simulator "iPhone 16"
         node setup_app.js --run -p ios --ios-device "Karol's iPhone"
         node setup_app.js --run -p android --android-device "emulator-5554"
@@ -162,8 +170,8 @@ function getConfig() {
         node setup_app.js -s main                           # Auto-detect ref type
         node setup_app.js -s branch:fix-bug -f              # Force-fetch branch from remote origin
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
-        node setup_app.js -r 0.74.0 -v release              # Combine short flags
-        node setup_app.js -p ios                            # Build iOS only
+        node setup_app.js -r 0.74.0 --build -v release      # Combine short flags
+        node setup_app.js -p ios --build                    # Setup iOS + xcodebuild
         node setup_app.js -a MyPlayground                   # Generate app under playground/MyPlayground
     `);
     process.exit(0);
@@ -229,10 +237,19 @@ function getConfig() {
     );
   }
 
+  const build = Boolean(config.build);
+  const run = Boolean(config.run);
+
+  if (build && run) {
+    fatal(
+      `Cannot use '--build' and '--run' together. Use '--build' for compile-only or '--run' to build and launch.`,
+    );
+  }
+
   const hasDeviceFlags = Boolean(
     iosSimulator || iosDevice || iosUdid || androidDevice,
   );
-  if (hasDeviceFlags && !config.run) {
+  if (hasDeviceFlags && !run) {
     fatal(
       `Device flags require '--run'. They only apply when launching the app.`,
     );
@@ -259,7 +276,8 @@ function getConfig() {
   return {
     ...config,
     variant,
-    run: Boolean(config.run),
+    build,
+    run,
     'ios-simulator': iosSimulator,
     'ios-device': iosDevice,
     'ios-udid': iosUdid,
