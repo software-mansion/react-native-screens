@@ -19,13 +19,7 @@ function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   });
 }
 
-function buildAndPackScreens(
-  sourceDir,
-  packFile,
-  config,
-  { runCommand },
-  { move = false } = {},
-) {
+function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
   runCommand('yarn install', sourceDir, config.paths.log);
   runCommand('yarn prepare', sourceDir, config.paths.log);
 
@@ -33,16 +27,11 @@ function buildAndPackScreens(
   const rawPackFile = output.trim().split('\n').pop();
   const packedPath = path.join(sourceDir, rawPackFile);
 
-  if (move) {
-    fs.renameSync(packedPath, packFile);
-    logger.append(config.paths.log, `Moved packed file to: ${packFile}\n`);
-  } else {
-    fs.copyFileSync(packedPath, packFile);
-    logger.append(
-      config.paths.log,
-      `Copied packed file from tmp to: ${packFile}\n`,
-    );
-  }
+  fs.renameSync(packedPath, packFile);
+  logger.append(
+    config.paths.log,
+    `Moved packed file from ${packedPath} to ${packFile}\n`,
+  );
 }
 
 function setupCurrentScreens(config, utils) {
@@ -55,9 +44,7 @@ function setupCurrentScreens(config, utils) {
     config.paths.log,
     () => {
       console.log(`\n📦 Building package from current working tree...\n`);
-      buildAndPackScreens(config.paths.screens, packFile, config, utils, {
-        move: true,
-      });
+      buildAndPackScreens(config.paths.screens, packFile, config, utils);
     },
   );
 
