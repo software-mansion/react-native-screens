@@ -2,6 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfiOS,
   dismissToast,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import {
@@ -32,20 +33,22 @@ function checkmarkFor(itemLabel: string) {
 // single picker, taps the option, and closes it again before the next call -
 // i.e. at most one picker is expanded at any time. Keep that invariant.
 async function setTitle(itemIndex: number, variant: 'foo' | 'bar') {
-  const pickerId = `title-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`title-${variant}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `title-picker-${itemIndex}`,
+    label: 'Title',
+    option: variant,
+  });
 }
 
 async function setMenuMode(
   itemIndex: number,
   mode: 'none' | 'single' | 'multi',
 ) {
-  const pickerId = `menu-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`menu-${mode}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `menu-picker-${itemIndex}`,
+    label: 'Menu',
+    option: mode,
+  });
 }
 
 describeIfiOS('Stack Header Selective Updates (iOS)', () => {

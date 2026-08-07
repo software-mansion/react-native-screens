@@ -2,6 +2,8 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
+  rewindAndScrollUntilVisible,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW } from '../../native-class-names';
@@ -29,41 +31,21 @@ const ALL_TITLES = [
 
 type MenuTitle = (typeof ALL_TITLES)[number];
 
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
+// Small steps — a larger one can scroll a short picker row past the viewport.
+const SCROLL_STEP = 300;
 
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
-  await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
-  await waitFor(element(by.id(id)))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(300, 'down', Number.NaN, 0.85);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
-// Closing the picker again matters: its option rows stay in the hierarchy and
-// would collide with the `by.text` matchers used for the toolbar menu items.
 async function selectOption(
   pickerId: string,
   pickerLabel: string,
   option: string,
 ) {
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(
-    `${pickerLabel}: ${option}`,
+  await selectPickerOption(
+    { pickerId, label: pickerLabel, option },
+    { scrollViewId: SCROLLVIEW_ID, pixelsPerStep: SCROLL_STEP },
   );
 }
 

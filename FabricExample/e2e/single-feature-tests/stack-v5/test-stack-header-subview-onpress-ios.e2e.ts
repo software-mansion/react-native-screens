@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfiOS,
   dismissToast,
-  getElementAttributes,
+  getFrame,
   isIOSVersionAtLeast,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
@@ -54,10 +54,7 @@ const overflowButton = element(by.id('OverflowBarButtonItem'));
  * off-menu coordinate has to be computed.
  */
 async function dismissMenu() {
-  const { frame } = await getElementAttributes({
-    by: 'type',
-    value: '_UIContextMenuPlatterTransitionView',
-  });
+  const frame = await getFrame(by.type('_UIContextMenuPlatterTransitionView'));
   await device.tap({
     x: frame.x + frame.width / 2,
     y: frame.y + frame.height / 2,
