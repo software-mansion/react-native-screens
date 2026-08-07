@@ -471,6 +471,14 @@
                                                                    withHeaderEventsDelegate:_eventsDelegate
                                                                             withImageLoader:_imageLoader];
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (item.identifier != nil) {
+      barButtonItem.identifier = item.identifier;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
     __weak auto weakSelf = self;

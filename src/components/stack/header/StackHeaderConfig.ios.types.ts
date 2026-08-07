@@ -94,6 +94,25 @@ export interface SupportsMenuIOS {
   menu?: StackHeaderMenuIOS | undefined;
 }
 
+export interface SupportsIdentifierIOS {
+  /**
+   * @summary Stable identifier used to match the item across different screens
+   * for more intelligent animation on transition.
+   *
+   * @description
+   * When navigating between screens, iOS tries to match similarly looking items (i.e. same sfSymbol)
+   * and animate between them. If the heuristic fails, a simpler crossfade is applied.
+   * In a situation where visually different items should be logically considered the same across screens,
+   * you may use this prop to tell this fact to the system. The identifier shouldn't be updated at runtime;
+   * doing so will results in item rebuild and visual flash.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 26 and higher
+   */
+  identifier?: string | undefined;
+}
+
 /**
  * @summary Native header item with text label.
  *
@@ -101,7 +120,8 @@ export interface SupportsMenuIOS {
  */
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
-    SupportsMenuIOS {
+    SupportsMenuIOS,
+    SupportsIdentifierIOS {
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -126,7 +146,9 @@ export interface StackHeaderInlineItemIOS
  *
  * @platform iOS
  */
-export interface StackHeaderInlineCustomItemIOS extends SupportsMenuIOS {
+export interface StackHeaderInlineCustomItemIOS
+  extends SupportsMenuIOS,
+    SupportsIdentifierIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
