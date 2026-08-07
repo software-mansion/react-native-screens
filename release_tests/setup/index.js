@@ -4,7 +4,7 @@ const utils = require('./utils');
 const initApp = require('./tasks/initApp');
 const copyExample = require('./tasks/copyExample');
 const setupScreens = require('./tasks/setupScreens');
-const buildApp = require('./tasks/buildApp');
+const buildAndRun = require('./tasks/buildApp');
 
 const config = getConfig();
 
@@ -35,7 +35,9 @@ console.time('⏳ Total execution time');
 initApp(config, utils);
 copyExample(config, utils);
 setupScreens(config, utils);
-buildApp(config, utils);
+if (config.run) {
+  buildAndRun(config, utils);
+}
 
 console.log(`🎉 All steps completed successfully!\n`);
 console.timeEnd('⏳ Total execution time');

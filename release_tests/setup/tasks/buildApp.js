@@ -89,21 +89,4 @@ function buildAndRun(config, utils) {
   }
 }
 
-function setupNativeDeps(config, utils) {
-  const { platform } = config;
-  const setupIos = platform === 'ios' || platform === 'both';
-
-  if (setupIos) {
-    installIosPods(config, utils);
-  }
-}
-
-function buildApp(config, utils) {
-  if (config.run) {
-    buildAndRun(config, utils);
-  } else {
-    setupNativeDeps(config, utils);
-  }
-}
-
-module.exports = buildApp;
+module.exports = buildAndRun;
