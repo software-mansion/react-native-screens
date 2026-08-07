@@ -1,4 +1,36 @@
+const fs = require('fs');
 const path = require('path');
+
+function gemfileHasGem(gemfile, gemName) {
+  return new RegExp(`^\\s*gem\\s+['"]${gemName}['"]`, 'm').test(gemfile);
+}
+
+function isRuby34OrNewer(appPath, { runCommand, logPath }) {
+  const version = runCommand(
+    'ruby -e "print RUBY_VERSION"',
+    appPath,
+    logPath,
+    true,
+  ).trim();
+  const [major, minor] = version.split('.').map(Number);
+  return major > 3 || (major === 3 && minor >= 4);
+}
+
+function ensureRuby34Gems(appPath, { runCommand, logPath }) {
+  if (!isRuby34OrNewer(appPath, { runCommand, logPath })) {
+    return;
+  }
+
+  const gemfilePath = path.join(appPath, 'Gemfile');
+  const gemfile = fs.readFileSync(gemfilePath, 'utf8');
+
+  if (!gemfileHasGem(gemfile, 'nkf')) {
+    console.log(
+      `\n⚠️ Gemfile is missing 'nkf' (needed on Ruby 3.4+). Adding it...`,
+    );
+    runCommand('bundle add nkf', appPath, logPath);
+  }
+}
 
 function installIosPods(config, { runTask, runCommand }) {
   const { paths } = config;
@@ -7,34 +39,16 @@ function installIosPods(config, { runTask, runCommand }) {
     const iosDir = path.join(paths.app, 'ios');
     const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
 
-    try {
-      runCommand(
-        `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-        iosDir,
-        paths.log,
-        true,
-      );
-    } catch (error) {
-      const errorMessage =
-        (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
+    ensureRuby34Gems(paths.app, {
+      runCommand,
+      logPath: paths.log,
+    });
 
-      if (errorMessage.includes('cannot load such file -- kconv')) {
-        console.log(
-          '\n⚠️ Detected missing kconv (Ruby 3.4+). Adding nkf gem and retrying...',
-        );
-
-        runCommand('bundle add nkf', paths.app, paths.log);
-
-        runCommand(
-          `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-          iosDir,
-          paths.log,
-          true,
-        );
-      } else {
-        throw error;
-      }
-    }
+    runCommand(
+      `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
+      iosDir,
+      paths.log,
+    );
   });
 }
 
