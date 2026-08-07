@@ -4,6 +4,11 @@ const { parseArgs } = require('util');
 
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 
+function fatal(message) {
+  console.error(`\n❌ FATAL ERROR: ${message}\n`);
+  process.exit(1);
+}
+
 function parseScreensVersion(screensVersion) {
   if (screensVersion === 'current') {
     return { type: 'current', target: 'current' };
@@ -22,18 +27,12 @@ function parseScreensVersion(screensVersion) {
   }
 
   if (!target) {
-    console.error(
-      `\n❌ FATAL ERROR: Invalid --screens-version '${screensVersion}'. Expected '${type}:<ref>' with a non-empty ref.\n`,
+    fatal(
+      `Invalid --screens-version '${screensVersion}'. Expected '${type}:<ref>' with a non-empty ref.`,
     );
-    process.exit(1);
   }
 
   return { type, target };
-}
-
-function fatal(message) {
-  console.error(`\n❌ FATAL ERROR: ${message}\n`);
-  process.exit(1);
 }
 
 function getConfig() {
@@ -107,8 +106,8 @@ function getConfig() {
   if (config.help) {
     console.log(`
       Usage: node setup_app.js [options]
-      
-      Options:
+
+      Setup options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
         -s, --screens-version <version>  react-native-screens version. Default: 'current'.
                                          Accepts:
@@ -122,49 +121,60 @@ function getConfig() {
                                          Use this to bypass the local git cache (e.g., after force pushes).
                                          Required to fetch a commit from remote (-s commit:<sha> -f).
                                          Mutually exclusive with --screens-version 'current'.
-        -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
-        -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
-        -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
-                                         Must start with a letter and contain only letters and digits.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
-                                         Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory 
-                                         exists, it will also be copied. Use 'empty' to skip copying 
+                                         Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory
+                                         exists, it will also be copied. Use 'empty' to skip copying
                                          and keep the default RN App.tsx.
                                          Available: 'tabsAndStack' (Stack v5 from main export; RNS 5.x),
                                          'tabsAndStackExperimental' (Stack v5 from experimental; RNS 4.x + gamma),
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x, no gamma).
-        -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
-                                         Required when testing experimental Stack implementation in RNS 4.x.
-            --run                        After setup, build, install, and launch the app.
-                                         Starts Metro for debug only (skipped for release).
-                                         Default (no flag): setup only — no native compile, no launch.
-            --ios-simulator <name>       Optional iOS simulator name for --run.
-                                         Without any iOS target flag, RN CLI picks the device.
-                                         Mutually exclusive with --ios-device and --ios-udid.
-            --ios-device <name>          Physical iOS device name for --run.
-                                         Mutually exclusive with --ios-simulator and --ios-udid.
-            --ios-udid <udid>            iOS device/simulator UDID for --run.
-                                         Mutually exclusive with --ios-simulator and --ios-device.
-            --android-device <name>      Android device/emulator name for --run (adb device id).
+        -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
+                                         Must start with a letter and contain only letters and digits.
         -h, --help                       Display this help message
-      
+
+      Without --run: JS setup only (init, example, screens) — no pod install, no native compile,
+      no launch. Run flags (-v, -p, -g, device flags) are not allowed.
+
+      Run options (require --run):
+            --run                        After setup: pod install (when platform is ios/both), build,
+                                         install, and launch the app. Starts Metro for debug only
+                                         (skipped for release).
+        -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
+        -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
+        -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
+                                         Required when testing experimental Stack in RNS 4.x.
+                                         Mutually exclusive with -p android.
+
+      Device options (require --run):
+            --ios-simulator <name>       iOS simulator name
+            --ios-device <name>          Physical iOS device name
+            --ios-udid <udid>            iOS device/simulator UDID
+            --android-device <name>      Android device/emulator name (adb device id)
+
+      Note: Device flags require --run. If omitted, RN CLI picks the device.
+      iOS target flags (--ios-simulator, --ios-device, --ios-udid) are mutually exclusive.
+      iOS device flags cannot be used with -p android, --android-device cannot be used with -p ios.
+
       Examples:
-        node setup_app.js                                   # Setup only (init, example, screens, iOS pods)
-        node setup_app.js --run                             # Setup + build & launch (debug)
-        node setup_app.js --run -v release                  # Setup + build & launch (release)
+        # Setup only
+        node setup_app.js
+        node setup_app.js -s branch:main
+        node setup_app.js -s tag:4.16.0
+        node setup_app.js -s commit:8b939b9
+        node setup_app.js -s commit:8b939b9 -f
+        node setup_app.js -s main
+        node setup_app.js -s branch:fix-bug -f
+        node setup_app.js -a MyPlayground
+
+        # Setup + run
+        node setup_app.js --run
+        node setup_app.js --run -v release
+        node setup_app.js --run -p ios
         node setup_app.js --run -p ios --ios-simulator "iPhone 16"
         node setup_app.js --run -p ios --ios-device "Karol's iPhone"
         node setup_app.js --run -p android --android-device "emulator-5554"
-        node setup_app.js -s branch:main                    # Clone branch
-        node setup_app.js -s tag:4.16.0                     # Clone tag
-        node setup_app.js -s commit:8b939b9                 # Commit from local repo
-        node setup_app.js -s commit:8b939b9 -f              # Commit from remote origin
-        node setup_app.js -s main                           # Auto-detect ref type
-        node setup_app.js -s branch:fix-bug -f              # Force-fetch branch from remote origin
-        node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
-        node setup_app.js -r 0.74.0 --run -v release        # Combine short flags
-        node setup_app.js -p ios --run                      # Setup iOS + build & launch
-        node setup_app.js -a MyPlayground                   # Generate app under playground/MyPlayground
+        node setup_app.js -s 4.26-stable --run -g
+        node setup_app.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
   }
@@ -235,12 +245,24 @@ function getConfig() {
 
   const run = Boolean(config.run);
 
-  const hasDeviceFlags = Boolean(
-    iosSimulator || iosDevice || iosUdid || androidDevice,
-  );
-  if (hasDeviceFlags && !run) {
+  const argvHasFlag = (...flags) =>
+    flags.some(flag => process.argv.includes(flag));
+
+  const runOnlyFlags = [
+    argvHasFlag('-v', '--variant') && '-v/--variant',
+    argvHasFlag('-p', '--platform') && '-p/--platform',
+    argvHasFlag('-g', '--gamma') && '-g/--gamma',
+    iosSimulator && '--ios-simulator',
+    iosDevice && '--ios-device',
+    iosUdid && '--ios-udid',
+    androidDevice && '--android-device',
+  ].filter(Boolean);
+
+  if (runOnlyFlags.length > 0 && !run) {
     fatal(
-      `Device flags require '--run'. They only apply when launching the app.`,
+      `Flags ${runOnlyFlags.join(
+        ', ',
+      )} require '--run'. They only apply when building and launching the app.`,
     );
   }
 
