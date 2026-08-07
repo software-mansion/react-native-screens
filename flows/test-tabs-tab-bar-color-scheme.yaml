@@ -1,0 +1,228 @@
+# e2e flow — Tabs · colorScheme (full TabsHost × RN-source matrix)
+#
+# Source of truth: apps/src/tests/single-feature-tests/tabs/test-tabs-tab-bar-color-scheme/index.tsx
+# Scenario:        apps/src/tests/single-feature-tests/tabs/test-tabs-tab-bar-color-scheme/scenario.md
+#
+# What it verifies: the TabsHost `colorScheme` prop across every combination of its 3 values against
+# the 3 RN-source states. There are 3 color-scheme sources in ascending precedence:
+# system < React Native < the TabsHost prop. Setting TabsHost `colorScheme` restyles the whole tabs
+# subtree (content + native tab bar), so each light/dark state is a full-screen, snapshot-friendly
+# contrast. The flow walks the full 3×3 matrix (TabsHost inherit|light|dark × RN unspecified|dark|light)
+# and takes ONE snapshot per cell — 9 in total. It proves both directions of precedence:
+#   • inherit  → tab screen DEFERS to the RN source  (dark→DARK, light→LIGHT)
+#   • light    → tab screen is LIGHT regardless of RN (OVERRIDES a dark RN source)
+#   • dark     → tab screen is DARK  regardless of RN (OVERRIDES a light RN source)
+# Verified on iPhone 17 / iOS 26.5.
+#
+# The 9 snapshots (name → TabsHost / RN source → expected):
+#   tabshost-inherit-rn-unspecified  inherit / unspecified(system default) → follows system (baseline)
+#   tabshost-light-rn-unspecified    light   / unspecified                 → LIGHT
+#   tabshost-dark-rn-unspecified     dark    / unspecified                 → DARK
+#   tabshost-inherit-rn-dark         inherit / dark                        → DARK  (defers to RN)
+#   tabshost-light-overrides-rn-dark light   / dark                        → LIGHT (overrides RN)
+#   tabshost-dark-rn-dark            dark    / dark                        → DARK
+#   tabshost-dark-overrides-rn-light dark    / light                       → DARK  (overrides RN)
+#   tabshost-light-rn-light          light   / light                       → LIGHT
+#   tabshost-inherit-rn-light        inherit / light                       → LIGHT (defers to RN)
+#
+# WHY THIS IS A VISUAL (snapshot) TEST — and not text asserts alone:
+#   Per scenario.md, Detox/structural tooling has NO access to color attributes, so "did the tab bar
+#   actually turn light/dark" cannot be asserted from the element tree — only the picker's selected
+#   VALUE is in the tree, not the resulting pixels. Hence the `snapshot` steps: they capture each
+#   matrix cell, and cells that should differ (light vs dark) MUST differ. The text `assert`s only
+#   confirm the picker state that drives each snapshot.
+#
+# The RN source is driven from INSIDE the app via the on-screen picker (Appearance.setColorScheme),
+# so the flow is fully self-contained — it does NOT shell out to `xcrun simctl ui … appearance …` and
+# never hardcodes a device UDID. `launch:` picks whatever booted device the runner targets, per
+# platform. NOTE: the OS-level system appearance is left at its default the whole run — the "RN
+# unspecified" rows exercise the system path only at that default. The scenario's "run each step once
+# via system setting AND once via the RN API" note is therefore covered ONLY on the RN-API side; the
+# system-toggle variant (Cmd+Shift+A / `adb shell cmd uimode night`) is not exercised here. RN sits
+# above system in precedence, so driving RN is enough to prove the TabsHost override in both
+# directions.
+#
+# Selector / interaction notes (all learned by actually running this on iOS):
+#   - Navigation uses STRICT text selectors `{ text: ... }`. A bare/loose string resolves
+#     identifier-FIRST, and the "Tabs" row's testID `single-feature-tests-Tabs` contains "tabs", so
+#     `tap: "Tabs"` would match that testID and tap WITHOUT navigating. `{ text: "Tabs" }` takes the
+#     accessibility-text path (a coordinate tap on the row), which navigates.
+#   - Picker OPTIONS are selected by COORDINATE tap (documented exception). SettingsPicker builds each
+#     option's testID as `<label>-<item>` (SettingsPicker.tsx), and BOTH pickers on this screen share
+#     the label "colorScheme" — so `colorscheme-light` / `colorscheme-dark` are AMBIGUOUS across the RN
+#     and TabsHost pickers. The options also coalesce into one AX node, so text selectors can't reach
+#     them either. Coordinate taps are unambiguous. Each picker is an inline expander: tap the header to
+#     expand, tap an option to select (it stays expanded), tap the header again to collapse. Coordinates
+#     are stable ONLY while at most one picker is expanded at a time (expanding the RN picker pushes the
+#     TabsHost picker down), so this flow always collapses one before touching the other.
+#     Collapsed:  RN header y=0.335 | TabsHost header y=0.436
+#     RN expanded (header 0.335):      unspecified 0.363 | light 0.387 | dark 0.410
+#     TabsHost expanded (header 0.436): inherit 0.463 | light 0.487 | dark 0.511  (all at x=0.5)
+#   - RENDER-SETTLE: changing a colorScheme reconfigures the native tabs UI; a tap fired too soon after
+#     is swallowed and a plain `wait` doesn't force a render. A `snapshot` runs settleTree AND takes a
+#     screenshot (which forces the render server to finish), so the snapshot after each state change
+#     doubles as the settle before the next picker interaction. Short `wait`s back this up.
+#   - Value asserts are unambiguous by construction: after RN=dark the RN header reads
+#     "colorScheme: dark" while TabsHost still reads "colorScheme: inherit" — so `dark` is unique to RN;
+#     after TabsHost=light, TabsHost reads "colorScheme: light" while RN still reads "colorScheme: dark"
+#     — so `light` is unique to TabsHost. No `await` gates (they read a stale post-transition snapshot);
+#     `assert` re-reads a fresh tree and is reliable.
+#
+# BASELINES: first run must write them —
+#   argent flow run test-tabs-tab-bar-color-scheme --update-baselines
+# Nine full-screen snapshots are taken (one per matrix cell — see the table above). They land in
+# .argent/flows/__baselines__/test-tabs-tab-bar-color-scheme/ (per platform+resolution) and should be
+# committed. Per-snapshot maxMismatch is small (1.0–2.0%); if a dev-build LogBox banner ("Open debugger
+# to view warnings.") or the status-bar clock makes a snapshot flaky, raise that cell's maxMismatch or
+# run a release build / add `LogBox.ignoreAllLogs()` to the dev app. The light↔dark difference is the
+# whole screen, far above any of these thresholds.
+
+steps:
+  - launch:
+      ios: org.reactjs.native.example.FabricExample
+      android: com.fabricexample
+  # --- Navigate: Home → Single Feature Tests → Tabs → Tab Bar Color Scheme ---
+  - echo: "On the example home screen — open Single Feature Tests"
+  - scroll-to: { target: { text: "Single Feature Tests" }, direction: down }
+  - wait: 600
+  - tap: { text: "Single Feature Tests" }
+  - wait: 700
+  # Nav-verify: "FormSheet" is unique to the Scenarios screen — if the tap didn't navigate (banner ate
+  # it), we're still on Home, this fails, and the whole flow is retried from a fresh launch.
+  - assert: { visible: "FormSheet" }
+
+  - echo: "On the Scenarios (Single Feature Tests) list — open the Tabs group"
+  - tap: { text: "Tabs" }
+  - wait: 700
+
+  - echo: "On the Tabs scenarios list — open the Tab Bar Color Scheme scenario"
+  - scroll-to: { target: { text: "Tab Bar Color Scheme" }, direction: down }
+  - wait: 600
+  - tap: { text: "Tab Bar Color Scheme" }
+  - wait: 1200
+
+  # --- Baseline: defaults — RN=unspecified, TabsHost=inherit ---
+  - echo: "Screen loaded — pickers default to RN=unspecified, TabsHost=inherit"
+  - assert: { visible: "TabsHost color scheme" }
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }  
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: inherit" } }
+  - snapshot: { name: tabshost-inherit-rn-unspecified, maxMismatch: 2.0 }
+
+ # --- TabsHost=light → whole tab screen LIGHT ---
+  - echo: "Set TabsHost colorScheme = light (expand TabsHost picker → light → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-light" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }        # collapse TabsHost picker (header now "colorScheme: light")
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }   # RN source untouched (system default)
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: light" } }     # TabsHost=light
+
+  - echo: "TabsHost=light with RN=unspecified → tab screen is LIGHT"
+  - snapshot: { name: tabshost-light-rn-unspecified, maxMismatch: 1.0 }
+
+  # --- TabsHost=dark and the unspecified RN source → whole tab screen DARK ---
+  - echo: "Set TabsHost colorScheme = dark (expand TabsHost picker → dark → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-dark" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }   # RN source untouched (system default)
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: dark" } }     # TabsHost=dark
+  
+  - echo: "TabsHost=dark and RN=unspecified → tab screen is dark"
+  - snapshot: { name: tabshost-dark-rn-unspecified, maxMismatch: 1.0 }
+
+
+  # --- Establish a DARK source on React Native (above system in precedence) ---
+  - echo: "Force the React Native color scheme = dark (expand RN picker → dark → collapse)"
+  - tap: { identifier: react-color-scheme-picker }
+  - tap: { identifier: "colorscheme-dark" }
+  - tap: { identifier: react-color-scheme-picker }
+  - wait: 400
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: dark" } }  
+
+  - echo: "Set TabsHost colorScheme = inherit (expand TabsHost picker → inherit → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-inherit" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: inherit" } }     # TabsHost=inherit (defers to RN=dark)
+
+  # --- TabsHost=inherit + RN=dark → whole tab screen DARK (defers to RN) ---
+  - echo: "TabsHost=inherit defers to RN=dark → tab screen is DARK"
+  - snapshot: { name: tabshost-inherit-rn-dark, maxMismatch: 1.0 }   # dark state + forces render settle
+
+  # --- TabsHost=light overrides the dark RN source → whole tab screen LIGHT (the assertion) ---
+  - echo: "Set TabsHost colorScheme = light (expand TabsHost picker → light → collapse) — should OVERRIDE the dark RN source"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-light" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }        # collapse TabsHost picker (header now "colorScheme: light")
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: dark" } }   # RN source is STILL dark — proves this is an override
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: light" } }     # TabsHost=light (unique; RN still shows "dark")
+
+  - echo: "TabsHost=light overrides RN=dark → tab screen is LIGHT"
+  - snapshot: { name: tabshost-light-overrides-rn-dark, maxMismatch: 1.0 }
+
+  # --- TabsHost=dark and the dark RN source → whole tab screen DARK ---
+  - echo: "Set TabsHost colorScheme = dark (expand TabsHost picker → dark → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-dark" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: dark" } }   # RN source is STILL dark — proves this is an override
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: dark" } }     # TabsHost=dark (unique; RN still shows "dark")
+  
+  - echo: "TabsHost=dark and RN=dark → tab screen is dark"
+  - snapshot: { name: tabshost-dark-rn-dark, maxMismatch: 1.0 }
+
+  - echo: "Done for RN=dark, TabsHost=inherit rendered DARK and TabsHost=light rendered LIGHT, TabsHost=dark rendered DARK: the prop overrides the RN source."
+
+# --- Establish a LIGHT source on React Native ---
+  - echo: "Force the React Native color scheme = light (expand RN picker → light → collapse)"
+  - tap: { identifier: react-color-scheme-picker }
+  - tap: { identifier: "colorscheme-light" }
+  - tap: { identifier: react-color-scheme-picker }
+  - wait: 400
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: light" } }  
+
+    # --- TabsHost=dark overrides the light RN source → whole tab screen DARK (the assertion) ---
+  - echo: "Assert that TabsHost colorScheme = dark — should OVERRIDE the light RN source"
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: dark" } }
+
+  - echo: "TabsHost=dark overrides RN=light → tab screen is DARK"
+  - snapshot: { name: tabshost-dark-overrides-rn-light, maxMismatch: 1.0 }
+
+  # --- TabsHost=light + RN=light → whole tab screen LIGHT ---
+  - echo: "Set TabsHost colorScheme = light"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-light" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: light" } }   # RN source is light
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: light" } }     # TabsHost=light
+
+  - echo: "TabsHost=light with RN=light → tab screen is LIGHT"
+  - snapshot: { name: tabshost-light-rn-light, maxMismatch: 1.0 }
+
+  # --- TabsHost=inherit + RN=light → whole tab screen LIGHT (defers to RN) ---
+  - echo: "Set TabsHost colorScheme = inherit"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-inherit" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: light" } }   # RN source is light
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: inherit" } }     # TabsHost=inherit (defers to RN=light)
+
+  - echo: "TabsHost=inherit defers to RN=light → tab screen is LIGHT"
+  - snapshot: { name: tabshost-inherit-rn-light, maxMismatch: 1.0 }
+
+
+  - echo: "Done — with RN=light, TabsHost=inherit rendered LIGHT and TabsHost=light rendered LIGHT, TabsHost=dark rendered DARK: the prop overrides the RN source."

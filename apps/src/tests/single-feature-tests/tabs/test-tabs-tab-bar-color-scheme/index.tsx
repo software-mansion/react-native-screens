@@ -49,6 +49,7 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>React Native's color scheme</Text>
         <SettingsPicker<ColorSchemeName>
+          testID = "react-color-scheme-picker"
           label={'colorScheme'}
           value={reactColorScheme}
           onValueChange={function (value: ColorSchemeName): void {
@@ -61,6 +62,7 @@ function ConfigScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>TabsHost color scheme</Text>
         <SettingsPicker<NonNullable<TabsHostColorScheme>>
+          testID = "tabshost-color-scheme-picker"
           label={'colorScheme'}
           value={hostConfig.colorScheme ?? 'inherit'}
           onValueChange={value => updateHostConfig({ colorScheme: value })}
