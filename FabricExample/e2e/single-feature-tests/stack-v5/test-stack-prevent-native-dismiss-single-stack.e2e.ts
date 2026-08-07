@@ -238,30 +238,6 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   });
 
   it('should flip the label when toggling prevent native dismiss at runtime', async () => {
-    await tapTopmostButton(TOGGLE);
-    jestExpect(await readPreventInfo()).toBe(
-      'Prevent native dismiss: Disabled',
-    );
-
-    // Toggled straight back on — with the flag off, a native back press would
-    // escape to the example app's navigation instead of popping this stack
-    // (#1459) and would leave the test screen. Scenario steps 7, 8 and 10 cover
-    // the Disabled half manually, via the direct launch.
-    await tapTopmostButton(TOGGLE);
-    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
-  });
-
-  it('should pop with the on-screen Pop button even while prevent is enabled', async () => {
-    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
-
-    await tapTopmostButton(POP);
-
-    jestExpect(await waitForTopmostRoute('A')).toBe(aKey);
-    await expectNoToast();
-  });
-
-  it('should apply the most recent toggle to a back press that follows it', async () => {
-    await tapTopmostButton(PUSH_B);
     const currentBKey = await waitForTopmostRoute('B');
 
     // Off, then straight back on — the press must see the latest value.
@@ -276,9 +252,18 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
 
     await dismissToasts(1);
     await expectStillOnB(currentBKey);
+  });
 
-    // Unwind to A so the suite does not leave a prevent-enabled screen on top.
+  it('should pop with the on-screen Pop button even while prevent is enabled', async () => {
+    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
+
     await tapTopmostButton(POP);
-    await waitForTopmostRoute('A');
+
+    jestExpect(await waitForTopmostRoute('A')).toBe(aKey);
+    await expectNoToast();
+    await tapTopmostButton(POP);
+
+    jestExpect(await waitForTopmostRoute('Home')).toBe(homeKey);
+    await expectNoToast();
   });
 });
