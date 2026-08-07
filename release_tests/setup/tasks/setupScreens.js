@@ -53,7 +53,6 @@ function setupCurrentScreens(config, utils) {
 
 function setupGitScreens(config, utils) {
   const { runTask, runCommand } = utils;
-  const tempCloneDir = fs.mkdtempSync(path.join(os.tmpdir(), 'screens-clone-'));
   const refType = config['screens-ref-type'];
   const target = config['screens-ref-target'];
   const packFileName = `screens-${target.replace(/\//g, '-')}.tgz`;
@@ -65,29 +64,34 @@ function setupGitScreens(config, utils) {
     `Preparing target version (${refType}:${target}) in temporary directory`,
     config.paths.log,
     () => {
-      const remoteUrl = getRemoteUrl(screensPath);
-      const useLocal = !forceFetch && refExistsLocally(screensPath, target);
+      let tempCloneDir;
+      try {
+        tempCloneDir = fs.mkdtempSync(
+          path.join(os.tmpdir(), 'screens-clone-'),
+        );
 
-      if (forceFetch) {
-        console.log(
-          `\n☁️ Force-fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
-        );
-      } else {
-        console.log(
-          `\n🔍 Checking if version '${target}' (${refType}) exists in the local repository...`,
-        );
-        if (useLocal) {
+        const remoteUrl = getRemoteUrl(screensPath);
+        const useLocal = !forceFetch && refExistsLocally(screensPath, target);
+
+        if (forceFetch) {
           console.log(
-            `\n📂 Using version '${target}' (${refType}) from the local repository.`,
+            `\n☁️ Force-fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
           );
         } else {
           console.log(
-            `\n☁️ Version '${target}' (${refType}) not found locally. Fetching from the network (${remoteUrl})...`,
+            `\n🔍 Checking if version '${target}' (${refType}) exists in the local repository...`,
           );
+          if (useLocal) {
+            console.log(
+              `\n📂 Using version '${target}' (${refType}) from the local repository.`,
+            );
+          } else {
+            console.log(
+              `\n☁️ Version '${target}' (${refType}) not found locally. Fetching from the network (${remoteUrl})...`,
+            );
+          }
         }
-      }
 
-      try {
         cloneScreensRef({
           refType,
           target,
@@ -104,7 +108,9 @@ function setupGitScreens(config, utils) {
         console.log(`\n📦 Building package in an isolated environment...\n`);
         buildAndPackScreens(tempCloneDir, packFile, config, utils);
       } finally {
-        fs.rmSync(tempCloneDir, { recursive: true, force: true });
+        if (tempCloneDir) {
+          fs.rmSync(tempCloneDir, { recursive: true, force: true });
+        }
       }
     },
   );

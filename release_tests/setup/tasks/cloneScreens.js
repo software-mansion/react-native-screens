@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { execSync } = require('child_process');
 
 function getRemoteUrl(screensPath) {
@@ -46,7 +45,7 @@ function looksLikeCommitHash(ref) {
   return /^[0-9a-f]{7,40}$/i.test(ref);
 }
 
-function failRemoteClone({ target, forceFetch, tempCloneDir, refType }) {
+function failRemoteClone({ target, forceFetch, refType }) {
   if (forceFetch) {
     console.error(
       `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
@@ -61,8 +60,7 @@ function failRemoteClone({ target, forceFetch, tempCloneDir, refType }) {
       `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
     );
   }
-  fs.rmSync(tempCloneDir, { recursive: true, force: true });
-  process.exit(1);
+  throw new Error(`Version '${refType}:${target}' was not found`);
 }
 
 function cloneScreensRef({
@@ -118,7 +116,7 @@ function cloneScreensRef({
       cloneBranch(remoteUrl);
     }
   } catch {
-    failRemoteClone({ target, forceFetch, tempCloneDir, refType });
+    failRemoteClone({ target, forceFetch, refType });
   }
 }
 
