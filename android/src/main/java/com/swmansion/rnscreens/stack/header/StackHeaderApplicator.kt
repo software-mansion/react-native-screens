@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.stack.header
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -11,11 +11,8 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.widget.TextViewCompat
-import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
@@ -43,7 +40,12 @@ internal class StackHeaderApplicator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ): StackHeaderAppBarLayout {
-        val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
+        val appBar =
+            StackHeaderAppBarLayout.create(
+                wrappedContext,
+                config.type,
+                config.collapsedTitleGravityMode,
+            )
 
         if (config.transparent) {
             coordinatorLayout.removeContentBehavior()
@@ -84,30 +86,21 @@ internal class StackHeaderApplicator(
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
-        populateTitleOrCenter(appBar, toolbar, config)
+        populateCenterSubview(appBar, toolbar, config)
         populateBackground(appBar, config)
     }
 
-    private fun populateTitleOrCenter(
+    private fun populateCenterSubview(
         appBar: StackHeaderAppBarLayout,
         toolbar: Toolbar,
         config: StackHeaderConfigurationProviding,
     ) {
-        val centerSubview = config.centerSubview
-        if (centerSubview != null) {
-            if (appBar is StackHeaderAppBarLayout.Small) {
-                centerSubview.view.detachFromCurrentParent()
-                toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
-            } else {
-                Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
-            }
-        } else if (appBar is StackHeaderAppBarLayout.Small) {
-            // Small header needs a managed title view because we can't use Toolbar's native
-            // title — it would be laid out to the leading side of leading subview.
-            val titleView = createManagedTitleView(toolbar)
-            appBar.managedTitleView = titleView
-            val index = if (config.isRTL) 0 else -1
-            toolbar.addView(titleView, index, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
+        val centerSubview = config.centerSubview ?: return
+        if (appBar is StackHeaderAppBarLayout.Small) {
+            centerSubview.view.detachFromCurrentParent()
+            toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
+        } else {
+            Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
         }
     }
 
@@ -144,47 +137,60 @@ internal class StackHeaderApplicator(
         )
     }
 
-    private fun createManagedTitleView(toolbar: Toolbar): AppCompatTextView =
-        AppCompatTextView(toolbar.context).apply {
-            setSingleLine()
-            ellipsize = TextUtils.TruncateAt.END
-            TextViewCompat.setTextAppearance(
-                this,
-                R.style.TextAppearance_Material3_TitleLarge,
-            )
-            layoutParams =
-                Toolbar
-                    .LayoutParams(
-                        WRAP_CONTENT,
-                        WRAP_CONTENT,
-                        Gravity.START,
-                    ).apply {
-                        // TODO: there seems to be a problem with collapsing margins.
-                        //       We will expose customization either way but we should
-                        //       have consistent behavior and defaults.
-                        marginStart = toolbar.titleMarginStart + toolbar.contentInsetStart
-                        marginEnd = toolbar.titleMarginEnd
-                        topMargin = toolbar.titleMarginTop
-                        bottomMargin = toolbar.titleMarginBottom
-                    }
-        }
-
     // endregion
 
     // region In-place updates
 
-    internal fun applyTitle(
+    // ctl.setMaxLines() is listed in Material docs in the same way as other props but for some
+    // reason it's restricted.
+    @SuppressLint("RestrictedApi")
+    internal fun applyTitleAndSubtitle(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
-                appBar.managedTitleView?.text = config.title
-                appBar.managedTitleView?.requestLayout()
+                appBar.toolbar.title = config.title
+                appBar.toolbar.subtitle = config.subtitle
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
-                appBar.collapsingToolbarLayout.title = config.title
+                val ctl = appBar.collapsingToolbarLayout
+
+                // Due to a bug in Material's CollapsingToolbarLayout implementation, showing
+                // subtitle in runtime while header is collapsed results in incorrect scroll offset
+                // unless more than 1 line is used. See CollapsingToolbarLayout.java:783
+                // (material-1.14.0). For now, we're hardcoding number of lines to 2. In the future,
+                // we're planning to expose this prop to the user. We should consider what the
+                // default value should be.
+                ctl.maxLines = 2
+
+                ctl.title = config.title
+                ctl.subtitle = config.subtitle
+
+                // setText only recomputes draw offsets within the existing bounds; the
+                // title/subtitle vertical split is recomputed only in onLayout. Force a layout
+                // so toggling the subtitle at runtime reclaims the title space.
+                ctl.requestLayout()
+            }
+        }
+    }
+
+    internal fun applyTitlePositioning(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.toolbar.isTitleCentered = config.titleCentered
+                appBar.toolbar.isSubtitleCentered = config.subtitleCentered
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                appBar.collapsingToolbarLayout.expandedTitleGravity =
+                    config.expandedTitleHorizontalGravity or config.expandedTitleVerticalGravity
+                appBar.collapsingToolbarLayout.collapsedTitleGravity =
+                    config.collapsedTitleHorizontalGravity or config.collapsedTitleVerticalGravity
             }
         }
     }

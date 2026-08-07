@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.stack.header.config
 
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -125,6 +126,69 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.title = value ?: ""
+    }
+
+    override fun setSubtitle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitle = value ?: ""
+    }
+
+    override fun setTitleCentered(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.titleCentered = value
+    }
+
+    override fun setSubtitleCentered(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.subtitleCentered = value
+    }
+
+    override fun setExpandedTitleHorizontalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleHorizontalGravity = parseHorizontalGravity(value)
+    }
+
+    override fun setExpandedTitleVerticalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleVerticalGravity = parseVerticalGravity(value)
+    }
+
+    override fun setCollapsedTitleHorizontalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleHorizontalGravity = parseHorizontalGravity(value)
+    }
+
+    override fun setCollapsedTitleVerticalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleVerticalGravity = parseVerticalGravity(value)
+    }
+
+    override fun setCollapsedTitleGravityMode(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleGravityMode =
+            when (value) {
+                "entireSpace" -> StackHeaderCollapsedTitleGravityMode.ENTIRE_SPACE
+                "availableSpace" -> StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE
+                else -> throw JSApplicationIllegalArgumentException(
+                    "[RNScreens] Invalid StackHeaderConfig collapsedTitleGravityMode: $value.",
+                )
+            }
     }
 
     override fun setHidden(
@@ -267,6 +331,26 @@ internal open class StackHeaderConfigViewManager :
         }
         view.dispatchMenuElementUpdates(parsed)
     }
+
+    private fun parseHorizontalGravity(value: String?): Int =
+        when (value) {
+            "start" -> Gravity.START
+            "center" -> Gravity.CENTER_HORIZONTAL
+            "end" -> Gravity.END
+            else -> throw JSApplicationIllegalArgumentException(
+                "[RNScreens] Invalid StackHeaderConfig title horizontal gravity: $value.",
+            )
+        }
+
+    private fun parseVerticalGravity(value: String?): Int =
+        when (value) {
+            "top" -> Gravity.TOP
+            "center" -> Gravity.CENTER_VERTICAL
+            "bottom" -> Gravity.BOTTOM
+            else -> throw JSApplicationIllegalArgumentException(
+                "[RNScreens] Invalid StackHeaderConfig title vertical gravity: $value.",
+            )
+        }
 
     companion object {
         private const val TAG = "StackHeaderConfigViewManager"

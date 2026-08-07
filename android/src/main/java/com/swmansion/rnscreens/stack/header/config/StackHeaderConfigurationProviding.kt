@@ -7,6 +7,7 @@ import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenu
 internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
     val title: String
+    val subtitle: String
     val hidden: Boolean
     val transparent: Boolean
     val backButtonHidden: Boolean
@@ -26,6 +27,15 @@ internal interface StackHeaderConfigurationProviding {
     val backgroundSubview: StackHeaderSubviewProviding?
     val toolbarMenu: StackHeaderToolbarMenuConfig
     val toolbarMenuGroupDividerEnabled: Boolean
+
+    val titleCentered: Boolean
+    val subtitleCentered: Boolean
+    val expandedTitleHorizontalGravity: Int
+    val expandedTitleVerticalGravity: Int
+    val collapsedTitleHorizontalGravity: Int
+    val collapsedTitleVerticalGravity: Int
+    val collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+
     val isRTL: Boolean
 
     val invalidationFlags: StackHeaderInvalidationFlags
