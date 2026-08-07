@@ -1,4 +1,3 @@
-const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../logger');
@@ -52,7 +51,7 @@ function setupCurrentScreens(config, utils) {
 }
 
 function setupGitScreens(config, utils) {
-  const { runTask, runCommand } = utils;
+  const { runTask, runCommand, withTempDir } = utils;
   const refType = config['screens-ref-type'];
   const target = config['screens-ref-target'];
   const packFileName = `screens-${target.replace(/\//g, '-')}.tgz`;
@@ -64,12 +63,7 @@ function setupGitScreens(config, utils) {
     `Preparing target version (${refType}:${target}) in temporary directory`,
     config.paths.log,
     () => {
-      let tempCloneDir;
-      try {
-        tempCloneDir = fs.mkdtempSync(
-          path.join(os.tmpdir(), 'screens-clone-'),
-        );
-
+      withTempDir('screens-clone-', tempCloneDir => {
         const remoteUrl = getRemoteUrl(screensPath);
         const useLocal = !forceFetch && refExistsLocally(screensPath, target);
 
@@ -107,11 +101,7 @@ function setupGitScreens(config, utils) {
 
         console.log(`\n📦 Building package in an isolated environment...\n`);
         buildAndPackScreens(tempCloneDir, packFile, config, utils);
-      } finally {
-        if (tempCloneDir) {
-          fs.rmSync(tempCloneDir, { recursive: true, force: true });
-        }
-      }
+      });
     },
   );
 

@@ -1,9 +1,42 @@
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const { execSync } = require('child_process');
 const logger = require('./logger');
 
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
 const METRO_PORT = 8081;
+
+function withTempDir(prefix, fn) {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+  let cleaned = false;
+
+  const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
+    try {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    } catch {
+      // ignore
+    }
+  };
+
+  const onSignal = () => {
+    cleanup();
+    process.exit(130);
+  };
+
+  process.once('SIGINT', onSignal);
+  process.once('SIGTERM', onSignal);
+
+  try {
+    return fn(tempDir);
+  } finally {
+    process.off('SIGINT', onSignal);
+    process.off('SIGTERM', onSignal);
+    cleanup();
+  }
+}
 
 function runCommand(cmd, cwd, logFile, captureOutput = false) {
   logger.append(logFile, `=== COMMAND: ${cmd} ===\n`);
@@ -62,6 +95,7 @@ function freePort(port = METRO_PORT) {
 module.exports = {
   runCommand,
   runTask,
+  withTempDir,
   freePort,
   METRO_PORT,
 };
