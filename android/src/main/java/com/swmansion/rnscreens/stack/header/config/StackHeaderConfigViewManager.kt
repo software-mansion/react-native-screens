@@ -99,6 +99,7 @@ internal open class StackHeaderConfigViewManager :
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
+        view.resolveOverflowIconIfNeeded()
         view.resolveToolbarMenuItemIconsIfNeeded()
     }
 
@@ -181,6 +182,41 @@ internal open class StackHeaderConfigViewManager :
         value: ReadableMap?,
     ) {
         view.backButtonImageIconUri = value?.getString("uri")
+    }
+
+    override fun setOverflowIconTintColorNormal(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorNormal = value
+    }
+
+    override fun setOverflowIconTintColorPressed(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorPressed = value
+    }
+
+    override fun setOverflowIconTintColorFocused(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorFocused = value
+    }
+
+    override fun setOverflowIconDrawableIconResourceName(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.overflowIconDrawableIconResourceName = value
+    }
+
+    override fun setOverflowIconImageIconResource(
+        view: StackHeaderConfig,
+        value: ReadableMap?,
+    ) {
+        view.overflowIconImageIconUri = value?.getString("uri")
     }
 
     override fun setScrollFlagScroll(

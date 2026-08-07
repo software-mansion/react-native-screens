@@ -243,6 +243,11 @@ internal class StackHeaderCoordinatorLayout(
 
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.OVERFLOW_ICON)) {
+                applicator.applyOverflowIcon(appBar.toolbar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+            }
         }
 
         onMaybeHeaderLayoutChanged()

@@ -581,6 +581,63 @@ export interface StackHeaderConfigPropsAndroid {
    */
   backButtonIcon?: PlatformIconAndroid | undefined;
   /**
+   * @summary Custom icon for the overflow menu button (the three-dots button
+   * that opens the toolbar menu's overflow popup).
+   *
+   * @description
+   * When `undefined`, the Material 3 Expressive default overflow icon is used.
+   *
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @platform android
+   */
+  overflowIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon in its normal state.
+   *
+   * @description
+   * When `undefined`, the default tint (the Material theme's menu icon color)
+   * is used. This applies to the default overflow icon and `drawableResource`
+   * icons that have an associated tint. For `imageSource` icons, no tint is
+   * applied by default.
+   *
+   * @platform android
+   */
+  overflowIconTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorFocused?: ColorValue | undefined;
+  /**
    * @summary Whether the header reacts to nested scroll. Required for any
    * other `scrollFlag*` prop to take effect.
    *

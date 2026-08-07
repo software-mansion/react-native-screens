@@ -116,6 +116,26 @@ internal class StackHeaderConfig(
     }
         internal set
 
+    override var overflowIconTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+    }
+        internal set
+
+    override var overflowIconTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+    }
+        internal set
+
+    override var overflowIconTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
+        if (old != new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+    }
+        internal set
+
+    override var overflowIcon: Drawable? by Delegates.observable(null) { _, old, new ->
+        if (old !== new) invalidate(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+    }
+        internal set
+
     override var scrollFlagScroll: Boolean by Delegates.observable(false) { _, old, new ->
         if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
     }
@@ -198,6 +218,34 @@ internal class StackHeaderConfig(
                 IconResolution.Unchanged -> Unit
                 is IconResolution.Resolved -> {
                     backButtonIcon = result.drawable
+                    if (!isInsideMountTransaction) {
+                        flushUpdates()
+                    }
+                }
+            }
+        }
+    }
+
+    // endregion
+
+    // region Overflow menu icon resolution
+
+    // Staging fields for overflow menu icon resolution — mirrors the back button icon.
+    // Resolution happens in resolveOverflowIconIfNeeded(), called from onAfterUpdateTransaction.
+    internal var overflowIconDrawableIconResourceName: String? = null
+    internal var overflowIconImageIconUri: String? = null
+    private val overflowIconResolver = PropIconResolver()
+
+    internal fun resolveOverflowIconIfNeeded() {
+        overflowIconResolver.resolve(
+            reactContext,
+            overflowIconDrawableIconResourceName,
+            overflowIconImageIconUri,
+        ) { result ->
+            when (result) {
+                IconResolution.Unchanged -> Unit
+                is IconResolution.Resolved -> {
+                    overflowIcon = result.drawable
                     if (!isInsideMountTransaction) {
                         flushUpdates()
                     }
