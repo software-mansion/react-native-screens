@@ -141,7 +141,8 @@ function getConfig() {
                                          Required when testing experimental Stack implementation in RNS 4.x.
             --build                      After setup, compile native apps (gradlew / xcodebuild).
                                          Mutually exclusive with --run.
-            --run                        After setup, build, install, and launch the app (starts Metro).
+            --run                        After setup, build, install, and launch the app.
+                                         Starts Metro for debug only (skipped for release).
                                          Mutually exclusive with --build.
                                          Default (neither flag): setup only — no native compile, no launch.
             --ios-simulator <name>       Optional iOS simulator name for --run.
@@ -223,7 +224,9 @@ function getConfig() {
 
   if (iosTargetFlags.length > 1) {
     fatal(
-      `Conflicting iOS target flags: ${iosTargetFlags.join(', ')}. Use only one of --ios-simulator, --ios-device, or --ios-udid.`,
+      `Conflicting iOS target flags: ${iosTargetFlags.join(
+        ', ',
+      )}. Use only one of --ios-simulator, --ios-device, or --ios-udid.`,
     );
   }
 
@@ -233,7 +236,9 @@ function getConfig() {
 
   if (platform === 'android' && iosTargetFlags.length > 0) {
     fatal(
-      `Cannot use iOS device flags (${iosTargetFlags.join(', ')}) when '--platform' is 'android'.`,
+      `Cannot use iOS device flags (${iosTargetFlags.join(
+        ', ',
+      )}) when '--platform' is 'android'.`,
     );
   }
 

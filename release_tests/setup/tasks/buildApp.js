@@ -222,10 +222,12 @@ function buildAndRun(config, utils) {
   const runIos = platform === 'ios' || platform === 'both';
   const runAndroid = platform === 'android' || platform === 'both';
 
-  runTask('Preparing Metro (free port 8081 + start)', paths.log, () => {
-    freePort(8081);
-    startMetro(paths.app, paths.log);
-  });
+  if (config.variant === 'debug') {
+    runTask('Preparing Metro (free port 8081 + start)', paths.log, () => {
+      freePort(8081);
+      startMetro(paths.app, paths.log);
+    });
+  }
 
   if (runAndroid) {
     runTask(
