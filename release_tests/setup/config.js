@@ -84,10 +84,6 @@ function getConfig() {
         short: 'a',
         default: 'PlaygroundApp',
       },
-      build: {
-        type: 'boolean',
-        default: false,
-      },
       run: {
         type: 'boolean',
         default: false,
@@ -139,12 +135,9 @@ function getConfig() {
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x, no gamma).
         -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
                                          Required when testing experimental Stack implementation in RNS 4.x.
-            --build                      After setup, compile native apps (gradlew / xcodebuild).
-                                         Mutually exclusive with --run.
             --run                        After setup, build, install, and launch the app.
                                          Starts Metro for debug only (skipped for release).
-                                         Mutually exclusive with --build.
-                                         Default (neither flag): setup only — no native compile, no launch.
+                                         Default (no flag): setup only — no native compile, no launch.
             --ios-simulator <name>       Optional iOS simulator name for --run.
                                          Without any iOS target flag, RN CLI picks the device.
                                          Mutually exclusive with --ios-device and --ios-udid.
@@ -157,8 +150,6 @@ function getConfig() {
       
       Examples:
         node setup_app.js                                   # Setup only (init, example, screens, iOS pods)
-        node setup_app.js --build                           # Setup + native compile (debug)
-        node setup_app.js --build -v release                # Setup + native compile (release)
         node setup_app.js --run                             # Setup + build & launch (debug)
         node setup_app.js --run -v release                  # Setup + build & launch (release)
         node setup_app.js --run -p ios --ios-simulator "iPhone 16"
@@ -171,8 +162,8 @@ function getConfig() {
         node setup_app.js -s main                           # Auto-detect ref type
         node setup_app.js -s branch:fix-bug -f              # Force-fetch branch from remote origin
         node setup_app.js -s 4.26-stable -g                 # Enable gamma flag for experimental stack in 4.x
-        node setup_app.js -r 0.74.0 --build -v release      # Combine short flags
-        node setup_app.js -p ios --build                    # Setup iOS + xcodebuild
+        node setup_app.js -r 0.74.0 --run -v release        # Combine short flags
+        node setup_app.js -p ios --run                      # Setup iOS + build & launch
         node setup_app.js -a MyPlayground                   # Generate app under playground/MyPlayground
     `);
     process.exit(0);
@@ -242,14 +233,7 @@ function getConfig() {
     );
   }
 
-  const build = Boolean(config.build);
   const run = Boolean(config.run);
-
-  if (build && run) {
-    fatal(
-      `Cannot use '--build' and '--run' together. Use '--build' for compile-only or '--run' to build and launch.`,
-    );
-  }
 
   const hasDeviceFlags = Boolean(
     iosSimulator || iosDevice || iosUdid || androidDevice,
@@ -281,7 +265,6 @@ function getConfig() {
   return {
     ...config,
     variant,
-    build,
     run,
     'ios-simulator': iosSimulator,
     'ios-device': iosDevice,

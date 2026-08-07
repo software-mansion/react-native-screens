@@ -20,7 +20,6 @@ console.table({
   'force-fetch': config['force-fetch'],
   'example-app': config['example-app'],
   gamma: config.gamma,
-  build: config.build,
   run: config.run,
   'ios-simulator': config['ios-simulator'] ?? '',
   'ios-device': config['ios-device'] ?? '',
