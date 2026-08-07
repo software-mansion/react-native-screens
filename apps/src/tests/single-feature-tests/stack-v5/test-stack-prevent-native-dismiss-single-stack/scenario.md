@@ -18,21 +18,15 @@ directly to work around issue #1459.
 
 ## E2E test
 
-Incomplete. Android only - `preventNativeDismiss` is not implemented for
-stack v5 on iOS, so there is nothing to assert there.
+Incomplete. Covered:
 
-- Steps 1-4, 6, 9, 11-13: the Enabled half - push navigation, the per-route
-  flag labels, the header chevron being intercepted, the runtime toggle, and
-  the on-screen **Pop** bypassing the flag.
+- Steps 1-4, 6, 9, 12, 13: the header back chevron while `preventNativeDismiss`
+  is **Enabled**, and the **Pop** actions.
 
 **Manual only (not automated):**
 
-- Steps 5, 8: the system gesture-back (edge swipe). Detox cannot perform the
-  OS-level edge gesture.
-- Steps 7, 8, 10: the header chevron while **Disabled**. The e2e reaches this
-  screen through the example app's own navigation, where an unintercepted back
-  press escapes to the outer navigator instead of popping the stack (issue
-  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)).
+- Steps 5, 8: the system gesture-back (edge swipe).
+- Steps 7, 8, 10, 11: the header chevron while **Disabled**.
 
 ## Prerequisites
 
