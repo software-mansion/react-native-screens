@@ -20,6 +20,11 @@ console.table({
   'force-fetch': config['force-fetch'],
   'example-app': config['example-app'],
   gamma: config.gamma,
+  run: config.run,
+  'ios-simulator': config['ios-simulator'] ?? '',
+  'ios-device': config['ios-device'] ?? '',
+  'ios-udid': config['ios-udid'] ?? '',
+  'android-device': config['android-device'] ?? '',
 });
 console.log('--------------------------------------------------');
 

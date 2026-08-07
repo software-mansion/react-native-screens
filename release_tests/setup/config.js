@@ -31,6 +31,11 @@ function parseScreensVersion(screensVersion) {
   return { type, target };
 }
 
+function fatal(message) {
+  console.error(`\n❌ FATAL ERROR: ${message}\n`);
+  process.exit(1);
+}
+
 function getConfig() {
   const { values: config } = parseArgs({
     options: {
@@ -79,6 +84,22 @@ function getConfig() {
         short: 'a',
         default: 'PlaygroundApp',
       },
+      run: {
+        type: 'boolean',
+        default: false,
+      },
+      'ios-simulator': {
+        type: 'string',
+      },
+      'ios-device': {
+        type: 'string',
+      },
+      'ios-udid': {
+        type: 'string',
+      },
+      'android-device': {
+        type: 'string',
+      },
     },
     strict: false,
   });
@@ -114,10 +135,26 @@ function getConfig() {
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x, no gamma).
         -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
                                          Required when testing experimental Stack implementation in RNS 4.x.
+            --run                        Build, install, and launch the app (starts Metro).
+                                         Without this flag the script only compiles (no launch).
+            --ios-simulator <name>       Optional iOS simulator name for --run.
+                                         Without any iOS target flag, RN CLI picks the device.
+                                         Mutually exclusive with --ios-device and --ios-udid.
+            --ios-device <name>          Physical iOS device name for --run.
+                                         Mutually exclusive with --ios-simulator and --ios-udid.
+            --ios-udid <udid>            iOS device/simulator UDID for --run.
+                                         Mutually exclusive with --ios-simulator and --ios-device.
+            --android-device <name>      Android device/emulator name for --run (adb device id).
         -h, --help                       Display this help message
       
       Examples:
-        node setup_app.js                                   # Runs with defaults (latest, current, debug)
+        node setup_app.js                                   # Build only (latest, current, debug)
+        node setup_app.js -v release                        # Build only, release variant
+        node setup_app.js --run                             # Build + run (debug)
+        node setup_app.js --run -v release                  # Build + run, release variant
+        node setup_app.js --run -p ios --ios-simulator "iPhone 16"
+        node setup_app.js --run -p ios --ios-device "Karol's iPhone"
+        node setup_app.js --run -p android --android-device "emulator-5554"
         node setup_app.js -s branch:main                    # Clone branch
         node setup_app.js -s tag:4.16.0                     # Clone tag
         node setup_app.js -s commit:8b939b9                 # Commit from local repo
@@ -132,25 +169,24 @@ function getConfig() {
     process.exit(0);
   }
 
-  if (!['debug', 'release'].includes(config.variant.toLowerCase())) {
-    console.error(
-      `\n❌ FATAL ERROR: Unknown build variant: ${config.variant}. Allowed: 'debug', 'release'.\n`,
+  const variant = config.variant.toLowerCase();
+  if (!['debug', 'release'].includes(variant)) {
+    fatal(
+      `Unknown build variant: ${config.variant}. Allowed: 'debug', 'release'.`,
     );
-    process.exit(1);
   }
 
-  if (!['ios', 'android', 'both'].includes(config.platform.toLowerCase())) {
-    console.error(
-      `\n❌ FATAL ERROR: Unknown platform: ${config.platform}. Allowed: 'ios', 'android', 'both'.\n`,
+  const platform = config.platform.toLowerCase();
+  if (!['ios', 'android', 'both'].includes(platform)) {
+    fatal(
+      `Unknown platform: ${config.platform}. Allowed: 'ios', 'android', 'both'.`,
     );
-    process.exit(1);
   }
 
   if (!/^[A-Za-z][A-Za-z0-9]*$/.test(config['app-name'])) {
-    console.error(
-      `\n❌ FATAL ERROR: Invalid app name: ${config['app-name']}. Must start with a letter and contain only letters and digits.\n`,
+    fatal(
+      `Invalid app name: ${config['app-name']}. Must start with a letter and contain only letters and digits.`,
     );
-    process.exit(1);
   }
 
   const { type: screensRefType, target: screensRefTarget } =
@@ -166,6 +202,42 @@ function getConfig() {
     process.exit(1);
   }
 
+  const iosSimulator = config['ios-simulator'];
+  const iosDevice = config['ios-device'];
+  const iosUdid = config['ios-udid'];
+  const androidDevice = config['android-device'];
+
+  const iosTargetFlags = [
+    iosSimulator && '--ios-simulator',
+    iosDevice && '--ios-device',
+    iosUdid && '--ios-udid',
+  ].filter(Boolean);
+
+  if (iosTargetFlags.length > 1) {
+    fatal(
+      `Conflicting iOS target flags: ${iosTargetFlags.join(', ')}. Use only one of --ios-simulator, --ios-device, or --ios-udid.`,
+    );
+  }
+
+  if (platform === 'ios' && androidDevice) {
+    fatal(`Cannot use '--android-device' when '--platform' is 'ios'.`);
+  }
+
+  if (platform === 'android' && iosTargetFlags.length > 0) {
+    fatal(
+      `Cannot use iOS device flags (${iosTargetFlags.join(', ')}) when '--platform' is 'android'.`,
+    );
+  }
+
+  const hasDeviceFlags = Boolean(
+    iosSimulator || iosDevice || iosUdid || androidDevice,
+  );
+  if (hasDeviceFlags && !config.run) {
+    fatal(
+      `Device flags require '--run'. They only apply when launching the app.`,
+    );
+  }
+
   const releaseTests = path.resolve(__dirname, '..');
   const appName = config['app-name'];
   const playground = path.join(releaseTests, 'playground');
@@ -178,21 +250,24 @@ function getConfig() {
       'App.tsx',
     );
     if (!fs.existsSync(exampleAppFile)) {
-      console.error(
-        `\n❌ FATAL ERROR: File ${exampleAppFile} not found. Please ensure the example exists.\n`,
+      fatal(
+        `File ${exampleAppFile} not found. Please ensure the example exists.`,
       );
-      process.exit(1);
     }
   }
 
   return {
     ...config,
+    variant,
+    run: Boolean(config.run),
+    'ios-simulator': iosSimulator,
+    'ios-device': iosDevice,
+    'ios-udid': iosUdid,
+    'android-device': androidDevice,
     'screens-ref-type': screensRefType,
     'screens-ref-target': screensRefTarget,
-    platform: config.platform.toLowerCase(),
-    capitalizedVariant:
-      config.variant.charAt(0).toUpperCase() +
-      config.variant.slice(1).toLowerCase(),
+    platform,
+    capitalizedVariant: variant.charAt(0).toUpperCase() + variant.slice(1),
     appName,
     paths: {
       releaseTests,

@@ -1,9 +1,9 @@
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const logger = require('./logger');
 
-// xcodebuild output routinely exceeds Node's default 1MB execSync maxBuffer.
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
+const METRO_PORT = 8081;
 
 function runCommand(cmd, cwd, logFile, captureOutput = false) {
   logger.append(logFile, `=== COMMAND: ${cmd} ===\n`);
@@ -51,4 +51,37 @@ function runTask(taskName, logFile, executeFn) {
   }
 }
 
-module.exports = { runCommand, runTask };
+function freePort(port = METRO_PORT) {
+  try {
+    execSync(`lsof -ti:${port} | xargs kill -9`, { stdio: 'ignore' });
+  } catch {
+    // nothing listening on the port
+  }
+}
+
+function startMetro(cwd, logFile) {
+  logger.append(logFile, `=== COMMAND: yarn start (background, port ${METRO_PORT}) ===\n`);
+  console.log(`🔍 Starting Metro on port ${METRO_PORT}...`);
+
+  const logFd = fs.openSync(logFile, 'a');
+  const child = spawn('yarn', ['start', '--port', String(METRO_PORT)], {
+    cwd,
+    stdio: ['ignore', logFd, logFd],
+    detached: true,
+  });
+
+  child.unref();
+
+  // Give Metro a moment to bind the port before run-android / run-ios.
+  execSync('sleep 3');
+
+  return child;
+}
+
+module.exports = {
+  runCommand,
+  runTask,
+  freePort,
+  startMetro,
+  METRO_PORT,
+};

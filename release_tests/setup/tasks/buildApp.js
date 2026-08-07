@@ -82,7 +82,73 @@ function patchPodfileFmtCpp17(iosDir) {
   fs.writeFileSync(podfilePath, contents);
 }
 
-function buildApp(config, { runTask, runCommand }) {
+function installIosPods(config, { runTask, runCommand }) {
+  const { paths } = config;
+
+  runTask('Installing iOS Pods', paths.log, () => {
+    const iosDir = path.join(paths.app, 'ios');
+    const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
+
+    if (needsFmtCpp17Workaround(config['rn-version'])) {
+      console.log(
+        '\n⚠️ Xcode 26.4+ with RN < 0.83 detected. Patching Podfile to compile fmt as C++17...',
+      );
+      patchPodfileFmtCpp17(iosDir);
+    }
+
+    try {
+      runCommand(
+        `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
+        iosDir,
+        paths.log,
+        true,
+      );
+    } catch (error) {
+      const errorMessage =
+        (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
+
+      if (errorMessage.includes('cannot load such file -- kconv')) {
+        console.log(
+          '\n⚠️ Detected missing kconv (Ruby 3.4+). Adding nkf gem and retrying...',
+        );
+
+        runCommand('bundle add nkf', paths.app, paths.log);
+
+        runCommand(
+          `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
+          iosDir,
+          paths.log,
+          true,
+        );
+      } else {
+        throw error;
+      }
+    }
+  });
+}
+
+function buildAndroidRunCmd(config) {
+  let cmd = `yarn android --no-packager --mode ${config.variant}`;
+  if (config['android-device']) {
+    cmd += ` --device "${config['android-device']}"`;
+  }
+  return cmd;
+}
+
+function buildIosRunCmd(config) {
+  let cmd = `yarn ios --no-packager --mode ${config.capitalizedVariant}`;
+  if (config['ios-udid']) {
+    cmd += ` --udid "${config['ios-udid']}"`;
+  } else if (config['ios-device']) {
+    cmd += ` --device "${config['ios-device']}"`;
+  } else if (config['ios-simulator']) {
+    cmd += ` --simulator "${config['ios-simulator']}"`;
+  }
+  return cmd;
+}
+
+function buildOnly(config, utils) {
+  const { runTask, runCommand } = utils;
   const { paths, appName, capitalizedVariant, platform } = config;
   const buildIos = platform === 'ios' || platform === 'both';
   const buildAndroid = platform === 'android' || platform === 'both';
@@ -98,46 +164,7 @@ function buildApp(config, { runTask, runCommand }) {
   }
 
   if (buildIos) {
-    runTask('Installing iOS Pods', paths.log, () => {
-      const iosDir = path.join(paths.app, 'ios');
-      const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
-
-      if (needsFmtCpp17Workaround(config['rn-version'])) {
-        console.log(
-          '\n⚠️ Xcode 26.4+ with RN < 0.83 detected. Patching Podfile to compile fmt as C++17...',
-        );
-        patchPodfileFmtCpp17(iosDir);
-      }
-
-      try {
-        runCommand(
-          `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-          iosDir,
-          paths.log,
-          true,
-        );
-      } catch (error) {
-        const errorMessage =
-          (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
-
-        if (errorMessage.includes('cannot load such file -- kconv')) {
-          console.log(
-            '\n⚠️ Detected missing kconv (Ruby 3.4+). Adding nkf gem and retrying...',
-          );
-
-          runCommand('bundle add nkf', paths.app, paths.log);
-
-          runCommand(
-            `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-            iosDir,
-            paths.log,
-            true,
-          );
-        } else {
-          throw error;
-        }
-      }
-    });
+    installIosPods(config, utils);
 
     runTask(`Building iOS App (${capitalizedVariant})`, paths.log, () => {
       const iosDir = path.join(paths.app, 'ios');
@@ -173,6 +200,77 @@ function buildApp(config, { runTask, runCommand }) {
         }
       }
     });
+  }
+}
+
+function buildAndRun(config, utils) {
+  const { runTask, runCommand, freePort, startMetro } = utils;
+  const { paths, capitalizedVariant, platform } = config;
+  const runIos = platform === 'ios' || platform === 'both';
+  const runAndroid = platform === 'android' || platform === 'both';
+
+  if (runIos) {
+    installIosPods(config, utils);
+  }
+
+  runTask('Preparing Metro (free port 8081 + start)', paths.log, () => {
+    freePort(8081);
+    startMetro(paths.app, paths.log);
+  });
+
+  if (runAndroid) {
+    runTask(
+      `Building & running Android (${capitalizedVariant})`,
+      paths.log,
+      () => {
+        runCommand(buildAndroidRunCmd(config), paths.app, paths.log);
+      },
+    );
+  }
+
+  if (runIos) {
+    runTask(`Building & running iOS (${capitalizedVariant})`, paths.log, () => {
+      const iosDir = path.join(paths.app, 'ios');
+      const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
+      const iosRunCmd = buildIosRunCmd(config);
+
+      try {
+        runCommand(iosRunCmd, paths.app, paths.log, true);
+      } catch (error) {
+        const errorMessage =
+          (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
+
+        if (
+          errorMessage.includes('call to consteval function') &&
+          errorMessage.includes('fmt::basic_format_string')
+        ) {
+          console.log(
+            '\n⚠️ Detected fmt consteval error (Xcode 26.4+). Patching Podfile to compile fmt as C++17 and retrying...',
+          );
+
+          patchPodfileFmtCpp17(iosDir);
+
+          runCommand(
+            `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
+            iosDir,
+            paths.log,
+            true,
+          );
+
+          runCommand(iosRunCmd, paths.app, paths.log, true);
+        } else {
+          throw error;
+        }
+      }
+    });
+  }
+}
+
+function buildApp(config, utils) {
+  if (config.run) {
+    buildAndRun(config, utils);
+  } else {
+    buildOnly(config, utils);
   }
 }
 
