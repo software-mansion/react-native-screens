@@ -147,6 +147,44 @@ function buildIosRunCmd(config) {
   return cmd;
 }
 
+function isFmtConstevalError(error) {
+  const errorMessage =
+    (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
+  return (
+    errorMessage.includes('call to consteval function') &&
+    errorMessage.includes('fmt::basic_format_string')
+  );
+}
+
+function runIosBuildWithFmtRetry(config, runCommand, { cmd, cwd }) {
+  const { paths } = config;
+  const iosDir = path.join(paths.app, 'ios');
+  const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
+
+  try {
+    runCommand(cmd, cwd, paths.log, true);
+  } catch (error) {
+    if (!isFmtConstevalError(error)) {
+      throw error;
+    }
+
+    console.log(
+      '\n⚠️ Detected fmt consteval error (Xcode 26.4+). Patching Podfile to compile fmt as C++17 and retrying...',
+    );
+
+    patchPodfileFmtCpp17(iosDir);
+
+    runCommand(
+      `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
+      iosDir,
+      paths.log,
+      true,
+    );
+
+    runCommand(cmd, cwd, paths.log, true);
+  }
+}
+
 function buildOnly(config, utils) {
   const { runTask, runCommand } = utils;
   const { paths, appName, capitalizedVariant, platform } = config;
@@ -168,37 +206,12 @@ function buildOnly(config, utils) {
 
     runTask(`Building iOS App (${capitalizedVariant})`, paths.log, () => {
       const iosDir = path.join(paths.app, 'ios');
-      const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
       const xcodebuildCmd = `xcodebuild -workspace ${appName}.xcworkspace -scheme ${appName} -configuration ${capitalizedVariant} -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO`;
 
-      try {
-        runCommand(xcodebuildCmd, iosDir, paths.log, true);
-      } catch (error) {
-        const errorMessage =
-          (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
-
-        if (
-          errorMessage.includes('call to consteval function') &&
-          errorMessage.includes('fmt::basic_format_string')
-        ) {
-          console.log(
-            '\n⚠️ Detected fmt consteval error (Xcode 26.4+). Patching Podfile to compile fmt as C++17 and retrying...',
-          );
-
-          patchPodfileFmtCpp17(iosDir);
-
-          runCommand(
-            `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-            iosDir,
-            paths.log,
-            true,
-          );
-
-          runCommand(xcodebuildCmd, iosDir, paths.log, true);
-        } else {
-          throw error;
-        }
-      }
+      runIosBuildWithFmtRetry(config, runCommand, {
+        cmd: xcodebuildCmd,
+        cwd: iosDir,
+      });
     });
   }
 }
@@ -208,10 +221,6 @@ function buildAndRun(config, utils) {
   const { paths, capitalizedVariant, platform } = config;
   const runIos = platform === 'ios' || platform === 'both';
   const runAndroid = platform === 'android' || platform === 'both';
-
-  if (runIos) {
-    installIosPods(config, utils);
-  }
 
   runTask('Preparing Metro (free port 8081 + start)', paths.log, () => {
     freePort(8081);
@@ -229,39 +238,13 @@ function buildAndRun(config, utils) {
   }
 
   if (runIos) {
+    installIosPods(config, utils);
+
     runTask(`Building & running iOS (${capitalizedVariant})`, paths.log, () => {
-      const iosDir = path.join(paths.app, 'ios');
-      const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
-      const iosRunCmd = buildIosRunCmd(config);
-
-      try {
-        runCommand(iosRunCmd, paths.app, paths.log, true);
-      } catch (error) {
-        const errorMessage =
-          (error.stdout?.toString() || '') + (error.stderr?.toString() || '');
-
-        if (
-          errorMessage.includes('call to consteval function') &&
-          errorMessage.includes('fmt::basic_format_string')
-        ) {
-          console.log(
-            '\n⚠️ Detected fmt consteval error (Xcode 26.4+). Patching Podfile to compile fmt as C++17 and retrying...',
-          );
-
-          patchPodfileFmtCpp17(iosDir);
-
-          runCommand(
-            `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-            iosDir,
-            paths.log,
-            true,
-          );
-
-          runCommand(iosRunCmd, paths.app, paths.log, true);
-        } else {
-          throw error;
-        }
-      }
+      runIosBuildWithFmtRetry(config, runCommand, {
+        cmd: buildIosRunCmd(config),
+        cwd: paths.app,
+      });
     });
   }
 }
