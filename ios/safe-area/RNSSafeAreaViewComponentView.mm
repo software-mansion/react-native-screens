@@ -79,13 +79,28 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
   [self updateStateIfNeeded];
 }
 
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+
+  if (_providerView == nil) {
+    [self updateStateIfNeeded];
+  }
+}
+
+- (UIEdgeInsets)fallbackSafeAreaInsets
+{
+  return self.window.safeAreaInsets;
+}
+
 - (void)updateStateIfNeeded
 {
-  if (_providerView == nil) {
+  if (self.window == nil) {
     return;
   }
 
-  UIEdgeInsets safeAreaInsets = _providerView.providerSafeAreaInsets;
+  UIEdgeInsets safeAreaInsets =
+      _providerView != nil ? _providerView.providerSafeAreaInsets : [self fallbackSafeAreaInsets];
 
   if (UIEdgeInsetsEqualToEdgeInsetsWithThreshold(safeAreaInsets, _currentSafeAreaInsets, 1.0 / RCTScreenScale())) {
     return;
