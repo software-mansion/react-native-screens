@@ -8,6 +8,7 @@ import {
   getTopmostMatch,
   selectSingleFeatureTestsScreen,
   tapTopmost,
+  waitUntil,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
@@ -249,15 +250,14 @@ describeIfAndroid('Stack v5: simple navigation', () => {
     interval = 100,
   ): Promise<void> {
     const expected = `Name: ${routeName}`;
-    const deadline = Date.now() + timeout;
-    while (Date.now() <= deadline) {
-      if ((await readTopmostText('stack-route-name')) === expected) {
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, interval));
-    }
-    throw new Error(
-      `waitForRoute timed out waiting for topmost route to be "${routeName}"`,
+
+    await waitUntil(
+      async () => (await readTopmostText('stack-route-name')) === expected,
+      {
+        timeout,
+        interval,
+        message: `topmost route to be "${routeName}"`,
+      },
     );
   }
 
@@ -268,16 +268,12 @@ describeIfAndroid('Stack v5: simple navigation', () => {
    * `waitForRoute` cannot detect because the route name is unchanged.
    */
   async function waitForKeyChange(previousKey: string): Promise<void> {
-    const deadline = Date.now() + 3000;
-    while (Date.now() <= deadline) {
-      const key = await readRouteKey();
-      if (key !== '' && key !== previousKey) {
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    throw new Error(
-      `waitForKeyChange timed out; topmost key is still "${previousKey}"`,
+    await waitUntil(
+      async () => {
+        const key = await readRouteKey();
+        return key !== '' && key !== previousKey;
+      },
+      { message: `topmost key to differ from "${previousKey}"` },
     );
   }
 
