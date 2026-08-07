@@ -18,10 +18,15 @@ directly to work around issue #1459.
 
 ## E2E test
 
-TBD: Automation is plausible - the system back button, the native header
-back-button chevron, and the on-screen buttons are all Detox-drivable on
-Android - but no e2e test has been implemented yet. The system gesture-back
-(edge swipe) step may need platform-specific handling.
+Incomplete. Covered:
+
+- Steps 1-4, 6, 9, 12, 13: the header back chevron while `preventNativeDismiss`
+  is **Enabled**, and the **Pop** actions.
+
+**Manual only (not automated):**
+
+- Steps 5, 8: the system gesture-back (edge swipe).
+- Steps 7, 8, 10, 11: the header chevron while **Disabled**.
 
 ## Prerequisites
 
