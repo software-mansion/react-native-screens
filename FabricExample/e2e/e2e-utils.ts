@@ -40,11 +40,32 @@ export function isIOSVersionAtLeast(version: string): boolean {
   );
 }
 
-export async function scrollUntilVisible(id: string, scrollViewId: string) {
+export type ScrollOptions = {
+  /** Pixels per step. Smaller steps avoid overshooting a short row. */
+  pixels?: number;
+  /** Swipe start, as a fraction of height. `NaN` leaves it to Detox. */
+  startPercentage?: number;
+};
+
+export async function scrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  { pixels = 600, startPercentage = 0.85 }: ScrollOptions = {},
+) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(600, 'down', Number.NaN, 0.85);
+    .scroll(pixels, 'down', Number.NaN, startPercentage);
+}
+
+/** Rewinds to the top first — `whileElement` only scrolls one way. */
+export async function rewindAndScrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  options: ScrollOptions = {},
+) {
+  await element(by.id(scrollViewId)).scrollTo('top');
+  await scrollUntilVisible(id, scrollViewId, options);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
@@ -133,6 +154,51 @@ export async function selectSingleFeatureTestsScreen(
   await element(by.id(`${screenKey}`)).tap();
 }
 
+/** @see apps/src/shared/SettingsPicker.tsx — derives option `testID`s. */
+export function pickerOptionId(pickerLabel: string, option: string): string {
+  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
+}
+
+export type SettingsControlOptions = ScrollOptions & { scrollViewId: string };
+
+type PickerSelection = {
+  pickerId: string;
+  /** The picker's `label` prop — option `testID`s are derived from it. */
+  label: string;
+  option: string;
+};
+
+/**
+ * Closes the picker again: its option rows stay in the hierarchy while open and
+ * would collide with the `by.text` matchers used for native popups.
+ */
+export async function selectPickerOption(
+  { pickerId, label, option }: PickerSelection,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  const scrollToAndTap = async (id: string) => {
+    await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+    await element(by.id(id)).tap();
+  };
+
+  await scrollToAndTap(pickerId);
+  await scrollToAndTap(pickerOptionId(label, option));
+  await scrollToAndTap(pickerId);
+
+  await expect(element(by.id(pickerId))).toHaveText(`${label}: ${option}`);
+}
+
+/** `to` is the state expected afterwards — a swallowed tap fails here. */
+export async function toggleSettingsSwitch(
+  { switchId, label, to }: { switchId: string; label: string; to: boolean },
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  await element(by.id(switchId)).tap();
+
+  await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
+}
+
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
 type ElementMatcher = {
@@ -211,6 +277,19 @@ export async function dismissToast(message: string) {
     .toBeVisible()
     .withTimeout(3000);
   await element(by.label(message)).tap();
+}
+
+/** Dismisses the head of the toast queue — always `1.` if each is dismissed. */
+export async function dismissNextToast(message: string) {
+  await dismissToast(`1. ${message}`);
+}
+
+/**
+ * Detox matches a regex against the *whole* string — without the trailing `.*`
+ * this matches nothing and always passes.
+ */
+export async function expectNoToast() {
+  await expect(element(by.label(/\d+\. .*/))).not.toExist();
 }
 
 /**
