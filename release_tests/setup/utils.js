@@ -86,7 +86,9 @@ function runTask(taskName, logFile, executeFn) {
 
 function freePort(port = METRO_PORT) {
   try {
-    execSync(`lsof -ti:${port} | xargs kill -9`, { stdio: 'ignore' });
+    execSync(`lsof -tiTCP:${port} -sTCP:LISTEN | xargs kill -9`, {
+      stdio: 'ignore',
+    });
   } catch {
     // nothing listening on the port
   }
