@@ -105,7 +105,7 @@ function getConfig() {
 
   if (config.help) {
     console.log(`
-      Usage: node setup_app.js [options]
+      Usage: node create_playground.js [options]
 
       Setup options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
@@ -156,24 +156,24 @@ function getConfig() {
 
       Examples:
         # Setup only
-        node setup_app.js
-        node setup_app.js -s branch:main
-        node setup_app.js -s tag:4.16.0
-        node setup_app.js -s commit:8b939b9
-        node setup_app.js -s commit:8b939b9 -f
-        node setup_app.js -s main
-        node setup_app.js -s branch:fix-bug -f
-        node setup_app.js -a MyPlayground
+        node create_playground.js
+        node create_playground.js -s branch:main
+        node create_playground.js -s tag:4.16.0
+        node create_playground.js -s commit:8b939b9
+        node create_playground.js -s commit:8b939b9 -f
+        node create_playground.js -s main
+        node create_playground.js -s branch:fix-bug -f
+        node create_playground.js -a MyPlayground
 
         # Setup + run
-        node setup_app.js --run
-        node setup_app.js --run -v release
-        node setup_app.js --run -p ios
-        node setup_app.js --run -p ios --ios-simulator "iPhone 16"
-        node setup_app.js --run -p ios --ios-device "Karol's iPhone"
-        node setup_app.js --run -p android --android-device "emulator-5554"
-        node setup_app.js -s 4.26-stable --run -g
-        node setup_app.js -r 0.74.0 --run -v release
+        node create_playground.js --run
+        node create_playground.js --run -v release
+        node create_playground.js --run -p ios
+        node create_playground.js --run -p ios --ios-simulator "iPhone 16"
+        node create_playground.js --run -p ios --ios-device "Karol's iPhone"
+        node create_playground.js --run -p android --android-device "emulator-5554"
+        node create_playground.js -s 4.26-stable --run -g
+        node create_playground.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
   }
