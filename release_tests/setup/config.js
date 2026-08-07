@@ -137,8 +137,7 @@ function getConfig() {
 
       Run options (require --run):
             --run                        After setup: pod install (when platform is ios/both), build,
-                                         install, and launch the app. Starts Metro for debug only
-                                         (skipped for release).
+                                         install, and launch the app.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
         -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
