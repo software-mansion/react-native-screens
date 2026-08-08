@@ -17,6 +17,7 @@ namespace react = facebook::react;
 @implementation RNSSearchBar {
   UISearchController *_controller;
   UIColor *_textColor;
+  NSString *_inputType;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -149,6 +150,34 @@ namespace react = facebook::react;
   [_controller.searchBar setAutocapitalizationType:autoCapitalize];
 }
 
+- (void)setInputType:(NSString *)inputType
+{
+  _inputType = [inputType copy];
+  [self applyInputType];
+}
+
+- (void)applyInputType
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  UITextField *searchTextField = _controller.searchBar.searchTextField;
+
+  if ([_inputType isEqualToString:@"phone"]) {
+    searchTextField.keyboardType = UIKeyboardTypePhonePad;
+  } else if ([_inputType isEqualToString:@"number"]) {
+    searchTextField.keyboardType = UIKeyboardTypeNumberPad;
+  } else if ([_inputType isEqualToString:@"email"]) {
+    searchTextField.keyboardType = UIKeyboardTypeEmailAddress;
+  } else if (_inputType == nil || [_inputType isEqualToString:@"text"]) {
+    searchTextField.keyboardType = UIKeyboardTypeDefault;
+  } else {
+    RCTLogWarn(@"[RNScreens] unsupported inputType: %@", _inputType);
+    searchTextField.keyboardType = UIKeyboardTypeDefault;
+  }
+
+  [searchTextField reloadInputViews];
+#endif
+}
+
 - (void)setPlaceholder:(NSString *)placeholder
 {
   [_controller.searchBar setPlaceholder:placeholder];
@@ -256,6 +285,8 @@ namespace react = facebook::react;
   if (_textColor != nil) {
     [_controller.searchBar.searchTextField setTextColor:_textColor];
   }
+
+  [self applyInputType];
 #endif
 
   [self showCancelButton];
@@ -362,6 +393,10 @@ namespace react = facebook::react;
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
 #endif
+
+  if (oldScreenProps.inputType != newScreenProps.inputType) {
+    [self setInputType:RCTNSStringFromStringNilIfEmpty(newScreenProps.inputType)];
+  }
 
   if (oldScreenProps.tintColor != newScreenProps.tintColor) {
     [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];
