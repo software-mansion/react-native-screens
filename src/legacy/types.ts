@@ -981,8 +981,6 @@ export interface SearchBarProps {
   hideWhenScrolling?: boolean | undefined;
   /**
    * Sets type of the input. Defaults to `text`.
-   *
-   * @platform android
    */
   inputType?: 'text' | 'phone' | 'number' | 'email' | undefined;
   /**
