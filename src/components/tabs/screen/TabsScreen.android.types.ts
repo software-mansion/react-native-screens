@@ -176,8 +176,10 @@ export interface TabsScreenPropsAndroid {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
+   * - `{ type: 'imageSource', imageSource, tinted? }`
+   *   Uses an image from the provided resource. The tab bar tints it with the
+   *   item icon color unless `tinted` is `false`, which keeps the image's own
+   *   colors.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
    *   For loading SVGs use `drawableResource` type.

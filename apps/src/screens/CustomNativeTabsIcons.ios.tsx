@@ -12,12 +12,12 @@ function TabScreen() {
     <View style={styles.screen}>
       <Text style={styles.label}>Custom asset-catalog tab icons</Text>
       <Text style={styles.hint}>
-        SWM Symbol: a custom symbol (`nano.swm` symbolset). It is not a built-in
-        SF Symbol, so it resolves via the custom-symbol fallback. Being a
-        template, it follows the system/host tint.
+        Symbol: a custom symbol (`nano.swm` symbolset). It is not a built-in SF
+        Symbol, so it resolves via the custom-symbol fallback. Being a template,
+        it follows the system/host tint.
       </Text>
       <Text style={styles.hint}>
-        SWM Tinted: the same custom symbol, tinted RED when selected via
+        Tinted: the same custom symbol, tinted RED when selected via
         `standardAppearance`.
       </Text>
       <Text style={styles.hint}>
@@ -26,6 +26,10 @@ function TabScreen() {
       </Text>
       <Text style={styles.hint}>
         System: a built-in SF Symbol star with a filled selected variant.
+      </Text>
+      <Text style={styles.hint}>
+        Image: an `imageSource` icon rendered as a template (`tinted: true`), so
+        it follows the item icon color.
       </Text>
     </View>
   );
@@ -37,7 +41,7 @@ const ROUTES: TabRouteConfig[] = [
     Component: TabScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'SWM Symbol',
+      title: 'Symbol',
       ios: {
         icon: { type: 'sfSymbol', name: 'nano.swm' },
       },
@@ -48,7 +52,7 @@ const ROUTES: TabRouteConfig[] = [
     Component: TabScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'SWM Tinted',
+      title: 'Tinted',
       ios: {
         icon: { type: 'sfSymbol', name: 'nano.swm' },
         standardAppearance: {
@@ -81,6 +85,21 @@ const ROUTES: TabRouteConfig[] = [
       ios: {
         icon: { type: 'sfSymbol', name: 'star' },
         selectedIcon: { type: 'sfSymbol', name: 'star.fill' },
+      },
+    },
+  },
+  {
+    name: 'IMAGE_TINT',
+    Component: TabScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Image',
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          tinted: true,
+        },
       },
     },
   },

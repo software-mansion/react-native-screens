@@ -26,6 +26,10 @@ function TabScreen() {
         Sys (unaltered): a built-in star. Size unaltered defaults to 24dp.
       </Text>
       <Text style={styles.hint}>
+        Image Tint: an `imageSource` icon, tinted by default and keeping its own
+        colors when selected (`tinted: false`).
+      </Text>
+      <Text style={styles.hint}>
         The active indicator is bar-wide via `tabBarItemActiveIndicatorWidth` /
         `Height`. And shared throughout all icons
       </Text>
@@ -95,6 +99,26 @@ const ROUTES: TabRouteConfig[] = [
       android: {
         icon: { type: 'drawableResource', name: 'star_big_off' },
         selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
+        standardAppearance: INDICATOR,
+      },
+    },
+  },
+  {
+    name: 'IMAGE_TINT',
+    Component: TabScreen,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Image Tint',
+      android: {
+        icon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+        },
+        selectedIcon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          tinted: false,
+        },
         standardAppearance: INDICATOR,
       },
     },

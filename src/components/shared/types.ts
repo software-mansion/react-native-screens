@@ -44,6 +44,12 @@ export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 export type PlatformIconShared = {
   type: 'imageSource';
   imageSource: ImageSourcePropType;
+  /**
+   * Whether the host component tints the icon with its state-dependent icon color.
+   * The default is platform-specific: Android tints image icons, while iOS
+   * renders them in their original colors unless `tinted` is `true`.
+   */
+  tinted?: boolean;
 };
 
 export type PlatformIconAndroidDrawableResource = {
@@ -56,6 +62,9 @@ export type PlatformIconAndroidDrawableResource = {
   tinted?: boolean;
 };
 
+/**
+ * @deprecated Use `{ type: 'imageSource', imageSource, tinted: true }` instead.
+ */
 export type PlatformIconIOSTemplate = {
   type: 'templateSource';
   templateSource: ImageSourcePropType;
