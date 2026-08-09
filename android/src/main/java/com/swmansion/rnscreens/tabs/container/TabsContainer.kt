@@ -422,9 +422,12 @@ class TabsContainer internal constructor(
 
     override fun onIconSizeChange(tabsScreen: TabsScreen) {
         // Icon box is bar-wide, so this must run even when the changed tab is not selected.
-        invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-        post {
-            this.flushPendingUpdates()
+        // Skip when detached; reattachment reapplies the full appearance anyway.
+        if (isAttachedToWindow) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                this.flushPendingUpdates()
+            }
         }
     }
 

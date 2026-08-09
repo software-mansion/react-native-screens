@@ -236,7 +236,9 @@ export interface TabsScreenPropsIOS {
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
    * - `{ type: 'sfSymbol', name }`
-   *   Uses an SF Symbol with the specified name.
+   *   Uses an SF Symbol with the specified name. If no system symbol
+   *   matches, falls back to an asset with that name (e.g. a custom
+   *   SF Symbol from the app's asset catalog).
    * - `{ type: 'xcasset', name }`
    *   Uses asset from Xcassets.
    * - `{ type: 'templateSource', templateSource }`

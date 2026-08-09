@@ -86,7 +86,7 @@ const ROUTES: TabRouteConfig[] = [
   },
 ];
 
-export default function CustomNativeBottomTabsIcons() {
+export default function CustomNativeTabsIcons() {
   return <TabsContainer routeConfigs={ROUTES} />;
 }
 

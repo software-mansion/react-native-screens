@@ -27,13 +27,14 @@ internal class TabsAppearanceCoordinator(
         val iconBoxDp = resolveIconBoxDp()
         appearanceApplicator.applyIconBox(iconBoxDp)
         appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden, iconBoxDp)
-        updateMenuItems(context, selectedTabAppearance)
+        updateMenuItems(context, selectedTabAppearance, iconBoxDp)
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }
 
     private fun updateMenuItems(
         context: Context,
         tabsAppearance: TabsAppearance?,
+        iconBoxDp: Float,
     ) {
         tabsScreenFragments.forEachIndexed { index, fragment ->
             val menuItemId = menuItemIdForFragmentAtIndex(index)
@@ -42,7 +43,7 @@ internal class TabsAppearanceCoordinator(
                     "[RNScreens] Missing MenuItem for id: $menuItemId"
                 }
             check(menuItem.itemId == menuItemId) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
+            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance, iconBoxDp)
         }
     }
 
@@ -51,8 +52,9 @@ internal class TabsAppearanceCoordinator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
+        iconBoxDp: Float = resolveIconBoxDp(),
     ) {
-        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, resolveIconBoxDp())
+        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, iconBoxDp)
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }

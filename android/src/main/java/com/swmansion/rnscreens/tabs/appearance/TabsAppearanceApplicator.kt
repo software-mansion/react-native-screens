@@ -41,9 +41,12 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.itemIconSize = bottomNavigationView.dpToPx(iconBoxDp).toInt()
     }
 
-    // Theme-resolved defaults, captured at construction, before this class (the only writer) overrides them.
-    private val defaultIndicatorWidthPx: Int = bottomNavigationView.itemActiveIndicatorWidth
-    private val defaultIndicatorHeightPx: Int = bottomNavigationView.itemActiveIndicatorHeight
+    // Resolved on each access: tracks the material library version and the display density.
+    private val defaultIndicatorWidthPx: Int
+        get() = bottomNavigationView.resources.getDimensionPixelSize(R.dimen.m3_bottom_nav_item_active_indicator_width)
+
+    private val defaultIndicatorHeightPx: Int
+        get() = bottomNavigationView.resources.getDimensionPixelSize(R.dimen.m3_bottom_nav_item_active_indicator_height)
 
     // Auto-scale preserves the themed default padding around the icon: default indicator minus default icon size.
     private val autoIndicatorHorizontalPaddingDp: Float
@@ -257,9 +260,12 @@ internal class TabsAppearanceApplicator(
             menuItem.title = tabsScreen.tabTitle
         }
 
-        val iconDrawable = tabsScreen.icon.drawable
-        val selectedIconDrawable = tabsScreen.selectedIcon.drawable
-        val targetIcon =
+        // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
+        // single inset computed from one child would mis-size the other when their resolutions differ.
+        val effectiveDp = effectiveIconSizeDp(tabsScreen)
+        val iconDrawable = sizeIcon(tabsScreen.icon.drawable, effectiveDp, iconBoxDp)
+        val selectedIconDrawable = sizeIcon(tabsScreen.selectedIcon.drawable, effectiveDp, iconBoxDp)
+        menuItem.icon =
             if (selectedIconDrawable != null && iconDrawable != null) {
                 StateListDrawable().apply {
                     addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
@@ -268,12 +274,6 @@ internal class TabsAppearanceApplicator(
             } else {
                 iconDrawable
             }
-
-        val sizedIcon = sizeIcon(targetIcon, effectiveIconSizeDp(tabsScreen), iconBoxDp)
-
-        if (menuItem.icon != sizedIcon) {
-            menuItem.icon = sizedIcon
-        }
     }
 
     internal fun updateBadgeAppearance(
