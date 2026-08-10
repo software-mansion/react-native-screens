@@ -57,8 +57,11 @@ function runCommand(cmd, cwd, logFile, captureOutput = false) {
     }
   } else {
     const logFd = fs.openSync(logFile, 'a');
-    execSync(cmd, { cwd, stdio: ['ignore', logFd, logFd] });
-    fs.closeSync(logFd);
+    try {
+      execSync(cmd, { cwd, stdio: ['ignore', logFd, logFd] });
+    } finally {
+      fs.closeSync(logFd);
+    }
   }
 }
 
