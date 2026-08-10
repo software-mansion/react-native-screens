@@ -15,7 +15,6 @@ import {
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
-// The option types are exported for the e2e test covering this screen.
 const ALL_IDS = [
   'item-top',
   'submenu-1',
@@ -26,6 +25,8 @@ const ALL_IDS = [
   'deep-menu',
   'deep-1',
 ] as const;
+
+// The option types are exported for the e2e test covering this screen.
 export type AllIds = (typeof ALL_IDS)[number];
 
 type TitleOption = 'Title X' | 'undefined';
