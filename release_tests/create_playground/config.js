@@ -243,6 +243,9 @@ function getConfig() {
 
   const run = Boolean(config.run);
 
+  if (run && config.gamma && platform === 'android') {
+    fatal(`Cannot use '--gamma' when '--platform' is 'android'.`);
+  }
   const argvHasFlag = (...flags) =>
     flags.some(flag => process.argv.includes(flag));
 
