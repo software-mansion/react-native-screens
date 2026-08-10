@@ -40,11 +40,27 @@ export function isIOSVersionAtLeast(version: string): boolean {
   );
 }
 
-export async function scrollUntilVisible(id: string, scrollViewId: string) {
+/**
+ * Scrolls `scrollViewId` down until `id` becomes visible.
+ *
+ * Pass `rewind` to scroll back to the top first, so a target above the current
+ * offset is still reachable — the underlying `whileElement` only scrolls one
+ * way. `pixels` tunes the step size: smaller steps cost more round trips but
+ * are less likely to overshoot a short target.
+ */
+export async function scrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  { rewind = false, pixels = 600 }: { rewind?: boolean; pixels?: number } = {},
+) {
+  if (rewind) {
+    await element(by.id(scrollViewId)).scrollTo('top');
+  }
+
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(600, 'down', Number.NaN, 0.85);
+    .scroll(pixels, 'down', Number.NaN, 0.85);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
