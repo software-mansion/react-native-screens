@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet
+package com.swmansion.rnscreens.modals.formsheet.react.event
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap

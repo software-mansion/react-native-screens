@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet
+package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 internal enum class FormSheetDismissalOrigin {
     /**

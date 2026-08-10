@@ -14,6 +14,7 @@ import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetDetentChangedEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetDidAppearEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetDidDisappearEvent
+import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetDismissEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetNativeDismissEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetNativeDismissPreventedEvent
 import com.swmansion.rnscreens.modals.formsheet.react.event.FormSheetSyncFlushEvent
