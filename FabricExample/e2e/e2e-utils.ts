@@ -241,62 +241,9 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
-/**
- * Polls until `matcher` resolves and its last match is visible, then returns
- * that match's index.
- *
- * Resolving the topmost match takes two round-trips — count, then index — and
- * Detox retries neither: zero matches throw, `toBeVisible()` fails immediately,
- * and a screen attaching between the calls leaves the index stale. Native header
- * chrome can lag the pushed screen's content, so any of the three is reachable.
- * Their errors are indistinguishable, hence one poll over the whole predicate.
- */
-async function waitForSettledTopmostIndex(
-  matcher: NativeMatcher,
-  timeout: number,
-  interval: number,
-): Promise<number> {
-  const deadline = Date.now() + timeout;
-  let lastError: unknown = '<never attempted>';
-  while (Date.now() <= deadline) {
-    try {
-      const index = (await countMatches(matcher)) - 1;
-      await expect(element(matcher).atIndex(index)).toBeVisible();
-      return index;
-    } catch (error) {
-      lastError = error;
-      await new Promise(resolve => setTimeout(resolve, interval));
-    }
-  }
-  throw new Error(
-    `waitForSettledTopmostIndex timed out after ${timeout}ms waiting for the ` +
-      `topmost match to be visible; last failure: ${lastError}`,
-  );
-}
-
-/**
- * Asserts `matcher`'s last match — the topmost stacked screen's copy — is
- * visible, retrying until it settles. Scoped to the last match because a bare
- * `toBeVisible()` throws "matches N views" once several screens are attached.
- *
- * Only for elements expected to be present — absence burns the full timeout.
- * Use `not.toExist()` instead.
- */
-export async function waitForTopmostVisible(
-  matcher: NativeMatcher,
-  timeout = 3000,
-  interval = 100,
-): Promise<void> {
-  await waitForSettledTopmostIndex(matcher, timeout, interval);
-}
-
-/**
- * Taps `matcher`'s last match — the topmost stacked screen's copy. Only the
- * resolution is retried; the tap fires once, since a retried tap could
- * double-fire when the response fails after it landed — which suites counting
- * per-press side effects (toasts, pops) would read as an extra press.
- */
+/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
-  const index = await waitForSettledTopmostIndex(matcher, 3000, 100);
-  await element(matcher).atIndex(index).tap();
+  await element(matcher)
+    .atIndex((await countMatches(matcher)) - 1)
+    .tap();
 }

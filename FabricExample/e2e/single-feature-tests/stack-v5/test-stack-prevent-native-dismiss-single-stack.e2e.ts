@@ -1,12 +1,13 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import { NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
   dismissToast,
+  getMatches,
   getTopmostMatch,
   selectSingleFeatureTestsScreen,
   tapTopmost,
-  waitForTopmostVisible,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
@@ -14,28 +15,68 @@ import {
 } from '../../native-class-names';
 
 /**
- * Stack v5 `preventNativeDismiss` — single stack. Android only; `ios/stack/`
- * has no handling for the prop, so there is nothing to assert there.
+ * Stack v5 `preventNativeDismiss` — single stack. See the scenario for what is
+ * automated vs. manual, and for the direct-`App.tsx` launch Android needs.
  *
- * Covers the interception itself — the header back button is swallowed, the
- * `onNativeDismissPrevented` toast fires, the stack stays put — plus the
- * runtime toggle and the JS-driven Pop. Two groups stay manual: the
- * gesture-back steps (5, 8), since Detox cannot drive the system edge swipe,
- * and the *Disabled* chevron steps (7, 10), which need the direct `App.tsx`
- * launch the scenario documents — reached through the example app's own
- * navigation, an unintercepted back press navigates out to the system menu
- * instead of popping the gamma `StackContainer`
- * (software-mansion/react-native-screens-labs#1459).
- *
- * Interception is unaffected by #1459: `StackScreenFragment` registers its
- * `PreventNativeDismissCallback` after the outer navigator's, and the
- * `OnBackPressedDispatcher` invokes enabled callbacks in reverse order.
+ * Interception survives software-mansion/react-native-screens-labs#1459:
+ * `StackScreenFragment` registers its `PreventNativeDismissCallback` after the
+ * outer navigator's, and `OnBackPressedDispatcher` runs enabled callbacks in
+ * reverse order — so the chevron is swallowed here even though an unintercepted
+ * back press would navigate out of the example app's own navigation.
  */
 
 // The toast renders as `${index + 1}. ${message}`, so its label carries the
 // 1-based position of the toast in the (bottom-anchored) stack.
 const TOAST_MESSAGE = 'Native dismiss prevented';
 const toastLabel = (position: number) => `${position}. ${TOAST_MESSAGE}`;
+
+/**
+ * Only "nothing matched yet" / "not visible yet" are worth retrying. Anything
+ * else — a crashed app, a lost session, a bad matcher — must surface as itself,
+ * not as a settle timeout.
+ */
+function isTransientMatchError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('No views in hierarchy found matching') ||
+    message.includes('not visible')
+  );
+}
+
+/**
+ * Asserts `matcher`'s last match — the topmost stacked screen's copy — is
+ * visible. Indexed because a bare `toBeVisible()` throws "matches N views" once
+ * several screens are attached; polled because native header chrome can lag the
+ * screen's content and `getMatches` throws on the transient 0-match state.
+ *
+ * Only for elements expected to be present — absence burns the full timeout;
+ * use `not.toExist()` instead.
+ */
+async function expectTopmostVisible(
+  matcher: NativeMatcher,
+  timeout = 3000,
+  interval = 100,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
+  let lastError: unknown = '<never attempted>';
+  while (Date.now() <= deadline) {
+    try {
+      const count = (await getMatches(matcher)).length;
+      await expect(element(matcher).atIndex(count - 1)).toBeVisible();
+      return;
+    } catch (error) {
+      if (!isTransientMatchError(error)) {
+        throw error;
+      }
+      lastError = error;
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+  }
+  throw new Error(
+    `expectTopmostVisible timed out after ${timeout}ms waiting for the ` +
+      `topmost match to be visible; last failure: ${lastError}`,
+  );
+}
 
 describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   // React Native's core `<Button>` uppercases its `title` on Android
@@ -45,9 +86,8 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   const POP = 'POP';
   const TOGGLE = 'TOGGLE PREVENT NATIVE DISMISS';
 
-  // Scoped to the toolbar the Stack v5 (gamma) header builds — the example
-  // app's own v4 header is a `CustomToolbar`, which extends `Toolbar` but not
-  // `MaterialToolbar`, so it is not matched here.
+  // Scoped to the Stack v5 header's toolbar: the example app's own v4 header is
+  // a `CustomToolbar`, which extends `Toolbar` but not `MaterialToolbar`.
   const backButtonMatcher = by
     .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
     .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
@@ -67,8 +107,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   /**
    * Matches the `stack-route-key` label of any screen on `routeName`. Keys are
    * minted as `r-<routeName>-<id>` with an increasing id
-   * (`generateRouteKeyForRouteName`), so this pins the route while staying
-   * agnostic about which instance of it is on top.
+   * (`generateRouteKeyForRouteName`), so this pins the route, not the instance.
    */
   const routeKeyPattern = (routeName: RouteName) =>
     new RegExp(`^Key: r-${routeName}-\\d+$`);
@@ -81,21 +120,20 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   /** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
   async function expectTopmostButtons(titles: string[]): Promise<void> {
     for (const title of titles) {
-      await waitForTopmostVisible(by.text(title));
+      await expectTopmostVisible(by.text(title));
     }
   }
 
   /**
-   * Waits until the topmost stacked screen is `routeName` and returns its route
-   * key. Matching the key rather than the `Name: X` label lets one read identify
-   * both the route and *which* instance is on top, so callers can assert
-   * continuity (same key) or a push (new key) without a second racing read.
+   * Waits until the topmost screen is `routeName` and returns its route key.
+   * Reading the key rather than the `Name: X` label identifies the route *and*
+   * which instance is on top, so one read settles continuity (same key) or a
+   * push (new key).
    *
-   * The pattern is polled against `getTopmostMatch` rather than handed to Detox
-   * as `by.text(...)`: covered screens stay attached on Android and Detox's
-   * visibility matcher only intersects a view with its *parents*, never with an
-   * occluding sibling — so `toBeVisible()` on a screen underneath the top one
-   * passes immediately and would not gate a pop.
+   * Polled against `getTopmostMatch` rather than `by.text(...)`: covered screens
+   * stay attached, and Detox intersects a view only with its parents, never with
+   * an occluding sibling — so `toBeVisible()` on a buried screen passes at once
+   * and would not gate a pop.
    */
   async function waitForTopmostRoute(
     routeName: RouteName,
@@ -124,7 +162,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   }
 
   /**
-   * Dismisses `count` toasts newest-first. Labels carry the 1-based position,
+   * Dismisses `count` toasts newest-first — labels carry the 1-based position,
    * so clearing from the highest down keeps the remaining ones stable.
    */
   async function dismissToasts(count: number): Promise<void> {
@@ -135,7 +173,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
 
   /**
    * Asserts no `onNativeDismissPrevented` toast is on screen. Every step clears
-   * its toasts, so position 1 is enough — an unexpected toast always lands there.
+   * its own toasts, so an unexpected one always lands at position 1.
    */
   async function expectNoToast(): Promise<void> {
     await expect(element(by.label(toastLabel(1)))).not.toExist();
@@ -170,7 +208,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     jestExpect(await readPreventInfo()).toBe(
       'Prevent native dismiss: Disabled',
     );
-    await waitForTopmostVisible(backButtonMatcher);
+    await expectTopmostVisible(backButtonMatcher);
     await expectTopmostButtons([PUSH_A, PUSH_B, POP]);
   });
 
@@ -181,7 +219,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     jestExpect(bKey).not.toBe(aKey);
     jestExpect(bKey).not.toBe(homeKey);
     jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
-    await waitForTopmostVisible(backButtonMatcher);
+    await expectTopmostVisible(backButtonMatcher);
     await expectTopmostButtons([PUSH_A, PUSH_B, POP, TOGGLE]);
   });
 
@@ -189,8 +227,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     await expectStillOnB(bKey);
     await tapTopmost(backButtonMatcher);
 
-    // Asserts the toast fired, then clears it so the next step starts from an
-    // empty toast list.
+    // Asserts the toast fired, then clears it for the next step.
     await dismissToasts(1);
     await expectStillOnB(bKey);
   });
