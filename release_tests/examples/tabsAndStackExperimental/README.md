@@ -18,5 +18,5 @@ Tabs from main export + Stack v5 from `react-native-screens/experimental` (gamma
 ## Setup
 
 ```bash
-node setup_app.js -s 4.26-stable -r 0.84.0 -f -e tabsAndStackExperimental -g
+node release_tests/create_playground.js -s 4.26-stable -r 0.84.0 -f -e tabsAndStackExperimental -g
 ```
