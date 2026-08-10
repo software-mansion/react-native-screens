@@ -82,8 +82,7 @@ function AScreen() {
 
 function BScreen() {
   return (
-    <CenteredLayoutView
-      style={{ backgroundColor: Colors.GreenLight100 }}>
+    <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <StackRouteInformation routeName="B" />
       <PreventNativeDismissInfo />
       <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
