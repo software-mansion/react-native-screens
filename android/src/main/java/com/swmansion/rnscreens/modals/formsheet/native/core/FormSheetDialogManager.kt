@@ -128,7 +128,7 @@ class FormSheetDialogManager(
         }
 
         if (oldConfig.isOpen != newConfig.isOpen) {
-            presentationManager.updatePresentationState(newConfig.isOpen)
+            presentationManager.requestProgrammaticStateUpdate(newConfig.isOpen)
         }
     }
 

@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.util.Log
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
@@ -18,9 +19,9 @@ internal class FormSheetPresentationManager(
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
 
     private var state = FormSheetPresentationState.DISMISSED
-    private var targetIsOpen = false
+    private var shouldBeOpen = false
 
-    private var dismissalOrigin = FormSheetDismissalOrigin.PROGRAMMATIC
+    private var dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
@@ -31,13 +32,45 @@ internal class FormSheetPresentationManager(
         }
     }
 
-    internal fun updatePresentationState(isOpen: Boolean) {
-        targetIsOpen = isOpen
+    internal fun requestProgrammaticStateUpdate(shouldBeOpen: Boolean) {
+        if (shouldBeOpen) {
+            handlePresent()
+        } else {
+            handleProgrammaticDismiss()
+        }
+    }
+
+    private fun handlePresent() {
+        updatePresentationState(shouldBeOpen = true, origin = FormSheetDismissalOrigin.UNSPECIFIED)
+    }
+
+    private fun handleProgrammaticDismiss() {
+        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.PROGRAMMATIC)
+    }
+
+    internal fun handleNativeDismiss() {
+        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
+            return
+        }
+
+        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.NATIVE)
+    }
+
+    private fun updatePresentationState(
+        shouldBeOpen: Boolean,
+        origin: FormSheetDismissalOrigin,
+    ) {
+        this.shouldBeOpen = shouldBeOpen
+        // Once a dismissal is in flight, it keeps the origin that started 
+        // it until the completion events are emitted.
+        if (state != FormSheetPresentationState.DISMISSING) {
+            dismissalOrigin = origin
+        }
         resolvePresentationState()
     }
 
     private fun resolvePresentationState() {
-        if (targetIsOpen) {
+        if (shouldBeOpen) {
             presentIfNeeded()
         } else {
             dismissIfNeeded()
@@ -159,23 +192,17 @@ internal class FormSheetPresentationManager(
             when (dismissalOrigin) {
                 FormSheetDismissalOrigin.NATIVE -> onNativeDismiss()
                 FormSheetDismissalOrigin.PROGRAMMATIC -> onDismiss()
+                FormSheetDismissalOrigin.UNSPECIFIED ->
+                    Log.e(
+                        "[RNScreens]",
+                        "FormSheet dismissal completed without a recorded origin; no dismissal event emitted",
+                    )
             }
-            // Reset so any subsequent dismissal defaults to programmatic unless a
-            // native dismissal detection `handleNativeDismiss()` is caught.
-            dismissalOrigin = FormSheetDismissalOrigin.PROGRAMMATIC
+            dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
             // ensure state hasn't updated during dismissal
             resolvePresentationState()
         }
-    }
-
-    internal fun handleNativeDismiss() {
-        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
-            return
-        }
-
-        dismissalOrigin = FormSheetDismissalOrigin.NATIVE
-        updatePresentationState(isOpen = false)
     }
 
     /**

@@ -2,6 +2,12 @@ package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 internal enum class FormSheetDismissalOrigin {
     /**
+     * No dismissal request is pending. Completing a dismissal with this
+     * origin should report an error.
+     */
+    UNSPECIFIED,
+
+    /**
      * The dismissal was requested from JS by setting `isOpen = false`.
      * Emits `onDismiss`.
      */
