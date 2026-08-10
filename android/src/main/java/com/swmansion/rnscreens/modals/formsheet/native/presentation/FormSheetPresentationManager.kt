@@ -45,7 +45,7 @@ internal class FormSheetPresentationManager(
     }
 
     private fun handleProgrammaticDismiss() {
-        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.PROGRAMMATIC)
+        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.PROGRAMMATIC_JS)
     }
 
     internal fun handleNativeDismiss() {
@@ -53,7 +53,7 @@ internal class FormSheetPresentationManager(
             return
         }
 
-        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.NATIVE)
+        updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.USER)
     }
 
     private fun updatePresentationState(
@@ -190,8 +190,8 @@ internal class FormSheetPresentationManager(
             appearanceEventEmitter?.emitOnDidDisappear()
 
             when (dismissalOrigin) {
-                FormSheetDismissalOrigin.NATIVE -> onNativeDismiss()
-                FormSheetDismissalOrigin.PROGRAMMATIC -> onDismiss()
+                FormSheetDismissalOrigin.USER -> onNativeDismiss()
+                FormSheetDismissalOrigin.PROGRAMMATIC_JS -> onDismiss()
                 FormSheetDismissalOrigin.UNSPECIFIED ->
                     Log.e(
                         "[RNScreens]",
