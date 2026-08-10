@@ -22,12 +22,14 @@ Incomplete. Covered:
 
 - Pop actions triggered by the Pop button.
 - Header back chevron/button behavior when `preventNativeDismiss` is Enabled.
+- Runtime toggling of the flag on **B**: the label flips in both directions,
+and a chevron press made immediately after a toggle honors the latest value.
 
 Manual only (not automated):
 
 - Pop actions triggered by the system back gesture (edge swipe).
 - Pop actions triggered by the header back chevron when `preventNativeDismiss`
-is Disabled.
+is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ## Prerequisites
 
