@@ -1,4 +1,6 @@
-package com.swmansion.rnscreens.modals.formsheet
+package com.swmansion.rnscreens.modals.formsheet.native.presentation
+
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetStackEntry
 
 internal object FormSheetStackCoordinator {
     private val sheets = mutableListOf<FormSheetStackEntry>()

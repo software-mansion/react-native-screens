@@ -7,6 +7,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetStackEntry
 
 internal class FormSheetPresentationManager(
     private val dialog: FormSheetDialog,
