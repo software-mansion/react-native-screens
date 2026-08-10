@@ -185,6 +185,12 @@ export async function getElementAttributes(
 /**
  * Performs a coordinate-based tap on iOS to interact with an element that may be
  * obstructed by other UI layers, bypassing Detox's default visibility checks.
+ *
+ * This is the established way to select an iOS 26 floating tab bar item — see
+ * the tabs suites that pair it with `tabBarItemAccessibilityLabel`, which gives
+ * each tab a distinct label so the matcher resolves to exactly one element.
+ * Without such a label a tab's title matches both the `_UITabButton` and its
+ * inner label view, and this helper then rejects the ambiguous match.
  */
 export async function forceTapByLabeliOS(testLabel: string) {
   const elementAttributes = await getElementAttributes({
@@ -196,6 +202,60 @@ export async function forceTapByLabeliOS(testLabel: string) {
     x: x + width / 2,
     y: y + height / 2,
   });
+}
+
+/**
+ * Taps `matcher`, retrying while Detox rejects the tap because the element is
+ * not hittable at its visible point.
+ *
+ * Detox requires a target to pass a 100% visibility threshold before it
+ * dispatches a tap. An iOS 26 tab bar button does not always pass it, because
+ * the liquid-glass selection indicator is drawn over it. Measured attributes
+ * for `_UITabButton` on iOS 26:
+ *
+ * - currently selected tab: `visible=false, hittable=false` — permanently. Never
+ *   tap the tab that is already selected; no amount of retrying will clear this.
+ * - immediately after a tab switch: every button reports `visible=false,
+ *   hittable=false` while the indicator animates across, then recovers.
+ * - otherwise unselected tab: `visible=true, hittable=true`.
+ *
+ * The retry exists for the middle case, which is short enough to go unnoticed
+ * locally but is reliably hit on slower CI machines. It is driven off the failed
+ * action rather than a pre-check: the `hittable` attribute runs the very same
+ * check (`dtx_isHittable`), so reading it first would only move the race.
+ *
+ * Detox asserts hittability before dispatching any touch
+ * (`NSObject+DetoxActions.m` → `dtx_tapAtPoint:`), so a retry can never
+ * double-tap the element.
+ *
+ * `index` is deliberately not defaulted: an ambiguous matcher should fail loudly
+ * rather than have this helper silently pick the first match. Pass one only when
+ * several matches are expected and the position is meaningful.
+ */
+export async function tapWhenHittableiOS(
+  matcher: NativeMatcher,
+  {
+    index,
+    timeout = 10000,
+    interval = 250,
+  }: { index?: number; timeout?: number; interval?: number } = {},
+) {
+  const target =
+    index === undefined ? element(matcher) : element(matcher).atIndex(index);
+  const giveUpAt = Date.now() + timeout;
+
+  for (;;) {
+    try {
+      await target.tap();
+      return;
+    } catch (error) {
+      const isNotHittable = (error as Error).message?.includes('not hittable');
+      if (!isNotHittable || Date.now() >= giveUpAt) {
+        throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+  }
 }
 
 export async function forceSelectTabByLabel(label: string) {

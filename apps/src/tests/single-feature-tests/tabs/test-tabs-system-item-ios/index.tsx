@@ -31,9 +31,16 @@ function StaticSystemItemScreen() {
   );
 }
 
-type SystemItemOption = 'favorites' | 'history' | 'search';
-type TitleOption = 'system' | 'custom' | 'hidden';
-type IconOption = 'system' | 'house' | 'heart';
+export type SystemItemOption = 'favorites' | 'history' | 'search';
+export type TitleOption = 'system' | 'custom' | 'hidden';
+export type IconOption = 'system' | 'house' | 'heart';
+
+/**
+ * Prefix of each option button's testID (`<group>-option-<option>`). Exported
+ * so the e2e suite builds its matchers from the same union instead of
+ * re-declaring the literals.
+ */
+export type OptionGroup = 'system-item' | 'title' | 'icon';
 
 type RuntimeConfig = {
   systemItem: SystemItemOption;
@@ -56,10 +63,17 @@ const TITLE_OPTIONS: TitleOption[] = ['system', 'custom', 'hidden'];
 const ICON_OPTIONS: IconOption[] = ['system', 'house', 'heart'];
 
 function OptionRow<T extends string>({
+  group,
   options,
   value,
   onSelect,
 }: {
+  /**
+   * Prefix for each button's testID (`<group>-option-<option>`). The `system`
+   * option exists in more than one row, so e2e tests need a per-row identifier
+   * to address a button without relying on its position in the hierarchy.
+   */
+  group: OptionGroup;
   options: T[];
   value: T;
   onSelect: (option: T) => void;
@@ -71,6 +85,7 @@ function OptionRow<T extends string>({
         return (
           <TouchableOpacity
             key={option}
+            testID={`${group}-option-${option}`}
             style={[styles.optionButton, isActive && styles.optionButtonActive]}
             onPress={() => onSelect(option)}>
             <Text
@@ -153,6 +168,7 @@ function RuntimeConfigScreen() {
           systemItem
         </Text>
         <OptionRow
+          group="system-item"
           options={SYSTEM_ITEM_OPTIONS}
           value={config.systemItem}
           onSelect={setSystemItem}
@@ -162,6 +178,7 @@ function RuntimeConfigScreen() {
           title
         </Text>
         <OptionRow
+          group="title"
           options={TITLE_OPTIONS}
           value={config.title}
           onSelect={setTitle}
@@ -171,6 +188,7 @@ function RuntimeConfigScreen() {
           icon
         </Text>
         <OptionRow
+          group="icon"
           options={ICON_OPTIONS}
           value={config.icon}
           onSelect={setIcon}
