@@ -20,13 +20,14 @@ directly to work around issue #1459.
 
 Incomplete. Covered:
 
-- Steps 1-4, 6, 9, 12, 13: the header back chevron while `preventNativeDismiss`
-  is **Enabled**, and the **Pop** actions.
+- Pop actions triggered by the Pop button.
+- Header back chevron/button behavior when `preventNativeDismiss` is Enabled.
 
-**Manual only (not automated):**
+Manual only (not automated):
 
-- Steps 5, 8: the system gesture-back (edge swipe).
-- Steps 7, 8, 10, 11: the header chevron while **Disabled**.
+- Pop actions triggered by the system back gesture (edge swipe).
+- Pop actions triggered by the header back chevron when `preventNativeDismiss`
+is Disabled.
 
 ## Prerequisites
 

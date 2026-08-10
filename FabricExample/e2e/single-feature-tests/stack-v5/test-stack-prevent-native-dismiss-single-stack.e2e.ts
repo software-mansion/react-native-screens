@@ -219,6 +219,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   });
 
   it('should intercept the native header back button while prevent is enabled', async () => {
+    await expectStillOnB(bKey);
     await tapTopmost(backButtonMatcher);
 
     // Asserts the toast fired, then clears it so the next step starts from an
@@ -228,6 +229,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   });
 
   it('should intercept every back press individually while prevent is enabled', async () => {
+    await expectStillOnB(bKey);
     await tapTopmost(backButtonMatcher);
     await tapTopmost(backButtonMatcher);
     await tapTopmost(backButtonMatcher);
@@ -237,8 +239,22 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     await expectStillOnB(bKey);
   });
 
+  it('should pop with the on-screen Pop button even while prevent is enabled', async () => {
+    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
+    await tapTopmostButton(POP);
+
+    jestExpect(await waitForTopmostRoute('A')).toBe(aKey);
+    await expectNoToast();
+    await tapTopmostButton(POP);
+
+    jestExpect(await waitForTopmostRoute('Home')).toBe(homeKey);
+    await expectNoToast();
+  });
+
   it('should flip the label when toggling prevent native dismiss at runtime', async () => {
+    await tapTopmostButton(PUSH_B);
     const currentBKey = await waitForTopmostRoute('B');
+    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
 
     // Off, then straight back on — the press must see the latest value.
     await tapTopmostButton(TOGGLE);
@@ -252,18 +268,5 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
 
     await dismissToasts(1);
     await expectStillOnB(currentBKey);
-  });
-
-  it('should pop with the on-screen Pop button even while prevent is enabled', async () => {
-    jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
-
-    await tapTopmostButton(POP);
-
-    jestExpect(await waitForTopmostRoute('A')).toBe(aKey);
-    await expectNoToast();
-    await tapTopmostButton(POP);
-
-    jestExpect(await waitForTopmostRoute('Home')).toBe(homeKey);
-    await expectNoToast();
   });
 });
