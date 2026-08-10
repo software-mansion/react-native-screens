@@ -119,7 +119,6 @@ function getConfig() {
                                          exists there; otherwise they are taken from origin.
         -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
                                          Use this to bypass the local git cache (e.g., after force pushes).
-                                         Required to fetch a commit from remote (-s commit:<sha> -f).
                                          Mutually exclusive with --screens-version 'current'.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
                                          Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory
