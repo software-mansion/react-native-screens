@@ -61,7 +61,7 @@ internal class FormSheetPresentationManager(
         origin: FormSheetDismissalOrigin,
     ) {
         this.shouldBeOpen = shouldBeOpen
-        // Once a dismissal is in flight, it keeps the origin that started 
+        // Once a dismissal is in flight, it keeps the origin that started
         // it until the completion events are emitted.
         if (state != FormSheetPresentationState.DISMISSING) {
             dismissalOrigin = origin
