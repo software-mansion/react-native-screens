@@ -54,7 +54,7 @@ function setupGitScreens(config, utils) {
   const { runTask, runCommand, withTempDir } = utils;
   const refType = config['screens-ref-type'];
   const target = config['screens-ref-target'];
-  const packFileName = `screens-${target.replace(/\//g, '-')}.tgz`;
+  const packFileName = `screens-${target.replace(/[^a-z0-9._-]/gi, '-')}.tgz`;
   const packFile = path.join(config.paths.app, packFileName);
   const screensPath = config.paths.screens;
   const forceFetch = config['force-fetch'];
