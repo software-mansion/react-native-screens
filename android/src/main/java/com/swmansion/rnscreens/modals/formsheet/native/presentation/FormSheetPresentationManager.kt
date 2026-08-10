@@ -60,12 +60,14 @@ internal class FormSheetPresentationManager(
         shouldBeOpen: Boolean,
         origin: FormSheetDismissalOrigin,
     ) {
-        this.shouldBeOpen = shouldBeOpen
-        // Once a dismissal is in flight, it keeps the origin that started
-        // it until the completion events are emitted.
-        if (state != FormSheetPresentationState.DISMISSING) {
+        // The origin belongs to the request that transitioned the target to closed -
+        // a repeated close request must not override it. Once a dismissal is in flight,
+        // it keeps the origin that started it until the completion events are emitted.
+        val isRepeatCloseRequest = !shouldBeOpen && !this.shouldBeOpen
+        if (state != FormSheetPresentationState.DISMISSING && !isRepeatCloseRequest) {
             dismissalOrigin = origin
         }
+        this.shouldBeOpen = shouldBeOpen
         resolvePresentationState()
     }
 
