@@ -73,10 +73,6 @@ export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
-
-// `by.type` resolves through `isAssignableFrom`, so this framework name also
-// matches the `AppCompatCheckBox` AppCompat inflates into a checkable row.
-export const CLASS_NAME_ANDROID_CHECK_BOX = 'android.widget.CheckBox';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
