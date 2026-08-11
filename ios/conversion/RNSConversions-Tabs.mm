@@ -354,7 +354,7 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
     case RNSTabsScreenSystemItemTopRated:
       return UITabBarSystemItemTopRated;
   }
-  RCTAssert(false, @"Attempt to convert unknown tabs screen systemItem to UITabBarSystemItem [%d]", systemItem);
+  RCTAssert(false, @"Attempt to convert unknown tabs screen systemItem to UITabBarSystemItem [%ld]", (long)systemItem);
   return UITabBarSystemItemSearch;
 }
 
