@@ -15,12 +15,10 @@ export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
 /**
- * Detox targets a single simulator per run, selected via the
- * `RNS_APPLE_SIM_NAME` env var (see scripts/e2e/ios-devices.js), which
- * defaults to an iPhone. There is no runtime UIUserInterfaceIdiom query
- * exposed to Detox, so we infer the idiom from the requested simulator name.
- * This lets iPad-only suites self-skip on the default iPhone CI run; they
- * execute only when invoked with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
+ * Detox exposes no runtime UIUserInterfaceIdiom query, so the idiom is inferred
+ * from the simulator name requested via `RNS_APPLE_SIM_NAME` (see
+ * scripts/e2e/ios-devices.js). iPad-only suites self-skip on the default iPhone
+ * run and execute only with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
  */
 export const isIPadTarget =
   device.getPlatform() === 'ios' &&
@@ -75,9 +73,9 @@ export async function selectIssueTestScreen(screenName: string) {
   if (device.getPlatform() === 'android') {
     await element(by.label('Search')).tap();
 
-    // This is the only way I was able to get the search box text input.
-    // I don't know why element(by.type('androidx.appcompat.widget.SearchView.SearchAutoComplete'))
-    // does not work even if it appears in view hierarchy returned by Detox in debug logging mode.
+    // Only way found to reach the search input: matching by type
+    // (androidx.appcompat.widget.SearchView.SearchAutoComplete) fails even
+    // though it shows up in Detox's view hierarchy.
     await element(by.text('')).replaceText(screenName);
   } else if (device.getPlatform() === 'ios') {
     await element(by.traits(['searchField'])).typeText(screenName);
@@ -176,9 +174,9 @@ function resolveMatcher({ by: matcher, value }: ElementMatcher) {
 }
 
 /**
- * Reads the attributes of a single element on either platform. Cast the result
- * to `IosElementAttributes` / `AndroidElementAttributes` at the call site when
- * you need platform-specific fields.
+ * Attributes of a single element on either platform. Cast to
+ * `IosElementAttributes` / `AndroidElementAttributes` at the call site for
+ * platform-specific fields.
  */
 export async function getElementAttributes(
   matcher: ElementMatcher,
@@ -199,8 +197,8 @@ export async function getElementAttributes(
   return attrs as ElementAttributes;
 }
 /**
- * Performs a coordinate-based tap on iOS to interact with an element that may be
- * obstructed by other UI layers, bypassing Detox's default visibility checks.
+ * Coordinate-based tap on iOS, bypassing Detox's visibility checks so an
+ * element obstructed by other UI layers can still be hit.
  */
 export async function forceTapByLabeliOS(testLabel: string) {
   const elementAttributes = await getElementAttributes({
@@ -229,24 +227,40 @@ export async function dismissToast(message: string) {
   await element(by.label(message)).tap();
 }
 
+type MatchOptions = {
+  /**
+   * Resolve to no matches instead of throwing. Pass only where absence is an
+   * expected state — it also swallows a crashed app and a dropped connection.
+   */
+  orEmpty?: boolean;
+};
+
 /**
- * Returns every element matching `matcher`, normalizing `getAttributes()`'s
- * single-element object and multi-element `{ elements: [...] }` wrapper to one
- * array. Ordered by view hierarchy, so the topmost stacked screen is last.
- *
- * Throws when nothing matches — left uncaught so a crash is not misreported
- * as "found 0".
+ * Every element matching `matcher`, normalizing `getAttributes()`'s single- and
+ * multi-element shapes into one array ordered by view hierarchy (topmost
+ * stacked screen last). Throws on no match, so a crash is not read as "found 0".
  */
 export async function getMatches(
   matcher: NativeMatcher,
+  { orEmpty = false }: MatchOptions = {},
 ): Promise<ElementAttributes[]> {
-  const attrs = await element(matcher).getAttributes();
-  return 'elements' in attrs ? attrs.elements : [attrs];
+  try {
+    const attrs = await element(matcher).getAttributes();
+    return 'elements' in attrs ? attrs.elements : [attrs];
+  } catch (error) {
+    if (orEmpty) {
+      return [];
+    }
+    throw error;
+  }
 }
 
-/** How many elements `matcher` resolves to. */
-export async function countMatches(matcher: NativeMatcher): Promise<number> {
-  return (await getMatches(matcher)).length;
+/** How many elements `matcher` resolves to; `0` with `orEmpty` and no match. */
+export async function countMatches(
+  matcher: NativeMatcher,
+  options?: MatchOptions,
+): Promise<number> {
+  return (await getMatches(matcher, options)).length;
 }
 
 /** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
@@ -257,9 +271,50 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
-/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+/**
+ * Taps `matcher`'s last match — the topmost stacked screen's copy. Pass a
+ * freshly built matcher: on Android `atIndex` rewrites it in place, so a reused
+ * one stays pinned to the index tapped here.
+ */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
     .tap();
+}
+
+type WaitUntilOptions = {
+  /** How long to keep polling before failing, in milliseconds. */
+  timeout?: number;
+  /** Delay between two `predicate` calls, in milliseconds. */
+  interval?: number;
+  /** What was awaited, appended to the timeout error. A function can build it
+   * from whatever the last `predicate` call observed. */
+  message: string | (() => string);
+};
+
+/**
+ * Polls `predicate` until it resolves `true`, or fails once `timeout` elapses.
+ * Prefer Detox's `waitFor(...).withTimeout(...)`, which syncs with the app
+ * instead of sampling it; this is for conditions it cannot express — notably
+ * anything about the match *set*, since on Android `waitFor` retries natively
+ * against a single view and a transient ambiguous match is terminal.
+ */
+export async function waitUntil(
+  predicate: () => Promise<boolean>,
+  { timeout = 3000, interval = 100, message }: WaitUntilOptions,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
+
+  while (Date.now() <= deadline) {
+    if (await predicate()) {
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, interval));
+  }
+
+  throw new Error(
+    `waitUntil timed out after ${timeout}ms: ${
+      typeof message === 'function' ? message() : message
+    }`,
+  );
 }
