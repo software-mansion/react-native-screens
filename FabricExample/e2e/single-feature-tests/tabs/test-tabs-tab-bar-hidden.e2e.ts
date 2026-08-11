@@ -44,6 +44,38 @@ describe('Tab Bar Hidden', () => {
     }
   });
 
+  // Android-only. The bar is hidden there by setting its visibility to `GONE`,
+  // which leaves the bounds it was last laid out with in place. React Native
+  // hit-tests the native view tree without looking at visibility, so those
+  // retained bounds used to swallow every touch aimed at the strip the bar had
+  // occupied. See #4132. iOS does not hide the tab bar this way.
+  it('content in the strip freed by the hidden tab bar should receive touches', async () => {
+    if (device.getPlatform() !== 'android') {
+      return;
+    }
+
+    await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
+      'tabBarHidden: true',
+    );
+    await expect(element(by.id('tab-bar-hidden-press-count'))).toHaveText(
+      'Bottom presses: 0',
+    );
+
+    // The Pressable is 120dp tall and anchored to the bottom of the screen, so
+    // it covers both the strip the tab bar freed and the system navigation bar
+    // below it. 40dp below its top edge is inside the strip - the bar is at
+    // least 80dp tall plus the bottom system inset - and clear of the system
+    // navigation bar, on which taps never reach the app.
+    await element(by.id('tab-bar-hidden-bottom-pressable')).tap({
+      x: 100,
+      y: 40,
+    });
+
+    await expect(element(by.id('tab-bar-hidden-press-count'))).toHaveText(
+      'Bottom presses: 1',
+    );
+  });
+
   it('tab bar should reappear after changing tabBarHidden value to false', async () => {
     await expect(element(by.id('tab-bar-hidden-switch'))).toHaveLabel(
       'tabBarHidden: true',
