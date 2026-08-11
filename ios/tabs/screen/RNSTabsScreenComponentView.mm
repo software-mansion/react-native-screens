@@ -167,8 +167,8 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
     if (!systemItem) {
       RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%d]",
-          _systemItem);
+          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+          (long)_systemItem);
       return;
     }
     tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
@@ -189,8 +189,8 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
     if (!systemItem) {
       RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%d]",
-          _systemItem);
+          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+          (long)_systemItem);
       return;
     }
     evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;

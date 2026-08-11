@@ -72,8 +72,8 @@
           rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       if (!systemItem) {
         RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%d]",
-            screenView.systemItem);
+            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+            (long)screenView.systemItem);
         return;
       }
       tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].image;
@@ -93,8 +93,8 @@
           rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       if (!systemItem) {
         RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%d]",
-            screenView.systemItem);
+            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+            (long)screenView.systemItem);
         return;
       }
       tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].selectedImage;
