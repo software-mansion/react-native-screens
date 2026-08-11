@@ -14,7 +14,7 @@ const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 const SCROLL_STEP = 100;
 
 async function scrollTo(id: string) {
-  await scrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
+  await scrollUntilVisible(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
 async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
@@ -24,7 +24,7 @@ async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
       label: 'direction',
       option: direction,
     },
-    { scrollViewId: SCROLLVIEW_ID, pixelsPerStep: SCROLL_STEP },
+    { scrollViewId: SCROLLVIEW_ID, pixels: SCROLL_STEP },
   );
 }
 
