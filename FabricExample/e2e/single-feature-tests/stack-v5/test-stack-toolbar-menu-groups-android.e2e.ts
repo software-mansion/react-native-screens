@@ -19,23 +19,22 @@ import {
 const SCROLLVIEW_ID = 'toolbar-menu-groups-scrollview';
 const OVERFLOW_MENU_LABEL = 'More options';
 
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles the overflow menu opening or dismissing has to be explicit.
+/** Detox's idle sync misses popup animations, so these waits are explicit. */
 const MENU_ANIMATION_TIMEOUT_MS = 5000;
 
-// Probes an already-settled popup rather than an animation — by the time it is
-// used the menu is either up or was never opened.
+/** Probes a settled popup: by now the menu is either up or was never opened. */
 const MENU_PRESENCE_TIMEOUT_MS = 250;
 
-// One Back press dismisses one popup window. How many are stacked while a
-// submenu is open depends on the form factor — appcompat picks between its
-// cascading and standard menu popups by smallest screen width, and the two
-// differ in whether the parent stays up behind the submenu — so the depth is
-// not a fixed number. Three is above anything this screen builds.
+/**
+ * One Back press per popup window. A submenu replaces its parent on phones and
+ * stacks on it on tablets, so at most two are ever up.
+ */
 const MAX_MENU_DEPTH = 3;
 
-// A multi-toggle group renders check boxes and a single-selection one radio
-// buttons, so the class asserts the group type.
+/**
+ * A multi-toggle group renders check boxes and a single-selection one radio
+ * buttons, so the class asserts the group type.
+ */
 type ToggleWidget =
   | typeof CLASS_NAME_ANDROID_CHECK_BOX
   | typeof CLASS_NAME_ANDROID_RADIO_BUTTON;
@@ -208,11 +207,7 @@ async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
 const overflowMenu = () =>
   element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
 
-/**
- * Detox resolves matchers against a single window: while a popup holds focus
- * nothing behind it is in the searched hierarchy, so a row going away is not
- * enough — the screen itself has to become addressable again.
- */
+/** Nothing behind a focused popup is in the hierarchy Detox searches. */
 async function waitForScreen() {
   await waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
@@ -230,11 +225,7 @@ async function isMenuOpen(): Promise<boolean> {
     );
 }
 
-/**
- * Waiting for the popup here — rather than only probing for it at close time —
- * keeps a menu that never opened from reaching the `try` blocks below at all,
- * so their cleanup never sends a Back press the activity would take.
- */
+/** Waits here, so a menu that never opened fails before any `try` below. */
 async function openOverflowMenu() {
   await element(by.label(OVERFLOW_MENU_LABEL)).tap();
   await waitFor(overflowMenu())
@@ -243,12 +234,8 @@ async function openOverflowMenu() {
 }
 
 /**
- * Presses Back once per open popup level, and only ever while a popup is
- * actually up: a Back press with no menu on screen is taken by the activity and
- * pops the test screen, which fails every later case in this stateful suite. A
- * left-over popup is just as bad — every later matcher would then resolve
- * against the popup window instead of the activity, so the rest of the suite
- * fails on views that are plainly there.
+ * Back only ever goes to an open popup: with no menu up the activity takes it
+ * and pops the test screen, failing every later case in this stateful suite.
  */
 async function closeMenuIfOpen() {
   let pressCount = 0;
@@ -272,8 +259,7 @@ async function tapMenuItem(title: string) {
   await element(by.text(title)).tap();
 }
 
-// The only submenu row no case hides or renames, so it is a stable signal that
-// the submenu itself — not just the menu behind it — is up.
+/** The only submenu row no case hides or renames. */
 const SUBMENU_ANCHOR_TITLE = 'Info';
 
 async function openSubmenu() {
@@ -326,8 +312,10 @@ async function withOverflowMenu(assertions: () => Promise<void>) {
   await closingMenuAfter(assertions);
 }
 
-// Opening the submenu is inside the cleanup scope: it is a tap that can fail
-// with the parent menu already up, and that popup still has to come down.
+/**
+ * Opening the submenu is inside the cleanup scope: it is a tap that can fail
+ * with the parent menu already up, and that popup still has to come down.
+ */
 async function withSubmenu(assertions: () => Promise<void>) {
   await openOverflowMenu();
   await closingMenuAfter(async () => {
