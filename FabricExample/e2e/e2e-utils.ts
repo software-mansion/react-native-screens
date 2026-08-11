@@ -169,11 +169,23 @@ type PickerSelection = {
 /**
  * Closes the picker again: its option rows stay in the hierarchy while open and
  * would collide with the `by.text` matchers used for native popups.
+ *
+ * Returns early when the picker already shows `option`. The check reads the same
+ * line the closing assertion checks, and `getAttributes` has no visibility
+ * constraint, so an already-set picker costs one read and no gesture at all.
+ * It assumes the picker is collapsed — true unless an earlier call threw partway,
+ * which fails its own test first.
  */
 export async function selectPickerOption(
   { pickerId, label, option }: PickerSelection,
   { scrollViewId, ...scroll }: SettingsControlOptions,
 ) {
+  const expected = `${label}: ${option}`;
+
+  if ((await getTopmostMatch(by.id(pickerId))).text === expected) {
+    return;
+  }
+
   const scrollToAndTap = async (id: string) => {
     await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
     await element(by.id(id)).tap();
@@ -183,7 +195,7 @@ export async function selectPickerOption(
   await scrollToAndTap(pickerOptionId(label, option));
   await scrollToAndTap(pickerId);
 
-  await expect(element(by.id(pickerId))).toHaveText(`${label}: ${option}`);
+  await expect(element(by.id(pickerId))).toHaveText(expected);
 }
 
 /** `to` is the state expected afterwards — a swallowed tap fails here. */
