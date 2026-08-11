@@ -16,8 +16,7 @@ import {
   CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
-// Every string this suite shares with the screen is typed from the screen, so
-// renaming one there fails type-checking here instead of at runtime.
+// Typed from the screen, so a rename there fails type-checking here.
 import type {
   AllIds as ElementId,
   CmdDisabledOption as CmdDisabled,
@@ -30,19 +29,15 @@ import type {
 const SCROLLVIEW_ID = 'toolbar-menu-disabled-scrollview';
 const HEADER_TITLE: HeaderTitle = 'Toolbar Menu Disabled Test';
 
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles a menu opening or dismissing has to be explicit. An upper bound, so
-// a generous value costs nothing on a wait that passes — the exception is
-// `isScreenAddressable`, a probe that is *expected* to time out while a second
-// popup is still stacked, and pays it in full.
+// Detox's idle sync does not cover popup animations, so waits that straddle a
+// menu opening or dismissing must be explicit. An upper bound — only
+// `isScreenAddressable`, which is expected to time out, pays it in full.
 const MENU_ANIMATION_TIMEOUT_MS = 5000;
 
-// Probes an already-settled popup rather than an animation — by the time it is
-// used the menu is either up or was never opened.
+// Probes a settled popup, not an animation: it is either up or never opened.
 const MENU_PRESENCE_TIMEOUT_MS = 250;
 
-// The switch renders `${label}: ${value}`. Typed as the screen's own label map,
-// so both the keys and the exact label strings are checked against it.
+// Rendered as `${label}: ${value}`. `ItemLabels` checks keys and exact strings.
 const SWITCH_LABELS: ItemLabels = {
   'action-bar': 'action-bar (toolbar button)',
   'action-overflow': 'action-overflow',
@@ -52,26 +47,23 @@ const SWITCH_LABELS: ItemLabels = {
   'sub-item': 'sub-item',
 };
 
-// Titles of the elements that live inside a popup. `action-bar` is excluded on
-// purpose — it is pinned to the toolbar via `showAsAction: 'always'`.
+// Popup rows only — `action-bar` is pinned to the toolbar (`showAsAction: 'always'`).
 type RowTitle = ElementTitles[Exclude<ElementId, 'action-bar'>];
 
 const NO_EVENT: NoEvent = '—';
 
-// `action-bar` is the only element pinned to the toolbar, so its item view is
-// unambiguous — the overflow button is a different class.
+// Unambiguous: the overflow button is a different class.
 const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 
-// The row, not the title `TextView` inside it: `View.setEnabled` does not
-// propagate to children, so only the row reflects a disabled menu element.
+// The row, not its title `TextView`: `View.setEnabled` does not propagate to
+// children, so only the row reflects a disabled element.
 function menuRow(title: RowTitle): NativeMatcher {
   return by
     .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
     .withDescendant(by.text(title));
 }
 
-// Matching nothing already throws inside `getMatches`, with Detox's own error
-// naming the matcher — so the only case left to reject here is an ambiguous one.
+// Zero matches already throws inside `getMatches`, so only ambiguity is left.
 async function attributesOf(
   matcher: NativeMatcher,
 ): Promise<AndroidElementAttributes> {
@@ -85,24 +77,21 @@ async function attributesOf(
   return matches[0] as AndroidElementAttributes;
 }
 
-// The controls sit above and below each other in one long ScrollView, so every
-// target needs the rewind. The smaller step keeps the short switch rows from
-// being scrolled straight past.
+// Targets sit either side of the current offset, hence the rewind; the small
+// step keeps short switch rows from being scrolled past.
 async function scrollIntoView(id: string) {
   await scrollUntilVisible(id, SCROLLVIEW_ID, { rewind: true, pixels: 300 });
 }
 
-// Detox resolves matchers against a single window: while a popup holds focus
-// nothing behind it is in the searched hierarchy, so an entry going away is not
-// enough — the screen itself has to become addressable again.
+// Detox searches one window: while a popup holds focus nothing behind it is in
+// the hierarchy, so the screen itself has to become addressable again.
 async function waitForScreen() {
   await waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
 
-// The same probe as `waitForScreen`, reported instead of thrown: with popups
-// stacked the screen legitimately stays unreachable until the last one is gone.
+// `waitForScreen` reported rather than thrown — stacked popups keep it false.
 async function isScreenAddressable(): Promise<boolean> {
   return waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
@@ -113,8 +102,7 @@ async function isScreenAddressable(): Promise<boolean> {
     );
 }
 
-// Waits for the popup itself, not for any single row: bodies that tap a row as
-// their first step would otherwise race the menu animating in.
+// Waits for the popup, not a row: bodies that tap first would race the animation.
 async function openMenu() {
   await element(by.label('More options')).tap();
   await waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
@@ -128,20 +116,17 @@ async function waitForMenuRow(title: RowTitle) {
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
 
-// The same race one level down, so opening the submenu is bracketed by waits
-// too. Only for the cases where it is expected to open — a disabled **More**
-// has to be tapped directly, since there is nothing to wait for.
+// Only where it is expected to open; a disabled **More** has nothing to wait for.
 async function openSubmenu() {
   await waitForMenuRow('More');
   await element(menuRow('More')).tap();
   await waitForMenuRow('Sub Item');
 }
 
-// The counterpart, for a **More** that must not react. A submenu would take
-// focus and put its own rows in the searched window, so the parent's rows
-// staying addressable is what proves none opened — and reading them forces a
-// round trip long enough for a submenu that did open to have shown up. A bare
-// `not.toExist()` on **Sub Item** would otherwise pass before the popup is up.
+// A submenu would take focus and put its rows in the searched window, so the
+// parent's rows staying addressable proves none opened. `expectRowEnabled` runs
+// first on purpose — it forces a round trip, without which `not.toExist()`
+// would pass before a submenu that did open is up.
 async function expectSubmenuStayedClosed() {
   await expectRowEnabled('More', false);
   await expect(element(menuRow('Sub Item'))).not.toExist();
@@ -160,9 +145,8 @@ async function isMenuOpen(): Promise<boolean> {
 // A submenu opens on top of the overflow menu, so at most two popups stack.
 const MAX_STACKED_MENUS = 2;
 
-// Presses Back only while a popup is actually up: a menu that never opened —
-// or already closed itself — would otherwise take the Back press and pop the
-// test screen. Submenus stack, hence the loop.
+// Presses Back only while a popup is up, or the press pops the test screen.
+// Submenus stack, hence the loop.
 async function closeMenus() {
   for (let attempt = 0; attempt < MAX_STACKED_MENUS; attempt++) {
     if (!(await isMenuOpen())) {
@@ -170,10 +154,8 @@ async function closeMenus() {
     }
     await device.pressBack();
 
-    // A dismissed popup lingers while it animates out, so re-probing it would
-    // read the one just closed as a second stacked menu and Back into the
-    // screen. Waiting for the screen instead settles that animation, and its
-    // return means nothing is left to close.
+    // A dismissed popup lingers while animating out, so re-probing would read it
+    // as a second stacked menu. Waiting for the screen settles that instead.
     if (await isScreenAddressable()) {
       return;
     }
@@ -181,24 +163,17 @@ async function closeMenus() {
   await waitForScreen();
 }
 
-/**
- * Runs `body` with the overflow menu open and closes the menu afterwards, even
- * when an assertion throws — this suite is stateful and a popup left covering
- * the screen would fail every later step.
- */
+// Runs `body` with the menu open, closing it afterwards even when an assertion
+// throws — a popup left covering the screen would fail every later step.
 async function withMenu(body: () => Promise<void>) {
   await openMenu();
 
   try {
     await body();
   } catch (error) {
-    // Swallowed here only: a failing cleanup must not replace the assertion
-    // that actually failed. When `body` passes, the `closeMenus` below is
-    // outside the `try` and its failure surfaces as the test's error.
-    //
-    // Logged rather than discarded: a cleanup that fails leaves the popup
-    // covering the screen, so the *next* test fails for a reason with no trace
-    // in its own output.
+    // Swallowed only here, so a failing cleanup cannot replace the assertion
+    // that failed. Logged, because it leaves the popup up and the *next* test
+    // then fails with no trace in its own output.
     await closeMenus().catch(cleanupError => {
       console.warn(
         'closeMenus failed while cleaning up after a failed assertion:',
@@ -216,8 +191,7 @@ async function expectRowEnabled(title: RowTitle, enabled: boolean) {
   jestExpect((await attributesOf(menuRow(title))).enabled).toBe(enabled);
 }
 
-// Checkable rows render an AppCompat checkbox whose `value` attribute carries
-// the toggle state.
+// The checkbox AppCompat inflates carries the toggle state in `value`.
 async function expectRowChecked(title: RowTitle, checked: boolean) {
   await waitForMenuRow(title);
   const attributes = await attributesOf(
@@ -240,32 +214,23 @@ async function expectLastEvent(expected: string) {
   await expect(element(by.id('last-event-text'))).toHaveText(expected);
 }
 
-/**
- * Asserts that `action` emitted no `onPress` / `onSelectionChange` — the way a
- * disabled element is checked to have ignored a tap.
- *
- * The value that must stay put is whatever the preceding steps left behind, so
- * it is read here rather than written into the test: spelling it out couples an
- * `it` to the outcome of the one before it, and reordering or inserting a step
- * then fails an assertion that has nothing to do with the change.
- *
- * `action` has to leave the screen addressable when it returns — read either
- * side of it, **Last Event** is behind any popup the body opens.
- */
+// Asserts `action` emitted no `onPress` / `onSelectionChange`. The baseline is
+// read rather than written into the test, so an `it` is not coupled to the
+// outcome of the one before it. `action` must leave the screen addressable —
+// **Last Event** sits behind any popup it opens.
 async function expectLastEventUnchanged(action: () => Promise<void>) {
   const before = await readLastEvent();
   await action();
   await expectLastEvent(before);
 }
 
-// The group payload is `JSON.stringify`d, so its order is an implementation
-// detail of the native selection callback — compare it as a set.
+// Payload order is an implementation detail of the native callback — compare
+// it as a set.
 async function expectLastSelection(groupId: string, ids: string[]) {
   const text = await readLastEvent();
   const prefix = `${groupId}: `;
 
-  // Compared as a slice rather than through `startsWith`, so a mismatch reports
-  // the line that was actually on screen instead of `false is not true`.
+  // Sliced rather than `startsWith`, so a mismatch reports the actual line.
   jestExpect(text.slice(0, prefix.length)).toBe(prefix);
 
   const selected: unknown = JSON.parse(text.slice(prefix.length));
@@ -304,11 +269,9 @@ async function selectOption(
   const expected = `${pickerLabel}: ${option}`;
   await scrollIntoView(pickerId);
 
-  // Pickers keep their value between commands, so a target that is already
-  // selected needs no interaction at all — opening, tapping and closing to
-  // re-pick it costs three taps and three scroll rewinds for nothing. Read from
-  // the closed picker's own label, so this stays a plain attribute read rather
-  // than a probe that has to time out.
+  // Pickers keep their value, so re-picking one costs three taps and three
+  // scroll rewinds for nothing. Reading the closed label avoids a probe that
+  // would have to time out.
   if ((await attributesOf(by.id(pickerId))).text === expected) {
     return;
   }
@@ -336,21 +299,14 @@ async function sendCommand(options: {
   await element(by.id('send-command-button')).tap();
 }
 
-/**
- * The blocks below run as one ordered script: each `describe` starts from the
- * state the previous one left behind, and there is deliberately no reset
- * between them.
- *
- * That ordering is load-bearing for the command steps rather than incidental.
- * Step 21 re-enables the `action-bar` that step 18 disabled, and step 22 clears
- * the `submenu` override that step 19 applied. Command state does not survive a
- * reload, so resetting in between would leave both acting on an element that
- * was never disabled — the assertions would still pass, having tested nothing.
- *
- * The props blocks (steps 2–17) carry no such dependency: each one toggles its
- * own switch back to `false` before it ends, so they only require every toggle
- * to start off.
- */
+// One ordered script: each `describe` starts from the state the previous left,
+// with no reset between them.
+//
+// That is load-bearing for the command steps. Step 21 re-enables the
+// `action-bar` step 18 disabled and step 22 clears the `submenu` override step
+// 19 applied; command state does not survive a reload, so resetting would leave
+// both acting on an already-enabled element and passing without testing
+// anything. The props blocks (2–17) each toggle their own switch back off.
 describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
