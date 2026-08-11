@@ -101,7 +101,8 @@
 {
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
-    UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
+    UIWindow *window = RCTKeyWindow();
+    UIInterfaceOrientationMask orientationMask = [window.rootViewController supportedInterfaceOrientations];
 
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
@@ -130,7 +131,6 @@
     if (newOrientation != UIInterfaceOrientationUnknown) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
       if (@available(iOS 16.0, *)) {
-        UIWindow *window = RCTKeyWindow();
         UIWindowScene *scene = window.windowScene;
 
         if (scene == nil) {
