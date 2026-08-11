@@ -404,12 +404,18 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       });
     });
 
-    it('disables opt-b, keeps it unchecked, and leaves Last Event unchanged when tapped', async () => {
+    it('disables opt-b while keeping its initial unchecked state', async () => {
       await setDisabledViaProps('opt-b', true);
+      await withMenu(async () => {
+        await expectRowEnabled('Option B', false);
+        await expectRowChecked('Option B', false);
+      });
+    });
+
+    it('leaves Last Event unchanged when the disabled unchecked item is tapped', async () => {
       await expectLastEventUnchanged(async () => {
         await withMenu(async () => {
-          await expectRowEnabled('Option B', false);
-          await expectRowChecked('Option B', false);
+          await waitForMenuRow('Option B');
           await element(menuRow('Option B')).tap();
           await expectRowChecked('Option B', false);
         });
@@ -428,7 +434,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       });
     });
 
-    it('sets Last Event to the "options" selection holding opt-a and opt-b when the re-enabled opt-b is checked', async () => {
+    it('reports both opt-a and opt-b in the "options" selection when opt-b is checked', async () => {
       await withMenu(async () => {
         await waitForMenuRow('Option B');
         await element(menuRow('Option B')).tap();
@@ -436,7 +442,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await expectLastSelection('options', ['opt-a', 'opt-b']);
     });
 
-    it('drops opt-a from the selection when the re-enabled opt-a is unchecked', async () => {
+    it('drops opt-a from the selection when opt-a is unchecked', async () => {
       await withMenu(async () => {
         await waitForMenuRow('Option A');
         await element(menuRow('Option A')).tap();
@@ -537,7 +543,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   });
 
   describe('commands — re-enable via updateToolbarMenuElements', () => {
-    it('sets Last Event to "Pressed: action-bar" when the command-re-enabled toolbar button is tapped', async () => {
+    it('sets Last Event to "Pressed: action-bar" when the re-enabled toolbar button is tapped', async () => {
       await sendCommand({ target: 'action-bar', disabled: 'false' });
       await expectActionBarEnabled(true);
 
@@ -547,7 +553,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   });
 
   describe('commands — three-state reset via `undefined`', () => {
-    it('clears the disabled override and falls back to the default', async () => {
+    it('clears the disabled override and falls back to the prop value', async () => {
       await sendCommand({ target: 'submenu', disabled: 'undefined' });
       await withMenu(async () => {
         await expectRowEnabled('More', true);
