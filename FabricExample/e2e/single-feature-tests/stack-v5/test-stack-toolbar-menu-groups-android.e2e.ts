@@ -9,6 +9,7 @@ import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
   CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
   CLASS_NAME_ANDROID_RADIO_BUTTON,
 } from '../../native-class-names';
 
@@ -17,6 +18,21 @@ import {
 
 const SCROLLVIEW_ID = 'toolbar-menu-groups-scrollview';
 const OVERFLOW_MENU_LABEL = 'More options';
+
+// Detox's idle sync does not cover popup window animations, so every wait that
+// straddles the overflow menu opening or dismissing has to be explicit.
+const MENU_ANIMATION_TIMEOUT_MS = 5000;
+
+// Probes an already-settled popup rather than an animation — by the time it is
+// used the menu is either up or was never opened.
+const MENU_PRESENCE_TIMEOUT_MS = 250;
+
+// One Back press dismisses one popup window. How many are stacked while a
+// submenu is open depends on the form factor — appcompat picks between its
+// cascading and standard menu popups by smallest screen width, and the two
+// differ in whether the parent stays up behind the submenu — so the depth is
+// not a fixed number. Three is above anything this screen builds.
+const MAX_MENU_DEPTH = 3;
 
 // A multi-toggle group renders check boxes and a single-selection one radio
 // buttons, so the class asserts the group type.
@@ -189,47 +205,135 @@ async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
   await tapById('send-command-button');
 }
 
-async function openOverflowMenu() {
-  await element(by.label(OVERFLOW_MENU_LABEL)).tap();
+const overflowMenu = () =>
+  element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+
+/**
+ * Detox resolves matchers against a single window: while a popup holds focus
+ * nothing behind it is in the searched hierarchy, so a row going away is not
+ * enough — the screen itself has to become addressable again.
+ */
+async function waitForScreen() {
+  await waitFor(element(by.id(SCROLLVIEW_ID)))
+    .toBeVisible()
+    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
 
-async function closeMenu() {
-  await device.pressBack();
+/** Resolves instead of throwing, so it can be used as a condition. */
+async function isMenuOpen(): Promise<boolean> {
+  return waitFor(overflowMenu())
+    .toExist()
+    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
+    .then(
+      () => true,
+      () => false,
+    );
+}
+
+/**
+ * Waiting for the popup here — rather than only probing for it at close time —
+ * keeps a menu that never opened from reaching the `try` blocks below at all,
+ * so their cleanup never sends a Back press the activity would take.
+ */
+async function openOverflowMenu() {
+  await element(by.label(OVERFLOW_MENU_LABEL)).tap();
+  await waitFor(overflowMenu())
+    .toBeVisible()
+    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+}
+
+/**
+ * Presses Back once per open popup level, and only ever while a popup is
+ * actually up: a Back press with no menu on screen is taken by the activity and
+ * pops the test screen, which fails every later case in this stateful suite. A
+ * left-over popup is just as bad — every later matcher would then resolve
+ * against the popup window instead of the activity, so the rest of the suite
+ * fails on views that are plainly there.
+ */
+async function closeMenuIfOpen() {
+  let pressCount = 0;
+
+  while (await isMenuOpen()) {
+    if (pressCount === MAX_MENU_DEPTH) {
+      throw new Error(
+        `The overflow menu was still open after ${MAX_MENU_DEPTH} Back presses.`,
+      );
+    }
+    await device.pressBack();
+    pressCount++;
+  }
+
+  if (pressCount > 0) {
+    await waitForScreen();
+  }
 }
 
 async function tapMenuItem(title: string) {
   await element(by.text(title)).tap();
 }
 
+// The only submenu row no case hides or renames, so it is a stable signal that
+// the submenu itself — not just the menu behind it — is up.
+const SUBMENU_ANCHOR_TITLE = 'Info';
+
+async function openSubmenu() {
+  await tapMenuItem('More');
+  await waitFor(element(menuItemRow(SUBMENU_ANCHOR_TITLE)))
+    .toBeVisible()
+    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+}
+
+/** A leaf tap dismisses the menu; the toast it emits is on the screen behind. */
+async function tapLeafItem(title: string) {
+  await tapMenuItem(title);
+  await waitForScreen();
+}
+
 async function tapOverflowItem(title: string) {
   await openOverflowMenu();
-  await tapMenuItem(title);
+  await tapLeafItem(title);
 }
 
 async function tapSubmenuItem(title: string) {
   await openOverflowMenu();
-  await tapMenuItem('More');
-  await tapMenuItem(title);
+  await openSubmenu();
+  await tapLeafItem(title);
 }
 
 /** Closes the menu even on failure; a leaked popup would fail every later case. */
-async function withOverflowMenu(assertions: () => Promise<void>) {
-  await openOverflowMenu();
+async function closingMenuAfter(assertions: () => Promise<void>) {
+  let assertionFailed = false;
+
   try {
     await assertions();
+  } catch (error) {
+    assertionFailed = true;
+    throw error;
   } finally {
-    await closeMenu();
+    try {
+      await closeMenuIfOpen();
+    } catch (cleanupError) {
+      // A throw from `finally` would replace the error that actually failed.
+      if (!assertionFailed) {
+        throw cleanupError;
+      }
+    }
   }
 }
 
+async function withOverflowMenu(assertions: () => Promise<void>) {
+  await openOverflowMenu();
+  await closingMenuAfter(assertions);
+}
+
+// Opening the submenu is inside the cleanup scope: it is a tap that can fail
+// with the parent menu already up, and that popup still has to come down.
 async function withSubmenu(assertions: () => Promise<void>) {
   await openOverflowMenu();
-  try {
-    await tapMenuItem('More');
+  await closingMenuAfter(async () => {
+    await openSubmenu();
     await assertions();
-  } finally {
-    await closeMenu();
-  }
+  });
 }
 
 describeIfAndroid('Stack Toolbar Menu Groups', () => {
@@ -240,6 +344,10 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
       'test-stack-toolbar-menu-groups-android',
     );
   });
+
+  // Covers the taps made outside a `with*` block: a case that fails mid-menu
+  // must not leave the popup up and take every following one down with it.
+  afterEach(closeMenuIfOpen);
 
   it('should render the whole menu with both groups', async () => {
     await expect(element(by.text('Toolbar Menu Groups Test'))).toBeVisible();
