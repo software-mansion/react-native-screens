@@ -358,11 +358,17 @@ export async function tapTopmostButton(title: string): Promise<void> {
  * Only "nothing matched yet" / "not visible yet" are worth retrying. Anything
  * else — a crashed app, a lost session, a bad matcher — must surface as itself,
  * not as a settle timeout.
+ *
+ * The two platforms word an empty match differently — Espresso "No views in
+ * hierarchy found matching", iOS "No elements found for" — so both are listed;
+ * dropping either turns a screen that has not rendered yet into a hard failure
+ * on that platform alone.
  */
 function isTransientMatchError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return (
     message.includes('No views in hierarchy found matching') ||
+    message.includes('No elements found for') ||
     message.includes('not visible')
   );
 }
@@ -406,21 +412,18 @@ export async function expectTopmostVisible(
 }
 
 /**
- * Waits until a screen showing `Name: <routeName>` is visible — the label the
- * stack test screens render for their route.
+ * Waits until the topmost screen shows `Name: <routeName>` — the label the stack
+ * test screens render for their route.
  *
- * Safe only where covered screens leave the hierarchy, i.e. iOS. On Android
- * they stay attached, so this matcher can resolve to one element per stacked
- * screen and `toBeVisible()` throws "matches N views"; poll
- * `readTopmostText('stack-route-name')` there instead.
+ * Indexed to the last match rather than waited on directly: on Android covered
+ * screens stay attached, so pushing the same route twice puts two of these
+ * labels in the hierarchy and a bare `toBeVisible()` throws "matches N views".
  */
 export async function waitForRoute(
   routeName: string,
   timeout = 3000,
 ): Promise<void> {
-  await waitFor(element(by.text(`Name: ${routeName}`)))
-    .toBeVisible()
-    .withTimeout(timeout);
+  await expectTopmostVisible(by.text(`Name: ${routeName}`), timeout);
 }
 
 // ---------------------------------------------------------------------------
