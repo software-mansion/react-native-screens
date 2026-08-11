@@ -323,12 +323,11 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
   }
 }
 
-UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
+std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
 {
   switch (systemItem) {
     case RNSTabsScreenSystemItemNone:
-      RCTAssert(false, @"Attempt to convert tabs systemItem none to UITabBarSystemItem");
-      return UITabBarSystemItemSearch;
+      return std::nullopt;
     case RNSTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;
     case RNSTabsScreenSystemItemContacts:
@@ -354,8 +353,7 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
     case RNSTabsScreenSystemItemTopRated:
       return UITabBarSystemItemTopRated;
   }
-  RCTAssert(false, @"Attempt to convert unknown tabs screen systemItem to UITabBarSystemItem [%d]", systemItem);
-  return UITabBarSystemItemSearch;
+  return std::nullopt;
 }
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
