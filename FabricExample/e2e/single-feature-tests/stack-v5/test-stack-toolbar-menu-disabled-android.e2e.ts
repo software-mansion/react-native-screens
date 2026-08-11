@@ -7,7 +7,7 @@ import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
   getMatches,
-  scrollUntilVisible,
+  rewindAndScrollUntilVisible,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import {
@@ -80,7 +80,7 @@ async function attributesOf(
 // Targets sit either side of the current offset, hence the rewind; the small
 // step keeps short switch rows from being scrolled past.
 async function scrollIntoView(id: string) {
-  await scrollUntilVisible(id, SCROLLVIEW_ID, { rewind: true, pixels: 300 });
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, { pixels: 300 });
 }
 
 // Detox searches one window: while a popup holds focus nothing behind it is in
