@@ -19,12 +19,10 @@ export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
 /**
- * Detox targets a single simulator per run, selected via the
- * `RNS_APPLE_SIM_NAME` env var (see scripts/e2e/ios-devices.js), which
- * defaults to an iPhone. There is no runtime UIUserInterfaceIdiom query
- * exposed to Detox, so we infer the idiom from the requested simulator name.
- * This lets iPad-only suites self-skip on the default iPhone CI run; they
- * execute only when invoked with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
+ * Detox exposes no runtime UIUserInterfaceIdiom query, so the idiom is inferred
+ * from the simulator name requested via `RNS_APPLE_SIM_NAME` (see
+ * scripts/e2e/ios-devices.js). iPad-only suites self-skip on the default iPhone
+ * run and execute only with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
  */
 export const isIPadTarget =
   device.getPlatform() === 'ios' &&
@@ -50,16 +48,40 @@ export function isIOSVersionAtLeast(version: string): boolean {
 
 export type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
+type MatchOptions = {
+  /**
+   * Resolve to no matches instead of throwing. Pass only where absence is an
+   * expected state — it also swallows a crashed app and a dropped connection.
+   */
+  orEmpty?: boolean;
+};
+
 /**
- * Returns every element matching `matcher`, normalizing `getAttributes()`'s
- * single-element object and multi-element `{ elements: [...] }` wrapper to one
- * array. Ordered by view hierarchy, so the topmost stacked screen is last.
+ * Every element matching `matcher`, normalizing `getAttributes()`'s single- and
+ * multi-element shapes into one array ordered by view hierarchy (topmost
+ * stacked screen last). Throws on no match, so a crash is not read as "found 0".
  */
 export async function getMatches(
   matcher: NativeMatcher,
+  { orEmpty = false }: MatchOptions = {},
 ): Promise<ElementAttributes[]> {
-  const attrs = await element(matcher).getAttributes();
-  return 'elements' in attrs ? attrs.elements : [attrs];
+  try {
+    const attrs = await element(matcher).getAttributes();
+    return 'elements' in attrs ? attrs.elements : [attrs];
+  } catch (error) {
+    if (orEmpty) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+/** How many elements `matcher` resolves to; `0` with `orEmpty` and no match. */
+export async function countMatches(
+  matcher: NativeMatcher,
+  options?: MatchOptions,
+): Promise<number> {
+  return (await getMatches(matcher, options)).length;
 }
 
 /**
@@ -95,18 +117,66 @@ export async function getFrame(
 }
 
 // ---------------------------------------------------------------------------
+// Waiting
+// ---------------------------------------------------------------------------
+
+type WaitUntilOptions = {
+  /** How long to keep polling before failing, in milliseconds. */
+  timeout?: number;
+  /** Delay between two `predicate` calls, in milliseconds. */
+  interval?: number;
+  /** What was awaited, appended to the timeout error. A function can build it
+   * from whatever the last `predicate` call observed. */
+  message: string | (() => string);
+};
+
+/**
+ * Polls `predicate` until it resolves `true`, or fails once `timeout` elapses.
+ * Prefer Detox's `waitFor(...).withTimeout(...)`, which syncs with the app
+ * instead of sampling it; this is for conditions it cannot express — notably
+ * anything about the match *set*, since on Android `waitFor` retries natively
+ * against a single view and a transient ambiguous match is terminal.
+ */
+export async function waitUntil(
+  predicate: () => Promise<boolean>,
+  { timeout = 3000, interval = 100, message }: WaitUntilOptions,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
+
+  while (Date.now() <= deadline) {
+    if (await predicate()) {
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, interval));
+  }
+
+  throw new Error(
+    `waitUntil timed out after ${timeout}ms: ${
+      typeof message === 'function' ? message() : message
+    }`,
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Interactions
 // ---------------------------------------------------------------------------
+
+export type ScrollOptions = {
+  /** Pixels per step. Smaller steps avoid overshooting a short row. */
+  pixels?: number;
+  /** Swipe start, as a fraction of height. `NaN` leaves it to Detox. */
+  startPercentage?: number;
+};
 
 export async function scrollUntilVisible(
   id: string,
   scrollViewId: string,
-  pixelsPerStep = 600,
+  { pixels = 600, startPercentage = 0.85 }: ScrollOptions = {},
 ) {
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(pixelsPerStep, 'down', Number.NaN, 0.85);
+    .scroll(pixels, 'down', Number.NaN, startPercentage);
 }
 
 /**
@@ -116,10 +186,10 @@ export async function scrollUntilVisible(
 export async function rewindAndScrollUntilVisible(
   id: string,
   scrollViewId: string,
-  pixelsPerStep = 600,
+  options: ScrollOptions = {},
 ) {
   await element(by.id(scrollViewId)).scrollTo('top');
-  await scrollUntilVisible(id, scrollViewId, pixelsPerStep);
+  await scrollUntilVisible(id, scrollViewId, options);
 }
 
 /**
@@ -127,8 +197,7 @@ export async function rewindAndScrollUntilVisible(
  * obstructed by other UI layers, bypassing Detox's default visibility checks.
  */
 export async function forceTapByLabeliOS(testLabel: string) {
-  const { x, y, width, height } = (await getSingleMatch(by.label(testLabel)))
-    .frame;
+  const { x, y, width, height } = await getFrame(by.label(testLabel));
   await device.tap({
     x: x + width / 2,
     y: y + height / 2,
@@ -143,12 +212,29 @@ export async function forceSelectTabByLabel(label: string) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Toasts
+// ---------------------------------------------------------------------------
+
 /** Waits for the toast labelled `message`, then taps it to dismiss it. */
 export async function dismissToast(message: string) {
   await waitFor(element(by.label(message)))
     .toBeVisible()
     .withTimeout(3000);
   await element(by.label(message)).tap();
+}
+
+/** Dismisses the head of the toast queue — always `1.` if each is dismissed. */
+export async function dismissNextToast(message: string) {
+  await dismissToast(`1. ${message}`);
+}
+
+/**
+ * Detox matches a regex against the *whole* string — without the trailing `.*`
+ * this matches nothing and always passes.
+ */
+export async function expectNoToast() {
+  await expect(element(by.label(/\d+\. .*/))).not.toExist();
 }
 
 // ---------------------------------------------------------------------------
@@ -168,18 +254,14 @@ export function pickerOptionId(label: string, option: string): string {
   return `${label.split(' ').join('-')}-${option}`.toLowerCase();
 }
 
+/** Pass when the control or its rows can sit outside the viewport. */
+export type SettingsControlOptions = ScrollOptions & { scrollViewId: string };
+
 export type PickerSelection = {
   pickerId: string;
   /** The picker's `label` prop — its option `testID`s are derived from it. */
   label: string;
   option: string;
-};
-
-/** Set when the picker or its rows can sit outside the viewport. */
-export type PickerScrollOptions = {
-  scrollViewId: string;
-  /** Pixels per scroll step. Smaller steps avoid overshooting a short row. */
-  pixelsPerStep?: number;
 };
 
 /**
@@ -191,27 +273,47 @@ export type PickerScrollOptions = {
  * and their ids are derived from the label alone, so two pickers sharing a
  * label would expose the same option id twice. Keeping at most one picker open
  * is what makes those ids unambiguous.
+ *
+ * Returns early when the picker already shows `option`. The check reads the same
+ * line the closing assertion checks, and `getAttributes` has no visibility
+ * constraint, so an already-set picker costs one read and no gesture at all. It
+ * assumes the picker is collapsed — true unless an earlier call threw partway,
+ * which fails its own test first.
  */
 export async function selectPickerOption(
   { pickerId, label, option }: PickerSelection,
-  scroll?: PickerScrollOptions,
+  scroll?: SettingsControlOptions,
 ) {
-  const tapById = async (id: string) => {
+  const expected = `${label}: ${option}`;
+
+  if ((await getTopmostMatch(by.id(pickerId))).text === expected) {
+    return;
+  }
+
+  const scrollToAndTap = async (id: string) => {
     if (scroll !== undefined) {
-      await rewindAndScrollUntilVisible(
-        id,
-        scroll.scrollViewId,
-        scroll.pixelsPerStep,
-      );
+      const { scrollViewId, ...options } = scroll;
+      await rewindAndScrollUntilVisible(id, scrollViewId, options);
     }
     await element(by.id(id)).tap();
   };
 
-  await tapById(pickerId);
-  await tapById(pickerOptionId(label, option));
-  await tapById(pickerId);
+  await scrollToAndTap(pickerId);
+  await scrollToAndTap(pickerOptionId(label, option));
+  await scrollToAndTap(pickerId);
 
-  await expect(element(by.id(pickerId))).toHaveLabel(`${label}: ${option}`);
+  await expect(element(by.id(pickerId))).toHaveText(expected);
+}
+
+/** `to` is the state expected afterwards — a swallowed tap fails here. */
+export async function toggleSettingsSwitch(
+  { switchId, label, to }: { switchId: string; label: string; to: boolean },
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  await element(by.id(switchId)).tap();
+
+  await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
 }
 
 // ---------------------------------------------------------------------------
@@ -222,18 +324,28 @@ export async function selectPickerOption(
 // normalize such a match to the topmost (last) one.
 // ---------------------------------------------------------------------------
 
+/** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
+export async function getTopmostMatch(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes> {
+  const matches = await getMatches(matcher);
+  return matches[matches.length - 1];
+}
+
 /** Reads the trimmed text of `testID` on the topmost stacked screen. */
 export async function readTopmostText(testID: string): Promise<string> {
-  const matches = await getMatches(by.id(testID));
-  const topmost = matches[matches.length - 1];
+  const topmost = await getTopmostMatch(by.id(testID));
   return (topmost.text ?? topmost.label ?? '').trim();
 }
 
-/** Taps `matcher`'s last match — the topmost stacked screen's copy. */
+/**
+ * Taps `matcher`'s last match — the topmost stacked screen's copy. Pass a
+ * freshly built matcher: on Android `atIndex` rewrites it in place, so a reused
+ * one stays pinned to the index tapped here.
+ */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
-  const count = (await getMatches(matcher)).length;
   await element(matcher)
-    .atIndex(count - 1)
+    .atIndex((await countMatches(matcher)) - 1)
     .tap();
 }
 
@@ -337,9 +449,9 @@ export async function selectIssueTestScreen(screenName: string) {
   if (device.getPlatform() === 'android') {
     await element(by.label('Search')).tap();
 
-    // This is the only way I was able to get the search box text input.
-    // I don't know why element(by.type('androidx.appcompat.widget.SearchView.SearchAutoComplete'))
-    // does not work even if it appears in view hierarchy returned by Detox in debug logging mode.
+    // Only way found to reach the search input: matching by type
+    // (androidx.appcompat.widget.SearchView.SearchAutoComplete) fails even
+    // though it shows up in Detox's view hierarchy.
     await element(by.text('')).replaceText(screenName);
   } else if (device.getPlatform() === 'ios') {
     await element(by.traits(['searchField'])).typeText(screenName);
