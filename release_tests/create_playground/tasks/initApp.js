@@ -12,7 +12,7 @@ function initApp(config, { runTask, runCommand }) {
 
   runTask('Initializing React Native app', paths.log, () => {
     runCommand(
-      `npx @react-native-community/cli@latest init "${appName}" --version "${config['rn-version']}" --skip-install`,
+      `npx @react-native-community/cli@latest init "${appName}" --version "${config['rn-version']}" --skip-install --skip-git-init`,
       paths.playground,
       paths.log,
     );
