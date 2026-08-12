@@ -20,7 +20,7 @@ function refExistsLocally(screensPath, target) {
   }
 }
 
-function isBranchOrTag(screensPath, target) {
+function isLocalBranch(screensPath, target) {
   try {
     execSync(`git show-ref --verify --quiet "refs/heads/${target}"`, {
       cwd: screensPath,
@@ -29,7 +29,11 @@ function isBranchOrTag(screensPath, target) {
     return true;
   } catch {
     // not a local branch
+    return false;
   }
+}
+
+function isLocalTag(screensPath, target) {
   try {
     execSync(`git show-ref --verify --quiet "refs/tags/${target}"`, {
       cwd: screensPath,
@@ -37,6 +41,7 @@ function isBranchOrTag(screensPath, target) {
     });
     return true;
   } catch {
+    // not a local tag
     return false;
   }
 }
@@ -77,7 +82,7 @@ function cloneScreensRef({
 }) {
   const git = (cmd, cwd = releaseTestsPath) => runCommand(cmd, cwd, logPath);
 
-  function cloneBranch(source) {
+  function cloneBranchOrTag(source) {
     git(
       `git clone --single-branch --branch "${target}" "${source}" "${tempCloneDir}"`,
     );
@@ -93,15 +98,15 @@ function cloneScreensRef({
 
   if (useLocal) {
     if (refType === 'branch' || refType === 'tag') {
-      cloneBranch(screensPath);
+      cloneBranchOrTag(screensPath);
       return;
     }
     if (refType === 'commit') {
       checkoutCommit(screensPath);
       return;
     }
-    if (isBranchOrTag(screensPath, target)) {
-      cloneBranch(screensPath);
+    if (isLocalBranch(screensPath, target) || isLocalTag(screensPath, target)) {
+      cloneBranchOrTag(screensPath);
     } else {
       checkoutCommit(screensPath);
     }
@@ -113,7 +118,7 @@ function cloneScreensRef({
       checkoutCommit(remoteUrl, { fetch: true });
     } else {
       // branch / tag / unknown — clone --branch (bare commit hashes need commit:<sha>)
-      cloneBranch(remoteUrl);
+      cloneBranchOrTag(remoteUrl);
     }
   } catch {
     failRemoteClone({ target, forceFetch, refType });
