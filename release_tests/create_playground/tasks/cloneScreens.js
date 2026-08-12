@@ -1,11 +1,16 @@
 const { execSync } = require('child_process');
 
 function getRemoteUrl(screensPath) {
-  return execSync('git config --get remote.origin.url', {
-    cwd: screensPath,
-  })
-    .toString()
-    .trim();
+  try {
+    return execSync('git config --get remote.origin.url', {
+      cwd: screensPath,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .toString()
+      .trim();
+  } catch {
+    throw new Error("Cannot find git remote 'origin'.");
+  }
 }
 
 function refExistsLocally(screensPath, target) {
