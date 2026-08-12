@@ -23,8 +23,14 @@ function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
   runCommand('yarn', ['install'], sourceDir, config.paths.log);
   runCommand('yarn', ['prepare'], sourceDir, config.paths.log);
 
-  const output = runCommand('npm', ['pack'], sourceDir, config.paths.log, true);
-  const rawPackFile = output.trim().split('\n').pop();
+  const output = runCommand(
+    'npm',
+    ['pack', '--json', '--ignore-scripts'],
+    sourceDir,
+    config.paths.log,
+    true,
+  );
+  const [{ filename: rawPackFile }] = JSON.parse(output);
   const packedPath = path.join(sourceDir, rawPackFile);
 
   fs.renameSync(packedPath, packFile);
