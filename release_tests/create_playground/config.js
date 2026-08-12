@@ -201,13 +201,10 @@ function getConfig() {
     parseScreensVersion(config['screens-version']);
 
   if (screensRefType === 'current' && config['force-fetch']) {
-    console.error(
-      `\n❌ FATAL ERROR: Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'current'.`,
+    fatal(
+      `Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'current'.\n` +
+        `Explanation: The 'current' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
     );
-    console.error(
-      `Explanation: The 'current' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
-    );
-    process.exit(1);
   }
 
   const iosSimulator = config['ios-simulator'];
