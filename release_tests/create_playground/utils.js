@@ -94,13 +94,80 @@ function runTask(taskName, logFile, executeFn) {
   }
 }
 
-function freePort(port = METRO_PORT) {
+function isMetroRespondingOnPort(port) {
   try {
-    execSync(`lsof -tiTCP:${port} -sTCP:LISTEN | xargs kill -9`, {
-      stdio: 'ignore',
-    });
+    const response = execSync(
+      `curl -s --max-time 2 http://localhost:${port}/status`,
+      { encoding: 'utf8' },
+    );
+    return response.includes('packager-status:running');
   } catch {
-    // nothing listening on the port
+    return false;
+  }
+}
+
+function freePort(port = METRO_PORT) {
+  let pids;
+  try {
+    pids = execFileSync(`lsof`, [`-tiTCP:${port}`, '-sTCP:LISTEN'], {
+      encoding: 'utf8',
+    })
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+  } catch {
+    return; // nothing listening on the port
+  }
+
+  if (pids.length === 0) {
+    return; // nothing listening on the port
+  }
+
+  if (pids.length > 1) {
+    throw new Error(
+      `Port ${port} is held by multiple processes (PIDs: ${pids.join(', ')}).`,
+    );
+  }
+  if (!isMetroRespondingOnPort(port)) {
+    throw new Error(
+      `Port ${port} is held by PID ${pids[0]}, which does not respond like Metro.`,
+    );
+  }
+  terminateProcess(Number(pids[0]));
+}
+
+function isProcessAlive(pid) {
+  try {
+    process.kill(pid, 0); // signal 0 only checks existence
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function terminateProcess(pid, gracePeriodMs = 3000) {
+  try {
+    process.kill(pid, 'SIGTERM');
+  } catch {
+    return; // already gone
+  }
+
+  const deadline = Date.now() + gracePeriodMs;
+  while (Date.now() < deadline) {
+    if (!isProcessAlive(pid)) {
+      return;
+    }
+    sleepSync(100);
+  }
+
+  try {
+    process.kill(pid, 'SIGKILL');
+  } catch {
+    // exited between the last check and the kill
   }
 }
 
