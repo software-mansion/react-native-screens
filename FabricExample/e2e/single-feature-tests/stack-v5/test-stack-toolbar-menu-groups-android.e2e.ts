@@ -166,15 +166,11 @@ async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
   await tapById('send-command-button');
 }
 
-async function tapMenuItem(title: string) {
-  await element(by.text(title)).tap();
-}
-
 /** The only submenu row no case hides or renames. */
 const SUBMENU_ANCHOR_TITLE = 'Info';
 
 async function openSubmenu() {
-  await tapMenuItem('More');
+  await element(by.text('More')).tap();
   await waitFor(element(menuRowWithText(SUBMENU_ANCHOR_TITLE)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT);

@@ -15,6 +15,7 @@ import {
 import {
   closingMenuAfter,
   closeOverflowMenu,
+  expectLastClicked as expectLastClickedOn,
   menuRow,
   menuRowImage,
   OVERFLOW_MENU_LABEL,
@@ -145,9 +146,14 @@ const setIncludeSubmenu2 = (value: boolean) =>
 const setAddExtraItem = (value: boolean) =>
   setSwitch('add-extra-item-switch', 'add extra item to submenu-1', value);
 
-async function openOverflowMenu() {
+/**
+ * Not the shared `openOverflowMenu`: that one gates on the popup matcher, which
+ * a nested chain can satisfy while a parent popup is still up. "Top Item" is
+ * never renamed or hidden by any step, so its count gates the open animation
+ * against the root popup specifically.
+ */
+async function openRootMenu() {
   await element(by.label(OVERFLOW_MENU_LABEL)).tap();
-  // No step ever renames or hides "Top Item", so it gates the open animation.
   await waitForMenuTextCount('Top Item', 1);
 }
 
@@ -161,7 +167,7 @@ async function openMenu(
   gate: MenuText,
   gateCount: number,
 ) {
-  await openOverflowMenu();
+  await openRootMenu();
 
   for (let i = 0; i < path.length; i++) {
     await element(menuText(path[i])).tap();
@@ -250,7 +256,7 @@ async function expectUntitledSubmenu(
   rowCount: number,
   expected: [MenuText, ...MenuText[]],
 ) {
-  await openOverflowMenu();
+  await openRootMenu();
 
   await withMenusClosedAfter(async () => {
     jestExpect(await countMatches(menuRow(), { orEmpty: true })).toBe(rowCount);
@@ -266,7 +272,7 @@ async function expectUntitledSubmenu(
 
 // Taps `item` in the menu reached through `path`. `item` must be the only match
 // in its popup, so the tap cannot be ambiguous.
-async function tapMenuItem(path: readonly MenuText[], item: MenuText) {
+async function tapMenuItemAtPath(path: readonly MenuText[], item: MenuText) {
   await openMenu(path, item, 1);
 
   // Selecting an item dismisses every popup in the chain.
@@ -274,10 +280,7 @@ async function tapMenuItem(path: readonly MenuText[], item: MenuText) {
 }
 
 async function expectLastClicked(id: AllIds) {
-  await scrollIntoView('last-clicked-text');
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
-  );
+  await expectLastClickedOn(id, SCROLLVIEW_ID);
 }
 
 describeIfAndroid('Stack Toolbar Nested Menu', () => {
@@ -320,31 +323,31 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
 
   describe('click handling — items at all nesting levels', () => {
     it('reports item-top as last clicked', async () => {
-      await tapMenuItem([], 'Top Item');
+      await tapMenuItemAtPath([], 'Top Item');
 
       await expectLastClicked('item-top');
     });
 
     it('reports sub-1-1 for the first item of submenu-1 as last clicked', async () => {
-      await tapMenuItem(['Submenu A'], 'Sub A.1');
+      await tapMenuItemAtPath(['Submenu A'], 'Sub A.1');
 
       await expectLastClicked('sub-1-1');
     });
 
     it('reports sub-1-2 for the second item of submenu-1 as last clicked', async () => {
-      await tapMenuItem(['Submenu A'], 'Sub A.2');
+      await tapMenuItemAtPath(['Submenu A'], 'Sub A.2');
 
       await expectLastClicked('sub-1-2');
     });
 
     it('reports sub-2-1 for the item of submenu-2 as last clicked', async () => {
-      await tapMenuItem(['Submenu B'], 'Sub B.1');
+      await tapMenuItemAtPath(['Submenu B'], 'Sub B.1');
 
       await expectLastClicked('sub-2-1');
     });
 
     it('reports deep-1 for the item of the doubly nested submenu as last clicked', async () => {
-      await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
+      await tapMenuItemAtPath(['Submenu B', 'Deep'], 'Deep.1');
 
       await expectLastClicked('deep-1');
     });
@@ -358,7 +361,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     });
 
     it('keeps the id stable across the title change', async () => {
-      await tapMenuItem(['Submenu A'], 'Title X');
+      await tapMenuItemAtPath(['Submenu A'], 'Title X');
 
       await expectLastClicked('sub-1-1');
     });
@@ -573,7 +576,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     });
 
     it('keeps the id of the deeply nested item stable', async () => {
-      await tapMenuItem(['Submenu B', 'Deep'], 'Title X');
+      await tapMenuItemAtPath(['Submenu B', 'Deep'], 'Title X');
 
       await expectLastClicked('deep-1');
     });

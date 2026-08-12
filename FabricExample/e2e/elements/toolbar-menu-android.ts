@@ -1,6 +1,11 @@
-import { device, element, by, waitFor } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
 import { NativeMatcher } from 'detox/detox';
-import { countMatches, waitUntil } from '../e2e-utils';
+import {
+  countMatches,
+  rewindAndScrollUntilVisible,
+  ScrollOptions,
+  waitUntil,
+} from '../e2e-utils';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
   CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
@@ -231,4 +236,19 @@ export async function withOverflowMenu(
 ) {
   await openOverflowMenu();
   await closingMenuAfter(scrollViewId, assertions, options);
+}
+
+/**
+ * Asserts the `last-clicked-text` status line the toolbar menu test screens
+ * render. It sits on the settings screen behind the menu, hence the scroll.
+ */
+export async function expectLastClicked(
+  id: string,
+  scrollViewId: string,
+  scroll?: ScrollOptions,
+) {
+  await rewindAndScrollUntilVisible('last-clicked-text', scrollViewId, scroll);
+  await expect(element(by.id('last-clicked-text'))).toHaveText(
+    `Last clicked: ${id}`,
+  );
 }

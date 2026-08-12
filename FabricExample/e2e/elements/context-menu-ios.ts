@@ -112,11 +112,17 @@ export async function dismissMenuAt(
 
 /**
  * Dismisses the presented menu by tapping UIKit's full-screen platter backdrop,
- * which every context menu puts up regardless of its anchor — so no off-menu
- * coordinate has to be computed. Prefer this where the backdrop is reachable.
+ * which every context menu puts up regardless of its anchor — so no per-screen
+ * off-menu coordinate has to be computed.
+ *
+ * Near the leading edge, not the centre. Menus are anchored to the header's
+ * trailing items, but once submenus stack they can reach screen centre, and a
+ * tap that lands on the menu only pops one level instead of dismissing it.
+ * The leading edge is clear of the platter at any depth.
  */
 export async function dismissMenu() {
   await dismissMenuAt(
     by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW),
+    { xFraction: 0.1 },
   );
 }

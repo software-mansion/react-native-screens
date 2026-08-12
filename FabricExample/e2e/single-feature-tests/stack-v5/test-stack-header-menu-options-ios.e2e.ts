@@ -4,7 +4,7 @@ import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navig
 import { expect as jestExpect } from '@jest/globals';
 import {
   chevronFor,
-  dismissMenuAt,
+  dismissMenu,
   menuRow,
 } from '../../elements/context-menu-ios';
 import {
@@ -41,15 +41,6 @@ function paletteIcon(iconId: string) {
 /** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
 async function getPaletteIconTopY(iconId: string) {
   return (await getFrame(paletteIconMatcher(iconId))).y;
-}
-
-/**
- * Dismisses the presented context menu without selecting any item. The label is
- * just body text underneath, used to locate a point near the leading edge that
- * the platter does not cover — it has nothing to do with the displayInline prop.
- */
-async function dismissMenu() {
-  await dismissMenuAt(by.id('text-display-inline'), { xFraction: 0.1 });
 }
 
 /** Taps a toggle and asserts the label it settles on. */

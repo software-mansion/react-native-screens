@@ -42,9 +42,7 @@ export default function App() {
   };
 
   const detailRouteConfig =
-    pushedScreenKey === 'home'
-      ? null
-      : DETAIL_ROUTE_CONFIGS[pushedScreenKey];
+    pushedScreenKey === 'home' ? null : DETAIL_ROUTE_CONFIGS[pushedScreenKey];
 
   return (
     <ScreenStack style={{ flex: 1 }}>

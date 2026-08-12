@@ -98,6 +98,13 @@ export async function getSingleMatch(
   return matches[0];
 }
 
+/** Attributes of `matcher`'s first match, for a deliberately broad matcher. */
+export async function getFirstMatch(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes> {
+  return (await getMatches(matcher))[0];
+}
+
 /** Screen-coordinate frame of the single element matching `matcher`. */
 export async function getFrame(
   matcher: NativeMatcher,
@@ -156,11 +163,11 @@ export type ScrollOptions = {
 };
 
 export async function scrollUntilVisible(
-  id: string,
+  target: string | NativeMatcher,
   scrollViewId: string,
   { pixels = 600, startPercentage = 0.85 }: ScrollOptions = {},
 ) {
-  await waitFor(element(by.id(id)))
+  await waitFor(element(typeof target === 'string' ? by.id(target) : target))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, 'down', Number.NaN, startPercentage);
@@ -169,12 +176,12 @@ export async function scrollUntilVisible(
 /** Rewinds first, so a target above the offset is reachable — `whileElement`
  * only scrolls one way. */
 export async function rewindAndScrollUntilVisible(
-  id: string,
+  target: string | NativeMatcher,
   scrollViewId: string,
   options: ScrollOptions = {},
 ) {
   await element(by.id(scrollViewId)).scrollTo('top');
-  await scrollUntilVisible(id, scrollViewId, options);
+  await scrollUntilVisible(target, scrollViewId, options);
 }
 
 // ---------------------------------------------------------------------------

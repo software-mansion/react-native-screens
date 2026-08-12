@@ -8,6 +8,7 @@ import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navig
 import { selectPickerOption } from '../../elements/settings-controls';
 import {
   closingMenuAfter,
+  expectLastClicked as expectLastClickedOn,
   MENU_ANIMATION_TIMEOUT,
   openOverflowMenu,
   textInMenu,
@@ -87,7 +88,8 @@ async function setSlotInclude(slot: number, include: boolean) {
   ).toBeVisible();
 }
 
-async function tapMenuItem(title: MenuTitle) {
+/** Taps a leaf item and waits for the whole menu to come down. */
+async function tapMenuItemAndWaitForClose(title: MenuTitle) {
   await waitForMenuItem(title);
   await element(textInMenu(title)).tap();
   await waitFor(element(textInMenu(title)))
@@ -149,10 +151,7 @@ async function expectMenuItems(
 }
 
 async function expectLastClicked(id: string) {
-  await scrollIntoView('last-clicked-text');
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
-  );
+  await expectLastClickedOn(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
 describeIfAndroid('Stack Toolbar Menu Commands', () => {
@@ -174,7 +173,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
 
     it('closes the menu and reports item-1 when tapping "Title A"', async () => {
       await openOverflowMenu();
-      await tapMenuItem('Title A');
+      await tapMenuItemAndWaitForClose('Title A');
 
       await expect(element(by.text('Title B'))).not.toExist();
       await expect(element(by.text('Title C'))).not.toExist();
@@ -183,7 +182,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
 
     it('reports item-3 when tapping "Title C"', async () => {
       await openOverflowMenu();
-      await tapMenuItem('Title C');
+      await tapMenuItemAndWaitForClose('Title C');
 
       await expect(element(by.text('Title A'))).not.toExist();
       await expectLastClicked('item-3');
@@ -216,7 +215,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
 
     it('keeps the id stable across a title change — "Changed" still reports item-2', async () => {
       await openOverflowMenu();
-      await tapMenuItem('Changed');
+      await tapMenuItemAndWaitForClose('Changed');
 
       await expect(element(by.text('Title A'))).not.toExist();
       await expectLastClicked('item-2');

@@ -2,7 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
-  getMatches,
+  getFirstMatch,
   isIOSVersionAtLeast,
 } from '../../e2e-utils';
 import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
@@ -18,11 +18,7 @@ async function tapOptionButton(optionText: string) {
 }
 
 async function getTabBarItemFrameX(tabLabel: string): Promise<number> {
-  const frame = (await getMatches(by.label(tabLabel)))[0]?.frame;
-  if (!frame) {
-    throw new Error(`Could not read frame for tab labelled "${tabLabel}"`);
-  }
-  return frame.x;
+  return (await getFirstMatch(by.label(tabLabel))).frame.x;
 }
 
 async function tapSystemTitleOption() {

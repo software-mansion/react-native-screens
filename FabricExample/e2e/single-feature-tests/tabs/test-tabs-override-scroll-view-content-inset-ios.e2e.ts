@@ -4,7 +4,7 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
-  getMatches,
+  getFirstMatch,
   getFrame,
   getSingleMatch,
 } from '../../e2e-utils';
@@ -31,7 +31,7 @@ async function getTabBarFrame(): Promise<{
   width: number;
   height: number;
 }> {
-  return (await getMatches(by.type(CLASS_NAME_UI_TAB_BAR)))[0].frame;
+  return (await getFirstMatch(by.type(CLASS_NAME_UI_TAB_BAR))).frame;
 }
 
 function isAboveTabBar(

@@ -1,11 +1,11 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../../e2e-utils';
+import { describeIfiOS, scrollUntilVisible } from '../../e2e-utils';
 import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { dismissToast } from '../../elements/toast';
 import {
   checkmarkFor,
   contextMenu,
-  dismissMenuAt,
+  dismissMenu,
   iconFor,
 } from '../../elements/context-menu-ios';
 import {
@@ -27,10 +27,7 @@ const headerTitle = element(
 );
 
 async function scrollTo(matcher: Detox.NativeMatcher) {
-  await waitFor(element(matcher))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(200, 'down');
+  await scrollUntilVisible(matcher, SCROLLVIEW_ID, { pixels: 200 });
 }
 
 /**
@@ -73,14 +70,6 @@ async function openTitleMenu() {
   const { x, y, width, height } = titleAttributes.frame;
   await device.tap({ x: x + width / 2, y: y + height / 2 });
   await waitFor(contextMenu).toBeVisible().withTimeout(2000);
-}
-
-/**
- * Taps the dimming layer to dismiss the menu. The menu is anchored to the
- * trailing bar button, so a point near the left edge never lands on it.
- */
-async function dismissMenu() {
-  await dismissMenuAt(by.text('setMenuOptions (Menu 1)'), { xFraction: 0 });
 }
 
 describeIfiOS('Stack Header Menu (iOS)', () => {
