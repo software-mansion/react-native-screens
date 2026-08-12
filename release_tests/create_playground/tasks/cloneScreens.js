@@ -95,10 +95,16 @@ function cloneScreensRef({
 
   function checkoutCommit(source, { fetch = false } = {}) {
     git(`git clone --no-checkout "${source}" "${tempCloneDir}"`);
-    if (fetch) {
-      git(`git fetch origin "${target}"`, tempCloneDir);
+    try {
+      git(`git checkout "${target}"`, tempCloneDir);
+    } catch (error) {
+      if (fetch) {
+        git(`git fetch origin "${target}"`, tempCloneDir);
+        git(`git checkout "${target}"`, tempCloneDir);
+      } else {
+        throw error;
+      }
     }
-    git(`git checkout "${target}"`, tempCloneDir);
   }
 
   if (useLocal) {
