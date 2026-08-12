@@ -16,7 +16,15 @@ item keeps its checked state.
 
 ## E2E test
 
-TBD: E2E coverage has not been determined yet.
+Incomplete: covers steps 1–22.
+
+Not automated:
+
+- The greyed-out appearance itself — `iconTintColorNormal` vs
+  `iconTintColorDisabled` on the `action-bar` button, and the greyed label of
+  disabled menu rows. Detox cannot read a tint, so the steps asserting one are
+  covered through the native `enabled` attribute instead. Verify the colors
+  visually.
 
 ## Prerequisites
 
