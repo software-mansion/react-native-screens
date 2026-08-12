@@ -1,35 +1,46 @@
 const fs = require('fs');
 const path = require('path');
 
+// remove this helper when we drop support for 0.84.
 function gemfileHasGem(gemfile, gemName) {
   return new RegExp(`^\\s*gem\\s+['"]${gemName}['"]`, 'm').test(gemfile);
 }
 
-function isRuby34OrNewer(appPath, { runCommand, logPath }) {
-  const version = runCommand(
-    'ruby -e "print RUBY_VERSION"',
-    appPath,
-    logPath,
-    true,
-  ).trim();
-  const [major, minor] = version.split('.').map(Number);
-  return major > 3 || (major === 3 && minor >= 4);
+// remove this helper when we drop support for 0.84.
+function canRequireKconv(appPath, { runCommand, logPath }) {
+  try {
+    runCommand(
+      'bundle exec ruby -e "require \'kconv\'"',
+      appPath,
+      logPath,
+      true,
+    );
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-function ensureRuby34Gems(appPath, { runCommand, logPath }) {
-  if (!isRuby34OrNewer(appPath, { runCommand, logPath })) {
+// remove this helper when we drop support for 0.84.
+function ensureNkfGem(appPath, { runCommand, logPath }) {
+  if (canRequireKconv(appPath, { runCommand, logPath })) {
+    // if the gem can require kconv, return
     return;
   }
 
   const gemfilePath = path.join(appPath, 'Gemfile');
   const gemfile = fs.readFileSync(gemfilePath, 'utf8');
 
-  if (!gemfileHasGem(gemfile, 'nkf')) {
-    console.log(
-      `\n⚠️ Gemfile is missing 'nkf' (needed on Ruby 3.4+). Adding it...`,
-    );
-    runCommand('bundle add nkf', appPath, logPath);
+  if (gemfileHasGem(gemfile, 'nkf')) {
+    // if the gemfile has the gem name, return
+    return;
   }
+
+  console.log(
+    `\n⚠️ Gemfile is missing 'nkf' (required to load kconv). Adding it...`,
+  );
+  runCommand('bundle add nkf', appPath, logPath);
+  // `bundle add nkf` deafult make bundle install, so we don't need to run it again
 }
 
 function installIosPods(config, { runTask, runCommand }) {
@@ -39,16 +50,18 @@ function installIosPods(config, { runTask, runCommand }) {
     const iosDir = path.join(paths.app, 'ios');
     const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
 
-    ensureRuby34Gems(paths.app, {
+    runCommand(`${gammaEnv} bundle install`, paths.app, paths.log);
+
+    // Workaround for RN < 0.85 templates: Gemfile may lack `nkf`, which is
+    // needed to `require 'kconv'` on Ruby 3.4+. RN 0.85 added `nkf` to the
+    // template — remove this helper when we drop support for 0.84.
+    // https://react-native-community.github.io/upgrade-helper/?from=0.84.1&to=0.85.0
+    ensureNkfGem(paths.app, {
       runCommand,
       logPath: paths.log,
     });
 
-    runCommand(
-      `${gammaEnv} bundle install && ${gammaEnv} bundle exec pod install`,
-      iosDir,
-      paths.log,
-    );
+    runCommand(`${gammaEnv} bundle exec pod install`, iosDir, paths.log);
   });
 }
 
