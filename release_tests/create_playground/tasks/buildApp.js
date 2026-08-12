@@ -50,7 +50,7 @@ function installIosPods(config, { runTask, runCommand }) {
     const iosDir = path.join(paths.app, 'ios');
     const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
 
-    runCommand(`${gammaEnv} bundle install`, paths.app, paths.log);
+    runCommand(`bundle install`, paths.app, paths.log);
 
     // Workaround for RN < 0.85 templates: Gemfile may lack `nkf`, which is
     // needed to `require 'kconv'` on Ruby 3.4+. RN 0.85 added `nkf` to the
