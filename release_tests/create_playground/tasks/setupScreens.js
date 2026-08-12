@@ -33,7 +33,7 @@ function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
   );
 }
 
-function setupCurrentScreens(config, utils) {
+function setupScreensFromWorkingTree(config, utils) {
   const { runTask } = utils;
   const packFileName = 'screens-current.tgz';
   const packFile = path.join(config.paths.app, packFileName);
@@ -50,7 +50,7 @@ function setupCurrentScreens(config, utils) {
   installPackedPackage(packFileName, config, utils);
 }
 
-function setupGitScreens(config, utils) {
+function setupScreensFromRef(config, utils) {
   const { runTask, runCommand, withTempDir } = utils;
   const refType = config['screens-ref-type'];
   const target = config['screens-ref-target'];
@@ -110,9 +110,9 @@ function setupGitScreens(config, utils) {
 
 function setupScreens(config, utils) {
   if (config['screens-ref-type'] === 'current') {
-    setupCurrentScreens(config, utils);
+    setupScreensFromWorkingTree(config, utils);
   } else {
-    setupGitScreens(config, utils);
+    setupScreensFromRef(config, utils);
   }
 }
 

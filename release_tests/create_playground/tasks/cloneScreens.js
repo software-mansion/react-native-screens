@@ -41,7 +41,7 @@ function isBranchOrTag(screensPath, target) {
   }
 }
 
-function looksLikeCommitHash(ref) {
+function matchesCommitShaFormat(ref) {
   return /^[0-9a-f]{7,40}$/i.test(ref);
 }
 
@@ -55,7 +55,7 @@ function failRemoteClone({ target, forceFetch, refType }) {
       `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally or on the network.`,
     );
   }
-  if (refType === 'unknown' && looksLikeCommitHash(target)) {
+  if (refType === 'unknown' && matchesCommitShaFormat(target)) {
     console.error(
       `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
     );
