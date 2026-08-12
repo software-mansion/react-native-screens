@@ -14,7 +14,7 @@ import {
 } from 'react-native-screens';
 import LongText from '@apps/shared/LongText';
 
-type TriState = 'undefined' | 'true' | 'false';
+export type TriState = 'undefined' | 'true' | 'false';
 
 const TRI_STATE_VALUES: TriState[] = ['undefined', 'true', 'false'];
 
@@ -80,27 +80,37 @@ function ConfigScreen() {
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView
+        testID="lift-on-scroll-scrollview"
         nestedScrollEnabled
         style={styles.scroll}
-        contentContainerStyle={styles.content}>
+        contentContainerStyle={[
+          styles.content,
+          // A transparent header overlays the content, which would otherwise
+          // bury the controls that toggle it back off.
+          config.transparent && styles.contentUnderTransparentHeader,
+        ]}>
         <Text style={styles.heading}>Header config</Text>
         <SettingsSwitch
+          testID="header-config-enabled-switch"
           label="headerConfig enabled (attach/detach)"
           value={config.enabled}
           onValueChange={v => updateConfig('enabled', v)}
         />
         <SettingsPicker<TriState>
+          testID="liftonscroll-picker"
           label="liftOnScroll"
           value={config.liftOnScroll}
           onValueChange={v => updateConfig('liftOnScroll', v)}
           items={TRI_STATE_VALUES}
         />
         <SettingsSwitch
+          testID="transparent-switch"
           label="transparent"
           value={config.transparent}
           onValueChange={v => updateConfig('transparent', v)}
         />
         <SettingsSwitch
+          testID="hidden-switch"
           label="hidden"
           value={config.hidden}
           onValueChange={v => updateConfig('hidden', v)}
@@ -108,6 +118,9 @@ function ConfigScreen() {
 
         <Text style={styles.heading}>Scroll to observe lift</Text>
         <LongText size="xl" />
+        {/* Bottom sentinel: lets e2e assert the content actually scrolled
+            rather than inferring it from the scroll action not throwing. */}
+        <Text testID="lift-on-scroll-bottom-marker">End of content</Text>
       </ScrollView>
     </ScrollViewMarker>
   );
@@ -123,6 +136,10 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     gap: 6,
+  },
+  // Clears a status bar plus a `small` app bar (56dp).
+  contentUnderTransparentHeader: {
+    paddingTop: 120,
   },
   heading: {
     fontSize: 20,
