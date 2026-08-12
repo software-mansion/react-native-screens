@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { describeIfiOS } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 
 describeIfiOS('Test2842 - pressables in modal', () => {
   beforeAll(async () => {

@@ -2,12 +2,12 @@ import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import {
   describeIfiOS,
-  selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
   describeIfiPad,
   getMatches,
   getSingleMatch,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { IosElementAttributes } from 'detox/detox';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,

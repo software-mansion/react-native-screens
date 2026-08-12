@@ -2,15 +2,14 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
-  dismissToast,
-  expectNoToast,
   expectTopmostVisible,
   readTopmostText,
-  selectSingleFeatureTestsScreen,
   tapTopmost,
   tapTopmostButton,
   waitUntil,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { dismissToast, expectNoToast } from '../../elements/toast';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
   CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,

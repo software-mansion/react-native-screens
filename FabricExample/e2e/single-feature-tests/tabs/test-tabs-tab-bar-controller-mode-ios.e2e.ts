@@ -1,10 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  describeIfiPad,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { describeIfiOS, describeIfiPad } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
 import {
   CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
   CLASS_NAME_UI_TAB_SIDEBAR_COLLECTION_VIEW,

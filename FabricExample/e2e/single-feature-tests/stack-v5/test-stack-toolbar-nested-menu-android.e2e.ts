@@ -6,10 +6,12 @@ import {
   describeIfAndroid,
   getMatches,
   rewindAndScrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import {
+  selectPickerOption,
+  toggleSettingsSwitch,
+} from '../../elements/settings-controls';
 import {
   closingMenuAfter,
   closeOverflowMenu,

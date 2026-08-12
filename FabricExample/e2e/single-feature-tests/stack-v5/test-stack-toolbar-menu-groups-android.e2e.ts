@@ -2,13 +2,14 @@ import { device, expect, element, by } from 'detox';
 import { NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
-  dismissNextToast,
-  expectNoToast,
   rewindAndScrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import {
+  selectPickerOption,
+  toggleSettingsSwitch,
+} from '../../elements/settings-controls';
+import { dismissNextToast, expectNoToast } from '../../elements/toast';
 import {
   closingMenuAfter,
   closeOverflowMenu,

@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 import { CLASS_NAME_UI_CONTEXT_MENU_VIEW } from '../native-class-names';
 
 const expectBackButtonMenuWithTheSameLabel = async (text: string) => {

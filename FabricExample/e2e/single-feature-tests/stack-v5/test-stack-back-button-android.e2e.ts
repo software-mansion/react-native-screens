@@ -3,11 +3,11 @@ import { device, expect, element, by, waitFor } from 'detox';
 import {
   describeIfAndroid,
   getMatches,
-  pickerOptionId,
-  selectSingleFeatureTestsScreen,
   tapTopmost,
   tapTopmostButton,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { pickerOptionId } from '../../elements/settings-controls';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
   CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
@@ -63,7 +63,10 @@ async function expectSingleVisibleBackButton() {
 
 async function openScreen() {
   await device.reloadReactNative();
-  await selectSingleFeatureTestsScreen('Stackv5', 'test-stack-back-button');
+  await selectSingleFeatureTestsScreen(
+    'Stackv5',
+    'test-stack-back-button-android',
+  );
   await waitFor(element(by.text(PUSH_SCREEN)))
     .toBeVisible()
     .withTimeout(3000);

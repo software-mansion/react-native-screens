@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 
 async function checkScreenVisibility(visible: boolean[]) {
   for (const [index, shouldBeVisible] of visible.entries()) {

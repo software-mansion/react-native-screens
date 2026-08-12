@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 import { CLASS_NAME_UI_REFRESH_CONTROL } from '../native-class-names';
 
 describe('Test640', () => {

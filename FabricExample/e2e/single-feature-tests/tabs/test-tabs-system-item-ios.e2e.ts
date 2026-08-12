@@ -1,11 +1,11 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
-  selectSingleFeatureTestsScreen,
   describeIfiOS,
   getMatches,
   isIOSVersionAtLeast,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LABEL,

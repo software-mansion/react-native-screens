@@ -7,8 +7,8 @@ import {
   getMatches,
   getFrame,
   getSingleMatch,
-  selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{

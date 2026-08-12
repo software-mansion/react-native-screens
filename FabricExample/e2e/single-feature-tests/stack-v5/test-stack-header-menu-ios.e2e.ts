@@ -1,16 +1,18 @@
 import { device, expect, element, by } from 'detox';
+import { describeIfiOS } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { dismissToast } from '../../elements/toast';
 import {
-  describeIfiOS,
-  dismissToast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+  checkmarkFor,
+  contextMenu,
+  dismissMenuAt,
+  iconFor,
+} from '../../elements/context-menu-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
-  CLASS_NAME_UI_IMAGE_VIEW,
 } from '../../native-class-names';
 import { IosElementAttributes } from 'detox/detox';
 
@@ -24,28 +26,6 @@ const headerTitle = element(
   by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu')),
 );
 
-const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
-
-function menuCell(itemLabel: string) {
-  return by
-    .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-    .and(by.label(itemLabel));
-}
-
-function checkmarkFor(itemLabel: string) {
-  return element(by.id('checkmark').withAncestor(menuCell(itemLabel)));
-}
-
-/** A menu row's SF Symbol, whose identifier is the symbol name. */
-function iconFor(iconId: string, itemLabel: string) {
-  return element(
-    by
-      .type(CLASS_NAME_UI_IMAGE_VIEW)
-      .and(by.id(iconId))
-      .withAncestor(menuCell(itemLabel)),
-  );
-}
-
 async function scrollTo(matcher: Detox.NativeMatcher) {
   await waitFor(element(matcher))
     .toBeVisible()
@@ -57,8 +37,14 @@ async function scrollTo(matcher: Detox.NativeMatcher) {
  * Opens the picker, taps the option, closes it again. Option ids
  * (`<label>-<option>`) repeat across both sections, so only one picker may be
  * open at a time.
+ *
+ * Deliberately not `selectPickerOption` from `elements/settings-controls`: it
+ * rewinds the
+ * scroll view to the top before each step, which on this screen would resolve a
+ * repeated option id against the *first* section rather than the one being
+ * driven. The forward-only scroll here is what keeps the two sections apart.
  */
-async function selectPickerOption(pickerId: string, optionId: string) {
+async function selectOption(pickerId: string, optionId: string) {
   await scrollTo(by.id(pickerId));
   await element(by.id(pickerId)).tap();
   await scrollTo(by.id(optionId));
@@ -94,13 +80,7 @@ async function openTitleMenu() {
  * trailing bar button, so a point near the left edge never lands on it.
  */
 async function dismissMenu() {
-  const textAttributes = (await element(
-    by.text('setMenuOptions (Menu 1)'),
-  ).getAttributes()) as IosElementAttributes;
-  const x = textAttributes.frame.x;
-  const y = textAttributes.frame.y + textAttributes.frame.height / 2;
-  await device.tap({ x, y });
-  await waitFor(contextMenu).not.toExist().withTimeout(2000);
+  await dismissMenuAt(by.text('setMenuOptions (Menu 1)'), { xFraction: 0 });
 }
 
 describeIfiOS('Stack Header Menu (iOS)', () => {
@@ -258,10 +238,7 @@ describeIfiOS(
     });
 
     it('should rename the targeted menu item', async () => {
-      await selectPickerOption(
-        'menu-item-options-title-picker',
-        'title-new title',
-      );
+      await selectOption('menu-item-options-title-picker', 'title-new title');
       await tapSendButton('send-menu-item-options-button');
 
       await openMenuOne();
@@ -274,14 +251,8 @@ describeIfiOS(
       await expect(iconFor('star.fill', 'New Title')).not.toExist();
       await dismissMenu();
 
-      await selectPickerOption(
-        'menu-item-options-title-picker',
-        'title-no change',
-      );
-      await selectPickerOption(
-        'menu-item-options-icon-picker',
-        'icon-star.fill',
-      );
+      await selectOption('menu-item-options-title-picker', 'title-no change');
+      await selectOption('menu-item-options-icon-picker', 'icon-star.fill');
       await tapSendButton('send-menu-item-options-button');
 
       await openMenuOne();
@@ -300,11 +271,11 @@ describeIfiOS(
     it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true', async () => {
       await dismissMenu();
 
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-target-id-picker',
         'target-id-toggle-1-1',
       );
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-toggle-state-picker',
         'togglestate-true',
       );
@@ -320,11 +291,11 @@ describeIfiOS(
     it('should keep Radio 1-1 selected when deselecting it in a singleSelection submenu', async () => {
       await dismissMenu();
 
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-target-id-picker',
         'target-id-radio-1-1',
       );
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-toggle-state-picker',
         'togglestate-false',
       );
@@ -339,11 +310,11 @@ describeIfiOS(
     it('should move the singleSelection checkmark from Radio 1-1 to Radio 1-2', async () => {
       await dismissMenu();
 
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-target-id-picker',
         'target-id-radio-1-2',
       );
-      await selectPickerOption(
+      await selectOption(
         'menu-item-options-toggle-state-picker',
         'togglestate-true',
       );
@@ -373,7 +344,7 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
   });
 
   it('should rename the targeted submenu', async () => {
-    await selectPickerOption('menu-options-title-picker', 'title-new title');
+    await selectOption('menu-options-title-picker', 'title-new title');
     await tapSendButton('send-menu-options-button');
 
     await openMenuOne();
@@ -386,8 +357,8 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
     await expect(iconFor('bell.fill', 'New Title')).not.toExist();
     await dismissMenu();
 
-    await selectPickerOption('menu-options-title-picker', 'title-no change');
-    await selectPickerOption('menu-options-icon-picker', 'icon-bell.fill');
+    await selectOption('menu-options-title-picker', 'title-no change');
+    await selectOption('menu-options-icon-picker', 'icon-bell.fill');
     await tapSendButton('send-menu-options-button');
 
     await openMenuOne();

@@ -3,11 +3,13 @@ import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
-  selectSingleFeatureTestsScreen,
-  dismissToast,
   tapTopmostButton,
-  waitForRoute,
 } from '../../e2e-utils';
+import {
+  selectSingleFeatureTestsScreen,
+  waitForRoute,
+} from '../../elements/test-screen-navigation';
+import { dismissToast } from '../../elements/toast';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
 

@@ -1,10 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import {
-  scrollUntilVisible,
-  selectComponentIntegrationTestsScreen,
-  forceSelectTabByLabel,
-  describeIfAndroid,
-} from '../../e2e-utils';
+import { scrollUntilVisible, describeIfAndroid } from '../../e2e-utils';
+import { selectComponentIntegrationTestsScreen } from '../../elements/test-screen-navigation';
+import { forceSelectTabByLabel } from '../../elements/tab-bar';
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting', () => {

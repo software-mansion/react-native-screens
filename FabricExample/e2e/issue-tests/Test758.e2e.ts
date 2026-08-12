@@ -1,9 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  isIOSVersionAtLeast,
-  selectIssueTestScreen,
-} from '../e2e-utils';
+import { describeIfiOS, isIOSVersionAtLeast } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 
 // On iOS 26+ cancel button does not contain any text.
 function getSearchBarCloseButton() {

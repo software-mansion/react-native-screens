@@ -2,9 +2,9 @@ import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
   rewindAndScrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
 import {
   closeOverflowMenu,
   OVERFLOW_MENU_LABEL,

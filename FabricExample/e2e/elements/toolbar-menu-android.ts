@@ -161,9 +161,14 @@ export async function tapLeafItem(
  * against the popup window instead of the activity, so the whole rest of the
  * suite fails on views that are plainly there.
  */
+export type CloseMenuOptions = {
+  /** Cap on Back presses. Lower it on a screen with fewer nestable popups. */
+  maxDepth?: number;
+};
+
 export async function closeOverflowMenu(
   scrollViewId: string,
-  { maxDepth = MAX_MENU_DEPTH }: { maxDepth?: number } = {},
+  { maxDepth = MAX_MENU_DEPTH }: CloseMenuOptions = {},
 ) {
   for (let presses = 0; presses < maxDepth; presses++) {
     if (await isScreenReachable(scrollViewId)) {
@@ -186,6 +191,7 @@ export async function closeOverflowMenu(
 export async function closingMenuAfter(
   scrollViewId: string,
   assertions: () => Promise<void>,
+  options: CloseMenuOptions = {},
 ) {
   let assertionFailed = false;
 
@@ -196,12 +202,18 @@ export async function closingMenuAfter(
     throw error;
   } finally {
     try {
-      await closeOverflowMenu(scrollViewId);
+      await closeOverflowMenu(scrollViewId, options);
     } catch (cleanupError) {
       // A throw from `finally` would replace the error that actually failed.
       if (!assertionFailed) {
         throw cleanupError;
       }
+      // Logged rather than dropped: the popup is still up, so the *next* test
+      // fails on views that are plainly there, with no trace in its own output.
+      console.warn(
+        'closeOverflowMenu failed while cleaning up after a failed assertion:',
+        cleanupError,
+      );
     }
   }
 }
@@ -215,7 +227,8 @@ export async function closingMenuAfter(
 export async function withOverflowMenu(
   scrollViewId: string,
   assertions: () => Promise<void>,
+  options: CloseMenuOptions = {},
 ) {
   await openOverflowMenu();
-  await closingMenuAfter(scrollViewId, assertions);
+  await closingMenuAfter(scrollViewId, assertions, options);
 }

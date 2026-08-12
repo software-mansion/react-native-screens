@@ -6,15 +6,19 @@ import { device, expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
-  getMatches,
+  getSingleMatch,
   rewindAndScrollUntilVisible,
-  selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
+import {
+  MENU_ANIMATION_TIMEOUT,
+  menuRowWithText,
+  withOverflowMenu,
+} from '../../elements/toolbar-menu-android';
 import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
-  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
@@ -28,14 +32,6 @@ import type {
 
 const SCROLLVIEW_ID = 'toolbar-menu-disabled-scrollview';
 const HEADER_TITLE: HeaderTitle = 'Toolbar Menu Disabled Test';
-
-// Detox's idle sync does not cover popup animations, so waits that straddle a
-// menu opening or dismissing must be explicit. An upper bound — only
-// `isScreenAddressable`, which is expected to time out, pays it in full.
-const MENU_ANIMATION_TIMEOUT_MS = 5000;
-
-// Probes a settled popup, not an animation: it is either up or never opened.
-const MENU_PRESENCE_TIMEOUT_MS = 250;
 
 // Rendered as `${label}: ${value}`. `ItemLabels` checks keys and exact strings.
 const SWITCH_LABELS: ItemLabels = {
@@ -55,62 +51,33 @@ const NO_EVENT: NoEvent = '—';
 // Unambiguous: the overflow button is a different class.
 const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 
-// The row, not its title `TextView`: `View.setEnabled` does not propagate to
-// children, so only the row reflects a disabled element.
-function menuRow(title: RowTitle): NativeMatcher {
-  return by
-    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
-    .withDescendant(by.text(title));
-}
+// Typed to this screen's rows. The row is matched, not its title `TextView`:
+// `View.setEnabled` does not propagate to children, so only the row reflects a
+// disabled element.
+const menuRow = (title: RowTitle): NativeMatcher => menuRowWithText(title);
 
-// Zero matches already throws inside `getMatches`, so only ambiguity is left.
+// The cast `getSingleMatch` asks call sites to make: `enabled` is Android-only,
+// and every assertion here reads a native attribute off exactly one view.
 async function attributesOf(
   matcher: NativeMatcher,
 ): Promise<AndroidElementAttributes> {
-  const matches = await getMatches(matcher);
-  if (matches.length > 1) {
-    throw new Error(
-      `Matcher resolved to ${matches.length} elements, expected exactly one. ` +
-        'Narrow the matcher, or the view hierarchy changed.',
-    );
-  }
-  return matches[0] as AndroidElementAttributes;
+  return (await getSingleMatch(matcher)) as AndroidElementAttributes;
 }
 
-// Targets sit either side of the current offset, hence the rewind; the small
-// step keeps short switch rows from being scrolled past.
+// A larger step can scroll a short switch or picker row past the viewport.
+const SCROLL_STEP = 300;
+
+// Targets sit either side of the current offset, hence the rewind.
 async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, { pixels: 300 });
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
-// Detox searches one window: while a popup holds focus nothing behind it is in
-// the hierarchy, so the screen itself has to become addressable again.
-async function waitForScreen() {
-  await waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
-
-// `waitForScreen` reported rather than thrown — stacked popups keep it false.
-async function isScreenAddressable(): Promise<boolean> {
-  return waitForScreen().then(
-    () => true,
-    () => false,
-  );
-}
-
-// Waits for the popup, not a row: bodies that tap first would race the animation.
-async function openMenu() {
-  await element(by.label('More options')).tap();
-  await waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
-
+// Waits on the row rather than `waitForMenuItem`'s text node: `enabled` lives on
+// the row, so the assertions here would otherwise race its inflation.
 async function waitForMenuRow(title: RowTitle) {
   await waitFor(element(menuRow(title)))
     .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+    .withTimeout(MENU_ANIMATION_TIMEOUT);
 }
 
 // Only where it is expected to open; a disabled **More** has nothing to wait for.
@@ -129,58 +96,11 @@ async function expectSubmenuStayedClosed() {
   await expect(element(menuRow('Sub Item'))).not.toExist();
 }
 
-async function isMenuOpen(): Promise<boolean> {
-  return waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
-    .toExist()
-    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
-    .then(
-      () => true,
-      () => false,
-    );
-}
-
 // A submenu opens on top of the overflow menu, so at most two popups stack.
 const MAX_STACKED_MENUS = 2;
 
-// Presses Back only while a popup is up, or the press pops the test screen.
-// Submenus stack, hence the loop.
-async function closeMenus() {
-  for (let attempt = 0; attempt < MAX_STACKED_MENUS; attempt++) {
-    if (!(await isMenuOpen())) {
-      break;
-    }
-    await device.pressBack();
-
-    // A dismissed popup lingers while animating out, so re-probing would read it
-    // as a second stacked menu. Waiting for the screen settles that instead.
-    if (await isScreenAddressable()) {
-      return;
-    }
-  }
-  await waitForScreen();
-}
-
-// Runs `body` with the menu open, closing it afterwards even when an assertion
-// throws — a popup left covering the screen would fail every later step.
 async function withMenu(body: () => Promise<void>) {
-  await openMenu();
-
-  try {
-    await body();
-  } catch (error) {
-    // Swallowed only here, so a failing cleanup cannot replace the assertion
-    // that failed. Logged, because it leaves the popup up and the *next* test
-    // then fails with no trace in its own output.
-    await closeMenus().catch(cleanupError => {
-      console.warn(
-        'closeMenus failed while cleaning up after a failed assertion:',
-        cleanupError,
-      );
-    });
-    throw error;
-  }
-
-  await closeMenus();
+  await withOverflowMenu(SCROLLVIEW_ID, body, { maxDepth: MAX_STACKED_MENUS });
 }
 
 async function expectRowEnabled(title: RowTitle, enabled: boolean) {
@@ -250,39 +170,18 @@ async function setDisabledViaProps(id: ElementId, disabled: boolean) {
   ).toBeVisible();
 }
 
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
-
-// Closing the picker again matters: its option rows stay in the hierarchy and
-// would collide with the `by.text` matchers used for the toolbar menu items.
+// `selectPickerOption` leaves the picker closed, which matters here beyond its
+// own reasons: open option rows stay in the hierarchy and would collide with
+// the `by.text` matchers used for the toolbar menu items.
 async function selectOption(
   pickerId: string,
   pickerLabel: string,
   option: string,
 ) {
-  const expected = `${pickerLabel}: ${option}`;
-  await scrollIntoView(pickerId);
-
-  // Pickers keep their value, so re-picking one costs three taps and three
-  // scroll rewinds for nothing. Reading the closed label avoids a probe that
-  // would have to time out.
-  if ((await attributesOf(by.id(pickerId))).text === expected) {
-    return;
-  }
-
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(expected);
+  await selectPickerOption(
+    { pickerId, label: pickerLabel, option },
+    { scrollViewId: SCROLLVIEW_ID, pixels: SCROLL_STEP },
+  );
 }
 
 async function sendCommand(options: {

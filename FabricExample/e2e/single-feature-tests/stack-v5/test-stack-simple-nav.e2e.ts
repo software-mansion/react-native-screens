@@ -5,11 +5,13 @@ import {
   describeIfiOS,
   getSingleMatch,
   readTopmostText,
-  selectSingleFeatureTestsScreen,
   tapTopmostButton,
-  waitForRoute,
   waitUntil,
 } from '../../e2e-utils';
+import {
+  selectSingleFeatureTestsScreen,
+  waitForRoute,
+} from '../../elements/test-screen-navigation';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,

@@ -4,9 +4,9 @@ import {
   describeIfiOS,
   getSingleMatch,
   scrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
 
 const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 
