@@ -23,16 +23,16 @@ function canRequireKconv(appPath, { runCommand, logPath }) {
 
 // remove this helper when we drop support for 0.84.
 function ensureNkfGem(appPath, { runCommand, logPath }) {
-  if (canRequireKconv(appPath, { runCommand, logPath })) {
-    // if the gem can require kconv, return
-    return;
-  }
-
   const gemfilePath = path.join(appPath, 'Gemfile');
   const gemfile = fs.readFileSync(gemfilePath, 'utf8');
 
   if (gemfileHasGem(gemfile, 'nkf')) {
     // if the gemfile has the gem name, return
+    return;
+  }
+
+  if (canRequireKconv(appPath, { runCommand, logPath })) {
+    // if the gem can require kconv, return
     return;
   }
 
