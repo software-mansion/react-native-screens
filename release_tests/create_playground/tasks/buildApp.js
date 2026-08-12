@@ -10,7 +10,8 @@ function gemfileHasGem(gemfile, gemName) {
 function canRequireKconv(appPath, { runCommand, logPath }) {
   try {
     runCommand(
-      'bundle exec ruby -e "require \'kconv\'"',
+      'bundle',
+      ['exec', 'ruby', '-e', "require 'kconv'"],
       appPath,
       logPath,
       true,
@@ -39,7 +40,7 @@ function ensureNkfGem(appPath, { runCommand, logPath }) {
   console.log(
     `\n⚠️ Gemfile is missing 'nkf' (required to load kconv). Adding it...`,
   );
-  runCommand('bundle add nkf', appPath, logPath);
+  runCommand('bundle', ['add', 'nkf'], appPath, logPath);
   // `bundle add nkf` deafult make bundle install, so we don't need to run it again
 }
 
@@ -49,7 +50,7 @@ function installIosPods(config, { runTask, runCommand }) {
   runTask('Installing iOS Pods', paths.log, () => {
     const iosDir = path.join(paths.app, 'ios');
 
-    runCommand(`bundle install`, paths.app, paths.log);
+    runCommand('bundle', ['install'], paths.app, paths.log);
 
     // Workaround for RN < 0.85 templates: Gemfile may lack `nkf`, which is
     // needed to `require 'kconv'` on Ruby 3.4+. RN 0.85 added `nkf` to the
@@ -60,28 +61,28 @@ function installIosPods(config, { runTask, runCommand }) {
       logPath: paths.log,
     });
 
-    runCommand(`bundle exec pod install`, iosDir, paths.log);
+    runCommand('bundle', ['exec', 'pod', 'install'], iosDir, paths.log);
   });
 }
 
-function buildAndroidRunCmd(config) {
-  let cmd = `yarn run android --mode ${config.variant}`;
+function buildAndroidRunArgs(config) {
+  const args = ['run', 'android', '--mode', config.variant];
   if (config['android-device']) {
-    cmd += ` --device "${config['android-device']}"`;
+    args.push('--device', config['android-device']);
   }
-  return cmd;
+  return args;
 }
 
-function buildIosRunCmd(config) {
-  let cmd = `yarn run ios --mode ${config.capitalizedVariant}`;
+function buildIosRunArgs(config) {
+  const args = ['run', 'ios', '--mode', config.capitalizedVariant];
   if (config['ios-udid']) {
-    cmd += ` --udid "${config['ios-udid']}"`;
+    args.push('--udid', config['ios-udid']);
   } else if (config['ios-device']) {
-    cmd += ` --device "${config['ios-device']}"`;
+    args.push('--device', config['ios-device']);
   } else if (config['ios-simulator']) {
-    cmd += ` --simulator "${config['ios-simulator']}"`;
+    args.push('--simulator', config['ios-simulator']);
   }
-  return cmd;
+  return args;
 }
 
 function buildAndRun(config, utils) {
@@ -99,7 +100,7 @@ function buildAndRun(config, utils) {
       `Building & running Android (${capitalizedVariant})`,
       paths.log,
       () => {
-        runCommand(buildAndroidRunCmd(config), paths.app, paths.log);
+        runCommand('yarn', buildAndroidRunArgs(config), paths.app, paths.log);
       },
     );
   }
@@ -108,7 +109,7 @@ function buildAndRun(config, utils) {
     installIosPods(config, utils);
 
     runTask(`Building & running iOS (${capitalizedVariant})`, paths.log, () => {
-      runCommand(buildIosRunCmd(config), paths.app, paths.log);
+      runCommand('yarn', buildIosRunArgs(config), paths.app, paths.log);
     });
   }
 }

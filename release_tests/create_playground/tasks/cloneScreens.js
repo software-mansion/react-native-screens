@@ -1,8 +1,8 @@
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 function getRemoteUrl(screensPath) {
   try {
-    return execSync('git config --get remote.origin.url', {
+    return execFileSync('git', ['config', '--get', 'remote.origin.url'], {
       cwd: screensPath,
       stdio: ['ignore', 'pipe', 'ignore'],
     })
@@ -15,7 +15,7 @@ function getRemoteUrl(screensPath) {
 
 function refExistsLocally(screensPath, target) {
   try {
-    execSync(`git rev-parse --verify "${target}^{commit}"`, {
+    execFileSync('git', ['rev-parse', '--verify', `${target}^{commit}`], {
       cwd: screensPath,
       stdio: 'ignore',
     });
@@ -27,10 +27,14 @@ function refExistsLocally(screensPath, target) {
 
 function isLocalBranch(screensPath, target) {
   try {
-    execSync(`git show-ref --verify --quiet "refs/heads/${target}"`, {
-      cwd: screensPath,
-      stdio: 'ignore',
-    });
+    execFileSync(
+      'git',
+      ['show-ref', '--verify', '--quiet', `refs/heads/${target}`],
+      {
+        cwd: screensPath,
+        stdio: 'ignore',
+      },
+    );
     return true;
   } catch {
     // not a local branch
@@ -40,10 +44,14 @@ function isLocalBranch(screensPath, target) {
 
 function isLocalTag(screensPath, target) {
   try {
-    execSync(`git show-ref --verify --quiet "refs/tags/${target}"`, {
-      cwd: screensPath,
-      stdio: 'ignore',
-    });
+    execFileSync(
+      'git',
+      ['show-ref', '--verify', '--quiet', `refs/tags/${target}`],
+      {
+        cwd: screensPath,
+        stdio: 'ignore',
+      },
+    );
     return true;
   } catch {
     // not a local tag
@@ -85,22 +93,21 @@ function cloneScreensRef({
   runCommand,
   forceFetch,
 }) {
-  const git = (cmd, cwd = releaseTestsPath) => runCommand(cmd, cwd, logPath);
+  const git = (args, cwd = releaseTestsPath) =>
+    runCommand('git', args, cwd, logPath);
 
   function cloneBranchOrTag(source) {
-    git(
-      `git clone --single-branch --branch "${target}" "${source}" "${tempCloneDir}"`,
-    );
+    git(['clone', '--single-branch', '--branch', target, source, tempCloneDir]);
   }
 
   function checkoutCommit(source, { fetch = false } = {}) {
-    git(`git clone --no-checkout "${source}" "${tempCloneDir}"`);
+    git(['clone', '--no-checkout', source, tempCloneDir]);
     try {
-      git(`git checkout "${target}"`, tempCloneDir);
+      git(['checkout', target], tempCloneDir);
     } catch (error) {
       if (fetch) {
-        git(`git fetch origin "${target}"`, tempCloneDir);
-        git(`git checkout "${target}"`, tempCloneDir);
+        git(['fetch', 'origin', target], tempCloneDir);
+        git(['checkout', target], tempCloneDir);
       } else {
         throw error;
       }

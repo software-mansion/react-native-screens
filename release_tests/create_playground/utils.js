@@ -1,11 +1,15 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync, execSync } = require('child_process');
 const logger = require('./logger');
 
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
 const METRO_PORT = 8081;
+
+function formatCommand(file, args = []) {
+  return [file, ...args].join(' ');
+}
 
 function withTempDir(prefix, fn) {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -38,12 +42,13 @@ function withTempDir(prefix, fn) {
   }
 }
 
-function runCommand(cmd, cwd, logFile, captureOutput = false) {
+function runCommand(file, args, cwd, logFile, captureOutput = false) {
+  const cmd = formatCommand(file, args);
   logger.append(logFile, `=== COMMAND: ${cmd} ===\n`);
   console.log(`🔍 Running command: ${cmd}`);
   if (captureOutput) {
     try {
-      const output = execSync(cmd, {
+      const output = execFileSync(file, args, {
         cwd,
         stdio: 'pipe',
         maxBuffer: CAPTURE_MAX_BUFFER,
@@ -58,7 +63,7 @@ function runCommand(cmd, cwd, logFile, captureOutput = false) {
   } else {
     const logFd = fs.openSync(logFile, 'a');
     try {
-      execSync(cmd, { cwd, stdio: ['ignore', logFd, logFd] });
+      execFileSync(file, args, { cwd, stdio: ['ignore', logFd, logFd] });
     } finally {
       fs.closeSync(logFd);
     }

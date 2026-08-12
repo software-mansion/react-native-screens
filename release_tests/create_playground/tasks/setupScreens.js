@@ -11,7 +11,8 @@ function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   runTask('Installing packed package in app', config.paths.log, () => {
     fs.writeFileSync(path.join(config.paths.app, 'yarn.lock'), '');
     runCommand(
-      `yarn add ./${packFileName}`,
+      'yarn',
+      ['add', `./${packFileName}`],
       config.paths.app,
       config.paths.log,
     );
@@ -19,10 +20,10 @@ function installPackedPackage(packFileName, config, { runTask, runCommand }) {
 }
 
 function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
-  runCommand('yarn install', sourceDir, config.paths.log);
-  runCommand('yarn prepare', sourceDir, config.paths.log);
+  runCommand('yarn', ['install'], sourceDir, config.paths.log);
+  runCommand('yarn', ['prepare'], sourceDir, config.paths.log);
 
-  const output = runCommand('npm pack', sourceDir, config.paths.log, true);
+  const output = runCommand('npm', ['pack'], sourceDir, config.paths.log, true);
   const rawPackFile = output.trim().split('\n').pop();
   const packedPath = path.join(sourceDir, rawPackFile);
 
