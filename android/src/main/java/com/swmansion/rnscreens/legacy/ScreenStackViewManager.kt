@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.legacy
 
 import android.view.View
+import android.view.ViewGroup
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -45,7 +46,11 @@ class ScreenStackViewManager :
     }
 
     private fun prepareOutTransition(screen: Screen?) {
-        screen?.startRemovalTransition()
+        if (screen?.isBeingRemoved == true) {
+            screen.startRemovalTransition()
+        } else {
+            (screen?.parent as? ViewGroup)?.removeView(screen)
+        }
     }
 
     override fun invalidate() {
