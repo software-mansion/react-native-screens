@@ -3,7 +3,7 @@ const path = require('path');
 
 function copyExample(config, { runTask }) {
   if (config['example-app'] === 'empty') {
-    console.log(`🔍 No example app selected. Skipping...\n`);
+    console.log(`🔍 Selected empty example app. Skipping...\n`);
     return;
   }
 
