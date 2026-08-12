@@ -3,6 +3,7 @@ const logger = require('../logger');
 
 function initApp(config, { runTask, runCommand }) {
   const { paths, appName } = config;
+  const rnVersion = config['rn-version'];
 
   runTask('Cleaning old app folder', paths.log, () => {
     fs.mkdirSync(paths.playground, { recursive: true });
@@ -12,7 +13,7 @@ function initApp(config, { runTask, runCommand }) {
 
   runTask('Initializing React Native app', paths.log, () => {
     runCommand(
-      `npx @react-native-community/cli@latest init "${appName}" --version "${config['rn-version']}" --skip-install --skip-git-init`,
+      `npx @react-native-community/cli@latest init "${appName}" --version "${rnVersion}" --skip-install --skip-git-init`,
       paths.playground,
       paths.log,
     );
