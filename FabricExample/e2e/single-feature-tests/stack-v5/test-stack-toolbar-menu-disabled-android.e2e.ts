@@ -93,13 +93,10 @@ async function waitForScreen() {
 
 // `waitForScreen` reported rather than thrown — stacked popups keep it false.
 async function isScreenAddressable(): Promise<boolean> {
-  return waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS)
-    .then(
-      () => true,
-      () => false,
-    );
+  return waitForScreen().then(
+    () => true,
+    () => false,
+  );
 }
 
 // Waits for the popup, not a row: bodies that tap first would race the animation.
@@ -553,7 +550,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   });
 
   describe('commands — three-state reset via `undefined`', () => {
-    it('clears the disabled override and falls back to the prop value', async () => {
+    it('clears the disabled override and falls back to the default', async () => {
       await sendCommand({ target: 'submenu', disabled: 'undefined' });
       await withMenu(async () => {
         await expectRowEnabled('More', true);
