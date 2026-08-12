@@ -76,6 +76,8 @@ function runTask(taskName, logFile, executeFn) {
   } catch (error) {
     console.log(`\n❌ ERROR: Failed during task: '${taskName}'`);
     console.log('--------------------------------------------------');
+    console.log(`ERROR MESSAGE: ${error.message}`);
+    console.log('--------------------------------------------------');
     console.log(`🔍 Last 20 lines of log output (${logFile}):`);
     console.log('--------------------------------------------------');
 
