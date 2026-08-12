@@ -68,11 +68,6 @@ function getConfig() {
         short: 'e',
         default: 'tabsAndStack',
       },
-      gamma: {
-        type: 'boolean',
-        short: 'g',
-        default: false,
-      },
       platform: {
         type: 'string',
         short: 'p',
@@ -125,23 +120,19 @@ function getConfig() {
                                          exists, it will also be copied. Use 'empty' to skip copying
                                          and keep the default RN App.tsx.
                                          Available: 'tabsAndStack' (Stack v5 from main export; RNS 5.x),
-                                         'tabsAndStackExperimental' (Stack v5 from experimental; RNS 4.x + gamma),
-                                         'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x, no gamma).
+                                         'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x).
         -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
                                          Must start with a letter and contain only letters and digits.
         -h, --help                       Display this help message
 
       Without --run: JS setup only (init, example, screens) — no pod install, no native compile,
-      no launch. Run flags (-v, -p, -g, device flags) are not allowed.
+      no launch. Run flags (-v, -p, device flags) are not allowed.
 
       Run options (require --run):
             --run                        After setup: pod install (when platform is ios/both), build,
                                          install, and launch the app.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
-        -g, --gamma                      Enable RNS_GAMMA_ENABLED=1 during pod install.
-                                         Required when testing experimental Stack in RNS 4.x.
-                                         Mutually exclusive with -p android.
 
       Device options (require --run):
             --ios-simulator <name>       iOS simulator name
@@ -171,7 +162,7 @@ function getConfig() {
         node create_playground.js --run -p ios --ios-simulator "iPhone 16"
         node create_playground.js --run -p ios --ios-device "Karol's iPhone"
         node create_playground.js --run -p android --android-device "emulator-5554"
-        node create_playground.js -s 4.26-stable --run -g
+        node create_playground.js -s 4.26-stable --run -e tabsAndStack4.x
         node create_playground.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
@@ -240,16 +231,12 @@ function getConfig() {
 
   const run = Boolean(config.run);
 
-  if (run && config.gamma && platform === 'android') {
-    fatal(`Cannot use '--gamma' when '--platform' is 'android'.`);
-  }
   const argvHasFlag = (...flags) =>
     flags.some(flag => process.argv.includes(flag));
 
   const runOnlyFlags = [
     argvHasFlag('-v', '--variant') && '-v/--variant',
     argvHasFlag('-p', '--platform') && '-p/--platform',
-    argvHasFlag('-g', '--gamma') && '-g/--gamma',
     iosSimulator && '--ios-simulator',
     iosDevice && '--ios-device',
     iosUdid && '--ios-udid',

@@ -4,11 +4,10 @@ Tabs + legacy V4 `ScreenStack` / `ScreenStackItem` from the main export. No expe
 
 ## Requirements
 
-|                  |                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------------------------------------- |
-| **RNS**          | 4.x (e.g. `4.26-stable`, `4.26.2`). For RNS 5.x / `main`, use `tabsAndStack` instead.                   |
-| **RN**           | Fabric required (RN ≥ 0.76). Match the RNS ↔ RN matrix from the library README for the release you use. |
-| **Gamma** (`-g`) | Not needed                                                                                              |
+|         |                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------- |
+| **RNS** | 4.x (e.g. `4.26-stable`, `4.26.2`). For RNS 5.x / `main`, use `tabsAndStack` instead.                   |
+| **RN**  | Fabric required (RN ≥ 0.76). Match the RNS ↔ RN matrix from the library README for the release you use. |
 
 ## Imports
 

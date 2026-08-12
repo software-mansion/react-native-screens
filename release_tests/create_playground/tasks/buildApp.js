@@ -48,7 +48,6 @@ function installIosPods(config, { runTask, runCommand }) {
 
   runTask('Installing iOS Pods', paths.log, () => {
     const iosDir = path.join(paths.app, 'ios');
-    const gammaEnv = config.gamma ? 'RNS_GAMMA_ENABLED=1' : '';
 
     runCommand(`bundle install`, paths.app, paths.log);
 
@@ -61,7 +60,7 @@ function installIosPods(config, { runTask, runCommand }) {
       logPath: paths.log,
     });
 
-    runCommand(`${gammaEnv} bundle exec pod install`, iosDir, paths.log);
+    runCommand(`bundle exec pod install`, iosDir, paths.log);
   });
 }
 

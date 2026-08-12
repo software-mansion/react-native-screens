@@ -19,7 +19,6 @@ console.table({
   'app-name': config['app-name'],
   'force-fetch': config['force-fetch'],
   'example-app': config['example-app'],
-  gamma: config.gamma,
   run: config.run,
   'ios-simulator': config['ios-simulator'] ?? '',
   'ios-device': config['ios-device'] ?? '',
