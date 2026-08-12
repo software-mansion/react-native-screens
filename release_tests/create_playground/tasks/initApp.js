@@ -5,8 +5,11 @@ function initApp(config, { runTask, runCommand }) {
   const { paths, appName } = config;
   const rnVersion = config['rn-version'];
 
-  runTask('Cleaning old app folder', paths.log, () => {
+  runTask('Ensuring playground directory exists', paths.log, () => {
     fs.mkdirSync(paths.playground, { recursive: true });
+  });
+
+  runTask('Cleaning old app directory', paths.log, () => {
     fs.rmSync(paths.app, { recursive: true, force: true });
     logger.append(paths.log, `Removed directory: ${paths.app}\n`);
   });
