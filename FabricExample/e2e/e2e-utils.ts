@@ -372,21 +372,14 @@ function isTransientMatchError(error: unknown): boolean {
 
 /**
  * Asserts the last match of `buildMatcher()` — the topmost stacked screen's
- * copy — is visible. Indexed because a bare `toBeVisible()` throws "matches N
- * views" once several screens are attached; polled because native header chrome
- * can lag the screen's content and `getMatches` throws on the transient 0-match
- * state.
+ * copy — is visible. Indexed because a bare `toBeVisible()` throws once several
+ * screens are attached; polled because header chrome can lag the content.
  *
- * Takes a factory rather than a matcher because on Android `atIndex` rewrites a
- * matcher in place, wrapping it in the index it just resolved. Reusing one
- * instance across polls would pin the assertion to whichever view was topmost
- * on the first attempt — and since Detox intersects a view only with its
- * parents, never with an occluding sibling, that now-buried view still reads as
- * visible. The result would be a false pass, so each attempt gets its own
- * matcher.
+ * Pass a factory, not a matcher: on Android `atIndex` rewrites one in place, so
+ * a reused matcher would pin later polls to the first attempt's index, where a
+ * now-buried view still reads as visible and would pass falsely.
  *
- * Only for elements expected to be present — absence burns the full timeout;
- * use `not.toExist()` instead.
+ * Only for elements expected to be present — absence burns the full timeout.
  */
 export async function expectTopmostVisible(
   buildMatcher: () => NativeMatcher,

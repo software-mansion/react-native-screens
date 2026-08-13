@@ -19,37 +19,28 @@ behavior and how Android is launched directly to work around issue #1459.
 
 ## E2E test
 
-Incomplete, Android only. Covered:
+Incomplete. Where a manual step's trigger cannot be driven by Detox, the e2e
+asserts the same behavior with the **Pop** button instead. 
 
-- Push navigation and the per-route flag labels, in both stacks (1-3, 9, 15,
-  17, 22), including the default flag restored on a fresh nested root (14).
+Covered:
+
+- Push navigation, the buttons each screen offers, and the per-route flag
+  labels in both stacks, including the default flag restored on a fresh
+  nested root.
 - Header back chevron intercepted while `preventNativeDismiss` is Enabled, on
-  **B** and on **NestedB** (4, 18).
-- Runtime toggling of the flag on the nested root: the label flips (12).
-- Pop actions triggered by the Pop button, including out of the nested stack
-  and back onto **B** rather than **A** (6, 21, 24, 26).
-- **B** resuming interception once it is the top screen again (25).
-
-Covered by the e2e only (no matching step above):
-
-- Repeated chevron presses on **NestedB**: each fires its own toast and none
-  pops. Step 11 asks this of **NestedHome**, where only the gesture can
-  trigger it.
-- Toggling **NestedB** Disabled and straight back to Enabled, then a chevron
-  press honoring the latest value. Step 20 pairs its toggle with a pop, which
-  is manual only.
-- Layered prevention resolved with the chevron: **NestedB** pushed on top of
-  preventing **NestedHome** and **B**, exactly one toast and it is
-  **NestedB**'s. Step 23 asserts this on **NestedHome**, gesture only.
-- Popping **NestedA** back to the preserved nested root, and **NestedB** back
-  to it, with the Pop button — the destinations of steps 16 and 20, whose
-  chevron trigger is manual only.
+  **B** and on **NestedB**, including repeated presses firing one toast each.
+- Runtime toggling of the flag, with a chevron press honoring the latest value.
+- Pop actions triggered by the **Pop** button, including out of the nested
+  stack and back onto **B** rather than **A**.
+- Only the topmost screen intercepting while **B** and **NestedHome** below it
+  also prevent.
 
 Manual only (not automated):
 
 - Pop actions triggered by the system back gesture (edge swipe).
 - Pop actions triggered by the header back chevron when `preventNativeDismiss`
   is Disabled.
+- Screen and toast colors, and that **NestedHome** shows no header at all.
 
 ## Prerequisites
 
@@ -225,8 +216,11 @@ Manual only (not automated):
 
 - [ ] The tap is intercepted: a green toast reading "Native dismiss prevented
       - NestedB" appears; the app stays on **NestedB**.
+- [ ] Tap the chevron two or three more times in quick succession: each tap is
+      intercepted individually and fires its own toast; the app never leaves
+      **NestedB**.
 
-19. On **NestedB**, perform a system gesture-back.
+19.  On **NestedB**, perform a system gesture-back.
 
 - [ ] The gesture is intercepted: the "Native dismiss prevented - NestedB"
       toast appears again; the app stays on **NestedB**.
