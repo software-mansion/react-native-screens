@@ -371,22 +371,34 @@ function isTransientMatchError(error: unknown): boolean {
 }
 
 /**
- * Asserts `matcher`'s last match — the topmost stacked screen's copy — is
- * visible. Indexed because a bare `toBeVisible()` throws "matches N views" once
- * several screens are attached; polled because native header chrome can lag the
- * screen's content and `getMatches` throws on the transient 0-match state.
+ * Asserts the last match of `buildMatcher()` — the topmost stacked screen's
+ * copy — is visible. Indexed because a bare `toBeVisible()` throws "matches N
+ * views" once several screens are attached; polled because native header chrome
+ * can lag the screen's content and `getMatches` throws on the transient 0-match
+ * state.
+ *
+ * Takes a factory rather than a matcher because on Android `atIndex` rewrites a
+ * matcher in place, wrapping it in the index it just resolved. Reusing one
+ * instance across polls would pin the assertion to whichever view was topmost
+ * on the first attempt — and since Detox intersects a view only with its
+ * parents, never with an occluding sibling, that now-buried view still reads as
+ * visible. The result would be a false pass, so each attempt gets its own
+ * matcher.
  *
  * Only for elements expected to be present — absence burns the full timeout;
  * use `not.toExist()` instead.
  */
 export async function expectTopmostVisible(
-  matcher: NativeMatcher,
+  buildMatcher: () => NativeMatcher,
   options: Omit<WaitUntilOptions, 'message'> = {},
 ): Promise<void> {
   let lastError: unknown = '<never attempted>';
 
   await waitUntil(
     async () => {
+      // Fresh per attempt: `countMatches` reads it before `atIndex` mutates it,
+      // and it is discarded before the next poll.
+      const matcher = buildMatcher();
       try {
         const count = await countMatches(matcher);
         await expect(element(matcher).atIndex(count - 1)).toBeVisible();

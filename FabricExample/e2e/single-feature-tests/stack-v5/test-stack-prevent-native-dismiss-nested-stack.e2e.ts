@@ -107,7 +107,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     aKey = await waitForTopmostRoute('A');
     jestExpect(aKey).not.toBe(homeKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
-    await expectTopmostVisible(stackV5BackButtonMatcher());
+    await expectTopmostVisible(stackV5BackButtonMatcher);
     await expectTopmostStackButtons([PUSH_A, PUSH_B, PUSH_NESTED_STACK, POP]);
     // Neither Home nor A carries a Toggle, so absence is unambiguous here.
     await expect(element(by.text(TOGGLE))).not.toExist();
@@ -120,7 +120,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     jestExpect(bKey).not.toBe(aKey);
     jestExpect(bKey).not.toBe(homeKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
-    await expectTopmostVisible(stackV5BackButtonMatcher());
+    await expectTopmostVisible(stackV5BackButtonMatcher);
     await expectTopmostStackButtons([
       PUSH_A,
       PUSH_B,
@@ -204,7 +204,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     // Unlike its root, a nested non-root screen renders the nested stack's own
     // header — titled and with a back chevron.
     await expect(element(stackV5HeaderTitleMatcher('NestedA'))).toBeVisible();
-    await expectTopmostVisible(stackV5BackButtonMatcher());
+    await expectTopmostVisible(stackV5BackButtonMatcher);
   });
 
   it('should pop NestedA back to the preserved nested root with the Pop button', async () => {
@@ -222,7 +222,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     jestExpect(nestedBKey).not.toBe(nestedAKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
     await expect(element(stackV5HeaderTitleMatcher('NestedB'))).toBeVisible();
-    await expectTopmostVisible(stackV5BackButtonMatcher());
+    await expectTopmostVisible(stackV5BackButtonMatcher);
     await expectTopmostStackButtons([
       PUSH_NESTED_A,
       PUSH_NESTED_B,

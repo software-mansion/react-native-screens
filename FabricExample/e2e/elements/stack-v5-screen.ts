@@ -112,6 +112,6 @@ export async function expectTopmostStackButtons(
   labels: string[],
 ): Promise<void> {
   for (const label of labels) {
-    await expectTopmostVisible(by.text(label));
+    await expectTopmostVisible(() => by.text(label));
   }
 }
