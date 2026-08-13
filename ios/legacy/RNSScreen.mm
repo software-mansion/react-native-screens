@@ -1561,6 +1561,42 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
     [self.screenView updateBounds];
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (self.screenView.isPresentedAsNativeModal &&
+        self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+      UIView *clippingView = self.view.superview;
+      UIView *shadowView = clippingView.superview;
+      UIView *transitionView = shadowView.superview;
+      if (transitionView != nil) {
+        CGRect shadowFrame = [transitionView convertRect:shadowView.bounds fromView:shadowView];
+        CGFloat displayScale = self.view.window.screen.scale;
+        CGFloat pixelTolerance = displayScale > 0.0 ? 1.0 / displayScale : 0.0;
+        BOOL isAlignedWithScreenEdges = displayScale > 0.0 &&
+            ABS(CGRectGetMinX(shadowFrame) - CGRectGetMinX(transitionView.bounds)) <= pixelTolerance &&
+            ABS(CGRectGetMaxX(shadowFrame) - CGRectGetMaxX(transitionView.bounds)) <= pixelTolerance &&
+            ABS(CGRectGetMaxY(shadowFrame) - CGRectGetMaxY(transitionView.bounds)) <= pixelTolerance;
+
+        if (isAlignedWithScreenEdges) {
+          // The physical display already clips a modal aligned with its bottom corners. Applying
+          // UIKit's software corner mask as well exposes the opaque sheet background along the
+          // antialiased edge, which appears as a light seam on dark content.
+          CGFloat topLeftRadius = [shadowView effectiveRadiusForCorner:UIRectCornerTopLeft];
+          CGFloat topRightRadius = [shadowView effectiveRadiusForCorner:UIRectCornerTopRight];
+          UICornerRadius *zeroRadius = [UICornerRadius fixedRadius:0.0];
+          clippingView.cornerConfiguration =
+              [UICornerConfiguration configurationWithTopLeftRadius:[UICornerRadius fixedRadius:topLeftRadius]
+                                                     topRightRadius:[UICornerRadius fixedRadius:topRightRadius]
+                                                   bottomLeftRadius:zeroRadius
+                                                  bottomRightRadius:zeroRadius];
+        } else {
+          clippingView.cornerConfiguration = shadowView.cornerConfiguration;
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (BOOL)isModalWithHeader
