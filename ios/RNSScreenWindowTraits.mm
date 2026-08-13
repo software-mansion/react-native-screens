@@ -101,7 +101,8 @@
 {
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
-    UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
+    UIWindow *window = RCTKeyWindow();
+    UIInterfaceOrientationMask orientationMask = [window.rootViewController supportedInterfaceOrientations];
 
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
@@ -130,17 +131,7 @@
     if (newOrientation != UIInterfaceOrientationUnknown) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
       if (@available(iOS 16.0, *)) {
-        NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
-
-        // when an app supports multiple scenes (e.g. CarPlay), it is possible that
-        // UIWindowScene is not the first scene, or it may not be present at all
-        UIWindowScene *scene = nil;
-        for (id connectedScene in array) {
-          if ([connectedScene isKindOfClass:[UIWindowScene class]]) {
-            scene = connectedScene;
-            break;
-          }
-        }
+        UIWindowScene *scene = window.windowScene;
 
         if (scene == nil) {
           return;
@@ -154,7 +145,8 @@
 
         // `attemptRotationToDeviceOrientation` is deprecated for modern OS versions
         // so we need to use `setNeedsUpdateOfSupportedInterfaceOrientations`
-        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+
+        UIViewController *topController = window.rootViewController;
         while (topController.presentedViewController) {
           topController = topController.presentedViewController;
         }

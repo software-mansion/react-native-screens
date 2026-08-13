@@ -947,6 +947,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+#ifndef NDEBUG
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   switch (resizeMode) {
@@ -965,6 +966,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       return RCTResizeModeStretch;
   }
 }
+#endif // !NDEBUG
 
 + (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
 {
