@@ -127,15 +127,8 @@ const ANCHOR_FOR_DOWNWARD_SCROLL = 0.85;
  */
 const STEP_DP = 500;
 
-/**
- * Deliberately more than the content is long. `scrollBackToTop` has to land on
- * the top edge *exactly*: the app bar unlifts only at offset zero, so stepping
- * back by `STEP_DP` would leave it lifted whenever the gesture undershoots, even
- * though the heading is already back on screen. Detox splits the amount into
- * swipes and swallows the error once it runs out of content, so overshooting
- * costs nothing and guarantees offset zero.
- */
-const OVERSHOOT_DP = 20000;
+/** More than the content is long, so one call covers any distance travelled. */
+const LONG_WAY_DP = 20000;
 
 async function scrollAwayFromTop() {
   await element(by.id(SCROLL_VIEW)).scroll(
@@ -149,10 +142,16 @@ async function scrollAwayFromTop() {
     .withTimeout(3000);
 }
 
-/** Returns to offset zero from anywhere; a no-op when already at the top. */
+/**
+ * Scrolls back up until the top of the content is on screen. Works in every
+ * header mode, but makes no promise about the final offset: Detox's edge probe
+ * can end the gesture early, and the heading comes back into view well before
+ * offset zero. Anything that goes on to assert the app bar is *flat* must use
+ * `scrollToTopEdge` instead — unlifting happens at offset zero exactly.
+ */
 async function scrollBackToTop() {
   await element(by.id(SCROLL_VIEW)).scroll(
-    OVERSHOOT_DP,
+    LONG_WAY_DP,
     'up',
     Number.NaN,
     ANCHOR_FOR_UPWARD_SCROLL,
@@ -160,8 +159,16 @@ async function scrollBackToTop() {
   await expectAtTop();
 }
 
-/** Rewinds the content, asserting nothing about what is on screen. */
-const rewind = scrollBackToTop;
+/**
+ * Lands on offset zero, deterministically: Detox repeats the scroll until the
+ * view reports it cannot move further. Unusable while the header is transparent,
+ * which is exactly the hang described above — so this is for opaque or absent
+ * headers only.
+ */
+async function scrollToTopEdge() {
+  await element(by.id(SCROLL_VIEW)).scrollTo('top');
+  await expectAtTop();
+}
 
 /**
  * Scrolls to the very end of the content and back, proving all of it stays
@@ -170,7 +177,7 @@ const rewind = scrollBackToTop;
  */
 async function scrollThroughAllContentAndBack() {
   await scrollUntilVisible(BOTTOM_MARKER, SCROLL_VIEW);
-  await scrollBackToTop();
+  await scrollToTopEdge();
 }
 
 // `SettingsSwitch` puts its testID on the touchable and renders
@@ -188,10 +195,10 @@ const TRANSPARENT: Switch = {
 };
 const HIDDEN: Switch = { testID: 'hidden-switch', label: 'hidden' };
 
-// Controls live inside the scrolled content, so rewind before reaching for one.
-// The label assertion doubles as the wait for the re-render to land.
+// Controls live inside the scrolled content, so scroll back up before reaching
+// for one. The label assertion doubles as the wait for the re-render to land.
 async function toggleSwitch({ testID, label }: Switch, expected: boolean) {
-  await rewind();
+  await scrollBackToTop();
   await element(by.id(testID)).tap();
   await waitFor(element(by.text(`${label}: ${expected}`)))
     .toBeVisible()
@@ -202,7 +209,7 @@ async function toggleSwitch({ testID, label }: Switch, expected: boolean) {
 // tap on the picker closes it again, so its options do not push the switches
 // below it off-screen.
 async function selectLiftOnScroll(value: TriState) {
-  await rewind();
+  await scrollBackToTop();
   await element(by.id(LIFT_PICKER)).tap();
   await element(by.id(`liftonscroll-${value}`)).tap();
   await element(by.id(LIFT_PICKER)).tap();
@@ -252,7 +259,9 @@ async function expectLiftFollowsScroll() {
   await expectAppBarFlat();
   await scrollAwayFromTop();
   await expectAppBarLifted();
-  await scrollBackToTop();
+  // Has to be the edge jump: unlifting needs offset zero exactly. That makes
+  // this usable only with an opaque header — every caller has one.
+  await scrollToTopEdge();
   await expectAppBarFlat();
 }
 
@@ -305,7 +314,7 @@ describeIfAndroid('Stack v5: header lift on scroll (Android)', () => {
       await expectAppBarLifted();
       jestExpect((await appBarAttributes()).frame).toEqual(frameAtTop);
 
-      await scrollBackToTop();
+      await scrollToTopEdge();
       await expectAppBarFlat();
       jestExpect((await appBarAttributes()).frame).toEqual(frameAtTop);
     });
