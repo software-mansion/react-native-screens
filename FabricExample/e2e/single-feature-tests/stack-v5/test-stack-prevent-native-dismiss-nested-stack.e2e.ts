@@ -25,18 +25,11 @@ import {
  * `StackScreenFragment` registers its `PreventNativeDismissCallback` after the
  * outer navigator's, and `OnBackPressedDispatcher` runs enabled callbacks in
  * reverse order — so the chevron is swallowed here even though an unintercepted
- * back press would navigate out of the example app's own navigation. The gamma
- * stack registers *only* the prevention callback, which is why every step where
- * native back is expected to actually pop stays manual.
+ * back press would navigate out of the example app's own navigation.
  */
 
-/**
- * Matchers for the Stack v5 native header on Android.
- *
- * Every matcher is built fresh on each call: on Android `atIndex` rewrites a
- * matcher in place, so a shared instance would stay pinned to the index of
- * whichever call indexed it first (see `tapTopmost`).
- */
+// Matchers are built fresh on each call, never shared: on Android `atIndex`
+// rewrites a matcher in place (see `tapTopmost`).
 
 /**
  * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
@@ -47,15 +40,10 @@ const stackV5ToolbarMatcher = (): NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
 
 /**
- * The header's back chevron.
- *
- * A covered screen keeps its toolbar in the hierarchy but loses its navigation
- * icon, and `Toolbar` drops the icon's view along with it — so while a headered
- * screen is on top this resolves to that screen's chevron alone. It does *not*
- * resolve to zero when the topmost screen is headerless: a covered screen's
- * toolbar is still there, hidden behind it. Detox intersects a view only with
- * its parents, never with an occluding sibling, so that leftover chevron reads
- * as visible.
+ * The header's back chevron. A covered screen keeps its toolbar but loses its
+ * navigation icon, so while a headered screen is on top this resolves to that
+ * screen's chevron alone. Absence is not reliable: under a headerless top
+ * screen the covered screen's chevron is still there and still reads visible.
  */
 const stackV5BackButtonMatcher = (): NativeMatcher =>
   by
@@ -71,16 +59,9 @@ async function tapStackV5BackButton(): Promise<void> {
   await tapTopmost(stackV5BackButtonMatcher());
 }
 
-/**
- * Widgets the Stack v5 test screens render into their body, from the shared
- * components under `apps/src/tests/shared/components/stack-v5/`.
- *
- * Covered screens stay attached on Android, so each of these matchers resolves
- * to one element per stacked screen — nested screens included, as they are
- * descendants of the outer stack's topmost screen. Every read is therefore
- * normalized to the last match, which is the topmost screen of the innermost
- * stack.
- */
+// Covered screens stay attached on Android, so the widget matchers below
+// resolve to one element per stacked screen. Every read is normalized to the
+// last match: the topmost screen of the innermost stack.
 
 /** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
 const ROUTE_KEY_TEST_ID = 'stack-route-key';
@@ -128,15 +109,10 @@ const routeKeyPattern = (routeName: string) =>
   new RegExp(`^Key: r-${routeName}-\\d+$`);
 
 /**
- * Waits until the topmost screen is `routeName` and returns its route key.
- * Reading the key rather than the `Name: X` label identifies the route *and*
- * which instance is on top, so one read settles continuity (same key) or a
- * push (new key).
- *
- * Polled against the key label rather than `waitFor(...)`: covered screens stay
- * attached, and Detox intersects a view only with its parents, never with an
- * occluding sibling — so `toBeVisible()` on a buried screen passes at once and
- * would not gate a pop.
+ * Waits until the topmost screen is `routeName` and returns its route key. The
+ * key identifies the route *and* the instance, so one read settles continuity
+ * (same key) or a push (new key). Polled rather than `waitFor(...)`, which
+ * passes at once on a buried screen and so would not gate a pop.
  */
 async function waitForTopmostRoute(routeName: string): Promise<string> {
   const pattern = routeKeyPattern(routeName);
