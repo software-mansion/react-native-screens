@@ -1579,6 +1579,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
             ABS(CGRectGetMaxY(shadowFrame) - CGRectGetMaxY(transitionView.bounds)) <= pixelTolerance;
 
         if (isAlignedWithScreenEdges) {
+          UIView *contentView = self.view.subviews.firstObject;
+          if (contentView.backgroundColor != nil) {
+            shadowView.backgroundColor = contentView.backgroundColor;
+          }
+
           // The physical display already clips a modal aligned with its bottom corners. Applying
           // UIKit's software corner mask as well exposes the opaque sheet background along the
           // antialiased edge, which appears as a light seam on dark content.
