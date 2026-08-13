@@ -19,7 +19,7 @@ export function TestStackSvmLiftOnScroll() {
 const ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'LiftOnScroll',
-    Component: ContentScreen,
+    element: <ContentScreen />,
     options: {
       headerConfig: {
         title: 'Lift on scroll',

@@ -20,7 +20,7 @@ import { Colors } from '@apps/shared/styling';
 const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
-    Component: FirstTabScreen,
+    element: <FirstTabScreen />,
     options: {
       title: 'First',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
@@ -28,7 +28,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Second',
-    Component: SecondTabScreen,
+    element: <SecondTabScreen />,
     options: {
       title: 'Second',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
@@ -36,7 +36,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Stack',
-    Component: StackTabScreen,
+    element: <StackTabScreen />,
     options: {
       title: 'Stack',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
@@ -47,15 +47,15 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
 const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
-    Component: FirstStackScreen,
+    element: <FirstStackScreen />,
   },
   {
     name: 'Second',
-    Component: SecondStackScreen,
+    element: <SecondStackScreen />,
   },
   {
     name: 'Third',
-    Component: ThirdStackScreen,
+    element: <ThirdStackScreen />,
   },
 ];
 
