@@ -220,7 +220,7 @@ Manual only (not automated):
       intercepted individually and fires its own toast; the app never leaves
       **NestedB**.
 
-19.  On **NestedB**, perform a system gesture-back.
+19. On **NestedB**, perform a system gesture-back.
 
 - [ ] The gesture is intercepted: the "Native dismiss prevented - NestedB"
       toast appears again; the app stays on **NestedB**.
