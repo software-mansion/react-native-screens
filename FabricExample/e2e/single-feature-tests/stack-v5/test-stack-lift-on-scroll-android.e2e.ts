@@ -256,6 +256,7 @@ async function isContentUnderHeader(): Promise<boolean> {
  * flat at the top, lifted once scrolled away, flat again on return.
  */
 async function expectLiftFollowsScroll() {
+  await scrollToTopEdge();
   await expectAppBarFlat();
   await scrollAwayFromTop();
   await expectAppBarLifted();
@@ -308,8 +309,10 @@ describeIfAndroid('Stack v5: header lift on scroll (Android)', () => {
     // pins down that the only thing the scroll changes is the app bar's depth —
     // its rectangle has to come back byte-identical.
     it('should stay lifted and keep the small header pinned across a full scroll', async () => {
-      // Pins the starting state rather than inheriting it from the test above,
-      // so the lift assertions below still mean something when this runs alone.
+      // Pins the starting state rather than inheriting it from the test above:
+      // a leftover scroll offset would keep the app bar lifted even though the
+      // top heading is already visible, so land on offset zero explicitly.
+      await scrollToTopEdge();
       await expectAppBarFlat();
       const { frame: frameAtTop } = await appBarAttributes();
 
