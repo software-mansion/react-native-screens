@@ -13,17 +13,11 @@ using namespace react;
 namespace rnscreens {
 
 namespace {
-// Process-lifetime owner. Two threads can reach nativeAddMutationsListener
-// concurrently on a cold launch: ScreensModule.initialize() on the module-init
-// thread, and onHostResume() on the UI thread (queued before setupFabric()
-// returns). The previous lazy `if (!screenRemovalListener_)` init raced there:
-// concurrent shared_ptr assignments are UB and can leave the registered
-// delegate pointing at freed memory while its control block still reports it
-// alive, so the next MountingCoordinator::pullTransaction locks the weak_ptr
-// successfully and virtual-calls into recycled heap -> SIGSEGV.
-// A function-local static leaves nothing to race (thread-safe init, no
-// static-init-order dependency), and a process-immortal instance also suits
-// core's delegate list, which is append-only with no removal API (as of 0.87).
+// Keep this listener process-lifetime to avoid races during initialization,
+// when nativeAddMutationsListener() can be called concurrently from different
+// threads. A function-local static initializes thread-safely, and an immortal
+// instance suits core's delegate list, which is append-only. For more details:
+// https://github.com/software-mansion/react-native-screens/pull/4413
 const std::shared_ptr<RNSScreenRemovalListener> &removalListener() {
   static const std::shared_ptr<RNSScreenRemovalListener> instance =
       std::make_shared<RNSScreenRemovalListener>();
