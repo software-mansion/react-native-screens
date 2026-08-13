@@ -1,29 +1,13 @@
-import { device, expect, element, by, waitFor } from 'detox';
-import {
-  describeIfiOS,
-  dismissToast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
-import {
-  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
-} from '../../native-class-names';
+import { device, expect, element, by } from 'detox';
+import { describeIfiOS } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
+import { dismissToast } from '../../elements/toast';
+import { checkmarkFor } from '../../elements/context-menu-ios';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
 
 function textItem(label: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(label)));
-}
-
-// A checked toggle/singleSelection row inside the presented native UIMenu.
-function checkmarkFor(itemLabel: string) {
-  return element(
-    by
-      .id('checkmark')
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(itemLabel)),
-      ),
-  );
 }
 
 // `SettingsPicker` derives its option testIDs from the label only, not the item
@@ -32,20 +16,22 @@ function checkmarkFor(itemLabel: string) {
 // single picker, taps the option, and closes it again before the next call -
 // i.e. at most one picker is expanded at any time. Keep that invariant.
 async function setTitle(itemIndex: number, variant: 'foo' | 'bar') {
-  const pickerId = `title-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`title-${variant}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `title-picker-${itemIndex}`,
+    label: 'Title',
+    option: variant,
+  });
 }
 
 async function setMenuMode(
   itemIndex: number,
   mode: 'none' | 'single' | 'multi',
 ) {
-  const pickerId = `menu-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`menu-${mode}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `menu-picker-${itemIndex}`,
+    label: 'Menu',
+    option: mode,
+  });
 }
 
 describeIfiOS('Stack Header Selective Updates (iOS)', () => {

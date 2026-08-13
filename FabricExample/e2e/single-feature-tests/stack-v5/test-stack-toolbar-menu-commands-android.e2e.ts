@@ -2,20 +2,22 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
-  selectSingleFeatureTestsScreen,
+  rewindAndScrollUntilVisible,
 } from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW } from '../../native-class-names';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
+import {
+  closingMenuAfter,
+  expectLastClicked as expectLastClickedOn,
+  MENU_ANIMATION_TIMEOUT,
+  openOverflowMenu,
+  textInMenu,
+  waitForMenuItem,
+  waitForScreen,
+} from '../../elements/toolbar-menu-android';
 
 const SCROLLVIEW_ID = 'toolbar-menu-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
-
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles the overflow menu opening or dismissing has to be explicit.
-const MENU_ANIMATION_TIMEOUT = 2000;
-
-// Probes an already-settled popup rather than an animation — by the time it is
-// used the menu is either up or was never opened.
-const MENU_PRESENCE_TIMEOUT = 250;
 
 // Every title this scenario can put into the menu. Assertions check the full
 // set — expected titles visible, all others absent — so a leaked entry fails.
@@ -29,41 +31,21 @@ const ALL_TITLES = [
 
 type MenuTitle = (typeof ALL_TITLES)[number];
 
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
+// Small steps — a larger one can scroll a short picker row past the viewport.
+const SCROLL_STEP = 300;
 
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
-  await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
-  await waitFor(element(by.id(id)))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(300, 'down', Number.NaN, 0.85);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
-// Closing the picker again matters: its option rows stay in the hierarchy and
-// would collide with the `by.text` matchers used for the toolbar menu items.
 async function selectOption(
   pickerId: string,
   pickerLabel: string,
   option: string,
 ) {
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(
-    `${pickerLabel}: ${option}`,
+  await selectPickerOption(
+    { pickerId, label: pickerLabel, option },
+    { scrollViewId: SCROLLVIEW_ID, pixels: SCROLL_STEP },
   );
 }
 
@@ -106,69 +88,14 @@ async function setSlotInclude(slot: number, include: boolean) {
   ).toBeVisible();
 }
 
-async function openMenu() {
-  await element(by.label('More options')).tap();
-}
-
-async function waitForMenuItem(title: MenuTitle) {
-  await waitFor(
-    element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ),
-  )
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-}
-
-// Detox resolves matchers against a single window: while the popup holds focus
-// nothing behind it is in the searched hierarchy, so the entry going away is
-// not enough — the screen itself has to become addressable again.
-async function waitForScreen() {
-  await waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-}
-
-async function tapMenuItem(title: MenuTitle) {
+/** Taps a leaf item and waits for the whole menu to come down. */
+async function tapMenuItemAndWaitForClose(title: MenuTitle) {
   await waitForMenuItem(title);
-  await element(
-    by
-      .text(title)
-      .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-  ).tap();
-  await waitFor(
-    element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ),
-  )
+  await element(textInMenu(title)).tap();
+  await waitFor(element(textInMenu(title)))
     .not.toExist()
     .withTimeout(MENU_ANIMATION_TIMEOUT);
-  await waitForScreen();
-}
-
-// Presses Back only when the popup is actually up: a menu that never opened
-// would otherwise take the Back press itself and pop the test screen.
-async function closeMenuIfOpen() {
-  const isOpen = await waitFor(
-    element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-  )
-    .toExist()
-    .withTimeout(MENU_PRESENCE_TIMEOUT)
-    .then(
-      () => true,
-      () => false,
-    );
-
-  if (!isOpen) {
-    return;
-  }
-
-  await device.pressBack();
-  await waitForScreen();
+  await waitForScreen(SCROLLVIEW_ID);
 }
 
 // Rows are stacked vertically, so their on-screen positions carry the order the
@@ -177,11 +104,7 @@ async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
   const rows: { title: MenuTitle; top: number }[] = [];
 
   for (const title of titles) {
-    const attributes = await element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ).getAttributes();
+    const attributes = await element(textInMenu(title)).getAttributes();
 
     if ('elements' in attributes) {
       throw new Error(`Expected a single menu row titled "${title}".`);
@@ -202,23 +125,17 @@ async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
   { checkOrder = false }: { checkOrder?: boolean } = {},
 ): Promise<void> {
-  await openMenu();
+  await openOverflowMenu();
 
-  let assertionFailed = false;
-
-  try {
+  // Closed by `closingMenuAfter` even when an assertion fails: this suite is
+  // stateful and a leaked popup would take every later step down with it.
+  await closingMenuAfter(SCROLLVIEW_ID, async () => {
     // Populated in a single layout pass, so once the first expected entry is up
     // the `not.toExist()` checks below cannot pass prematurely.
     await waitForMenuItem(expectedVisible[0]);
 
     for (const title of expectedVisible) {
-      await expect(
-        element(
-          by
-            .text(title)
-            .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-        ),
-      ).toBeVisible();
+      await expect(element(textInMenu(title))).toBeVisible();
     }
 
     if (checkOrder) {
@@ -227,39 +144,14 @@ async function expectMenuItems(
 
     for (const title of ALL_TITLES) {
       if (!expectedVisible.includes(title)) {
-        await expect(
-          element(
-            by
-              .text(title)
-              .withAncestor(
-                by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW),
-              ),
-          ),
-        ).not.toExist();
+        await expect(element(textInMenu(title))).not.toExist();
       }
     }
-  } catch (error) {
-    assertionFailed = true;
-    throw error;
-  } finally {
-    // Closed here so a failed assertion does not leave the popup covering the
-    // screen — this suite is stateful and every later step would then fail.
-    try {
-      await closeMenuIfOpen();
-    } catch (cleanupError) {
-      // A throw from `finally` would replace the error that actually failed.
-      if (!assertionFailed) {
-        throw cleanupError;
-      }
-    }
-  }
+  });
 }
 
 async function expectLastClicked(id: string) {
-  await scrollIntoView('last-clicked-text');
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
-  );
+  await expectLastClickedOn(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
 describeIfAndroid('Stack Toolbar Menu Commands', () => {
@@ -280,8 +172,8 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
     });
 
     it('closes the menu and reports item-1 when tapping "Title A"', async () => {
-      await openMenu();
-      await tapMenuItem('Title A');
+      await openOverflowMenu();
+      await tapMenuItemAndWaitForClose('Title A');
 
       await expect(element(by.text('Title B'))).not.toExist();
       await expect(element(by.text('Title C'))).not.toExist();
@@ -289,8 +181,8 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
     });
 
     it('reports item-3 when tapping "Title C"', async () => {
-      await openMenu();
-      await tapMenuItem('Title C');
+      await openOverflowMenu();
+      await tapMenuItemAndWaitForClose('Title C');
 
       await expect(element(by.text('Title A'))).not.toExist();
       await expectLastClicked('item-3');
@@ -322,8 +214,8 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
     });
 
     it('keeps the id stable across a title change — "Changed" still reports item-2', async () => {
-      await openMenu();
-      await tapMenuItem('Changed');
+      await openOverflowMenu();
+      await tapMenuItemAndWaitForClose('Changed');
 
       await expect(element(by.text('Title A'))).not.toExist();
       await expectLastClicked('item-2');

@@ -23,8 +23,8 @@ function HomeScreen({ navigation }: any) {
       <Pressable
         style={styles.button}
         onPress={() => navigation.getParent()?.navigate('Calendar')}>
-          <Text style={styles.buttonText}>Push Calendar</Text>
-        </Pressable>
+        <Text style={styles.buttonText}>Push Calendar</Text>
+      </Pressable>
     </View>
   );
 }
@@ -34,14 +34,14 @@ function MyPetsScreen() {
     <View style={styles.screen}>
       <Text>My Pets (Tab B)</Text>
       <ScrollView style={styles.scrollArea}>
-        {Array.from({ length: 30 }, (_, i) =>
+        {Array.from({ length: 30 }, (_, i) => (
           <Pressable
             key={i}
             style={styles.listItem}
             onPress={() => console.log(`pressed pet item ${i}`)}>
-              <Text style={styles.listItemText}>Pet item {i}</Text>
-            </Pressable>
-        )}
+            <Text style={styles.listItemText}>Pet item {i}</Text>
+          </Pressable>
+        ))}
       </ScrollView>
       <Text>
         If touches are broken, tapping items above will produce NO console logs.
@@ -57,12 +57,12 @@ function ProfileScreen() {
       <Pressable
         style={styles.button}
         onPress={() => console.log('Profile button pressed')}>
-          <Text style={styles.buttonText}>Press me</Text>
-        </Pressable>
-        <Text>
-          If touches are broken, pressing the button above will produce NO console
-          log.
-        </Text>
+        <Text style={styles.buttonText}>Press me</Text>
+      </Pressable>
+      <Text>
+        If touches are broken, pressing the button above will produce NO console
+        log.
+      </Text>
     </View>
   );
 }
@@ -72,9 +72,9 @@ function TabsNavigator() {
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen
-      name="MyPets"
-      component={MyPetsScreen}
-      options={{ title: 'My Pets' }}
+        name="MyPets"
+        component={MyPetsScreen}
+        options={{ title: 'My Pets' }}
       />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -100,14 +100,14 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-        name="Tabs"
-        component={TabsNavigator}
-        options={{ headerShown: false }}
+          name="Tabs"
+          component={TabsNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
-        name="Calendar"
-        component={CalendarScreen}
-        options={{ title: 'Calendar' }}
+          name="Calendar"
+          component={CalendarScreen}
+          options={{ title: 'Calendar' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

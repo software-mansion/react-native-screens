@@ -1,22 +1,14 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { AndroidElementAttributes } from 'detox/detox';
-import {
-  describeIfAndroid,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { describeIfAndroid, getFrame } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 
-async function getTabBarItemAttrs(): Promise<AndroidElementAttributes> {
-  const attrs = (await element(
-    by.id('ime-insets-config-tab-item'),
-  ).getAttributes()) as AndroidElementAttributes;
-  return attrs;
+async function getTabBarItemY(): Promise<number> {
+  return (await getFrame(by.id('ime-insets-config-tab-item'))).y;
 }
-async function getTextAttrs(): Promise<AndroidElementAttributes> {
-  const attrs = (await element(
-    by.id('tabs-screen-bottom-text'),
-  ).getAttributes()) as AndroidElementAttributes;
-  return attrs;
+
+async function getTextY(): Promise<number> {
+  return (await getFrame(by.id('tabs-screen-bottom-text'))).y;
 }
 
 describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
@@ -50,13 +42,13 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: false');
 
-    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
-    const yTextBefore = (await getTextAttrs()).frame.y;
+    const yTabBefore = await getTabBarItemY();
+    const yTextBefore = await getTextY();
 
     await element(by.id('ime-insets-text-input')).tap();
 
-    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
-    const yTextAfter = (await getTextAttrs()).frame.y;
+    const yTabAfter = await getTabBarItemY();
+    const yTextAfter = await getTextY();
 
     jestExpect(yTabAfter).toEqual(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);
@@ -70,13 +62,13 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: true');
 
-    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
-    const yTextBefore = (await getTextAttrs()).frame.y;
+    const yTabBefore = await getTabBarItemY();
+    const yTextBefore = await getTextY();
 
     await element(by.id('ime-insets-text-input')).tap();
 
-    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
-    const yTextAfter = (await getTextAttrs()).frame.y;
+    const yTabAfter = await getTabBarItemY();
+    const yTextAfter = await getTextY();
 
     jestExpect(yTabAfter).toBeLessThan(yTabBefore);
     jestExpect(yTextAfter).toBeLessThan(yTextBefore);
@@ -84,7 +76,7 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
 
     await device.pressBack();
 
-    const yTabRestored = (await getTabBarItemAttrs()).frame.y;
+    const yTabRestored = await getTabBarItemY();
 
     jestExpect(yTabRestored).toEqual(yTabBefore);
   });
@@ -98,15 +90,15 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: true');
 
-    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
-    const yTextBefore = (await getTextAttrs()).frame.y;
+    const yTabBefore = await getTabBarItemY();
+    const yTextBefore = await getTextY();
 
     jestExpect(yTextBefore).toBeGreaterThan(yTabBefore);
 
     await element(by.id('ime-insets-text-input')).tap();
 
-    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
-    const yTextAfter = (await getTextAttrs()).frame.y;
+    const yTabAfter = await getTabBarItemY();
+    const yTextAfter = await getTextY();
 
     jestExpect(yTabAfter).toBeLessThan(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);
@@ -123,14 +115,14 @@ describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
       element(by.id('tab-bar-respects-ime-insets-switch')),
     ).toHaveLabel('tabBarRespectsIMEInsets: false');
 
-    const yTabBefore = (await getTabBarItemAttrs()).frame.y;
-    const yTextBefore = (await getTextAttrs()).frame.y;
+    const yTabBefore = await getTabBarItemY();
+    const yTextBefore = await getTextY();
     jestExpect(yTextBefore).toBeGreaterThan(yTabBefore);
 
     await element(by.id('ime-insets-text-input')).tap();
 
-    const yTabAfter = (await getTabBarItemAttrs()).frame.y;
-    const yTextAfter = (await getTextAttrs()).frame.y;
+    const yTabAfter = await getTabBarItemY();
+    const yTextAfter = await getTextY();
 
     jestExpect(yTabAfter).toEqual(yTabBefore);
     jestExpect(yTextAfter).toEqual(yTextBefore);

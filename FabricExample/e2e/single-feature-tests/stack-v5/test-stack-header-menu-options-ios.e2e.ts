@@ -1,29 +1,19 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  getElementAttributes,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { describeIfiOS, getFrame } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { expect as jestExpect } from '@jest/globals';
 import {
+  chevronFor,
+  dismissMenu,
+  menuRow,
+} from '../../elements/context-menu-ios';
+import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
-  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
-  CLASS_NAME_UI_CONTEXT_MENU_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
-import { IosElementAttributes } from 'detox/detox';
-
-/**
- * UIKit exposes no way to query a presented menu, so structure and layout are
- * checked indirectly: `by.id(...)` on an image matches the SF Symbol name;
- * a row's chevron tells a collapsed submenu from an inlined one; and icon
- * frames tell a horizontal palette from a vertical list.
- */
-const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
 
 const optionsMenuButton = element(
   by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label('Options')),
@@ -31,32 +21,6 @@ const optionsMenuButton = element(
 const paletteMenuButton = element(
   by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label('Palette')),
 );
-
-/** A row of a presented menu, matched by its visible label. */
-function menuRow(itemLabel: string) {
-  return element(
-    by
-      .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-      .and(by.label(itemLabel)),
-  );
-}
-
-/**
- * UIKit's disclosure indicator, drawn only on rows that open a submenu. Its
- * absence marks an inlined submenu; the title alone cannot, since an inlined
- * submenu may keep its title as a section header (see Text Style).
- */
-function chevronFor(itemLabel: string) {
-  return element(
-    by
-      .id('chevron.forward')
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(itemLabel)),
-      ),
-  );
-}
 
 /** The palette submenu title's chevron — its own class, not a menu row. */
 const paletteTitleChevron = element(
@@ -66,35 +30,17 @@ const paletteTitleChevron = element(
 );
 
 /** A palette item rendered as an icon, matched by its SF Symbol name. */
+function paletteIconMatcher(iconId: string) {
+  return by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId));
+}
+
 function paletteIcon(iconId: string) {
-  return element(by.type(CLASS_NAME_UI_IMAGE_VIEW).and(by.id(iconId)));
+  return element(paletteIconMatcher(iconId));
 }
 
 /** Top edge of a palette icon in screen coordinates; smaller y is higher up. */
 async function getPaletteIconTopY(iconId: string) {
-  const attrs = await paletteIcon(iconId).getAttributes();
-  return (attrs as IosElementAttributes).frame.y;
-}
-
-/**
- * Dismisses the presented context menu without selecting any item.
- *
- * The platter is anchored under the header's trailing items, so it covers the
- * centre of this full-width text: a centre tap hits the menu and only pops one
- * submenu level, while a tap near the leading edge is clear of it and closes
- * the menu at any depth. The label is just body text underneath, used to locate
- * that point — it has nothing to do with the displayInline prop.
- */
-async function dismissMenu() {
-  const { frame } = await getElementAttributes({
-    by: 'id',
-    value: 'text-display-inline',
-  });
-  await device.tap({
-    x: frame.x + frame.width / 10,
-    y: frame.y + frame.height / 2,
-  });
-  await waitFor(contextMenu).not.toExist();
+  return (await getFrame(paletteIconMatcher(iconId))).y;
 }
 
 /** Taps a toggle and asserts the label it settles on. */

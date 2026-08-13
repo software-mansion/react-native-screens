@@ -1,12 +1,15 @@
-import { device, element, by, waitFor } from 'detox';
+import { device, element, by } from 'detox';
 import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
-  selectSingleFeatureTestsScreen,
-  dismissToast,
-  tapTopmost,
+  tapTopmostButton,
 } from '../../e2e-utils';
+import {
+  selectSingleFeatureTestsScreen,
+  waitForRoute,
+} from '../../elements/test-screen-navigation';
+import { dismissToast } from '../../elements/toast';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
 
@@ -41,12 +44,6 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  */
 
 type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
-async function waitForRoute(routeName: string): Promise<void> {
-  await waitFor(element(by.text(`Name: ${routeName}`)))
-    .toBeVisible()
-    .withTimeout(3000);
-}
 
 describeIfiOS('Stack v5: lifecycle events', () => {
   beforeAll(async () => {
@@ -287,11 +284,6 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   const PUSH_NESTED_STACK = 'PUSH NESTEDSTACK';
   const PUSH_NESTED_A = 'PUSH NESTEDA';
   const POP = 'POP';
-
-  /** Taps a Push/Pop button on the topmost stacked screen. */
-  async function tapTopmostButton(title: string): Promise<void> {
-    await tapTopmost(by.text(title));
-  }
 
   beforeAll(async () => {
     await device.reloadReactNative();

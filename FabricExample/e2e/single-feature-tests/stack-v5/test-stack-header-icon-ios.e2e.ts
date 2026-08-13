@@ -1,7 +1,11 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import { describeIfiOS } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import {
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  anyMenuRowMatcher,
+  menuRowMatcher,
+} from '../../elements/context-menu-ios';
+import {
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
@@ -28,11 +32,7 @@ const ICON_IDS = {
 // The icon of a single menu row, addressed by its icon id and its position in
 // the menu.
 const menuRowIcon = (iconId: string, index: number) =>
-  element(
-    by
-      .id(iconId)
-      .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)),
-  ).atIndex(index);
+  element(by.id(iconId).withAncestor(anyMenuRowMatcher())).atIndex(index);
 
 // Asserts that every menu row renders the icon carrying `iconId`.
 const expectAllMenuRowIconsToBeVisible = async (
@@ -52,15 +52,7 @@ const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 // stay in the hierarchy while the submenu is open, so an index-based matcher
 // would happily match a parent row instead.
 const submenuRowIcon = (iconId: string, rowTitle: string) =>
-  element(
-    by
-      .id(iconId)
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(rowTitle)),
-      ),
-  );
+  element(by.id(iconId).withAncestor(menuRowMatcher(rowTitle)));
 
 // Asserts that every submenu row renders the icon carrying `iconId`.
 const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {

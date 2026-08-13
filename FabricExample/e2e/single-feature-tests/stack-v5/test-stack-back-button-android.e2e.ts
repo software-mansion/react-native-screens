@@ -1,11 +1,13 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import {
-  countMatches,
   describeIfAndroid,
-  selectSingleFeatureTestsScreen,
+  getMatches,
   tapTopmost,
+  tapTopmostButton,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { pickerOptionId } from '../../elements/settings-controls';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
   CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
@@ -27,12 +29,17 @@ const backButtonMatcher = by
   .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
   .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
 
-// Option ids are `SettingsPicker`'s own `<label>-<item>`, lowercased. The
-// second tap on the picker closes it, so its options do not push later
-// controls off-screen.
-async function selectOption(pickerId: string, optionId: string) {
+// Taps the topmost match rather than using `selectPickerOption`: each stacked
+// screen keeps its own copy of these controls on Android, so a plain `by.id`
+// tap is ambiguous. The second tap on the picker closes it, so its options do
+// not push later controls off-screen.
+async function selectOption(
+  pickerId: string,
+  pickerLabel: string,
+  option: string,
+) {
   await tapTopmost(by.id(pickerId));
-  await tapTopmost(by.id(optionId));
+  await tapTopmost(by.id(pickerOptionId(pickerLabel, option)));
   await tapTopmost(by.id(pickerId));
 }
 
@@ -41,7 +48,7 @@ async function selectOption(pickerId: string, optionId: string) {
 // rendered would pass too. Each screen builds its own toolbar, hence the index.
 async function expectNoBackButton() {
   const toolbarMatcher = by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
-  const count = await countMatches(toolbarMatcher);
+  const count = (await getMatches(toolbarMatcher)).length;
   await expect(element(toolbarMatcher).atIndex(count - 1)).toBeVisible();
   await expect(element(backButtonMatcher)).not.toExist();
 }
@@ -51,19 +58,22 @@ async function expectNoBackButton() {
 // names the ambiguity a second stacked toolbar's icon would cause.
 async function expectSingleVisibleBackButton() {
   await waitFor(element(backButtonMatcher)).toBeVisible().withTimeout(3000);
-  jestExpect(await countMatches(backButtonMatcher)).toBe(1);
+  jestExpect((await getMatches(backButtonMatcher)).length).toBe(1);
 }
 
 async function openScreen() {
   await device.reloadReactNative();
-  await selectSingleFeatureTestsScreen('Stackv5', 'test-stack-back-button');
+  await selectSingleFeatureTestsScreen(
+    'Stackv5',
+    'test-stack-back-button-android',
+  );
   await waitFor(element(by.text(PUSH_SCREEN)))
     .toBeVisible()
     .withTimeout(3000);
 }
 
 async function pushScreen() {
-  await tapTopmost(by.text(PUSH_SCREEN));
+  await tapTopmostButton(PUSH_SCREEN);
   await waitFor(element(by.text(PUSH_ANOTHER)))
     .toBeVisible()
     .withTimeout(3000);
@@ -94,8 +104,8 @@ describeIfAndroid('Stack v5: back button configured before the push', () => {
   beforeAll(openScreen);
 
   it('should keep the root screen back-button-free with an icon and tint set', async () => {
-    await selectOption('icon-picker', 'icon-imagesource');
-    await selectOption('tint-color-normal-picker', 'tintcolornormal-purple');
+    await selectOption('icon-picker', 'icon', 'imageSource');
+    await selectOption('tint-color-normal-picker', 'tintColorNormal', 'purple');
     await expectNoBackButton();
   });
 

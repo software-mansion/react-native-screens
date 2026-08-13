@@ -1,16 +1,15 @@
-import { device, expect, element, by, waitFor } from 'detox';
+import { device, expect, element, by } from 'detox';
+import { describeIfiOS, isIOSVersionAtLeast } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { dismissToast } from '../../elements/toast';
 import {
-  describeIfiOS,
-  dismissToast,
-  getElementAttributes,
-  isIOSVersionAtLeast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+  chevronFor,
+  dismissMenu,
+  menuRow as menuRowInCell,
+  menuRowMatcher,
+} from '../../elements/context-menu-ios';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
-  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
 } from '../../native-class-names';
 
@@ -27,58 +26,18 @@ function headerItem(title: string) {
   return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(title)));
 }
 
-const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
-
 /**
  * A selectable row inside a presented native UIMenu (a header-item menu, or on
  * iOS 26 the toolbar overflow menu and its submenus), addressed by its title.
- * The `_UIContextMenuCell` ancestor excludes a submenu's pinned title/back row,
- * which shares the label of the submenu's first entry when that item also has
- * an `onPress`.
+ * `inCell` excludes a submenu's pinned title/back row, which shares the label
+ * of the submenu's first entry when that item also has an `onPress`.
  */
-function menuRow(title: string) {
-  return element(
-    by
-      .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-      .and(by.label(title))
-      .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL)),
-  );
-}
+const menuRow = (title: string) => menuRowInCell(title, { inCell: true });
 
 const overflowButton = element(by.id('OverflowBarButtonItem'));
 
-/**
- * Dismisses any presented native UIMenu (header-item, or on iOS 26 the overflow
- * menu and its submenus) by tapping UIKit's full-screen "Dismiss context menu"
- * element, which every context menu exposes regardless of its anchor - so no
- * off-menu coordinate has to be computed.
- */
-async function dismissMenu() {
-  const { frame } = await getElementAttributes({
-    by: 'type',
-    value: '_UIContextMenuPlatterTransitionView',
-  });
-  await device.tap({
-    x: frame.x + frame.width / 2,
-    y: frame.y + frame.height / 2,
-  });
-  await waitFor(contextMenu).not.toExist();
-}
-
 async function toggleItemsCount() {
   await element(by.id('toggle-items-count-button')).tap();
-}
-
-function chevronFor(itemLabel: string) {
-  return element(
-    by
-      .id('chevron.forward')
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(itemLabel)),
-      ),
-  );
 }
 
 describeIfiOS('Stack Header Subview onPress (iOS)', () => {
@@ -151,12 +110,9 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
       await expect(menuRow('Item 0').atIndex(1)).toBeVisible();
       await expect(
         element(
-          by
-            .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-            .and(by.label('Item 0'))
-            .withAncestor(
-              by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW),
-            ),
+          menuRowMatcher('Item 0').withAncestor(
+            by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW),
+          ),
         ),
       ).toBeVisible();
       await expect(menuRow('Action 0-1')).toBeVisible();

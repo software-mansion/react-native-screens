@@ -1,43 +1,36 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { AndroidElementAttributes, IosElementAttributes } from 'detox/detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiOS,
+  getSingleMatch,
+  scrollUntilVisible,
+} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
 
-type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 
-async function getElementAttributes(
-  testLabel: string,
-): Promise<ElementAttributes> {
-  const attrs = await element(by.label(testLabel)).getAttributes();
-  return attrs as ElementAttributes;
-}
+// Small steps — a larger one can scroll a short picker row past the viewport.
+const SCROLL_STEP = 100;
 
-async function scrollTo(selector: { id: string } | { text: string }) {
-  const el =
-    'text' in selector
-      ? element(by.text(selector.text))
-      : element(by.id(selector.id));
-
-  await waitFor(el)
-    .toBeVisible()
-    .whileElement(by.id('tab-bar-layout-direction-scrollview'))
-    .scroll(100, 'down');
+async function scrollTo(id: string) {
+  await scrollUntilVisible(id, SCROLLVIEW_ID, { pixels: SCROLL_STEP });
 }
 
 async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
-  await scrollTo({ id: 'tab-bar-layout-direction-picker' });
-  await element(by.id('tab-bar-layout-direction-picker')).tap();
-  await scrollTo({ text: direction });
-  await element(by.text(direction)).tap();
-  await element(by.id('tab-bar-layout-direction-picker')).tap();
-  await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
-    `direction: ${direction}`,
+  await selectPickerOption(
+    {
+      pickerId: 'tab-bar-layout-direction-picker',
+      label: 'direction',
+      option: direction,
+    },
+    { scrollViewId: SCROLLVIEW_ID, pixels: SCROLL_STEP },
   );
 }
 
 async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
-  const t1 = await getElementAttributes('tab-bar-item-1-label');
-  const t2 = await getElementAttributes('tab-bar-item-2-label');
+  const t1 = await getSingleMatch(by.label('tab-bar-item-1-label'));
+  const t2 = await getSingleMatch(by.label('tab-bar-item-2-label'));
   if (shouldBeLeft) {
     jestExpect(t2.frame.x).toBeGreaterThan(t1.frame.x);
   } else {
@@ -70,7 +63,7 @@ describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
       'I18nManager.isRTL == false',
     );
 
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+    await scrollTo('tab-bar-layout-direction-picker');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: ltr',
     );
@@ -154,7 +147,7 @@ describe('Tab Bar Layout Direction - system/RN settings: RTL', () => {
       'I18nManager.isRTL == true',
     );
 
-    await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+    await scrollTo('tab-bar-layout-direction-picker');
     await expect(element(by.id('tab-bar-layout-direction-picker'))).toHaveLabel(
       'direction: rtl',
     );
@@ -233,7 +226,7 @@ describeIfiOS(
         'I18nManager.isRTL == false',
       );
 
-      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await scrollTo('tab-bar-layout-direction-picker');
       await expect(
         element(by.id('tab-bar-layout-direction-picker')),
       ).toHaveLabel('direction: ltr');
@@ -308,7 +301,7 @@ describeIfiOS(
         'I18nManager.isRTL == true',
       );
 
-      await scrollTo({ id: 'tab-bar-layout-direction-picker' });
+      await scrollTo('tab-bar-layout-direction-picker');
       await expect(
         element(by.id('tab-bar-layout-direction-picker')),
       ).toHaveLabel('direction: rtl');

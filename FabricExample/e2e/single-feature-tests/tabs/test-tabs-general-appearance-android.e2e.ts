@@ -1,22 +1,16 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfAndroid,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { describeIfAndroid } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
+import { selectPickerOption } from '../../elements/settings-controls';
 
 async function selectLabelVisibilityMode(
   mode: 'auto' | 'selected' | 'labeled' | 'unlabeled',
 ) {
-  await element(
-    by.id('general-appearance-android-label-visibility-picker'),
-  ).tap();
-  await element(by.id(`tabbaritemlabelvisibilitymode-${mode}`)).tap();
-  await expect(
-    element(by.id('general-appearance-android-label-visibility-picker')),
-  ).toHaveLabel(`tabBarItemLabelVisibilityMode: ${mode}`);
-  await element(
-    by.id('general-appearance-android-label-visibility-picker'),
-  ).tap();
+  await selectPickerOption({
+    pickerId: 'general-appearance-android-label-visibility-picker',
+    label: 'tabBarItemLabelVisibilityMode',
+    option: mode,
+  });
 }
 
 describeIfAndroid(

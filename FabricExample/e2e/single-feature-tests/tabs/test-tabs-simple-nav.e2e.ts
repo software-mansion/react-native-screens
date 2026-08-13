@@ -1,8 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  forceTapByLabeliOS,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { forceTapByLabeliOS } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 
 describe('@smoke Tabs: simple navigation', () => {
   beforeAll(async () => {

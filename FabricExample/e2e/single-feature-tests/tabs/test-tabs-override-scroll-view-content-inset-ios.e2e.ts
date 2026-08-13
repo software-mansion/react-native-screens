@@ -4,16 +4,17 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
-  selectSingleFeatureTestsScreen,
+  getFirstMatch,
+  getFrame,
+  getSingleMatch,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
   top: number;
 }> {
-  const attrs = (await element(
-    by.id(testID),
-  ).getAttributes()) as IosElementAttributes;
+  const attrs = (await getSingleMatch(by.id(testID))) as IosElementAttributes;
   return { top: attrs.safeAreaInsets.top };
 }
 
@@ -30,24 +31,7 @@ async function getTabBarFrame(): Promise<{
   width: number;
   height: number;
 }> {
-  const attrs = await element(by.type(CLASS_NAME_UI_TAB_BAR)).getAttributes();
-  return (attrs as IosElementAttributes).frame;
-}
-
-async function getElementFrame(testID: string): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> {
-  const attrs = await element(by.id(testID)).getAttributes();
-
-  if ('elements' in attrs) {
-    throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for testID: "${testID}".`,
-    );
-  }
-  return (attrs as IosElementAttributes).frame;
+  return (await getFirstMatch(by.type(CLASS_NAME_UI_TAB_BAR))).frame;
 }
 
 function isAboveTabBar(
@@ -58,7 +42,7 @@ function isAboveTabBar(
 }
 
 async function assertLastItemAboveTabBar(tabPrefix: string, expected: boolean) {
-  const lastItemFrame = await getElementFrame(`${tabPrefix}-item-30`);
+  const lastItemFrame = await getFrame(by.id(`${tabPrefix}-item-30`));
   const tabFrame = await getTabBarFrame();
   jestExpect(isAboveTabBar(lastItemFrame, tabFrame)).toBe(expected);
 }
@@ -67,7 +51,7 @@ async function assertHeaderBehindStatusBar(
   tabPrefix: string,
   expected: boolean,
 ) {
-  const informationFrame = await getElementFrame(`${tabPrefix}-header`);
+  const informationFrame = await getFrame(by.id(`${tabPrefix}-header`));
   const scrollViewSAVInsetTop = await getScrollViewSafeAreaInsetsTop(
     `${tabPrefix}-scrollview`,
   );

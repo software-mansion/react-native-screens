@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 import { tapBarBackButton } from '../elements/back-button';
 
 describe('Test432', () => {

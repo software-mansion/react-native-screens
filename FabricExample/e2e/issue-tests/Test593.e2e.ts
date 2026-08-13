@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,

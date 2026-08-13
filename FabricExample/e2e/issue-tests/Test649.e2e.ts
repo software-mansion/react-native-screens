@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { describeIfiOS } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 import { CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW } from '../native-class-names';
 
 // headerLargeTitle is supported only on iOS

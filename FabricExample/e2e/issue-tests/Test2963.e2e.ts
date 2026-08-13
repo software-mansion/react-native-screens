@@ -1,5 +1,6 @@
 import { device, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { describeIfiOS } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 
 // issue related to iOS
 describeIfiOS('Test2963', () => {

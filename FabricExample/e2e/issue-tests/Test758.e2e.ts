@@ -1,13 +1,10 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
-import isVersionEqualOrHigherThan from '../helpers/isVersionEqualOrHigherThan';
-
-const { getIOSVersionNumber } = require('../../../scripts/e2e/ios-devices.js');
+import { describeIfiOS, isIOSVersionAtLeast } from '../e2e-utils';
+import { selectIssueTestScreen } from '../elements/test-screen-navigation';
 
 // On iOS 26+ cancel button does not contain any text.
 function getSearchBarCloseButton() {
-  const iosVersion = getIOSVersionNumber();
-  if (isVersionEqualOrHigherThan(iosVersion, '26.0')) {
+  if (isIOSVersionAtLeast('26.0')) {
     return element(by.label('Close').and(by.traits(['button'])));
   } else {
     return element(by.text('Cancel text'));

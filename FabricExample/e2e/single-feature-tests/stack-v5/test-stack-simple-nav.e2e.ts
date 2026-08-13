@@ -1,15 +1,17 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
-  getElementAttributes,
-  getTopmostMatch,
-  selectSingleFeatureTestsScreen,
-  tapTopmost,
+  getSingleMatch,
+  readTopmostText,
+  tapTopmostButton,
   waitUntil,
 } from '../../e2e-utils';
+import {
+  selectSingleFeatureTestsScreen,
+  waitForRoute,
+} from '../../elements/test-screen-navigation';
 import { tapBarBackButton } from '../../elements/back-button';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
@@ -37,8 +39,6 @@ import {
  *   launch documented in the scenario.
  */
 
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
 describeIfiOS('Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
@@ -47,18 +47,9 @@ describeIfiOS('Stack v5: simple navigation', () => {
    * unambiguously to the current screen.
    */
   async function readRouteKey(): Promise<string> {
-    const attrs = await getElementAttributes({
-      by: 'id',
-      value: 'stack-route-key',
-    });
+    const attrs = await getSingleMatch(by.id('stack-route-key'));
     const value = attrs.text ?? attrs.label ?? '';
     return value.trim();
-  }
-
-  async function waitForRoute(routeName: 'Home' | 'A' | 'B'): Promise<void> {
-    await waitFor(element(by.text(`Name: ${routeName}`)))
-      .toBeVisible()
-      .withTimeout(3000);
   }
 
   /**
@@ -222,20 +213,9 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
 
-  /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
-  async function readTopmostText(testID: string): Promise<string> {
-    const top = await getTopmostMatch(by.id(testID));
-    return (top.text ?? top.label ?? '').trim();
-  }
-
   /** Reads the topmost route's unique `routeKey`. */
   async function readRouteKey(): Promise<string> {
     return readTopmostText('stack-route-key');
-  }
-
-  /** Taps a Push/Pop button on the topmost stacked screen. */
-  async function tapTopmostButton(title: string): Promise<void> {
-    await tapTopmost(by.text(title));
   }
 
   /**
@@ -244,7 +224,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
    * stacked `A` screens), which makes `toBeVisible()` throw "matches N views",
    * so we poll the topmost `stack-route-name` label instead.
    */
-  async function waitForRoute(
+  async function waitForTopmostRoute(
     routeName: 'Home' | 'A' | 'B',
     timeout = 3000,
     interval = 100,
@@ -265,7 +245,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
    * Waits until the topmost route's `Key` differs from `previousKey`. Every push
    * mints a new key and every pop reveals a screen with a different key, so this
    * gates a transition between two same-named screens (e.g. A → A), which
-   * `waitForRoute` cannot detect because the route name is unchanged.
+   * `waitForTopmostRoute` cannot detect because the route name is unchanged.
    */
   async function waitForKeyChange(previousKey: string): Promise<void> {
     await waitUntil(
@@ -289,7 +269,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   let firstBKey = '';
 
   it('should show Home as the root screen with no Pop button', async () => {
-    await waitForRoute('Home');
+    await waitForTopmostRoute('Home');
     homeKey = await readRouteKey();
     await expect(element(by.text(PUSH_A))).toBeVisible();
     await expect(element(by.text(PUSH_B))).toBeVisible();
@@ -298,7 +278,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
 
   it('should push A with a new key and reveal the Pop button', async () => {
     await tapTopmostButton(PUSH_A);
-    await waitForRoute('A');
+    await waitForTopmostRoute('A');
     firstAKey = await readRouteKey();
     jestExpect(firstAKey).not.toBe(homeKey);
     await expect(element(by.text(POP))).toBeVisible();
@@ -307,7 +287,7 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   // eslint-disable-next-line jest/no-identical-title -- Android and iOS have separate test suites
   it('should push B on top of A with a new key', async () => {
     await tapTopmostButton(PUSH_B);
-    await waitForRoute('B');
+    await waitForTopmostRoute('B');
     firstBKey = await readRouteKey();
     jestExpect(firstBKey).not.toBe(firstAKey);
     jestExpect(firstBKey).not.toBe(homeKey);
@@ -315,33 +295,33 @@ describeIfAndroid('Stack v5: simple navigation', () => {
 
   it('should push a second A instance with a key distinct from the first A', async () => {
     await tapTopmostButton(PUSH_A);
-    await waitForRoute('A');
+    await waitForTopmostRoute('A');
     const secondAKey = await readRouteKey();
     jestExpect(secondAKey).not.toBe(firstAKey);
   });
 
   it('should pop back to B keeping its original key', async () => {
     await tapTopmostButton(POP);
-    await waitForRoute('B');
+    await waitForTopmostRoute('B');
     jestExpect(await readRouteKey()).toBe(firstBKey);
   });
 
   it('should pop back to A keeping its original key', async () => {
     await tapTopmostButton(POP);
-    await waitForRoute('A');
+    await waitForTopmostRoute('A');
     jestExpect(await readRouteKey()).toBe(firstAKey);
   });
 
   it('should pop back to Home with no Pop button', async () => {
     await tapTopmostButton(POP);
-    await waitForRoute('Home');
+    await waitForTopmostRoute('Home');
     jestExpect(await readRouteKey()).toBe(homeKey);
     await expect(element(by.text(POP))).not.toExist();
   });
 
   it('should assign a distinct key to every pushed A instance', async () => {
     await tapTopmostButton(PUSH_A);
-    await waitForRoute('A');
+    await waitForTopmostRoute('A');
     const a1 = await readRouteKey();
 
     await tapTopmostButton(PUSH_A);
@@ -362,6 +342,6 @@ describeIfAndroid('Stack v5: simple navigation', () => {
     await tapTopmostButton(POP);
     await waitForKeyChange(top);
     await tapTopmostButton(POP);
-    await waitForRoute('Home');
+    await waitForTopmostRoute('Home');
   });
 });

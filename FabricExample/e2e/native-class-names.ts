@@ -58,6 +58,9 @@ export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
   '_UIContextMenuHeaderView';
 export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
+/** The full-screen view every presented context menu puts behind its platter. */
+export const CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW =
+  '_UIContextMenuPlatterTransitionView';
 
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';

@@ -2,11 +2,12 @@ import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import {
   describeIfiOS,
-  selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
   describeIfiPad,
-  getElementAttributes,
+  getMatches,
+  getSingleMatch,
 } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '../../elements/test-screen-navigation';
 import { IosElementAttributes } from 'detox/detox';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
@@ -18,19 +19,13 @@ const bottomAccessoryElement = (testID: string) =>
     by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
   ).atIndex(0);
 
-const getBottomAccessoryAttributes = () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
+const getBottomAccessoryAttributes = async () =>
+  (
+    await getMatches(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY))
+  )[0] as IosElementAttributes;
 
 const getExtendedTabBarAttributes = async () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_TAB_BAR,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
+  (await getMatches(by.type(CLASS_NAME_UI_TAB_BAR)))[0] as IosElementAttributes;
 
 async function expectBottomAccessoryExist(testID: string) {
   await expect(bottomAccessoryElement(testID)).toExist();
@@ -324,11 +319,9 @@ describeIfiPad('@ipad Tabs bottomAccessory (iPad)', () => {
       'test-tabs-bottom-accessory-layout-ios',
     );
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    configScrollView = (await getElementAttributes({
-      by: 'id',
-      value: 'config-scrollview',
-      index: 0,
-    })) as IosElementAttributes;
+    configScrollView = (await getSingleMatch(
+      by.id('config-scrollview'),
+    )) as IosElementAttributes;
   });
 
   it('should display the Config tab content and initial accessory on load', async () => {
