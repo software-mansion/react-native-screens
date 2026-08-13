@@ -1,17 +1,18 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import { NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
   dismissToast,
-  expectTopmostVisible,
+  getMatches,
   getTopmostMatch,
   selectSingleFeatureTestsScreen,
   tapTopmost,
 } from '../../e2e-utils';
 import {
-  stackV5BackButtonMatcher,
-  tapStackV5BackButton,
-} from '../../elements/stack-v5-header';
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
+  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
+} from '../../native-class-names';
 
 /**
  * Stack v5 `preventNativeDismiss` — single stack. See the scenario for what is
@@ -29,6 +30,54 @@ import {
 const TOAST_MESSAGE = 'Native dismiss prevented';
 const toastLabel = (position: number) => `${position}. ${TOAST_MESSAGE}`;
 
+/**
+ * Only "nothing matched yet" / "not visible yet" are worth retrying. Anything
+ * else — a crashed app, a lost session, a bad matcher — must surface as itself,
+ * not as a settle timeout.
+ */
+function isTransientMatchError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('No views in hierarchy found matching') ||
+    message.includes('not visible')
+  );
+}
+
+/**
+ * Asserts `matcher`'s last match — the topmost stacked screen's copy — is
+ * visible. Indexed because a bare `toBeVisible()` throws "matches N views" once
+ * several screens are attached; polled because native header chrome can lag the
+ * screen's content and `getMatches` throws on the transient 0-match state.
+ *
+ * Only for elements expected to be present — absence burns the full timeout;
+ * use `not.toExist()` instead.
+ */
+async function expectTopmostVisible(
+  matcher: NativeMatcher,
+  timeout = 3000,
+  interval = 100,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
+  let lastError: unknown = '<never attempted>';
+  while (Date.now() <= deadline) {
+    try {
+      const count = (await getMatches(matcher)).length;
+      await expect(element(matcher).atIndex(count - 1)).toBeVisible();
+      return;
+    } catch (error) {
+      if (!isTransientMatchError(error)) {
+        throw error;
+      }
+      lastError = error;
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+  }
+  throw new Error(
+    `expectTopmostVisible timed out after ${timeout}ms waiting for the ` +
+      `topmost match to be visible; last failure: ${lastError}`,
+  );
+}
+
 describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   // React Native's core `<Button>` uppercases its `title` on Android
   // (`title.toUpperCase()`), so buttons are matched by their rendered text.
@@ -36,6 +85,12 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
   const TOGGLE = 'TOGGLE PREVENT NATIVE DISMISS';
+
+  // Scoped to the Stack v5 header's toolbar: the example app's own v4 header is
+  // a `CustomToolbar`, which extends `Toolbar` but not `MaterialToolbar`.
+  const backButtonMatcher = by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
+    .withAncestor(by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR));
 
   // Covered screens stay attached on Android, so a matcher resolves to one
   // element per stacked screen and has to be normalized to the topmost match.
@@ -65,7 +120,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   /** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
   async function expectTopmostButtons(titles: string[]): Promise<void> {
     for (const title of titles) {
-      await expectTopmostVisible(() => by.text(title));
+      await expectTopmostVisible(by.text(title));
     }
   }
 
@@ -142,7 +197,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     homeKey = await waitForTopmostRoute('Home');
     await expectTopmostButtons([PUSH_A, PUSH_B]);
     await expect(element(by.text(POP))).not.toExist();
-    await expect(element(stackV5BackButtonMatcher())).not.toExist();
+    await expect(element(backButtonMatcher)).not.toExist();
   });
 
   it('should push A with prevent native dismiss disabled', async () => {
@@ -153,7 +208,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     jestExpect(await readPreventInfo()).toBe(
       'Prevent native dismiss: Disabled',
     );
-    await expectTopmostVisible(stackV5BackButtonMatcher);
+    await expectTopmostVisible(backButtonMatcher);
     await expectTopmostButtons([PUSH_A, PUSH_B, POP]);
   });
 
@@ -164,13 +219,13 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     jestExpect(bKey).not.toBe(aKey);
     jestExpect(bKey).not.toBe(homeKey);
     jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
-    await expectTopmostVisible(stackV5BackButtonMatcher);
+    await expectTopmostVisible(backButtonMatcher);
     await expectTopmostButtons([PUSH_A, PUSH_B, POP, TOGGLE]);
   });
 
   it('should intercept the native header back button while prevent is enabled', async () => {
     await expectStillOnB(bKey);
-    await tapStackV5BackButton();
+    await tapTopmost(backButtonMatcher);
 
     // Asserts the toast fired, then clears it for the next step.
     await dismissToasts(1);
@@ -179,9 +234,9 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
 
   it('should intercept every back press individually while prevent is enabled', async () => {
     await expectStillOnB(bKey);
-    await tapStackV5BackButton();
-    await tapStackV5BackButton();
-    await tapStackV5BackButton();
+    await tapTopmost(backButtonMatcher);
+    await tapTopmost(backButtonMatcher);
+    await tapTopmost(backButtonMatcher);
 
     // A new toast per press — three presses, three toasts, and B never popped.
     await dismissToasts(3);
@@ -213,7 +268,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     await tapTopmostButton(TOGGLE);
     jestExpect(await readPreventInfo()).toBe('Prevent native dismiss: Enabled');
 
-    await tapStackV5BackButton();
+    await tapTopmost(backButtonMatcher);
 
     await dismissToasts(1);
     await expectStillOnB(currentBKey);

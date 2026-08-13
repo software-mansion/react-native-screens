@@ -1,28 +1,20 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import { NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
   dismissNextToast,
   expectNoToast,
   expectTopmostVisible,
+  getTopmostMatch,
   selectSingleFeatureTestsScreen,
+  tapTopmost,
+  waitUntil,
 } from '../../e2e-utils';
 import {
-  stackV5BackButtonMatcher,
-  stackV5HeaderTitleMatcher,
-  tapStackV5BackButton,
-} from '../../elements/stack-v5-header';
-import {
-  expectTopmostStackButtons,
-  POP_BUTTON_LABEL,
-  PREVENT_NATIVE_DISMISS_DISABLED,
-  PREVENT_NATIVE_DISMISS_ENABLED,
-  pushButtonLabel,
-  readTopmostPreventNativeDismissInfo,
-  tapTopmostStackButton,
-  TOGGLE_PREVENT_NATIVE_DISMISS_LABEL,
-  waitForTopmostRoute,
-} from '../../elements/stack-v5-screen';
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
+  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
+} from '../../native-class-names';
 
 /**
  * Stack v5 `preventNativeDismiss` — a nested stack inside another stack. See
@@ -37,6 +29,144 @@ import {
  * stack registers *only* the prevention callback, which is why every step where
  * native back is expected to actually pop stays manual.
  */
+
+/**
+ * Matchers for the Stack v5 native header on Android.
+ *
+ * Every matcher is built fresh on each call: on Android `atIndex` rewrites a
+ * matcher in place, so a shared instance would stay pinned to the index of
+ * whichever call indexed it first (see `tapTopmost`).
+ */
+
+/**
+ * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
+ * matches the example app's own v4 header, a `CustomToolbar` — which extends
+ * `Toolbar` but not `MaterialToolbar`.
+ */
+const stackV5ToolbarMatcher = (): NativeMatcher =>
+  by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
+
+/**
+ * The header's back chevron.
+ *
+ * A covered screen keeps its toolbar in the hierarchy but loses its navigation
+ * icon, and `Toolbar` drops the icon's view along with it — so while a headered
+ * screen is on top this resolves to that screen's chevron alone. It does *not*
+ * resolve to zero when the topmost screen is headerless: a covered screen's
+ * toolbar is still there, hidden behind it. Detox intersects a view only with
+ * its parents, never with an occluding sibling, so that leftover chevron reads
+ * as visible.
+ */
+const stackV5BackButtonMatcher = (): NativeMatcher =>
+  by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
+    .withAncestor(stackV5ToolbarMatcher());
+
+/** A native header title, which renders as a `MaterialToolbar` child. */
+const stackV5HeaderTitleMatcher = (title: string): NativeMatcher =>
+  by.text(title).withAncestor(stackV5ToolbarMatcher());
+
+/** Taps the back chevron of the topmost headered screen. */
+async function tapStackV5BackButton(): Promise<void> {
+  await tapTopmost(stackV5BackButtonMatcher());
+}
+
+/**
+ * Widgets the Stack v5 test screens render into their body, from the shared
+ * components under `apps/src/tests/shared/components/stack-v5/`.
+ *
+ * Covered screens stay attached on Android, so each of these matchers resolves
+ * to one element per stacked screen — nested screens included, as they are
+ * descendants of the outer stack's topmost screen. Every read is therefore
+ * normalized to the last match, which is the topmost screen of the innermost
+ * stack.
+ */
+
+/** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
+const ROUTE_KEY_TEST_ID = 'stack-route-key';
+
+/** Rendered by the `preventNativeDismiss` test screens' own info label. */
+const PREVENT_NATIVE_DISMISS_TEST_ID = 'prevent-native-dismiss-info';
+
+const PREVENT_NATIVE_DISMISS_ENABLED = 'Prevent native dismiss: Enabled';
+const PREVENT_NATIVE_DISMISS_DISABLED = 'Prevent native dismiss: Disabled';
+
+/**
+ * React Native's core `<Button>` uppercases its `title` on Android
+ * (`title.toUpperCase()`), so its buttons are matched by their rendered text.
+ */
+const buttonLabel = (title: string) => title.toUpperCase();
+
+/** @see apps/src/tests/shared/components/stack-v5/StackNavigationButtons.tsx */
+const pushButtonLabel = (routeName: string) => buttonLabel(`Push ${routeName}`);
+
+const POP_BUTTON_LABEL = buttonLabel('Pop');
+
+/** Rendered by the `preventNativeDismiss` test screens. */
+const TOGGLE_PREVENT_NATIVE_DISMISS_LABEL = buttonLabel(
+  'Toggle Prevent Native Dismiss',
+);
+
+async function readTopmostText(testID: string): Promise<string> {
+  const top = await getTopmostMatch(by.id(testID));
+  return (top.text ?? top.label ?? '').trim();
+}
+
+/** The `Key: ...` label of the topmost screen. */
+const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
+
+/** The `Prevent native dismiss: ...` label of the topmost screen. */
+const readTopmostPreventNativeDismissInfo = () =>
+  readTopmostText(PREVENT_NATIVE_DISMISS_TEST_ID);
+
+/**
+ * Matches the route key label of any screen on `routeName`. Keys are minted as
+ * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
+ * so this pins the route, not the instance.
+ */
+const routeKeyPattern = (routeName: string) =>
+  new RegExp(`^Key: r-${routeName}-\\d+$`);
+
+/**
+ * Waits until the topmost screen is `routeName` and returns its route key.
+ * Reading the key rather than the `Name: X` label identifies the route *and*
+ * which instance is on top, so one read settles continuity (same key) or a
+ * push (new key).
+ *
+ * Polled against the key label rather than `waitFor(...)`: covered screens stay
+ * attached, and Detox intersects a view only with its parents, never with an
+ * occluding sibling — so `toBeVisible()` on a buried screen passes at once and
+ * would not gate a pop.
+ */
+async function waitForTopmostRoute(routeName: string): Promise<string> {
+  const pattern = routeKeyPattern(routeName);
+  let lastSeen = '<never read>';
+
+  await waitUntil(
+    async () => {
+      lastSeen = await readTopmostRouteKey();
+      return pattern.test(lastSeen);
+    },
+    {
+      message: () =>
+        `the topmost route to be "${routeName}"; topmost key was "${lastSeen}"`,
+    },
+  );
+
+  return lastSeen;
+}
+
+/** Taps a Push/Pop/Toggle button on the topmost stacked screen. */
+async function tapTopmostStackButton(label: string): Promise<void> {
+  await tapTopmost(by.text(label));
+}
+
+/** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
+async function expectTopmostStackButtons(labels: string[]): Promise<void> {
+  for (const label of labels) {
+    await expectTopmostVisible(() => by.text(label));
+  }
+}
 
 // Each preventing route pushes its own toast text, so the label identifies
 // which screen intercepted — the point of the layered-prevention steps.
