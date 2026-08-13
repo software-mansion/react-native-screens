@@ -308,6 +308,9 @@ describeIfAndroid('Stack v5: header lift on scroll (Android)', () => {
     // pins down that the only thing the scroll changes is the app bar's depth —
     // its rectangle has to come back byte-identical.
     it('should stay lifted and keep the small header pinned across a full scroll', async () => {
+      // Pins the starting state rather than inheriting it from the test above,
+      // so the lift assertions below still mean something when this runs alone.
+      await expectAppBarFlat();
       const { frame: frameAtTop } = await appBarAttributes();
 
       await scrollUntilVisible(BOTTOM_MARKER, SCROLL_VIEW);
