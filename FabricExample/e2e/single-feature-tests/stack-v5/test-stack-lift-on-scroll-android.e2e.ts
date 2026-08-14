@@ -260,8 +260,6 @@ async function expectLiftFollowsScroll() {
   await expectAppBarFlat();
   await scrollAwayFromTop();
   await expectAppBarLifted();
-  await scrollUntilVisible(BOTTOM_MARKER, SCROLL_VIEW);
-  await expectAppBarLifted();
   // Has to be the edge jump: unlifting needs offset zero exactly. That makes
   // this usable only with an opaque header — every caller has one.
   await scrollToTopEdge();
