@@ -16,7 +16,21 @@ one batch is applied in order, with the last icon winning.
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Incomplete: covers steps 1–18.
+
+Not automated:
+
+- The visual correctness of a downloaded photo icon. Detox cannot read image
+  bytes, so a "photo applied" step is verified only through the presence (or
+  absence, for a cleared/failed load) of the icon's `ImageView`, never that
+  the pixels are actually the expected seeded photo. Verify the icon's
+  appearance visually.
+- Strict same-instant atomicity of an image-and-check batch. Detox has no way
+  to prove the icon and its coalesced event land with zero gap between them;
+  the automated steps wait for the batch's converged final state (event count
+  together with the icon) rather than proving no earlier, partially-applied
+  state was ever observable. Verify visually that the icon and the check
+  really do appear together.
 
 ## Prerequisites
 

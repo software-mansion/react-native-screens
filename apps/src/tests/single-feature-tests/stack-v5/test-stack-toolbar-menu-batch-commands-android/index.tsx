@@ -252,18 +252,31 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-batch-commands-scrollview">
         <Text style={styles.heading}>Batch Commands</Text>
         <View style={styles.buttons}>
-          <Button title="Select All (1 event)" onPress={selectAll} />
-          <Button title="Deselect All (1 event)" onPress={deselectAll} />
+          <Button
+            title="Select All (1 event)"
+            onPress={selectAll}
+            testID="select-all-button"
+          />
+          <Button
+            title="Deselect All (1 event)"
+            onPress={deselectAll}
+            testID="deselect-all-button"
+          />
           <Button
             title="Batch across groups (2 events)"
             onPress={batchAcrossGroups}
+            testID="batch-across-groups-button"
           />
           <Button
             title="Single object update (1 event)"
             onPress={singleObjectUpdate}
+            testID="single-object-update-button"
           />
           <Button
             title={
@@ -272,24 +285,33 @@ function MainScreen() {
                 : 'Move Apple to toolbar'
             }
             onPress={toggleAppleShowAsAction}
+            testID="toggle-apple-button"
           />
           <Button
             title="Batch: image + check (atomic)"
             onPress={batchWithImageLoad}
+            testID="batch-image-check-button"
           />
           <Button
             title="Ordering race (last: Apple absent)"
             onPress={runOrderingRace}
+            testID="ordering-race-button"
           />
           <Button
             title="Failing image + follow-up"
             onPress={runFailingImageRepro}
+            testID="failing-image-button"
           />
           <Button
             title="Duplicate id: merge + last icon"
             onPress={runDuplicateIdRepro}
+            testID="duplicate-id-button"
           />
-          <Button title="Reset log (menu state kept)" onPress={resetLog} />
+          <Button
+            title="Reset log (menu state kept)"
+            onPress={resetLog}
+            testID="reset-log-button"
+          />
         </View>
 
         <Text style={styles.hint}>
@@ -300,13 +322,18 @@ function MainScreen() {
           log.
         </Text>
 
-        <Text style={styles.heading}>Events received: {eventCount}</Text>
+        <Text testID="events-count-text" style={styles.heading}>
+          Events received: {eventCount}
+        </Text>
         <Text style={styles.subheading}>Newest first</Text>
         {eventLog.length === 0 ? (
           <Text style={styles.result}>—</Text>
         ) : (
           eventLog.map((entry, i) => (
-            <Text key={`${i}-${entry}`} style={styles.result}>
+            <Text
+              key={`${i}-${entry}`}
+              testID={`event-log-entry-${i}`}
+              style={styles.result}>
               {i === 0 ? '▶ ' : '  '}
               {entry}
             </Text>
