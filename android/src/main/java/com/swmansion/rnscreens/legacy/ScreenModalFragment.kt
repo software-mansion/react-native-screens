@@ -234,7 +234,7 @@ class ScreenModalFragment :
 
         behavior.apply {
             isHideable = true
-            isDraggable = true
+            isDraggable = screen.isGestureEnabled
         }
 
         when (screen.sheetDetents.count) {
