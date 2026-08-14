@@ -117,11 +117,11 @@ function TestStackBackButton() {
         routeConfigs={[
           {
             name: 'Root',
-            Component: RootScreen,
+            element: <RootScreen />,
           },
           {
             name: 'Pushed',
-            Component: PushedScreen,
+            element: <PushedScreen />,
           },
         ]}
       />

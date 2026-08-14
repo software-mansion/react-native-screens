@@ -14,7 +14,7 @@ function TestSvmConfiguresScrollView() {
       routeConfigs={[
         {
           name: 'Content',
-          Component: ContentScreen,
+          element: <ContentScreen />,
         },
       ]}
     />

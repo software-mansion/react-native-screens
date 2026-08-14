@@ -180,7 +180,7 @@ function TestStackToolbarMenuGroups() {
         routeConfigs={[
           {
             name: 'Main',
-            Component: MainScreen,
+            element: <MainScreen />,
             options: {
               headerConfig: {
                 title: HEADER_TITLE,

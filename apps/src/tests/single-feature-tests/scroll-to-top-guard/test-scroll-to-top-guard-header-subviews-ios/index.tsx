@@ -151,7 +151,7 @@ function TestScrollToTopGuardHeaderSubviewsIOS() {
       routeConfigs={[
         {
           name: 'Screen1',
-          Component: Screen1,
+          element: <Screen1 />,
         },
       ]}
     />
