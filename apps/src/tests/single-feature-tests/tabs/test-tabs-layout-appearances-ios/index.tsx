@@ -124,8 +124,6 @@ function TabScreen({ name }: { name: string }) {
   );
 }
 
-const createTabScreen = (name: string) => () => <TabScreen name={name} />;
-
 const SHARED_IOS_OPTIONS = {
   ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
   standardAppearance: APPEARANCE,
@@ -135,7 +133,7 @@ const SHARED_IOS_OPTIONS = {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Info',
-    Component: InfoScreen,
+    element: <InfoScreen />,
     options: {
       title: 'Info',
       ios: {
@@ -148,7 +146,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab1',
-    Component: createTabScreen('Tab 1'),
+    element: <TabScreen name="Tab 1" />,
     options: {
       title: 'Tab1',
       tabBarItemTestID: 'tab-item-title-style-tab1',
@@ -160,7 +158,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: createTabScreen('Tab 2'),
+    element: <TabScreen name="Tab 2" />,
     options: {
       title: 'Tab2',
       tabBarItemTestID: 'tab-item-title-style-tab2',
@@ -172,7 +170,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: createTabScreen('Tab 3'),
+    element: <TabScreen name="Tab 3" />,
     options: {
       title: 'Tab3',
       tabBarItemTestID: 'tab-item-title-style-tab3',

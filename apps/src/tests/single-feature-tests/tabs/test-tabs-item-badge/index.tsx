@@ -185,7 +185,7 @@ function Tab4Screen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: Tab1Screen,
+    element: <Tab1Screen />,
     options: {
       title: 'Tab1',
       badgeValue: Platform.OS === 'ios' ? '1' : '',
@@ -203,7 +203,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: Tab2Screen,
+    element: <Tab2Screen />,
     options: {
       title: 'Tab2',
       badgeValue: '1234567890',
@@ -233,7 +233,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: Tab3Screen,
+    element: <Tab3Screen />,
     options: {
       title: 'Tab3',
       badgeValue: 'NEW!',
@@ -259,7 +259,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab4',
-    Component: Tab4Screen,
+    element: <Tab4Screen />,
     options: {
       title: 'Tab4',
       badgeValue: '⚠️',

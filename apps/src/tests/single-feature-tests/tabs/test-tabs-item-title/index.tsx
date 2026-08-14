@@ -130,7 +130,7 @@ function LongTitleTab() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'LongTitle',
-    Component: LongTitleTab,
+    element: <LongTitleTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'A Very Long Tab Title That Should Truncate',
@@ -138,7 +138,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Color',
-    Component: ColorTab,
+    element: <ColorTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Color',
@@ -176,7 +176,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'FontConfig',
-    Component: FontTab,
+    element: <FontTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Font',

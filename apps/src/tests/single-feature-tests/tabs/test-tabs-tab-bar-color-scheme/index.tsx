@@ -82,7 +82,7 @@ function TestScreen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Config',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
@@ -95,7 +95,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Keyboard',
-    Component: TestScreen,
+    element: <TestScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Keyboard',
