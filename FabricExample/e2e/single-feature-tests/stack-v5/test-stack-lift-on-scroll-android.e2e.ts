@@ -260,6 +260,8 @@ async function expectLiftFollowsScroll() {
   await expectAppBarFlat();
   await scrollAwayFromTop();
   await expectAppBarLifted();
+  await scrollUntilVisible(BOTTOM_MARKER, SCROLL_VIEW);
+  await expectAppBarLifted();
   // Has to be the edge jump: unlifting needs offset zero exactly. That makes
   // this usable only with an opaque header — every caller has one.
   await scrollToTopEdge();
@@ -304,24 +306,14 @@ describeIfAndroid('Stack v5: header lift on scroll (Android)', () => {
       await expectLiftFollowsScroll();
     });
 
-    // The lift cycle above only nudges the content off zero. This runs the whole
-    // content past the header instead, which is what "stays lifted" needs, and
-    // pins down that the only thing the scroll changes is the app bar's depth —
-    // its rectangle has to come back byte-identical.
-    it('should stay lifted and keep the small header pinned across a full scroll', async () => {
-      // Pins the starting state rather than inheriting it from the test above:
-      // a leftover scroll offset would keep the app bar lifted even though the
-      // top heading is already visible, so land on offset zero explicitly.
+    it('should keep the small header pinned across a full scroll', async () => {
       await scrollToTopEdge();
-      await expectAppBarFlat();
       const { frame: frameAtTop } = await appBarAttributes();
 
       await scrollUntilVisible(BOTTOM_MARKER, SCROLL_VIEW);
-      await expectAppBarLifted();
       jestExpect((await appBarAttributes()).frame).toEqual(frameAtTop);
 
       await scrollToTopEdge();
-      await expectAppBarFlat();
       jestExpect((await appBarAttributes()).frame).toEqual(frameAtTop);
     });
 
