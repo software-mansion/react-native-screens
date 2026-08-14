@@ -357,6 +357,61 @@ export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
     .tap();
 }
 
+/**
+ * Only "nothing matched yet" / "not visible yet" are worth retrying. Anything
+ * else — a crashed app, a lost session, a bad matcher — must surface as itself,
+ * not as a settle timeout.
+ */
+function isTransientMatchError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('No views in hierarchy found matching') ||
+    message.includes('not visible')
+  );
+}
+
+/**
+ * Asserts the last match of `buildMatcher()` — the topmost stacked screen's
+ * copy — is visible. Indexed because a bare `toBeVisible()` throws once several
+ * screens are attached; polled because header chrome can lag the content.
+ *
+ * Pass a factory, not a matcher: on Android `atIndex` rewrites one in place, so
+ * a reused matcher would pin later polls to the first attempt's index, where a
+ * now-buried view still reads as visible and would pass falsely.
+ *
+ * Only for elements expected to be present — absence burns the full timeout.
+ */
+export async function expectTopmostVisible(
+  buildMatcher: () => NativeMatcher,
+  options: Omit<WaitUntilOptions, 'message'> = {},
+): Promise<void> {
+  let lastError: unknown = '<never attempted>';
+
+  await waitUntil(
+    async () => {
+      // Fresh per attempt: `countMatches` reads it before `atIndex` mutates it,
+      // and it is discarded before the next poll.
+      const matcher = buildMatcher();
+      try {
+        const count = await countMatches(matcher);
+        await expect(element(matcher).atIndex(count - 1)).toBeVisible();
+        return true;
+      } catch (error) {
+        if (!isTransientMatchError(error)) {
+          throw error;
+        }
+        lastError = error;
+        return false;
+      }
+    },
+    {
+      ...options,
+      message: () =>
+        `the topmost match to be visible; last failure: ${lastError}`,
+    },
+  );
+}
+
 type WaitUntilOptions = {
   /** How long to keep polling before failing, in milliseconds. */
   timeout?: number;
