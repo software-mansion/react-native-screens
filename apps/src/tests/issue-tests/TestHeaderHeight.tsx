@@ -464,7 +464,7 @@ function HeaderHeightTabsWrapper() {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'Tab1',
-      Component: HeaderHeightTest,
+      element: <HeaderHeightTest />,
       options: {
         title: 'Tab 1',
         ios: {
@@ -483,7 +483,7 @@ function HeaderHeightTabsWrapper() {
     },
     {
       name: 'Tab2',
-      Component: HeaderHeightTest,
+      element: <HeaderHeightTest />,
       options: {
         title: 'Tab 2',
         ios: {

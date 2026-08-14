@@ -8,7 +8,7 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
 function makeTab(title: string, description: string) {
-  return () => (
+  return (
     <CenteredLayoutView>
       <Text style={{ fontWeight: 'bold' }}>{title}</Text>
       <Text style={{ textAlign: 'center' }}>{description}</Text>
@@ -19,7 +19,7 @@ function makeTab(title: string, description: string) {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: makeTab(
+    element: makeTab(
       'Tab 1',
       'Tab icon is from Xcassets.\nOnly icon prop is defined.',
     ),
@@ -35,7 +35,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: makeTab(
+    element: makeTab(
       'Tab 2',
       'Tab icon is from Xcassets.\nBoth icon and selectedIcon props are defined.',
     ),

@@ -47,7 +47,7 @@ const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: Tab1,
+    element: <Tab1 />,
     options: {
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
@@ -92,7 +92,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: Tab2,
+    element: <Tab2 />,
     options: {
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
@@ -176,7 +176,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: Tab3,
+    element: <Tab3 />,
     options: {
       badgeValue: '2137',
       testID: 'tab-screen-3-id',
@@ -224,7 +224,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab4',
-    Component: Tab4,
+    element: <Tab4 />,
     options: {
       testID: 'tab-screen-4-id',
       accessibilityLabel: 'Fourth Tab Screen',
