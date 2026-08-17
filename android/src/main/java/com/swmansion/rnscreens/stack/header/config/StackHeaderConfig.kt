@@ -6,13 +6,12 @@ import android.util.LayoutDirection
 import android.view.Gravity
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
-import com.facebook.react.common.ReactConstants
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.views.text.ReactTypefaceUtils
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.common.ShadowStateProxy
+import com.swmansion.rnscreens.common.text.ReactTextAppearance
 import com.swmansion.rnscreens.helpers.IconResolution
 import com.swmansion.rnscreens.helpers.PropIconResolver
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
@@ -166,87 +165,15 @@ internal class StackHeaderConfig(
         by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    // Text appearance. Raw font family/weight/style are held here (React-side) and
-    // exposed to the native applicator only as a React-agnostic TypefaceTransform.
-    override var titleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var titleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var titleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var titleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var titleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    override val titleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(titleFontFamily, titleFontWeight, titleFontStyle)
+    override val titleAppearance = ReactTextAppearance(reactContext.assets)
+    override val subtitleAppearance = ReactTextAppearance(reactContext.assets)
+    override val expandedTitleAppearance = ReactTextAppearance(reactContext.assets)
+    override val collapsedTitleAppearance = ReactTextAppearance(reactContext.assets)
+    override val expandedSubtitleAppearance = ReactTextAppearance(reactContext.assets)
+    override val collapsedSubtitleAppearance = ReactTextAppearance(reactContext.assets)
 
-    override var subtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var subtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var subtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var subtitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var subtitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    override val subtitleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(subtitleFontFamily, subtitleFontWeight, subtitleFontStyle)
-
-    override var expandedTitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var expandedTitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var expandedTitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var expandedTitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var expandedTitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    override val expandedTitleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(expandedTitleFontFamily, expandedTitleFontWeight, expandedTitleFontStyle)
-
-    override var collapsedTitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var collapsedTitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var collapsedTitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var collapsedTitleFontWeight: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var collapsedTitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    override val collapsedTitleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(collapsedTitleFontFamily, collapsedTitleFontWeight, collapsedTitleFontStyle)
-
-    override var expandedSubtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var expandedSubtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var expandedSubtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var expandedSubtitleFontWeight: Int by invalidatingProperty(
-        ReactConstants.UNSET,
-        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
-    )
-    internal var expandedSubtitleFontStyle: Int by invalidatingProperty(ReactConstants.UNSET, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    override val expandedSubtitleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(expandedSubtitleFontFamily, expandedSubtitleFontWeight, expandedSubtitleFontStyle)
-
-    override var collapsedSubtitleColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    override var collapsedSubtitleFontSize: Float? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-        internal set
-    internal var collapsedSubtitleFontFamily: String? by invalidatingProperty(null, StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-    internal var collapsedSubtitleFontWeight: Int by invalidatingProperty(
-        ReactConstants.UNSET,
-        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
-    )
-    internal var collapsedSubtitleFontStyle: Int by invalidatingProperty(
-        ReactConstants.UNSET,
-        StackHeaderInvalidationFlags.TITLE_APPEARANCE,
-    )
-    override val collapsedSubtitleTypefaceTransform: TypefaceTransform?
-        get() = buildTypefaceTransform(collapsedSubtitleFontFamily, collapsedSubtitleFontWeight, collapsedSubtitleFontStyle)
-
-    private fun buildTypefaceTransform(
-        fontFamily: String?,
-        fontWeight: Int,
-        fontStyle: Int,
-    ): TypefaceTransform? {
-        if (fontFamily == null && fontWeight == ReactConstants.UNSET && fontStyle == ReactConstants.UNSET) {
-            return null
-        }
-        return { base -> ReactTypefaceUtils.applyStyles(base, fontStyle, fontWeight, fontFamily, reactContext.assets) }
-    }
+    // Appearance objects are mutated in place, so writing to one does not invalidate on its own.
+    internal fun invalidateTextAppearance() = invalidate(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL

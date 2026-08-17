@@ -27,11 +27,11 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
-import com.swmansion.rnscreens.stack.header.config.TypefaceTransform
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
@@ -220,9 +220,7 @@ internal class StackHeaderApplicator(
                     setColor = { toolbar.setTitleTextColor(it) },
                     appearanceAttr = R.attr.textAppearanceTitleLarge,
                     colorAttr = R.attr.colorOnSurface,
-                    typefaceTransform = config.titleTypefaceTransform,
-                    color = config.titleColor,
-                    fontSizeSp = config.titleFontSize,
+                    appearance = config.titleAppearance,
                 )
                 applyToolbarSlot(
                     textView = appBar.subtitleTextView,
@@ -230,9 +228,7 @@ internal class StackHeaderApplicator(
                     setColor = { toolbar.setSubtitleTextColor(it) },
                     appearanceAttr = R.attr.textAppearanceLabelMedium,
                     colorAttr = R.attr.colorOnSurfaceVariant,
-                    typefaceTransform = config.subtitleTypefaceTransform,
-                    color = config.subtitleColor,
-                    fontSizeSp = config.subtitleFontSize,
+                    appearance = config.subtitleAppearance,
                 )
             }
 
@@ -253,9 +249,7 @@ internal class StackHeaderApplicator(
                     setSizePx = ctl::setExpandedTitleTextSize,
                     appearanceAttr = expandedTitleAttr,
                     colorAttr = R.attr.colorOnSurface,
-                    typefaceTransform = config.expandedTitleTypefaceTransform,
-                    color = config.expandedTitleColor,
-                    fontSizeSp = config.expandedTitleFontSize,
+                    appearance = config.expandedTitleAppearance,
                 )
                 applyCtlSlot(
                     ctl = ctl,
@@ -266,9 +260,7 @@ internal class StackHeaderApplicator(
                     setSizePx = ctl::setCollapsedTitleTextSize,
                     appearanceAttr = R.attr.textAppearanceTitleLarge,
                     colorAttr = R.attr.colorOnSurface,
-                    typefaceTransform = config.collapsedTitleTypefaceTransform,
-                    color = config.collapsedTitleColor,
-                    fontSizeSp = config.collapsedTitleFontSize,
+                    appearance = config.collapsedTitleAppearance,
                 )
                 applyCtlSlot(
                     ctl = ctl,
@@ -279,9 +271,7 @@ internal class StackHeaderApplicator(
                     setSizePx = ctl::setExpandedSubtitleTextSize,
                     appearanceAttr = expandedSubtitleAttr,
                     colorAttr = R.attr.colorOnSurfaceVariant,
-                    typefaceTransform = config.expandedSubtitleTypefaceTransform,
-                    color = config.expandedSubtitleColor,
-                    fontSizeSp = config.expandedSubtitleFontSize,
+                    appearance = config.expandedSubtitleAppearance,
                 )
                 applyCtlSlot(
                     ctl = ctl,
@@ -292,31 +282,27 @@ internal class StackHeaderApplicator(
                     setSizePx = ctl::setCollapsedSubtitleTextSize,
                     appearanceAttr = R.attr.textAppearanceLabelMedium,
                     colorAttr = R.attr.colorOnSurfaceVariant,
-                    typefaceTransform = config.collapsedSubtitleTypefaceTransform,
-                    color = config.collapsedSubtitleColor,
-                    fontSizeSp = config.collapsedSubtitleFontSize,
+                    appearance = config.collapsedSubtitleAppearance,
                 )
             }
         }
     }
 
     private fun applyToolbarSlot(
-        textView: TextView?,
+        textView: TextView,
         setAppearance: (Int) -> Unit,
         setColor: (Int) -> Unit,
         @AttrRes appearanceAttr: Int,
         @AttrRes colorAttr: Int,
-        typefaceTransform: TypefaceTransform?,
-        color: Int?,
-        fontSizeSp: Float?,
+        appearance: TextAppearance,
     ) {
         // Reset to default
         setAppearance(resolveStyleResAttr(wrappedContext, appearanceAttr))
 
         // Apply props
-        setColor(color ?: resolveColorAttr(wrappedContext, colorAttr))
-        typefaceTransform?.let { transform -> textView?.let { it.typeface = transform(it.typeface) } }
-        fontSizeSp?.let { textView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, it) }
+        setColor(appearance.color ?: resolveColorAttr(wrappedContext, colorAttr))
+        textView.typeface = appearance.resolveTypeface(textView.typeface)
+        appearance.fontSize?.let { textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, it) }
     }
 
     private fun applyCtlSlot(
@@ -328,17 +314,15 @@ internal class StackHeaderApplicator(
         setSizePx: (Float) -> Unit,
         @AttrRes appearanceAttr: Int,
         @AttrRes colorAttr: Int,
-        typefaceTransform: TypefaceTransform?,
-        color: Int?,
-        fontSizeSp: Float?,
+        appearance: TextAppearance,
     ) {
         // Reset to default
         setAppearance(resolveStyleResAttr(wrappedContext, appearanceAttr))
 
         // Apply props
-        setColor(color ?: resolveColorAttr(wrappedContext, colorAttr))
-        typefaceTransform?.let { setTypeface(it(getTypeface())) }
-        fontSizeSp?.let { setSizePx(ctl.spToPx(it)) }
+        setColor(appearance.color ?: resolveColorAttr(wrappedContext, colorAttr))
+        setTypeface(appearance.resolveTypeface(getTypeface()))
+        appearance.fontSize?.let { setSizePx(ctl.spToPx(it)) }
     }
 
     internal fun applyBackButton(

@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -39,33 +40,30 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
-        // MaterialToolbar creates its title/subtitle TextViews lazily and exposes no getters.
-        // We force them into existence in a fixed order (title first, subtitle second) so we can
-        // hold stable references — identifying them by text is ambiguous when the title and
-        // subtitle share the same string. Both instances persist for the toolbar's lifetime, so
-        // these references stay valid even while the text is cleared.
+        // MaterialToolbar creates its title/subtitle TextViews lazily and exposes no getters. We
+        // force them into existence with distinct placeholders, capture them, then clear the text.
+        // Both instances persist for the toolbar's lifetime, so these references stay valid even
+        // while the text is cleared.
         internal val titleTextView: TextView
         internal val subtitleTextView: TextView
 
         init {
             addView(toolbar)
 
-            toolbar.title = FORCE_CREATE_PLACEHOLDER
-            val title = toolbar.toolbarTextViews().single()
-            toolbar.subtitle = FORCE_CREATE_PLACEHOLDER
-            val subtitle = toolbar.toolbarTextViews().first { it !== title }
+            toolbar.title = TITLE_PLACEHOLDER
+            toolbar.subtitle = SUBTITLE_PLACEHOLDER
+            titleTextView = toolbar.findTextViewWithText(TITLE_PLACEHOLDER)
+            subtitleTextView = toolbar.findTextViewWithText(SUBTITLE_PLACEHOLDER)
             toolbar.title = ""
             toolbar.subtitle = ""
-
-            titleTextView = title
-            subtitleTextView = subtitle
         }
 
-        private fun MaterialToolbar.toolbarTextViews(): List<TextView> = (0 until childCount).mapNotNull { getChildAt(it) as? TextView }
+        private fun MaterialToolbar.findTextViewWithText(text: String): TextView =
+            children.filterIsInstance<TextView>().first { it.text?.toString() == text }
 
         private companion object {
-            // Any non-empty string forces the TextViews into existence; cleared before layout.
-            private const val FORCE_CREATE_PLACEHOLDER = "\u200B"
+            private const val TITLE_PLACEHOLDER = "rns_title"
+            private const val SUBTITLE_PLACEHOLDER = "rns_subtitle"
         }
     }
 
