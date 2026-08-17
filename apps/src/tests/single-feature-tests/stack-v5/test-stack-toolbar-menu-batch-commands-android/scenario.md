@@ -21,10 +21,12 @@ Incomplete: covers steps 1–18.
 Not automated:
 
 - The visual correctness of a downloaded photo icon. Detox cannot read image
-  bytes, so a "photo applied" step is verified only through the presence (or
-  absence, for a cleared/failed load) of the icon's `ImageView`, never that
-  the pixels are actually the expected seeded photo. Verify the icon's
-  appearance visually.
+  bytes, and an Android action button draws its icon as part of the text view
+  rather than as a separate image view, so a "photo applied" step is verified
+  only through the button being in its icon-only form (no rendered text, title
+  exposed as content description) versus its text-button form ("APPLE"
+  rendered as text) — for a cleared/failed load — never that the pixels are
+  actually the expected seeded photo. Verify the icon's appearance visually.
 - Strict same-instant atomicity of an image-and-check batch. Detox has no way
   to prove the icon and its coalesced event land with zero gap between them;
   the automated steps wait for the batch's converged final state (event count

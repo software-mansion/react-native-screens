@@ -1,7 +1,7 @@
 // Detox cannot read the bytes of a remotely loaded image, so every
-// image-load case below asserts only whether Apple's toolbar icon view
-// exists — that *a* photo (or none, for a failed/cleared load) was
-// applied — never that the downloaded content is the correct photo, and
+// image-load case below asserts only whether Apple's toolbar button is in
+// its icon-only form — that *a* photo (or none, for a failed/cleared load)
+// was applied — never that the downloaded content is the correct photo, and
 // never that the icon and its coalesced event land at the exact same
 // instant. See scenario.md's "Not automated" note.
 import { expect as jestExpect } from '@jest/globals';
@@ -18,10 +18,7 @@ import {
   scrollToAndTap,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
-} from '../../native-class-names';
+import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-names';
 
 // Runs the whole scenario.md walkthrough as one continuous, stateful script:
 // "Reset log clears only the counter and log, not the menu" — so every case
@@ -32,36 +29,47 @@ const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 
 // The image cases download a large, uncached image over the network (or hit
 // an always-failing host), so the async load is visibly slow — see
-// scenario.md's Prerequisites and Note.
-const IMAGE_LOAD_TIMEOUT_MS = 30000;
+// scenario.md's Prerequisites and Note. Generous on purpose: a slow network
+// must not read as a failed batch. Stays under jest's per-test timeout.
+const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
-// Matched by accessibility label, not visible text: once an icon is applied
-// the row may show only the icon, but the label still carries the title.
+// Per scenario.md's Note, Android's overflow menu does not render item icons
+// and an action button does not show its checked state, so Apple's icon is
+// only observable while it sits in the toolbar and its check only inside the
+// overflow menu (`expectCheckBox`) — the steps move it between the two.
+//
+// The toolbar button itself is a text view that draws its icon as a compound
+// drawable, so there is no icon child to match. What is observable is
+// AppCompat's own switch: an icon-only action button renders no text and
+// exposes its title as the content description, while a text button renders
+// the title as text — never both (see the sibling toolbar-menu-title spec).
+//
+// Detox's Android `by.label` matches the content description *or* the text, so
+// it finds the button in either form; the form is then told apart by whether
+// the title is rendered as text.
 const appleToolbarButton: NativeMatcher = by
   .label('Apple')
   .and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
-
-const appleToolbarIcon: NativeMatcher = by
-  .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
-  .withAncestor(appleToolbarButton);
-
-async function expectAppleInToolbar() {
-  await expect(element(appleToolbarButton)).toBeVisible();
-}
 
 async function expectAppleNotInToolbar() {
   await expect(element(appleToolbarButton)).not.toExist();
 }
 
-// Existence-only, per the file header note: proves an icon view was (or
-// wasn't) mounted, not that its pixels are the correct photo.
-async function expectAppleToolbarIcon(present: boolean) {
-  if (present) {
-    await expect(element(appleToolbarIcon)).toBeVisible();
-  } else {
-    await expectAppleInToolbar();
-    await expect(element(appleToolbarIcon)).not.toExist();
-  }
+// Existence-only, per the file header note: proves the button is (or isn't) in
+// its icon-only form, not that the icon's pixels are the correct photo.
+//
+// Both forms are asserted positively: on Android, Detox evaluates a negated
+// matcher (`not.toHaveText`, `not.toExist`) against `null` when the view is
+// missing, so a negation alone would pass for a button that is not there.
+async function expectAppleInToolbarWithIcon() {
+  await expect(element(appleToolbarButton)).toBeVisible();
+  // An icon-only action button clears its text (`setText(null)`).
+  await expect(element(appleToolbarButton)).toHaveText('');
+}
+
+async function expectAppleInToolbarWithoutIcon() {
+  await expect(element(appleToolbarButton)).toBeVisible();
+  await expect(element(appleToolbarButton)).toHaveText('Apple');
 }
 
 // The small step keeps short rows from being scrolled past.
@@ -110,6 +118,9 @@ async function waitForEventCount(n: number, timeoutMs: number) {
 // coupled to the outcome of the one before it.
 async function expectEventCountUnchanged(action: () => Promise<void>) {
   const before = await readText('events-count-text');
+  // Guards the read itself: an empty or unexpected value must not become a
+  // baseline that the closing assertion then trivially confirms.
+  jestExpect(before).toMatch(/^Events received: \d+$/);
   await action();
   await scrollIntoView('events-count-text');
   await expect(element(by.id('events-count-text'))).toHaveText(before);
@@ -240,9 +251,11 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
         await tapById('toggle-apple-button');
       });
 
-      await expectAppleInToolbar();
-      await expectAppleToolbarIcon(false);
+      await expectAppleInToolbarWithoutIcon();
       await withOverflowMenu(async () => {
+        // A row that must still be there proves the menu's rows are
+        // addressable, so Apple's absence is a finding, not a no-op.
+        await expect(element(menuItemRow('Banana'))).toBeVisible();
         await expect(element(menuItemRow('Apple'))).not.toExist();
       });
     });
@@ -257,7 +270,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
       await tapById('batch-image-check-button');
       await waitForEventCount(7, IMAGE_LOAD_TIMEOUT_MS);
       await expectNewestEntry('fruits', ['apple', 'cherry']);
-      await expectAppleToolbarIcon(true);
+      await expectAppleInToolbarWithIcon();
     });
 
     it('moves Apple back to the overflow menu, checked, with no new event', async () => {
@@ -304,8 +317,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
         await tapById('toggle-apple-button');
       });
 
-      await expectAppleInToolbar();
-      await expectAppleToolbarIcon(false);
+      await expectAppleInToolbarWithoutIcon();
     });
 
     it('keeps Apple checked in the overflow menu, with no new event', async () => {
@@ -332,8 +344,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
         await tapById('toggle-apple-button');
       });
 
-      await expectAppleInToolbar();
-      await expectAppleToolbarIcon(false);
+      await expectAppleInToolbarWithoutIcon();
     });
 
     it('keeps the check from the first duplicate update and applies the second update’s icon', async () => {
@@ -341,7 +352,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
       await waitForEventCount(15, IMAGE_LOAD_TIMEOUT_MS);
       await expectPreviousEntry('fruits', ['apple']);
       await expectNewestEntry('fruits', ['apple', 'cherry']);
-      await expectAppleToolbarIcon(true);
+      await expectAppleInToolbarWithIcon();
     });
 
     it('keeps Apple checked in the overflow menu, with no new event', async () => {
