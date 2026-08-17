@@ -157,7 +157,9 @@
     window = RCTKeyWindow();
   }
 
-  if (![[window subviews] containsObject:_container]) {
+  if (_container.superview == window) {
+    [window bringSubviewToFront:_container];
+  } else {
     [window addSubview:_container];
   }
 }
@@ -182,6 +184,10 @@
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [self addSubview:childComponentView];
+
+  if (self.superview != nil) {
+    [self maybeShow];
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
