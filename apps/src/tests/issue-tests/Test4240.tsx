@@ -74,7 +74,7 @@ function TabContentWrapper() {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'HomeTab',
-    Component: TabContentWrapper,
+    element: <TabContentWrapper />,
     options: {
       title: 'Tab',
     },

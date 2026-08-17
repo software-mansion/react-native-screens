@@ -20,7 +20,7 @@ export function TestStackHeaderSubviewsOnpressIOS() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
+            element: <ConfigScreen />,
           },
         ]}
       />

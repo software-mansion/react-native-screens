@@ -20,7 +20,7 @@ export function TestSvmTabsScrollEdgeEffects() {
 const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    Component: TabContents,
+    element: <TabContents />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -28,7 +28,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Second',
-    Component: TabContents,
+    element: <TabContents />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Second',

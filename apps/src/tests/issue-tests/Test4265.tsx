@@ -73,7 +73,7 @@ function ProfileTab() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    Component: HomeTab,
+    element: <HomeTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -95,7 +95,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Search',
-    Component: SearchTab,
+    element: <SearchTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Search',
@@ -116,7 +116,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Profile',
-    Component: ProfileTab,
+    element: <ProfileTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Profile',

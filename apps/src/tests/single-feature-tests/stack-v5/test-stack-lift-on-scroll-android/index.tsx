@@ -55,7 +55,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
 function TestStackLiftOnScrollAndroid() {
   return (
     <StackContainer
-      routeConfigs={[{ name: 'Home', Component: ConfigScreen }]}
+      routeConfigs={[{ name: 'Home', element: <ConfigScreen /> }]}
     />
   );
 }

@@ -266,7 +266,7 @@ function Tab3Screen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: Tab1Screen,
+    element: <Tab1Screen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
@@ -277,7 +277,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: Tab2Screen,
+    element: <Tab2Screen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
@@ -290,7 +290,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: Tab3Screen,
+    element: <Tab3Screen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',
