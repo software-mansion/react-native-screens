@@ -75,6 +75,10 @@ export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
+// Detox resolves `by.type` with `isAssignableFrom`, so this also matches the
+// library's internal `StackHeaderAppBarLayout` subclasses.
+export const CLASS_NAME_ANDROID_APP_BAR_LAYOUT =
+  'com.google.android.material.appbar.AppBarLayout';
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ActionMenuItemView';
 
