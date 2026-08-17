@@ -1,12 +1,6 @@
-// Detox cannot read the bytes of a remotely loaded image, so every
-// image-load case below asserts only whether Apple's toolbar button is in
-// its icon-only form — that *a* photo (or none, for a failed/cleared load)
-// was applied — never that the downloaded content is the correct photo, and
-// never that the icon and its coalesced event land at the exact same
-// instant. See scenario.md's "Not automated" note.
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
+import type { NativeMatcher } from 'detox/detox';
 import {
   createOverflowMenuHelpers,
   describeIfAndroid,
@@ -20,33 +14,21 @@ import {
 } from '../../e2e-utils';
 import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-names';
 
-// Runs the whole scenario.md walkthrough as one continuous, stateful script:
-// "Reset log clears only the counter and log, not the menu" — so every case
-// below starts from the checked/toolbar state the previous one left.
+// Stateful walkthrough of scenario.md: the menu's checked state is cumulative
+// and the screen has no full reset, so each case starts where the previous one
+// left off and event counts are absolute. See scenario.md's "Not automated"
+// section for what is not covered.
 
 const SCROLLVIEW_ID = 'toolbar-menu-batch-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
+const SCROLL_STEP = { pixels: 300 };
 
-// The image cases download a large, uncached image over the network (or hit
-// an always-failing host), so the async load is visibly slow — see
-// scenario.md's Prerequisites and Note. Generous on purpose: a slow network
-// must not read as a failed batch. Stays under jest's per-test timeout.
+const EVENT_TIMEOUT_MS = 3000;
+// Generous on purpose: a slow image download must not read as a failed batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
-// Per scenario.md's Note, Android's overflow menu does not render item icons
-// and an action button does not show its checked state, so Apple's icon is
-// only observable while it sits in the toolbar and its check only inside the
-// overflow menu (`expectCheckBox`) — the steps move it between the two.
-//
-// The toolbar button itself is a text view that draws its icon as a compound
-// drawable, so there is no icon child to match. What is observable is
-// AppCompat's own switch: an icon-only action button renders no text and
-// exposes its title as the content description, while a text button renders
-// the title as text — never both (see the sibling toolbar-menu-title spec).
-//
-// Detox's Android `by.label` matches the content description *or* the text, so
-// it finds the button in either form; the form is then told apart by whether
-// the title is rendered as text.
+// `by.label` matches the button in both its icon-only (title as content
+// description) and text form; the form is told apart by the rendered text.
 const appleToolbarButton: NativeMatcher = by
   .label('Apple')
   .and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
@@ -55,15 +37,10 @@ async function expectAppleNotInToolbar() {
   await expect(element(appleToolbarButton)).not.toExist();
 }
 
-// Existence-only, per the file header note: proves the button is (or isn't) in
-// its icon-only form, not that the icon's pixels are the correct photo.
-//
-// Both forms are asserted positively: on Android, Detox evaluates a negated
-// matcher (`not.toHaveText`, `not.toExist`) against `null` when the view is
-// missing, so a negation alone would pass for a button that is not there.
+// Asserted positively: on Android a negated matcher passes on a missing view.
 async function expectAppleInToolbarWithIcon() {
   await expect(element(appleToolbarButton)).toBeVisible();
-  // An icon-only action button clears its text (`setText(null)`).
+  // AppCompat clears an icon-only action button's text (`setText(null)`).
   await expect(element(appleToolbarButton)).toHaveText('');
 }
 
@@ -72,17 +49,12 @@ async function expectAppleInToolbarWithoutIcon() {
   await expect(element(appleToolbarButton)).toHaveText('Apple');
 }
 
-// The small step keeps short rows from being scrolled past.
-const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, pixels: 300 };
-
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
 async function tapById(id: string) {
-  await scrollToAndTap(id, SETTINGS_CONTROL);
+  await scrollToAndTap(id, { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP });
 }
 
 const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
@@ -91,43 +63,25 @@ const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
 
 async function readText(id: string): Promise<string> {
   await scrollIntoView(id);
-  const attrs = (await getElementAttributes({
-    by: 'id',
-    value: id,
-  })) as AndroidElementAttributes;
-  return attrs.text ?? '';
+  return (await getElementAttributes({ by: 'id', value: id })).text ?? '';
 }
 
-async function expectEventCount(n: number) {
-  await scrollIntoView('events-count-text');
-  await expect(element(by.id('events-count-text'))).toHaveText(
-    `Events received: ${n}`,
-  );
-}
-
-// For the image-load cases: the count settles only once the async command
-// queue drains, which can take a while over the network.
-async function waitForEventCount(n: number, timeoutMs: number) {
+async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
   await scrollIntoView('events-count-text');
   await waitFor(element(by.id('events-count-text')))
     .toHaveText(`Events received: ${n}`)
     .withTimeout(timeoutMs);
 }
 
-// The baseline is read rather than written into the test, so an `it` is not
-// coupled to the outcome of the one before it.
 async function expectEventCountUnchanged(action: () => Promise<void>) {
   const before = await readText('events-count-text');
-  // Guards the read itself: an empty or unexpected value must not become a
-  // baseline that the closing assertion then trivially confirms.
   jestExpect(before).toMatch(/^Events received: \d+$/);
   await action();
   await scrollIntoView('events-count-text');
   await expect(element(by.id('events-count-text'))).toHaveText(before);
 }
 
-// Payload order is a native implementation detail — compare ids as a set, the
-// same way the sibling toolbar-menu-disabled spec's `expectLastSelection` does.
+// Ids are compared as a set — payload order is an implementation detail.
 function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
   const text = raw.replace(/^(▶ | {2})/, '');
   const separator = text.indexOf(': ');
@@ -136,10 +90,13 @@ function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
   }
   const groupId = text.slice(0, separator);
   const parsed: unknown = JSON.parse(text.slice(separator + 2));
-  if (!Array.isArray(parsed)) {
-    throw new Error(`Expected a JSON array of ids in: "${raw}"`);
+  if (
+    !Array.isArray(parsed) ||
+    !parsed.every((id): id is string => typeof id === 'string')
+  ) {
+    throw new Error(`Expected a JSON array of string ids in: "${raw}"`);
   }
-  return { groupId, ids: parsed as string[] };
+  return { groupId, ids: parsed };
 }
 
 async function expectLogEntry(index: number, groupId: string, ids: string[]) {
@@ -153,9 +110,7 @@ async function expectNewestEntry(groupId: string, ids: string[]) {
   await expectLogEntry(0, groupId, ids);
 }
 
-// Only meaningful right after a two-event batch — index 1 is one entry older
-// than "newest", i.e. the first of the two events the batch produced.
-async function expectPreviousEntry(groupId: string, ids: string[]) {
+async function expectSecondNewestEntry(groupId: string, ids: string[]) {
   await expectLogEntry(1, groupId, ids);
 }
 
@@ -168,8 +123,6 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
     );
   });
 
-  // Covers taps made outside a `withOverflowMenu` block: a case that fails
-  // mid-menu must not leave the popup up and take every later case down too.
   afterEach(closeMenuIfOpen);
 
   describe('baseline — initial render', () => {
@@ -221,7 +174,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
     it('emits two events, one per affected group, in update order', async () => {
       await tapById('batch-across-groups-button');
       await expectEventCount(4);
-      await expectPreviousEntry('fruits', ['cherry']);
+      await expectSecondNewestEntry('fruits', ['cherry']);
       await expectNewestEntry('view', ['grid']);
 
       await withOverflowMenu(async () => {
@@ -253,8 +206,6 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
       await expectAppleInToolbarWithoutIcon();
       await withOverflowMenu(async () => {
-        // A row that must still be there proves the menu's rows are
-        // addressable, so Apple's absence is a finding, not a no-op.
         await expect(element(menuItemRow('Banana'))).toBeVisible();
         await expect(element(menuItemRow('Apple'))).not.toExist();
       });
@@ -268,7 +219,7 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
     it('applies the icon and the check together only once the image has loaded', async () => {
       await tapById('batch-image-check-button');
-      await waitForEventCount(7, IMAGE_LOAD_TIMEOUT_MS);
+      await expectEventCount(7, IMAGE_LOAD_TIMEOUT_MS);
       await expectNewestEntry('fruits', ['apple', 'cherry']);
       await expectAppleInToolbarWithIcon();
     });
@@ -294,8 +245,8 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
     it('applies the second (synchronous) command last, even though the first image resolves later', async () => {
       await tapById('ordering-race-button');
-      await waitForEventCount(10, IMAGE_LOAD_TIMEOUT_MS);
-      await expectPreviousEntry('fruits', ['apple']);
+      await expectEventCount(10, IMAGE_LOAD_TIMEOUT_MS);
+      await expectSecondNewestEntry('fruits', ['apple']);
       await expectNewestEntry('fruits', []);
 
       await withOverflowMenu(async () => {
@@ -307,8 +258,8 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
   describe('robustness — a failing image still completes the batch', () => {
     it('applies both commands even though the first image fails to load', async () => {
       await tapById('failing-image-button');
-      await waitForEventCount(12, IMAGE_LOAD_TIMEOUT_MS);
-      await expectPreviousEntry('fruits', ['apple']);
+      await expectEventCount(12, IMAGE_LOAD_TIMEOUT_MS);
+      await expectSecondNewestEntry('fruits', ['apple']);
       await expectNewestEntry('fruits', ['apple', 'banana']);
     });
 
@@ -349,8 +300,8 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
     it('keeps the check from the first duplicate update and applies the second update’s icon', async () => {
       await tapById('duplicate-id-button');
-      await waitForEventCount(15, IMAGE_LOAD_TIMEOUT_MS);
-      await expectPreviousEntry('fruits', ['apple']);
+      await expectEventCount(15, IMAGE_LOAD_TIMEOUT_MS);
+      await expectSecondNewestEntry('fruits', ['apple']);
       await expectNewestEntry('fruits', ['apple', 'cherry']);
       await expectAppleInToolbarWithIcon();
     });
