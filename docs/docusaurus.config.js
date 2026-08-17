@@ -104,7 +104,7 @@ const config = {
         style: 'light',
         links: [],
         copyright:
-          'All trademarks and copyrights belong to their respective owners.',
+          'All trademarks and copyrights belong to their respective owners. Read about our ',
       },
     }),
 };
