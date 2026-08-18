@@ -211,6 +211,11 @@ internal class StackHeaderCoordinatorLayout(
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_POSITIONING)
             }
 
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.CONTENT_INSETS)) {
+                applicator.applyContentInsets(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.CONTENT_INSETS)
+            }
+
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
                 applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.BACK_BUTTON)

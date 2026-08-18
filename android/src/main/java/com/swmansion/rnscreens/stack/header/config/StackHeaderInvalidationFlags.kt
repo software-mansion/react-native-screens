@@ -16,7 +16,9 @@ internal value class StackHeaderInvalidationFlags(
         val OVERFLOW_ICON = StackHeaderInvalidationFlags(1 shl 7)
         val TITLE_POSITIONING = StackHeaderInvalidationFlags(1 shl 8)
         val TITLE_APPEARANCE = StackHeaderInvalidationFlags(1 shl 9)
-        val APPEARANCE = TITLE or BACK_BUTTON or OVERFLOW_ICON or TITLE_POSITIONING or TITLE_APPEARANCE
+        val CONTENT_INSETS = StackHeaderInvalidationFlags(1 shl 10)
+        val APPEARANCE =
+            TITLE or BACK_BUTTON or OVERFLOW_ICON or TITLE_POSITIONING or TITLE_APPEARANCE or CONTENT_INSETS
         val ALL = STRUCTURE or SUBVIEWS or APPEARANCE or SCROLL_FLAGS or TOOLBAR_MENU or LIFT_ON_SCROLL
     }
 

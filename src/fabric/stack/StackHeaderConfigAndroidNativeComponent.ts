@@ -125,6 +125,9 @@ export interface NativeProps extends ViewProps {
     'availableSpace'
   >;
 
+  contentInsetStart?: CT.WithDefault<CT.Float, -1.0>;
+  contentInsetEnd?: CT.WithDefault<CT.Float, -1.0>;
+
   titleColor?: ColorValue | undefined;
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.WithDefault<CT.Float, -1.0>;
