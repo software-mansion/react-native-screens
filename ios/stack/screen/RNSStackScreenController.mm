@@ -19,6 +19,13 @@
     _screenView = componentView;
     _headerCoordinator = [[RNSStackScreenHeaderCoordinator alloc] initWithScreenController:self];
     _containerItemSupport = [RNSContainerItemSupport new];
+
+#if !TARGET_OS_TV
+    // NavigationBar is configured to always prefer large title and the actual configuration is
+    // handled by headerConfig updating the display mode on navigationItem.
+    // In case the headerConfig is not provided, we opt out of large title by default.
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+#endif // !TARGET_OS_TV
   }
   return self;
 }
