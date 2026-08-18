@@ -50,7 +50,7 @@ function cloneScreensRef({
     } catch {
       fatal(
         `Version '${refType}:${target}' was not found locally.\n` +
-          `Hint: fetch it first, or pass -f to take it from origin.`,
+          `Hint: fetch it first, or pass -o to take it from origin.`,
       );
     }
     return;

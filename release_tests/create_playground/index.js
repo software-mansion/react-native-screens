@@ -17,7 +17,7 @@ console.table({
   variant: config.variant,
   platform: config.platform,
   'app-name': config['app-name'],
-  'force-fetch': config['force-fetch'],
+  'from-origin': config['from-origin'],
   'example-app': config['example-app'],
   run: config.run,
   'ios-simulator': config['ios-simulator'] ?? '',

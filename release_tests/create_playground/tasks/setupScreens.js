@@ -64,14 +64,14 @@ function setupScreensFromRef(config, utils) {
   const packFileName = `screens-${target.replace(/[^a-z0-9._-]/gi, '-')}.tgz`;
   const packFile = path.join(config.paths.app, packFileName);
   const screensPath = config.paths.screens;
-  const forceFetch = config['force-fetch'];
+  const fromOrigin = config['from-origin'];
 
   runTask(
     `Preparing target version (${refType}:${target}) in temporary directory`,
     config.paths.log,
     () => {
       withTempDir('screens-clone-', tempCloneDir => {
-        const useLocal = !forceFetch;
+        const useLocal = !fromOrigin;
         const remoteUrl = useLocal ? null : getRemoteUrl(screensPath);
 
         if (useLocal) {

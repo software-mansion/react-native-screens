@@ -61,9 +61,9 @@ function getConfig() {
         short: 'h',
         default: false,
       },
-      'force-fetch': {
+      'from-origin': {
         type: 'boolean',
-        short: 'f',
+        short: 'o',
         default: false,
       },
       'example-app': {
@@ -114,8 +114,8 @@ function getConfig() {
                                            commit:<sha>                  — checkout that commit
                                          Use '${CURRENT_SCREENS_VERSION}' for the working tree, or a typed ref
                                          (branch:/tag:/commit:). Typed refs are taken from the
-                                         local git repository; pass -f to take them from origin.
-        -f, --force-fetch                Fetch the screens version from the remote repository (origin)
+                                         local git repository; pass -o to take them from origin.
+        -o, --from-origin                Take the screens version from the remote repository (origin)
                                          instead of the local git repository.
                                          Mutually exclusive with --screens-version '${CURRENT_SCREENS_VERSION}'.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
@@ -153,8 +153,8 @@ function getConfig() {
         node create_playground.js -s branch:main
         node create_playground.js -s tag:4.16.0
         node create_playground.js -s commit:8b939b9
-        node create_playground.js -s commit:8b939b9 -f
-        node create_playground.js -s branch:fix-bug -f
+        node create_playground.js -s commit:8b939b9 -o
+        node create_playground.js -s branch:fix-bug -o
         node create_playground.js -a MyPlayground
 
         # Setup + run
@@ -193,10 +193,10 @@ function getConfig() {
   const { type: screensRefType, target: screensRefTarget } =
     parseScreensVersion(config['screens-version']);
 
-  if (screensRefType === CURRENT_SCREENS_VERSION && config['force-fetch']) {
+  if (screensRefType === CURRENT_SCREENS_VERSION && config['from-origin']) {
     fatal(
-      `Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to '${CURRENT_SCREENS_VERSION}'.\n` +
-        `Explanation: The '${CURRENT_SCREENS_VERSION}' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch, tag, or commit (e.g., -s branch:main -f).\n`,
+      `Invalid flag combination. You cannot use '--from-origin' when '--screens-version' is set to '${CURRENT_SCREENS_VERSION}'.\n` +
+        `Explanation: The '${CURRENT_SCREENS_VERSION}' option uses your current working directory directly. Taking the ref from origin only applies when you target a specific branch, tag, or commit (e.g., -s branch:main -o).\n`,
     );
   }
 
