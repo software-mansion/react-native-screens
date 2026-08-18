@@ -6,7 +6,6 @@ import React, {
   useRef,
 } from 'react';
 import {
-  Image,
   type NativeSyntheticEvent,
   processColor,
   StyleSheet,
@@ -151,29 +150,12 @@ function parseBackButtonIconToNativeProps(
   StackHeaderConfigAndroidNativeComponentProps,
   'backButtonImageIconResource' | 'backButtonDrawableIconResourceName'
 > {
-  if (!icon) {
-    return {};
-  }
+  const parsed = parseAndroidIconToNativeProps(icon);
 
-  if (icon.type === 'imageSource') {
-    const resolved = Image.resolveAssetSource(icon.imageSource);
-    if (!resolved) {
-      console.error(
-        '[RNScreens] failed to resolve an asset for back button icon',
-      );
-    }
-    return {
-      backButtonImageIconResource: resolved || undefined,
-    };
-  } else if (icon.type === 'drawableResource') {
-    return {
-      backButtonDrawableIconResourceName: icon.name,
-    };
-  } else {
-    throw new Error(
-      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
-    );
-  }
+  return {
+    backButtonImageIconResource: parsed.imageIconResource,
+    backButtonDrawableIconResourceName: parsed.drawableIconResourceName,
+  };
 }
 
 function parseOverflowIconToNativeProps(
@@ -182,29 +164,12 @@ function parseOverflowIconToNativeProps(
   StackHeaderConfigAndroidNativeComponentProps,
   'overflowIconImageIconResource' | 'overflowIconDrawableIconResourceName'
 > {
-  if (!icon) {
-    return {};
-  }
+  const parsed = parseAndroidIconToNativeProps(icon);
 
-  if (icon.type === 'imageSource') {
-    const resolved = Image.resolveAssetSource(icon.imageSource);
-    if (!resolved) {
-      console.error(
-        '[RNScreens] failed to resolve an asset for overflow menu icon',
-      );
-    }
-    return {
-      overflowIconImageIconResource: resolved || undefined,
-    };
-  } else if (icon.type === 'drawableResource') {
-    return {
-      overflowIconDrawableIconResourceName: icon.name,
-    };
-  } else {
-    throw new Error(
-      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
-    );
-  }
+  return {
+    overflowIconImageIconResource: parsed.imageIconResource,
+    overflowIconDrawableIconResourceName: parsed.drawableIconResourceName,
+  };
 }
 
 type ScrollFlagFields = {
