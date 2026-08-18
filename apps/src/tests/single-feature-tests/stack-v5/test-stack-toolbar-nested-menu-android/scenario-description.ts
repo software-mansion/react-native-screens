@@ -8,6 +8,6 @@ export const scenarioDescription: ScenarioDescription = {
     'at all nesting levels, imperative commands targeting items inside ' +
     'submenus and submenu containers, and props-update rebuild semantics.',
   platforms: ['android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };

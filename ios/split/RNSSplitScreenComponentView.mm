@@ -4,8 +4,7 @@
 #import <rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
-
-#import "Swift-Bridging.h"
+#import "RNSSplitScreenController.h"
 
 namespace react = facebook::react;
 

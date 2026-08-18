@@ -1,6 +1,10 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
@@ -12,4 +16,6 @@ interface NativeProps extends ViewProps {
   bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSScrollViewMarker');
+export default codegenNativeComponent<NativeProps>(
+  'RNSScrollViewMarker',
+) as HostComponent<NativeProps>;

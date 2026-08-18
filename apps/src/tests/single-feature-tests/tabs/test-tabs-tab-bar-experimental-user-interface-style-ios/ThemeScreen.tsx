@@ -87,7 +87,7 @@ export function InterfaceStyleScreen({ style }: { style: InterfaceStyle }) {
 
   const routeConfigs: TabRouteConfig[] = icons.map((icon, i) => ({
     name: `Tab${i + 1}`,
-    Component: () => <ThemedTabContent style={style} />,
+    element: <ThemedTabContent style={style} />,
     options: {
       title: `Tab${i + 1}`,
       ios: {

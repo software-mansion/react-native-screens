@@ -30,8 +30,14 @@ import { useEdgeInsetApplication } from './contexts/EdgeInsetApplicationContext'
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
 
+// Nominal instance type for header config refs. `React.ComponentRef<typeof View>`
+// declaration emit resolves down to the non-public `ReactNativeElement` class.
+// An interface stops that resolution at a name this package can emit.
+export interface ScreenStackHeaderConfigInstance
+  extends React.ComponentRef<typeof View> {}
+
 export const ScreenStackHeaderConfig = React.forwardRef<
-  View,
+  ScreenStackHeaderConfigInstance,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
   const {

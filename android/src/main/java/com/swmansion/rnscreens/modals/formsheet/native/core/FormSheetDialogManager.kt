@@ -67,6 +67,7 @@ class FormSheetDialogManager(
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
             onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
+            onDismiss = { eventEmitter?.emitOnDismissEvent() },
         )
 
     private val nativeDismissCoordinator =
@@ -127,7 +128,7 @@ class FormSheetDialogManager(
         }
 
         if (oldConfig.isOpen != newConfig.isOpen) {
-            presentationManager.updatePresentationState(newConfig.isOpen)
+            presentationManager.requestProgrammaticStateUpdate(newConfig.isOpen)
         }
     }
 

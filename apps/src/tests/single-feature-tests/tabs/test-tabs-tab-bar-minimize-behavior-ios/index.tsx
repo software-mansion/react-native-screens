@@ -51,7 +51,7 @@ function TestScreen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
@@ -59,7 +59,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: TestScreen,
+    element: <TestScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',

@@ -52,7 +52,7 @@ function TestTabsOverrideScrollViewContentInset() {
           routeConfigs={[
             {
               name: 'False',
-              Component: FalseTab,
+              element: <FalseTab />,
               options: {
                 title: 'False',
                 tabBarItemAccessibilityLabel: 'override-inset-tab-false',
@@ -64,7 +64,7 @@ function TestTabsOverrideScrollViewContentInset() {
             },
             {
               name: 'True',
-              Component: TrueTab,
+              element: <TrueTab />,
               options: {
                 title: 'True',
                 tabBarItemAccessibilityLabel: 'override-inset-tab-true',
@@ -76,7 +76,7 @@ function TestTabsOverrideScrollViewContentInset() {
             },
             {
               name: 'Default',
-              Component: DefaultTab,
+              element: <DefaultTab />,
               options: {
                 title: 'Default',
                 tabBarItemAccessibilityLabel: 'override-inset-tab-default',

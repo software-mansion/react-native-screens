@@ -60,7 +60,7 @@ function AppContents() {
     () => [
       {
         name: 'TabA',
-        Component: TabScreen,
+        element: <TabScreen />,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-a-item',
@@ -71,7 +71,7 @@ function AppContents() {
       },
       {
         name: 'TabB',
-        Component: TabScreen,
+        element: <TabScreen />,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-b-item',
@@ -82,7 +82,7 @@ function AppContents() {
       },
       {
         name: 'TabC',
-        Component: TabScreen,
+        element: <TabScreen />,
         options: {
           ...DEFAULT_TAB_ROUTE_OPTIONS,
           tabBarItemTestID: 'tab-c-item',
@@ -100,7 +100,7 @@ function AppContents() {
 
 function TestTabsLifecycleEvents() {
   return (
-    <ToastProvider>
+    <ToastProvider anchorSide="top">
       <AppContents />
     </ToastProvider>
   );

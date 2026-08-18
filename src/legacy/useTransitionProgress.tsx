@@ -1,8 +1,10 @@
 import * as React from 'react';
 
-import TransitionProgressContext from './TransitionProgressContext';
+import TransitionProgressContext, {
+  type TransitionProgressContextBody,
+} from './TransitionProgressContext';
 
-export default function useTransitionProgress() {
+export default function useTransitionProgress(): TransitionProgressContextBody {
   const progress = React.useContext(TransitionProgressContext);
 
   if (progress === undefined) {

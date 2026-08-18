@@ -25,26 +25,29 @@ const ALL_IDS = [
   'deep-menu',
   'deep-1',
 ] as const;
-type AllIds = (typeof ALL_IDS)[number];
+
+// The option types are exported for the e2e test covering this screen.
+export type AllIds = (typeof ALL_IDS)[number];
 
 type TitleOption = 'Title X' | 'undefined';
 type HiddenOption = 'true' | 'false' | 'undefined';
 
-type CmdTitleOption = TitleOption | 'no change';
-type CmdHiddenOption = HiddenOption | 'no change';
+export type CmdTitleOption = TitleOption | 'no change';
+export type CmdHiddenOption = HiddenOption | 'no change';
 
 type MenuTitleOption = 'Header X' | 'undefined';
-type CmdMenuTitleOption = MenuTitleOption | 'no change';
+export type CmdMenuTitleOption = MenuTitleOption | 'no change';
 
 const SUBMENU1_TITLE_OPTIONS = ['Submenu A', 'Changed', 'undefined'] as const;
-type Submenu1TitleOption = (typeof SUBMENU1_TITLE_OPTIONS)[number];
+export type Submenu1TitleOption = (typeof SUBMENU1_TITLE_OPTIONS)[number];
 
 const SUBMENU1_MENU_TITLE_OPTIONS = [
   'Header A',
   'Changed Header',
   'undefined',
 ] as const;
-type Submenu1MenuTitleOption = (typeof SUBMENU1_MENU_TITLE_OPTIONS)[number];
+export type Submenu1MenuTitleOption =
+  (typeof SUBMENU1_MENU_TITLE_OPTIONS)[number];
 
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
@@ -180,7 +183,7 @@ function TestStackToolbarNestedMenu() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -259,9 +262,14 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        testID="toolbar-nested-menu-scrollview"
+        style={styles.scroll}
+        contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Result</Text>
-        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        <Text testID="last-clicked-text" style={styles.result}>
+          Last clicked: {lastClicked ?? '—'}
+        </Text>
 
         <Text style={styles.heading}>Send Command</Text>
         <SettingsPicker<AllIds>
@@ -269,54 +277,67 @@ function MainScreen() {
           value={cmdTargetId}
           items={[...ALL_IDS]}
           onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
         />
         <SettingsPicker<CmdTitleOption>
           label="title"
           value={cmdTitle}
           items={CMD_TITLE_OPTIONS}
           onValueChange={setCmdTitle}
+          testID="cmd-title-picker"
         />
         <SettingsPicker<CmdHiddenOption>
           label="hidden"
           value={cmdHidden}
           items={CMD_HIDDEN_OPTIONS}
           onValueChange={setCmdHidden}
+          testID="cmd-hidden-picker"
         />
         <SettingsPicker<CmdMenuTitleOption>
           label="menuTitle"
           value={cmdMenuTitle}
           items={CMD_MENU_TITLE_OPTIONS}
           onValueChange={setCmdMenuTitle}
+          testID="cmd-menutitle-picker"
         />
-        <Button title="Send Command" onPress={sendCommand} />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
         <Text style={styles.heading}>Menu Structure — Props</Text>
         <SettingsSwitch
           label="include submenu-1"
           value={config.includeSubmenu1}
           onValueChange={v => applyConfig({ ...config, includeSubmenu1: v })}
+          testID="include-submenu-1-switch"
         />
         <SettingsPicker<Submenu1TitleOption>
           label="submenu-1 title"
           value={config.submenu1Title}
           items={[...SUBMENU1_TITLE_OPTIONS]}
           onValueChange={v => applyConfig({ ...config, submenu1Title: v })}
+          testID="submenu-1-title-picker"
         />
         <SettingsPicker<Submenu1MenuTitleOption>
           label="submenu-1 menuTitle"
           value={config.submenu1MenuTitle}
           items={[...SUBMENU1_MENU_TITLE_OPTIONS]}
           onValueChange={v => applyConfig({ ...config, submenu1MenuTitle: v })}
+          testID="submenu-1-menutitle-picker"
         />
         <SettingsSwitch
           label="add extra item to submenu-1"
           value={config.addExtraItem}
           onValueChange={v => applyConfig({ ...config, addExtraItem: v })}
+          testID="add-extra-item-switch"
         />
         <SettingsSwitch
           label="include submenu-2"
           value={config.includeSubmenu2}
           onValueChange={v => applyConfig({ ...config, includeSubmenu2: v })}
+          testID="include-submenu-2-switch"
         />
       </ScrollView>
     </ScrollViewMarker>

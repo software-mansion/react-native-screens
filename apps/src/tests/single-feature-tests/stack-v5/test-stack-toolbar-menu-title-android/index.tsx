@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -15,13 +15,15 @@ import {
   ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
+// The option types are exported for the e2e test covering this screen.
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
-type IdOption = (typeof ID_OPTIONS)[number];
+export type IdOption = (typeof ID_OPTIONS)[number];
 
 const ICON_OPTIONS = ['undefined', 'searchIcon'] as const;
-type IconOption = (typeof ICON_OPTIONS)[number];
+export type IconOption = (typeof ICON_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = [
   'undefined',
@@ -31,24 +33,27 @@ const SHOW_AS_ACTION_OPTIONS = [
   'ifRoom',
   'ifRoomWithText',
 ] as const;
-type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
+export type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
 const TITLE_CONDENSED_OPTIONS = ['undefined', 'Cond', 'Short'] as const;
-type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
+export type TitleCondensedOption = (typeof TITLE_CONDENSED_OPTIONS)[number];
 
+// Tooltips are manual-only, so the two types below stay local to the screen.
 const TOOLTIP_OPTIONS = ['undefined', 'Tooltip text', 'Hi!'] as const;
 type TooltipOption = (typeof TOOLTIP_OPTIONS)[number];
 
 // Title is fixed per id so the condensed/tooltip fallbacks are easy to spot.
-const ITEM_TITLES: Record<IdOption, string> = {
+const ITEM_TITLES = {
   'item-1': 'First Item',
   'item-2': 'Second Item Title',
   'item-3': 'Third Item Long Title',
-};
+} as const satisfies Record<IdOption, string>;
 
-type CmdTitleOption = 'no change' | 'Cmd Title' | 'undefined';
-type CmdCondensedOption = 'no change' | TitleCondensedOption;
-type CmdTooltipOption = 'no change' | TooltipOption;
+export type ItemTitle = (typeof ITEM_TITLES)[IdOption];
+
+export type CmdTitleOption = 'no change' | 'Cmd Title' | 'undefined';
+export type CmdCondensedOption = 'no change' | TitleCondensedOption;
+export type CmdTooltipOption = 'no change' | TooltipOption;
 
 const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
   'no change',
@@ -154,13 +159,15 @@ function updateSlotAt(
 
 const HEADER_TITLE = 'Title / Condensed / Tooltip';
 
+export type HeaderTitle = typeof HEADER_TITLE;
+
 function TestStackToolbarMenuTitle() {
   return (
     <StackContainer
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -236,45 +243,62 @@ function MainScreen() {
   }, [cmdTargetId, cmdTitle, cmdCondensed, cmdTooltip]);
 
   return (
-    <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.heading}>Send Command</Text>
-        <SettingsPicker<IdOption>
-          label="target id"
-          value={cmdTargetId}
-          items={[...ID_OPTIONS]}
-          onValueChange={setCmdTargetId}
-        />
-        <SettingsPicker<CmdTitleOption>
-          label="title"
-          value={cmdTitle}
-          items={CMD_TITLE_OPTIONS}
-          onValueChange={setCmdTitle}
-        />
-        <SettingsPicker<CmdCondensedOption>
-          label="titleCondensed"
-          value={cmdCondensed}
-          items={CMD_CONDENSED_OPTIONS}
-          onValueChange={setCmdCondensed}
-        />
-        <SettingsPicker<CmdTooltipOption>
-          label="tooltipText"
-          value={cmdTooltip}
-          items={CMD_TOOLTIP_OPTIONS}
-          onValueChange={setCmdTooltip}
-        />
-        <Button title="Send Command" onPress={sendCommand} />
+    // The app draws edge to edge, so without the bottom inset the list's
+    // viewport runs under the navigation bar and its lowest row cannot be
+    // tapped — neither by hand nor by Detox.
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollViewMarker style={styles.scrollViewMarker}>
+        <ScrollView
+          testID="toolbar-menu-title-scrollview"
+          style={styles.scroll}
+          contentContainerStyle={styles.content}>
+          <Text style={styles.heading}>Send Command</Text>
+          <SettingsPicker<IdOption>
+            label="cmd target id"
+            value={cmdTargetId}
+            items={[...ID_OPTIONS]}
+            onValueChange={setCmdTargetId}
+            testID="cmd-target-id-picker"
+          />
+          <SettingsPicker<CmdTitleOption>
+            label="cmd title"
+            value={cmdTitle}
+            items={CMD_TITLE_OPTIONS}
+            onValueChange={setCmdTitle}
+            testID="cmd-title-picker"
+          />
+          <SettingsPicker<CmdCondensedOption>
+            label="cmd titleCondensed"
+            value={cmdCondensed}
+            items={CMD_CONDENSED_OPTIONS}
+            onValueChange={setCmdCondensed}
+            testID="cmd-titlecondensed-picker"
+          />
+          <SettingsPicker<CmdTooltipOption>
+            label="cmd tooltipText"
+            value={cmdTooltip}
+            items={CMD_TOOLTIP_OPTIONS}
+            onValueChange={setCmdTooltip}
+          />
+          <Button
+            title="Send Command"
+            onPress={sendCommand}
+            testID="send-command-button"
+          />
 
-        <Text style={styles.heading}>Result</Text>
-        <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+          <Text style={styles.heading}>Result</Text>
+          {/* The e2e test taps this label to dismiss the overflow menu, so it
+              must stay non-interactive. */}
+          <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
 
-        <Text style={styles.heading}>Menu Items — Props</Text>
-        <SlotControls
-          slots={slots}
-          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-        />
-      </ScrollView>
-    </ScrollViewMarker>
+          <Text style={styles.heading}>Menu Items — Props</Text>
+          <SlotControls
+            slots={slots}
+            updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+          />
+        </ScrollView>
+      </ScrollViewMarker>
+    </SafeAreaView>
   );
 }
 
@@ -291,26 +315,31 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
           <Text style={styles.slotLabel}>
             Slot {i + 1} ({slot.id}) — title "{ITEM_TITLES[slot.id]}"
           </Text>
+          {/* Labels carry the slot number to keep the testIDs `SettingsPicker`
+              derives from them unique across slots. */}
           <SettingsPicker<IconOption>
-            label="icon"
+            label={`Slot ${i + 1} icon`}
             value={slot.icon}
             items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
+            testID={`slot-${i + 1}-icon-picker`}
           />
           <SettingsPicker<ShowAsActionOption>
-            label="showAsAction"
+            label={`Slot ${i + 1} showAsAction`}
             value={slot.showAsAction}
             items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
+            testID={`slot-${i + 1}-showasaction-picker`}
           />
           <SettingsPicker<TitleCondensedOption>
-            label="titleCondensed"
+            label={`Slot ${i + 1} titleCondensed`}
             value={slot.titleCondensed}
             items={[...TITLE_CONDENSED_OPTIONS]}
             onValueChange={v => updateSlot(i, { titleCondensed: v })}
+            testID={`slot-${i + 1}-titlecondensed-picker`}
           />
           <SettingsPicker<TooltipOption>
-            label="tooltipText"
+            label={`Slot ${i + 1} tooltipText`}
             value={slot.tooltipText}
             items={[...TOOLTIP_OPTIONS]}
             onValueChange={v => updateSlot(i, { tooltipText: v })}

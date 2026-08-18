@@ -37,7 +37,7 @@ function ScrollScreen({ tabName }: ScrollScreenProps) {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: () => <ScrollScreen tabName="tab1" />,
+    element: <ScrollScreen tabName="tab1" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
@@ -52,7 +52,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: () => <ScrollScreen tabName="tab2" />,
+    element: <ScrollScreen tabName="tab2" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',
@@ -67,7 +67,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: () => <ScrollScreen tabName="tab3" />,
+    element: <ScrollScreen tabName="tab3" />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab3',

@@ -76,9 +76,11 @@ function makeTabConfigs(
   return [
     {
       name: 'Auto',
-      Component: tabsOrientations.home.stackScreen
-        ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
-        : TabElement,
+      element: tabsOrientations.home.stackScreen ? (
+        <TabElement orientation={tabsOrientations.home.stackScreen} />
+      ) : (
+        <TabElement />
+      ),
       options: {
         title: 'Auto',
         orientation: tabsOrientations.home.tabScreen,
@@ -106,7 +108,7 @@ function makeTabConfigs(
     },
     {
       name: 'Portrait',
-      Component: () => (
+      element: (
         <TabElement orientation={tabsOrientations.portrait.stackScreen} />
       ),
       options: {
@@ -136,7 +138,7 @@ function makeTabConfigs(
     },
     {
       name: 'Landscape',
-      Component: () => (
+      element: (
         <TabElement orientation={tabsOrientations.landscape.stackScreen} />
       ),
       options: {

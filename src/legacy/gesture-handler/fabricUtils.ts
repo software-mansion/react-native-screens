@@ -1,6 +1,7 @@
 'use strict';
 
-import { View } from 'react-native';
+import type { ComponentRef } from 'react';
+import type { View } from 'react-native';
 
 /* eslint-disable */
 
@@ -16,7 +17,9 @@ export type HostInstance = {
   _viewConfig: Record<string, unknown>;
 };
 
-export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
+export function getShadowNodeWrapperAndTagFromRef(
+  ref: ComponentRef<typeof View> | null,
+): {
   shadowNodeWrapper: any;
   tag: number;
 } {

@@ -17,7 +17,12 @@ export default function ConfigColumn({
     .map(index => {
       const configuration: TabRouteConfig = {
         name: 'column' + index,
-        Component: () => ConfigColumnTab({ index, configColumnIndex }),
+        element: (
+          <ConfigColumnTab
+            index={index}
+            configColumnIndex={configColumnIndex}
+          />
+        ),
         options: {
           title: 'Column ' + index,
           ios: {

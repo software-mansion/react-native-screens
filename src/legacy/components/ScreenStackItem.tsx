@@ -4,7 +4,6 @@ import {
   type StyleProp,
   StyleSheet,
   type ViewStyle,
-  View,
 } from 'react-native';
 import warnOnce from 'warn-once';
 
@@ -15,7 +14,7 @@ import {
   StackPresentationTypes,
 } from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
-import Screen from './Screen';
+import Screen, { type ScreenInstance } from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
@@ -54,7 +53,7 @@ function ScreenStackItem(
     unstable_sheetFooter,
     ...rest
   }: Props,
-  ref: React.ForwardedRef<View>,
+  ref: React.ForwardedRef<ScreenInstance>,
 ) {
   const headerVisible = !headerConfig?.hidden;
   const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
@@ -65,7 +64,7 @@ function ScreenStackItem(
     headerConfig?.disableBottomInsetApplication ?? false,
   );
 
-  const currentScreenRef = React.useRef<View | null>(null);
+  const currentScreenRef = React.useRef<ScreenInstance | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
   React.useImperativeHandle(ref, () => currentScreenRef.current!);

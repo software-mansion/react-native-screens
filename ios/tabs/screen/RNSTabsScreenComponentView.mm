@@ -11,6 +11,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTImageSource.h>
+#import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -163,12 +164,18 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UITabBarItem *tabBarItem = nil;
   if (_systemItem != RNSTabsScreenSystemItemNone) {
-    UITabBarSystemItem systemItem = rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
+    std::optional<UITabBarSystemItem> systemItem =
+        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    if (!systemItem) {
+      RCTLogError(
+          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+          (long)_systemItem);
+      return;
+    }
+    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
-
   _controller.tabBarItem = tabBarItem;
 }
 
@@ -179,8 +186,15 @@ RNS_IGNORE_SUPER_CALL_END
   NSString *evaluatedTitle = _title;
   if (_title == nil && _systemItem != RNSTabsScreenSystemItemNone) {
     // Restore default system item title
-    UITabBarSystemItem systemItem = rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].title;
+    std::optional<UITabBarSystemItem> systemItem =
+        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    if (!systemItem) {
+      RCTLogError(
+          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+          (long)_systemItem);
+      return;
+    }
+    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;
   }
 
   [self updateTabBarItemTitle:evaluatedTitle];

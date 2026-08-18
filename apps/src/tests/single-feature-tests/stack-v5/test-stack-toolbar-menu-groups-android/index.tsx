@@ -180,7 +180,7 @@ function TestStackToolbarMenuGroups() {
         routeConfigs={[
           {
             name: 'Main',
-            Component: MainScreen,
+            element: <MainScreen />,
             options: {
               headerConfig: {
                 title: HEADER_TITLE,
@@ -285,7 +285,10 @@ function MainScreen() {
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        testID="toolbar-menu-groups-scrollview"
+        style={styles.scroll}
+        contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Last Event</Text>
         <Text style={styles.result}>{lastEvent ?? '—'}</Text>
 
@@ -295,26 +298,34 @@ function MainScreen() {
           value={cmdTargetId}
           items={[...ALL_IDS]}
           onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
         />
         <SettingsPicker<CmdCheckedOption>
           label="checked"
           value={cmdChecked}
           items={CMD_CHECKED_OPTIONS}
           onValueChange={setCmdChecked}
+          testID="cmd-checked-picker"
         />
         <SettingsPicker<CmdTitleOption>
           label="title"
           value={cmdTitle}
           items={CMD_TITLE_OPTIONS}
           onValueChange={setCmdTitle}
+          testID="cmd-title-picker"
         />
         <SettingsPicker<CmdHiddenOption>
           label="hidden"
           value={cmdHidden}
           items={CMD_HIDDEN_OPTIONS}
           onValueChange={setCmdHidden}
+          testID="cmd-hidden-picker"
         />
-        <Button title="Send Command" onPress={sendCommand} />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
         <Text style={styles.heading}>Menu Config — Props</Text>
         <SettingsSwitch
@@ -323,16 +334,19 @@ function MainScreen() {
           onValueChange={v =>
             applyConfig({ ...config, singleSelectionOnColors: v })
           }
+          testID="single-selection-switch"
         />
         <SettingsSwitch
           label="include Blue"
           value={config.includeBlue}
           onValueChange={v => applyConfig({ ...config, includeBlue: v })}
+          testID="include-blue-switch"
         />
         <SettingsSwitch
           label="divider enabled"
           value={config.dividerEnabled}
           onValueChange={v => applyConfig({ ...config, dividerEnabled: v })}
+          testID="divider-switch"
         />
       </ScrollView>
     </ScrollViewMarker>

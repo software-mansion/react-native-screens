@@ -117,11 +117,11 @@ function TestStackBackButton() {
         routeConfigs={[
           {
             name: 'Root',
-            Component: RootScreen,
+            element: <RootScreen />,
           },
           {
             name: 'Pushed',
-            Component: PushedScreen,
+            element: <PushedScreen />,
           },
         ]}
       />
@@ -136,29 +136,34 @@ function ConfigControls() {
     <>
       <Text style={styles.heading}>Back Button</Text>
       <SettingsSwitch
+        testID="back-button-hidden-switch"
         label="backButtonHidden"
         value={config.backButtonHidden}
         onValueChange={v => updateConfig('backButtonHidden', v)}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-normal-picker"
         label="tintColorNormal"
         value={config.tintColorNormal}
         onValueChange={v => updateConfig('tintColorNormal', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-pressed-picker"
         label="tintColorPressed"
         value={config.tintColorPressed}
         onValueChange={v => updateConfig('tintColorPressed', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-focused-picker"
         label="tintColorFocused"
         value={config.tintColorFocused}
         onValueChange={v => updateConfig('tintColorFocused', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<IconOption>
+        testID="icon-picker"
         label="icon"
         value={config.icon}
         onValueChange={v => updateConfig('icon', v)}

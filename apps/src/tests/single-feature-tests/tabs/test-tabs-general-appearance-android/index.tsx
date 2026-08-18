@@ -113,7 +113,7 @@ function IndicatorTab() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Default',
-    Component: DefaultTab,
+    element: <DefaultTab />,
     options: {
       title: 'Default',
       tabBarItemTestID: 'general-appearance-android-tab-default',
@@ -124,7 +124,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Label',
-    Component: LabelTab,
+    element: <LabelTab />,
     options: {
       title: 'Label',
       tabBarItemTestID: 'general-appearance-android-tab-label',
@@ -138,7 +138,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Ripple',
-    Component: RippleTab,
+    element: <RippleTab />,
     options: {
       title: 'Ripple',
       tabBarItemTestID: 'general-appearance-android-tab-ripple',
@@ -156,7 +156,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Indicator',
-    Component: IndicatorTab,
+    element: <IndicatorTab />,
     options: {
       title: 'Indicator',
       tabBarItemTestID: 'general-appearance-android-tab-indicator',

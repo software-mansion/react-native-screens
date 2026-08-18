@@ -36,12 +36,12 @@ export function StackInTabsScenario() {
           routeConfigs={[
             {
               name: 'config',
-              Component: ConfigComponent,
+              element: <ConfigComponent />,
               options: { title: 'Config' },
             },
             {
               name: 'stack',
-              Component: StackScenario,
+              element: <StackScenario />,
               options: {
                 title: 'Stack',
               },

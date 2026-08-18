@@ -5,6 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-back-button-android',
   details: 'Tests back button customization: hidden, tint color, custom icon.',
   platforms: ['android'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };

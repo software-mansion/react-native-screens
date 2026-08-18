@@ -194,7 +194,7 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: ConfigScreen,
+          element: <ConfigScreen />,
         },
       ]}
     />

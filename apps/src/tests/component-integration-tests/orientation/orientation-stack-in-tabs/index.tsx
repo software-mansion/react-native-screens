@@ -57,7 +57,7 @@ function ConfigScreen() {
 const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'Screen1',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
   },
 ];
 
@@ -68,7 +68,7 @@ function StackScreen() {
 const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: StackScreen,
+    element: <StackScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab1',
@@ -76,7 +76,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: DummyScreen,
+    element: <DummyScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tab2',

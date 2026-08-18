@@ -1,7 +1,12 @@
 'use client';
 
 import { codegenNativeComponent } from 'react-native';
-import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  ColorValue,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 
 // #region General helpers
 
@@ -89,4 +94,4 @@ export interface NativeProps extends ViewProps {
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {
   interfaceOnly: true,
   excludedPlatforms: ['android'],
-});
+}) as HostComponent<NativeProps>;

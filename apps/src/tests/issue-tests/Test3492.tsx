@@ -489,7 +489,7 @@ function ScreenTab4() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       title: 'Config',
       ios: {
@@ -503,7 +503,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: ScreenTab2,
+    element: <ScreenTab2 />,
     options: {
       title: 'Tab 2',
       ios: {
@@ -517,7 +517,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: ScreenTab3,
+    element: <ScreenTab3 />,
     options: {
       title: 'Tab 3',
       ios: { icon: { type: 'sfSymbol', name: 'triangle' } },
@@ -526,7 +526,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab4',
-    Component: ScreenTab4,
+    element: <ScreenTab4 />,
     options: {
       title: 'Tab 4',
       ios: {

@@ -1582,24 +1582,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return NO;
 }
 
-- (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
-{
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-  CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
-
-  CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
-  if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0) {
-    return fallbackStatusBarSize;
-  }
-
-  return primaryStatusBarSize;
-
-#else
-  // TVOS does not have status bar.
-  return CGSizeMake(0, 0);
-#endif // !TARGET_OS_TV
-}
-
 - (UINavigationController *)getVisibleNavigationControllerIsModal:(BOOL)isModal
 {
   UINavigationController *navctr = self.navigationController;

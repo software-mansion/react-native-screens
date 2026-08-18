@@ -98,32 +98,32 @@ const ROUTE_OPTIONS: TabRouteOptions = {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'First', tabBarItemTestID: 'First' },
   },
   {
     name: 'Second',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'Second', tabBarItemTestID: 'Second' },
   },
   {
     name: 'Third',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'Third', tabBarItemTestID: 'Third' },
   },
   {
     name: 'Fourth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'Fourth', tabBarItemTestID: 'Fourth' },
   },
   {
     name: 'Fifth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'Fifth', tabBarItemTestID: 'Fifth' },
   },
   {
     name: 'Sixth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...ROUTE_OPTIONS, title: 'Sixth', tabBarItemTestID: 'Sixth' },
   },
 ];

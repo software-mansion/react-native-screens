@@ -4,7 +4,7 @@
 #import "RNSDefines.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSSplitHostComponentView.h"
-#import "Swift-Bridging.h"
+#import "RNSSplitHostController.h"
 
 @implementation RNSSplitAppearanceApplicator
 
