@@ -128,9 +128,9 @@ color=red` and `collapsedTitle color=blue`.
       collapsed toolbar title is blue. Scroll back down a little and the header
       re-expands red. The two states are independent.
 
-13. Set `expandedTitle fontSize=30` and `collapsedTitle fontSize=12`.
+13. Set `expandedTitle fontSize=12` and `collapsedTitle fontSize=30`.
 
-- [ ] Expanded title and the collapsed title are smaller; changing one
+- [ ] Expanded title is smaller and the collapsed title is larger; changing one
       state's size does not affect the other.
 
 14. Set `expandedSubtitle color=red`, `collapsedSubtitle color=blue`, and set
