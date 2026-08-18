@@ -1,4 +1,5 @@
 const { execFileSync } = require('child_process');
+const { fatal } = require('../utils');
 
 function getRemoteUrl(screensPath) {
   try {
@@ -11,21 +12,6 @@ function getRemoteUrl(screensPath) {
   } catch {
     throw new Error("Cannot find git remote 'origin'.");
   }
-}
-
-function failLocalClone({ target, refType }) {
-  console.error(
-    `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally.`,
-  );
-  console.error(`Hint: fetch it first, or pass -f to take it from origin.`);
-  throw new Error(`Version '${refType}:${target}' was not found locally`);
-}
-
-function failRemoteClone({ target, refType }) {
-  console.error(
-    `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
-  );
-  throw new Error(`Version '${refType}:${target}' was not found`);
 }
 
 function cloneScreensRef({
@@ -62,7 +48,10 @@ function cloneScreensRef({
     try {
       cloneFromSource(screensPath);
     } catch {
-      failLocalClone({ target, refType });
+      fatal(
+        `Version '${refType}:${target}' was not found locally.\n` +
+          `Hint: fetch it first, or pass -f to take it from origin.`,
+      );
     }
     return;
   }
@@ -70,7 +59,7 @@ function cloneScreensRef({
   try {
     cloneFromSource(remoteUrl);
   } catch {
-    failRemoteClone({ target, refType });
+    fatal(`Version '${refType}:${target}' was not found on the network.`);
   }
 }
 

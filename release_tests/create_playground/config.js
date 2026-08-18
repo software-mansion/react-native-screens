@@ -1,15 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const { parseArgs } = require('util');
+const { fatal } = require('./utils');
 
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 const SCREENS_VERSION_HELP =
   "'current', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'";
-
-function fatal(message) {
-  console.error(`\n❌ FATAL ERROR: ${message}\n`);
-  process.exit(1);
-}
 
 function parseScreensVersion(screensVersion) {
   if (screensVersion === 'current') {

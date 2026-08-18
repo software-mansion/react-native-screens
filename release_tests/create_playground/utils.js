@@ -7,6 +7,11 @@ const logger = require('./logger');
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
 const METRO_PORT = 8081;
 
+function fatal(message) {
+  console.error(`\n❌ FATAL ERROR: ${message}\n`);
+  process.exit(1);
+}
+
 function formatCommand(file, args = []) {
   return [file, ...args].join(' ');
 }
@@ -172,6 +177,7 @@ function terminateProcess(pid, gracePeriodMs = 3000) {
 }
 
 module.exports = {
+  fatal,
   runCommand,
   runTask,
   withTempDir,
