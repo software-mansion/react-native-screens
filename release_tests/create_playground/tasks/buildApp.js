@@ -7,7 +7,7 @@ function gemfileHasGem(gemfile, gemName) {
 }
 
 // remove this helper when we drop support for 0.84.
-function canRequireKconv(appPath, { runCommand, logPath }) {
+function isKconvAvailable(appPath, { runCommand, logPath }) {
   try {
     runCommand(
       'bundle',
@@ -28,20 +28,18 @@ function ensureNkfGem(appPath, { runCommand, logPath }) {
   const gemfile = fs.readFileSync(gemfilePath, 'utf8');
 
   if (gemfileHasGem(gemfile, 'nkf')) {
-    // if the gemfile has the gem name, return
     return;
   }
 
-  if (canRequireKconv(appPath, { runCommand, logPath })) {
-    // if the gem can require kconv, return
+  if (isKconvAvailable(appPath, { runCommand, logPath })) {
     return;
   }
 
   console.log(
     `\n⚠️ Gemfile is missing 'nkf' (required to load kconv). Adding it...`,
   );
+  // `bundle add nkf` default makes bundle install, so we don't need to run it again
   runCommand('bundle', ['add', 'nkf'], appPath, logPath);
-  // `bundle add nkf` deafult make bundle install, so we don't need to run it again
 }
 
 function installIosPods(config, { runTask, runCommand }) {
