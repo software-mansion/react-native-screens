@@ -13,63 +13,11 @@ function getRemoteUrl(screensPath) {
   }
 }
 
-function refExistsLocally(screensPath, target) {
-  try {
-    execFileSync('git', ['rev-parse', '--verify', `${target}^{commit}`], {
-      cwd: screensPath,
-      stdio: 'ignore',
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function isLocalBranch(screensPath, target) {
-  try {
-    execFileSync(
-      'git',
-      ['show-ref', '--verify', '--quiet', `refs/heads/${target}`],
-      {
-        cwd: screensPath,
-        stdio: 'ignore',
-      },
-    );
-    return true;
-  } catch {
-    // not a local branch
-    return false;
-  }
-}
-
-function isLocalTag(screensPath, target) {
-  try {
-    execFileSync(
-      'git',
-      ['show-ref', '--verify', '--quiet', `refs/tags/${target}`],
-      {
-        cwd: screensPath,
-        stdio: 'ignore',
-      },
-    );
-    return true;
-  } catch {
-    // not a local tag
-    return false;
-  }
-}
-
-function matchesCommitShaFormat(ref) {
-  return /^[0-9a-f]{7,40}$/i.test(ref);
-}
-
 function failLocalClone({ target, refType }) {
   console.error(
     `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally.`,
   );
-  console.error(
-    `Hint: fetch it first, or pass -f to take it from origin.`,
-  );
+  console.error(`Hint: fetch it first, or pass -f to take it from origin.`);
   throw new Error(`Version '${refType}:${target}' was not found locally`);
 }
 
@@ -77,11 +25,6 @@ function failRemoteClone({ target, refType }) {
   console.error(
     `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
   );
-  if (refType === 'unknown' && matchesCommitShaFormat(target)) {
-    console.error(
-      `Hint: '${target}' looks like a commit hash. Use -s commit:${target} -f.`,
-    );
-  }
   throw new Error(`Version '${refType}:${target}' was not found`);
 }
 
@@ -99,51 +42,33 @@ function cloneScreensRef({
   const git = (args, cwd = releaseTestsPath) =>
     runCommand('git', args, cwd, logPath);
 
-  function cloneBranchOrTag(source) {
-    git(['clone', '--single-branch', '--branch', target, source, tempCloneDir]);
-  }
+  function cloneFromSource(source) {
+    git(['init', tempCloneDir]);
+    git(['remote', 'add', 'origin', source], tempCloneDir);
 
-  function checkoutCommit(source, { fetch = false } = {}) {
-    git(['clone', '--no-checkout', source, tempCloneDir]);
-    try {
-      git(['checkout', target], tempCloneDir);
-    } catch (error) {
-      if (fetch) {
-        git(['fetch', 'origin', target], tempCloneDir);
-        git(['checkout', target], tempCloneDir);
-      } else {
-        throw error;
-      }
+    if (refType === 'commit') {
+      git(['fetch', 'origin', target], tempCloneDir);
+      git(['checkout', 'FETCH_HEAD'], tempCloneDir);
+      return;
     }
+
+    const ref =
+      refType === 'tag' ? `refs/tags/${target}` : `refs/heads/${target}`;
+    git(['fetch', 'origin', `${ref}:${ref}`], tempCloneDir);
+    git(['checkout', target], tempCloneDir);
   }
 
   if (useLocal) {
-    if (!refExistsLocally(screensPath, target)) {
+    try {
+      cloneFromSource(screensPath);
+    } catch {
       failLocalClone({ target, refType });
-    }
-    if (refType === 'branch' || refType === 'tag') {
-      cloneBranchOrTag(screensPath);
-      return;
-    }
-    if (refType === 'commit') {
-      checkoutCommit(screensPath);
-      return;
-    }
-    if (isLocalBranch(screensPath, target) || isLocalTag(screensPath, target)) {
-      cloneBranchOrTag(screensPath);
-    } else {
-      checkoutCommit(screensPath);
     }
     return;
   }
 
   try {
-    if (refType === 'commit') {
-      checkoutCommit(remoteUrl, { fetch: true });
-    } else {
-      // branch / tag / unknown — clone --branch (bare commit hashes need commit:<sha>)
-      cloneBranchOrTag(remoteUrl);
-    }
+    cloneFromSource(remoteUrl);
   } catch {
     failRemoteClone({ target, refType });
   }
@@ -151,6 +76,5 @@ function cloneScreensRef({
 
 module.exports = {
   getRemoteUrl,
-  refExistsLocally,
   cloneScreensRef,
 };

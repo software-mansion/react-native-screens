@@ -3,6 +3,8 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
+const SCREENS_VERSION_HELP =
+  "'current', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'";
 
 function fatal(message) {
   console.error(`\n❌ FATAL ERROR: ${message}\n`);
@@ -16,14 +18,18 @@ function parseScreensVersion(screensVersion) {
 
   const separatorIndex = screensVersion.indexOf(':');
   if (separatorIndex === -1) {
-    return { type: 'unknown', target: screensVersion };
+    fatal(
+      `Invalid --screens-version '${screensVersion}'. Expected ${SCREENS_VERSION_HELP}.`,
+    );
   }
 
   const type = screensVersion.slice(0, separatorIndex);
   const target = screensVersion.slice(separatorIndex + 1);
 
   if (!KNOWN_REF_TYPES.includes(type)) {
-    return { type: 'unknown', target: screensVersion };
+    fatal(
+      `Invalid --screens-version '${screensVersion}'. Unknown type '${type}'. Expected ${SCREENS_VERSION_HELP}.`,
+    );
   }
 
   if (!target) {
@@ -108,10 +114,10 @@ function getConfig() {
                                          Accepts:
                                            current                       — current working tree
                                            branch:<name> | tag:<name>    — clone that branch or tag
-                                           commit:<sha>                  — from local repo; use -f to fetch from remote
-                                           <ref>                         — auto-detect branch, tag, or commit
-                                         Ref versions are taken from the local git repository.
-                                         Pass -f to take them from origin instead.
+                                           commit:<sha>                  — checkout that commit
+                                         Use 'current' for the working tree, or a typed ref
+                                         (branch:/tag:/commit:). Typed refs are taken from the
+                                         local git repository; pass -f to take them from origin.
         -f, --force-fetch                Fetch the screens version from the remote repository (origin)
                                          instead of the local git repository.
                                          Mutually exclusive with --screens-version 'current'.
@@ -151,7 +157,6 @@ function getConfig() {
         node create_playground.js -s tag:4.16.0
         node create_playground.js -s commit:8b939b9
         node create_playground.js -s commit:8b939b9 -f
-        node create_playground.js -s main
         node create_playground.js -s branch:fix-bug -f
         node create_playground.js -a MyPlayground
 
@@ -162,7 +167,7 @@ function getConfig() {
         node create_playground.js --run -p ios --ios-simulator "iPhone 16"
         node create_playground.js --run -p ios --ios-device "Karol's iPhone"
         node create_playground.js --run -p android --android-device "emulator-5554"
-        node create_playground.js -s 4.26-stable --run -e tabsAndStack4.x
+        node create_playground.js -s branch:4.26-stable --run -e tabsAndStack4.x
         node create_playground.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
