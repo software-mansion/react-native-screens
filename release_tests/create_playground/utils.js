@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync, execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const logger = require('./logger');
 
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
@@ -101,8 +101,9 @@ function runTask(taskName, logFile, executeFn) {
 
 function isMetroRespondingOnPort(port) {
   try {
-    const response = execSync(
-      `curl -s --max-time 2 http://localhost:${port}/status`,
+    const response = execFileSync(
+      'curl',
+      ['-s', '--max-time', '2', `http://localhost:${port}/status`],
       { encoding: 'utf8' },
     );
     return response.includes('packager-status:running');
