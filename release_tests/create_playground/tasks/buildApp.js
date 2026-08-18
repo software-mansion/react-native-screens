@@ -8,13 +8,15 @@ function gemfileHasGem(gemfile, gemName) {
 
 // remove this helper when we drop support for 0.84.
 function isKconvAvailable(appPath, { runCommand, logPath }) {
+  console.log(
+    `\nℹ️ Checking whether 'kconv' can be required (this command may fail)...`,
+  );
   try {
     runCommand(
       'bundle',
       ['exec', 'ruby', '-e', "require 'kconv'"],
       appPath,
       logPath,
-      true,
     );
     return true;
   } catch {
