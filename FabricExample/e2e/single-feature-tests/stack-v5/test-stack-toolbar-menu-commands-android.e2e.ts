@@ -104,9 +104,10 @@ async function setSlotInclude(slot: number, include: boolean) {
   ).toBeVisible();
 }
 
-const { waitForScreen, withOverflowMenu } = createOverflowMenuHelpers({
-  scrollViewId: SCROLLVIEW_ID,
-});
+const { waitForScreen, closeMenuIfOpen, withOverflowMenu } =
+  createOverflowMenuHelpers({
+    scrollViewId: SCROLLVIEW_ID,
+  });
 
 async function waitForMenuItem(title: MenuTitle) {
   await waitFor(
@@ -220,6 +221,11 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       'test-stack-toolbar-menu-commands-android',
     );
   });
+
+  // The direct `openOverflowMenu()` cases below close the menu via
+  // `tapMenuItem`; if a step fails in between, the popup would otherwise leak
+  // into every later case of this stateful suite.
+  afterEach(closeMenuIfOpen);
 
   describe('baseline — initial render from props', () => {
     it('renders the header title and the three prop-configured menu items in order', async () => {
