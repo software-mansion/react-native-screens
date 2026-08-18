@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const { EMPTY_EXAMPLE_APP } = require('../config');
 
 function copyExample(config, { runTask }) {
-  if (config['example-app'] === 'empty') {
+  if (config['example-app'] === EMPTY_EXAMPLE_APP) {
     console.log(`🔍 Selected empty example app. Skipping...\n`);
     return;
   }

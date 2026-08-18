@@ -3,13 +3,14 @@ const path = require('path');
 const { parseArgs } = require('util');
 const { fatal } = require('./utils');
 
+const CURRENT_SCREENS_VERSION = 'current';
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
-const SCREENS_VERSION_HELP =
-  "'current', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'";
+const SCREENS_VERSION_HELP = `'${CURRENT_SCREENS_VERSION}', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'`;
+const EMPTY_EXAMPLE_APP = 'empty';
 
 function parseScreensVersion(screensVersion) {
-  if (screensVersion === 'current') {
-    return { type: 'current', target: 'current' };
+  if (screensVersion === CURRENT_SCREENS_VERSION) {
+    return { type: CURRENT_SCREENS_VERSION, target: CURRENT_SCREENS_VERSION };
   }
 
   const separatorIndex = screensVersion.indexOf(':');
@@ -48,7 +49,7 @@ function getConfig() {
       'screens-version': {
         type: 'string',
         short: 's',
-        default: 'current',
+        default: CURRENT_SCREENS_VERSION,
       },
       variant: {
         type: 'string',
@@ -106,20 +107,20 @@ function getConfig() {
 
       Setup options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
-        -s, --screens-version <version>  react-native-screens version. Default: 'current'.
+        -s, --screens-version <version>  react-native-screens version. Default: '${CURRENT_SCREENS_VERSION}'.
                                          Accepts:
-                                           current                       — current working tree
+                                           ${CURRENT_SCREENS_VERSION}                       — current working tree
                                            branch:<name> | tag:<name>    — clone that branch or tag
                                            commit:<sha>                  — checkout that commit
-                                         Use 'current' for the working tree, or a typed ref
+                                         Use '${CURRENT_SCREENS_VERSION}' for the working tree, or a typed ref
                                          (branch:/tag:/commit:). Typed refs are taken from the
                                          local git repository; pass -f to take them from origin.
         -f, --force-fetch                Fetch the screens version from the remote repository (origin)
                                          instead of the local git repository.
-                                         Mutually exclusive with --screens-version 'current'.
+                                         Mutually exclusive with --screens-version '${CURRENT_SCREENS_VERSION}'.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
                                          Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory
-                                         exists, it will also be copied. Use 'empty' to skip copying
+                                         exists, it will also be copied. Use '${EMPTY_EXAMPLE_APP}' to skip copying
                                          and keep the default RN App.tsx.
                                          Available: 'tabsAndStack' (Stack v5 from main export; RNS 5.x),
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x).
@@ -192,10 +193,10 @@ function getConfig() {
   const { type: screensRefType, target: screensRefTarget } =
     parseScreensVersion(config['screens-version']);
 
-  if (screensRefType === 'current' && config['force-fetch']) {
+  if (screensRefType === CURRENT_SCREENS_VERSION && config['force-fetch']) {
     fatal(
-      `Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to 'current'.\n` +
-        `Explanation: The 'current' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch or commit (e.g., -s branch:main -f).\n`,
+      `Invalid flag combination. You cannot use '--force-fetch' when '--screens-version' is set to '${CURRENT_SCREENS_VERSION}'.\n` +
+        `Explanation: The '${CURRENT_SCREENS_VERSION}' option uses your current working directory directly. Fetching from origin only applies when you target a specific branch, tag, or commit (e.g., -s branch:main -f).\n`,
     );
   }
 
@@ -256,7 +257,7 @@ function getConfig() {
   const appName = config['app-name'];
   const playground = path.join(releaseTests, 'playground');
 
-  if (config['example-app'] !== 'empty') {
+  if (config['example-app'] !== EMPTY_EXAMPLE_APP) {
     const exampleAppFile = path.join(
       releaseTests,
       'examples',
@@ -294,3 +295,5 @@ function getConfig() {
 }
 
 module.exports = getConfig;
+module.exports.CURRENT_SCREENS_VERSION = CURRENT_SCREENS_VERSION;
+module.exports.EMPTY_EXAMPLE_APP = EMPTY_EXAMPLE_APP;

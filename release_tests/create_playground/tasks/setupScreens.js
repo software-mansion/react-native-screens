@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const logger = require('../logger');
+const { CURRENT_SCREENS_VERSION } = require('../config');
 const { getRemoteUrl, cloneScreensRef } = require('./cloneScreens');
 
 function installPackedPackage(packFileName, config, { runTask, runCommand }) {
@@ -41,7 +42,7 @@ function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
 
 function setupScreensFromWorkingTree(config, utils) {
   const { runTask } = utils;
-  const packFileName = 'screens-current.tgz';
+  const packFileName = `screens-${CURRENT_SCREENS_VERSION}.tgz`;
   const packFile = path.join(config.paths.app, packFileName);
 
   runTask(
@@ -105,7 +106,7 @@ function setupScreensFromRef(config, utils) {
 }
 
 function setupScreens(config, utils) {
-  if (config['screens-ref-type'] === 'current') {
+  if (config['screens-ref-type'] === CURRENT_SCREENS_VERSION) {
     setupScreensFromWorkingTree(config, utils);
   } else {
     setupScreensFromRef(config, utils);
