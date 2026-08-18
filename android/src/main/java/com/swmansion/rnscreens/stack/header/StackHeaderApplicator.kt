@@ -282,6 +282,9 @@ internal class StackHeaderApplicator(
                     setTypeface = { ctl.setCollapsedSubtitleTypeface(it) },
                     setTextSizePx = { ctl.collapsedSubtitleTextSize = it },
                 )
+
+                // Layout is necessary e.g. after changing subtitle text size.
+                ctl.requestLayout()
             }
         }
     }
