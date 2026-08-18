@@ -66,7 +66,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'Tab1',
-      Component: () => TabScreen(stackNavProp),
+      element: <TabScreen {...stackNavProp} />,
       options: {
         title: 'Tab 1',
         ios: {
@@ -80,7 +80,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
     },
     {
       name: 'Tab2',
-      Component: () => TabScreen(stackNavProp),
+      element: <TabScreen {...stackNavProp} />,
       options: {
         title: 'Tab 2',
         ios: {

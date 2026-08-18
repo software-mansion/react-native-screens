@@ -291,7 +291,6 @@ internal object StackHeaderToolbarMenuApplicator {
         }
         options.hidden?.let { menuItem.isVisible = !it }
         options.disabled?.let { menuItem.isEnabled = !it }
-        options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
 
         // checked is intentionally not handled here. The coordinator layout manages it in
         // applyGroupItemStateChange because toggling checked state requires group metadata
@@ -321,6 +320,9 @@ internal object StackHeaderToolbarMenuApplicator {
                 Log.w(TAG, "[RNScreens] menuTitle ignored: target is not a submenu.")
             }
         }
+
+        // Apply showAsAction property after icon is set to ensure correct overflow behavior.
+        options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
     }
 
     private fun StackHeaderToolbarMenuItemConfig.toOptions() =

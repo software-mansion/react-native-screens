@@ -19,10 +19,28 @@ behavior and how Android is launched directly to work around issue #1459.
 
 ## E2E test
 
-TBD: Automation is plausible — the native header back-button chevron, the
-on-screen buttons, and the Toggle button are all Detox-drivable on Android —
-but no e2e test has been implemented yet. The system gesture-back (edge
-swipe) steps may need platform-specific handling.
+Incomplete. Where a manual step's trigger cannot be driven by Detox, the e2e
+asserts the same behavior with the **Pop** button instead. 
+
+Covered:
+
+- Push navigation, the buttons each screen offers, and the per-route flag
+  labels in both stacks, including the default flag restored on a fresh
+  nested root.
+- Header back chevron intercepted while `preventNativeDismiss` is Enabled, on
+  **B** and on **NestedB**, including repeated presses firing one toast each.
+- Runtime toggling of the flag, with a chevron press honoring the latest value.
+- Pop actions triggered by the **Pop** button, including out of the nested
+  stack and back onto **B** rather than **A**.
+- Only the topmost screen intercepting while **B** and **NestedHome** below it
+  also prevent.
+
+Manual only (not automated):
+
+- Pop actions triggered by the system back gesture (edge swipe).
+- Pop actions triggered by the header back chevron when `preventNativeDismiss`
+  is Disabled.
+- Screen and toast colors, and that **NestedHome** shows no header at all.
 
 ## Prerequisites
 
@@ -198,6 +216,9 @@ swipe) steps may need platform-specific handling.
 
 - [ ] The tap is intercepted: a green toast reading "Native dismiss prevented
       - NestedB" appears; the app stays on **NestedB**.
+- [ ] Tap the chevron two or three more times in quick succession: each tap is
+      intercepted individually and fires its own toast; the app never leaves
+      **NestedB**.
 
 19. On **NestedB**, perform a system gesture-back.
 

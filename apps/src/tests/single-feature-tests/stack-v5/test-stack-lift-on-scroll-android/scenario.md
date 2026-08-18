@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** Exercises the Android Material 3 header **lift-on-scroll**
-effect — the app bar's tonal/elevation shift applied when scrollable content
+effect - the app bar's tonal/elevation shift applied when scrollable content
 moves beneath the pinned `small` header.
 
 `liftOnScroll` only applies to the `small` header, so this scenario fixes the
@@ -17,7 +17,20 @@ so `liftOnScroll` has no effect there; that path is out of scope for this test.
 
 ## E2E test
 
-Incomplete - we can't detect the elevation/color flash with Detox.
+Incomplete: covers the lifted/unlifted transitions of steps 1–7, plus the app
+bar being attached, detached and pinned. Lift is read from the app bar's
+`elevation`, which Material drives off the same `state_lifted` that paints the
+tonal colour.
+
+Not automated:
+
+- The lift's *appearance* - the tonal/colour shift in steps 1–2. Detox reads no
+  colours.
+- Flicker while the elevation animates (step 1) and the "no visible header
+  rebuild/flash" of step 3. Detox samples state, not animation frames.
+- Step 2 asserts that the lifted state ignores scrolling, not that elevation is
+  zero: without `liftOnScroll` the app bar is not liftable, so it rests at a
+  non-zero elevation.
 
 ## Prerequisites
 
@@ -44,7 +57,7 @@ Incomplete - we can't detect the elevation/color flash with Detox.
 
 2. Set `liftOnScroll` = `false`, then scroll.
 
-- [ ] The header does not lift — it stays flat regardless of scroll position.
+- [ ] The header does not lift - it stays flat regardless of scroll position.
 
 3. Set `liftOnScroll` = `true` (or `undefined`) again, then scroll.
 

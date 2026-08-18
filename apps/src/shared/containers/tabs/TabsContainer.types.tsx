@@ -20,14 +20,14 @@ export type TabRouteOptions = Omit<
  */
 export type TabRouteConfig = {
   name: string;
-  Component: React.ComponentType;
+  element: React.ReactElement;
   options?: TabRouteOptions;
 };
 
 /**
  * Runtime instance of a tab route. Created from a TabRouteConfig blueprint.
  */
-export type TabRoute = Omit<TabRouteConfig, 'Component'> & {
+export type TabRoute = Omit<TabRouteConfig, 'element'> & {
   routeKey: string;
 };
 

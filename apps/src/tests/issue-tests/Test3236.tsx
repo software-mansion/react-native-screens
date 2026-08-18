@@ -18,29 +18,27 @@ function makeTab(
   controllerMode: TabBarControllerMode,
   setControllerMode: (mode: TabBarControllerMode) => void,
 ) {
-  return function Tab() {
-    return (
-      <CenteredLayoutView>
-        <Text>{title}</Text>
-        <Button
-          title={`Change mode (currently ${controllerMode})`}
-          onPress={() => {
-            switch (controllerMode) {
-              case 'automatic':
-                setControllerMode('tabBar');
-                break;
-              case 'tabBar':
-                setControllerMode('tabSidebar');
-                break;
-              default:
-                setControllerMode('automatic');
-                break;
-            }
-          }}
-        />
-      </CenteredLayoutView>
-    );
-  };
+  return (
+    <CenteredLayoutView>
+      <Text>{title}</Text>
+      <Button
+        title={`Change mode (currently ${controllerMode})`}
+        onPress={() => {
+          switch (controllerMode) {
+            case 'automatic':
+              setControllerMode('tabBar');
+              break;
+            case 'tabBar':
+              setControllerMode('tabSidebar');
+              break;
+            default:
+              setControllerMode('automatic');
+              break;
+          }
+        }}
+      />
+    </CenteredLayoutView>
+  );
 }
 
 function App() {
@@ -54,7 +52,7 @@ function App() {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'Tab1',
-      Component: makeTab('Tab 1', controllerMode, setControllerMode),
+      element: makeTab('Tab 1', controllerMode, setControllerMode),
       options: {
         title: 'Tab 1',
         ios: {
@@ -73,7 +71,7 @@ function App() {
     },
     {
       name: 'Tab2',
-      Component: makeTab('Tab 2', controllerMode, setControllerMode),
+      element: makeTab('Tab 2', controllerMode, setControllerMode),
       options: {
         title: 'Tab 2',
         ios: {

@@ -47,7 +47,7 @@ function SettingsTab() {
 const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'HomeTab',
-    Component: HomeTab,
+    element: <HomeTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -60,7 +60,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'SettingsTab',
-    Component: SettingsTab,
+    element: <SettingsTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Settings',
@@ -80,14 +80,14 @@ function NestedTabsScreen() {
 const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
-    Component: FirstScreen,
+    element: <FirstScreen />,
     options: {
       headerConfig: { title: 'First' },
     },
   },
   {
     name: 'NestedTabs',
-    Component: NestedTabsScreen,
+    element: <NestedTabsScreen />,
     options: {
       headerConfig: { title: 'Nested Tabs' },
     },
