@@ -35,6 +35,7 @@ import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
+import kotlin.math.roundToInt
 
 /**
  * Builds and applies the Material app bar — type, subviews, title, back button,
@@ -334,8 +335,8 @@ internal class StackHeaderApplicator(
         val toolbar = appBar.toolbar
 
         toolbar.setContentInsetsRelative(
-            config.contentInsetStart?.let { toolbar.dpToPx(it).toInt() } ?: appBar.defaultContentInsetStart,
-            config.contentInsetEnd?.let { toolbar.dpToPx(it).toInt() } ?: appBar.defaultContentInsetEnd,
+            config.contentInsetStart?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetStart,
+            config.contentInsetEnd?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetEnd,
         )
 
         toolbar.requestLayout()
