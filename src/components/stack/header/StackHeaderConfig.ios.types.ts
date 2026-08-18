@@ -104,7 +104,7 @@ export interface SupportsIdentifierIOS {
    * and animate between them. If the heuristic fails, a simpler crossfade is applied.
    * In a situation where visually different items should be logically considered the same across screens,
    * you may use this prop to tell this fact to the system. The identifier shouldn't be updated at runtime;
-   * doing so will results in item rebuild and visual flash.
+   * doing so will result in item rebuild and visual flash.
    *
    * @platform iOS
    *
