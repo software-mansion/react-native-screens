@@ -42,6 +42,9 @@ internal interface StackHeaderConfigurationProviding {
     val collapsedTitleVerticalGravity: Int
     val collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
 
+    val contentInsetStart: Float?
+    val contentInsetEnd: Float?
+
     val titleAppearance: TextAppearance
     val subtitleAppearance: TextAppearance
 

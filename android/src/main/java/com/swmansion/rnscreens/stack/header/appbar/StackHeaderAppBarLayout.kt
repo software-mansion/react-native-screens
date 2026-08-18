@@ -20,6 +20,11 @@ internal sealed class StackHeaderAppBarLayout(
 ) : AppBarLayout(context) {
     abstract val toolbar: MaterialToolbar
 
+    // Material's default insets, read before we ever write one.
+    // Lazy because [toolbar] is initialized by the subclasses.
+    internal val defaultContentInsetStart: Int by lazy { toolbar.contentInsetStart }
+    internal val defaultContentInsetEnd: Int by lazy { toolbar.contentInsetEnd }
+
     init {
         layoutParams =
             CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {

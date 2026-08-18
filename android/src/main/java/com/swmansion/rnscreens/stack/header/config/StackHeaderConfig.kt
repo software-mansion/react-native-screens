@@ -169,6 +169,14 @@ internal class StackHeaderConfig(
         by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
+    override var contentInsetStart: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
+        internal set
+
+    override var contentInsetEnd: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
+        internal set
+
     override val titleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
     override val subtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
     override val expandedTitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)

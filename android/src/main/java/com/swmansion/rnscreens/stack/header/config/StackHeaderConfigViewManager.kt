@@ -199,6 +199,25 @@ internal open class StackHeaderConfigViewManager :
             }
     }
 
+    // region Header spacing
+    // Spacing arrives as a float defaulting to -1 (unset); 0 is a valid, applied value.
+
+    override fun setContentInsetStart(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetStart = value.takeIf { it >= 0f }
+    }
+
+    override fun setContentInsetEnd(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetEnd = value.takeIf { it >= 0f }
+    }
+
+    // endregion
+
     // region Text appearance
     // Font size arrives as a float defaulting to -1 (unset); non-positive means "use default".
 
