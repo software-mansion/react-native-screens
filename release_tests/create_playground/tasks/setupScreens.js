@@ -9,6 +9,9 @@ const {
 
 function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   runTask('Installing packed package in app', config.paths.log, () => {
+    // Without a local one it would pick up the repo root's yarn.lock and treat
+    // the app as part of the screens project. An empty yarn.lock marks the app
+    // directory as its own project root, so `yarn add` installs here.
     fs.writeFileSync(path.join(config.paths.app, 'yarn.lock'), '');
     runCommand(
       'yarn',
