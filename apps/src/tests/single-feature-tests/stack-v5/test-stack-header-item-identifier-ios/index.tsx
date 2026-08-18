@@ -86,7 +86,9 @@ function makeItem(
     return {
       type: 'item',
       id,
-      render: () => <View style={[styles.customItem, { backgroundColor: color }]} />,
+      render: () => (
+        <View style={[styles.customItem, { backgroundColor: color }]} />
+      ),
       ...identifierProp,
     };
   }
@@ -120,71 +122,70 @@ function buildItems(
   return result;
 }
 
-function makeScreen(routeName: string) {
-  return function Screen() {
-    const {
-      identifiersEnabled,
-      separatorsEnabled,
-      customViewsEnabled,
-      setIdentifiersEnabled,
-      setSeparatorsEnabled,
-      setCustomViewsEnabled,
-    } = useContext(ToggleContext);
-    const navigation = useStackNavigationContext();
-    const { setRouteOptions, routeKey } = navigation;
-    const screenIndex = ROUTE_NAMES.indexOf(routeName);
+function Screen(props: { routeName: string }) {
+  const { routeName } = props;
+  const {
+    identifiersEnabled,
+    separatorsEnabled,
+    customViewsEnabled,
+    setIdentifiersEnabled,
+    setSeparatorsEnabled,
+    setCustomViewsEnabled,
+  } = useContext(ToggleContext);
+  const navigation = useStackNavigationContext();
+  const { setRouteOptions, routeKey } = navigation;
+  const screenIndex = ROUTE_NAMES.indexOf(routeName);
 
-    const headerConfig = useMemo<StackHeaderConfigProps>(
-      () => ({
-        title: routeName,
-        ios: {
-          trailingItems: buildItems(
-            LAYOUTS[routeName]!,
-            screenIndex,
-            identifiersEnabled,
-            separatorsEnabled,
-            customViewsEnabled,
-          ),
-        },
-      }),
-      [identifiersEnabled, separatorsEnabled, customViewsEnabled, screenIndex],
-    );
+  const headerConfig = useMemo<StackHeaderConfigProps>(
+    () => ({
+      title: routeName,
+      ios: {
+        trailingItems: buildItems(
+          LAYOUTS[routeName]!,
+          screenIndex,
+          identifiersEnabled,
+          separatorsEnabled,
+          customViewsEnabled,
+        ),
+      },
+    }),
+    [routeName, identifiersEnabled, separatorsEnabled, customViewsEnabled, screenIndex],
+  );
 
-    useLayoutEffect(() => {
-      setRouteOptions(routeKey, { headerConfig });
-    }, [headerConfig, setRouteOptions, routeKey]);
+  useLayoutEffect(() => {
+    setRouteOptions(routeKey, { headerConfig });
+  }, [headerConfig, setRouteOptions, routeKey]);
 
-    const nextRoute = ROUTE_NAMES[screenIndex + 1];
+  const nextRoute = ROUTE_NAMES[screenIndex + 1];
 
-    return (
-      <View style={styles.container}>
-        <SettingsSwitch
-          label="Identifiers"
-          testID="toggle-identifiers"
-          value={identifiersEnabled}
-          onValueChange={setIdentifiersEnabled}
-        />
-        <SettingsSwitch
-          label="Separators"
-          testID="toggle-separators"
-          value={separatorsEnabled}
-          onValueChange={setSeparatorsEnabled}
-        />
-        <SettingsSwitch
-          label="Custom views"
-          testID="toggle-custom-views"
-          value={customViewsEnabled}
-          onValueChange={setCustomViewsEnabled}
-        />
-        {nextRoute && (
-          <Button title="Next" onPress={() => navigation.push(nextRoute)} />
-        )}
-        {routeName !== 'One' && (
-          <Button title="Go back" onPress={() => navigation.pop(routeKey)} />
-        )}
-      </View>
-    );
-  };
+  return (
+    <View style={styles.container}>
+      <SettingsSwitch
+        label="Identifiers"
+        testID="toggle-identifiers"
+        value={identifiersEnabled}
+        onValueChange={setIdentifiersEnabled}
+      />
+      <SettingsSwitch
+        label="Separators"
+        testID="toggle-separators"
+        value={separatorsEnabled}
+        onValueChange={setSeparatorsEnabled}
+      />
+      <SettingsSwitch
+        label="Custom views"
+        testID="toggle-custom-views"
+        value={customViewsEnabled}
+        onValueChange={setCustomViewsEnabled}
+      />
+      {nextRoute && (
+        <Button title="Next" onPress={() => navigation.push(nextRoute)} />
+      )}
+      {routeName !== 'One' && (
+        <Button title="Go back" onPress={() => navigation.pop(routeKey)} />
+      )}
+    </View>
+  );
 }
 
 function TestStackHeaderItemIdentifierIOS() {
@@ -208,7 +209,7 @@ function TestStackHeaderItemIdentifierIOS() {
     () =>
       ROUTE_NAMES.map(routeName => ({
         name: routeName,
-        Component: makeScreen(routeName),
+        element: <Screen routeName={routeName} />,
       })),
     [],
   );
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: Colors.OffWhite,
   },
   customItem: {
     width: 24,
