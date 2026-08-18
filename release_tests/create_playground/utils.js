@@ -13,7 +13,9 @@ function fatal(message) {
 }
 
 function formatCommand(file, args = []) {
-  return [file, ...args].join(' ');
+  return [file, ...args]
+    .map(arg => (arg.includes(' ') ? `"${arg}"` : arg))
+    .join(' ');
 }
 
 function withTempDir(prefix, fn) {
