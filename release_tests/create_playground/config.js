@@ -110,10 +110,10 @@ function getConfig() {
                                            branch:<name> | tag:<name>    — clone that branch or tag
                                            commit:<sha>                  — from local repo; use -f to fetch from remote
                                            <ref>                         — auto-detect branch, tag, or commit
-                                         Ref versions prefer the local git repository when the ref
-                                         exists there; otherwise they are taken from origin.
-        -f, --force-fetch                Force fetch the screens version from the remote repository (origin).
-                                         Use this to bypass the local git cache (e.g., after force pushes).
+                                         Ref versions are taken from the local git repository.
+                                         Pass -f to take them from origin instead.
+        -f, --force-fetch                Fetch the screens version from the remote repository (origin)
+                                         instead of the local git repository.
                                          Mutually exclusive with --screens-version 'current'.
         -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
                                          Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory

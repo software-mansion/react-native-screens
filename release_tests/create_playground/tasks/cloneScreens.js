@@ -63,19 +63,23 @@ function matchesCommitShaFormat(ref) {
   return /^[0-9a-f]{7,40}$/i.test(ref);
 }
 
-function failRemoteClone({ target, forceFetch, refType }) {
-  if (forceFetch) {
-    console.error(
-      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
-    );
-  } else {
-    console.error(
-      `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally or on the network.`,
-    );
-  }
+function failLocalClone({ target, refType }) {
+  console.error(
+    `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found locally.`,
+  );
+  console.error(
+    `Hint: fetch it first, or pass -f to take it from origin.`,
+  );
+  throw new Error(`Version '${refType}:${target}' was not found locally`);
+}
+
+function failRemoteClone({ target, refType }) {
+  console.error(
+    `\n❌ FATAL ERROR: Version '${refType}:${target}' was not found on the network.`,
+  );
   if (refType === 'unknown' && matchesCommitShaFormat(target)) {
     console.error(
-      `Hint: '${target}' looks like a commit hash. Use -s commit:${target} to fetch it from the remote (add -f to force-fetch from origin).`,
+      `Hint: '${target}' looks like a commit hash. Use -s commit:${target} -f.`,
     );
   }
   throw new Error(`Version '${refType}:${target}' was not found`);
@@ -91,7 +95,6 @@ function cloneScreensRef({
   releaseTestsPath,
   logPath,
   runCommand,
-  forceFetch,
 }) {
   const git = (args, cwd = releaseTestsPath) =>
     runCommand('git', args, cwd, logPath);
@@ -115,6 +118,9 @@ function cloneScreensRef({
   }
 
   if (useLocal) {
+    if (!refExistsLocally(screensPath, target)) {
+      failLocalClone({ target, refType });
+    }
     if (refType === 'branch' || refType === 'tag') {
       cloneBranchOrTag(screensPath);
       return;
@@ -139,7 +145,7 @@ function cloneScreensRef({
       cloneBranchOrTag(remoteUrl);
     }
   } catch {
-    failRemoteClone({ target, forceFetch, refType });
+    failRemoteClone({ target, refType });
   }
 }
 

@@ -1,11 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const logger = require('../logger');
-const {
-  getRemoteUrl,
-  refExistsLocally,
-  cloneScreensRef,
-} = require('./cloneScreens');
+const { getRemoteUrl, cloneScreensRef } = require('./cloneScreens');
 
 function installPackedPackage(packFileName, config, { runTask, runCommand }) {
   runTask('Installing packed package in app', config.paths.log, () => {
@@ -74,20 +70,16 @@ function setupScreensFromRef(config, utils) {
     config.paths.log,
     () => {
       withTempDir('screens-clone-', tempCloneDir => {
-        const useLocal = !forceFetch && refExistsLocally(screensPath, target);
+        const useLocal = !forceFetch;
         const remoteUrl = useLocal ? null : getRemoteUrl(screensPath);
 
-        if (forceFetch) {
-          console.log(
-            `\n☁️ Force-fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
-          );
-        } else if (useLocal) {
+        if (useLocal) {
           console.log(
             `\n📂 Using version '${target}' (${refType}) from the local repository.`,
           );
         } else {
           console.log(
-            `\n☁️ Version '${target}' (${refType}) not found locally. Fetching from the network (${remoteUrl})...`,
+            `\n☁️ Fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
           );
         }
 
@@ -101,7 +93,6 @@ function setupScreensFromRef(config, utils) {
           releaseTestsPath: config.paths.releaseTests,
           logPath: config.paths.log,
           runCommand,
-          forceFetch,
         });
 
         console.log(`\n📦 Building package in an isolated environment...\n`);
