@@ -16,5 +16,5 @@ internal interface TextAppearance {
      * Returns the modified typeface based on [base] typeface. Properties that are not overridden
      * are inherited from [base], which is returned unchanged when there are no overrides at all.
      */
-    fun resolveTypeface(base: Typeface?): Typeface
+    fun resolveTypeface(base: Typeface): Typeface
 }

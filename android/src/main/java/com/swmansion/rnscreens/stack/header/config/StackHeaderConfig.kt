@@ -165,15 +165,14 @@ internal class StackHeaderConfig(
         by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override val titleAppearance = ReactTextAppearance(reactContext.assets)
-    override val subtitleAppearance = ReactTextAppearance(reactContext.assets)
-    override val expandedTitleAppearance = ReactTextAppearance(reactContext.assets)
-    override val collapsedTitleAppearance = ReactTextAppearance(reactContext.assets)
-    override val expandedSubtitleAppearance = ReactTextAppearance(reactContext.assets)
-    override val collapsedSubtitleAppearance = ReactTextAppearance(reactContext.assets)
+    override val titleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val subtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val expandedTitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val collapsedTitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val expandedSubtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val collapsedSubtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
 
-    // Appearance objects are mutated in place, so writing to one does not invalidate on its own.
-    internal fun invalidateTextAppearance() = invalidate(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+    private fun invalidateTextAppearance() = invalidate(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL

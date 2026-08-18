@@ -200,7 +200,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.titleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setTitleFontFamily(
@@ -208,7 +207,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.titleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setTitleFontSize(
@@ -216,7 +214,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.titleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setTitleFontWeight(
@@ -224,7 +221,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.titleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setTitleFontStyle(
@@ -232,7 +228,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.titleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     override fun setSubtitleColor(
@@ -240,7 +235,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.subtitleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setSubtitleFontFamily(
@@ -248,7 +242,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.subtitleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setSubtitleFontSize(
@@ -256,7 +249,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.subtitleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setSubtitleFontWeight(
@@ -264,7 +256,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.subtitleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setSubtitleFontStyle(
@@ -272,7 +263,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.subtitleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedTitleColor(
@@ -280,7 +270,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.expandedTitleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedTitleFontFamily(
@@ -288,7 +277,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedTitleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedTitleFontSize(
@@ -296,7 +284,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.expandedTitleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedTitleFontWeight(
@@ -304,7 +291,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedTitleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedTitleFontStyle(
@@ -312,7 +298,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedTitleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedTitleColor(
@@ -320,7 +305,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.collapsedTitleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedTitleFontFamily(
@@ -328,7 +312,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedTitleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedTitleFontSize(
@@ -336,7 +319,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.collapsedTitleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedTitleFontWeight(
@@ -344,7 +326,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedTitleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedTitleFontStyle(
@@ -352,7 +333,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedTitleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedSubtitleColor(
@@ -360,7 +340,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.expandedSubtitleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedSubtitleFontFamily(
@@ -368,7 +347,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedSubtitleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedSubtitleFontSize(
@@ -376,7 +354,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.expandedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedSubtitleFontWeight(
@@ -384,7 +361,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedSubtitleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setExpandedSubtitleFontStyle(
@@ -392,7 +368,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.expandedSubtitleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedSubtitleColor(
@@ -400,7 +375,6 @@ internal open class StackHeaderConfigViewManager :
         value: Int?,
     ) {
         view.collapsedSubtitleAppearance.color = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedSubtitleFontFamily(
@@ -408,7 +382,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedSubtitleAppearance.fontFamily = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedSubtitleFontSize(
@@ -416,7 +389,6 @@ internal open class StackHeaderConfigViewManager :
         value: Float,
     ) {
         view.collapsedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedSubtitleFontWeight(
@@ -424,7 +396,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedSubtitleAppearance.fontWeight = value
-        view.invalidateTextAppearance()
     }
 
     override fun setCollapsedSubtitleFontStyle(
@@ -432,7 +403,6 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.collapsedSubtitleAppearance.fontStyle = value
-        view.invalidateTextAppearance()
     }
 
     // endregion
