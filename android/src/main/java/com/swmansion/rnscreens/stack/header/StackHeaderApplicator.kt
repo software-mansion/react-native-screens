@@ -26,6 +26,8 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
@@ -471,6 +473,18 @@ internal class StackHeaderApplicator(
             is StackHeaderAppBarLayout.Small -> {
                 appBar.background = backgroundColor.toDrawable()
                 appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
+
+                // The lift animation runs only on lifted-state changes; jump to the end
+                // state when colors change while already lifted. The end state is the
+                // scrolled color composited over the background (see Material's
+                // initializeLiftOnScrollWithColor), not the raw scrolled color — they
+                // differ when the scrolled color is not fully opaque.
+                if (appBar.isLifted) {
+                    (appBar.background as? MaterialShapeDrawable)?.fillColor =
+                        ColorStateList.valueOf(
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor),
+                        )
+                }
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
