@@ -16,7 +16,6 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.graphics.drawable.toDrawable
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
@@ -469,9 +468,14 @@ internal class StackHeaderApplicator(
             config.scrolledBackgroundColor
                 ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
 
+        val background =
+            MaterialShapeDrawable().apply {
+                fillColor = ColorStateList.valueOf(backgroundColor)
+            }
+
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
-                appBar.background = backgroundColor.toDrawable()
+                appBar.background = background
                 appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
 
                 // The lift animation runs only on lifted-state changes; jump to the end
@@ -480,7 +484,7 @@ internal class StackHeaderApplicator(
                 // initializeLiftOnScrollWithColor), not the raw scrolled color — they
                 // differ when the scrolled color is not fully opaque.
                 if (appBar.isLifted) {
-                    (appBar.background as? MaterialShapeDrawable)?.fillColor =
+                    background.fillColor =
                         ColorStateList.valueOf(
                             MaterialColors.layer(backgroundColor, scrolledBackgroundColor),
                         )
@@ -489,7 +493,7 @@ internal class StackHeaderApplicator(
 
             is StackHeaderAppBarLayout.Collapsing -> {
                 appBar.setLiftOnScrollColor(null)
-                appBar.background = backgroundColor.toDrawable()
+                appBar.background = background
                 appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
             }
         }
