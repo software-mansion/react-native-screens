@@ -100,5 +100,10 @@ export default codegenNativeComponent<NativeProps>(
   'RNSScreenStackHeaderConfig',
   {
     interfaceOnly: true,
+    // Distinguishes omitted colors from transparent (0) under Android Props 2.0
+    // getDiffProps. HostPlatformColor::UndefinedColor and processColor("transparent")
+    // are both 0, so a default SharedColor{} would drop the key on CREATE.
+    // @ts-expect-error RN public Options type does not include this codegen flag yet.
+    generateOptionalProperties: true,
   },
 ) as HostComponent<NativeProps>;
