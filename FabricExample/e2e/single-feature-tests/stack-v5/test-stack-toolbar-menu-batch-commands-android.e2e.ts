@@ -81,7 +81,7 @@ async function expectEventCountUnchanged(action: () => Promise<void>) {
   await expect(element(by.id('events-count-text'))).toHaveText(before);
 }
 
-// Ids are compared as a set — payload order is an implementation detail.
+// Parses an event-log entry into group id + ids.
 function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
   const text = raw.replace(/^(▶ | {2})/, '');
   const separator = text.indexOf(': ');
@@ -99,6 +99,7 @@ function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
   return { groupId, ids: parsed };
 }
 
+// Compares ids sorted — order-insensitive, duplicates still fail.
 async function expectLogEntry(index: number, groupId: string, ids: string[]) {
   const raw = await readText(`event-log-entry-${index}`);
   const entry = parseLogEntry(raw);
