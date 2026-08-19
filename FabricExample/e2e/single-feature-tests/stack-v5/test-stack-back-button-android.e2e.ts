@@ -56,7 +56,10 @@ async function expectSingleVisibleBackButton() {
 
 async function openScreen() {
   await device.reloadReactNative();
-  await selectSingleFeatureTestsScreen('Stackv5', 'test-stack-back-button');
+  await selectSingleFeatureTestsScreen(
+    'Stackv5',
+    'test-stack-back-button-android',
+  );
   await waitFor(element(by.text(PUSH_SCREEN)))
     .toBeVisible()
     .withTimeout(3000);

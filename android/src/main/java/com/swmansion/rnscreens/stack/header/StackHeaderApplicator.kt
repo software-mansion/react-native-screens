@@ -11,6 +11,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
@@ -210,7 +211,13 @@ internal class StackHeaderApplicator(
                 ?.let { getResizedDrawable(toolbar, it) }
                 ?: resolveDefaultBackButtonIcon()
 
-        val tintList = resolveBackButtonTintList(config)
+        val tintList =
+            buildTintList(
+                config.backButtonTintColorNormal,
+                config.backButtonTintColorPressed,
+                config.backButtonTintColorFocused,
+            )
+
         toolbar.navigationIcon =
             if (tintList != null && baseDrawable != null) {
                 DrawableCompat.wrap(baseDrawable.mutate()).also {
@@ -221,6 +228,32 @@ internal class StackHeaderApplicator(
             }
 
         toolbar.setNavigationOnClickListener { onNavigationIconClick() }
+    }
+
+    internal fun applyOverflowIcon(
+        toolbar: MaterialToolbar,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val baseDrawable =
+            config.overflowIcon
+                ?.let { getResizedDrawable(toolbar, it) }
+                ?: resolveDefaultOverflowIcon()
+
+        val tintList =
+            buildTintList(
+                config.overflowIconTintColorNormal,
+                config.overflowIconTintColorPressed,
+                config.overflowIconTintColorFocused,
+            )
+
+        toolbar.overflowIcon =
+            if (tintList != null && baseDrawable != null) {
+                DrawableCompat.wrap(baseDrawable.mutate()).also {
+                    DrawableCompat.setTintList(it, tintList)
+                }
+            } else {
+                baseDrawable
+            }
     }
 
     internal fun applyScrollFlags(
@@ -300,6 +333,12 @@ internal class StackHeaderApplicator(
 
     private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
 
+    // Mirrors how the toolbar's own overflow button obtains its icon: an AppCompatImageView built
+    // with actionOverflowButtonStyle resolves the theme's srcCompat and applies AppCompat's
+    // colorControlNormal auto-tint.
+    private fun resolveDefaultOverflowIcon(): Drawable? =
+        AppCompatImageView(wrappedContext, null, androidx.appcompat.R.attr.actionOverflowButtonStyle).drawable
+
     private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
@@ -340,11 +379,11 @@ internal class StackHeaderApplicator(
         }
     }
 
-    private fun resolveBackButtonTintList(config: StackHeaderConfigurationProviding): ColorStateList? {
-        val normal = config.backButtonTintColorNormal
-        val pressed = config.backButtonTintColorPressed
-        val focused = config.backButtonTintColorFocused
-
+    private fun buildTintList(
+        normal: Int?,
+        pressed: Int?,
+        focused: Int?,
+    ): ColorStateList? {
         if (normal == null && pressed == null && focused == null) return null
 
         val states = mutableListOf<IntArray>()

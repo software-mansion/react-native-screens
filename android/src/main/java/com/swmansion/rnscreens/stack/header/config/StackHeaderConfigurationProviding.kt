@@ -14,6 +14,10 @@ internal interface StackHeaderConfigurationProviding {
     val backButtonTintColorPressed: Int?
     val backButtonTintColorFocused: Int?
     val backButtonIcon: Drawable?
+    val overflowIconTintColorNormal: Int?
+    val overflowIconTintColorPressed: Int?
+    val overflowIconTintColorFocused: Int?
+    val overflowIcon: Drawable?
     val scrollFlagScroll: Boolean
     val scrollFlagEnterAlways: Boolean
     val scrollFlagEnterAlwaysCollapsed: Boolean
