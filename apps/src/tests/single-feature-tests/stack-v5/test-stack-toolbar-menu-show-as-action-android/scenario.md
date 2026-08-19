@@ -17,26 +17,17 @@ effect when an icon is present.
 
 ## E2E test
 
-Incomplete: every step is automated except the purely visual assertions.
-The test asserts placement — whether an item sits in the toolbar or in the
-overflow menu — and, for toolbar items, whether it renders icon-only or with
-its title as text. Both forms are matched through the action button's
-`by.label` (title as content description when icon-only, title as text
-otherwise); icon-only is asserted through the button's cleared text, which
-`ActionMenuItemView` sets to empty exactly when an icon replaces the title.
-The WITH_TEXT layout is checked by rotating the device. Every overflow row is
-asserted icon-less (no visible image view in the row).
+Incomplete. Automated: every step's placement (toolbar vs overflow menu),
+whether a toolbar item is icon-only or shows its title, the WITH_TEXT
+landscape layout via rotation, "Last clicked" after taps, and that overflow
+rows show no icon. For steps 11 and 12 the number of promoted items is pinned
+to the reference emulator (API 36, portrait).
 
-Steps 11 and 12 promote all three slots. How many fit is screen-width
-dependent, so the e2e test pins the count observed on the reference
-emulator (API 36, portrait): two text buttons for `ifRoom`, three icon
-buttons for `ifRoomWithText`. Other widths are manual.
+Manual only:
 
-Not covered:
-
-- Icon identity and tint (that the drawable shown is the search glyph), and
-  whether an icon sits next to the text in the WITH_TEXT landscape layout —
-  the icon is a compound drawable of the action button, not a view.
+- Icon identity and tint (that the drawable is the search glyph).
+- That the icon is still shown next to the text in landscape (steps 9, 12).
+- Steps 11 and 12 on other screen widths.
 
 ## Prerequisites
 
