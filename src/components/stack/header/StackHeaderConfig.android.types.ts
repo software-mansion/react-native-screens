@@ -745,7 +745,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
    * installs its own content scrim and disables the app bar's lift-on-scroll,
    * so this prop has no effect there. The collapsed appearance of those headers
-   * is instead controlled by that content scrim, which is not exposed yet.
+   * is instead controlled by that content scrim — see
+   * {@link scrolledBackgroundColor}.
    *
    * Has no effect while the header is `transparent` (there is no scrolling
    * content behavior installed in that mode).
@@ -755,6 +756,43 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   liftOnScroll?: boolean | undefined;
+  /**
+   * @summary Background color of the header.
+   *
+   * @description
+   * Applies to all header types. For `medium` / `large` headers this is the
+   * color of the expanded state — the collapsed state color is controlled by
+   * {@link scrolledBackgroundColor}.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Background color of the header when content is scrolled beneath
+   * it.
+   *
+   * @description
+   * For the `small` header, this is the lift-on-scroll target color: when
+   * content is scrolled beneath the app bar, the background animates from
+   * {@link backgroundColor} to this color. Requires {@link liftOnScroll}.
+   *
+   * For `medium` / `large` headers, this is the color of the content scrim
+   * that fades in as the header collapses. The scrim is drawn above the
+   * header background (and the `backgroundSubview`, if any) but below the
+   * toolbar content.
+   *
+   * @remarks
+   * A translucent color is composited over the header background instead of
+   * replacing it.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  scrolledBackgroundColor?: ColorValue | undefined;
   /**
    * @summary Toolbar menu configuration.
    *

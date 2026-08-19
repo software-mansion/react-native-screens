@@ -27,6 +27,8 @@ internal interface StackHeaderConfigurationProviding {
     val scrollFlagExitUntilCollapsed: Boolean
     val scrollFlagSnap: Boolean
     val liftOnScroll: Boolean
+    val backgroundColor: Int?
+    val scrolledBackgroundColor: Int?
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
