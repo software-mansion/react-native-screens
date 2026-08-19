@@ -179,6 +179,9 @@ export interface NativeProps extends ViewProps {
 
   liftOnScroll?: CT.WithDefault<boolean, true>;
 
+  backgroundColor?: ColorValue | undefined;
+  scrolledBackgroundColor?: ColorValue | undefined;
+
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
   toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;
   onToolbarMenuItemPress?:

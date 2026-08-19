@@ -16,6 +16,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toDrawable
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
@@ -33,6 +34,7 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProvi
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
 import kotlin.math.roundToInt
@@ -453,6 +455,30 @@ internal class StackHeaderApplicator(
         appBar.isLiftOnScroll = enabled
         appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
         appBar.requestLayout()
+    }
+
+    internal fun applyBackgroundColors(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val backgroundColor =
+            config.backgroundColor ?: resolveColorAttr(appBar.context, R.attr.colorSurface)
+        val scrolledBackgroundColor =
+            config.scrolledBackgroundColor
+                ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
+
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.background = backgroundColor.toDrawable()
+                appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                appBar.setLiftOnScrollColor(null)
+                appBar.background = backgroundColor.toDrawable()
+                appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
+            }
+        }
     }
 
     // endregion
