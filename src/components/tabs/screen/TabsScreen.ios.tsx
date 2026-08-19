@@ -165,7 +165,9 @@ function parseIconsToNativeProps(
     parsedSelectedIcon.iconType !== undefined &&
     parsedIcon.iconType !== parsedSelectedIcon.iconType
   ) {
-    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
+    throw new Error(
+      '[RNScreens] icon and selectedIcon must be same type. Note that `imageSource` icons with different `tinted` values resolve to different types.',
+    );
   } else if (
     parsedIcon.iconType === undefined &&
     parsedSelectedIcon.iconType !== undefined
@@ -200,7 +202,7 @@ function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
     };
   } else if (icon.type === 'imageSource') {
     return {
-      iconType: 'image',
+      iconType: icon.tinted ? 'template' : 'image',
       iconImageSource: icon.imageSource,
     };
   } else if (icon.type === 'templateSource') {
