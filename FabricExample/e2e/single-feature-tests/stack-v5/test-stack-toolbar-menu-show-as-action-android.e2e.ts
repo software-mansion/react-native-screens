@@ -4,27 +4,43 @@ import type { ElementAttributeFrame } from 'detox/detox';
 import {
   describeIfAndroid,
   getElementAttributes,
+  getTopmostMatch,
+  pickerOptionId,
+  rewindAndScrollUntilVisible,
   selectSingleFeatureTestsScreen,
+  waitUntil,
 } from '../../e2e-utils';
 import {
-  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
+  CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
+  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
+// Typed from the screen, so a rename there fails type-checking here.
+import type {
+  CmdIconOption,
+  CmdShowAsActionOption,
+  HeaderTitle,
+  IconOption,
+  IdOption,
+  ShowAsActionOption,
+} from '@apps/tests/single-feature-tests/stack-v5/test-stack-toolbar-menu-show-as-action-android';
 
-// Icon identity, icon tinting and the fact that overflow rows never render an
-// icon are not assertable through Detox — the popup row layout keeps a GONE
-// `ImageView` in the hierarchy either way. See `scenario.md` next to the test
-// screen for the manual-only steps.
+// Icon identity and tinting are not assertable through Detox. See `scenario.md`
+// for the manual-only steps.
 
 const SCROLLVIEW_ID = 'toolbar-menu-show-as-action-scrollview';
-const HEADER_TITLE = 'Show As Action Test';
+const HEADER_TITLE: HeaderTitle = 'Show As Action Test';
 
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles the overflow menu opening or dismissing has to be explicit.
+// 300px steps: large enough to move past a whole slot block per swipe, small
+// enough not to carry a short picker option row past the viewport.
+const SCROLL_STEP = { pixels: 300 };
+
+// Detox's idle sync does not cover popup animations, so waits that straddle the
+// menu opening or dismissing must be explicit.
 const MENU_ANIMATION_TIMEOUT = 2000;
 
-// Probes an already-settled popup rather than an animation — by the time it is
-// used the menu is either up or was never opened.
+// Probes an already-settled popup: by then it is either up or was never opened.
 const MENU_PRESENCE_TIMEOUT = 250;
 
 // A `showAsAction` change re-inflates the action menu, and a rotation does it
@@ -35,80 +51,76 @@ const TOOLBAR_UPDATE_TIMEOUT = 3000;
 // orientation. Generous: an emulator rotation is slow and animated.
 const ROTATION_TIMEOUT = 10000;
 
-// Every title this scenario can put into the menu. Menu assertions check the
-// full set — expected titles present, all others absent — so an item that fails
-// to move between the toolbar and the overflow menu fails the test.
+// Every title this scenario can put into the menu. Assertions check the full
+// set — expected present, all others absent — so an item that fails to move
+// between toolbar and overflow fails the test.
 const ALL_TITLES = ['I1', 'Item 2', 'Item Number Three'] as const;
 
 type MenuTitle = (typeof ALL_TITLES)[number];
 
-const toolbar = by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
 const popup = by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
 
 const overflowRow = (title: MenuTitle) => by.text(title).withAncestor(popup);
 
-// An action item shows its title as text only while no icon is set, or while
-// the WITH_TEXT modifier is in effect (landscape only).
-const actionItemText = (title: MenuTitle) =>
-  by.text(title).withAncestor(toolbar);
+// A row's `group_divider` and `submenuarrow` share this class but are GONE here,
+// and `by.type` matches visible views only — so a match is an icon.
+const overflowRowImage = (title: MenuTitle) =>
+  by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
+    .withAncestor(
+      by
+        .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
+        .withDescendant(by.text(title)),
+    );
 
-// `ActionMenuItemView` falls back to the item's title as its content
-// description exactly when it renders icon-only, so this is what distinguishes
-// an icon action button from a text one.
-// @see StackHeaderToolbarMenuApplicator.applyMenuElementOptions
-const actionItemLabel = (title: MenuTitle) =>
-  by.label(title).withAncestor(toolbar);
-
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
+// `by.label` matches the action button in both its forms — icon-only (title as
+// content description) and text (title as text) — so the form is told apart by
+// the rendered text: AppCompat clears an icon-only button's text (`setText(null)`)
+// and shows the title only while no icon is set or WITH_TEXT is in effect.
+// @see androidx.appcompat.view.menu.ActionMenuItemView.updateTextButtonVisibility
+const actionItem = (title: MenuTitle) =>
+  element(
+    by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW)),
+  );
 
 async function frameOf(id: string): Promise<ElementAttributeFrame> {
   const attributes = await getElementAttributes({ by: 'id', value: id });
   return attributes.frame;
 }
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Detox's scroll gestures fling, and the momentum keeps the content gliding
-// after the action itself has resolved. Detox computes a tap's coordinates from
-// the element's position and dispatches the touch a moment later, so a tap into
-// a still-moving list lands on whatever has slid under those coordinates — which
-// is how a tap meant for one slot's option row selects another slot's, or misses
-// the content entirely and hits the system navigation bar. Nothing is tapped
-// until its frame has stopped changing.
+// Detox's scroll gestures fling and the content keeps gliding after the call
+// resolves, while a tap's coordinates are computed a moment before the touch
+// lands — so a tap into a still-moving list hits whatever slid under it (another
+// slot's option row, or the navigation bar). Nothing is tapped until its frame
+// has stopped changing.
 const SETTLE_TIMEOUT = 5000;
 const SETTLE_POLL_INTERVAL = 50;
 
 async function waitUntilStill(id: string) {
-  const deadline = Date.now() + SETTLE_TIMEOUT;
   let previous: ElementAttributeFrame | null = null;
 
-  for (;;) {
-    const frame = await frameOf(id);
-
-    if (previous && isSameFrame(previous, frame)) {
-      return;
-    }
-
-    if (Date.now() > deadline) {
-      throw new Error(`${id} was still moving after ${SETTLE_TIMEOUT} ms.`);
-    }
-
-    previous = frame;
-    await sleep(SETTLE_POLL_INTERVAL);
-  }
+  await waitUntil(
+    async () => {
+      const frame = await frameOf(id);
+      const isStill = previous !== null && isSameFrame(previous, frame);
+      previous = frame;
+      return isStill;
+    },
+    {
+      timeout: SETTLE_TIMEOUT,
+      interval: SETTLE_POLL_INTERVAL,
+      message: `${id} to stop moving`,
+    },
+  );
 }
 
-// The scroll view runs edge to edge — its frame ends at the bottom of the screen
-// — so a row can be drawn behind the system navigation bar. That bar is a
-// separate window and does not clip the row, so Espresso still reports it as
-// fully visible and `toBeVisible()` happily settles there, leaving a tap at the
-// row's center to land on Home. Everything below this fraction of the viewport
-// is treated as the navigation bar's; it covers the 3-button bar and the gesture
-// bar alike.
+// The scroll view runs edge to edge, so a row can sit behind the system
+// navigation bar. That bar is a separate window and does not clip the row, so
+// `toBeVisible()` passes there and a tap at the row's center lands on Home.
+// Everything below this fraction of the viewport counts as the bar. Measured on
+// the reference emulator (API 36, 1080x2400 @ 420dpi, 3-button nav): the bar is
+// 126px (48dp) and the portrait viewport under the header is ~2100px, so 8% is
+// ~170px — clears the bar with ~16dp to spare, and the gesture bar is shorter.
 const NAV_BAR_VIEWPORT_FRACTION = 0.08;
 
 async function clearsNavigationBar(id: string): Promise<boolean> {
@@ -117,20 +129,14 @@ async function clearsNavigationBar(id: string): Promise<boolean> {
   const navigationBarTop =
     viewport.y + viewport.height * (1 - NAV_BAR_VIEWPORT_FRACTION);
 
-  // Frames are in screen coordinates and both are read in the same units, so no
-  // dp/px conversion is needed.
+  // Both frames are in screen coordinates — no dp/px conversion needed.
   return target.y + target.height <= navigationBarTop;
 }
 
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way. Returns with the target
-// stationary and clear of the navigation bar, ready to be tapped.
+// Returns with the target stationary and clear of the navigation bar, ready to
+// be tapped.
 async function scrollIntoView(id: string) {
-  await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
-  await waitFor(element(by.id(id)))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(300, 'down', Number.NaN, 0.85);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 
   for (let attempt = 0; attempt < 3; attempt++) {
     await waitUntilStill(id);
@@ -150,66 +156,78 @@ async function scrollIntoView(id: string) {
   await waitUntilStill(id);
 }
 
-// Closing the picker again matters: its option rows stay in the hierarchy and
-// would collide with the `by.text` matchers used for the menu items.
-async function selectOption(
-  pickerId: string,
-  pickerLabel: string,
-  option: string,
-) {
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(
-    `${pickerLabel}: ${option}`,
-  );
+async function scrollToAndTap(id: string) {
+  await scrollIntoView(id);
+  await element(by.id(id)).tap();
 }
 
-type ShowAsAction =
-  | 'undefined'
-  | 'never'
-  | 'always'
-  | 'alwaysWithText'
-  | 'ifRoom'
-  | 'ifRoomWithText';
-type Icon = 'undefined' | 'searchIcon';
+type PickerSelection = {
+  pickerId: string;
+  /** The picker's `label` prop — option `testID`s are derived from it. */
+  label: string;
+  option: string;
+};
+
+// Same contract as e2e-utils' `selectPickerOption`, but every tap goes through
+// this spec's `scrollIntoView` (settle + navigation-bar guards). Returns early
+// when the picker already shows `option`. Closes the picker again: its option
+// rows would otherwise collide with the `by.text` menu matchers.
+async function selectOption({ pickerId, label, option }: PickerSelection) {
+  const expected = `${label}: ${option}`;
+
+  if ((await getTopmostMatch(by.id(pickerId))).text === expected) {
+    return;
+  }
+
+  await scrollToAndTap(pickerId);
+  await scrollToAndTap(pickerOptionId(label, option));
+  await scrollToAndTap(pickerId);
+
+  await expect(element(by.id(pickerId))).toHaveText(expected);
+}
 
 type Slot = 1 | 2 | 3;
 
-async function setSlotShowAsAction(slot: Slot, value: ShowAsAction) {
-  await selectOption(
-    `slot-${slot}-show-as-action-picker`,
-    `slot ${slot} showAsAction`,
-    value,
-  );
+async function setSlotShowAsAction(slot: Slot, option: ShowAsActionOption) {
+  await selectOption({
+    pickerId: `slot-${slot}-show-as-action-picker`,
+    label: `slot ${slot} showAsAction`,
+    option,
+  });
 }
 
-async function setSlotIcon(slot: Slot, value: Icon) {
-  await selectOption(`slot-${slot}-icon-picker`, `slot ${slot} icon`, value);
+async function setSlotIcon(slot: Slot, option: IconOption) {
+  await selectOption({
+    pickerId: `slot-${slot}-icon-picker`,
+    label: `slot ${slot} icon`,
+    option,
+  });
 }
 
+/** Keyed by the `label` the option `testID`s are derived from. */
+const COMMAND_PICKERS = {
+  target: { pickerId: 'cmd-target-picker', label: 'target id' },
+  icon: { pickerId: 'cmd-icon-picker', label: 'cmd icon' },
+  showAsAction: {
+    pickerId: 'cmd-show-as-action-picker',
+    label: 'cmd showAsAction',
+  },
+} as const;
+
+/** The pickers keep their last value; `selectOption` skips ones already set. */
 async function sendCommand(options: {
-  target: 'item-1' | 'item-2' | 'item-3';
-  icon: Icon | 'no change';
-  showAsAction: ShowAsAction | 'no change';
+  target: IdOption;
+  icon: CmdIconOption;
+  showAsAction: CmdShowAsActionOption;
 }) {
-  await selectOption('cmd-target-picker', 'target id', options.target);
-  await selectOption('cmd-icon-picker', 'cmd icon', options.icon);
-  await selectOption(
-    'cmd-show-as-action-picker',
-    'cmd showAsAction',
-    options.showAsAction,
-  );
+  await selectOption({ ...COMMAND_PICKERS.target, option: options.target });
+  await selectOption({ ...COMMAND_PICKERS.icon, option: options.icon });
+  await selectOption({
+    ...COMMAND_PICKERS.showAsAction,
+    option: options.showAsAction,
+  });
 
-  await scrollIntoView('send-command-button');
-  await element(by.id('send-command-button')).tap();
+  await scrollToAndTap('send-command-button');
 }
 
 async function openMenu() {
@@ -222,9 +240,8 @@ async function waitForMenuItem(title: MenuTitle) {
     .withTimeout(MENU_ANIMATION_TIMEOUT);
 }
 
-// Detox resolves matchers against a single window: while the popup holds focus
-// nothing behind it is in the searched hierarchy, so the entry going away is
-// not enough — the screen itself has to become addressable again.
+// Detox searches one window: while the popup holds focus nothing behind it is
+// in the hierarchy, so the screen itself has to become addressable again.
 async function waitForScreen() {
   await waitFor(element(by.id(SCROLLVIEW_ID)))
     .toBeVisible()
@@ -240,8 +257,8 @@ async function tapMenuItem(title: MenuTitle) {
   await waitForScreen();
 }
 
-// Presses Back only when the popup is actually up: a menu that never opened
-// would otherwise take the Back press itself and pop the test screen.
+// Back only when the popup is up: otherwise the activity takes it and pops the
+// test screen.
 async function closeMenuIfOpen() {
   const isOpen = await waitFor(element(popup))
     .toExist()
@@ -259,8 +276,8 @@ async function closeMenuIfOpen() {
   await waitForScreen();
 }
 
-// Rows are stacked vertically, so their on-screen positions carry the order the
-// menu was built in. Only callable while the menu is open.
+// Rows are stacked vertically, so their y positions carry the menu order. Only
+// callable while the menu is open.
 async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
   const rows: { title: MenuTitle; top: number }[] = [];
 
@@ -278,10 +295,10 @@ async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
   jestExpect(topToBottom).toEqual([...titles]);
 }
 
-// Asserts the exact overflow menu contents, then closes it. `expectedVisible`
-// is a non-empty subset of ALL_TITLES — a title outside that set would go
-// unasserted, and the first entry gates the open animation. With `checkOrder`,
-// the entries must also appear top to bottom in the order given.
+// Asserts the exact overflow menu contents — every expected row present and
+// icon-less, all other titles absent — then closes it. `expectedVisible` is a
+// non-empty subset of ALL_TITLES (anything else would go unasserted); its first
+// entry gates the open animation. `checkOrder` also asserts top-to-bottom order.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
   { checkOrder = false }: { checkOrder?: boolean } = {},
@@ -291,12 +308,14 @@ async function expectMenuItems(
   let assertionFailed = false;
 
   try {
-    // Populated in a single layout pass, so once the first expected entry is up
-    // the `not.toExist()` checks below cannot pass prematurely.
+    // Rows populate in one layout pass, so once the first is up the
+    // `not.toExist()` checks below cannot pass prematurely.
     await waitForMenuItem(expectedVisible[0]);
 
     for (const title of expectedVisible) {
       await expect(element(overflowRow(title))).toBeVisible();
+      // Icons never render in the overflow menu, whatever the `icon` prop.
+      await expect(element(overflowRowImage(title))).not.toExist();
     }
 
     if (checkOrder) {
@@ -312,8 +331,7 @@ async function expectMenuItems(
     assertionFailed = true;
     throw error;
   } finally {
-    // Closed here so a failed assertion does not leave the popup covering the
-    // screen — this suite is stateful and every later step would then fail.
+    // A leaked popup would fail every later step of this stateful suite.
     try {
       await closeMenuIfOpen();
     } catch (cleanupError) {
@@ -325,31 +343,39 @@ async function expectMenuItems(
   }
 }
 
-/** Promoted to the toolbar, rendering its icon in place of its title. */
+/**
+ * Promoted to the toolbar, rendering its icon in place of its title. Asserted
+ * positively through the cleared text — on Android a negated matcher passes on
+ * a missing view. Which icon it is stays manual (see the header comment).
+ */
 async function expectIconActionItem(title: MenuTitle) {
-  await waitFor(element(actionItemLabel(title)))
+  await waitFor(actionItem(title))
     .toBeVisible()
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-  await expect(element(actionItemText(title))).not.toExist();
+  await waitFor(actionItem(title))
+    .toHaveText('')
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
 }
 
 /**
- * Promoted to the toolbar with its title rendered as text — either because no
- * icon is set, or because the WITH_TEXT modifier put the title beside the icon.
- * Whether an icon sits next to the text is not assertable through Detox.
+ * Promoted to the toolbar with its title as text — no icon set, or WITH_TEXT
+ * put the title beside the icon. Whether an icon sits next to the text is not
+ * assertable: it is a compound drawable of the same `TextView`, not a view.
  */
 async function expectTextActionItem(title: MenuTitle) {
-  await waitFor(element(actionItemText(title)))
+  await waitFor(actionItem(title))
     .toBeVisible()
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
+  await waitFor(actionItem(title))
+    .toHaveText(title)
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
 }
 
-/** Not promoted: neither the text nor the icon form is in the toolbar. */
+/** Not promoted: the button is in neither form in the toolbar. */
 async function expectNoActionItem(title: MenuTitle) {
-  await waitFor(element(actionItemText(title)))
+  await waitFor(actionItem(title))
     .not.toExist()
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-  await expect(element(actionItemLabel(title))).not.toExist();
 }
 
 async function expectNoActionItems() {
@@ -358,50 +384,46 @@ async function expectNoActionItems() {
   }
 }
 
-async function expectLastClicked(id: string) {
+async function expectLastClicked(id: IdOption) {
   await scrollIntoView('last-clicked-text');
   await expect(element(by.id('last-clicked-text'))).toHaveText(
     `Last clicked: ${id}`,
   );
 }
 
-// The WITH_TEXT modifier only takes effect where the platform allows text
-// alongside an action icon, which on a phone is landscape only.
+// WITH_TEXT only applies where the platform allows text beside an action icon —
+// on a phone, landscape only.
 //
-// The rotation is asynchronous and nothing on the screen appears or disappears
-// with it — the header title, the scroll view and every control stay visible
-// throughout — so there is no matcher-based settle signal. The scroll view's
-// frame is one: wait until its aspect matches the new orientation. Returning
-// early leaves the next interaction tapping coordinates from the previous
-// layout, which is how a picker row tap ends up on the navigation bar.
+// Rotation is asynchronous and no element appears or disappears with it, so
+// there is no matcher to wait on; the scroll view's aspect ratio is the settle
+// signal. Returning early would leave the next tap using coordinates from the
+// old layout.
 async function setOrientation(orientation: 'portrait' | 'landscape') {
   await device.setOrientation(orientation);
 
-  const deadline = Date.now() + ROTATION_TIMEOUT;
   let previous: ElementAttributeFrame | null = null;
 
-  for (;;) {
-    const frame = await frameOf(SCROLLVIEW_ID);
-    const hasNewAspect =
-      orientation === 'landscape'
-        ? frame.width > frame.height
-        : frame.height > frame.width;
+  await waitUntil(
+    async () => {
+      const frame = await frameOf(SCROLLVIEW_ID);
+      const hasNewAspect =
+        orientation === 'landscape'
+          ? frame.width > frame.height
+          : frame.height > frame.width;
 
-    // Two identical readings, so the rotation animation is over rather than
-    // merely past the point where the new layout was applied.
-    if (hasNewAspect && previous && isSameFrame(previous, frame)) {
-      return;
-    }
-
-    if (Date.now() > deadline) {
-      throw new Error(
-        `The screen did not settle into ${orientation} within ${ROTATION_TIMEOUT} ms.`,
-      );
-    }
-
-    previous = frame;
-    await sleep(SETTLE_POLL_INTERVAL);
-  }
+      // Two identical readings: the rotation animation is over, not merely
+      // past the point where the new layout was applied.
+      const isSettled =
+        hasNewAspect && previous !== null && isSameFrame(previous, frame);
+      previous = frame;
+      return isSettled;
+    },
+    {
+      timeout: ROTATION_TIMEOUT,
+      interval: SETTLE_POLL_INTERVAL,
+      message: `the screen to settle into ${orientation}`,
+    },
+  );
 }
 
 function isSameFrame(
@@ -422,8 +444,8 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     );
   });
 
-  // A test failing mid-rotation would otherwise leave every later test in
-  // landscape, where promotion rules differ.
+  // A failure mid-rotation would otherwise leave later tests in landscape,
+  // where promotion rules differ.
   afterAll(async () => {
     await device.setOrientation('portrait');
   });
@@ -477,7 +499,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     });
 
     it('reports item-1 when tapping the action button', async () => {
-      await element(actionItemLabel('I1')).tap();
+      await actionItem('I1').tap();
 
       await expectLastClicked('item-1');
     });
@@ -505,9 +527,9 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
   });
 
   describe('props — ifRoom', () => {
-    // Only slot 1 is promoted here: with all three requesting ifRoom the
-    // number that fits is width-dependent, which `scenario.md` covers manually.
-    it('promotes item-1 as a text action button when there is room', async () => {
+    // With all three requesting ifRoom, how many fit is width-dependent: two
+    // text buttons on the reference emulator. `scenario.md` covers other widths.
+    it('promotes the two items that fit as text action buttons', async () => {
       await setSlotIcon(1, 'undefined');
       await setSlotShowAsAction(1, 'ifRoom');
       await setSlotIcon(2, 'undefined');
@@ -522,6 +544,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
   });
 
   describe('props — ifRoomWithText', () => {
+    // Icon-only buttons are narrower than text ones, so all three fit here.
     it('renders icon-only in portrait', async () => {
       await setSlotIcon(1, 'searchIcon');
       await setSlotShowAsAction(1, 'ifRoomWithText');
@@ -532,7 +555,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
 
       await expectIconActionItem('I1');
       await expectIconActionItem('Item 2');
-      await expectMenuItems(['Item Number Three']);
+      await expectIconActionItem('Item Number Three');
     });
 
     it('puts the title beside the icon in landscape', async () => {
@@ -540,9 +563,10 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
 
       await expectTextActionItem('I1');
       await expectTextActionItem('Item 2');
+      await expectTextActionItem('Item Number Three');
     });
 
-    it('demotes item-1 back to the overflow menu once the props are reset', async () => {
+    it('demotes every item back to the overflow menu once the props are reset', async () => {
       await setOrientation('portrait');
       await setSlotIcon(1, 'undefined');
       await setSlotShowAsAction(1, 'undefined');

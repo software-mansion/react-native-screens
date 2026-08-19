@@ -18,10 +18,10 @@ import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
-type IdOption = (typeof ID_OPTIONS)[number];
+export type IdOption = (typeof ID_OPTIONS)[number];
 
 const ICON_OPTIONS = ['undefined', 'searchIcon'] as const;
-type IconOption = (typeof ICON_OPTIONS)[number];
+export type IconOption = (typeof ICON_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = [
   'undefined',
@@ -31,10 +31,10 @@ const SHOW_AS_ACTION_OPTIONS = [
   'ifRoom',
   'ifRoomWithText',
 ] as const;
-type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
+export type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
-type CmdIconOption = 'no change' | IconOption;
-type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
+export type CmdIconOption = 'no change' | IconOption;
+export type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
 
 const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const CMD_SHOW_AS_ACTION_OPTIONS: CmdShowAsActionOption[] = [
@@ -112,6 +112,7 @@ function updateSlotAt(
 }
 
 const HEADER_TITLE = 'Show As Action Test';
+export type HeaderTitle = typeof HEADER_TITLE;
 
 function TestStackToolbarMenuShowAsAction() {
   return (

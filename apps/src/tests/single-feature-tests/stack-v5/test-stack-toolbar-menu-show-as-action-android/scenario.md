@@ -17,24 +17,26 @@ effect when an icon is present.
 
 ## E2E test
 
-Incomplete: every step is automated except the width-dependent and
-purely visual assertions. The test asserts placement — whether an item
-sits in the toolbar or in the overflow menu — and, for toolbar items,
-whether it renders icon-only or with its title as text. Icon-only is
-detected through the item's content description, which
-`ActionMenuItemView` falls back to the title for exactly when the text
-is hidden; the WITH_TEXT layout is checked by rotating the device.
+Incomplete: every step is automated except the purely visual assertions.
+The test asserts placement — whether an item sits in the toolbar or in the
+overflow menu — and, for toolbar items, whether it renders icon-only or with
+its title as text. Both forms are matched through the action button's
+`by.label` (title as content description when icon-only, title as text
+otherwise); icon-only is asserted through the button's cleared text, which
+`ActionMenuItemView` sets to empty exactly when an icon replaces the title.
+The WITH_TEXT layout is checked by rotating the device. Every overflow row is
+asserted icon-less (no visible image view in the row).
+
+Steps 11 and 12 promote all three slots. How many fit is screen-width
+dependent, so the e2e test pins the count observed on the reference
+emulator (API 36, portrait): two text buttons for `ifRoom`, three icon
+buttons for `ifRoomWithText`. Other widths are manual.
 
 Not covered:
 
-- Step 5 / step 12: that overflow rows render no icon. The popup row
-  layout keeps a `GONE` `ImageView` in the hierarchy whether or not an
-  icon is set, so its absence is not assertable.
-- Step 11 / step 12: the `ifRoom` variants with all three slots
-  promoted at once. How many items fit is screen-width dependent, so
-  the e2e test promotes only slot 1 — enough to assert that a fitting
-  item is promoted and the rest fall back to the overflow menu.
-- Icon identity and tint (that the drawable shown is the search glyph).
+- Icon identity and tint (that the drawable shown is the search glyph), and
+  whether an icon sits next to the text in the WITH_TEXT landscape layout —
+  the icon is a compound drawable of the action button, not a view.
 
 ## Prerequisites
 
