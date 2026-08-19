@@ -75,11 +75,12 @@ function resolveShowAsAction(
   return v === 'undefined' ? undefined : v;
 }
 
-const ITEM_TITLES: Record<IdOption, string> = {
+const ITEM_TITLES = {
   'item-1': 'I1',
   'item-2': 'Item 2',
   'item-3': 'Item Number Three',
-};
+} as const satisfies Record<IdOption, string>;
+export type ItemTitle = (typeof ITEM_TITLES)[IdOption];
 
 function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots

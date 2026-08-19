@@ -17,10 +17,10 @@ effect when an icon is present.
 
 ## E2E test
 
-Incomplete. Automated: every step's placement (toolbar vs overflow menu),
-whether a toolbar item is icon-only or shows its title, the WITH_TEXT
-landscape layout via rotation, "Last clicked" after taps, and that overflow
-rows show no icon. For steps 11 and 12 the number of promoted items is pinned
+Incomplete. Automated: every step's placement (toolbar vs overflow menu,
+overflow order included), whether a toolbar item is icon-only or shows its
+title, the WITH_TEXT landscape layout via rotation, "Last clicked" after taps,
+and that overflow rows show no icon. For steps 11 and 12 the number of promoted items is pinned
 to the reference emulator (API 36, portrait).
 
 Manual only:

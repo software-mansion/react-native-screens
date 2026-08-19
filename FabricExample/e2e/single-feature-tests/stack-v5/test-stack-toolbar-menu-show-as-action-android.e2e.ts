@@ -23,6 +23,7 @@ import type {
   HeaderTitle,
   IconOption,
   IdOption,
+  ItemTitle as MenuTitle,
   ShowAsActionOption,
 } from '@apps/tests/single-feature-tests/stack-v5/test-stack-toolbar-menu-show-as-action-android';
 
@@ -53,10 +54,13 @@ const ROTATION_TIMEOUT = 10000;
 
 // Every title this scenario can put into the menu. Assertions check the full
 // set — expected present, all others absent — so an item that fails to move
-// between toolbar and overflow fails the test.
-const ALL_TITLES = ['I1', 'Item 2', 'Item Number Three'] as const;
-
-type MenuTitle = (typeof ALL_TITLES)[number];
+// between toolbar and overflow fails the test. `Record<MenuTitle, …>` makes a
+// missing or unknown title a type error.
+const ALL_TITLES = Object.keys({
+  I1: true,
+  'Item 2': true,
+  'Item Number Three': true,
+} satisfies Record<MenuTitle, true>) as MenuTitle[];
 
 const popup = by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
 
@@ -239,8 +243,20 @@ async function sendCommand(options: {
   await scrollToAndTap('send-command-button');
 }
 
+const overflowButton = () => element(by.label('More options'));
+
 async function openMenu() {
-  await element(by.label('More options')).tap();
+  await overflowButton().tap();
+}
+
+/**
+ * With every item promoted nothing is left to overflow, so AppCompat drops the
+ * overflow button altogether. Waited for, since the toolbar re-inflates.
+ */
+async function expectNoOverflowMenu() {
+  await waitFor(overflowButton())
+    .not.toExist()
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
 }
 
 async function waitForMenuItem(title: MenuTitle) {
@@ -304,13 +320,12 @@ async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
   jestExpect(topToBottom).toEqual([...titles]);
 }
 
-// Asserts the exact overflow menu contents — every expected row present and
-// icon-less, all other titles absent — then closes it. `expectedVisible` is a
-// non-empty subset of ALL_TITLES (anything else would go unasserted); its first
-// entry gates the open animation. `checkOrder` also asserts top-to-bottom order.
+// Asserts the exact overflow menu contents — the given titles top to bottom in
+// that order, each row icon-less, all other titles absent — then closes it.
+// `expectedVisible` is a non-empty subset of ALL_TITLES (anything else would go
+// unasserted); its first entry gates the open animation.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
-  { checkOrder = false }: { checkOrder?: boolean } = {},
 ): Promise<void> {
   await openMenu();
 
@@ -327,9 +342,7 @@ async function expectMenuItems(
       await expect(element(overflowRowImage(title))).not.toExist();
     }
 
-    if (checkOrder) {
-      await expectMenuOrder(expectedVisible);
-    }
+    await expectMenuOrder(expectedVisible);
 
     for (const title of ALL_TITLES) {
       if (!expectedVisible.includes(title)) {
@@ -459,13 +472,15 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     await device.setOrientation('portrait');
   });
 
+  // The direct `openMenu()` cases close the menu via `tapMenuItem`; if a step
+  // fails in between, the popup would otherwise leak into every later case.
+  afterEach(closeMenuIfOpen);
+
   describe('baseline — the default is equivalent to never', () => {
     it('keeps every item in the overflow menu when showAsAction is omitted', async () => {
       await expect(element(by.text(HEADER_TITLE))).toBeVisible();
       await expectNoActionItems();
-      await expectMenuItems(['I1', 'Item 2', 'Item Number Three'], {
-        checkOrder: true,
-      });
+      await expectMenuItems(['I1', 'Item 2', 'Item Number Three']);
     });
 
     it('reports item-1 when tapping "I1" in the overflow menu', async () => {
@@ -565,6 +580,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
       await expectIconActionItem('I1');
       await expectIconActionItem('Item 2');
       await expectIconActionItem('Item Number Three');
+      await expectNoOverflowMenu();
     });
 
     it('puts the title beside the icon in landscape', async () => {
