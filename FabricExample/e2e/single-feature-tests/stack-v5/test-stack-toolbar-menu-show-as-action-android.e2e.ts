@@ -133,12 +133,15 @@ async function clearsNavigationBar(id: string): Promise<boolean> {
   return target.y + target.height <= navigationBarTop;
 }
 
+const NAV_BAR_CLEAR_ATTEMPTS = 3;
+
 // Returns with the target stationary and clear of the navigation bar, ready to
-// be tapped.
+// be tapped — or throws, since a tap under the bar lands on Home and takes the
+// rest of the suite with it.
 async function scrollIntoView(id: string) {
   await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < NAV_BAR_CLEAR_ATTEMPTS; attempt++) {
     await waitUntilStill(id);
 
     if (await clearsNavigationBar(id)) {
@@ -154,6 +157,12 @@ async function scrollIntoView(id: string) {
   }
 
   await waitUntilStill(id);
+
+  if (!(await clearsNavigationBar(id))) {
+    throw new Error(
+      `${id} could not be scrolled clear of the navigation bar after ${NAV_BAR_CLEAR_ATTEMPTS} attempts.`,
+    );
+  }
 }
 
 async function scrollToAndTap(id: string) {
