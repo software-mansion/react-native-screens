@@ -3,7 +3,6 @@ import {
   NativeSyntheticEvent,
   ViewProps,
   View,
-  type ViewInstance,
   TargetedEvent,
   ColorValue,
 } from 'react-native';
@@ -343,7 +342,7 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   preventNativeDismiss?: boolean | undefined;
-  ref?: React.Ref<ViewInstance> | undefined;
+  ref?: React.Ref<React.ComponentRef<typeof View>> | undefined;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -1283,6 +1282,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string | undefined;
+  subtitle?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean | undefined;
@@ -1368,7 +1368,10 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = Record<string, React.RefObject<ViewInstance>>;
+export type ScreensRefsHolder = Record<
+  string,
+  React.RefObject<React.ComponentRef<typeof View>>
+>;
 
 export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder> | undefined;

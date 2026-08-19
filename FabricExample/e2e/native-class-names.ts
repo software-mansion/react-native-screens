@@ -43,14 +43,15 @@ export const CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY = '_UIBadgeView';
 // --- UIKit: navigation bar ---
 
 export const CLASS_NAME_UI_BUTTON_BAR_BUTTON = '_UIButtonBarButton';
+export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
   '_UINavigationBarLargeTitleView';
-export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 
 // --- UIKit: context menu ---
 
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
 export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
+export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
 export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
@@ -74,3 +75,22 @@ export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
+// Detox resolves `by.type` with `isAssignableFrom`, so this also matches the
+// library's internal `StackHeaderAppBarLayout` subclasses.
+export const CLASS_NAME_ANDROID_APP_BAR_LAYOUT =
+  'com.google.android.material.appbar.AppBarLayout';
+export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ActionMenuItemView';
+
+// A row of a popup menu — the anchor for addressing its widgets by item title.
+export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =
+  'androidx.appcompat.view.menu.ListMenuItemView';
+
+// A menu row's `group_divider` and `submenuarrow`.
+export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW =
+  'androidx.appcompat.widget.AppCompatImageView';
+
+// A grouped menu item's checkmark. `by.type` matches subclasses, so these also
+// cover the `AppCompat*` variants the platform inflates.
+export const CLASS_NAME_ANDROID_CHECK_BOX = 'android.widget.CheckBox';
+export const CLASS_NAME_ANDROID_RADIO_BUTTON = 'android.widget.RadioButton';

@@ -18,19 +18,17 @@ enableFreeze(true);
 const ICON = require('@assets/variableIcons/globe_oversized.png');
 
 function makeTab(title: string) {
-  return function Tab() {
-    return (
-      <CenteredLayoutView style={{ backgroundColor: Colors.PurpleLight60 }}>
-        <Text>{title}</Text>
-      </CenteredLayoutView>
-    );
-  };
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.PurpleLight60 }}>
+      <Text>{title}</Text>
+    </CenteredLayoutView>
+  );
 }
 
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: makeTab('Tab 1'),
+    element: makeTab('Tab 1'),
     options: {
       title: 'Tab 1',
       ios: {
@@ -49,7 +47,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: makeTab('Tab 2'),
+    element: makeTab('Tab 2'),
     options: {
       title: 'Tab 2',
       ios: {
@@ -68,7 +66,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab3',
-    Component: makeTab('Tab 3'),
+    element: makeTab('Tab 3'),
     options: {
       title: 'Tab 3',
       ios: {

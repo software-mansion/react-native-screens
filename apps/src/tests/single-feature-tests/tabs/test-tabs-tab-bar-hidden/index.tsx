@@ -32,7 +32,7 @@ function ConfigScreen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       tabBarItemTestID: 'tab-bar-item-1-id',

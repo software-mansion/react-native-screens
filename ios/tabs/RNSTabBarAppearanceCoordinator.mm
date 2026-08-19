@@ -1,6 +1,7 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
+#import <React/RCTLog.h>
 #import "RCTConvert+RNSTabs.h"
 #import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
@@ -68,9 +69,15 @@
       }
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
-      UITabBarSystemItem systemItem =
+      std::optional<UITabBarSystemItem> systemItem =
           rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
+      if (!systemItem) {
+        RCTLogError(
+            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+            (long)screenView.systemItem);
+        return;
+      }
+      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].image;
     } else {
       tabBarItem.image = nil;
     }
@@ -83,9 +90,15 @@
       }
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
-      UITabBarSystemItem systemItem =
+      std::optional<UITabBarSystemItem> systemItem =
           rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
+      if (!systemItem) {
+        RCTLogError(
+            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+            (long)screenView.systemItem);
+        return;
+      }
+      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].selectedImage;
     } else {
       tabBarItem.selectedImage = nil;
     }
@@ -163,13 +176,6 @@
   if ([screenParentViewController isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)screenParentViewController;
     [tabBarVC.tabBar setNeedsLayout];
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    if (@available(iOS 26, *)) {
-      // Without this the deferred pass can measure the label slot before the
-      // image lands, truncating the label until a tab is tapped.
-      [tabBarVC.tabBar layoutIfNeeded];
-    }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   }
 }
 

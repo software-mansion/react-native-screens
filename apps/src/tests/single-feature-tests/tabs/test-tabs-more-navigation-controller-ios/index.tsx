@@ -46,32 +46,32 @@ function TabsNavigationButtons() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'First' },
   },
   {
     name: 'Second',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Second' },
   },
   {
     name: 'Third',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Third' },
   },
   {
     name: 'Fourth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fourth' },
   },
   {
     name: 'Fifth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Fifth' },
   },
   {
     name: 'Sixth',
-    Component: ContentView,
+    element: <ContentView />,
     options: { ...DEFAULT_TAB_ROUTE_OPTIONS, title: 'Sixth' },
   },
 ];

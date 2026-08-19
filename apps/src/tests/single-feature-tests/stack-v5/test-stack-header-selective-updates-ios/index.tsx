@@ -140,7 +140,7 @@ export function TestStackHeaderSelectiveUpdatesIOS() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
+            element: <ConfigScreen />,
           },
         ]}
       />

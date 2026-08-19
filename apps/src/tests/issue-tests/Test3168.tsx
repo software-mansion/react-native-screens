@@ -199,7 +199,7 @@ function TabsStackComponent() {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'main',
-      Component: () => Menu({ tabsMode: true }),
+      element: <Menu tabsMode={true} />,
       options: {
         title: 'Main',
         ios: {
@@ -212,7 +212,7 @@ function TabsStackComponent() {
     },
     {
       name: 'another',
-      Component: AnotherTab,
+      element: <AnotherTab />,
       options: {
         title: 'Another',
         ios: {
@@ -225,7 +225,7 @@ function TabsStackComponent() {
     },
     {
       name: 'examples',
-      Component: () => ExamplesStackComponent({ showMenu: false }),
+      element: <ExamplesStackComponent showMenu={false} />,
       options: {
         title: 'Search',
         ios: {

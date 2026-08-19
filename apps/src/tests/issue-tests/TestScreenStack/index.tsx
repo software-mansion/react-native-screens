@@ -26,11 +26,11 @@ function TemplateScreen() {
 const ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'A',
-    Component: TemplateScreen,
+    element: <TemplateScreen />,
   },
   {
     name: 'B',
-    Component: TemplateScreen,
+    element: <TemplateScreen />,
   },
 ];
 

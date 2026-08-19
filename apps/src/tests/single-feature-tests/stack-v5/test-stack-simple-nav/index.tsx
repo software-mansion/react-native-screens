@@ -17,7 +17,7 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: HomeScreen,
+          element: <HomeScreen />,
           // Rendering a header (via headerConfig) makes the native back
           // button appear on non-root screens, including on Android. The
           // root screen (Home) always hides the back button.
@@ -29,7 +29,7 @@ function StackSetup() {
         },
         {
           name: 'A',
-          Component: AScreen,
+          element: <AScreen />,
           options: {
             headerConfig: {
               title: 'A',
@@ -38,7 +38,7 @@ function StackSetup() {
         },
         {
           name: 'B',
-          Component: BScreen,
+          element: <BScreen />,
           options: {
             headerConfig: {
               title: 'B',

@@ -4,7 +4,7 @@
 
 **Description:** Verify that the `FormSheet` component correctly emits dismiss events. The `onDismiss` event should be fired every time the sheet is dismissed programmatically. The `onNativeDismiss` event should be fired when the user dismisses the sheet via a native gesture (e.g., swiping down or tapping the backdrop).
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ TBD: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone
+- Android emulator
 
 ## Steps
 

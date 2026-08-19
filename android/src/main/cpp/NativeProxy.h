@@ -4,6 +4,7 @@
 #include <react/fabric/JFabricUIManager.h>
 #include "RNSScreenRemovalListener.h"
 
+#include <cstdint>
 #include <mutex>
 #include <string>
 
@@ -13,7 +14,6 @@ using namespace facebook::jni;
 
 class NativeProxy : public jni::HybridClass<NativeProxy> {
  public:
-  std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
   std::vector<std::weak_ptr<const facebook::react::MountingCoordinator>>
       coordinatorsWithMountingOverrides_;
   static auto constexpr kJavaDescriptor =
@@ -27,6 +27,12 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
   jni::global_ref<NativeProxy::javaobject> javaPart_;
 
   std::mutex coordinatorsMutex_;
+
+  // Serializes callback install (nativeAddMutationsListener) with
+  // invalidateNative: the install-time copy of javaPart_ must not race the
+  // invalidation write, and the stored token must match the last install.
+  std::mutex installMutex_;
+  uint64_t removalListenerToken_{0};
 
   explicit NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis);
 

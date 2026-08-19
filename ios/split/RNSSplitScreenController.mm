@@ -2,9 +2,8 @@
 
 #import <React/RCTAssert.h>
 #import "RNSSplitHostComponentView.h"
+#import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
-// TODO: @t0maboro - temporal - will be removed with HostController migration
-#import "Swift-Bridging.h"
 
 @implementation RNSSplitScreenController {
   RNSSplitScreenComponentView *_splitScreenComponentView;

@@ -15,7 +15,7 @@ and hidden items preserving their selection in callbacks.
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Full: Covers all manual scenario steps.
 
 ## Prerequisites
 

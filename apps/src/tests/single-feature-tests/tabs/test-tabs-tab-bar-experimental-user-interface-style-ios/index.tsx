@@ -40,11 +40,11 @@ function LightRootScreenContent() {
 }
 
 const ROUTE_CONFIGS: StackRouteConfig[] = [
-  { name: 'home', Component: HomeScreen },
-  { name: 'darkRoot', Component: DarkRootScreenContent },
-  { name: 'darkPushed', Component: DarkInterfaceStyleScreen },
-  { name: 'lightRoot', Component: LightRootScreenContent },
-  { name: 'lightPushed', Component: LightInterfaceStyleScreen },
+  { name: 'home', element: <HomeScreen /> },
+  { name: 'darkRoot', element: <DarkRootScreenContent /> },
+  { name: 'darkPushed', element: <DarkInterfaceStyleScreen /> },
+  { name: 'lightRoot', element: <LightRootScreenContent /> },
+  { name: 'lightPushed', element: <LightInterfaceStyleScreen /> },
 ];
 
 function TestTabsTabBarExperimentalUserInterfaceStyle() {

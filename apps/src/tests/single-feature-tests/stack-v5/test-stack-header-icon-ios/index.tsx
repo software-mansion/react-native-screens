@@ -223,7 +223,7 @@ function TestStackHeaderIconIOS() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
+            element: <ConfigScreen />,
           },
         ]}
       />

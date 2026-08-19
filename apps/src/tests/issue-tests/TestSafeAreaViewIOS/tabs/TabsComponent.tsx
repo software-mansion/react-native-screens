@@ -15,7 +15,7 @@ export default function TabsComponent() {
   const TAB_CONFIGS: TabRouteConfig[] = [
     {
       name: 'config',
-      Component: ConfigTab,
+      element: <ConfigTab />,
       options: {
         title: 'Config',
         ios: {
@@ -28,7 +28,7 @@ export default function TabsComponent() {
     },
     {
       name: 'test',
-      Component: TestTab,
+      element: <TestTab />,
       options: {
         title: 'Test',
         ios: {

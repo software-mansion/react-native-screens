@@ -18,10 +18,18 @@ directly to work around issue #1459.
 
 ## E2E test
 
-TBD: Automation is plausible - the system back button, the native header
-back-button chevron, and the on-screen buttons are all Detox-drivable on
-Android - but no e2e test has been implemented yet. The system gesture-back
-(edge swipe) step may need platform-specific handling.
+Incomplete. Covered:
+
+- Pop actions triggered by the Pop button.
+- Header back chevron/button behavior when `preventNativeDismiss` is Enabled.
+- Runtime toggling of the flag on **B**: the label flips in both directions,
+and a chevron press made immediately after a toggle honors the latest value.
+
+Manual only (not automated):
+
+- Pop actions triggered by the system back gesture (edge swipe).
+- Pop actions triggered by the header back chevron when `preventNativeDismiss`
+is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ## Prerequisites
 

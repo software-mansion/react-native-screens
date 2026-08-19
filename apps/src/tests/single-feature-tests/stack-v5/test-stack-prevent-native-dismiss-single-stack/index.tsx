@@ -28,11 +28,11 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: HomeScreen,
+          element: <HomeScreen />,
         },
         {
           name: 'A',
-          Component: AScreen,
+          element: <AScreen />,
           options: {
             headerConfig: {
               title: 'A',
@@ -41,7 +41,7 @@ function StackSetup() {
         },
         {
           name: 'B',
-          Component: BScreen,
+          element: <BScreen />,
           options: {
             preventNativeDismiss: true,
             onNativeDismissPrevented: () => {
@@ -111,7 +111,9 @@ function PreventNativeDismissInfo() {
 
   return (
     <View>
-      <Text style={styles.routeInformation}>
+      <Text
+        style={styles.routeInformation}
+        testID="prevent-native-dismiss-info">
         Prevent native dismiss:{' '}
         {navContext.routeOptions.preventNativeDismiss ? 'Enabled' : 'Disabled'}
       </Text>

@@ -71,7 +71,14 @@ class Screen(
         private set
     var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
+
+    // Can be set on the mounting coordinator's thread (see `markAsBeingRemoved`), read on the UI thread.
+    @Volatile
     var isBeingRemoved = false
+        private set
+
+    // Keeps `startTransitionRecursive` / `endTransitionRecursive` calls paired. Should be used on UI thread only.
+    private var isRemovalTransitionStarted = false
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
@@ -439,19 +446,28 @@ class Screen(
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
+    /**
+     * Marks this screen as being removed from the native stack. Safe to call off the UI thread;
+     * must run before the mount transaction removing this screen executes.
+     */
+    fun markAsBeingRemoved() {
+        isBeingRemoved = true
+    }
+
     fun startRemovalTransition() {
-        if (!isBeingRemoved) {
-            isBeingRemoved = true
+        isBeingRemoved = true
+        if (!isRemovalTransitionStarted) {
+            isRemovalTransitionStarted = true
             startTransitionRecursive(this)
         }
     }
 
     fun endRemovalTransition() {
-        if (!isBeingRemoved) {
-            return
+        if (isRemovalTransitionStarted) {
+            isRemovalTransitionStarted = false
+            isBeingRemoved = false
+            endTransitionRecursive(this)
         }
-        isBeingRemoved = false
-        endTransitionRecursive(this)
     }
 
     private fun endTransitionRecursive(parent: ViewGroup) {

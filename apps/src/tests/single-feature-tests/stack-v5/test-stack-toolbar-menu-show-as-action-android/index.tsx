@@ -119,7 +119,7 @@ function TestStackToolbarMenuShowAsAction() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,

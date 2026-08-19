@@ -156,7 +156,7 @@ function ImageTab() {
 const IOS_ROUTES: TabRouteConfig[] = [
   {
     name: 'Tint',
-    Component: TintTab,
+    element: <TintTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tint',
@@ -174,7 +174,7 @@ const IOS_ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'Override',
-    Component: OverrideTab,
+    element: <OverrideTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Override',
@@ -199,7 +199,7 @@ const IOS_ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'XcassetIcon',
-    Component: XcassetDrawableResourceTab,
+    element: <XcassetDrawableResourceTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Xcasset',
@@ -213,7 +213,7 @@ const IOS_ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'Image',
-    Component: ImageTab,
+    element: <ImageTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Image',
@@ -241,7 +241,7 @@ const IOS_ROUTES: TabRouteConfig[] = [
 const ANDROID_ROUTES: TabRouteConfig[] = [
   {
     name: 'DrawableResource',
-    Component: XcassetDrawableResourceTab,
+    element: <XcassetDrawableResourceTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'DrawableResource',
@@ -259,7 +259,7 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'Image',
-    Component: ImageTab,
+    element: <ImageTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Image',
