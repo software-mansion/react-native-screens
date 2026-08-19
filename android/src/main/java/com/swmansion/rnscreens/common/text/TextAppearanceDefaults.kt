@@ -10,6 +10,9 @@ import com.swmansion.rnscreens.utils.resolveStyleResAttr
  * Default text styling of a single title/subtitle slot, resolved from the M3 type-scale
  * style behind [textAppearanceAttr] and the color behind [textColorAttr].
  *
+ * Resolved from the style rather than read back from the widget: Material resolves a slot's
+ * default typeface asynchronously, so until that lands the widget reports [Typeface.DEFAULT].
+ *
  * Values depend on the current theme and display metrics — resolve at apply time through
  * the widget's own context.
  */
@@ -30,10 +33,11 @@ internal class TextAppearanceDefaults(
                 val textSizePx = attrs.getDimension(IDX_TEXT_SIZE, 0f)
                 require(textSizePx > 0f) { "[RNScreens] Text appearance defines no text size." }
 
-                // The M3 type scale always declares the family as a plain string (e.g.
-                // "sans-serif-medium"), which Material itself can only turn into a Typeface
-                // asynchronously. Resolving it here up front yields the same typeface its
-                // async fallback would eventually apply, deterministically.
+                // android:fontFamily is either a font resource (@font/…, resolvable only
+                // asynchronously) or a family name. The M3 type scale always declares a family
+                // name (@string/m3_ref_typeface_* — "sans-serif" / "sans-serif-medium"), so this
+                // is the same synchronous path Material's own fallback and AppCompatTextHelper
+                // take for it.
                 val textStyle = attrs.getInt(IDX_TEXT_STYLE, Typeface.NORMAL)
                 val typeface =
                     attrs.getString(IDX_FONT_FAMILY)?.let { Typeface.create(it, textStyle) }

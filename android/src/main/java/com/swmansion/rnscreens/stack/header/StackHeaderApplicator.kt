@@ -210,6 +210,10 @@ internal class StackHeaderApplicator(
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
                 val toolbar = appBar.toolbar
+
+                // Widget.Material3Expressive.Toolbar#{title,subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font. That style sets no text
+                //   colors, so both come from @macro/m3_comp_app_bar_{title,subtitle}_color.
                 applySlot(
                     view = toolbar,
                     defaults =
@@ -241,10 +245,22 @@ internal class StackHeaderApplicator(
             is StackHeaderAppBarLayout.Collapsing -> {
                 val ctl = appBar.collapsingToolbarLayout
                 val isLarge = appBar.type == StackHeaderType.LARGE
+
+                // Widget.Material3Expressive.CollapsingToolbar.{Large,Medium}#expandedTitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_title_font
                 val expandedTitleAttr =
                     if (isLarge) R.attr.textAppearanceDisplaySmall else R.attr.textAppearanceHeadlineMedium
+
+                // …#expandedSubtitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_subtitle_font
                 val expandedSubtitleAttr =
                     if (isLarge) R.attr.textAppearanceTitleMedium else R.attr.textAppearanceLabelLarge
+
+                // In the calls below, the collapsed appearances and all four colors come from the base
+                // Widget.Material3Expressive.CollapsingToolbar: collapsed{Title,Subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font,
+                // {collapsed,expanded}{Title,Subtitle}TextColor
+                //   = @macro/m3_comp_app_bar_{title,subtitle}_color.
 
                 applySlot(
                     view = ctl,

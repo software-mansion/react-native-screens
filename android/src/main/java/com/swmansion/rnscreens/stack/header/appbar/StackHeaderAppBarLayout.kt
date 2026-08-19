@@ -40,10 +40,12 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
-        // MaterialToolbar creates its title/subtitle TextViews lazily and exposes no getters. We
-        // force them into existence with distinct placeholders, capture them, then clear the text.
-        // Both instances persist for the toolbar's lifetime, so these references stay valid even
-        // while the text is cleared.
+        // Setting text size and typeface separately (Toolbar exposes only a whole text appearance)
+        // needs the title/subtitle TextViews, and Toolbar has no getter for them. Material locates
+        // them by matching the current text (internal ToolbarUtils.getTitleTextView); we do the
+        // same once, with distinct placeholders — they force both views into existence and tell
+        // them apart — and clear the text only after capturing the references. Toolbar keeps both
+        // instances for its lifetime (empty text only detaches them), so the references stay valid.
         internal val titleTextView: TextView
         internal val subtitleTextView: TextView
 
