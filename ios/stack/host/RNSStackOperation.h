@@ -18,8 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSPopOperation : RNSStackOperation
 
-@property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
-
 @end
 
 NS_ASSUME_NONNULL_END
