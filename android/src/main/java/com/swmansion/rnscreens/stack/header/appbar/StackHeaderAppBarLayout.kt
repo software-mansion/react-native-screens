@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.stack.header.appbar
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.PaintDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -56,8 +58,28 @@ internal sealed class StackHeaderAppBarLayout(
         internal val titleTextView: TextView
         internal val subtitleTextView: TextView
 
+        // Keeps the status bar strip in sync with the bar's effective color through
+        // the lift animation (same per-frame mixed color Material applies to the
+        // background). Detached when an explicit statusBarScrimColor is set.
+        private var statusBarScrimSyncEnabled = false
+        private val statusBarScrimSync =
+            object : LiftOnScrollProgressListener() {
+                override fun onUpdate(
+                    elevation: Float,
+                    backgroundColor: Int,
+                    progress: Float,
+                ) {
+                    statusBarForeground?.setTint(backgroundColor)
+                }
+            }
+
         init {
             addView(toolbar)
+
+            // PaintDrawable is not color-extractable, so AppBarLayout's built-in
+            // colorSurface-keyed strip tint sync can never activate and fight the
+            // listener above (or an explicit scrim color) — regardless of theme.
+            statusBarForeground = PaintDrawable().apply { setTint(Color.TRANSPARENT) }
 
             toolbar.title = TITLE_PLACEHOLDER
             toolbar.subtitle = SUBTITLE_PLACEHOLDER
@@ -65,6 +87,16 @@ internal sealed class StackHeaderAppBarLayout(
             subtitleTextView = toolbar.findTextViewWithText(SUBTITLE_PLACEHOLDER)
             toolbar.title = ""
             toolbar.subtitle = ""
+        }
+
+        internal fun setStatusBarScrimSyncEnabled(enabled: Boolean) {
+            if (statusBarScrimSyncEnabled == enabled) return
+            statusBarScrimSyncEnabled = enabled
+            if (enabled) {
+                addLiftOnScrollProgressListener(statusBarScrimSync)
+            } else {
+                removeLiftOnScrollProgressListener(statusBarScrimSync)
+            }
         }
 
         private fun MaterialToolbar.findTextViewWithText(text: String): TextView =
