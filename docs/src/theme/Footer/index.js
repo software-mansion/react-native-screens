@@ -9,7 +9,7 @@ export default function Footer(props) {
     if (!paragraph || paragraph.querySelector('[data-privacy-policy]')) {
       return;
     }
-
+    paragraph.appendChild(document.createTextNode(' Read about our '));
     const link = document.createElement('a');
     link.href = PRIVACY_POLICY_URL;
     link.target = '_blank';

@@ -30,7 +30,7 @@ const config = {
           innerHTML: topbarBannerReservationScript(
             firstZone.zoneId,
             firstZone.contentId,
-            TOPBAR_BANNER.hiddenPaths
+            TOPBAR_BANNER.hiddenPaths,
           ),
         },
       ]
@@ -104,7 +104,7 @@ const config = {
         style: 'light',
         links: [],
         copyright:
-          'All trademarks and copyrights belong to their respective owners. Read about our ',
+          'All trademarks and copyrights belong to their respective owners.',
       },
     }),
 };
