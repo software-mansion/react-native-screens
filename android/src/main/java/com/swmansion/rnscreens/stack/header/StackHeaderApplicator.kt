@@ -32,6 +32,7 @@ import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderContentScrimDrawable
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
@@ -495,7 +496,8 @@ internal class StackHeaderApplicator(
             is StackHeaderAppBarLayout.Collapsing -> {
                 appBar.setLiftOnScrollColor(null)
                 appBar.background = background
-                appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
+                appBar.collapsingToolbarLayout.contentScrim =
+                    StackHeaderContentScrimDrawable(scrolledBackgroundColor)
             }
         }
 
@@ -527,14 +529,18 @@ internal class StackHeaderApplicator(
             is StackHeaderAppBarLayout.Collapsing -> {
                 // Defaulting to the content scrim color masks toolbar content passing
                 // through the status-bar area (scroll-only flags) and is a visual
-                // no-op in the opaque exitUntilCollapsed case.
+                // no-op in the opaque exitUntilCollapsed case. An invisible scrim is
+                // normalized to null so the content scrim exclusion can key on scrim
+                // presence alone.
                 val scrimColor =
                     resolveStatusBarScrimColor(config, drivingColor = scrolledBackgroundColor)
+                        ?.takeIf { Color.alpha(it) > 0 }
                 if (scrimColor != null) {
                     appBar.collapsingToolbarLayout.setStatusBarScrimColor(scrimColor)
                 } else {
                     appBar.collapsingToolbarLayout.statusBarScrim = null
                 }
+                appBar.updateContentScrimExclusion()
             }
         }
     }

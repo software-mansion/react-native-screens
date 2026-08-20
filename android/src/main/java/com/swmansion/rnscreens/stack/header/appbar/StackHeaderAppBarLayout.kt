@@ -7,8 +7,10 @@ import android.graphics.drawable.PaintDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.WindowInsets
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -140,6 +142,9 @@ internal sealed class StackHeaderAppBarLayout(
                     as CollapsingToolbarLayout
             ).apply { addView(toolbar) }
 
+        private var trackedTopInset = 0
+        private var currentVerticalOffset = 0
+
         init {
             require(
                 type == StackHeaderType.MEDIUM ||
@@ -148,6 +153,51 @@ internal sealed class StackHeaderAppBarLayout(
                 "[RNScreens] Collapsing StackHeaderAppBarLayout must be MEDIUM or LARGE type."
             }
             addView(collapsingToolbarLayout)
+
+            addOnOffsetChangedListener { _, verticalOffset ->
+                currentVerticalOffset = verticalOffset
+                updateContentScrimExclusion()
+            }
+        }
+
+        // Observed here because both AppBarLayout and CollapsingToolbarLayout
+        // install their own OnApplyWindowInsetsListener in their constructors —
+        // setting ours would silently replace Material's. Reads the same inset
+        // CTL uses for its status bar scrim bounds.
+        override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
+            @Suppress("DEPRECATION")
+            trackedTopInset =
+                if (fitsSystemWindows) {
+                    WindowInsetsCompat.toWindowInsetsCompat(insets, this).systemWindowInsetTop
+                } else {
+                    0
+                }
+            updateContentScrimExclusion()
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        /**
+         * While a status bar scrim is installed, the content scrim skips the
+         * status-bar strip that the status bar scrim paints alone. Otherwise,
+         * the two scrims stack there while fading (they share the same partial
+         * alpha), showing a darker band during the transition. The strip spans
+         * `[-verticalOffset, -verticalOffset + topInset]` in CTL coordinates,
+         * matching the status bar scrim bounds set in
+         * `CollapsingToolbarLayout.draw`.
+         */
+        internal fun updateContentScrimExclusion() {
+            val contentScrim =
+                collapsingToolbarLayout.contentScrim
+            check(contentScrim is StackHeaderContentScrimDrawable) {
+                "[RNScreens] Unexpected contentScrim class."
+            }
+
+            contentScrim.exclusionBottom =
+                if (collapsingToolbarLayout.statusBarScrim != null && trackedTopInset > 0) {
+                    trackedTopInset - currentVerticalOffset
+                } else {
+                    0
+                }
         }
 
         private companion object {

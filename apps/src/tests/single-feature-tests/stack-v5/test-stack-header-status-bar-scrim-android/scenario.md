@@ -21,8 +21,7 @@ colors and animated transitions, neither of which Detox can read.
 
 ## Prerequisites
 
-- Android emulator or device, app drawn edge-to-edge (the default; without a
-  top window inset reaching the header no scrim is drawn at all).
+- Android emulator or device
 
 ## Note
 
@@ -107,6 +106,8 @@ colors and animated transitions, neither of which Detox can read.
 
 - [ ] A red scrim fades in over the status-bar area together with the green
       content scrim below it; no red is visible while expanded.
+- [ ] Mid-fade the status-bar area is not darker than the fading scrims — the
+      status bar scrim never stacks on top of the content scrim.
 
 13. Set `statusBarScrimColor` = `transparent`, `scrollFlagExitUntilCollapsed`
     OFF, and scroll the header away.
