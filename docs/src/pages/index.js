@@ -7,7 +7,6 @@ import Downloads from '@site/src/components/Downloads';
 import Overview from '@site/src/components/Overview';
 import LearnMore from '@site/src/components/LearnMore';
 import Testimonals from '@site/src/components/Testimonials';
-import Sponsors from '@site/src/components/Sponsors';
 import { HireUsSection } from '@swmansion/t-rex-ui';
 import styles from './styles.module.css';
 
@@ -27,7 +26,6 @@ export default function Home() {
       </div>
       <Testimonals />
       <div className={styles.container}>
-        <Sponsors />
         <HireUsSection
           href={
             'https://swmansion.com/contact/projects?utm_source=screens&utm_medium=docs '
