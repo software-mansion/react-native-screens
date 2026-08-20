@@ -814,8 +814,10 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * The default scrim is installed only when the color it follows resolves to
    * a fully opaque color; translucent headers stay see-through. An explicit
-   * translucent color is honored, but composites over the header background
-   * (small) or the content scrim (`medium` / `large`) in the status-bar area.
+   * translucent color is honored and composites over the header background in
+   * the status-bar area (for `medium` / `large` headers the content scrim is
+   * excluded from that area while a scrim is installed, so the two scrims
+   * never stack).
    *
    * @platform android
    */
