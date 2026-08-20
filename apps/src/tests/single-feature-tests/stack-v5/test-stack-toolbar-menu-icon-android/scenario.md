@@ -15,7 +15,11 @@ props); changes to one item never touch others.
 
 ## E2E test
 
-TBD: E2E coverage has not been determined yet.
+Incomplete. Not automated. Almost every check verifies which drawable is shown
+and its tint color per interaction state (normal / pressed / focused /
+disabled) — pixel-level visual assertions Detox cannot express. The pressed
+and focused states additionally require observing rendering mid-gesture and
+hardware keyboard focus, neither of which Detox supports.
 
 ## Prerequisites
 
