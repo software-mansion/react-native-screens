@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -15,6 +15,7 @@ import {
   ScrollViewMarker,
 } from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
@@ -193,51 +194,56 @@ function MainScreen() {
   }, [cmdTargetId, cmdIcon, cmdShowAsAction]);
 
   return (
-    <ScrollViewMarker style={styles.scrollViewMarker}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        testID="toolbar-menu-show-as-action-scrollview">
-        <Text style={styles.heading}>Send Command</Text>
-        <SettingsPicker<IdOption>
-          label="target id"
-          value={cmdTargetId}
-          items={[...ID_OPTIONS]}
-          onValueChange={setCmdTargetId}
-          testID="cmd-target-picker"
-        />
-        <SettingsPicker<CmdIconOption>
-          label="cmd icon"
-          value={cmdIcon}
-          items={CMD_ICON_OPTIONS}
-          onValueChange={setCmdIcon}
-          testID="cmd-icon-picker"
-        />
-        <SettingsPicker<CmdShowAsActionOption>
-          label="cmd showAsAction"
-          value={cmdShowAsAction}
-          items={CMD_SHOW_AS_ACTION_OPTIONS}
-          onValueChange={setCmdShowAsAction}
-          testID="cmd-show-as-action-picker"
-        />
-        <Button
-          title="Send Command"
-          onPress={sendCommand}
-          testID="send-command-button"
-        />
+    // The app draws edge to edge, so without the bottom inset the list's
+    // viewport runs under the navigation bar and its lowest row cannot be
+    // tapped — neither by hand nor by Detox.
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollViewMarker style={styles.scrollViewMarker}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          testID="toolbar-menu-show-as-action-scrollview">
+          <Text style={styles.heading}>Send Command</Text>
+          <SettingsPicker<IdOption>
+            label="target id"
+            value={cmdTargetId}
+            items={[...ID_OPTIONS]}
+            onValueChange={setCmdTargetId}
+            testID="cmd-target-picker"
+          />
+          <SettingsPicker<CmdIconOption>
+            label="cmd icon"
+            value={cmdIcon}
+            items={CMD_ICON_OPTIONS}
+            onValueChange={setCmdIcon}
+            testID="cmd-icon-picker"
+          />
+          <SettingsPicker<CmdShowAsActionOption>
+            label="cmd showAsAction"
+            value={cmdShowAsAction}
+            items={CMD_SHOW_AS_ACTION_OPTIONS}
+            onValueChange={setCmdShowAsAction}
+            testID="cmd-show-as-action-picker"
+          />
+          <Button
+            title="Send Command"
+            onPress={sendCommand}
+            testID="send-command-button"
+          />
 
-        <Text style={styles.heading}>Result</Text>
-        <Text testID="last-clicked-text" style={styles.result}>
-          Last clicked: {lastClicked ?? '—'}
-        </Text>
+          <Text style={styles.heading}>Result</Text>
+          <Text testID="last-clicked-text" style={styles.result}>
+            Last clicked: {lastClicked ?? '—'}
+          </Text>
 
-        <Text style={styles.heading}>Menu Items — Props</Text>
-        <SlotControls
-          slots={slots}
-          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-        />
-      </ScrollView>
-    </ScrollViewMarker>
+          <Text style={styles.heading}>Menu Items — Props</Text>
+          <SlotControls
+            slots={slots}
+            updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+          />
+        </ScrollView>
+      </ScrollViewMarker>
+    </SafeAreaView>
   );
 }
 

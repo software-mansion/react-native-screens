@@ -1,14 +1,10 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import type { ElementAttributeFrame } from 'detox/detox';
 import {
   describeIfAndroid,
-  getElementAttributes,
-  getTopmostMatch,
-  pickerOptionId,
   rewindAndScrollUntilVisible,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
-  waitUntil,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
@@ -48,10 +44,6 @@ const MENU_PRESENCE_TIMEOUT = 250;
 // from a configuration change, so the toolbar can lag the assertion.
 const TOOLBAR_UPDATE_TIMEOUT = 3000;
 
-// Budget for the device to rotate and the app to lay out for the new
-// orientation. Generous: an emulator rotation is slow and animated.
-const ROTATION_TIMEOUT = 10000;
-
 // Every title this scenario can put into the menu. Assertions check the full
 // set — expected present, all others absent — so an item that fails to move
 // between toolbar and overflow fails the test. `Record<MenuTitle, …>` makes a
@@ -87,134 +79,35 @@ const actionItem = (title: MenuTitle) =>
     by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW)),
   );
 
-async function frameOf(id: string): Promise<ElementAttributeFrame> {
-  const attributes = await getElementAttributes({ by: 'id', value: id });
-  return attributes.frame;
-}
-
-// Detox's scroll gestures fling and the content keeps gliding after the call
-// resolves, while a tap's coordinates are computed a moment before the touch
-// lands — so a tap into a still-moving list hits whatever slid under it (another
-// slot's option row, or the navigation bar). Nothing is tapped until its frame
-// has stopped changing.
-const SETTLE_TIMEOUT = 5000;
-const SETTLE_POLL_INTERVAL = 50;
-
-async function waitUntilStill(id: string) {
-  let previous: ElementAttributeFrame | null = null;
-
-  await waitUntil(
-    async () => {
-      const frame = await frameOf(id);
-      const isStill = previous !== null && isSameFrame(previous, frame);
-      previous = frame;
-      return isStill;
-    },
-    {
-      timeout: SETTLE_TIMEOUT,
-      interval: SETTLE_POLL_INTERVAL,
-      message: `${id} to stop moving`,
-    },
-  );
-}
-
-// The scroll view runs edge to edge, so a row can sit behind the system
-// navigation bar. That bar is a separate window and does not clip the row, so
-// `toBeVisible()` passes there and a tap at the row's center lands on Home.
-// Everything below this fraction of the viewport counts as the bar. Measured on
-// the reference emulator (API 36, 1080x2400 @ 420dpi, 3-button nav): the bar is
-// 126px (48dp) and the portrait viewport under the header is ~2100px, so 8% is
-// ~170px — clears the bar with ~16dp to spare, and the gesture bar is shorter.
-const NAV_BAR_VIEWPORT_FRACTION = 0.08;
-
-async function clearsNavigationBar(id: string): Promise<boolean> {
-  const viewport = await frameOf(SCROLLVIEW_ID);
-  const target = await frameOf(id);
-  const navigationBarTop =
-    viewport.y + viewport.height * (1 - NAV_BAR_VIEWPORT_FRACTION);
-
-  // Both frames are in screen coordinates — no dp/px conversion needed.
-  return target.y + target.height <= navigationBarTop;
-}
-
-const NAV_BAR_CLEAR_ATTEMPTS = 3;
-
-// Returns with the target stationary and clear of the navigation bar, ready to
-// be tapped — or throws, since a tap under the bar lands on Home and takes the
-// rest of the suite with it.
-async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
-
-  for (let attempt = 0; attempt < NAV_BAR_CLEAR_ATTEMPTS; attempt++) {
-    await waitUntilStill(id);
-
-    if (await clearsNavigationBar(id)) {
-      return;
-    }
-
-    try {
-      await element(by.id(SCROLLVIEW_ID)).scroll(200, 'down', Number.NaN, 0.5);
-    } catch {
-      // At the content edge: the row is already as high as it can get.
-      break;
-    }
-  }
-
-  await waitUntilStill(id);
-
-  if (!(await clearsNavigationBar(id))) {
-    throw new Error(
-      `${id} could not be scrolled clear of the navigation bar after ${NAV_BAR_CLEAR_ATTEMPTS} attempts.`,
-    );
-  }
-}
+const SCROLL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
 async function scrollToAndTap(id: string) {
-  await scrollIntoView(id);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
   await element(by.id(id)).tap();
-}
-
-type PickerSelection = {
-  pickerId: string;
-  /** The picker's `label` prop — option `testID`s are derived from it. */
-  label: string;
-  option: string;
-};
-
-// Same contract as e2e-utils' `selectPickerOption`, but every tap goes through
-// this spec's `scrollIntoView` (settle + navigation-bar guards). Returns early
-// when the picker already shows `option`. Closes the picker again: its option
-// rows would otherwise collide with the `by.text` menu matchers.
-async function selectOption({ pickerId, label, option }: PickerSelection) {
-  const expected = `${label}: ${option}`;
-
-  if ((await getTopmostMatch(by.id(pickerId))).text === expected) {
-    return;
-  }
-
-  await scrollToAndTap(pickerId);
-  await scrollToAndTap(pickerOptionId(label, option));
-  await scrollToAndTap(pickerId);
-
-  await expect(element(by.id(pickerId))).toHaveText(expected);
 }
 
 type Slot = 1 | 2 | 3;
 
 async function setSlotShowAsAction(slot: Slot, option: ShowAsActionOption) {
-  await selectOption({
-    pickerId: `slot-${slot}-show-as-action-picker`,
-    label: `slot ${slot} showAsAction`,
-    option,
-  });
+  await selectPickerOption(
+    {
+      pickerId: `slot-${slot}-show-as-action-picker`,
+      label: `slot ${slot} showAsAction`,
+      option,
+    },
+    SCROLL,
+  );
 }
 
 async function setSlotIcon(slot: Slot, option: IconOption) {
-  await selectOption({
-    pickerId: `slot-${slot}-icon-picker`,
-    label: `slot ${slot} icon`,
-    option,
-  });
+  await selectPickerOption(
+    {
+      pickerId: `slot-${slot}-icon-picker`,
+      label: `slot ${slot} icon`,
+      option,
+    },
+    SCROLL,
+  );
 }
 
 /** Keyed by the `label` the option `testID`s are derived from. */
@@ -227,18 +120,24 @@ const COMMAND_PICKERS = {
   },
 } as const;
 
-/** The pickers keep their last value; `selectOption` skips ones already set. */
+/** The pickers keep their last value; `selectPickerOption` skips ones already set. */
 async function sendCommand(options: {
   target: IdOption;
   icon: CmdIconOption;
   showAsAction: CmdShowAsActionOption;
 }) {
-  await selectOption({ ...COMMAND_PICKERS.target, option: options.target });
-  await selectOption({ ...COMMAND_PICKERS.icon, option: options.icon });
-  await selectOption({
-    ...COMMAND_PICKERS.showAsAction,
-    option: options.showAsAction,
-  });
+  await selectPickerOption(
+    { ...COMMAND_PICKERS.target, option: options.target },
+    SCROLL,
+  );
+  await selectPickerOption(
+    { ...COMMAND_PICKERS.icon, option: options.icon },
+    SCROLL,
+  );
+  await selectPickerOption(
+    { ...COMMAND_PICKERS.showAsAction, option: options.showAsAction },
+    SCROLL,
+  );
 
   await scrollToAndTap('send-command-button');
 }
@@ -407,53 +306,13 @@ async function expectNoActionItems() {
 }
 
 async function expectLastClicked(id: IdOption) {
-  await scrollIntoView('last-clicked-text');
+  await rewindAndScrollUntilVisible(
+    'last-clicked-text',
+    SCROLLVIEW_ID,
+    SCROLL_STEP,
+  );
   await expect(element(by.id('last-clicked-text'))).toHaveText(
     `Last clicked: ${id}`,
-  );
-}
-
-// WITH_TEXT only applies where the platform allows text beside an action icon —
-// on a phone, landscape only.
-//
-// Rotation is asynchronous and no element appears or disappears with it, so
-// there is no matcher to wait on; the scroll view's aspect ratio is the settle
-// signal. Returning early would leave the next tap using coordinates from the
-// old layout.
-async function setOrientation(orientation: 'portrait' | 'landscape') {
-  await device.setOrientation(orientation);
-
-  let previous: ElementAttributeFrame | null = null;
-
-  await waitUntil(
-    async () => {
-      const frame = await frameOf(SCROLLVIEW_ID);
-      const hasNewAspect =
-        orientation === 'landscape'
-          ? frame.width > frame.height
-          : frame.height > frame.width;
-
-      // Two identical readings: the rotation animation is over, not merely
-      // past the point where the new layout was applied.
-      const isSettled =
-        hasNewAspect && previous !== null && isSameFrame(previous, frame);
-      previous = frame;
-      return isSettled;
-    },
-    {
-      timeout: ROTATION_TIMEOUT,
-      interval: SETTLE_POLL_INTERVAL,
-      message: `the screen to settle into ${orientation}`,
-    },
-  );
-}
-
-function isSameFrame(
-  a: ElementAttributeFrame,
-  b: ElementAttributeFrame,
-): boolean {
-  return (
-    a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height
   );
 }
 
@@ -538,13 +397,13 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     });
 
     it('puts the title beside the icon in landscape', async () => {
-      await setOrientation('landscape');
+      await device.setOrientation('landscape');
 
       await expectTextActionItem('I1');
     });
 
     it('returns to icon-only back in portrait', async () => {
-      await setOrientation('portrait');
+      await device.setOrientation('portrait');
 
       await expectIconActionItem('I1');
     });
@@ -584,7 +443,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     });
 
     it('puts the title beside the icon in landscape', async () => {
-      await setOrientation('landscape');
+      await device.setOrientation('landscape');
 
       await expectTextActionItem('I1');
       await expectTextActionItem('Item 2');
@@ -592,7 +451,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     });
 
     it('demotes every item back to the overflow menu once the props are reset', async () => {
-      await setOrientation('portrait');
+      await device.setOrientation('portrait');
       await setSlotIcon(1, 'undefined');
       await setSlotShowAsAction(1, 'undefined');
       await setSlotIcon(2, 'undefined');
