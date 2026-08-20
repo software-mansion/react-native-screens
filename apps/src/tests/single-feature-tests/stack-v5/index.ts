@@ -26,6 +26,7 @@ import TestStackToolbarMenuA11y from './test-stack-toolbar-menu-a11y-android';
 import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
 import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
+import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
@@ -38,6 +39,7 @@ export { default as TestStackSubviewsAndroid } from './test-stack-subviews-andro
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
 export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
+export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
@@ -65,6 +67,7 @@ const scenarios = {
   TestStackSubviewsIOS,
   TestStackHeaderMenuIOS,
   TestStackHeaderIconIOS,
+  TestStackHeaderItemIdentifierIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
