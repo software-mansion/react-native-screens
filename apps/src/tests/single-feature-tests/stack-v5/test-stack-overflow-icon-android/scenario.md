@@ -12,7 +12,11 @@ the overflow popup. It allows customization via a custom icon and tint color
 
 ## E2E test
 
-TBD: Automation is planned in limited scope but not yet implemented.
+Incomplete: Not automated. The checkpoints verify the overflow button's
+rendered icon and tint colors, which Detox cannot assert (no color/drawable
+data in `getAttributes()`, no screenshot comparison). The pressed and focused
+tints additionally require mid-press observation and hardware-keyboard focus.
+This scenario is manual only.
 
 ## Prerequisites
 

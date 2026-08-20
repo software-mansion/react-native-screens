@@ -98,7 +98,7 @@ function TestStackOverflowIcon() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
         },
       ]}
     />
