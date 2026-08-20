@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.tabs.screen
 
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
+import android.util.SparseArray
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
@@ -126,6 +128,17 @@ class TabsScreen(
         r: Int,
         b: Int,
     ) = Unit
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        // Do nothing. React Native owns this view hierarchy and keeps it alive, so there is no
+        // need to serialize/deserialize native view state. View ids in this subtree are react
+        // tags, which are not stable identities - restoring state by id can apply state saved
+        // by one view type to a different one, crashing e.g. in CompoundButton (see #4523).
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        // Ignore restoring instance state too, as we are not saving anything anyways.
+    }
 
     internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
         tabsScreenDelegate = WeakReference(delegate)
