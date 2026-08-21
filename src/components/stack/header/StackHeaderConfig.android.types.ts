@@ -913,6 +913,42 @@ export interface StackHeaderConfigPropsAndroid {
    */
   maxLines?: number | undefined;
   /**
+   * @summary Start inset of the toolbar.
+   *
+   * @description
+   * The inset is a minimum: the navigation icon is positioned before it is
+   * applied and is not bounded by it, so the content area starts at whichever
+   * reaches further from the edge — the navigation icon's trailing edge or this
+   * inset. A back button usually wins, which makes this prop inert while one is
+   * visible.
+   *
+   * @remarks
+   * Applies to all header types. On `medium` / `large` it affects the collapsed
+   * title only.
+   *
+   * By default, native platform applies non-zero inset which makes centered
+   * collapsed title look off-center when `collapsedTitleGravityMode:
+   * 'availableSpace'` is used.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetStart?: number | undefined;
+  /**
+   * @summary End inset of the toolbar content area.
+   *
+   * @remarks
+   * The end-side counterpart of `contentInsetStart`. Applies to all header
+   * types. Like its start-side counterpart it is a minimum, so it is inert
+   * while the toolbar menu shows items that already reach further in.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetEnd?: number | undefined;
+  /**
    * @summary Color of the title text. Applies to `small` header only.
    *
    * @remarks
