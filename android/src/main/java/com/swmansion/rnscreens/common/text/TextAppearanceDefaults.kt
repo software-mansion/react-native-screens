@@ -35,9 +35,9 @@ internal class TextAppearanceDefaults(
 
                 // android:fontFamily is either a font resource (@font/…, resolvable only
                 // asynchronously) or a family name. The M3 type scale always declares a family
-                // name (@string/m3_ref_typeface_* — "sans-serif" / "sans-serif-medium"), so this
-                // is the same synchronous path Material's own fallback and AppCompatTextHelper
-                // take for it.
+                // name (@string/m3_ref_typeface_* — "sans-serif" / "sans-serif-medium"),
+                // so we can unconditionally take the synchronous path (Material's own fallback and
+                // AppCompatTextHelper do the same).
                 val textStyle = attrs.getInt(IDX_TEXT_STYLE, Typeface.NORMAL)
                 val typeface =
                     attrs.getString(IDX_FONT_FAMILY)?.let { Typeface.create(it, textStyle) }
