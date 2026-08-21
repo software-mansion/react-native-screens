@@ -46,6 +46,50 @@ table thead tr {
   border: transparent 2px solid;
 }
 
+footer.footer {
+  --ifm-footer-padding-vertical: 30px;
+}
+
+@media (max-width: 996px) {
+  footer.footer {
+    --ifm-footer-padding-vertical: 30px;
+  }
+}
+
+footer .footer__copyright p a[data-privacy-policy] {
+  text-decoration: none;
+}
+
+footer .footer__bottom [class*='footer__copyright'] {
+  justify-content: center;
+  padding-bottom: var(--swm-footer-copyright-padding-bottom);
+}
+
+footer .footer__bottom [class*='footer__copyright'] p {
+  text-align: center;
+}
+
+footer .footer__bottom [class*='footer__copyright'] p a[data-privacy-policy] {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+footer
+  .footer__bottom
+  [class*='footer__copyright']
+  p
+  a[data-privacy-policy]:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 996px) {
+  footer .footer__bottom [class*='footer__copyright'] {
+    align-items: center;
+  }
+}
+
 .header-github {
   margin-left: 1.5em;
 }

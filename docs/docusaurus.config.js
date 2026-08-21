@@ -30,7 +30,7 @@ const config = {
           innerHTML: topbarBannerReservationScript(
             firstZone.zoneId,
             firstZone.contentId,
-            TOPBAR_BANNER.hiddenPaths
+            TOPBAR_BANNER.hiddenPaths,
           ),
         },
       ]
