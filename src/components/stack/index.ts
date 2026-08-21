@@ -2,7 +2,7 @@ import { StackHost } from './host';
 import { StackScreen } from './screen';
 import { StackHeaderConfig } from './header';
 
-export type { StackHostProps } from './host';
+export type { StackHostProps, StackHostColorScheme } from './host';
 
 export type {
   OnDismissEventPayload,
