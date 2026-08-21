@@ -39,7 +39,7 @@ export function isIOSVersionAtLeast(version: string): boolean {
 }
 
 /**
- * Suites for iOS 26+-only features (e.g. `bottomAccessory`, the header overflow
+ * Suites for iOS 26+ only features (e.g. `bottomAccessory`, the header overflow
  * button). `isIOSVersionAtLeast` is false on Android, so these stay iOS-only
  * and additionally self-skip on iOS 18 and older.
  */
