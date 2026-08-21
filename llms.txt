@@ -1,0 +1,13 @@
+# React Native Screens
+
+## Documentation
+
+- [intro](https://docs.swmansion.com/react-native-screens/docs/intro)
+
+## Pages
+
+- [React Native Screens](https://docs.swmansion.com/react-native-screens/): Native Navigation primitives for your React Native app.
+
+## About
+
+- [Software Mansion](https://swmansion.com): maintainer of React Native Screens
