@@ -1,0 +1,85 @@
+# e2e flow — Tabs · colorScheme (SYSTEM=LIGHT source × TabsHost override)
+#
+# Source of truth: apps/src/tests/single-feature-tests/tabs/test-tabs-tab-bar-color-scheme/index.tsx
+#
+# One HALF of the system-source matrix (the LIGHT row). Its twin is
+# test-tabs-tab-bar-color-scheme-system-dark.yaml. Both are driven by the wrapper
+#   scripts/run-tab-bar-color-scheme-system.sh
+# which SETS the OS appearance (via `xcrun simctl … appearance` on iOS / `adb … cmd uimode` on Android)
+# and THEN runs each flow headless — the argent flow engine has no shell step and there is no in-app
+# control for the system appearance, so the flip must happen OUTSIDE the YAML, before launch.
+#
+# PRECONDITION (the wrapper guarantees this): system appearance is already LIGHT when this flow starts.
+# Run standalone only after setting it yourself:
+#   xcrun simctl ui booted appearance light       # iOS simulator
+#   adb shell "cmd uimode night no"               # Android emulator
+#   argent flow run test-tabs-tab-bar-color-scheme-system-light --platform ios   # (or android)
+#
+# What it proves (RN source held at `unspecified` the whole time → asserted at every state):
+#   system=LIGHT, TabsHost=inherit → LIGHT (defers to system)
+#   system=LIGHT, TabsHost=light   → LIGHT (explicit, matches system)
+#   system=LIGHT, TabsHost=dark    → DARK  (prop OVERRIDES system light)
+# The `snapshot`s are the real assertion (Detox can't read colors); the `assert`s only confirm the
+# picker VALUES driving each snapshot. Selector rig matches the RN sibling flow.
+#
+# BASELINES (seed once, then commit .argent/flows/__baselines__/…-system-light/):
+#   scripts/run-tab-bar-color-scheme-system.sh ios --update-baselines
+# maxMismatch 7.0 absorbs the dev LogBox banner + status-bar clock; the light↔dark delta is whole-screen.
+
+steps:
+  - launch:
+      ios: org.reactjs.native.example.FabricExample
+      android: com.fabricexample
+
+  # --- Navigate: Home → Single Feature Tests → Tabs → Tab Bar Color Scheme ---
+  - echo: "On the example home screen — open Single Feature Tests"
+  - scroll-to: { target: { text: "Single Feature Tests" }, direction: down }
+  - wait: 600
+  - tap: { text: "Single Feature Tests" }
+  - wait: 700
+  - assert: { visible: "FormSheet" }   # nav-verify: unique to the Scenarios screen
+
+  - echo: "On the Scenarios list — open the Tabs group"
+  - tap: { text: "Tabs" }
+  - wait: 700
+
+  - echo: "On the Tabs scenarios list — open the Tab Bar Color Scheme scenario"
+  - scroll-to: { target: { text: "Tab Bar Color Scheme" }, direction: down }
+  - wait: 600
+  - tap: { text: "Tab Bar Color Scheme" }
+  - wait: 1200
+
+  # --- State A: system=LIGHT, RN=unspecified, TabsHost=inherit (defaults) → LIGHT (defers to system) ---
+  - echo: "Screen loaded — RN=unspecified, TabsHost=inherit; system is LIGHT"
+  - assert: { visible: "TabsHost color scheme" }
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: inherit" } }
+  - wait: 600
+  - echo: "TabsHost=inherit defers to system=LIGHT → tab screen is LIGHT"
+  - snapshot: { name: system-light-tabshost-inherit, maxMismatch: 7.0 }
+
+  # --- State B: TabsHost=light → LIGHT (explicit, matches system) ---
+  - echo: "Set TabsHost colorScheme = light (expand → light → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-light" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: light" } }
+  - echo: "TabsHost=light matches system=LIGHT → tab screen is LIGHT"
+  - snapshot: { name: system-light-tabshost-light, maxMismatch: 7.0 }
+
+  # --- State C: TabsHost=dark → DARK (overrides system light) ---
+  - echo: "Set TabsHost colorScheme = dark (expand → dark → collapse)"
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - tap: { identifier: "colorscheme-dark" }
+  - wait: 400
+  - tap: { identifier: tabshost-color-scheme-picker }
+  - wait: 600
+  - assert: { text: { in: { identifier: react-color-scheme-picker }, contains: "colorScheme: unspecified" } }
+  - assert: { text: { in: { identifier: tabshost-color-scheme-picker }, contains: "colorScheme: dark" } }
+  - echo: "TabsHost=dark overrides system=LIGHT → tab screen is DARK"
+  - snapshot: { name: system-light-tabshost-dark, maxMismatch: 7.0 }
+
+  - echo: "Done (system=LIGHT): TabsHost=dark overrode the light system source; inherit/light stayed LIGHT. RN stayed unspecified."
