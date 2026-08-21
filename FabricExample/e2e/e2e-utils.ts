@@ -44,6 +44,18 @@ export function isIOSVersionAtLeast(version: string): boolean {
   );
 }
 
+/**
+ * Suites for iOS 26+ only features (e.g. `bottomAccessory`, the header overflow
+ * button). `isIOSVersionAtLeast` is false on Android, so these stay iOS-only
+ * and additionally self-skip on iOS 18 and older.
+ */
+export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
+  ? describe
+  : describe.skip;
+
+export const describeIfiPadIOS26 =
+  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
+
 export type ScrollOptions = {
   /** Pixels per step. Smaller steps avoid overshooting a short row. */
   pixels?: number;
