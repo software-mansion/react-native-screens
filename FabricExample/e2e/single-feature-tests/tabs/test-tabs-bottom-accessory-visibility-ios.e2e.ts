@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import type { IosElementAttributes } from 'detox/detox';
 import {
-  describeIfiOS,
+  describeIfiOS26,
   getElementAttributes,
   getMatches,
   selectSingleFeatureTestsScreen,
@@ -15,21 +15,11 @@ import {
 } from '../../native-class-names';
 
 /**
- * Covers the end state of every `scenario.md` step: after each `hidden` /
- * `rendered` toggle (and their combinations) the bottom accessory is either
- * present with its content and laid out above the tab bar, or gone.
- *
- * Both toggles remove the accessory from the native view hierarchy -
- * `bottomAccessoryHidden` through `setBottomAccessory:nil`, `rendered` by
- * unmounting it - so presence is read the same way for both, and cross-checked
- * against the tab bar: the `UITabBar` itself stays full-width, but on iOS 26
- * the tab item pill (`_UITabButton`) is laid out to the accessory's width while
- * one is attached and shrinks back to its intrinsic width once it is gone. The
- * screen has a single tab, so that pill *is* the visible tab bar.
- *
- * What stays manual is the *animation* `hidden` drives: that the accessory
- * slides out/in smoothly with its content visible throughout and no blank
- * frame. Detox samples the settled hierarchy, not animation frames.
+ * Covers the end state of each `scenario.md` step: after every `hidden` /
+ * `rendered` toggle the accessory is either shown with its content above the
+ * tab bar, or gone. Presence is cross-checked against the tab item pill
+ * (`_UITabButton`), which spans the accessory's width while one is attached.
+ * Animation quality stays manual.
  */
 
 const SCROLL_VIEW = 'bottom-accessory-visibility-scrollview';
@@ -38,25 +28,17 @@ const HIDDEN_SWITCH = 'hidden-switch';
 const ACCESSORY_TEXT = 'bottom-accessory-text';
 const ACCESSORY_CONTENT = 'Bottom Accessory';
 
-// Detox syncs with UIKit animations, but the accessory is attached/detached by
-// `setBottomAccessory:animated:`, so give the transition a bounded grace period
-// rather than asserting the hierarchy on the very next sample.
+// Grace period for the animated `setBottomAccessory:` attach / detach.
 const TRANSITION_TIMEOUT_MS = 3000;
 
 const SETTINGS_CONTROL = { scrollViewId: SCROLL_VIEW };
 
 const bottomAccessory = by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY);
 
-/**
- * Width of the tab item pill while the accessory is attached, read once on the
- * baseline step. Every later step compares against it: narrower means the
- * accessory is gone, back to this width means it is attached again. A relative
- * check, so no system layout constant is hardcoded.
- */
+/** Pill width with the accessory attached, read on the baseline step. */
 let tabButtonWidthWithAccessory: number;
 
-// The single tab button resolves twice (same frame) even under `atIndex`, so
-// read the match set and take the first entry.
+// The tab button resolves twice (same frame), so read the match set.
 async function getTabButtonWidth(): Promise<number> {
   const [tabButton] = (await getMatches(
     by.type(CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26),
@@ -64,8 +46,7 @@ async function getTabButtonWidth(): Promise<number> {
   return tabButton.frame.width;
 }
 
-// RN mounts the text twice under the same `testID` (the paragraph view and its
-// accessibility proxy); `atIndex(0)` pins the matcher to one of them.
+// The text resolves twice under the same `testID`.
 const bottomAccessoryText = () =>
   element(by.id(ACCESSORY_TEXT).withAncestor(bottomAccessory)).atIndex(0);
 
@@ -89,7 +70,7 @@ async function expectSwitchState(
   await expect(element(by.id(switchId))).toHaveLabel(`${label}: ${value}`);
 }
 
-/** The accessory is in the hierarchy, shows its content, and sits above the tab bar. */
+/** Accessory present with its content, above the tab bar, pill stretched. */
 async function expectBottomAccessoryShown() {
   await waitFor(element(bottomAccessory))
     .toExist()
@@ -112,18 +93,13 @@ async function expectBottomAccessoryShown() {
     accessory.frame.y + accessory.frame.height,
   );
 
-  // Frames are integral points here; `toBeCloseTo(…, 0)` only tolerates
-  // sub-pixel drift, not a narrower pill.
   jestExpect(await getTabButtonWidth()).toBeCloseTo(
     tabButtonWidthWithAccessory,
     0,
   );
 }
 
-/**
- * Neither the accessory view nor its content is left in the hierarchy, and the
- * tab item pill has shrunk back from the accessory's width.
- */
+/** Accessory and its content gone from the hierarchy, pill shrunk back. */
 async function expectBottomAccessoryAbsent() {
   await waitFor(element(bottomAccessory))
     .not.toExist()
@@ -135,14 +111,14 @@ async function expectBottomAccessoryAbsent() {
   );
 }
 
-/** The screen is still interactive - its controls are on screen and readable. */
+/** The screen is still interactive. */
 async function expectConfigScreenResponsive() {
   await expect(element(by.id(SCROLL_VIEW))).toBeVisible();
   await expect(element(by.id(RENDERED_SWITCH))).toBeVisible();
   await expect(element(by.id(HIDDEN_SWITCH))).toBeVisible();
 }
 
-describeIfiOS('Tabs: bottomAccessoryHidden (iOS)', () => {
+describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
