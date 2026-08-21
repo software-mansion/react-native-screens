@@ -33,7 +33,7 @@ Assumption:
 
 1. Launch the app and navigate to the **Tab Bar Color Scheme** screen.
 
-- [ ] Config tab is shown. Pickers default to `unspecified` / `inherit`
+- [ ] Config tab is shown. Pickers default to `auto` / `inherit`
 
 ---
 
