@@ -124,6 +124,37 @@ export interface NativeProps extends ViewProps {
     'availableSpace'
   >;
 
+  titleColor?: ColorValue | undefined;
+  titleFontFamily?: string | undefined;
+  titleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  titleFontWeight?: string | undefined;
+  titleFontStyle?: string | undefined;
+  subtitleColor?: ColorValue | undefined;
+  subtitleFontFamily?: string | undefined;
+  subtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  subtitleFontWeight?: string | undefined;
+  subtitleFontStyle?: string | undefined;
+  expandedTitleColor?: ColorValue | undefined;
+  expandedTitleFontFamily?: string | undefined;
+  expandedTitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  expandedTitleFontWeight?: string | undefined;
+  expandedTitleFontStyle?: string | undefined;
+  collapsedTitleColor?: ColorValue | undefined;
+  collapsedTitleFontFamily?: string | undefined;
+  collapsedTitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  collapsedTitleFontWeight?: string | undefined;
+  collapsedTitleFontStyle?: string | undefined;
+  expandedSubtitleColor?: ColorValue | undefined;
+  expandedSubtitleFontFamily?: string | undefined;
+  expandedSubtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  expandedSubtitleFontWeight?: string | undefined;
+  expandedSubtitleFontStyle?: string | undefined;
+  collapsedSubtitleColor?: ColorValue | undefined;
+  collapsedSubtitleFontFamily?: string | undefined;
+  collapsedSubtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  collapsedSubtitleFontWeight?: string | undefined;
+  collapsedSubtitleFontStyle?: string | undefined;
+
   backButtonTintColorNormal?: ColorValue | undefined;
   backButtonTintColorPressed?: ColorValue | undefined;
   backButtonTintColorFocused?: ColorValue | undefined;

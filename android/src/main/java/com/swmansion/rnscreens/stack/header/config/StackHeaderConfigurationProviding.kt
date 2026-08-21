@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.stack.header.config
 
 import android.graphics.drawable.Drawable
+import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 
@@ -39,6 +40,14 @@ internal interface StackHeaderConfigurationProviding {
     val collapsedTitleHorizontalGravity: Int
     val collapsedTitleVerticalGravity: Int
     val collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+
+    val titleAppearance: TextAppearance
+    val subtitleAppearance: TextAppearance
+
+    val expandedTitleAppearance: TextAppearance
+    val collapsedTitleAppearance: TextAppearance
+    val expandedSubtitleAppearance: TextAppearance
+    val collapsedSubtitleAppearance: TextAppearance
 
     val isRTL: Boolean
 

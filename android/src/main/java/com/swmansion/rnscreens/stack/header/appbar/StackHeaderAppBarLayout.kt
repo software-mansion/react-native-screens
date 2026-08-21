@@ -5,7 +5,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -38,8 +40,33 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
+        // Setting text size and typeface separately (Toolbar exposes only a whole text appearance)
+        // needs the title/subtitle TextViews, and Toolbar has no getter for them. Material locates
+        // them by matching the current text (internal ToolbarUtils.getTitleTextView); we attempt
+        // the same, but since we don't have current text, we use distinct placeholders - they force
+        // both views into existence and tell them apart — and clear the text only after capturing
+        // the references. Toolbar keeps both instances for its lifetime (empty text only detaches
+        // them), so the references stay valid.
+        internal val titleTextView: TextView
+        internal val subtitleTextView: TextView
+
         init {
             addView(toolbar)
+
+            toolbar.title = TITLE_PLACEHOLDER
+            toolbar.subtitle = SUBTITLE_PLACEHOLDER
+            titleTextView = toolbar.findTextViewWithText(TITLE_PLACEHOLDER)
+            subtitleTextView = toolbar.findTextViewWithText(SUBTITLE_PLACEHOLDER)
+            toolbar.title = ""
+            toolbar.subtitle = ""
+        }
+
+        private fun MaterialToolbar.findTextViewWithText(text: String): TextView =
+            children.filterIsInstance<TextView>().first { it.text?.toString() == text }
+
+        private companion object {
+            private const val TITLE_PLACEHOLDER = "rns_title"
+            private const val SUBTITLE_PLACEHOLDER = "rns_subtitle"
         }
     }
 

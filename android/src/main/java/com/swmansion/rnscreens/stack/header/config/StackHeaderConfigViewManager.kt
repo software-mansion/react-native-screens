@@ -192,6 +192,221 @@ internal open class StackHeaderConfigViewManager :
             }
     }
 
+    // region Text appearance
+    // Font size arrives as a float defaulting to -1 (unset); non-positive means "use default".
+
+    override fun setTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.titleAppearance.color = value
+    }
+
+    override fun setTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontFamily = value
+    }
+
+    override fun setTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.titleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontWeight = value
+    }
+
+    override fun setTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontStyle = value
+    }
+
+    override fun setSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.subtitleAppearance.color = value
+    }
+
+    override fun setSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontFamily = value
+    }
+
+    override fun setSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.subtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontWeight = value
+    }
+
+    override fun setSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontStyle = value
+    }
+
+    override fun setExpandedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedTitleAppearance.color = value
+    }
+
+    override fun setExpandedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontFamily = value
+    }
+
+    override fun setExpandedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedTitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontWeight = value
+    }
+
+    override fun setExpandedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontStyle = value
+    }
+
+    override fun setCollapsedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedTitleAppearance.color = value
+    }
+
+    override fun setCollapsedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontFamily = value
+    }
+
+    override fun setCollapsedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedTitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontWeight = value
+    }
+
+    override fun setCollapsedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontStyle = value
+    }
+
+    override fun setExpandedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedSubtitleAppearance.color = value
+    }
+
+    override fun setExpandedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontFamily = value
+    }
+
+    override fun setExpandedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontWeight = value
+    }
+
+    override fun setExpandedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontStyle = value
+    }
+
+    override fun setCollapsedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedSubtitleAppearance.color = value
+    }
+
+    override fun setCollapsedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontFamily = value
+    }
+
+    override fun setCollapsedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontWeight = value
+    }
+
+    override fun setCollapsedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontStyle = value
+    }
+
+    // endregion
+
     override fun setHidden(
         view: StackHeaderConfig,
         value: Boolean,
