@@ -3,6 +3,7 @@ import {
   StackScreenProps,
   StackHeaderConfigProps,
   StackHeaderConfigRef,
+  StackHostProps,
 } from 'react-native-screens';
 
 /// Route definition
@@ -32,7 +33,7 @@ export type StackRoute = Omit<StackRouteConfig, 'element'> & {
 
 /// StackContainer props
 
-export type StackContainerProps = {
+export type StackContainerProps = Omit<StackHostProps, 'children' | 'ref'> & {
   routeConfigs: StackRouteConfig[];
 };
 
