@@ -226,6 +226,11 @@ internal class StackHeaderCoordinatorLayout(
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.SCROLL_FLAGS)
             }
 
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACKGROUND_COLORS)) {
+                applicator.applyBackgroundColors(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+            }
+
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)) {
                 // Lift-on-scroll is disabled in transparent mode: there is no content
                 // scrolling behavior installed and the app bar overlays the content.

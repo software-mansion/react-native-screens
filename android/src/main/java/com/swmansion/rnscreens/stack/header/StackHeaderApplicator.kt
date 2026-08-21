@@ -25,6 +25,8 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
@@ -33,6 +35,7 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProvi
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
 import kotlin.math.roundToInt
@@ -453,6 +456,47 @@ internal class StackHeaderApplicator(
         appBar.isLiftOnScroll = enabled
         appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
         appBar.requestLayout()
+    }
+
+    internal fun applyBackgroundColors(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val backgroundColor =
+            config.backgroundColor ?: resolveColorAttr(appBar.context, R.attr.colorSurface)
+        val scrolledBackgroundColor =
+            config.scrolledBackgroundColor
+                ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
+
+        val background =
+            MaterialShapeDrawable().apply {
+                fillColor = ColorStateList.valueOf(backgroundColor)
+            }
+
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.background = background
+                appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
+
+                // The lift animation runs only on lifted-state changes; jump to the end
+                // state when colors change while already lifted. The end state is the
+                // scrolled color composited over the background (see Material's
+                // initializeLiftOnScrollWithColor), not the raw scrolled color — they
+                // differ when the scrolled color is not fully opaque.
+                if (appBar.isLifted) {
+                    background.fillColor =
+                        ColorStateList.valueOf(
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor),
+                        )
+                }
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                appBar.setLiftOnScrollColor(null)
+                appBar.background = background
+                appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
+            }
+        }
     }
 
     // endregion

@@ -566,6 +566,20 @@ internal open class StackHeaderConfigViewManager :
         view.liftOnScroll = value
     }
 
+    override fun setBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backgroundColor = value
+    }
+
+    override fun setScrolledBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.scrolledBackgroundColor = value
+    }
+
     override fun setToolbarMenuGroupDividerEnabled(
         view: StackHeaderConfig,
         value: Boolean,
