@@ -580,6 +580,13 @@ internal open class StackHeaderConfigViewManager :
         view.scrolledBackgroundColor = value
     }
 
+    override fun setStatusBarScrimColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.statusBarScrimColor = value
+    }
+
     override fun setToolbarMenuGroupDividerEnabled(
         view: StackHeaderConfig,
         value: Boolean,

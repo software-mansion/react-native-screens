@@ -143,6 +143,9 @@ internal class StackHeaderConfig(
     override var scrolledBackgroundColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
         internal set
 
+    override var statusBarScrimColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+        internal set
+
     override var toolbarMenu: StackHeaderToolbarMenuConfig
         by invalidatingProperty(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
