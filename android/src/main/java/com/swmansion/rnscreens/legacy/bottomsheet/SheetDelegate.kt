@@ -187,7 +187,9 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
+            // Honor gestureEnabled so gestureEnabled = false blocks drag-to-dismiss on
+            // Android, matching iOS (modalInPresentation). Still draggable between detents.
+            isHideable = screen.isGestureEnabled
             isDraggable = true
         }
 
