@@ -8,6 +8,7 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.swmansion.rnscreens.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
@@ -25,6 +26,8 @@ class StackHost(
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
     private var isLayoutEnqueued = false
+
+    internal var colorScheme: ColorScheme by container::colorScheme
 
     init {
         addView(container)
