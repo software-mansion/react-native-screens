@@ -43,6 +43,7 @@ type HitSlopValue = '0' | '10' | '30';
 type PressRetentionValue = '0' | '20' | '50';
 type TextOption = 'undefined' | 'short' | 'long';
 type ScrollFlagValue = 'undefined' | 'true' | 'false';
+type MaxLinesValue = '1' | '2' | '3';
 
 interface Config {
   enabled: boolean;
@@ -51,6 +52,7 @@ interface Config {
   hidden: boolean;
   title: TextOption;
   subtitle: TextOption;
+  maxLines: MaxLinesValue;
   titleCentered: boolean;
   subtitleCentered: boolean;
   expandedTitleHorizontalGravity: StackHeaderTitleHorizontalGravityAndroid;
@@ -79,6 +81,7 @@ const DEFAULT_CONFIG: Config = {
   hidden: false,
   title: 'short',
   subtitle: 'short',
+  maxLines: '1',
   titleCentered: false,
   subtitleCentered: false,
   expandedTitleHorizontalGravity: 'start',
@@ -110,6 +113,7 @@ const HIT_SLOP_VALUES: HitSlopValue[] = ['0', '10', '30'];
 const PRESS_RETENTION_VALUES: PressRetentionValue[] = ['0', '20', '50'];
 const TEXT_OPTIONS: TextOption[] = ['undefined', 'short', 'long'];
 const SCROLL_FLAG_VALUES: ScrollFlagValue[] = ['undefined', 'true', 'false'];
+const MAX_LINES_OPTIONS: MaxLinesValue[] = ['1', '2', '3'];
 const HORIZONTAL_GRAVITY_OPTIONS: StackHeaderTitleHorizontalGravityAndroid[] = [
   'start',
   'center',
@@ -234,6 +238,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       collapsedTitleHorizontalGravity: config.collapsedTitleHorizontalGravity,
       collapsedTitleVerticalGravity: config.collapsedTitleVerticalGravity,
       collapsedTitleGravityMode: config.collapsedTitleGravityMode,
+      maxLines: Number(config.maxLines),
       scrollFlagScroll: resolveScrollFlag(config.scrollFlagScroll),
       scrollFlagEnterAlways: resolveScrollFlag(config.scrollFlagEnterAlways),
       scrollFlagEnterAlwaysCollapsed: resolveScrollFlag(
@@ -389,6 +394,12 @@ function ConfigScreen() {
               value={config.collapsedTitleGravityMode}
               onValueChange={v => updateConfig('collapsedTitleGravityMode', v)}
               items={GRAVITY_MODE_OPTIONS}
+            />
+            <SettingsPicker<MaxLinesValue>
+              label="maxLines"
+              value={config.maxLines}
+              onValueChange={v => updateConfig('maxLines', v)}
+              items={MAX_LINES_OPTIONS}
             />
           </>
         )}

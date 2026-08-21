@@ -82,6 +82,10 @@ internal class StackHeaderConfig(
     override var subtitle: String by invalidatingProperty("", StackHeaderInvalidationFlags.TITLE)
         internal set
 
+    // Requires header rebuild due to bug in Material implementation
+    override var maxLines: Int by invalidatingProperty(1, StackHeaderInvalidationFlags.STRUCTURE)
+        internal set
+
     override var hidden: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 

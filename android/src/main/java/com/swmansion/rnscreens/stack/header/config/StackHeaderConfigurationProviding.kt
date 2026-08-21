@@ -9,6 +9,7 @@ internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
     val title: String
     val subtitle: String
+    val maxLines: Int
     val hidden: Boolean
     val transparent: Boolean
     val backButtonHidden: Boolean
