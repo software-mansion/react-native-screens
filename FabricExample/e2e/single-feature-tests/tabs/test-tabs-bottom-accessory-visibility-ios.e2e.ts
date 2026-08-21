@@ -70,7 +70,6 @@ async function expectSwitchState(
   await expect(element(by.id(switchId))).toHaveLabel(`${label}: ${value}`);
 }
 
-/** Accessory present with its content, above the tab bar, pill stretched. */
 async function expectBottomAccessoryShown() {
   await waitFor(element(bottomAccessory))
     .toExist()
@@ -99,7 +98,6 @@ async function expectBottomAccessoryShown() {
   );
 }
 
-/** Accessory and its content gone from the hierarchy, pill shrunk back. */
 async function expectBottomAccessoryAbsent() {
   await waitFor(element(bottomAccessory))
     .not.toExist()
@@ -111,7 +109,6 @@ async function expectBottomAccessoryAbsent() {
   );
 }
 
-/** The screen is still interactive. */
 async function expectConfigScreenResponsive() {
   await expect(element(by.id(SCROLL_VIEW))).toBeVisible();
   await expect(element(by.id(RENDERED_SWITCH))).toBeVisible();
@@ -127,10 +124,6 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
     );
   });
 
-  // ---------------------------------------------------------------------------
-  // Baseline
-  // ---------------------------------------------------------------------------
-
   it('should show the bottom accessory above the tab bar on load', async () => {
     await expectConfigScreenResponsive();
     await expectSwitchState(RENDERED_SWITCH, 'rendered', true);
@@ -144,10 +137,6 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
     await expectBottomAccessoryShown();
   });
 
-  // ---------------------------------------------------------------------------
-  // Hidden prop
-  // ---------------------------------------------------------------------------
-
   it('should remove the bottom accessory when hidden is toggled on', async () => {
     await setHidden(true);
 
@@ -160,10 +149,6 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
     await expectBottomAccessoryShown();
   });
 
-  // ---------------------------------------------------------------------------
-  // Rendered prop
-  // ---------------------------------------------------------------------------
-
   it('should remove the bottom accessory when rendered is toggled off', async () => {
     await setRendered(false);
 
@@ -175,10 +160,6 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
 
     await expectBottomAccessoryShown();
   });
-
-  // ---------------------------------------------------------------------------
-  // Combined
-  // ---------------------------------------------------------------------------
 
   it('should keep the bottom accessory absent when hidden is toggled on and then rendered off', async () => {
     await setHidden(true);
