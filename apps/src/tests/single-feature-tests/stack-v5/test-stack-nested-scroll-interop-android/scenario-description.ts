@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verify Stack v5 can forward its remaining Android nested-scroll transaction to an external delegate.',
   platforms: ['android'],
-  e2eCoverage: 'complete',
+  e2eCoverage: 'full',
   smokeTest: false,
 };

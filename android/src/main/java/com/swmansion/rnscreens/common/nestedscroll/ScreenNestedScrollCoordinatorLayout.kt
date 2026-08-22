@@ -24,6 +24,7 @@ internal abstract class ScreenNestedScrollCoordinatorLayout(
     private var nestedScrollDelegate: ScreenNestedScrollDelegate? = null
     private val superAcceptedTypes = mutableSetOf<Int>()
     private val delegateAcceptedTypes = mutableSetOf<Int>()
+    private val delegateTargets = mutableMapOf<Int, View>()
     private val ancestorBridges = mutableMapOf<Int, AncestorBridge>()
     private val delegateConsumed = IntArray(2)
     private val ancestorConsumed = IntArray(2)
@@ -67,6 +68,7 @@ internal abstract class ScreenNestedScrollCoordinatorLayout(
             super.onNestedScrollAccepted(child, target, axes, type)
         }
         if (type in delegateAcceptedTypes) {
+            delegateTargets[type] = target
             nestedScrollDelegate?.onNestedScrollAccepted(child, target, axes, type)
         }
     }
@@ -80,7 +82,9 @@ internal abstract class ScreenNestedScrollCoordinatorLayout(
         }
         stopAncestorBridge(type)
         if (type in delegateAcceptedTypes) {
-            nestedScrollDelegate?.onStopNestedScroll(target, type)
+            nestedScrollDelegate?.onStopNestedScroll(delegateTargets.remove(type) ?: target, type)
+        } else {
+            delegateTargets.remove(type)
         }
         superAcceptedTypes.remove(type)
         delegateAcceptedTypes.remove(type)
@@ -250,7 +254,12 @@ internal abstract class ScreenNestedScrollCoordinatorLayout(
 
     override fun onDetachedFromWindow() {
         ancestorBridges.keys.toList().forEach(::stopAncestorBridge)
-        nestedScrollDelegate?.onScreenDetached(screen)
+        val delegate = nestedScrollDelegate
+        delegateTargets.toList().forEach { (type, target) ->
+            delegate?.onStopNestedScroll(target, type)
+        }
+        delegateTargets.clear()
+        delegate?.onScreenDetached(screen)
         nestedScrollDelegate = null
         superAcceptedTypes.clear()
         delegateAcceptedTypes.clear()
