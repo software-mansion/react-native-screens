@@ -261,9 +261,9 @@ internal abstract class ScreenNestedScrollCoordinatorLayout(
         delegateTargets.clear()
         delegate?.onScreenDetached(screen)
         nestedScrollDelegate = null
+        super.onDetachedFromWindow()
         superAcceptedTypes.clear()
         delegateAcceptedTypes.clear()
-        super.onDetachedFromWindow()
     }
 
     override fun onLayout(
