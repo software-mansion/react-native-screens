@@ -178,6 +178,11 @@ class TabsContainer internal constructor(
 
         bottomNavigationView.setOnItemSelectedListener(this::onMenuItemSelected)
         invalidationFlags.invalidateAll()
+
+        bottomNavigationView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
     }
 
     // region Public API (third-party stable)
@@ -386,7 +391,10 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, resolveBottomNavigationViewHeight().toFloat())
+
+    private fun resolveBottomNavigationViewHeight(): Int =
+        bottomNavigationView.height.takeIf { it > 0 } ?: bottomNavigationView.measuredHeight
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
@@ -745,7 +753,7 @@ class TabsContainer internal constructor(
         }
 
     private fun updateInterfaceInsets(newHeight: Int? = null) {
-        val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
+        val height = if (tabBarHidden) 0 else (newHeight ?: resolveBottomNavigationViewHeight())
 
         interfaceInsetsChangeListener?.apply {
             this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
