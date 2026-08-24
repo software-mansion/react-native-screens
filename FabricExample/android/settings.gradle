@@ -4,16 +4,3 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autol
 rootProject.name = 'FabricExample'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
-
-// Kotlin 2.2 incremental compilation can't see a module's own `internal` declarations 
-// when the project path goes through a symlink (see: https://youtrack.jetbrains.com/issue/KT-80039): 
-// KGP registers the previous compilation output as a canonicalized
-// "friend path" while the classpath keeps the symlinked path, so the visibility
-// check never matches. node_modules/react-native-screens is a symlink to the repo
-// root, so resolve autolinked project dirs to their real paths.
-// TODO: Can be removed when RN ships Kotlin >= 2.3.0 which resolved the issue.
-gradle.settingsEvaluated { settings ->
-    settings.rootProject.children.each { p ->
-        p.projectDir = p.projectDir.canonicalFile
-    }
-}
