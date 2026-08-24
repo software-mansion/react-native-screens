@@ -1,4 +1,4 @@
-# Test Scenario: Stack Back Button
+# Test Scenario: Stack Back Button (Android)
 
 ## Details
 
