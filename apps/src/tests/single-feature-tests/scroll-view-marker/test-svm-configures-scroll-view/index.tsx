@@ -17,7 +17,7 @@ const TOP_EDGE_EFFECTS: ScrollEdgeEffect[] = [
 
 // Taken once at module scope so the colors stay stable across re-renders
 // (generateNextColor advances a global counter on every call).
-const RECT_COLORS = Array.from({ length: 12 }, () => generateNextColor());
+const RECT_COLORS = Array.from({ length: 14 }, () => generateNextColor());
 
 function TestSvmConfiguresScrollView() {
   return (

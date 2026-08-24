@@ -3,14 +3,16 @@
 ## Details
 
 **Description:** Verifies the basic functionality of the
-`ScrollViewMarker` component: that it detects the `ScrollView` in its
-subtree, registers it with the enclosing Stack screen as the _content
-ScrollView_, and configures the scroll edge effect on it. The screen
-renders a `Text` label _before_ the marker on purpose - the "first
-descendant chain" heuristic (the fallback used when no marker is
-present, by both the library and UIKit) stops on that label and never
-reaches the `ScrollView`, so every content-scroll-view behavior
-observed in this test is attributable to the marker.
+`ScrollViewMarker` component: that it finds the `ScrollView` it wraps
+and configures the scroll edge effect on it, including switching the
+effect value at runtime. The marker also registers that `ScrollView`
+with the enclosing Stack screen as the _content ScrollView_ - the
+`Text` label rendered _before_ the marker intentionally breaks the
+"first descendant chain" heuristic (the fallback used when no marker
+is present, by both the library and UIKit), leaving the marker as the
+only way the screen can resolve its content `ScrollView`. That
+registration has no directly observable effect in this scenario, so
+the steps below cover the edge effect configuration only.
 
 A floating selector pill at the bottom of the screen switches the
 marker's `scrollEdgeEffects.top` value between `automatic` / `hard` /
