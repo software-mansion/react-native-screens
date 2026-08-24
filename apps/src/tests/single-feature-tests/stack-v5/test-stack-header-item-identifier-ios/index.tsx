@@ -22,7 +22,7 @@ import type {
 } from 'react-native-screens/components/stack/header';
 import type { PlatformIconIOS } from 'react-native-screens';
 
-type ItemId = 'alpha' | 'bravo' | 'charlie';
+export type ItemId = 'alpha' | 'bravo' | 'charlie';
 
 const SYMBOL_CYCLES: Record<ItemId, string[]> = {
   alpha: ['1.circle.fill', '2.circle.fill', '3.circle.fill'],
@@ -87,7 +87,10 @@ function makeItem(
       type: 'item',
       id,
       render: () => (
-        <View style={[styles.customItem, { backgroundColor: color }]} />
+        <View
+          testID={`custom-item-${id}`}
+          style={[styles.customItem, { backgroundColor: color }]}
+        />
       ),
       ...identifierProp,
     };
@@ -149,7 +152,13 @@ function Screen(props: { routeName: string }) {
         ),
       },
     }),
-    [routeName, identifiersEnabled, separatorsEnabled, customViewsEnabled, screenIndex],
+    [
+      routeName,
+      identifiersEnabled,
+      separatorsEnabled,
+      customViewsEnabled,
+      screenIndex,
+    ],
   );
 
   useLayoutEffect(() => {
