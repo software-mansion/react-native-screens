@@ -4,7 +4,7 @@ import type {
   TabsHostProps,
   TabsScreenProps,
 } from 'react-native-screens';
-import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
+import type { SafeAreaViewProps } from 'react-native-screens/experimental';
 
 /// Route definition
 
@@ -92,7 +92,7 @@ export type TabsContainerProps = Omit<
    * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
    */
-  defaultRouteName?: string;
+  defaultRouteName?: string | undefined;
 };
 
 export type SetTabOptionsMethod = (
