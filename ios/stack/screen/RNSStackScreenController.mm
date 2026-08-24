@@ -23,6 +23,17 @@
   return self;
 }
 
+#pragma mark - RNSStackBackButtonDelegate
+
+- (void)applyBackButtonConfigWithTitle:(nullable NSString *)backTitle
+                           displayMode:(UINavigationItemBackButtonDisplayMode)displayMode
+{
+#if !TARGET_OS_TV
+  self.navigationItem.backButtonTitle = backTitle;
+  self.navigationItem.backButtonDisplayMode = displayMode;
+#endif // !TARGET_OS_TV
+}
+
 #pragma mark - RNSContainerItem
 
 - (void)registerNestedContainer:(id<RNSContainer>)container

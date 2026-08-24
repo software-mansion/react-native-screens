@@ -38,4 +38,17 @@ RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement
   }
 };
 
+template <>
+UINavigationItemBackButtonDisplayMode convert(react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode)
+{
+  switch (displayMode) {
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Default:
+      return UINavigationItemBackButtonDisplayModeDefault;
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Generic:
+      return UINavigationItemBackButtonDisplayModeGeneric;
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Minimal:
+      return UINavigationItemBackButtonDisplayModeMinimal;
+  }
+};
+
 }; // namespace rnscreens::conversion

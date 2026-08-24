@@ -2,6 +2,7 @@
 
 #if defined(__cplusplus)
 
+#import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
@@ -26,6 +27,10 @@ RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement);
 template <>
 RNSHeaderItemSpacerPlacement convert(
     react::RNSStackHeaderItemSpacerIOSPlacement placement);
+
+template <>
+UINavigationItemBackButtonDisplayMode convert(
+    react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode);
 
 }; // namespace rnscreens::conversion
 

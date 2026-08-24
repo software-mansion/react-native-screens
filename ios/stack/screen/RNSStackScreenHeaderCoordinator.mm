@@ -392,6 +392,9 @@
 
   navItem.title = _configDataProvider.title;
 
+  [controller.backButtonDelegate applyBackButtonConfigWithTitle:_configDataProvider.backTitle
+                                                    displayMode:_configDataProvider.backButtonDisplayMode];
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     navItem.largeTitle = _configDataProvider.largeTitle;
