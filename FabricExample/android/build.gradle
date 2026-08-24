@@ -25,6 +25,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
+        // TODO: Can be removed when RN ships Kotlin >= 2.3.0
         // Pin KGP explicitly, because the version-less classpath entry resolves to the
         // version pinned by RN's gradle-plugin.
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
