@@ -5,6 +5,7 @@ import {
   describeIfiOS26,
   getMatches,
   selectSingleFeatureTestsScreen,
+  toggleSettingsSwitch,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_UI_LABEL,
@@ -96,11 +97,6 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
   expectAscending(frames.map(frame => frame.x));
 }
 
-async function toggleSwitch(testID: string, label: string, to: boolean) {
-  await element(by.id(testID)).tap();
-  await expect(element(by.id(testID))).toHaveLabel(`${label}: ${to}`);
-}
-
 // The identifier-driven item-matching behavior under test only exists on
 // iOS 26+ (see scenario.md, "OS test creation version").
 describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
@@ -177,7 +173,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await waitForScreen('Three');
       await popBackFrom('Three');
       await popBackFrom('Two');
-      await toggleSwitch('toggle-custom-views', 'Custom views', true);
+      await toggleSettingsSwitch({
+        switchId: 'toggle-custom-views',
+        label: 'Custom views',
+        to: true,
+      });
     });
 
     it('should replace the sfSymbol items with three custom-render items on screen One, ordered alpha, bravo, charlie left to right', async () => {
@@ -241,7 +241,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await waitForScreen('Three');
       await popBackFrom('Three');
       await popBackFrom('Two');
-      await toggleSwitch('toggle-separators', 'Separators', true);
+      await toggleSettingsSwitch({
+        switchId: 'toggle-separators',
+        label: 'Separators',
+        to: true,
+      });
     });
 
     it('should give each of the three trailing items its own platter on screen One, ordered left to right', async () => {

@@ -218,12 +218,16 @@ export async function selectPickerOption(
   await expect(element(by.id(pickerId))).toHaveText(expected);
 }
 
-/** `to` is the state expected afterwards — a swallowed tap fails here. */
+/** `to` is the state expected afterwards — a swallowed tap fails here. Omit
+ * `control` on screens whose switches sit outside any scroll view. */
 export async function toggleSettingsSwitch(
   { switchId, label, to }: { switchId: string; label: string; to: boolean },
-  { scrollViewId, ...scroll }: SettingsControlOptions,
+  control?: SettingsControlOptions,
 ) {
-  await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  if (control) {
+    const { scrollViewId, ...scroll } = control;
+    await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  }
   await element(by.id(switchId)).tap();
 
   await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
