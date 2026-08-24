@@ -155,6 +155,7 @@ internal class StackHeaderApplicator(
     internal fun applyTitleAndSubtitle(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
+        isAppBarFullyCollapsed: Boolean,
     ) {
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
@@ -165,13 +166,7 @@ internal class StackHeaderApplicator(
             is StackHeaderAppBarLayout.Collapsing -> {
                 val ctl = appBar.collapsingToolbarLayout
 
-                // Due to a bug in Material's CollapsingToolbarLayout implementation, showing
-                // subtitle in runtime while header is collapsed results in incorrect scroll offset
-                // unless more than 1 line is used. See CollapsingToolbarLayout.java:783
-                // (material-1.14.0). For now, we're hardcoding number of lines to 2. In the future,
-                // we're planning to expose this prop to the user. We should consider what the
-                // default value should be.
-                ctl.maxLines = 2
+                ctl.maxLines = config.maxLines
 
                 ctl.title = config.title
                 ctl.subtitle = config.subtitle
@@ -180,6 +175,15 @@ internal class StackHeaderApplicator(
                 // title/subtitle vertical split is recomputed only in onLayout. Force a layout
                 // so toggling the subtitle at runtime reclaims the title space.
                 ctl.requestLayout()
+
+                // Material re-asserts the collapsed offset after a height change itself, but only
+                // when maxLines > 1 (CollapsingToolbarLayout.onMeasure). With maxLines == 1 it never
+                // does, so toggling the subtitle at runtime while collapsed leaves a stale offset —
+                // setExpanded(false, false) is the closest public equivalent of Material's private
+                // maybeSetPendingActionCollapsed().
+                if (config.maxLines == 1 && isAppBarFullyCollapsed) {
+                    appBar.setExpanded(false, false)
+                }
             }
         }
     }

@@ -893,6 +893,26 @@ export interface StackHeaderConfigPropsAndroid {
     | StackHeaderCollapsedTitleGravityModeAndroid
     | undefined;
   /**
+   * @summary Maximum number of lines for the expanded title and subtitle.
+   *
+   * @description
+   * A single shared value: the same limit applies to both the expanded title
+   * and the expanded subtitle. Text exceeding the limit is ellipsized.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * collapsed title is always a single line regardless of this value.
+   *
+   * A value less than `1` is invalid and falls back to `1`.
+   *
+   * Changing this value at runtime rebuilds the header. This is required due to
+   * a native platform limitation.
+   *
+   * @default 1
+   * @platform android
+   */
+  maxLines?: number | undefined;
+  /**
    * @summary Color of the title text. Applies to `small` header only.
    *
    * @remarks

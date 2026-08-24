@@ -136,6 +136,13 @@ internal open class StackHeaderConfigViewManager :
         view.subtitle = value ?: ""
     }
 
+    override fun setMaxLines(
+        view: StackHeaderConfig,
+        value: Int,
+    ) {
+        view.maxLines = value.coerceAtLeast(1)
+    }
+
     override fun setTitleCentered(
         view: StackHeaderConfig,
         value: Boolean,
