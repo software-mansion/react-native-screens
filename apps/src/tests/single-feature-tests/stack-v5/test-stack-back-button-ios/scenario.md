@@ -23,7 +23,7 @@ chevron is displayed for the latter, whereas the former shows the title
 of the screen below if it fits, or generic "Back".
 
 On iOS <= 18, when header contents change so that the back title no longer fits,
-it is compacted to eiter "< Back" or "<" (this depends on what displayMode is specified).
+it is compacted to either "< Back" or "<" (this depends on what displayMode is specified).
 When the header changes content again, the button title doesn't adjust and is left in
 compact state. This is confirmed native behavior.
 
@@ -51,7 +51,7 @@ compact state. This is confirmed native behavior.
 9. Tap `title` and `trailingItemsCount` once to reset. Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Second" and back button displays as "< First"
-10. Tap `Pop` to pop the screen. Tap `title` to set "Custom title". Tap `backTitle` twice to set "Longer custom title". Tap `Push Second`.
+10. Under Next screen, tap `Pop` to pop the screen. Tap `title` to set "Custom title". Tap `backTitle` twice to set "Longer custom title". Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Custom title" and back button displays as "< Back"
 
@@ -75,6 +75,6 @@ compact state. This is confirmed native behavior.
 8. Tap `title` and `backTitle` once to reset. Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Second" and back button displays as "<"
-9. Tap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
+9. Under Next screen, ap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
   - A new screen is pushed
   - Back button displays as "< Custom title"
