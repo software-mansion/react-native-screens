@@ -1,9 +1,7 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
 
-// TEMP-VERIFY: swap back to './Example' before committing
-import { TestStackBackButtonIOS as Example } from './src/tests/single-feature-tests/stack-v5';
-// import Example from './Example';
+import Example from './Example';
 
 // import { TestTabsSimpleNav as Example } from './src/tests/single-feature-tests';
 // import { TestTabsInStackStableEnterTransition as Example } from './src/tests/component-integration-tests';
