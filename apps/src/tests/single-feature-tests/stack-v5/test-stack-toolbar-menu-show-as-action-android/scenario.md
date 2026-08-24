@@ -17,7 +17,26 @@ effect when an icon is present.
 
 ## E2E test
 
-Other — automation is not implemented yet.
+Incomplete.
+
+**Automated**
+
+- Every step's placement (toolbar vs overflow menu).
+- Whether a toolbar item is icon-only or shows its title.
+- The `WITH_TEXT` landscape layout via rotation.
+- "Last clicked" after taps.
+- That overflow rows show no icon.
+
+**Environment assumptions**
+
+- For steps 11 and 12, the number of promoted items is pinned to the
+  reference emulator (API 36, portrait).
+
+**Manual only**
+
+- Icon identity and tint (that the drawable is the search glyph).
+- That the icon is still shown next to the text in landscape (steps 9, 12).
+- Steps 11 and 12 on other screen widths.
 
 ## Prerequisites
 

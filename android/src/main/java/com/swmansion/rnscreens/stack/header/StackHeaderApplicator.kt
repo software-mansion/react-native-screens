@@ -1,9 +1,11 @@
 package com.swmansion.rnscreens.stack.header
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +14,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
@@ -25,11 +25,15 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.common.text.TextAppearance
+import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
+import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
+import com.swmansion.rnscreens.utils.spToPx
 
 /**
  * Builds and applies the Material app bar — type, subviews, title, back button,
@@ -44,7 +48,12 @@ internal class StackHeaderApplicator(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ): StackHeaderAppBarLayout {
-        val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
+        val appBar =
+            StackHeaderAppBarLayout.create(
+                wrappedContext,
+                config.type,
+                config.collapsedTitleGravityMode,
+            )
 
         if (config.transparent) {
             coordinatorLayout.removeContentBehavior()
@@ -85,30 +94,21 @@ internal class StackHeaderApplicator(
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
-        populateTitleOrCenter(appBar, toolbar, config)
+        populateCenterSubview(appBar, toolbar, config)
         populateBackground(appBar, config)
     }
 
-    private fun populateTitleOrCenter(
+    private fun populateCenterSubview(
         appBar: StackHeaderAppBarLayout,
         toolbar: Toolbar,
         config: StackHeaderConfigurationProviding,
     ) {
-        val centerSubview = config.centerSubview
-        if (centerSubview != null) {
-            if (appBar is StackHeaderAppBarLayout.Small) {
-                centerSubview.view.detachFromCurrentParent()
-                toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
-            } else {
-                Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
-            }
-        } else if (appBar is StackHeaderAppBarLayout.Small) {
-            // Small header needs a managed title view because we can't use Toolbar's native
-            // title — it would be laid out to the leading side of leading subview.
-            val titleView = createManagedTitleView(toolbar)
-            appBar.managedTitleView = titleView
-            val index = if (config.isRTL) 0 else -1
-            toolbar.addView(titleView, index, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
+        val centerSubview = config.centerSubview ?: return
+        if (appBar is StackHeaderAppBarLayout.Small) {
+            centerSubview.view.detachFromCurrentParent()
+            toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
+        } else {
+            Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
         }
     }
 
@@ -145,49 +145,185 @@ internal class StackHeaderApplicator(
         )
     }
 
-    private fun createManagedTitleView(toolbar: Toolbar): AppCompatTextView =
-        AppCompatTextView(toolbar.context).apply {
-            setSingleLine()
-            ellipsize = TextUtils.TruncateAt.END
-            TextViewCompat.setTextAppearance(
-                this,
-                R.style.TextAppearance_Material3_TitleLarge,
-            )
-            layoutParams =
-                Toolbar
-                    .LayoutParams(
-                        WRAP_CONTENT,
-                        WRAP_CONTENT,
-                        Gravity.START,
-                    ).apply {
-                        // TODO: there seems to be a problem with collapsing margins.
-                        //       We will expose customization either way but we should
-                        //       have consistent behavior and defaults.
-                        marginStart = toolbar.titleMarginStart + toolbar.contentInsetStart
-                        marginEnd = toolbar.titleMarginEnd
-                        topMargin = toolbar.titleMarginTop
-                        bottomMargin = toolbar.titleMarginBottom
-                    }
-        }
-
     // endregion
 
     // region In-place updates
 
-    internal fun applyTitle(
+    // ctl.setMaxLines() is listed in Material docs in the same way as other props but for some
+    // reason it's restricted.
+    @SuppressLint("RestrictedApi")
+    internal fun applyTitleAndSubtitle(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+        isAppBarFullyCollapsed: Boolean,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.toolbar.title = config.title
+                appBar.toolbar.subtitle = config.subtitle
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                val ctl = appBar.collapsingToolbarLayout
+
+                ctl.maxLines = config.maxLines
+
+                ctl.title = config.title
+                ctl.subtitle = config.subtitle
+
+                // setText only recomputes draw offsets within the existing bounds; the
+                // title/subtitle vertical split is recomputed only in onLayout. Force a layout
+                // so toggling the subtitle at runtime reclaims the title space.
+                ctl.requestLayout()
+
+                // Material re-asserts the collapsed offset after a height change itself, but only
+                // when maxLines > 1 (CollapsingToolbarLayout.onMeasure). With maxLines == 1 it never
+                // does, so toggling the subtitle at runtime while collapsed leaves a stale offset —
+                // setExpanded(false, false) is the closest public equivalent of Material's private
+                // maybeSetPendingActionCollapsed().
+                if (config.maxLines == 1 && isAppBarFullyCollapsed) {
+                    appBar.setExpanded(false, false)
+                }
+            }
+        }
+    }
+
+    internal fun applyTitlePositioning(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
-                appBar.managedTitleView?.text = config.title
-                appBar.managedTitleView?.requestLayout()
+                appBar.toolbar.isTitleCentered = config.titleCentered
+                appBar.toolbar.isSubtitleCentered = config.subtitleCentered
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
-                appBar.collapsingToolbarLayout.title = config.title
+                appBar.collapsingToolbarLayout.expandedTitleGravity =
+                    config.expandedTitleHorizontalGravity or config.expandedTitleVerticalGravity
+                appBar.collapsingToolbarLayout.collapsedTitleGravity =
+                    config.collapsedTitleHorizontalGravity or config.collapsedTitleVerticalGravity
             }
         }
+    }
+
+    internal fun applyTitleAndSubtitleAppearance(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                val toolbar = appBar.toolbar
+
+                // Widget.Material3Expressive.Toolbar#{title,subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font. That style sets no text
+                //   colors, so both come from @macro/m3_comp_app_bar_{title,subtitle}_color.
+                applySlot(
+                    view = toolbar,
+                    defaults =
+                        TextAppearanceDefaults.resolve(
+                            toolbar.context,
+                            R.attr.textAppearanceTitleLarge,
+                            R.attr.colorOnSurface,
+                        ),
+                    appearance = config.titleAppearance,
+                    setColor = { toolbar.setTitleTextColor(it) },
+                    setTypeface = { appBar.titleTextView.typeface = it },
+                    setTextSizePx = { appBar.titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, it) },
+                )
+                applySlot(
+                    view = toolbar,
+                    defaults =
+                        TextAppearanceDefaults.resolve(
+                            toolbar.context,
+                            R.attr.textAppearanceLabelMedium,
+                            R.attr.colorOnSurfaceVariant,
+                        ),
+                    appearance = config.subtitleAppearance,
+                    setColor = { toolbar.setSubtitleTextColor(it) },
+                    setTypeface = { appBar.subtitleTextView.typeface = it },
+                    setTextSizePx = { appBar.subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, it) },
+                )
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                val ctl = appBar.collapsingToolbarLayout
+                val isLarge = appBar.type == StackHeaderType.LARGE
+
+                // Widget.Material3Expressive.CollapsingToolbar.{Large,Medium}#expandedTitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_title_font
+                val expandedTitleAttr =
+                    if (isLarge) R.attr.textAppearanceDisplaySmall else R.attr.textAppearanceHeadlineMedium
+
+                // …#expandedSubtitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_subtitle_font
+                val expandedSubtitleAttr =
+                    if (isLarge) R.attr.textAppearanceTitleMedium else R.attr.textAppearanceLabelLarge
+
+                // In the calls below, the collapsed appearances and all four colors come from the base
+                // Widget.Material3Expressive.CollapsingToolbar: collapsed{Title,Subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font,
+                // {collapsed,expanded}{Title,Subtitle}TextColor
+                //   = @macro/m3_comp_app_bar_{title,subtitle}_color.
+
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, expandedTitleAttr, R.attr.colorOnSurface),
+                    appearance = config.expandedTitleAppearance,
+                    setColor = { ctl.setExpandedTitleTextColor(ColorStateList.valueOf(it)) },
+                    setTypeface = { ctl.setExpandedTitleTypeface(it) },
+                    setTextSizePx = { ctl.expandedTitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceTitleLarge, R.attr.colorOnSurface),
+                    appearance = config.collapsedTitleAppearance,
+                    setColor = { ctl.setCollapsedTitleTextColor(it) },
+                    setTypeface = { ctl.setCollapsedTitleTypeface(it) },
+                    setTextSizePx = { ctl.collapsedTitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, expandedSubtitleAttr, R.attr.colorOnSurfaceVariant),
+                    appearance = config.expandedSubtitleAppearance,
+                    setColor = { ctl.setExpandedSubtitleTextColor(ColorStateList.valueOf(it)) },
+                    setTypeface = { ctl.setExpandedSubtitleTypeface(it) },
+                    setTextSizePx = { ctl.expandedSubtitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceLabelMedium, R.attr.colorOnSurfaceVariant),
+                    appearance = config.collapsedSubtitleAppearance,
+                    setColor = { ctl.setCollapsedSubtitleTextColor(it) },
+                    setTypeface = { ctl.setCollapsedSubtitleTypeface(it) },
+                    setTextSizePx = { ctl.collapsedSubtitleTextSize = it },
+                )
+
+                // Layout is necessary e.g. after changing subtitle text size.
+                ctl.requestLayout()
+            }
+        }
+    }
+
+    /**
+     * Applies one title/subtitle slot as absolute values: each property is the prop value when
+     * set, the Material default otherwise.
+     */
+    private fun applySlot(
+        view: View,
+        defaults: TextAppearanceDefaults,
+        appearance: TextAppearance,
+        setColor: (Int) -> Unit,
+        setTypeface: (Typeface) -> Unit,
+        setTextSizePx: (Float) -> Unit,
+    ) {
+        setColor(appearance.color ?: defaults.color)
+        setTypeface(appearance.resolveTypeface(defaults.typeface))
+        setTextSizePx(appearance.fontSize?.let { view.spToPx(it) } ?: defaults.textSizePx)
     }
 
     internal fun applyBackButton(

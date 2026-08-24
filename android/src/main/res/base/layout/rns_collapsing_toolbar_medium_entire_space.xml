@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.CollapsingToolbarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="?attr/collapsingToolbarLayoutMediumStyle"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
+    app:collapsedTitleGravityMode="entireSpace" />

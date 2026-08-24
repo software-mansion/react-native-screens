@@ -2,7 +2,9 @@ package com.swmansion.rnscreens.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
+import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
@@ -107,7 +109,8 @@ internal class StackHeaderCoordinatorLayout(
     // region Layout callbacks
 
     private val appBarOffsetListener =
-        AppBarLayout.OnOffsetChangedListener { _, _ ->
+        AppBarLayout.OnOffsetChangedListener { appBar, verticalOffset ->
+            evaluateCollapseState(appBar, verticalOffset)
             onMaybeHeaderLayoutChanged()
         }
 
@@ -131,6 +134,20 @@ internal class StackHeaderCoordinatorLayout(
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
         StackHeaderFrameSynchronizer.sync(appBar, provider, delegate)
+    }
+
+    // Tracks whether the app bar is currently scrolled to its fully collapsed offset. Used to work
+    // around a Material offset bug when the title/subtitle changes at runtime — see
+    // StackHeaderApplicator.applyTitleAndSubtitle. This should be equivalent to Material's
+    // `collapsingTitleHelper.getExpansionFraction() == 1f` condition.
+    private var isAppBarFullyCollapsed = false
+
+    private fun evaluateCollapseState(
+        appBar: AppBarLayout,
+        verticalOffset: Int,
+    ) {
+        val totalScrollRange = appBar.totalScrollRange
+        isAppBarFullyCollapsed = totalScrollRange > 0 && -verticalOffset >= totalScrollRange
     }
 
     // endregion
@@ -180,8 +197,18 @@ internal class StackHeaderCoordinatorLayout(
         val appBar = appBarLayout
         if (appBar != null) {
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
-                applicator.applyTitle(appBar, provider)
+                applicator.applyTitleAndSubtitle(appBar, provider, isAppBarFullyCollapsed)
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE_APPEARANCE)) {
+                applicator.applyTitleAndSubtitleAppearance(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE_POSITIONING)) {
+                applicator.applyTitlePositioning(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_POSITIONING)
             }
 
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
@@ -274,6 +301,8 @@ internal class StackHeaderCoordinatorLayout(
             removeView(it)
         }
         appBarLayout = null
+        // A rebuilt header starts fully expanded; drop any stale collapsed state from the old one.
+        isAppBarFullyCollapsed = false
         selectionController.clear()
     }
 
@@ -307,6 +336,22 @@ internal class StackHeaderCoordinatorLayout(
             stackScreen.onContentYOriginChanged(0)
             stackScreenWrapper.requestLayout()
         }
+    }
+
+    // endregion
+
+    // region Instance state
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        // Do nothing. This view is the root of a fragment-managed, react-owned hierarchy that
+        // React Native keeps alive, so there is no need to serialize/deserialize native view
+        // state. View ids in this subtree are react tags, which are not stable identities -
+        // restoring state by id can apply state saved by one view type to a different one,
+        // crashing e.g. in CompoundButton (see #4523).
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
     // endregion

@@ -19,6 +19,9 @@ export type {
   StackHeaderConfigRef,
   // Android
   StackHeaderTypeAndroid,
+  StackHeaderTitleHorizontalGravityAndroid,
+  StackHeaderTitleVerticalGravityAndroid,
+  StackHeaderCollapsedTitleGravityModeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
   StackHeaderToolbarSubviewAndroid,
   StackHeaderBackgroundSubviewAndroid,
