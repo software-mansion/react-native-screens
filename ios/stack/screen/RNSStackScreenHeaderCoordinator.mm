@@ -123,6 +123,7 @@
 
   [self applyTitleMenuForController:controller];
   [self updateNavigationBarVisibilityAnimated:YES];
+  [self updateBackButtonMenuEnabled];
 }
 
 - (void)applyConfigProperties
@@ -133,6 +134,18 @@
 
   [self applyConfigPropertiesForController:[self requireScreenController]];
   [self updateNavigationBarVisibilityAnimated:YES];
+  [self updateBackButtonMenuEnabled];
+}
+
+- (void)updateBackButtonMenuEnabled
+{
+  RNSStackNavigationController *navController = [self getNavigationController];
+  if (navController == nil || navController.topViewController != _screenController) {
+    return;
+  }
+
+  BOOL enabled = _configDataProvider == nil || _configDataProvider.backButtonMenuEnabled;
+  [navController.navigationBarCoordinator setBackButtonMenuEnabled:enabled forNavigationController:navController];
 }
 
 /**
@@ -322,6 +335,7 @@
 #endif // !TARGET_OS_TV
 
   [self updateNavigationBarVisibilityAnimated:YES];
+  [self updateBackButtonMenuEnabled];
 }
 
 /**

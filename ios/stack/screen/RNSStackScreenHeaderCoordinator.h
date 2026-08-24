@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateNavigationBarVisibilityAnimated:(BOOL)animated;
 
+- (void)updateBackButtonMenuEnabled;
+
 #if !TARGET_OS_TV
 - (void)clearAppliedBackButtonConfig;
 #endif // !TARGET_OS_TV

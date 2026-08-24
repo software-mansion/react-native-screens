@@ -311,6 +311,19 @@ export interface StackHeaderConfigPropsIOS {
    */
   backButtonDisplayMode?: StackHeaderBackButtonDisplayModeIOS | undefined;
   /**
+   * @summary Whether the back button shows the navigation history menu on long press.
+   *
+   * @description
+   * Configured on the screen whose back button it applies to (the screen that
+   * is pushed on top). When `false`, long-pressing the back button does not
+   * show the navigation history menu; tapping it still pops the screen.
+   *
+   * @default true
+   *
+   * @platform iOS
+   */
+  backButtonMenuEnabled?: boolean | undefined;
+  /**
    * @summary Custom item to display as a subtitle.
    *
    * @description Takes precedence over subtitle text.

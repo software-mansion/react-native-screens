@@ -68,6 +68,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeTitleEnabled = NO;
   _backButtonTitle = nil;
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  _backButtonMenuEnabled = YES;
   _titleMenu = nil;
 }
 
@@ -440,6 +441,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
     _backButtonDisplayMode =
         rnscreens::conversion::convert<UINavigationItemBackButtonDisplayMode>(newHeaderProps.backButtonDisplayMode);
+  }
+
+  if (oldHeaderProps.backButtonMenuEnabled != newHeaderProps.backButtonMenuEnabled) {
+    _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
   }
 
   if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {

@@ -57,6 +57,7 @@
 {
   [super viewWillAppear:animated];
   [self.headerCoordinator updateNavigationBarVisibilityAnimated:animated];
+  [self.headerCoordinator updateBackButtonMenuEnabled];
   [[self reactEventEmitter] emitOnWillAppear];
 }
 
