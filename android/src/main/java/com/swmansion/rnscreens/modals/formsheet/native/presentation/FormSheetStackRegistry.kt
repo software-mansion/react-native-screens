@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.modals.formsheet
+package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 internal object FormSheetStackRegistry {
     private val stack = mutableListOf<FormSheetPresentationManager>()

@@ -151,7 +151,7 @@ internal class FormSheetPresentationManager(
 
         shouldSkipExitAnimation = true
         onNativeDismiss()
-        updatePresentationState(isOpen = false)
+        updatePresentationState(false, FormSheetDismissalOrigin.USER)
     }
 
     private fun performInstantDismiss() {
