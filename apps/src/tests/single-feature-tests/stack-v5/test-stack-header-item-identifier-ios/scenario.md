@@ -13,18 +13,19 @@ stay put, only changing their appearance.
 
 ## E2E test
 
-Incomplete: covers the end state after each push for steps 1–4 and 6–7 -
-which item shows at which trailing position (asserted via horizontal frame
-order) for the sfSymbols, custom-views, and separators configurations, and
-that with separators each item sits in its own platter view.
+Incomplete: covers the end state after each push for steps 1–4 and 6–7 — which
+item shows at which trailing position (asserted via horizontal frame order) for
+the sfSymbols, custom-views, and separators configurations, and that with
+separators each item sits in its own platter view.
 
 Not automated:
 
-- Transition quality: items "not flashing" while changing symbols (steps
-  2–4) and the blur/crossfade of separated transitions (step 7). Detox
+- Transition quality (steps 2–4, 7): flashing / blur / crossfade — Detox
   samples settled state, not animation frames.
-- Step 5 (identifiers off): its end state is identical to the identifier
-  case — only the transition differs, so there is nothing to assert.
+- Step 5 (identifiers off): end state is identical, only the transition
+  differs — Detox can't assert it.
+- Custom-view colors (step 4): Detox reads no colors; only presence and
+  position are asserted.
 
 ## Prerequisites
 

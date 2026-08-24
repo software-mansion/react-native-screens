@@ -37,11 +37,29 @@ async function pushNext() {
   await element(by.text('Next')).tap();
 }
 
+// Waits on the popped screen's title disappearing first: waiting only for the
+// destination's title would pass early, since the back button already shows
+// it. Once the popped title is gone, the destination title is unambiguous and
+// is asserted to confirm where the pop landed.
+async function popBackFrom(routeName: 'Two' | 'Three') {
+  await element(by.text('Go back')).tap();
+  await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
+    .not.toExist()
+    .withTimeout(3000);
+  await waitForScreen(routeName === 'Three' ? 'Two' : 'One');
+}
+
 async function frameX(matcher: {
   getAttributes: () => Promise<unknown>;
 }): Promise<number> {
   const attrs = (await matcher.getAttributes()) as IosElementAttributes;
   return attrs.frame.x;
+}
+
+function expectAscending(xs: number[]) {
+  for (let i = 1; i < xs.length; i++) {
+    jestExpect(xs[i]).toBeGreaterThan(xs[i - 1]);
+  }
 }
 
 // Asserts `matchers` sit left-to-right in the given order, by comparing their
@@ -53,23 +71,29 @@ async function expectOrderedLeftToRight(
   for (const matcher of matchers) {
     xs.push(await frameX(matcher));
   }
-  for (let i = 1; i < xs.length; i++) {
-    jestExpect(xs[i]).toBeGreaterThan(xs[i - 1]);
-  }
+  expectAscending(xs);
 }
 
 // Asserts each symbol sits in its own liquid-glass platter, in the given
 // left-to-right order.
 async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
-  const platters = sfSymbolNames.map(name =>
-    by
-      .type(CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW)
-      .withDescendant(by.id(name)),
-  );
-  for (const platter of platters) {
-    jestExpect((await getMatches(platter)).length).toBe(1);
+  const frames: IosElementAttributes['frame'][] = [];
+  for (const name of sfSymbolNames) {
+    const matches = (await getMatches(
+      by
+        .type(CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW)
+        .withDescendant(by.id(name)),
+    )) as IosElementAttributes[];
+    jestExpect(matches.length).toBe(1);
+    frames.push(matches[0].frame);
   }
-  await expectOrderedLeftToRight(platters.map(platter => element(platter)));
+  // Each symbol's platter must be a different view: with separators off every
+  // symbol resolves to the single shared platter, so its frame repeats here.
+  const distinctFrames = new Set(
+    frames.map(({ x, y, width, height }) => `${x},${y},${width},${height}`),
+  );
+  jestExpect(distinctFrames.size).toBe(sfSymbolNames.length);
+  expectAscending(frames.map(frame => frame.x));
 }
 
 async function toggleSwitch(testID: string, label: string, to: boolean) {
@@ -144,10 +168,20 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
         'test-stack-header-item-identifier-ios',
       );
       await waitForScreen('One');
+      // Scenario step 4: push through the stack with sfSymbol items first and
+      // pop back to One, so the toggle swaps the item type on a header whose
+      // native items are already materialized — not on a pristine screen.
+      await pushNext();
+      await waitForScreen('Two');
+      await pushNext();
+      await waitForScreen('Three');
+      await popBackFrom('Three');
+      await popBackFrom('Two');
       await toggleSwitch('toggle-custom-views', 'Custom views', true);
     });
 
-    it('should show three custom-render trailing items on screen One, ordered alpha, bravo, charlie left to right', async () => {
+    it('should replace the sfSymbol items with three custom-render items on screen One, ordered alpha, bravo, charlie left to right', async () => {
+      await expect(barButtonIcon('1.circle.fill')).not.toExist();
       await expect(customItem('alpha')).toBeVisible();
       await expect(customItem('bravo')).toBeVisible();
       await expect(customItem('charlie')).toBeVisible();
@@ -198,6 +232,15 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
         'test-stack-header-item-identifier-ios',
       );
       await waitForScreen('One');
+      // Scenario step 6: push through the stack and pop back to One, so the
+      // toggle splits already-materialized items into per-item platters — not
+      // items configured with separators from birth.
+      await pushNext();
+      await waitForScreen('Two');
+      await pushNext();
+      await waitForScreen('Three');
+      await popBackFrom('Three');
+      await popBackFrom('Two');
       await toggleSwitch('toggle-separators', 'Separators', true);
     });
 
