@@ -2,7 +2,7 @@ import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import {
   describeIfiOS26,
-  describeIfiPadIOS26,
+  describeIfiPadOS26,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
   getElementAttributes,
@@ -311,7 +311,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   });
 });
 
-describeIfiPadIOS26('@ipad Tabs bottomAccessory (iPad, iOS 26+)', () => {
+describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
   // every test in this block, so read its frame + safe-area insets once and
   // reuse it as the window/safe-area reference for the bottom-anchor assertion.

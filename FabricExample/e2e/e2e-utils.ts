@@ -47,7 +47,7 @@ export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
   ? describe
   : describe.skip;
 
-export const describeIfiPadIOS26 =
+export const describeIfiPadOS26 =
   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
 
 export type ScrollOptions = {
