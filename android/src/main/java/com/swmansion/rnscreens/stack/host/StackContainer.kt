@@ -19,6 +19,7 @@ import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
+import com.swmansion.rnscreens.stack.screen.StackScreenFragmentDelegate
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
@@ -29,7 +30,8 @@ internal class StackContainer(
 ) : FrameLayout(context),
     Container,
     FragmentManager.OnBackStackChangedListener,
-    ColorSchemeProviding {
+    ColorSchemeProviding,
+    StackScreenFragmentDelegate {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -112,6 +114,8 @@ internal class StackContainer(
         super.onConfigurationChanged(newConfig)
         colorSchemeCoordinator.onConfigurationChanged(newConfig)
     }
+
+    override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
     internal fun setupFragmentManger() {
         fragmentManager =
@@ -235,7 +239,7 @@ internal class StackContainer(
         screen: StackScreen,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
-        StackScreenFragment(screen, canNavigateBack).also {
+        StackScreenFragment(screen, canNavigateBack, WeakReference(this)).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 

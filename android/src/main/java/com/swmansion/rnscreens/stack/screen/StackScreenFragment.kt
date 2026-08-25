@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.stack.screen
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -8,10 +9,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
+import java.lang.ref.WeakReference
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
+    private val delegate: WeakReference<StackScreenFragmentDelegate>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -69,6 +72,11 @@ internal class StackScreenFragment(
         super.onDestroy()
         stackScreen.onDismiss()
         teardownPreventNativeDismissCallback()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        delegate.get()?.onFragmentConfigurationChanged(newConfig)
     }
 
     /**

@@ -24,6 +24,9 @@ export type StackHostProps = {
    * @remarks
    * Color scheme isn't currently supported on iOS.
    *
+   * On Android, when the effective color scheme changes, the header is rebuilt
+   * which restores initial selection and changes applied via view commands.
+   *
    * @default inherit
    *
    * @platform android

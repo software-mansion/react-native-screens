@@ -481,9 +481,10 @@ export interface StackHeaderConfigCommandsAndroid {
    * @remarks
    * Updates are applied to the live toolbar: they take effect only while the
    * header is shown, and are discarded whenever the menu is rebuilt from the
-   * `toolbarMenu` prop — whether by a prop change or a structural change such
-   * as hiding and re-showing the header. They persist across unrelated
-   * re-renders. An update whose `id` is not in the current menu is ignored.
+   * `toolbarMenu` prop — whether by a prop change, a structural change such
+   * as hiding and re-showing the header, or an effective color scheme change.
+   * They persist across unrelated re-renders. An update whose `id` is not in
+   * the current menu is ignored.
    *
    * @param updates A single update object or an array of updates.
    */
