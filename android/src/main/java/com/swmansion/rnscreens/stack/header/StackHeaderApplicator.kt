@@ -500,6 +500,9 @@ internal class StackHeaderApplicator(
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
+                // Fade collapse mode disables liftOnScroll, but the lift animation only checks the
+                // lift color. We set it to null so the fill stays at backgroundColor under the
+                // transparent/translucent content scrim.
                 appBar.setLiftOnScrollColor(null)
                 appBar.background = background
                 appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
