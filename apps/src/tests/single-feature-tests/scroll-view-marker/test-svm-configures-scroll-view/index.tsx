@@ -48,7 +48,6 @@ function ContentScreen() {
         scrollEdgeEffects={{ top: topEdgeEffect }}>
         <ScrollView
           style={[styles.fillParent]}
-          contentContainerStyle={styles.scrollContent}
           contentInsetAdjustmentBehavior="automatic">
           {RECT_COLORS.map((color, index) => {
             return (
@@ -73,13 +72,12 @@ function TopEdgeEffectSelector({
   onValueChange: (value: ScrollEdgeEffect) => void;
 }) {
   return (
-    <View style={styles.selectorBar} testID="top-edge-effect-selector">
+    <View style={styles.selectorBar}>
       {TOP_EDGE_EFFECTS.map(effect => {
         const selected = effect === value;
         return (
           <Pressable
             key={effect}
-            testID={`top-edge-effect-${effect}`}
             accessibilityRole="button"
             accessibilityState={{ selected }}
             onPress={() => onValueChange(effect)}
@@ -106,12 +104,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  scrollContent: {
-    // Keep the last rectangles reachable above the floating selector bar.
-    paddingBottom: 96,
-  },
-  // Floating pill above the bottom edge, so it does not affect the layout
-  // of the marker and its ScrollView.
   selectorBar: {
     position: 'absolute',
     bottom: 24,
