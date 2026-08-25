@@ -32,8 +32,10 @@ import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.utils.dpToPx
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
+import kotlin.math.roundToInt
 
 /**
  * Builds and applies the Material app bar — type, subviews, title, back button,
@@ -324,6 +326,20 @@ internal class StackHeaderApplicator(
         setColor(appearance.color ?: defaults.color)
         setTypeface(appearance.resolveTypeface(defaults.typeface))
         setTextSizePx(appearance.fontSize?.let { view.spToPx(it) } ?: defaults.textSizePx)
+    }
+
+    internal fun applyContentInsets(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val toolbar = appBar.toolbar
+
+        toolbar.setContentInsetsRelative(
+            config.contentInsetStart?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetStart,
+            config.contentInsetEnd?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetEnd,
+        )
+
+        toolbar.requestLayout()
     }
 
     internal fun applyBackButton(
