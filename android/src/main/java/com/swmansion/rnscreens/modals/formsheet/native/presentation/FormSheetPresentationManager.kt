@@ -107,6 +107,9 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.DISMISSING
         dismissSheetsAbove()
+        // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
+        // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
+        // torn down.
         FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
