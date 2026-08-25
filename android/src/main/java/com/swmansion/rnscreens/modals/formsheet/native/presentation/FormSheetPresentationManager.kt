@@ -6,13 +6,12 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 
 internal class FormSheetPresentationManager(
     private val dialog: FormSheetDialog,
     private val bottomSheetView: View?,
-    private val dimmingManager: DimmingViewManager,
+    private val dimmingManager: FormSheetDimmingManager,
     private val onNativeDismiss: () -> Unit,
     private val onDismiss: () -> Unit,
 ) {
@@ -24,23 +23,12 @@ internal class FormSheetPresentationManager(
 
     private var dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
-    private var coupledSheetBelow: FormSheetPresentationManager? = null
-
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
-
-    private fun sheetBelowForDimming(): FormSheetPresentationManager? = FormSheetStackRegistry.sheetBelow(this) ?: coupledSheetBelow
 
     internal fun setup() {
         bottomSheetView?.let { view ->
             dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-        }
-
-        // Only the topmost sheet's dimming view should be visible (iOS parity), so total dim
-        // does not accumulate across stacked sheets. Whenever this sheet's dim changes, the
-        // sheet directly below receives the notification.
-        dimmingManager.onDimmingViewAlphaChange = { alpha ->
-            sheetBelowForDimming()?.dimmingManager?.setDimmingViewAlphaSync(dimmingManager.maxAlpha - alpha)
         }
     }
 
@@ -101,7 +89,12 @@ internal class FormSheetPresentationManager(
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
-            dimmingManager.onDialogShow()
+
+            // Every sheet dims the surface inside the window below, attaching an overlay to the sheet
+            // directly below in the stack, or to the DecorView when this sheet is the
+            // bottom-most one.
+            dimmingManager.attachDimming(FormSheetStackRegistry.sheetBelow(this)?.bottomSheetView)
+
             startEnterAnimation()
         }
         dialog.show()
@@ -114,7 +107,6 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.DISMISSING
         dismissSheetsAbove()
-        coupledSheetBelow = FormSheetStackRegistry.sheetBelow(this)
         FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
@@ -222,7 +214,7 @@ internal class FormSheetPresentationManager(
 
     private fun performDismiss() {
         shouldSkipExitAnimation = false
-        coupledSheetBelow = null
+        dimmingManager.detachDimming()
         dialog.dismiss()
         onDismissComplete()
     }
@@ -280,8 +272,7 @@ internal class FormSheetPresentationManager(
 
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
-        coupledSheetBelow = null
-        dimmingManager.onDimmingViewAlphaChange = null
+        dimmingManager.detachDimming()
 
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
