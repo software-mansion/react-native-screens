@@ -2,23 +2,14 @@
 
 ## Details
 
-**Description:** Verifies the basic functionality of the
-`ScrollViewMarker` component: that it finds the `ScrollView` it wraps
-and configures the scroll edge effect on it, including switching the
-effect value at runtime. The marker also registers that `ScrollView`
-with the enclosing Stack screen as the _content ScrollView_ - the
-`Text` label rendered _before_ the marker intentionally breaks the
-"first descendant chain" heuristic (the fallback used when no marker
-is present, by both the library and UIKit), leaving the marker as the
-only way the screen can resolve its content `ScrollView`. That
-registration has no directly observable effect in this scenario, so
-the steps below cover the edge effect configuration only.
-
-A floating selector pill at the bottom of the screen switches the
-marker's `scrollEdgeEffects.top` value between `automatic` / `hard` /
-`soft` / `hidden` at runtime (initially `hard`, the active value is
-highlighted). The other edges are not configured and keep their
-`automatic` default.
+**Description:** Verifies the basic functionality of
+`ScrollViewMarker`: it finds the `ScrollView` it wraps and configures
+its scroll edge effect, including switching the value at runtime. The
+`Text` label rendered before the marker intentionally breaks the
+"first descendant chain" fallback heuristic, making the marker the
+only way the enclosing Stack screen can resolve its content
+ScrollView. That registration is not verified here - the steps cover
+only the edge effect configuration.
 
 On Android there are no scroll edge effects - the screen exists there
 only as a prepared environment for native-side debugging, so this
@@ -40,6 +31,8 @@ and Detox cannot verify any of them.
 ## Note
 
 - The `Text` label rendered above the marker is intentional.
+- Only the top edge effect is configured by this screen; the other
+  edges keep their `automatic` default.
 - The screen has no `headerConfig`, so the stack shows its default,
   untitled navigation bar. The top edge effect is observed at the top
   edge of the scrolling content, where the coloured rectangles leave
@@ -49,8 +42,6 @@ and Detox cannot verify any of them.
   effect is drawn for any value.
 
 ### How each top edge effect should look (iOS 26+)
-
-Values map to `UIScrollEdgeEffect` (`style` + `isHidden`):
 
 - **`automatic`** - the system picks the effect for the context; on
   this screen it matches the `soft` look: the scrolled-out content
