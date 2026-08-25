@@ -18,7 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
-import com.swmansion.rnscreens.fragment.restoration.RNScreensFragment
+import com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetDialogRootView
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetDialogScreen
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
@@ -26,7 +26,7 @@ import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 class ScreenModalFragment :
     BottomSheetDialogFragment,
     ScreenStackFragmentWrapper,
-    RNScreensFragment {
+    RNScreensNonRestorableFragment {
     override lateinit var screen: Screen
 
     // Nested containers

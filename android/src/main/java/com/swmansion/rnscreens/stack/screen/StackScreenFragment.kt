@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
-import com.swmansion.rnscreens.fragment.restoration.RNScreensFragment
+import com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
 ) : Fragment(),
-    RNScreensFragment {
+    RNScreensNonRestorableFragment {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
     /**
