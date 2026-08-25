@@ -131,7 +131,7 @@ export interface FormSheetProps {
    * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
    *
    * @default false
-   * @platform ios
+   * @platform android, ios
    */
   preventNativeDismiss?: boolean | undefined;
 
@@ -183,7 +183,7 @@ export interface FormSheetProps {
    *
    * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -215,7 +215,7 @@ export interface FormSheetProps {
    * It is useful for triggering custom feedback, such as an alert
    * to inform the user why the sheet cannot be closed.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onNativeDismissPrevented?:
     | FormSheetEventHandler<EmptyEventPayload>

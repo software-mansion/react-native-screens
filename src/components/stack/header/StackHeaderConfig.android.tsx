@@ -6,10 +6,10 @@ import React, {
   useRef,
 } from 'react';
 import {
-  Image,
   type NativeSyntheticEvent,
   processColor,
   StyleSheet,
+  type TextStyle,
 } from 'react-native';
 import type {
   StackHeaderConfigProps,
@@ -59,6 +59,7 @@ function StackHeaderConfig(
     centerSubview,
     trailingSubview,
     backButtonIcon,
+    overflowIcon,
     scrollFlagScroll,
     scrollFlagEnterAlways,
     scrollFlagEnterAlwaysCollapsed,
@@ -66,8 +67,26 @@ function StackHeaderConfig(
     scrollFlagSnap,
     toolbarMenu,
     toolbarMenuGroupDividerEnabled,
+    titleFontWeight,
+    subtitleFontWeight,
+    expandedTitleFontWeight,
+    collapsedTitleFontWeight,
+    expandedSubtitleFontWeight,
+    collapsedSubtitleFontWeight,
     ...filteredAndroidProps
   } = android ?? {};
+
+  // Native expects font weight as a string; RN allows numeric weights too.
+  const fontWeightProps = {
+    titleFontWeight: fontWeightToNative(titleFontWeight),
+    subtitleFontWeight: fontWeightToNative(subtitleFontWeight),
+    expandedTitleFontWeight: fontWeightToNative(expandedTitleFontWeight),
+    collapsedTitleFontWeight: fontWeightToNative(collapsedTitleFontWeight),
+    expandedSubtitleFontWeight: fontWeightToNative(expandedSubtitleFontWeight),
+    collapsedSubtitleFontWeight: fontWeightToNative(
+      collapsedSubtitleFontWeight,
+    ),
+  };
 
   const parsedToolbarMenu = parseToolbarMenuToNativeProps(toolbarMenu);
   const handleToolbarMenuItemPress = (
@@ -91,6 +110,7 @@ function StackHeaderConfig(
   };
 
   const backButtonIconProps = parseBackButtonIconToNativeProps(backButtonIcon);
+  const overflowIconProps = parseOverflowIconToNativeProps(overflowIcon);
   const scrollFlagProps = resolveScrollFlags(filteredAndroidProps.type, {
     scrollFlagScroll,
     scrollFlagEnterAlways,
@@ -110,7 +130,9 @@ function StackHeaderConfig(
       onToolbarMenuGroupSelectionChange={handleToolbarMenuGroupSelectionChange}
       {...baseProps}
       {...filteredAndroidProps}
+      {...fontWeightProps}
       {...backButtonIconProps}
+      {...overflowIconProps}
       {...scrollFlagProps}>
       {/*
         Please note that the order of the subviews MUST match
@@ -142,35 +164,38 @@ function StackHeaderConfig(
   );
 }
 
+function fontWeightToNative(
+  fontWeight: TextStyle['fontWeight'],
+): string | undefined {
+  return fontWeight == null ? undefined : String(fontWeight);
+}
+
 function parseBackButtonIconToNativeProps(
   icon: StackHeaderConfigPropsAndroid['backButtonIcon'],
 ): Pick<
   StackHeaderConfigAndroidNativeComponentProps,
   'backButtonImageIconResource' | 'backButtonDrawableIconResourceName'
 > {
-  if (!icon) {
-    return {};
-  }
+  const parsed = parseAndroidIconToNativeProps(icon);
 
-  if (icon.type === 'imageSource') {
-    const resolved = Image.resolveAssetSource(icon.imageSource);
-    if (!resolved) {
-      console.error(
-        '[RNScreens] failed to resolve an asset for back button icon',
-      );
-    }
-    return {
-      backButtonImageIconResource: resolved || undefined,
-    };
-  } else if (icon.type === 'drawableResource') {
-    return {
-      backButtonDrawableIconResourceName: icon.name,
-    };
-  } else {
-    throw new Error(
-      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
-    );
-  }
+  return {
+    backButtonImageIconResource: parsed.imageIconResource,
+    backButtonDrawableIconResourceName: parsed.drawableIconResourceName,
+  };
+}
+
+function parseOverflowIconToNativeProps(
+  icon: StackHeaderConfigPropsAndroid['overflowIcon'],
+): Pick<
+  StackHeaderConfigAndroidNativeComponentProps,
+  'overflowIconImageIconResource' | 'overflowIconDrawableIconResourceName'
+> {
+  const parsed = parseAndroidIconToNativeProps(icon);
+
+  return {
+    overflowIconImageIconResource: parsed.imageIconResource,
+    overflowIconDrawableIconResourceName: parsed.drawableIconResourceName,
+  };
 }
 
 type ScrollFlagFields = {

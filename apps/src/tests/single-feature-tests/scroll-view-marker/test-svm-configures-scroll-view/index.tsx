@@ -2,7 +2,7 @@ import React from 'react';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 import { StackContainer } from '@apps/shared/containers/stack';
 import { Rectangle } from '@apps/shared/Rectangle';
 import { Colors } from '@apps/shared/styling';
@@ -14,8 +14,7 @@ function TestSvmConfiguresScrollView() {
       routeConfigs={[
         {
           name: 'Content',
-          Component: ContentScreen,
-          options: {},
+          element: <ContentScreen />,
         },
       ]}
     />

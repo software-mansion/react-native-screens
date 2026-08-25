@@ -75,7 +75,7 @@ function NestedStackScreen() {
 const ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'A',
-    Component: TemplateScreen,
+    element: <TemplateScreen />,
     options: {
       onWillAppear: () => console.log('A onWillAppear'),
       onWillDisappear: () => console.log('A onWillDisappear'),
@@ -85,7 +85,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
   },
   {
     name: 'B',
-    Component: TemplateScreen,
+    element: <TemplateScreen />,
     options: {
       onWillAppear: () => console.log('B onWillAppear'),
       onWillDisappear: () => console.log('B onWillDisappear'),
@@ -95,7 +95,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
   },
   {
     name: 'NestedStack',
-    Component: NestedStackScreen,
+    element: <NestedStackScreen />,
     options: {
       onWillAppear: () => console.log('NestedStack onWillAppear'),
       onWillDisappear: () => console.log('NestedStack onWillDisappear'),
@@ -108,13 +108,11 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
 const ROUTE_CONFIGS_NESTED_STACK: StackRouteConfig[] = [
   {
     name: 'NestedA',
-    Component: NestedTemplateScreen,
-    options: {},
+    element: <NestedTemplateScreen />,
   },
   {
     name: 'NestedB',
-    Component: NestedTemplateScreen,
-    options: {},
+    element: <NestedTemplateScreen />,
   },
 ];
 

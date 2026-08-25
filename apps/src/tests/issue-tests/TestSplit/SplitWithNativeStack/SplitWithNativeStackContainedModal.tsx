@@ -1,5 +1,5 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';

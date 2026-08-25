@@ -1,8 +1,8 @@
 import React from 'react';
-import { findNodeHandle, ReactNativeElement } from 'react-native';
+import { findNodeHandle, HostInstance } from 'react-native';
 import { RNSLog } from '../logging';
 
-export type NativeComponentGenericRef = React.Component & ReactNativeElement;
+export type NativeComponentGenericRef = React.Component & HostInstance;
 
 // A hook that logs information when component is rendered, mounted and unmounted.
 // It returns a ref that can be passed to a component instance in order to

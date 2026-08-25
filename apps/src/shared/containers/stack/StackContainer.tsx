@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack } from 'react-native-screens/experimental';
+import { Stack } from 'react-native-screens';
 import type {
   NavigationAction,
   StackContainerProps,
@@ -21,12 +21,12 @@ import {
   useRenderDebugInfo,
 } from 'react-native-screens/private';
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
-import { useComponentsByName } from '../shared/use-components-by-name';
+import { useElementsByName } from '../shared/use-elements-by-name';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
 
-  const componentsByName = useComponentsByName(routeConfigs);
+  const elementsByName = useElementsByName(routeConfigs);
 
   const [stackNavState, navActionDispatch]: [
     StackNavigationState,
@@ -66,7 +66,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
     <Stack.Host ref={hostRef}>
       {stackNavState.stack.map(
         ({
-          options: { headerConfig, headerConfigRef, ...options },
+          options: { headerConfig, headerConfigRef, ...options } = {},
           activityMode,
           routeKey,
           name,
@@ -81,8 +81,8 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
             setRouteOptions: navMethods.setRouteOptions,
           };
 
-          const Component = componentsByName.get(name);
-          if (!Component) {
+          const element = elementsByName.get(name);
+          if (!element) {
             throw new Error(
               `[Stack] No config matches the "${name}" route name`,
             );
@@ -97,7 +97,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
               onDismiss={onScreenDismissed}
               onNativeDismiss={onScreenNativelyDismissed}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
-                <Component />
+                {element}
                 {headerConfig !== undefined && (
                   <Stack.HeaderConfig ref={headerConfigRef} {...headerConfig} />
                 )}

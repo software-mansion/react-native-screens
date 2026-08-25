@@ -2,7 +2,9 @@ package com.swmansion.rnscreens.stack.header
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
+import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
@@ -12,16 +14,23 @@ import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationObserver
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.stack.header.config.StackHeaderInvalidationFlags
-import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuElementUpdate
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuApplicator
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuSelectionController
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
 import com.swmansion.rnscreens.stack.screen.StackScreen
 
+/**
+ * Root CoordinatorLayout for a screen's header: hosts the app bar and the
+ * content wrapper, wires header-config attach/observe, routes config
+ * invalidations to the applicators, and owns header lifecycle/teardown.
+ */
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
     context: Context,
@@ -80,15 +89,15 @@ internal class StackHeaderCoordinatorLayout(
                 // then emit a single coalesced event per affected group.
                 val affectedGroups = LinkedHashSet<String>()
                 for (update in updates) {
-                    applicator.updateToolbarMenuElement(
+                    StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
                         toolbar,
-                        toolbarMenuForwardIdMap,
+                        selectionController.forwardIdMap,
                         update.id,
                         update.options,
                     )
                     val checked = update.options.checked
                     if (checked != null) {
-                        applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
+                        selectionController.applyGroupItemStateChange(toolbar, update.id, checked)?.let(affectedGroups::add)
                     }
                 }
                 affectedGroups.forEach { groupId -> emitGroupSelection(toolbar, groupId) }
@@ -100,7 +109,8 @@ internal class StackHeaderCoordinatorLayout(
     // region Layout callbacks
 
     private val appBarOffsetListener =
-        AppBarLayout.OnOffsetChangedListener { _, _ ->
+        AppBarLayout.OnOffsetChangedListener { appBar, verticalOffset ->
+            evaluateCollapseState(appBar, verticalOffset)
             onMaybeHeaderLayoutChanged()
         }
 
@@ -123,49 +133,21 @@ internal class StackHeaderCoordinatorLayout(
         val delegate = currentDelegate ?: return
         val provider = currentProvider ?: return
         val appBar = appBarLayout ?: return
-
-        // When config is transparent, the StackScreen is static so we need to offset the header
-        // config by the offset of the AppBarLayout (which is 0 or is negative). When config is
-        // opaque, the Screen always moves with the config, that's why we need to offset the
-        // header config by the negative value of AppBarLayout's height.
-        val configOffset = if (provider.transparent) appBar.top else appBar.top - appBar.bottom
-
-        delegate.onHeaderFrameChanged(
-            appBar.width,
-            appBar.height,
-            configOffset,
-        )
-
-        updateSubviewOffsets(appBar, provider)
+        StackHeaderFrameSynchronizer.sync(appBar, provider, delegate)
     }
 
-    private fun updateSubviewOffsets(
-        appBar: StackHeaderAppBarLayout,
-        config: StackHeaderConfigurationProviding,
+    // Tracks whether the app bar is currently scrolled to its fully collapsed offset. Used to work
+    // around a Material offset bug when the title/subtitle changes at runtime — see
+    // StackHeaderApplicator.applyTitleAndSubtitle. This should be equivalent to Material's
+    // `collapsingTitleHelper.getExpansionFraction() == 1f` condition.
+    private var isAppBarFullyCollapsed = false
+
+    private fun evaluateCollapseState(
+        appBar: AppBarLayout,
+        verticalOffset: Int,
     ) {
-        config.leadingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.centerSubview?.let { updateSubviewOffset(it, appBar) }
-        config.trailingSubview?.let { updateSubviewOffset(it, appBar) }
-        config.backgroundSubview?.let { updateSubviewOffset(it, appBar) }
-    }
-
-    private fun updateSubviewOffset(
-        subview: StackHeaderSubviewProviding,
-        appBar: StackHeaderAppBarLayout,
-    ) {
-        val view = subview.view
-        if (view.width == 0 && view.height == 0) return
-
-        val appBarPos = IntArray(2)
-        val subviewPos = IntArray(2)
-        appBar.getLocationInWindow(appBarPos)
-        view.getLocationInWindow(subviewPos)
-
-        currentDelegate?.onSubviewOriginChanged(
-            subview.type,
-            x = subviewPos[0] - appBarPos[0],
-            y = subviewPos[1] - appBarPos[1],
-        )
+        val totalScrollRange = appBar.totalScrollRange
+        isAppBarFullyCollapsed = totalScrollRange > 0 && -verticalOffset >= totalScrollRange
     }
 
     // endregion
@@ -180,10 +162,9 @@ internal class StackHeaderCoordinatorLayout(
 
     private val applicator = StackHeaderApplicator(wrappedContext)
 
-    private var appBarLayout: StackHeaderAppBarLayout? = null
+    private val selectionController = StackHeaderToolbarMenuSelectionController()
 
-    private var toolbarMenuForwardIdMap = emptyMap<String, Int>()
-    private var toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
+    private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private val onNavigationIconClick: () -> Unit = {
         val activity =
@@ -216,8 +197,23 @@ internal class StackHeaderCoordinatorLayout(
         val appBar = appBarLayout
         if (appBar != null) {
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
-                applicator.applyTitle(appBar, provider)
+                applicator.applyTitleAndSubtitle(appBar, provider, isAppBarFullyCollapsed)
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE_APPEARANCE)) {
+                applicator.applyTitleAndSubtitleAppearance(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TITLE_POSITIONING)) {
+                applicator.applyTitlePositioning(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_POSITIONING)
+            }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.CONTENT_INSETS)) {
+                applicator.applyContentInsets(appBar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.CONTENT_INSETS)
             }
 
             if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
@@ -230,26 +226,36 @@ internal class StackHeaderCoordinatorLayout(
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.SCROLL_FLAGS)
             }
 
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)) {
+                // Lift-on-scroll is disabled in transparent mode: there is no content
+                // scrolling behavior installed and the app bar overlays the content.
+                applicator.applyLiftOnScroll(
+                    appBar,
+                    enabled = provider.liftOnScroll && !provider.transparent,
+                    targetScrollView = stackScreen.findContentScrollView(),
+                )
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+            }
+
             if (provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 val (forwardIdMap, reverseIdMap) =
-                    applicator.generateToolbarMenuItemMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuItemMappings(
                         provider.toolbarMenu,
                     )
                 val forwardGroupIdMap =
-                    applicator.generateToolbarMenuGroupMappings(
+                    StackHeaderToolbarMenuApplicator.generateToolbarMenuGroupMappings(
                         provider.toolbarMenu,
                     )
                 val groupMetadata =
-                    applicator.computeGroupMetadata(
+                    StackHeaderToolbarMenuApplicator.computeGroupMetadata(
                         provider.toolbarMenu,
                     )
 
-                applicator.validateRadioInitialSelection(provider.toolbarMenu)
+                StackHeaderToolbarMenuApplicator.validateRadioInitialSelection(provider.toolbarMenu)
 
-                toolbarMenuForwardIdMap = forwardIdMap
-                toolbarMenuGroupMetadata = groupMetadata
+                selectionController.setMenuMaps(forwardIdMap, groupMetadata)
 
-                applicator.rebuildToolbarMenu(
+                StackHeaderToolbarMenuApplicator.rebuildToolbarMenu(
                     appBar.toolbar,
                     provider.toolbarMenu,
                     forwardIdMap,
@@ -258,7 +264,7 @@ internal class StackHeaderCoordinatorLayout(
                     groupDividerEnabled = provider.toolbarMenuGroupDividerEnabled,
                     onItemClicked = { id, menuItem ->
                         if (menuItem.isCheckable) {
-                            applyGroupItemStateChange(appBar.toolbar, id)?.let { groupId ->
+                            selectionController.applyGroupItemStateChange(appBar.toolbar, id)?.let { groupId ->
                                 emitGroupSelection(appBar.toolbar, groupId)
                             }
                         } else {
@@ -269,6 +275,11 @@ internal class StackHeaderCoordinatorLayout(
 
                 provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
+
+            if (needsRebuild || provider.invalidationFlags.containsAny(StackHeaderInvalidationFlags.OVERFLOW_ICON)) {
+                applicator.applyOverflowIcon(appBar.toolbar, provider)
+                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+            }
         }
 
         onMaybeHeaderLayoutChanged()
@@ -278,62 +289,12 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Group selection
 
-    /**
-     * Mutates the checked state of [itemId] within its group and returns the id of the group
-     * whose selection changed, or `null` when nothing changed (the item is not in a group, an
-     * invalid attempt to uncheck a single-selection item, or the item was already in the
-     * target state). Does not emit — callers decide when to emit so that batched updates can
-     * coalesce into one event per group.
-     */
-    private fun applyGroupItemStateChange(
-        toolbar: MaterialToolbar,
-        itemId: String,
-        explicitCheckedValue: Boolean? = null,
-    ): String? {
-        val groupId = toolbarMenuGroupMetadata.itemGroupMap[itemId] ?: return null
-        val singleSelection = toolbarMenuGroupMetadata.groupSingleSelection[groupId] ?: return null
-        val intId = toolbarMenuForwardIdMap[itemId] ?: return null
-        val menuItem = toolbar.menu.findItem(intId) ?: return null
-
-        if (singleSelection && explicitCheckedValue == false) {
-            Log.w(
-                TAG,
-                "[RNScreens] Cannot uncheck item '$itemId' in single-selection group '$groupId'. " +
-                    "Check a different item instead.",
-            )
-            return null
-        }
-
-        val newChecked =
-            if (singleSelection) {
-                true
-            } else {
-                explicitCheckedValue ?: !menuItem.isChecked
-            }
-        if (menuItem.isChecked == newChecked) return null
-        menuItem.isChecked = newChecked
-
-        return groupId
-    }
-
     private fun emitGroupSelection(
         toolbar: MaterialToolbar,
         groupId: String,
     ) {
-        currentDelegate?.onGroupSelectionChanged(groupId, collectSelectedIds(toolbar, groupId))
+        currentDelegate?.onGroupSelectionChanged(groupId, selectionController.collectSelectedIds(toolbar, groupId))
     }
-
-    private fun collectSelectedIds(
-        toolbar: MaterialToolbar,
-        groupId: String,
-    ): List<String> =
-        toolbarMenuGroupMetadata
-            .groupMemberItems[groupId]
-            .orEmpty()
-            .filter { memberId ->
-                val intId = toolbarMenuForwardIdMap[memberId] ?: return@filter false
-                toolbar.menu.findItem(intId)?.isChecked == true
-            }
 
     // endregion
 
@@ -345,8 +306,9 @@ internal class StackHeaderCoordinatorLayout(
             removeView(it)
         }
         appBarLayout = null
-        toolbarMenuForwardIdMap = emptyMap()
-        toolbarMenuGroupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
+        // A rebuilt header starts fully expanded; drop any stale collapsed state from the old one.
+        isAppBarFullyCollapsed = false
+        selectionController.clear()
     }
 
     private fun removeHeader() {
@@ -379,6 +341,22 @@ internal class StackHeaderCoordinatorLayout(
             stackScreen.onContentYOriginChanged(0)
             stackScreenWrapper.requestLayout()
         }
+    }
+
+    // endregion
+
+    // region Instance state
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        // Do nothing. This view is the root of a fragment-managed, react-owned hierarchy that
+        // React Native keeps alive, so there is no need to serialize/deserialize native view
+        // state. View ids in this subtree are react tags, which are not stable identities -
+        // restoring state by id can apply state saved by one view type to a different one,
+        // crashing e.g. in CompoundButton (see #4523).
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
     // endregion

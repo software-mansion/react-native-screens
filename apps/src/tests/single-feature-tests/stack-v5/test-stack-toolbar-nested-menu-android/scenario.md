@@ -16,7 +16,13 @@ command-applied state at every level.
 
 ## E2E test
 
-TBD — automation is possible and planned but not yet implemented.
+Full: covers all steps.
+
+Steps 19 and 27 leave the submenu entry with no text for Detox to
+match, so both are reached by their position among the overflow
+menu's rows instead. The absence of a submenu header is asserted
+indirectly, as a header would show up as an extra match for the text
+it renders.
 
 ## Prerequisites
 

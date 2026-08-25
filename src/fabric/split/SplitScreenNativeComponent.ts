@@ -1,6 +1,10 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+} from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -21,4 +25,4 @@ interface NativeProps extends ViewProps {
 
 export default codegenNativeComponent<NativeProps>('RNSSplitScreen', {
   interfaceOnly: true,
-});
+}) as HostComponent<NativeProps>;

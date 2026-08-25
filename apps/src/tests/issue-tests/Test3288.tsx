@@ -136,7 +136,7 @@ function TestScreen() {
 const TAB_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    Component: Config,
+    element: <Config />,
     options: {
       title: 'Config',
       ios: {
@@ -149,7 +149,7 @@ const TAB_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Tab2',
-    Component: TestScreen,
+    element: <TestScreen />,
     options: {
       title: 'Test',
       ios: {

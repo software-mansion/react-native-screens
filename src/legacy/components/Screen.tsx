@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Animated, View, Platform } from 'react-native';
+import { Animated, Platform, View } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -41,7 +41,7 @@ const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-interface ViewConfig extends View {
+interface ViewConfig extends React.ComponentRef<typeof View> {
   viewConfig: {
     validAttributes: {
       style: {
@@ -65,13 +65,18 @@ interface ViewConfig extends View {
   };
 }
 
-export const InnerScreen = React.forwardRef<View, ScreenProps>(
+// Nominal instance type for screen refs. `React.ComponentRef<typeof View>`
+// declaration emit resolves down to the non-public `ReactNativeElement` class.
+// An interface stops that resolution at a name this package can emit.
+export interface ScreenInstance extends React.ComponentRef<typeof View> {}
+
+export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
     React.useImperativeHandle(ref, () => innerRef.current!, []);
     const prevActivityState = usePrevious(props.activityState);
 
-    const setRef = (ref: ViewConfig) => {
+    const setRef = (ref: ViewConfig | null) => {
       innerRef.current = ref;
       props.onComponentRef?.(ref);
     };
@@ -175,7 +180,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       }
 
-      const handleRef = (ref: ViewConfig) => {
+      const handleRef = (ref: ViewConfig | null) => {
         // Workaround is necessary to prevent React Native from hiding frozen screens.
         // See this PR: https://github.com/grahammendick/navigation/pull/860
         if (ref?.viewConfig?.validAttributes?.style) {
@@ -277,6 +282,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             androidResetScreenShadowStateOnOrientationChangeEnabled={
               featureFlags.experiment
                 .androidResetScreenShadowStateOnOrientationChangeEnabled
+            }
+            iosOrientationInheritanceFixEnabled={
+              featureFlags.experiment.iosOrientationInheritanceFixEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
@@ -322,7 +330,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
+const Screen = React.forwardRef<ScreenInstance, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
   return <ScreenWrapper {...props} ref={ref} />;

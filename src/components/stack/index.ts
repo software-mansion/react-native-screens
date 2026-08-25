@@ -19,6 +19,9 @@ export type {
   StackHeaderConfigRef,
   // Android
   StackHeaderTypeAndroid,
+  StackHeaderTitleHorizontalGravityAndroid,
+  StackHeaderTitleVerticalGravityAndroid,
+  StackHeaderCollapsedTitleGravityModeAndroid,
   StackHeaderBackgroundSubviewCollapseModeAndroid,
   StackHeaderToolbarSubviewAndroid,
   StackHeaderBackgroundSubviewAndroid,
@@ -48,9 +51,6 @@ export type {
   StackHeaderMenuOptionsIOS,
 } from './header';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 export const Stack = {
   Host: StackHost,
   Screen: StackScreen,

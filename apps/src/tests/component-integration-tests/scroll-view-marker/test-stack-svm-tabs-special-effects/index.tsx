@@ -10,7 +10,7 @@ import {
 } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 import { Rectangle } from '@apps/shared/Rectangle';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 import { type ScrollEdgeEffect } from 'react-native-screens';
 import {
   StackContainer,
@@ -24,7 +24,7 @@ export function TestStackSvmTabsSpecialEffects() {
 const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    Component: TabContents,
+    element: <TabContents />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -34,7 +34,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Stack',
-    Component: StackTabScreen,
+    element: <StackTabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Stack',
@@ -47,13 +47,11 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
 const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'First',
-    Component: StackContents,
-    options: {},
+    element: <StackContents />,
   },
   {
     name: 'Second',
-    Component: StackContents,
-    options: {},
+    element: <StackContents />,
   },
 ];
 

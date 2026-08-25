@@ -48,7 +48,7 @@ export function ExploreTab() {
 const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    Component: HomeTab,
+    element: <HomeTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -56,7 +56,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Explore',
-    Component: ExploreTab,
+    element: <ExploreTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Explore',
@@ -83,12 +83,11 @@ export function TestScreen() {
 const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'Tabs',
-    Component: TabsScreen,
-    options: {},
+    element: <TabsScreen />,
   },
   {
     name: 'Test',
-    Component: TestScreen,
+    element: <TestScreen />,
     options: {
       headerConfig: {
         title: 'Test',

@@ -2,20 +2,15 @@ import {
   StackHeaderMenuElementIOS,
   StackHeaderMenuIOS,
 } from './ios/StackHeaderMenu.ios.types';
-import { SupportsMenuIOS } from './StackHeaderConfig.ios.types';
 
-export function findMenuElementByIdInItems(
-  items: SupportsMenuIOS[],
+export function findMenuElementByIdInMenus(
+  menus: StackHeaderMenuIOS[],
   id: string,
 ): StackHeaderMenuElementIOS | null {
-  for (const item of items) {
-    if (item.menu === undefined) {
-      continue;
-    }
-
-    const menu = findMenuElementById(item.menu, id);
-    if (menu !== null) {
-      return menu;
+  for (const menu of menus) {
+    const element = findMenuElementById(menu, id);
+    if (element !== null) {
+      return element;
     }
   }
 

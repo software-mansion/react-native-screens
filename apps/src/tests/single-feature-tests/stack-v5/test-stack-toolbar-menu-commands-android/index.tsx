@@ -7,11 +7,12 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderToolbarMenuElementAndroid,
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderToolbarMenuElementAndroid,
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
@@ -96,7 +97,7 @@ function TestStackToolbarMenuCommands() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -163,37 +164,51 @@ function MainScreen() {
   }, [cmdTargetId, cmdTitle, cmdHidden]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<IdOption>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ID_OPTIONS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdTitleOption>
-        label="title"
-        value={cmdTitle}
-        items={CMD_TITLE_OPTIONS}
-        onValueChange={setCmdTitle}
-      />
-      <SettingsPicker<CmdHiddenOption>
-        label="hidden"
-        value={cmdHidden}
-        items={CMD_HIDDEN_OPTIONS}
-        onValueChange={setCmdHidden}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-commands-scrollview">
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<IdOption>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ID_OPTIONS]}
+          onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
+        />
+        <SettingsPicker<CmdTitleOption>
+          label="cmd title"
+          value={cmdTitle}
+          items={CMD_TITLE_OPTIONS}
+          onValueChange={setCmdTitle}
+          testID="cmd-title-picker"
+        />
+        <SettingsPicker<CmdHiddenOption>
+          label="cmd hidden"
+          value={cmdHidden}
+          items={CMD_HIDDEN_OPTIONS}
+          onValueChange={setCmdHidden}
+          testID="cmd-hidden-picker"
+        />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
 
-      <Text style={styles.heading}>Result</Text>
-      <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+        <Text style={styles.heading}>Result</Text>
+        <Text testID="last-clicked-text" style={styles.result}>
+          Last clicked: {lastClicked ?? '—'}
+        </Text>
 
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      <SlotControls
-        slots={slots}
-        updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-      />
-    </ScrollView>
+        <Text style={styles.heading}>Menu Items — Props</Text>
+        <SlotControls
+          slots={slots}
+          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+        />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -211,21 +226,24 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             Slot {i + 1} (item-{i + 1})
           </Text>
           <SettingsSwitch
-            label="include"
+            label={`slot ${i + 1} include`}
             value={slot.include}
             onValueChange={v => updateSlot(i, { include: v })}
+            testID={`slot-${i + 1}-include-switch`}
           />
           <SettingsPicker<TitleOption>
-            label="title"
+            label={`slot ${i + 1} title`}
             value={slot.title}
             items={[...TITLE_OPTIONS]}
             onValueChange={v => updateSlot(i, { title: v })}
+            testID={`slot-${i + 1}-title-picker`}
           />
           <SettingsPicker<HiddenOption>
-            label="hidden"
+            label={`slot ${i + 1} hidden`}
             value={slot.hidden}
             items={[...HIDDEN_OPTIONS]}
             onValueChange={v => updateSlot(i, { hidden: v })}
+            testID={`slot-${i + 1}-hidden-picker`}
           />
         </React.Fragment>
       ))}
@@ -234,6 +252,9 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

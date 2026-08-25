@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ScrollView, Text } from 'react-native';
-import { ScrollViewMarker } from 'react-native-screens/experimental';
+import { ScrollViewMarker } from 'react-native-screens';
 import { useScrollEdgeEffectsConfigContext } from './context';
 
 export function ScrollViewTemplate() {

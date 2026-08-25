@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
 @property (nonatomic, readonly, nullable) NSString *itemId;
+@property (nonatomic, readonly, nullable) NSString *identifier;
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) RNSStackHeaderIconData *icon;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;

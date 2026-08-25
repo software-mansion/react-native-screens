@@ -1,5 +1,6 @@
 #import "RNSStackScreenHeaderCoordinator.h"
-#import "RCTAssert.h"
+#import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 #import "RNSDefines.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
@@ -10,7 +11,6 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
-#import "React/RCTLog.h"
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -103,6 +103,7 @@
               largeSubtitleView:largeSubtitleView
                   forController:controller];
 
+  [self applyTitleMenuForController:controller];
   [self applyNavigationBarProperties];
 }
 
@@ -200,28 +201,37 @@
   }
 }
 
+- (void)reapplyTitleMenu
+{
+  if (_configDataProvider == nil) {
+    return;
+  }
+  [self applyTitleMenuForController:[self requireScreenController]];
+}
+
+- (void)resetTitleMenuTracker
+{
+  [_trackerRegistry resetTrackerForItemId:RNSTitleMenuTrackerItemId];
+}
+
 - (void)setToggleState:(BOOL)state
       forMenuElementId:(NSString *)elementId
-            withItemId:(NSString *)itemId
+         trackerItemId:(NSString *)trackerItemId
+              rootMenu:(RNSStackHeaderMenuData *)rootMenu
             parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
 {
-  if (_configDataProvider == nil || elementId == nil || itemId == nil) {
+  if (_configDataProvider == nil || elementId == nil || trackerItemId == nil || rootMenu == nil) {
     return;
   }
 
-  RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+  RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:trackerItemId];
 
   if ([tracker toggleStateEquals:state forItemWithId:elementId]) {
     return;
   }
 
-  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
-  if (item == nil || item.menu == nil) {
-    return;
-  }
-
-  RNSStackHeaderMenuData *singleSelectionRoot =
-      [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:elementId inMenu:item.menu];
+  RNSStackHeaderMenuData *singleSelectionRoot = [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:elementId
+                                                                                                       inMenu:rootMenu];
 
   NSString *eventMenuId = nil;
   NSArray<NSString *> *toggleIds = nil;
@@ -269,6 +279,12 @@
   navItem.titleView = nil;
   [navItem setLeftBarButtonItems:@[] animated:YES];
   [navItem setRightBarButtonItems:@[] animated:YES];
+
+#if !TARGET_OS_TV
+  if (@available(iOS 16.0, *)) {
+    navItem.titleMenuProvider = nil;
+  }
+#endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -415,12 +431,53 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
+- (void)applyTitleMenuForController:(RNSStackScreenController *)controller
+{
+#if !TARGET_OS_TV
+  if (@available(iOS 16.0, *)) {
+    RNSStackHeaderMenuData *titleMenuData = _configDataProvider.titleMenu;
+    UINavigationItem *navItem = controller.navigationItem;
+
+    if (titleMenuData == nil) {
+      navItem.titleMenuProvider = nil;
+      return;
+    }
+
+    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:RNSTitleMenuTrackerItemId];
+    __weak auto weakSelf = self;
+    __weak auto weakEventsDelegate = _eventsDelegate;
+    __weak auto weakImageLoader = _imageLoader;
+
+    navItem.titleMenuProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
+      if (weakEventsDelegate == nil || weakImageLoader == nil) {
+        return nil;
+      }
+      return [RNSStackHeaderMenuCoordinator buildUIMenuFromData:titleMenuData
+                                       withHeaderEventsDelegate:weakEventsDelegate
+                                                   stateTracker:tracker
+                                                withImageLoader:weakImageLoader
+                                        menuInvalidatedCallback:^{
+                                          [weakSelf reapplyTitleMenu];
+                                        }];
+    };
+  }
+#endif // !TARGET_OS_TV
+}
+
 - (UIBarButtonItem *)buildBarButtonItemForItem:(id<RNSStackHeaderItemDataProviding>)item
 {
   UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
                                                                     withFrameChangeDelegate:_frameChangeDelegate
                                                                    withHeaderEventsDelegate:_eventsDelegate
                                                                             withImageLoader:_imageLoader];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (item.identifier != nil) {
+      barButtonItem.identifier = item.identifier;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];

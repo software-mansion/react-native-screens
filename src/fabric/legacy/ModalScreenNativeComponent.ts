@@ -1,7 +1,12 @@
 'use client';
 
 import { codegenNativeComponent } from 'react-native';
-import type { CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  HostComponent,
+  ViewProps,
+  ColorValue,
+} from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ScreenEvent = Readonly<{}>;
@@ -122,8 +127,9 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
+  iosOrientationInheritanceFixEnabled?: CT.WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {
   interfaceOnly: true,
-});
+}) as HostComponent<NativeProps>;

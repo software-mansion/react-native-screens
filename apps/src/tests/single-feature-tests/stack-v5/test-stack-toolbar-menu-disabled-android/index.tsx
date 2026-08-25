@@ -7,11 +7,12 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuBaseAndroid,
-  StackHeaderToolbarMenuElementOptionsAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuBaseAndroid,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
@@ -26,9 +27,11 @@ const ALL_IDS = [
   'submenu',
   'sub-item',
 ] as const;
-type AllIds = (typeof ALL_IDS)[number];
 
-type CmdDisabledOption = 'no change' | 'true' | 'false' | 'undefined';
+// The types below are exported for the e2e test covering this screen.
+export type AllIds = (typeof ALL_IDS)[number];
+
+export type CmdDisabledOption = 'no change' | 'true' | 'false' | 'undefined';
 
 const CMD_DISABLED_OPTIONS: CmdDisabledOption[] = [
   'no change',
@@ -48,14 +51,35 @@ const DEFAULT_DISABLED: DisabledById = {
   'sub-item': false,
 };
 
-const ITEM_LABELS: Record<AllIds, string> = {
+// Switch labels, rendered by `SettingsSwitch` as `disable ${label}: ${value}`.
+const ITEM_LABELS = {
   'action-bar': 'action-bar (toolbar button)',
   'action-overflow': 'action-overflow',
   'opt-a': 'opt-a (checkable, checked)',
   'opt-b': 'opt-b (checkable)',
   submenu: 'submenu',
   'sub-item': 'sub-item',
-};
+} as const satisfies Record<AllIds, string>;
+
+export type ItemLabels = typeof ITEM_LABELS;
+
+// Menu element titles. Kept in one place so the e2e test can address a popup
+// row by the same string the menu is built from.
+const ELEMENT_TITLES = {
+  'action-bar': 'Action Bar',
+  'action-overflow': 'Action Overflow',
+  'opt-a': 'Option A',
+  'opt-b': 'Option B',
+  submenu: 'More',
+  'sub-item': 'Sub Item',
+} as const satisfies Record<AllIds, string>;
+
+export type ElementTitles = typeof ELEMENT_TITLES;
+
+// Shown by **Last Event** until the first `onPress` / `onSelectionChange`.
+const NO_EVENT = '—';
+
+export type NoEvent = typeof NO_EVENT;
 
 const SEARCH_ICON: PlatformIconAndroid = {
   type: 'imageSource',
@@ -79,7 +103,7 @@ function buildMenu(
       {
         type: 'menuItem',
         id: 'action-bar',
-        title: 'Action Bar',
+        title: ELEMENT_TITLES['action-bar'],
         showAsAction: 'always',
         icon: SEARCH_ICON,
         iconTintColorNormal: Colors.PurpleLight100,
@@ -90,7 +114,7 @@ function buildMenu(
       {
         type: 'menuItem',
         id: 'action-overflow',
-        title: 'Action Overflow',
+        title: ELEMENT_TITLES['action-overflow'],
         showAsAction: 'never',
         disabled: disabled['action-overflow'],
         onPress: () => onItemPress('action-overflow'),
@@ -98,7 +122,7 @@ function buildMenu(
       {
         type: 'menuItem',
         id: 'opt-a',
-        title: 'Option A',
+        title: ELEMENT_TITLES['opt-a'],
         groupId: 'options',
         initialToggleState: true,
         disabled: disabled['opt-a'],
@@ -106,20 +130,20 @@ function buildMenu(
       {
         type: 'menuItem',
         id: 'opt-b',
-        title: 'Option B',
+        title: ELEMENT_TITLES['opt-b'],
         groupId: 'options',
         disabled: disabled['opt-b'],
       },
       {
         type: 'menu',
         id: 'submenu',
-        title: 'More',
+        title: ELEMENT_TITLES.submenu,
         disabled: disabled.submenu,
         children: [
           {
             type: 'menuItem',
             id: 'sub-item',
-            title: 'Sub Item',
+            title: ELEMENT_TITLES['sub-item'],
             disabled: disabled['sub-item'],
             onPress: () => onItemPress('sub-item'),
           },
@@ -131,13 +155,15 @@ function buildMenu(
 
 const HEADER_TITLE = 'Toolbar Menu Disabled Test';
 
+export type HeaderTitle = typeof HEADER_TITLE;
+
 function TestStackToolbarMenuDisabled() {
   return (
     <StackContainer
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -224,39 +250,56 @@ function MainScreen() {
   }, [cmdTargetId, cmdDisabled]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Last Event</Text>
-      <Text style={styles.result}>{lastEvent ?? '—'}</Text>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-disabled-scrollview">
+        <Text style={styles.heading}>Last Event</Text>
+        <Text testID="last-event-text" style={styles.result}>
+          {lastEvent ?? NO_EVENT}
+        </Text>
 
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<AllIds>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ALL_IDS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdDisabledOption>
-        label="disabled"
-        value={cmdDisabled}
-        items={CMD_DISABLED_OPTIONS}
-        onValueChange={setCmdDisabled}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
-
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      {ALL_IDS.map(id => (
-        <SettingsSwitch
-          key={id}
-          label={`disable ${ITEM_LABELS[id]}`}
-          value={disabledById[id]}
-          onValueChange={v => applyDisabled({ ...disabledById, [id]: v })}
+        <Text style={styles.heading}>Send Command</Text>
+        <SettingsPicker<AllIds>
+          label="target id"
+          value={cmdTargetId}
+          items={[...ALL_IDS]}
+          onValueChange={setCmdTargetId}
+          testID="cmd-target-picker"
         />
-      ))}
-    </ScrollView>
+        <SettingsPicker<CmdDisabledOption>
+          label="disabled"
+          value={cmdDisabled}
+          items={CMD_DISABLED_OPTIONS}
+          onValueChange={setCmdDisabled}
+          testID="cmd-disabled-picker"
+        />
+        <Button
+          title="Send Command"
+          onPress={sendCommand}
+          testID="send-command-button"
+        />
+
+        <Text style={styles.heading}>Menu Items — Props</Text>
+        {ALL_IDS.map(id => (
+          <SettingsSwitch
+            key={id}
+            label={`disable ${ITEM_LABELS[id]}`}
+            value={disabledById[id]}
+            onValueChange={v => applyDisabled({ ...disabledById, [id]: v })}
+            testID={`disable-${id}-switch`}
+          />
+        ))}
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

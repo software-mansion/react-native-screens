@@ -10,12 +10,12 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/experimental';
+import { StackHeaderConfigProps } from 'react-native-screens';
 import type {
   StackHeaderConfigRef,
   StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 import { Button, ScrollView, StyleSheet, Text } from 'react-native';
 import LongText from '@apps/shared/LongText';
 import { scenarioDescription } from './scenario-description';
@@ -31,10 +31,12 @@ const ACTION_IDS = [
   'radio-1-1',
   'radio-1-2',
   'radio-1-3',
+  'title-action-1',
+  'title-action-2',
 ] as const;
 type ActionId = (typeof ACTION_IDS)[number];
 
-const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1'] as const;
+const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1', 'title-menu'] as const;
 type MenuId = (typeof MENU_IDS)[number];
 
 const TITLE_OPTIONS = [
@@ -89,8 +91,7 @@ function TestStackHeaderMenuIOS() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
-            options: {},
+            element: <ConfigScreen />,
           },
         ]}
       />
@@ -193,6 +194,26 @@ function buildHeaderConfig(
     title: 'Header Menu',
     ios: {
       trailingItems,
+      titleMenu: {
+        type: 'menu',
+        id: 'title-menu',
+        children: [
+          {
+            id: 'title-action-1',
+            type: 'menuItem',
+            itemType: 'action',
+            title: 'Title Action 1',
+            onPress: () => showToast('Clicked "Title Action 1"'),
+          },
+          {
+            id: 'title-action-2',
+            type: 'menuItem',
+            itemType: 'action',
+            title: 'Title Action 2',
+            onPress: () => showToast('Clicked "Title Action 2"'),
+          },
+        ],
+      },
     },
   };
 }
@@ -261,7 +282,9 @@ function ConfigScreen() {
   }, [menuId, menuTitle, menuIcon]);
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      testID="header-menu-scrollview"
+      contentInsetAdjustmentBehavior="automatic">
       <Button
         title={`Toggle trailing items count (${trailingItemsCount}/4)`}
         onPress={() => setTrailingItemsCount(count => (count + 1) % 5)}
@@ -273,51 +296,66 @@ function ConfigScreen() {
 
       <Text style={styles.heading}>setMenuItemOptions (Menu 1)</Text>
       <SettingsPicker<ActionId>
+        testID="menu-item-options-target-id-picker"
         label="target id"
         value={actionId}
         items={[...ACTION_IDS]}
         onValueChange={setActionId}
       />
       <SettingsPicker<TitleOption>
+        testID="menu-item-options-title-picker"
         label="title"
         value={actionTitle}
         items={[...TITLE_OPTIONS]}
         onValueChange={setActionTitle}
       />
       <SettingsPicker<IconOption>
+        testID="menu-item-options-icon-picker"
         label="icon"
         value={actionIcon}
         items={[...ICON_OPTIONS]}
         onValueChange={setActionIcon}
       />
       <SettingsPicker<ToggleStateOption>
+        testID="menu-item-options-toggle-state-picker"
         label="toggleState"
         value={actionToggle}
         items={[...TOGGLE_STATE_OPTIONS]}
         onValueChange={setActionToggle}
       />
-      <Button title="Send setMenuItemOptions" onPress={sendActionCommand} />
+      <Button
+        testID="send-menu-item-options-button"
+        title="Send setMenuItemOptions"
+        onPress={sendActionCommand}
+      />
 
       <Text style={styles.heading}>setMenuOptions (Menu 1)</Text>
       <SettingsPicker<MenuId>
+        testID="menu-options-target-id-picker"
         label="target id"
         value={menuId}
         items={[...MENU_IDS]}
         onValueChange={setMenuId}
       />
       <SettingsPicker<TitleOption>
+        testID="menu-options-title-picker"
         label="title"
         value={menuTitle}
         items={[...TITLE_OPTIONS]}
         onValueChange={setMenuTitle}
       />
       <SettingsPicker<IconOption>
+        testID="menu-options-icon-picker"
         label="icon"
         value={menuIcon}
         items={[...ICON_OPTIONS]}
         onValueChange={setMenuIcon}
       />
-      <Button title="Send setMenuOptions" onPress={sendMenuCommand} />
+      <Button
+        testID="send-menu-options-button"
+        title="Send setMenuOptions"
+        onPress={sendMenuCommand}
+      />
 
       <LongText />
     </ScrollView>

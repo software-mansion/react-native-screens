@@ -192,6 +192,15 @@ exception for iPad devices, where it resolves to [UIInterfaceOrientationMaskAll]
 
 Defaults to `default` on iOS.
 
+> [!NOTE]
+> iOS only: when `screenOrientation` is **not set at all** and the
+> `featureFlags.experiment.iosOrientationInheritanceFixEnabled` flag is enabled
+> (the default), a legacy (Stack v4) screen defers to its parent screen's
+> orientation instead of forcing `UIInterfaceOrientationMaskAllButUpsideDown`,
+> ultimately falling back to the orientations declared in `Info.plist`. Setting
+> `screenOrientation` to `default` explicitly keeps the previous behavior. See
+> [#4408](https://github.com/software-mansion/react-native-screens/pull/4408).
+
 ### `sheetAllowedDetents`
 
 Describes heights where a sheet can rest.
@@ -663,6 +672,7 @@ menu?: {
     | {
       label?: string;
       type: 'submenu';
+      subtitle?: string; // Subtitle of the submenu, displayed below its label - https://developer.apple.com/documentation/uikit/uimenuelement/subtitle?language=objc
       icon?: PlatformIconIOSSfSymbol;
       displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
       destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive

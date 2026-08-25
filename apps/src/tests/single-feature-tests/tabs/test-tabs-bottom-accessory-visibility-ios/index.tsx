@@ -14,7 +14,9 @@ import { Colors } from '@apps/shared/styling';
 function BottomAccessoryContent() {
   return (
     <View style={styles.accessory}>
-      <Text style={styles.accessoryText}>Bottom Accessory</Text>
+      <Text testID="bottom-accessory-text" style={styles.accessoryText}>
+        Bottom Accessory
+      </Text>
     </View>
   );
 }
@@ -36,13 +38,21 @@ function ConfigScreen() {
   }, [rendered, hidden, updateHostConfig]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      testID="bottom-accessory-visibility-scrollview"
+      style={styles.container}>
       <SettingsSwitch
+        testID="rendered-switch"
         label="rendered"
         value={rendered}
         onValueChange={setRendered}
       />
-      <SettingsSwitch label="hidden" value={hidden} onValueChange={setHidden} />
+      <SettingsSwitch
+        testID="hidden-switch"
+        label="hidden"
+        value={hidden}
+        onValueChange={setHidden}
+      />
     </ScrollView>
   );
 }
@@ -50,7 +60,7 @@ function ConfigScreen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Config',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',

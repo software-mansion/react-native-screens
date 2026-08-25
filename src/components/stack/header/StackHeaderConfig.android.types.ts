@@ -1,9 +1,23 @@
 import type { ReactElement } from 'react';
-import type { ColorValue } from 'react-native';
+import type { ColorValue, TextStyle } from 'react-native';
 import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../shared/types';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
+
+export type StackHeaderTitleHorizontalGravityAndroid =
+  | 'start'
+  | 'center'
+  | 'end';
+
+export type StackHeaderTitleVerticalGravityAndroid =
+  | 'top'
+  | 'center'
+  | 'bottom';
+
+export type StackHeaderCollapsedTitleGravityModeAndroid =
+  | 'entireSpace'
+  | 'availableSpace';
 
 export type StackHeaderBackgroundSubviewCollapseModeAndroid =
   StackHeaderSubviewCollapseModeAndroid;
@@ -581,6 +595,63 @@ export interface StackHeaderConfigPropsAndroid {
    */
   backButtonIcon?: PlatformIconAndroid | undefined;
   /**
+   * @summary Custom icon for the overflow menu button (the three-dots button
+   * that opens the toolbar menu's overflow popup).
+   *
+   * @description
+   * When `undefined`, the Material 3 Expressive default overflow icon is used.
+   *
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @platform android
+   */
+  overflowIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon in its normal state.
+   *
+   * @description
+   * When `undefined`, the default tint (the Material theme's menu icon color)
+   * is used. This applies to the default overflow icon and `drawableResource`
+   * icons that have an associated tint. For `imageSource` icons, no tint is
+   * applied by default.
+   *
+   * @platform android
+   */
+  overflowIconTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorFocused?: ColorValue | undefined;
+  /**
    * @summary Whether the header reacts to nested scroll. Required for any
    * other `scrollFlag*` prop to take effect.
    *
@@ -661,6 +732,30 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagSnap?: boolean | undefined;
   /**
+   * @summary Whether the app bar lifts (applies a tonal/elevation shift) when
+   * content is scrolled beneath it.
+   *
+   * @description
+   * For reliable behavior the content scroll view should be designated with a
+   * `ScrollViewMarker`. Without it, the app bar cannot always locate the scroll
+   * view, which can cause the lifted state to flicker while scrolling.
+   *
+   * @remarks
+   * Applies to the `small` header only. For `medium` and `large` headers the
+   * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
+   * installs its own content scrim and disables the app bar's lift-on-scroll,
+   * so this prop has no effect there. The collapsed appearance of those headers
+   * is instead controlled by that content scrim, which is not exposed yet.
+   *
+   * Has no effect while the header is `transparent` (there is no scrolling
+   * content behavior installed in that mode).
+   *
+   * @default true
+   *
+   * @platform android
+   */
+  liftOnScroll?: boolean | undefined;
+  /**
    * @summary Toolbar menu configuration.
    *
    * @description
@@ -686,4 +781,462 @@ export interface StackHeaderConfigPropsAndroid {
    * @supported API 28 or higher
    */
   toolbarMenuGroupDividerEnabled?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the title within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only; ignored for `medium` / `large` (use
+   * `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
+   * instead). The title is centered independently of the subtitle. Combining
+   * a centered title with left and/or center subviews is not recommended — they
+   * may overlap or be laid out incorrectly.
+   *
+   * @default false
+   * @platform android
+   */
+  titleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the subtitle within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only. The subtitle is centered independently
+   * of the title. See {@link titleCentered}.
+   *
+   * @default false
+   * @platform android
+   */
+  subtitleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small` (use
+   * `titleCentered` instead). The subtitle always follows the title's
+   * alignment.
+   *
+   * @default start
+   * @platform android
+   */
+  expandedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`.
+   *
+   * @default bottom
+   * @platform android
+   */
+  expandedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * subtitle always follows the title's alignment. `center` is further affected
+   * by `collapsedTitleGravityMode`.
+   *
+   * @default start
+   * @platform android
+   */
+  collapsedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`.
+   *
+   * @default center
+   * @platform android
+   */
+  collapsedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Anchor used when resolving the collapsed title's horizontal
+   * gravity.
+   *
+   * @description
+   * The following values are available:
+   * - `availableSpace` - gravity is computed over the space left after the
+   *   navigation icon, menu and subviews are laid out,
+   * - `entireSpace` - gravity is computed over the whole app bar, so a centered
+   *   title is centered relative to the app bar and pushed aside only if it
+   *   would overlap another view.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only and affects only the collapsed
+   * state; it is only visually meaningful with
+   * `collapsedTitleHorizontalGravity: 'center'`.
+   *
+   * Because the underlying Material field is set at construction time, changing
+   * this prop rebuilds the header.
+   *
+   * If the header is laid out during a screen transition, due to a native bug,
+   * the title and the subtitle might be laid out incorrectly when `entireSpace`
+   * gravity mode is used.
+   *
+   * @default availableSpace
+   * @platform android
+   */
+  collapsedTitleGravityMode?:
+    | StackHeaderCollapsedTitleGravityModeAndroid
+    | undefined;
+  /**
+   * @summary Maximum number of lines for the expanded title and subtitle.
+   *
+   * @description
+   * A single shared value: the same limit applies to both the expanded title
+   * and the expanded subtitle. Text exceeding the limit is ellipsized.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * collapsed title is always a single line regardless of this value.
+   *
+   * A value less than `1` is invalid and falls back to `1`.
+   *
+   * Changing this value at runtime rebuilds the header. This is required due to
+   * a native platform limitation.
+   *
+   * @default 1
+   * @platform android
+   */
+  maxLines?: number | undefined;
+  /**
+   * @summary Start inset of the toolbar.
+   *
+   * @description
+   * The inset is a minimum: the navigation icon is positioned before it is
+   * applied and is not bounded by it, so the content area starts at whichever
+   * reaches further from the edge — the navigation icon's trailing edge or this
+   * inset. A back button usually wins, which makes this prop inert while one is
+   * visible.
+   *
+   * @remarks
+   * Applies to all header types. On `medium` / `large` it affects the collapsed
+   * title only.
+   *
+   * By default, native platform applies non-zero inset which makes centered
+   * collapsed title look off-center when `collapsedTitleGravityMode:
+   * 'availableSpace'` is used.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetStart?: number | undefined;
+  /**
+   * @summary End inset of the toolbar content area.
+   *
+   * @remarks
+   * The end-side counterpart of `contentInsetStart`. Applies to all header
+   * types. Like its start-side counterpart it is a minimum, so it is inert
+   * while the toolbar menu shows items that already reach further in.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetEnd?: number | undefined;
+  /**
+   * @summary Color of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the subtitle text. Applies to `small`
+   * header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the expanded title text. Applies to `medium` and
+   * `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the expanded title text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the collapsed title text. Applies to `medium` and
+   * `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the collapsed title text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the expanded subtitle text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the collapsed subtitle text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
 }

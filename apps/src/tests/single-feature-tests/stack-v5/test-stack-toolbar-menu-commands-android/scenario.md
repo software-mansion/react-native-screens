@@ -17,7 +17,7 @@ whose prop changed.
 
 ## E2E test
 
-Other — automation is not implemented yet.
+Full: All steps are covered.
 
 ## Prerequisites
 

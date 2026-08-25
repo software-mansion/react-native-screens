@@ -5,22 +5,19 @@
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
     "check-types": "tsc --noEmit",
-    "check-ios-swift-react-leak": "node scripts/ios/check-react-symbols-not-leaked-to-swift.js",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,FabricExample,apps}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
-    "format-ios-swift": "sh scripts/swift-format-helper.sh format",
     "format-ios-cpp": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
-    "format-ios": "yarn format-ios-swift && yarn format-ios-cpp",
+    "format-ios": "yarn format-ios-cpp",
     "format-common": "find common/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-cpp": "find cpp/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-android-cpp": "find android/src/main/cpp -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-common && yarn format-cpp && yarn format-android-cpp",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
-    "lint-swift": "sh scripts/swift-format-helper.sh lint",
-    "lint": "yarn lint-js && yarn lint-android && yarn lint-swift",
+    "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install"
   },
@@ -81,13 +78,14 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "7.22.15",
-    "@react-native-community/cli": "20.1.0",
-    "@react-native-community/cli-platform-android": "20.1.0",
-    "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.86.0",
-    "@react-native/eslint-config": "0.86.0",
-    "@react-native/metro-config": "0.86.0",
-    "@react-native/typescript-config": "0.86.0",
+    "@react-native-community/cli": "20.2.0",
+    "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native-community/cli-platform-ios": "20.2.0",
+    "@react-native/babel-preset": "0.87.0-rc.3",
+    "@react-native/eslint-config": "0.87.0-rc.3",
+    "@react-native/jest-preset": "0.87.0-rc.3",
+    "@react-native/metro-config": "0.87.0-rc.3",
+    "@react-native/typescript-config": "0.87.0-rc.3",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^29.5.13",
@@ -110,20 +108,19 @@
     "prettier": "^2.8.8",
     "react": "19.2.3",
     "react-dom": "^19.1.0",
-    "react-native": "0.86.0",
+    "react-native": "0.87.0-rc.3",
     "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^3.0.1",
     "react-native-reanimated": "^3.19.0",
-    "react-native-safe-area-context": "5.6.0",
+    "react-native-safe-area-context": "5.8.0",
     "react-native-windows": "^0.64.8",
     "react-test-renderer": "19.2.3",
     "release-it": "^15.6.0",
     "shelljs": "^0.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "lint-staged": {
     "{src,FabricExample}/**/*.{js,ts,tsx}": "yarn format-js",
-    "FabricExample/ios/**/*.swift": "yarn format-ios-swift",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "common/**/*.{h,cpp}": "yarn format-common",
     "cpp/**/*.{h,cpp}": "yarn format-cpp",
@@ -172,6 +169,9 @@
         },
         "RNSScreenFooter": {
           "className": "RNSScreenFooter"
+        },
+        "RNSScrollToTopGuard": {
+          "className": "RNSScrollToTopGuard"
         },
         "RNSScreen": {
           "className": "RNSScreenView"

@@ -16,6 +16,15 @@ namespace react = facebook::react;
 
 @implementation RNSScreenContentWrapper
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const react::RNSScreenContentWrapperProps>();
+    _props = defaultProps;
+  }
+  return self;
+}
+
 - (void)notifyDelegateWithFrame:(CGRect)frame
 {
   [self.delegate contentWrapper:self receivedReactFrame:frame];

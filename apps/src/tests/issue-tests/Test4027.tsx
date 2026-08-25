@@ -38,7 +38,7 @@ function Screen1({ navigation }: StackNavigationProp) {
       routeConfigs={[
         {
           name: 'Tab1',
-          Component: () => TabsScreen({ navigation }),
+          element: <TabsScreen navigation={navigation} />,
           options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab1',
@@ -46,7 +46,7 @@ function Screen1({ navigation }: StackNavigationProp) {
         },
         {
           name: 'Tab2',
-          Component: () => TabsScreen({ navigation }),
+          element: <TabsScreen navigation={navigation} />,
           options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab2',
@@ -54,7 +54,7 @@ function Screen1({ navigation }: StackNavigationProp) {
         },
         {
           name: 'Tab3',
-          Component: () => TabsScreen({ navigation }),
+          element: <TabsScreen navigation={navigation} />,
           options: {
             ...DEFAULT_TAB_ROUTE_OPTIONS,
             title: 'Tab3',

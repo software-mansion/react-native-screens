@@ -3,7 +3,7 @@ import {
   StackScreenProps,
   StackHeaderConfigProps,
   StackHeaderConfigRef,
-} from 'react-native-screens/experimental';
+} from 'react-native-screens';
 
 /// Route definition
 
@@ -20,11 +20,11 @@ export type StackRouteOptions = Omit<
  */
 export type StackRouteConfig = {
   name: string;
-  Component: React.ComponentType;
-  options: StackRouteOptions;
+  element: React.ReactElement;
+  options?: StackRouteOptions;
 };
 
-export type StackRoute = Omit<StackRouteConfig, 'Component'> & {
+export type StackRoute = Omit<StackRouteConfig, 'element'> & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
   isMarkedForDismissal: boolean; // whether this route is during or after dismissal process

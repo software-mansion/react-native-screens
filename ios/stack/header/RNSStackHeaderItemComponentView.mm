@@ -45,6 +45,7 @@ namespace react = facebook::react;
 - (void)resetProps
 {
   _itemId = nil;
+  _identifier = nil;
   [self setTitleProp:nil];
   [self setIconProp:nil];
   [self setMenuProp:nil];
@@ -181,6 +182,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.itemId != newItemProps.itemId) {
     _itemId = RCTNSStringFromStringNilIfEmpty(newItemProps.itemId);
+  }
+
+  if (oldItemProps.identifier != newItemProps.identifier) {
+    _identifier = RCTNSStringFromStringNilIfEmpty(newItemProps.identifier);
+    needsUpdate = YES;
   }
 
   if (oldItemProps.placement != newItemProps.placement) {

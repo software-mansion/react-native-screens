@@ -36,6 +36,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<NSString *> *)getToggleItemsIdsInMenu:(RNSStackHeaderMenuData *)menu;
 
 /**
+ * Builds a UIMenu from the given menu data. Used for `UINavigationItem.titleMenuProvider`.
+ */
++ (UIMenu *)buildUIMenuFromData:(RNSStackHeaderMenuData *)data
+       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                   stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                withImageLoader:(id<RNSImageLoading>)imageLoader
+        menuInvalidatedCallback:(nullable void (^)(void))onMenuInvalidated;
+
+/**
  * Constructs a new menu tree with the child matching `elementId` replaced by `newElement`.
  * Returns the original menu unchanged if no matching child is found in the subtree.
  */

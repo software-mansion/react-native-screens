@@ -20,8 +20,7 @@ export function TestStackHeaderSubviewsOnpressIOS() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
-            options: {},
+            element: <ConfigScreen />,
           },
         ]}
       />
@@ -97,6 +96,7 @@ function ConfigScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
+        testID="toggle-items-count-button"
         title={`Toggle items count (${itemsCount}/${MAX_ITEMS})`}
         onPress={() => setItemsCount(count => (count + 1) % (MAX_ITEMS + 1))}
       />

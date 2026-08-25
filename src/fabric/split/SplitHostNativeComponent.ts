@@ -112,7 +112,7 @@ type ComponentType = HostComponent<NativeProps>;
 
 interface NativeCommands {
   showColumn: (
-    viewRef: React.ElementRef<ComponentType>,
+    viewRef: React.ComponentRef<ComponentType>,
     column: string,
   ) => void;
 }
@@ -121,4 +121,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: ['showColumn'],
 });
 
-export default codegenNativeComponent<NativeProps>('RNSSplitHost', {});
+export default codegenNativeComponent<NativeProps>(
+  'RNSSplitHost',
+  {},
+) as HostComponent<NativeProps>;

@@ -16,23 +16,19 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: HomeScreen,
-          options: {},
+          element: <HomeScreen />,
         },
         {
           name: 'Blue',
-          Component: BlueScreen,
-          options: {},
+          element: <BlueScreen />,
         },
         {
           name: 'Red',
-          Component: RedScreen,
-          options: {},
+          element: <RedScreen />,
         },
         {
           name: 'NestedHost',
-          Component: NestedHostScreen,
-          options: {},
+          element: <NestedHostScreen />,
         },
       ]}
     />
@@ -78,18 +74,15 @@ function NestedHostScreen() {
       routeConfigs={[
         {
           name: 'NestedHome',
-          Component: NestedHomeScreen,
-          options: {},
+          element: <NestedHomeScreen />,
         },
         {
           name: 'NestedBlue',
-          Component: NestedBlueScreen,
-          options: {},
+          element: <NestedBlueScreen />,
         },
         {
           name: 'NestedRed',
-          Component: NestedRedScreen,
-          options: {},
+          element: <NestedRedScreen />,
         },
       ]}
     />

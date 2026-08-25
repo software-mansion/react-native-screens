@@ -150,13 +150,11 @@ function StackSetup() {
         routeConfigs={[
           {
             name: 'Home',
-            Component: ConfigScreen,
-            options: {},
+            element: <ConfigScreen />,
           },
           {
             name: 'Second',
-            Component: ConfigScreen,
-            options: {},
+            element: <ConfigScreen />,
           },
         ]}
       />

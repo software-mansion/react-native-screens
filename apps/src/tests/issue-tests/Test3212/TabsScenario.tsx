@@ -35,12 +35,12 @@ export function TabsScenario() {
             routeConfigs={[
               {
                 name: 'config',
-                Component: ConfigComponent,
+                element: <ConfigComponent />,
                 options: { title: 'Config' },
               },
               {
                 name: 'stack',
-                Component: ScrollViewTemplate,
+                element: <ScrollViewTemplate />,
                 options: {
                   title: 'Scroll',
                 },

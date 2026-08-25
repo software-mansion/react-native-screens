@@ -189,7 +189,7 @@ function RuntimeConfigScreen() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'StaticSystemItem',
-    Component: StaticSystemItemScreen,
+    element: <StaticSystemItemScreen />,
     options: {
       tabBarItemTestID: 'bookmark-tab-item',
       ios: {
@@ -199,7 +199,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'RuntimeConfig',
-    Component: RuntimeConfigScreen,
+    element: <RuntimeConfigScreen />,
     options: {
       tabBarItemTestID: 'custom-tab-item',
       ios: {

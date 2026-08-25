@@ -175,13 +175,11 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const routeConfigs: StackRouteConfig[] = [
   {
     name: 'Menu',
-    Component: MenuScreen,
-    options: {},
+    element: <MenuScreen />,
   },
   ...ALPHABET.map(name => ({
     name,
-    Component: TemplateScreen,
-    options: {},
+    element: <TemplateScreen />,
   })),
 ];
 

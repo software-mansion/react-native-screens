@@ -1,10 +1,10 @@
 import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import {
-  describeIfiOS,
+  describeIfiOS26,
+  describeIfiPadOS26,
   selectSingleFeatureTestsScreen,
   forceTapByLabeliOS,
-  describeIfiPad,
   getElementAttributes,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
@@ -161,7 +161,7 @@ async function verifyConfigTabInitialContent() {
   ).toBeVisible();
 }
 
-describeIfiOS('Tabs bottomAccessory (iOS)', () => {
+describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -311,7 +311,7 @@ describeIfiOS('Tabs bottomAccessory (iOS)', () => {
   });
 });
 
-describeIfiPad('@ipad Tabs bottomAccessory (iPad)', () => {
+describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
   // every test in this block, so read its frame + safe-area insets once and
   // reuse it as the window/safe-area reference for the bottom-anchor assertion.

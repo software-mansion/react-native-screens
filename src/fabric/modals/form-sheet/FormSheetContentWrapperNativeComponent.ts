@@ -1,10 +1,10 @@
 'use client';
 
-import type { ViewProps } from 'react-native';
+import type { HostComponent, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 interface NativeProps extends ViewProps {}
 
 export default codegenNativeComponent<NativeProps>(
   'RNSFormSheetContentWrapper',
-);
+) as HostComponent<NativeProps>;

@@ -6,10 +6,11 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuBaseAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuBaseAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
@@ -80,7 +81,7 @@ function TestStackToolbarMenuBatchCommands() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -250,68 +251,103 @@ function MainScreen() {
   }, [failingIcon, nextPhotoIcon]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Batch Commands</Text>
-      <View style={styles.buttons}>
-        <Button title="Select All (1 event)" onPress={selectAll} />
-        <Button title="Deselect All (1 event)" onPress={deselectAll} />
-        <Button
-          title="Batch across groups (2 events)"
-          onPress={batchAcrossGroups}
-        />
-        <Button
-          title="Single object update (1 event)"
-          onPress={singleObjectUpdate}
-        />
-        <Button
-          title={
-            appleInToolbar ? 'Move Apple to overflow' : 'Move Apple to toolbar'
-          }
-          onPress={toggleAppleShowAsAction}
-        />
-        <Button
-          title="Batch: image + check (atomic)"
-          onPress={batchWithImageLoad}
-        />
-        <Button
-          title="Ordering race (last: Apple absent)"
-          onPress={runOrderingRace}
-        />
-        <Button
-          title="Failing image + follow-up"
-          onPress={runFailingImageRepro}
-        />
-        <Button
-          title="Duplicate id: merge + last icon"
-          onPress={runDuplicateIdRepro}
-        />
-        <Button title="Reset log (menu state kept)" onPress={resetLog} />
-      </View>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        testID="toolbar-menu-batch-commands-scrollview">
+        <Text style={styles.heading}>Batch Commands</Text>
+        <View style={styles.buttons}>
+          <Button
+            title="Select All (1 event)"
+            onPress={selectAll}
+            testID="select-all-button"
+          />
+          <Button
+            title="Deselect All (1 event)"
+            onPress={deselectAll}
+            testID="deselect-all-button"
+          />
+          <Button
+            title="Batch across groups (2 events)"
+            onPress={batchAcrossGroups}
+            testID="batch-across-groups-button"
+          />
+          <Button
+            title="Single object update (1 event)"
+            onPress={singleObjectUpdate}
+            testID="single-object-update-button"
+          />
+          <Button
+            title={
+              appleInToolbar
+                ? 'Move Apple to overflow'
+                : 'Move Apple to toolbar'
+            }
+            onPress={toggleAppleShowAsAction}
+            testID="toggle-apple-button"
+          />
+          <Button
+            title="Batch: image + check (atomic)"
+            onPress={batchWithImageLoad}
+            testID="batch-image-check-button"
+          />
+          <Button
+            title="Ordering race (last: Apple absent)"
+            onPress={runOrderingRace}
+            testID="ordering-race-button"
+          />
+          <Button
+            title="Failing image + follow-up"
+            onPress={runFailingImageRepro}
+            testID="failing-image-button"
+          />
+          <Button
+            title="Duplicate id: merge + last icon"
+            onPress={runDuplicateIdRepro}
+            testID="duplicate-id-button"
+          />
+          <Button
+            title="Reset log (menu state kept)"
+            onPress={resetLog}
+            testID="reset-log-button"
+          />
+        </View>
 
-      <Text style={styles.hint}>
-        Move Apple to the toolbar to see its loaded icon (overflow items
-        don&apos;t render icons); its checkbox is only visible in the overflow
-        menu. Icon &amp; showAsAction changes emit no events. Menu checked state
-        persists across taps — Reset log clears only the counter and log.
-      </Text>
+        <Text style={styles.hint}>
+          Move Apple to the toolbar to see its loaded icon (overflow items
+          don&apos;t render icons); its checkbox is only visible in the overflow
+          menu. Icon &amp; showAsAction changes emit no events. Menu checked
+          state persists across taps — Reset log clears only the counter and
+          log.
+        </Text>
 
-      <Text style={styles.heading}>Events received: {eventCount}</Text>
-      <Text style={styles.subheading}>Newest first</Text>
-      {eventLog.length === 0 ? (
-        <Text style={styles.result}>—</Text>
-      ) : (
-        eventLog.map((entry, i) => (
-          <Text key={`${i}-${entry}`} style={styles.result}>
-            {i === 0 ? '▶ ' : '  '}
-            {entry}
-          </Text>
-        ))
-      )}
-    </ScrollView>
+        <Text testID="events-count-text" style={styles.heading}>
+          Events received: {eventCount}
+        </Text>
+        <Text style={styles.subheading}>Newest first</Text>
+        {eventLog.length === 0 ? (
+          <Text style={styles.result}>—</Text>
+        ) : (
+          eventLog.map((entry, i) => (
+            <Text
+              key={`${i}-${entry}`}
+              testID={`event-log-entry-${i}`}
+              style={styles.result}>
+              {i === 0 ? '▶ ' : '  '}
+              {entry}
+            </Text>
+          ))
+        )}
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

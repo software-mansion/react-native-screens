@@ -30,9 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)resetTrackerForItemWithId:(nullable NSString *)itemId;
 
+- (void)reapplyTitleMenu;
+
+- (void)resetTitleMenuTracker;
+
 - (void)setToggleState:(BOOL)state
       forMenuElementId:(NSString *)elementId
-            withItemId:(NSString *)itemId
+         trackerItemId:(NSString *)trackerItemId
+              rootMenu:(RNSStackHeaderMenuData *)rootMenu
             parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu;
 
 - (void)clearHeaderConfiguration;

@@ -1,11 +1,11 @@
 #import "RNSStackNavigationController.h"
+#import <React/RCTAssert.h>
 #import "RNSContainer.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
-#import "React/RCTAssert.h"
 
 @implementation RNSStackNavigationController {
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
@@ -102,10 +102,10 @@
     return;
   }
 
-  for (RNSPopOperation *op in _pendingPopOperations) {
-    UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
+  for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
     RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == controller, @"[RNScreens] Attempt to pop non-top screen");
+    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.stackScreen.controller),
+              @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
 
@@ -126,10 +126,12 @@
 
 - (void)dumpStackModel
 {
+#ifdef RNS_DEBUG_LOGGING
   RNSLog(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
     RNSLog(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
   }
+#endif // RNS_DEBUG_LOGGING
 }
 
 @end

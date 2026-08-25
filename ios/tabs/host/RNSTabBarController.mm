@@ -257,7 +257,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
-#pragma mark - RNSReactTransactionObserving
+#pragma mark - RNSReactMountingTransactionObserving
 
 - (void)reactMountingTransactionWillMount
 {

@@ -6,7 +6,7 @@ import {
 } from './SplitViewSAVExampleContext';
 import { NavigationIndependentTree } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import ConfigColumn from './ConfigColumn';
 import { mapContentStringToComponent } from '../shared';
 import { SafeAreaView } from 'react-native-screens/experimental';

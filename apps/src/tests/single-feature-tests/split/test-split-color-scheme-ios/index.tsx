@@ -12,7 +12,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker } from '@apps/shared';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { SplitHostColorScheme } from 'react-native-screens/components/split/SplitHost.types';
 import { SafeAreaView } from 'react-native-screens/experimental';
 

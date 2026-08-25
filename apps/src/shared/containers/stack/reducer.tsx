@@ -1,4 +1,4 @@
-import type { StackScreenActivityMode } from 'react-native-screens/experimental';
+import type { StackScreenActivityMode } from 'react-native-screens';
 import type {
   NavigationAction,
   NavigationActionBatch,
@@ -277,7 +277,7 @@ function createRouteFromConfig(
   activityMode: StackScreenActivityMode = 'detached',
 ): StackRoute {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { Component, ...rest } = config;
+  const { element, ...rest } = config;
   return {
     ...rest,
     activityMode,

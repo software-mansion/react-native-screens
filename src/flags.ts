@@ -4,6 +4,7 @@ const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = true;
 const RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
+const RNS_IOS_ORIENTATION_INHERITANCE_FIX_DEFAULT = true;
 const RNS_DEBUG_LOGGING = false;
 
 // TODO: Migrate freeze here
@@ -80,6 +81,8 @@ const _featureFlags = {
       RNS_ANDROID_LEGACY_TOP_INSET_BEHAVIOR_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
+    iosOrientationInheritanceFixEnabled:
+      RNS_IOS_ORIENTATION_INHERITANCE_FIX_DEFAULT,
   },
   stable: {
     debugLogging: RNS_DEBUG_LOGGING,
@@ -157,6 +160,11 @@ const androidResetScreenShadowStateOnOrientationChangeAccessor =
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
     RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   );
+const iosOrientationInheritanceFixAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'iosOrientationInheritanceFixEnabled',
+    RNS_IOS_ORIENTATION_INHERITANCE_FIX_DEFAULT,
+  );
 const rnsDebugLoggingAccessor = createStableFeatureFlagAccessor(
   'debugLogging',
   RNS_DEBUG_LOGGING,
@@ -203,6 +211,24 @@ export const featureFlags = {
       value: boolean,
     ) {
       androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
+    },
+    /**
+     * Fixes legacy (Stack v4) screen orientation evaluation on iOS. On by default.
+     *
+     * Before this fix, a legacy `Screen` without an explicit `screenOrientation`
+     * always reported `allButUpsideDown` (iPhone) / `all` (iPad), which overrode
+     * the orientation set by an ancestor screen (e.g. a portrait-locked stack
+     * hosting bottom tabs). With the fix enabled, such a screen defers to its
+     * parent screen / the app's `Info.plist` supported orientations instead.
+     *
+     * PR: https://github.com/software-mansion/react-native-screens/pull/4408
+     * @platform ios
+     */
+    get iosOrientationInheritanceFixEnabled() {
+      return iosOrientationInheritanceFixAccessor.get();
+    },
+    set iosOrientationInheritanceFixEnabled(value: boolean) {
+      iosOrientationInheritanceFixAccessor.set(value);
     },
     /**
      * Enables the fix for native / JS state desynchronization in Stack. On by default.

@@ -28,12 +28,11 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: HomeScreen,
-          options: {},
+          element: <HomeScreen />,
         },
         {
           name: 'A',
-          Component: AScreen,
+          element: <AScreen />,
           options: {
             headerConfig: {
               title: 'A',
@@ -42,7 +41,7 @@ function StackSetup() {
         },
         {
           name: 'B',
-          Component: BScreen,
+          element: <BScreen />,
           options: {
             preventNativeDismiss: true,
             onNativeDismissPrevented: () => {
@@ -59,7 +58,7 @@ function StackSetup() {
         },
         {
           name: 'NestedStack',
-          Component: NestedStackScreen,
+          element: <NestedStackScreen />,
           options: {
             // This one is interesting. It will prevent nested stack from being popped.
             preventNativeDismiss: false,
@@ -117,7 +116,7 @@ function NestedStackScreen() {
       routeConfigs={[
         {
           name: 'NestedHome',
-          Component: NestedHomeScreen,
+          element: <NestedHomeScreen />,
           options: {
             // This one will also prevent!
             preventNativeDismiss: true,
@@ -132,7 +131,7 @@ function NestedStackScreen() {
         },
         {
           name: 'NestedA',
-          Component: NestedAScreen,
+          element: <NestedAScreen />,
           options: {
             headerConfig: {
               title: 'NestedA',
@@ -141,7 +140,7 @@ function NestedStackScreen() {
         },
         {
           name: 'NestedB',
-          Component: NestedBScreen,
+          element: <NestedBScreen />,
           options: {
             preventNativeDismiss: true,
             onNativeDismissPrevented: () => {
@@ -222,7 +221,9 @@ function PreventNativeDismissInfo() {
 
   return (
     <View>
-      <Text style={styles.routeInformation}>
+      <Text
+        style={styles.routeInformation}
+        testID="prevent-native-dismiss-info">
         Prevent native dismiss:{' '}
         {navContext.routeOptions.preventNativeDismiss ? 'Enabled' : 'Disabled'}
       </Text>

@@ -1,23 +1,21 @@
 package com.swmansion.rnscreens.stack.header
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.text.TextUtils
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.MenuItemCompat
-import androidx.core.widget.TextViewCompat
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
@@ -27,30 +25,37 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.common.text.TextAppearance
+import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
+import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarFieldUpdate
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuConfig
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuElementConfig
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuElementOptions
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuGroupConfig
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuGroupMetadata
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuItemConfig
-import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuItemType
-import com.swmansion.rnscreens.stack.header.toolbar.valueOrNull
+import com.swmansion.rnscreens.utils.dpToPx
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
+import com.swmansion.rnscreens.utils.spToPx
+import kotlin.math.roundToInt
 
+/**
+ * Builds and applies the Material app bar — type, subviews, title, back button,
+ * scroll flags — from the header configuration.
+ */
 internal class StackHeaderApplicator(
     private val wrappedContext: ContextThemeWrapper,
 ) {
     // region Rebuild
 
-    fun rebuild(
+    internal fun rebuild(
         coordinatorLayout: StackHeaderCoordinatorLayout,
         config: StackHeaderConfigurationProviding,
     ): StackHeaderAppBarLayout {
-        val appBar = StackHeaderAppBarLayout.create(wrappedContext, config.type)
+        val appBar =
+            StackHeaderAppBarLayout.create(
+                wrappedContext,
+                config.type,
+                config.collapsedTitleGravityMode,
+            )
 
         if (config.transparent) {
             coordinatorLayout.removeContentBehavior()
@@ -91,30 +96,21 @@ internal class StackHeaderApplicator(
             toolbar.addView(it.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END))
         }
 
-        populateTitleOrCenter(appBar, toolbar, config)
+        populateCenterSubview(appBar, toolbar, config)
         populateBackground(appBar, config)
     }
 
-    private fun populateTitleOrCenter(
+    private fun populateCenterSubview(
         appBar: StackHeaderAppBarLayout,
         toolbar: Toolbar,
         config: StackHeaderConfigurationProviding,
     ) {
-        val centerSubview = config.centerSubview
-        if (centerSubview != null) {
-            if (appBar is StackHeaderAppBarLayout.Small) {
-                centerSubview.view.detachFromCurrentParent()
-                toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
-            } else {
-                Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
-            }
-        } else if (appBar is StackHeaderAppBarLayout.Small) {
-            // Small header needs a managed title view because we can't use Toolbar's native
-            // title — it would be laid out to the leading side of leading subview.
-            val titleView = createManagedTitleView(toolbar)
-            appBar.managedTitleView = titleView
-            val index = if (config.isRTL) 0 else -1
-            toolbar.addView(titleView, index, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.START))
+        val centerSubview = config.centerSubview ?: return
+        if (appBar is StackHeaderAppBarLayout.Small) {
+            centerSubview.view.detachFromCurrentParent()
+            toolbar.addView(centerSubview.view, Toolbar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
+        } else {
+            Log.e(TAG, "[RNScreens] Center subview is supported only for small header type.")
         }
     }
 
@@ -151,52 +147,202 @@ internal class StackHeaderApplicator(
         )
     }
 
-    private fun createManagedTitleView(toolbar: Toolbar): AppCompatTextView =
-        AppCompatTextView(toolbar.context).apply {
-            setSingleLine()
-            ellipsize = TextUtils.TruncateAt.END
-            TextViewCompat.setTextAppearance(
-                this,
-                R.style.TextAppearance_Material3_TitleLarge,
-            )
-            layoutParams =
-                Toolbar
-                    .LayoutParams(
-                        WRAP_CONTENT,
-                        WRAP_CONTENT,
-                        Gravity.START,
-                    ).apply {
-                        // TODO: there seems to be a problem with collapsing margins.
-                        //       We will expose customization either way but we should
-                        //       have consistent behavior and defaults.
-                        marginStart = toolbar.titleMarginStart + toolbar.contentInsetStart
-                        marginEnd = toolbar.titleMarginEnd
-                        topMargin = toolbar.titleMarginTop
-                        bottomMargin = toolbar.titleMarginBottom
-                    }
-        }
-
     // endregion
 
     // region In-place updates
 
-    fun applyTitle(
+    // ctl.setMaxLines() is listed in Material docs in the same way as other props but for some
+    // reason it's restricted.
+    @SuppressLint("RestrictedApi")
+    internal fun applyTitleAndSubtitle(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+        isAppBarFullyCollapsed: Boolean,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.toolbar.title = config.title
+                appBar.toolbar.subtitle = config.subtitle
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                val ctl = appBar.collapsingToolbarLayout
+
+                ctl.maxLines = config.maxLines
+
+                ctl.title = config.title
+                ctl.subtitle = config.subtitle
+
+                // setText only recomputes draw offsets within the existing bounds; the
+                // title/subtitle vertical split is recomputed only in onLayout. Force a layout
+                // so toggling the subtitle at runtime reclaims the title space.
+                ctl.requestLayout()
+
+                // Material re-asserts the collapsed offset after a height change itself, but only
+                // when maxLines > 1 (CollapsingToolbarLayout.onMeasure). With maxLines == 1 it never
+                // does, so toggling the subtitle at runtime while collapsed leaves a stale offset —
+                // setExpanded(false, false) is the closest public equivalent of Material's private
+                // maybeSetPendingActionCollapsed().
+                if (config.maxLines == 1 && isAppBarFullyCollapsed) {
+                    appBar.setExpanded(false, false)
+                }
+            }
+        }
+    }
+
+    internal fun applyTitlePositioning(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
-                appBar.managedTitleView?.text = config.title
-                appBar.managedTitleView?.requestLayout()
+                appBar.toolbar.isTitleCentered = config.titleCentered
+                appBar.toolbar.isSubtitleCentered = config.subtitleCentered
             }
 
             is StackHeaderAppBarLayout.Collapsing -> {
-                appBar.collapsingToolbarLayout.title = config.title
+                appBar.collapsingToolbarLayout.expandedTitleGravity =
+                    config.expandedTitleHorizontalGravity or config.expandedTitleVerticalGravity
+                appBar.collapsingToolbarLayout.collapsedTitleGravity =
+                    config.collapsedTitleHorizontalGravity or config.collapsedTitleVerticalGravity
             }
         }
     }
 
-    fun applyBackButton(
+    internal fun applyTitleAndSubtitleAppearance(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                val toolbar = appBar.toolbar
+
+                // Widget.Material3Expressive.Toolbar#{title,subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font. That style sets no text
+                //   colors, so both come from @macro/m3_comp_app_bar_{title,subtitle}_color.
+                applySlot(
+                    view = toolbar,
+                    defaults =
+                        TextAppearanceDefaults.resolve(
+                            toolbar.context,
+                            R.attr.textAppearanceTitleLarge,
+                            R.attr.colorOnSurface,
+                        ),
+                    appearance = config.titleAppearance,
+                    setColor = { toolbar.setTitleTextColor(it) },
+                    setTypeface = { appBar.titleTextView.typeface = it },
+                    setTextSizePx = { appBar.titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, it) },
+                )
+                applySlot(
+                    view = toolbar,
+                    defaults =
+                        TextAppearanceDefaults.resolve(
+                            toolbar.context,
+                            R.attr.textAppearanceLabelMedium,
+                            R.attr.colorOnSurfaceVariant,
+                        ),
+                    appearance = config.subtitleAppearance,
+                    setColor = { toolbar.setSubtitleTextColor(it) },
+                    setTypeface = { appBar.subtitleTextView.typeface = it },
+                    setTextSizePx = { appBar.subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, it) },
+                )
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                val ctl = appBar.collapsingToolbarLayout
+                val isLarge = appBar.type == StackHeaderType.LARGE
+
+                // Widget.Material3Expressive.CollapsingToolbar.{Large,Medium}#expandedTitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_title_font
+                val expandedTitleAttr =
+                    if (isLarge) R.attr.textAppearanceDisplaySmall else R.attr.textAppearanceHeadlineMedium
+
+                // …#expandedSubtitleTextAppearance
+                //   = @macro/m3_comp_app_bar_{large,medium}_flexible_subtitle_font
+                val expandedSubtitleAttr =
+                    if (isLarge) R.attr.textAppearanceTitleMedium else R.attr.textAppearanceLabelLarge
+
+                // In the calls below, the collapsed appearances and all four colors come from the base
+                // Widget.Material3Expressive.CollapsingToolbar: collapsed{Title,Subtitle}TextAppearance
+                //   = @macro/m3_comp_app_bar_small_{title,subtitle}_font,
+                // {collapsed,expanded}{Title,Subtitle}TextColor
+                //   = @macro/m3_comp_app_bar_{title,subtitle}_color.
+
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, expandedTitleAttr, R.attr.colorOnSurface),
+                    appearance = config.expandedTitleAppearance,
+                    setColor = { ctl.setExpandedTitleTextColor(ColorStateList.valueOf(it)) },
+                    setTypeface = { ctl.setExpandedTitleTypeface(it) },
+                    setTextSizePx = { ctl.expandedTitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceTitleLarge, R.attr.colorOnSurface),
+                    appearance = config.collapsedTitleAppearance,
+                    setColor = { ctl.setCollapsedTitleTextColor(it) },
+                    setTypeface = { ctl.setCollapsedTitleTypeface(it) },
+                    setTextSizePx = { ctl.collapsedTitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, expandedSubtitleAttr, R.attr.colorOnSurfaceVariant),
+                    appearance = config.expandedSubtitleAppearance,
+                    setColor = { ctl.setExpandedSubtitleTextColor(ColorStateList.valueOf(it)) },
+                    setTypeface = { ctl.setExpandedSubtitleTypeface(it) },
+                    setTextSizePx = { ctl.expandedSubtitleTextSize = it },
+                )
+                applySlot(
+                    view = ctl,
+                    defaults =
+                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceLabelMedium, R.attr.colorOnSurfaceVariant),
+                    appearance = config.collapsedSubtitleAppearance,
+                    setColor = { ctl.setCollapsedSubtitleTextColor(it) },
+                    setTypeface = { ctl.setCollapsedSubtitleTypeface(it) },
+                    setTextSizePx = { ctl.collapsedSubtitleTextSize = it },
+                )
+
+                // Layout is necessary e.g. after changing subtitle text size.
+                ctl.requestLayout()
+            }
+        }
+    }
+
+    /**
+     * Applies one title/subtitle slot as absolute values: each property is the prop value when
+     * set, the Material default otherwise.
+     */
+    private fun applySlot(
+        view: View,
+        defaults: TextAppearanceDefaults,
+        appearance: TextAppearance,
+        setColor: (Int) -> Unit,
+        setTypeface: (Typeface) -> Unit,
+        setTextSizePx: (Float) -> Unit,
+    ) {
+        setColor(appearance.color ?: defaults.color)
+        setTypeface(appearance.resolveTypeface(defaults.typeface))
+        setTextSizePx(appearance.fontSize?.let { view.spToPx(it) } ?: defaults.textSizePx)
+    }
+
+    internal fun applyContentInsets(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val toolbar = appBar.toolbar
+
+        toolbar.setContentInsetsRelative(
+            config.contentInsetStart?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetStart,
+            config.contentInsetEnd?.let { toolbar.dpToPx(it).roundToInt() } ?: appBar.defaultContentInsetEnd,
+        )
+
+        toolbar.requestLayout()
+    }
+
+    internal fun applyBackButton(
         toolbar: MaterialToolbar,
         config: StackHeaderConfigurationProviding,
         canNavigateBack: Boolean,
@@ -217,7 +363,13 @@ internal class StackHeaderApplicator(
                 ?.let { getResizedDrawable(toolbar, it) }
                 ?: resolveDefaultBackButtonIcon()
 
-        val tintList = resolveBackButtonTintList(config)
+        val tintList =
+            buildTintList(
+                config.backButtonTintColorNormal,
+                config.backButtonTintColorPressed,
+                config.backButtonTintColorFocused,
+            )
+
         toolbar.navigationIcon =
             if (tintList != null && baseDrawable != null) {
                 DrawableCompat.wrap(baseDrawable.mutate()).also {
@@ -230,7 +382,33 @@ internal class StackHeaderApplicator(
         toolbar.setNavigationOnClickListener { onNavigationIconClick() }
     }
 
-    fun applyScrollFlags(
+    internal fun applyOverflowIcon(
+        toolbar: MaterialToolbar,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        val baseDrawable =
+            config.overflowIcon
+                ?.let { getResizedDrawable(toolbar, it) }
+                ?: resolveDefaultOverflowIcon()
+
+        val tintList =
+            buildTintList(
+                config.overflowIconTintColorNormal,
+                config.overflowIconTintColorPressed,
+                config.overflowIconTintColorFocused,
+            )
+
+        toolbar.overflowIcon =
+            if (tintList != null && baseDrawable != null) {
+                DrawableCompat.wrap(baseDrawable.mutate()).also {
+                    DrawableCompat.setTintList(it, tintList)
+                }
+            } else {
+                baseDrawable
+            }
+    }
+
+    internal fun applyScrollFlags(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
@@ -249,298 +427,32 @@ internal class StackHeaderApplicator(
         appBar.setExpanded(true, false)
     }
 
-    // endregion
-
-    // region Toolbar menu
-
-    fun generateToolbarMenuItemMappings(menuConfig: StackHeaderToolbarMenuConfig): Pair<Map<String, Int>, Map<Int, String>> {
-        val forwardIdMap = mutableMapOf<String, Int>()
-        val reverseIdMap = mutableMapOf<Int, String>()
-        var counter = 1
-        assignElementIds(menuConfig.children, forwardIdMap, reverseIdMap) { counter++ }
-        return Pair(forwardIdMap.toMap(), reverseIdMap.toMap())
-    }
-
-    fun generateToolbarMenuGroupMappings(menuConfig: StackHeaderToolbarMenuConfig): Map<String, Int> {
-        val forwardGroupIdMap = mutableMapOf<String, Int>()
-        var counter = 1
-        assignGroupIds(menuConfig, forwardGroupIdMap) { counter++ }
-        return forwardGroupIdMap.toMap()
-    }
-
-    fun computeGroupMetadata(menuConfig: StackHeaderToolbarMenuConfig): StackHeaderToolbarMenuGroupMetadata {
-        val itemGroupMap = mutableMapOf<String, String>()
-        val groupSingleSelection = mutableMapOf<String, Boolean>()
-        val groupMemberItems = mutableMapOf<String, MutableList<String>>()
-        collectGroupMetadata(menuConfig, itemGroupMap, groupSingleSelection, groupMemberItems)
-        return StackHeaderToolbarMenuGroupMetadata(
-            itemGroupMap,
-            groupSingleSelection,
-            groupMemberItems.mapValues { it.value.toList() },
-        )
-    }
-
-    fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
-        for (group in menuConfig.groups) {
-            if (!group.singleSelection) continue
-            var count = 0
-            for (element in menuConfig.children) {
-                if (element.item.groupId == group.groupId && element.item.initialToggleState) {
-                    count++
-                }
-            }
-            require(count <= 1) {
-                "[RNScreens] Radio group '${group.groupId}' has $count items with " +
-                    "initialToggleState=true. At most 1 is allowed for single-selection groups."
-            }
-        }
-        for (element in menuConfig.children) {
-            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                validateRadioInitialSelection(element.menu)
-            }
-        }
-    }
-
     /**
-     * Recursively traverses menu elements and maps user-friendly string item IDs to integers
-     * expected by Android.
+     * Applies lift-on-scroll in-place. `setLiftOnScroll` is a plain field
+     * setter (re-read on the next layout / nested-scroll pass), so this needs
+     * no header rebuild.
      *
-     * @param elements List of menu elements.
-     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
-     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
-     * @param nextId Function that returns next ID integer. New unique integer should be returned
-     *               each time the function is called. The function is used to handle recursive
-     *               element traversal.
-     */
-    private fun assignElementIds(
-        elements: List<StackHeaderToolbarMenuElementConfig>,
-        forwardIdMap: MutableMap<String, Int>,
-        reverseIdMap: MutableMap<Int, String>,
-        nextId: () -> Int,
-    ) {
-        for (element in elements) {
-            require(element.item.id !in forwardIdMap) {
-                "[RNScreens] Duplicate toolbar menu item id: '${element.item.id}'. Item IDs must be unique across the entire menu."
-            }
-            val nativeId = nextId()
-            forwardIdMap[element.item.id] = nativeId
-            reverseIdMap[nativeId] = element.item.id
-            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                assignElementIds(element.menu.children, forwardIdMap, reverseIdMap, nextId)
-            }
-        }
-    }
-
-    /**
-     * Recursively traverses menu elements and maps user-friendly string group IDs to integers
-     * expected by Android.
+     * Only the small header participates: medium/large (collapsing) headers
+     * derive their elevation from the `CollapsingToolbarLayout` content scrim,
+     * not from lift-on-scroll, so we leave their app bar untouched.
      *
-     * @param elements List of menu elements.
-     * @param forwardIdMap Reference to String->Int ID map to which ID entries will be added.
-     * @param reverseIdMap Reference to Int->String ID map to which ID entries will be added.
-     * @param nextId Function that returns next ID integer. New unique integer should be returned
-     *               each time the function is called. The function is used to handle recursive
-     *               element traversal.
+     * [targetScrollView] is the resolved content scroll view (see
+     * [com.swmansion.rnscreens.common.container.ContainerItem.findContentScrollView]).
+     * Without it, Material's `findFirstScrollingChild` only inspects the
+     * CoordinatorLayout's direct children — which is our wrapper `FrameLayout`,
+     * not the (deeply nested) scroll view — so the lifted state is miscomputed
+     * and the small header flashes while scrolling.
      */
-    private fun assignGroupIds(
-        menuConfig: StackHeaderToolbarMenuConfig,
-        forwardMap: MutableMap<String, Int>,
-        nextId: () -> Int,
+    internal fun applyLiftOnScroll(
+        appBar: StackHeaderAppBarLayout,
+        enabled: Boolean,
+        targetScrollView: ViewGroup?,
     ) {
-        for (group in menuConfig.groups) {
-            require(group.groupId !in forwardMap) {
-                "[RNScreens] Duplicate toolbar menu group id: '${group.groupId}'. Group IDs must be unique across the entire menu."
-            }
-            forwardMap[group.groupId] = nextId()
-        }
-        for (element in menuConfig.children) {
-            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                assignGroupIds(element.menu, forwardMap, nextId)
-            }
-        }
-    }
+        if (appBar !is StackHeaderAppBarLayout.Small) return
 
-    private fun collectGroupMetadata(
-        config: StackHeaderToolbarMenuConfig,
-        itemGroupMap: MutableMap<String, String>,
-        groupSingleSelection: MutableMap<String, Boolean>,
-        groupMemberItems: MutableMap<String, MutableList<String>>,
-    ) {
-        val localGroupIds = config.groups.map { it.groupId }.toSet()
-        for (group in config.groups) {
-            groupSingleSelection[group.groupId] = group.singleSelection
-            groupMemberItems.getOrPut(group.groupId) { mutableListOf() }
-        }
-        for (element in config.children) {
-            element.item.groupId?.let { gid ->
-                require(gid in localGroupIds) {
-                    "[RNScreens] Menu item '${element.item.id}' references group '$gid' " +
-                        "which is not defined at the same menu level. " +
-                        "Groups cannot span submenus."
-                }
-                itemGroupMap[element.item.id] = gid
-                groupMemberItems[gid]!!.add(element.item.id)
-            }
-            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                collectGroupMetadata(element.menu, itemGroupMap, groupSingleSelection, groupMemberItems)
-            }
-        }
-    }
-
-    fun rebuildToolbarMenu(
-        toolbar: MaterialToolbar,
-        menuConfig: StackHeaderToolbarMenuConfig,
-        forwardIdMap: Map<String, Int>,
-        reverseIdMap: Map<Int, String>,
-        forwardGroupIdMap: Map<String, Int>,
-        groupDividerEnabled: Boolean,
-        onItemClicked: (id: String, menuItem: MenuItem) -> Unit,
-    ) {
-        toolbar.menu.clear()
-        addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            toolbar.menu.setGroupDividerEnabled(groupDividerEnabled)
-        }
-        toolbar.setOnMenuItemClickListener { menuItem ->
-            val stringId = reverseIdMap[menuItem.itemId]
-            if (stringId != null) {
-                onItemClicked(stringId, menuItem)
-            }
-            true
-        }
-    }
-
-    private fun addElements(
-        toolbar: MaterialToolbar,
-        menu: Menu,
-        menuConfig: StackHeaderToolbarMenuConfig,
-        forwardIdMap: Map<String, Int>,
-        forwardGroupIdMap: Map<String, Int>,
-    ) {
-        menuConfig.children.forEachIndexed { index, element ->
-            val itemId =
-                requireNotNull(forwardIdMap[element.item.id]) {
-                    "[RNScreens] Invalid forwardIdMap received. Missing item: ${element.item}."
-                }
-            val groupIntId =
-                element.item.groupId
-                    ?.let { forwardGroupIdMap[it] ?: Menu.NONE }
-                    ?: Menu.NONE
-            when (element) {
-                is StackHeaderToolbarMenuElementConfig.MenuItem -> {
-                    val menuItem = menu.add(groupIntId, itemId, index, null)
-                    applyMenuElementOptions(toolbar, menuItem, element.item.toOptions())
-                    applyCheckability(menuItem, element.item)
-                }
-                is StackHeaderToolbarMenuElementConfig.Submenu -> {
-                    val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
-                    applyMenuElementOptions(toolbar, subMenu.item, element.item.toOptions())
-                    element.menuTitle?.let { subMenu.setHeaderTitle(it) }
-                    addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap)
-                }
-            }
-        }
-        configureGroupCheckability(menu, menuConfig.groups, forwardGroupIdMap)
-    }
-
-    private fun configureGroupCheckability(
-        menu: Menu,
-        groups: List<StackHeaderToolbarMenuGroupConfig>,
-        forwardGroupIdMap: Map<String, Int>,
-    ) {
-        for (group in groups) {
-            val groupIntId = forwardGroupIdMap[group.groupId] ?: continue
-            menu.setGroupCheckable(groupIntId, true, group.singleSelection)
-        }
-    }
-
-    private fun applyCheckability(
-        menuItem: MenuItem,
-        itemConfig: StackHeaderToolbarMenuItemConfig,
-    ) {
-        val shouldBeCheckable =
-            when (itemConfig.itemType) {
-                StackHeaderToolbarMenuItemType.TOGGLE -> {
-                    require(itemConfig.groupId != null) {
-                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=TOGGLE but no groupId. " +
-                            "Toggle items must belong to a group."
-                    }
-                    true
-                }
-                StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
-                StackHeaderToolbarMenuItemType.ACTION -> {
-                    require(itemConfig.groupId == null) {
-                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=ACTION " +
-                            "and belongs to a group. Action items cannot belong to groups."
-                    }
-                    false
-                }
-            }
-        if (shouldBeCheckable) {
-            menuItem.isCheckable = true
-            menuItem.isChecked = itemConfig.initialToggleState
-        }
-    }
-
-    fun updateToolbarMenuElement(
-        toolbar: MaterialToolbar,
-        forwardIdMap: Map<String, Int>,
-        id: String,
-        options: StackHeaderToolbarMenuElementOptions,
-    ) {
-        val item =
-            forwardIdMap[id]?.let { toolbar.menu.findItem(it) } ?: run {
-                Log.e(TAG, "[RNScreens] Unable to find menu element.")
-                return
-            }
-        applyMenuElementOptions(toolbar, item, options)
-    }
-
-    private fun applyMenuElementOptions(
-        toolbar: MaterialToolbar,
-        menuItem: MenuItem,
-        options: StackHeaderToolbarMenuElementOptions,
-    ) {
-        options.title?.let { menuItem.title = it.valueOrNull() }
-        options.titleCondensed?.let { menuItem.titleCondensed = it.valueOrNull() }
-        options.tooltipText?.let { MenuItemCompat.setTooltipText(menuItem, it.valueOrNull()) }
-        options.accessibilityLabel?.let {
-            // Setting `null` will restore Android's default (`title` for items
-            // in toolbar, `null` otherwise).
-            MenuItemCompat.setContentDescription(menuItem, it.valueOrNull())
-        }
-        options.hidden?.let { menuItem.isVisible = !it }
-        options.disabled?.let { menuItem.isEnabled = !it }
-        options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
-
-        // checked is intentionally not handled here. The coordinator layout manages it in
-        // applyGroupItemStateChange because toggling checked state requires group metadata
-        // (radio vs checkbox) and may emit onGroupSelectionChanged events.
-
-        options.icon?.let {
-            when (it) {
-                StackHeaderToolbarFieldUpdate.Reset -> menuItem.icon = null
-                is StackHeaderToolbarFieldUpdate.Set<Drawable> ->
-                    menuItem.icon = getResizedDrawable(toolbar, it.value)
-            }
-        }
-
-        if (options.requiresIconTintColorUpdate || options.icon != null) {
-            MenuItemCompat.setIconTintList(menuItem, getResolvedIconTintList(menuItem, options))
-        }
-
-        options.menuTitle?.let { update ->
-            val subMenu = menuItem.subMenu
-            if (subMenu != null) {
-                // In order to match native behavior, we need to clear the header first and then use
-                // regular title if menuTitle is not provided. If title is also null, there will be
-                // no submenu header at all.
-                subMenu.clearHeader()
-                subMenu.setHeaderTitle(update.valueOrNull() ?: menuItem.title)
-            } else {
-                Log.w(TAG, "[RNScreens] menuTitle ignored: target is not a submenu.")
-            }
-        }
+        appBar.isLiftOnScroll = enabled
+        appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
+        appBar.requestLayout()
     }
 
     // endregion
@@ -572,6 +484,12 @@ internal class StackHeaderApplicator(
     }
 
     private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
+
+    // Mirrors how the toolbar's own overflow button obtains its icon: an AppCompatImageView built
+    // with actionOverflowButtonStyle resolves the theme's srcCompat and applies AppCompat's
+    // colorControlNormal auto-tint.
+    private fun resolveDefaultOverflowIcon(): Drawable? =
+        AppCompatImageView(wrappedContext, null, androidx.appcompat.R.attr.actionOverflowButtonStyle).drawable
 
     private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
@@ -613,27 +531,11 @@ internal class StackHeaderApplicator(
         }
     }
 
-    private fun StackHeaderToolbarMenuItemConfig.toOptions() =
-        StackHeaderToolbarMenuElementOptions(
-            title = StackHeaderToolbarFieldUpdate.from(title),
-            titleCondensed = StackHeaderToolbarFieldUpdate.from(titleCondensed),
-            tooltipText = StackHeaderToolbarFieldUpdate.from(tooltipText),
-            accessibilityLabel = StackHeaderToolbarFieldUpdate.from(accessibilityLabel),
-            hidden = hidden,
-            disabled = disabled,
-            showAsAction = showAsAction,
-            icon = StackHeaderToolbarFieldUpdate.from(icon),
-            iconTintColorNormal = StackHeaderToolbarFieldUpdate.from(iconTintColorNormal),
-            iconTintColorPressed = StackHeaderToolbarFieldUpdate.from(iconTintColorPressed),
-            iconTintColorFocused = StackHeaderToolbarFieldUpdate.from(iconTintColorFocused),
-            iconTintColorDisabled = StackHeaderToolbarFieldUpdate.from(iconTintColorDisabled),
-        )
-
-    private fun resolveBackButtonTintList(config: StackHeaderConfigurationProviding): ColorStateList? {
-        val normal = config.backButtonTintColorNormal
-        val pressed = config.backButtonTintColorPressed
-        val focused = config.backButtonTintColorFocused
-
+    private fun buildTintList(
+        normal: Int?,
+        pressed: Int?,
+        focused: Int?,
+    ): ColorStateList? {
         if (normal == null && pressed == null && focused == null) return null
 
         val states = mutableListOf<IntArray>()
@@ -655,108 +557,9 @@ internal class StackHeaderApplicator(
         return ColorStateList(states.toTypedArray(), colors.toIntArray())
     }
 
-    private fun getResolvedIconTintList(
-        menuItem: MenuItem,
-        options: StackHeaderToolbarMenuElementOptions,
-    ): ColorStateList? {
-        val currentTintList = MenuItemCompat.getIconTintList(menuItem)
-        // The currently-applied normal (catch-all) color, if any. Used both as the "leave
-        // unchanged" value for normal and to dedup read-back overrides: when a normal entry
-        // exists every override probe also matches it, so an override equal to the current
-        // normal is the catch-all leaking through rather than an explicit override.
-        val currentNormal = currentTintList?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled))
-
-        val finalNormal =
-            when (val update = options.iconTintColorNormal) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null -> currentNormal
-            }
-
-        val finalDisabled =
-            when (val update = options.iconTintColorDisabled) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(-android.R.attr.state_enabled))
-                        ?.takeIf { it != currentNormal }
-            }
-
-        val finalPressed =
-            when (val update = options.iconTintColorPressed) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed))
-                        ?.takeIf { it != currentNormal }
-            }
-
-        val finalFocused =
-            when (val update = options.iconTintColorFocused) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_focused))
-                        ?.takeIf { it != currentNormal }
-            }
-
-        val states = mutableListOf<IntArray>()
-        val colors = mutableListOf<Int>()
-
-        finalDisabled?.let {
-            states.add(intArrayOf(-android.R.attr.state_enabled))
-            colors.add(it)
-        }
-
-        finalPressed?.let {
-            states.add(intArrayOf(android.R.attr.state_pressed))
-            colors.add(it)
-        }
-
-        finalFocused?.let {
-            states.add(intArrayOf(android.R.attr.state_focused))
-            colors.add(it)
-        }
-
-        finalNormal?.let {
-            states.add(intArrayOf())
-            colors.add(it)
-        }
-
-        return if (states.isNotEmpty()) {
-            ColorStateList(states.toTypedArray(), colors.toIntArray())
-        } else {
-            null
-        }
-    }
-
-    /**
-     * Resolves the color the receiver applies to [stateSet], or `null` when no state spec
-     * matches it.
-     *
-     * `getColorForState` returns the caller-supplied fallback when nothing matches, so we
-     * probe twice with two distinct sentinels: equal results mean a real spec matched (the
-     * actual color), differing results mean the slot is absent. This is robust for any color
-     * value and keeps the read-back stateless — see [getResolvedIconTintList].
-     */
-    private fun ColorStateList.resolvedColorOrNull(stateSet: IntArray): Int? {
-        val a = getColorForState(stateSet, SENTINEL_A)
-        val b = getColorForState(stateSet, SENTINEL_B)
-        return if (a == b) a else null
-    }
-
     // endregion
 
     companion object {
         private const val TAG = "StackHeaderApplicator"
-
-        // Two distinct sentinel fallbacks used to detect whether a ColorStateList actually
-        // defines a color for a given state. Their concrete values are irrelevant as long as
-        // they differ — see resolvedColorOrNull.
-        private const val SENTINEL_A = 0x00000001
-        private const val SENTINEL_B = 0x00000002
     }
 }

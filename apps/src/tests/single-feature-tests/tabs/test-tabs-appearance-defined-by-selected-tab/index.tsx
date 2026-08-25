@@ -161,7 +161,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
       routeConfigs={[
         {
           name: 'Tab1',
-          Component: TabScreen,
+          element: <TabScreen />,
           options: {
             title: 'Tab1',
             ios: {
@@ -191,7 +191,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
         },
         {
           name: 'Tab2',
-          Component: TabScreen,
+          element: <TabScreen />,
           options: {
             title: 'Tab2',
             ios: {
@@ -235,7 +235,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
         },
         {
           name: 'Tab3',
-          Component: TabScreen,
+          element: <TabScreen />,
           options: {
             title: 'Tab3',
             badgeValue: '123',
@@ -262,7 +262,7 @@ function TestTabsAppearanceDefinedBySelectedTab() {
         },
         {
           name: 'Tab4',
-          Component: TabScreen,
+          element: <TabScreen />,
           options: {
             title: 'Tab4',
             badgeValue: 'Platform',

@@ -62,7 +62,7 @@ function SettingsTab() {
 const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'HomeTab',
-    Component: HomeTab,
+    element: <HomeTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Home',
@@ -75,7 +75,7 @@ const TAB_ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'SettingsTab',
-    Component: SettingsTab,
+    element: <SettingsTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Settings',

@@ -17,7 +17,10 @@ namespace react = facebook::react;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-  self = [super initWithFrame:frame];
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const react::RNSTabsBottomAccessoryContentProps>();
+    _props = defaultProps;
+  }
   return self;
 }
 

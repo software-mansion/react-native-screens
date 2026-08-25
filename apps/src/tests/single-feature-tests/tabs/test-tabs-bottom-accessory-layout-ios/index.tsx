@@ -180,7 +180,7 @@ function ScrollUpTab() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Config',
-    Component: ConfigScreen,
+    element: <ConfigScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Config',
@@ -190,7 +190,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'ScrollDown',
-    Component: ScrollDownTab,
+    element: <ScrollDownTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'ScrollDown',
@@ -200,7 +200,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'ScrollUp',
-    Component: ScrollUpTab,
+    element: <ScrollUpTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'ScrollUp',

@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -7,20 +7,22 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderToolbarMenuElementAndroid,
-  StackHeaderConfigRef,
-  StackHeaderToolbarMenuElementOptionsAndroid,
-  StackHeaderToolbarMenuItemShowAsActionAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderToolbarMenuElementAndroid,
+  type StackHeaderConfigRef,
+  type StackHeaderToolbarMenuElementOptionsAndroid,
+  type StackHeaderToolbarMenuItemShowAsActionAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 import type { PlatformIconAndroid } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
-type IdOption = (typeof ID_OPTIONS)[number];
+export type IdOption = (typeof ID_OPTIONS)[number];
 
 const ICON_OPTIONS = ['undefined', 'searchIcon'] as const;
-type IconOption = (typeof ICON_OPTIONS)[number];
+export type IconOption = (typeof ICON_OPTIONS)[number];
 
 const SHOW_AS_ACTION_OPTIONS = [
   'undefined',
@@ -30,10 +32,10 @@ const SHOW_AS_ACTION_OPTIONS = [
   'ifRoom',
   'ifRoomWithText',
 ] as const;
-type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
+export type ShowAsActionOption = (typeof SHOW_AS_ACTION_OPTIONS)[number];
 
-type CmdIconOption = 'no change' | IconOption;
-type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
+export type CmdIconOption = 'no change' | IconOption;
+export type CmdShowAsActionOption = 'no change' | ShowAsActionOption;
 
 const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', ...ICON_OPTIONS];
 const CMD_SHOW_AS_ACTION_OPTIONS: CmdShowAsActionOption[] = [
@@ -74,11 +76,12 @@ function resolveShowAsAction(
   return v === 'undefined' ? undefined : v;
 }
 
-const ITEM_TITLES: Record<IdOption, string> = {
+const ITEM_TITLES = {
   'item-1': 'I1',
   'item-2': 'Item 2',
   'item-3': 'Item Number Three',
-};
+} as const satisfies Record<IdOption, string>;
+export type ItemTitle = (typeof ITEM_TITLES)[IdOption];
 
 function buildItems(slots: Slots): StackHeaderToolbarMenuElementAndroid[] {
   return slots
@@ -111,6 +114,7 @@ function updateSlotAt(
 }
 
 const HEADER_TITLE = 'Show As Action Test';
+export type HeaderTitle = typeof HEADER_TITLE;
 
 function TestStackToolbarMenuShowAsAction() {
   return (
@@ -118,7 +122,7 @@ function TestStackToolbarMenuShowAsAction() {
       routeConfigs={[
         {
           name: 'Main',
-          Component: MainScreen,
+          element: <MainScreen />,
           options: {
             headerConfig: {
               title: HEADER_TITLE,
@@ -190,37 +194,56 @@ function MainScreen() {
   }, [cmdTargetId, cmdIcon, cmdShowAsAction]);
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Send Command</Text>
-      <SettingsPicker<IdOption>
-        label="target id"
-        value={cmdTargetId}
-        items={[...ID_OPTIONS]}
-        onValueChange={setCmdTargetId}
-      />
-      <SettingsPicker<CmdIconOption>
-        label="icon"
-        value={cmdIcon}
-        items={CMD_ICON_OPTIONS}
-        onValueChange={setCmdIcon}
-      />
-      <SettingsPicker<CmdShowAsActionOption>
-        label="showAsAction"
-        value={cmdShowAsAction}
-        items={CMD_SHOW_AS_ACTION_OPTIONS}
-        onValueChange={setCmdShowAsAction}
-      />
-      <Button title="Send Command" onPress={sendCommand} />
+    // The app draws edge to edge, so without the bottom inset the list's
+    // viewport runs under the navigation bar and its lowest row cannot be
+    // tapped — neither by hand nor by Detox.
+    <SafeAreaView edges={{ bottom: Platform.OS === 'android' }}>
+      <ScrollViewMarker style={styles.scrollViewMarker}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          testID="toolbar-menu-show-as-action-scrollview">
+          <Text style={styles.heading}>Send Command</Text>
+          <SettingsPicker<IdOption>
+            label="target id"
+            value={cmdTargetId}
+            items={[...ID_OPTIONS]}
+            onValueChange={setCmdTargetId}
+            testID="cmd-target-picker"
+          />
+          <SettingsPicker<CmdIconOption>
+            label="cmd icon"
+            value={cmdIcon}
+            items={CMD_ICON_OPTIONS}
+            onValueChange={setCmdIcon}
+            testID="cmd-icon-picker"
+          />
+          <SettingsPicker<CmdShowAsActionOption>
+            label="cmd showAsAction"
+            value={cmdShowAsAction}
+            items={CMD_SHOW_AS_ACTION_OPTIONS}
+            onValueChange={setCmdShowAsAction}
+            testID="cmd-show-as-action-picker"
+          />
+          <Button
+            title="Send Command"
+            onPress={sendCommand}
+            testID="send-command-button"
+          />
 
-      <Text style={styles.heading}>Result</Text>
-      <Text style={styles.result}>Last clicked: {lastClicked ?? '—'}</Text>
+          <Text style={styles.heading}>Result</Text>
+          <Text testID="last-clicked-text" style={styles.result}>
+            Last clicked: {lastClicked ?? '—'}
+          </Text>
 
-      <Text style={styles.heading}>Menu Items — Props</Text>
-      <SlotControls
-        slots={slots}
-        updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
-      />
-    </ScrollView>
+          <Text style={styles.heading}>Menu Items — Props</Text>
+          <SlotControls
+            slots={slots}
+            updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+          />
+        </ScrollView>
+      </ScrollViewMarker>
+    </SafeAreaView>
   );
 }
 
@@ -238,21 +261,24 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
             Slot {i + 1} (item-{i + 1})
           </Text>
           <SettingsSwitch
-            label="include"
+            label={`slot ${i + 1} include`}
             value={slot.include}
             onValueChange={v => updateSlot(i, { include: v })}
+            testID={`slot-${i + 1}-include-switch`}
           />
           <SettingsPicker<IconOption>
-            label="icon"
+            label={`slot ${i + 1} icon`}
             value={slot.icon}
             items={[...ICON_OPTIONS]}
             onValueChange={v => updateSlot(i, { icon: v })}
+            testID={`slot-${i + 1}-icon-picker`}
           />
           <SettingsPicker<ShowAsActionOption>
-            label="showAsAction"
+            label={`slot ${i + 1} showAsAction`}
             value={slot.showAsAction}
             items={[...SHOW_AS_ACTION_OPTIONS]}
             onValueChange={v => updateSlot(i, { showAsAction: v })}
+            testID={`slot-${i + 1}-show-as-action-picker`}
           />
         </React.Fragment>
       ))}
@@ -261,6 +287,9 @@ function SlotControls({ slots, updateSlot }: SlotControlsProps) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },

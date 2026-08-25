@@ -6,7 +6,7 @@ debug_logging_enabled = ENV['RNS_DEBUG_LOGGING'] == '1'
 use_cxxbridge = ENV['RNS_USE_CXXBRIDGE'] == '1'
 
 
-source_files_exts = '{h,m,mm,cpp,swift}'
+source_files_exts = '{h,m,mm,cpp}'
 source_files = ["ios/**/*.#{source_files_exts}"]
 
 min_supported_ios_version = "15.1"
@@ -14,17 +14,14 @@ min_supported_tvos_version = "15.1"
 min_supported_visionos_version = "1.0"
 
 rnscreens_cpp_flags = []
-rnscreens_swift_flags = []
 
 if debug_logging_enabled
   rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1"
-  rnscreens_swift_flags << "-DRNS_DEBUG_LOGGING"
 end
 rnscreens_cpp_flags << "-DRNS_USE_CXXBRIDGE=1" if use_cxxbridge
 
 rnscreens_config  =  {
-  'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" "),
-  'OTHER_SWIFT_FLAGS' => rnscreens_swift_flags.join(" ")
+  'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" ")
 }
 
 rnscreens_config['DEFINES_MODULE'] = 'YES'
@@ -42,7 +39,6 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_supported_ios_version, :tvos => min_supported_tvos_version, :visionos => min_supported_visionos_version }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
-  s.project_header_files = "ios/bridging/Swift-Bridging.h"
   s.requires_arc = true
 
   if debug_logging_enabled

@@ -3,6 +3,7 @@
 import { codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
+  HostComponent,
   ImageSource,
   ProcessedColorValue,
   ViewProps,
@@ -116,4 +117,4 @@ export interface NativeProps extends ViewProps {
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenAndroid', {
   excludedPlatforms: ['iOS'],
-});
+}) as HostComponent<NativeProps>;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { FormSheet } from 'react-native-screens/experimental';
+import { FormSheet } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { StackContainer } from '@apps/shared/containers/stack';
@@ -37,12 +37,11 @@ function StackSetup() {
       routeConfigs={[
         {
           name: 'Home',
-          Component: HomeScreen,
-          options: {},
+          element: <HomeScreen />,
         },
         {
           name: 'A',
-          Component: AScreen,
+          element: <AScreen />,
           options: {
             headerConfig: { title: 'A' },
           },

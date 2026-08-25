@@ -16,8 +16,6 @@
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
 
-#import "Swift-Bridging.h"
-
 namespace react = facebook::react;
 
 @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving, RNSScrollViewSeeking>

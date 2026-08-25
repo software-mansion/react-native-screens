@@ -1,5 +1,5 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,

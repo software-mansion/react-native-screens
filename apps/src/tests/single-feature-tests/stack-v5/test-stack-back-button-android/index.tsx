@@ -8,10 +8,11 @@ import {
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigPropsAndroid,
-} from 'react-native-screens/experimental';
+import {
+  type StackHeaderConfigProps,
+  type StackHeaderConfigPropsAndroid,
+  ScrollViewMarker,
+} from 'react-native-screens';
 
 type TintColorOption = 'default' | 'purple' | 'red' | 'green';
 type IconOption = 'default' | 'imageSource' | 'drawableResource';
@@ -116,13 +117,11 @@ function TestStackBackButton() {
         routeConfigs={[
           {
             name: 'Root',
-            Component: RootScreen,
-            options: {},
+            element: <RootScreen />,
           },
           {
             name: 'Pushed',
-            Component: PushedScreen,
-            options: {},
+            element: <PushedScreen />,
           },
         ]}
       />
@@ -137,29 +136,34 @@ function ConfigControls() {
     <>
       <Text style={styles.heading}>Back Button</Text>
       <SettingsSwitch
+        testID="back-button-hidden-switch"
         label="backButtonHidden"
         value={config.backButtonHidden}
         onValueChange={v => updateConfig('backButtonHidden', v)}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-normal-picker"
         label="tintColorNormal"
         value={config.tintColorNormal}
         onValueChange={v => updateConfig('tintColorNormal', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-pressed-picker"
         label="tintColorPressed"
         value={config.tintColorPressed}
         onValueChange={v => updateConfig('tintColorPressed', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<TintColorOption>
+        testID="tint-color-focused-picker"
         label="tintColorFocused"
         value={config.tintColorFocused}
         onValueChange={v => updateConfig('tintColorFocused', v)}
         items={TINT_COLOR_OPTIONS}
       />
       <SettingsPicker<IconOption>
+        testID="icon-picker"
         label="icon"
         value={config.icon}
         onValueChange={v => updateConfig('icon', v)}
@@ -184,11 +188,13 @@ function RootScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push screen" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push screen" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
@@ -197,15 +203,20 @@ function PushedScreen() {
   useApplyHeaderConfig();
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <ConfigControls />
-      <Text style={styles.heading}>Navigation</Text>
-      <Button title="Push another" onPress={() => push('Pushed')} />
-    </ScrollView>
+    <ScrollViewMarker style={styles.scrollViewMarker}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <ConfigControls />
+        <Text style={styles.heading}>Navigation</Text>
+        <Button title="Push another" onPress={() => push('Pushed')} />
+      </ScrollView>
+    </ScrollViewMarker>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewMarker: {
+    flex: 1,
+  },
   scroll: {
     backgroundColor: Colors.cardBackground,
   },
