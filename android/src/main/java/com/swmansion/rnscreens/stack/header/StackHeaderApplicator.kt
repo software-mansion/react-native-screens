@@ -462,8 +462,16 @@ internal class StackHeaderApplicator(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
+        // Widget.Material3Expressive.AppBarLayout (an empty alias of Widget.Material3.AppBarLayout)
+        //   #android:background = @macro/m3_comp_app_bar_container_color.
         val backgroundColor =
             config.backgroundColor ?: resolveColorAttr(appBar.context, R.attr.colorSurface)
+
+        // Both header kinds default to the same token, from different places:
+        //   small — ...AppBarLayout#liftOnScrollColor
+        //     = @macro/m3_comp_app_bar_on_scroll_container_color;
+        //   collapsing — the M3 CollapsingToolbar styles set no contentScrim, so CTL installs its
+        //     own default for titleCollapseMode=fade (getDefaultContentScrimColorForTitleCollapseFadeMode).
         val scrolledBackgroundColor =
             config.scrolledBackgroundColor
                 ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
