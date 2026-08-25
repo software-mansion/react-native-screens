@@ -74,8 +74,7 @@ and Detox cannot verify any of them.
 
 - [ ] The scrolled-out content above the boundary is blurred/washed
       out and ends at a sharp, straight cutoff with a thin dividing
-      line; below it the rectangles are fully crisp (see the `hard`
-      description in the Note).
+      line; below it the rectangles are fully crisp.
 - [ ] The effect appears only while content is scrolled past the top;
       after scrolling back to the very top it disappears.
 
@@ -83,7 +82,7 @@ and Detox cannot verify any of them.
 
 - [ ] The `soft` chip becomes highlighted.
 - [ ] The top edge changes in place to a gradual blur/fade with no
-      dividing line (see `soft` in the Note).
+      dividing line.
 - [ ] The list itself does not change: scroll position is kept and
       every rectangle keeps its colour.
 
@@ -95,13 +94,12 @@ and Detox cannot verify any of them.
 5. Tap `hidden`, then scroll up and down past the top edge.
 
 - [ ] The rectangles stay fully crisp up to the edge - no blur, no
-      fade, no dividing line, in both directions (see `hidden` in the
-      Note).
+      fade, no dividing line, in both directions.
 
 6. Tap `automatic`, then scroll up and down past the top edge.
 
 - [ ] A soft blur/fade is shown again, visually matching the `soft`
-      value (see `automatic` in the Note).
+      value.
 
 7. Tap `hard` again and scroll up and down past the top edge. Then,
    with the content resting mid-list, cycle through all four values a
