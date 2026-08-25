@@ -145,7 +145,6 @@ internal class FormSheetPresentationManager(
         }
 
         shouldSkipExitAnimation = true
-        onNativeDismiss()
         updatePresentationState(false, FormSheetDismissalOrigin.USER)
     }
 
