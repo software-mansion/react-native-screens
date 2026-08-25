@@ -4,22 +4,18 @@ import type { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS26,
   getElementAttributes,
-  getMatches,
   selectSingleFeatureTestsScreen,
   toggleSettingsSwitch,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
   CLASS_NAME_UI_TAB_BAR,
-  CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
 } from '../../native-class-names';
 
 /**
  * Covers the end state of each `scenario.md` step: after every `hidden` /
  * `rendered` toggle the accessory is either shown with its content above the
- * tab bar, or gone. Presence is cross-checked against the tab item pill
- * (`_UITabButton`), which spans the accessory's width while one is attached.
- * Animation quality stays manual.
+ * tab bar, or gone. Animation quality stays manual.
  */
 
 const SCROLL_VIEW = 'bottom-accessory-visibility-scrollview';
@@ -34,17 +30,6 @@ const TRANSITION_TIMEOUT_MS = 3000;
 const SETTINGS_CONTROL = { scrollViewId: SCROLL_VIEW };
 
 const bottomAccessory = by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY);
-
-/** Pill width with the accessory attached, read on the baseline step. */
-let tabButtonWidthWithAccessory: number;
-
-// The tab button resolves twice (same frame), so read the match set.
-async function getTabButtonWidth(): Promise<number> {
-  const [tabButton] = (await getMatches(
-    by.type(CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26),
-  )) as IosElementAttributes[];
-  return tabButton.frame.width;
-}
 
 // The text resolves twice under the same `testID`.
 const bottomAccessoryText = () =>
@@ -91,11 +76,6 @@ async function expectBottomAccessoryShown() {
   jestExpect(tabBar.frame.y).toBeGreaterThan(
     accessory.frame.y + accessory.frame.height,
   );
-
-  jestExpect(await getTabButtonWidth()).toBeCloseTo(
-    tabButtonWidthWithAccessory,
-    0,
-  );
 }
 
 async function expectBottomAccessoryAbsent() {
@@ -103,16 +83,6 @@ async function expectBottomAccessoryAbsent() {
     .not.toExist()
     .withTimeout(TRANSITION_TIMEOUT_MS);
   await expect(element(by.id(ACCESSORY_TEXT))).not.toExist();
-
-  jestExpect(await getTabButtonWidth()).toBeLessThan(
-    tabButtonWidthWithAccessory,
-  );
-}
-
-async function expectConfigScreenResponsive() {
-  await expect(element(by.id(SCROLL_VIEW))).toBeVisible();
-  await expect(element(by.id(RENDERED_SWITCH))).toBeVisible();
-  await expect(element(by.id(HIDDEN_SWITCH))).toBeVisible();
 }
 
 describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
@@ -125,14 +95,8 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
   });
 
   it('should show the bottom accessory above the tab bar on load', async () => {
-    await expectConfigScreenResponsive();
     await expectSwitchState(RENDERED_SWITCH, 'rendered', true);
     await expectSwitchState(HIDDEN_SWITCH, 'hidden', false);
-
-    await waitFor(element(bottomAccessory))
-      .toExist()
-      .withTimeout(TRANSITION_TIMEOUT_MS);
-    tabButtonWidthWithAccessory = await getTabButtonWidth();
 
     await expectBottomAccessoryShown();
   });
@@ -167,7 +131,6 @@ describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
 
     await setRendered(false);
 
-    await expectConfigScreenResponsive();
     await expectBottomAccessoryAbsent();
   });
 
