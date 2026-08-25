@@ -60,11 +60,6 @@ and Detox cannot verify any of them.
   fully crisp and undistorted all the way to the edge - **no blur, no
   fade, no dividing line**, the content simply clips.
 
-The quickest tells apart: `hard` is the only value with a sharp
-boundary and dividing line (its blur does not fade out - it is cut
-off); `hidden` is the only value with completely crisp content at the
-edge; `soft` and `automatic` look alike here (gradual dissolve).
-
 ## Steps
 
 1. Launch the app and navigate to **ScrollViewMarker scenarios → Basic
