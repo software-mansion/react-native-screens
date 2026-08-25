@@ -6,6 +6,8 @@ import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.common.ShadowStateProxy
+import com.swmansion.rnscreens.helpers.FragmentManagerHelper
+import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialogManager
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
 
@@ -44,8 +46,48 @@ class FormSheetHost(
             contentView = sheetContentView,
         )
 
+    private val contentFragment = FormSheetContentFragment(sheetContentView)
+
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
+        sheetContentView.contentFragment = contentFragment
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        attachContentFragmentIfNeeded()
+    }
+
+    private fun attachContentFragmentIfNeeded() {
+        if (contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager =
+            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
+                "[RNScreens] Nullish fragment manager - can't attach FormSheet content fragment"
+            }
+
+        fragmentManager
+            .createTransactionWithReordering()
+            .add(contentFragment, null)
+            .commitNowAllowingStateLoss()
+    }
+
+    private fun detachContentFragmentIfNeeded() {
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.isDestroyed) {
+            return
+        }
+
+        fragmentManager
+            .createTransactionWithReordering()
+            .remove(contentFragment)
+            .commitNowAllowingStateLoss()
     }
 
     internal fun mountReactSubviewAt(
@@ -127,6 +169,7 @@ class FormSheetHost(
     }
 
     internal fun destroy() {
+        detachContentFragmentIfNeeded()
         dialogManager.destroy()
     }
 }
