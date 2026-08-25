@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.modals.formsheet.react.host
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
@@ -9,7 +10,9 @@ import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialogManager
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetPresentationObserver
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
+import java.lang.ref.WeakReference
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,
@@ -48,9 +51,27 @@ class FormSheetHost(
 
     private val contentFragment = FormSheetContentFragment(sheetContentView)
 
+    private var isPresented = false
+
+    private var primaryNavigationFragmentToRestore: WeakReference<Fragment>? = null
+
+    private val presentationObserver =
+        object : FormSheetPresentationObserver {
+            override fun onPresentationStarted() {
+                isPresented = true
+                takePrimaryNavigationIfNeeded()
+            }
+
+            override fun onDismissalCompleted() {
+                isPresented = false
+                restorePrimaryNavigationIfNeeded()
+            }
+        }
+
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
         sheetContentView.contentFragment = contentFragment
+        dialogManager.presentationObserver = presentationObserver
     }
 
     override fun onAttachedToWindow() {
@@ -72,6 +93,49 @@ class FormSheetHost(
             .createTransactionWithReordering()
             .add(contentFragment, null)
             .commitNowAllowingStateLoss()
+
+        if (isPresented) {
+            takePrimaryNavigationIfNeeded()
+        }
+    }
+
+    // FragmentManager enables back stack handling of a nested FragmentManager only when the parent
+    // fragment is the primary navigation fragment, so the content fragment takes that role for as
+    // long as the sheet is considered as presented (PRESENTING -> PRESENTED -> DISMISSING -> DISMISSED).
+    private fun takePrimaryNavigationIfNeeded() {
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.primaryNavigationFragment === contentFragment) {
+            return
+        }
+
+        primaryNavigationFragmentToRestore = fragmentManager.primaryNavigationFragment?.let { WeakReference(it) }
+        fragmentManager
+            .createTransactionWithReordering()
+            .setPrimaryNavigationFragment(contentFragment)
+            .commitNowAllowingStateLoss()
+    }
+
+    private fun restorePrimaryNavigationIfNeeded() {
+        val fragmentToRestore = primaryNavigationFragmentToRestore?.get()?.takeIf { it.isAdded }
+        primaryNavigationFragmentToRestore = null
+
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.isDestroyed || fragmentManager.primaryNavigationFragment !== contentFragment) {
+            return
+        }
+
+        fragmentManager
+            .createTransactionWithReordering()
+            .setPrimaryNavigationFragment(fragmentToRestore)
+            .commitNowAllowingStateLoss()
     }
 
     private fun detachContentFragmentIfNeeded() {
@@ -84,6 +148,7 @@ class FormSheetHost(
             return
         }
 
+        restorePrimaryNavigationIfNeeded()
         fragmentManager
             .createTransactionWithReordering()
             .remove(contentFragment)

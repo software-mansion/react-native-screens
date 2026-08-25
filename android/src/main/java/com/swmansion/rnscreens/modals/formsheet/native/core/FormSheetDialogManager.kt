@@ -11,6 +11,7 @@ import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDime
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetNativeDismissCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetPresentationObserver
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetDimmingManager
@@ -69,6 +70,8 @@ class FormSheetDialogManager(
             dialog = dialog,
             bottomSheetView = bottomSheetView,
             dimmingManager = dimmingManager,
+            onPresentationStarted = { presentationObserver?.onPresentationStarted() },
+            onDismissalCompleted = { presentationObserver?.onDismissalCompleted() },
             onNativeDismiss = { eventEmitter?.emitOnNativeDismissEvent() },
             onDismiss = { eventEmitter?.emitOnDismissEvent() },
         )
@@ -84,6 +87,8 @@ class FormSheetDialogManager(
     internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
         presentationManager.appearanceEventEmitter = newValue
     }
+
+    internal var presentationObserver: FormSheetPresentationObserver? = null
 
     internal val contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate
         get() = dimensionsCoordinator

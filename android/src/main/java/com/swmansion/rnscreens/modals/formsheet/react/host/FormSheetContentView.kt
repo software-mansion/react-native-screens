@@ -36,6 +36,7 @@ class FormSheetContentView(
     internal var contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate? = null
 
     internal var contentFragment: FormSheetContentFragment? = null
+
     override fun getAssociatedFragment(): Fragment? = contentFragment?.takeIf { it.isAdded }
 
     private val themedReactContext: ThemedReactContext

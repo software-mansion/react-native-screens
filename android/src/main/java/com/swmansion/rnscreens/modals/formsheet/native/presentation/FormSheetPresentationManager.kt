@@ -12,6 +12,8 @@ internal class FormSheetPresentationManager(
     private val dialog: FormSheetDialog,
     private val bottomSheetView: View?,
     private val dimmingManager: FormSheetDimmingManager,
+    private val onPresentationStarted: () -> Unit,
+    private val onDismissalCompleted: () -> Unit,
     private val onNativeDismiss: () -> Unit,
     private val onDismiss: () -> Unit,
 ) {
@@ -86,6 +88,7 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.PRESENTING
         FormSheetStackRegistry.register(this)
+        onPresentationStarted()
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
@@ -233,6 +236,7 @@ internal class FormSheetPresentationManager(
     private fun onDismissComplete() {
         if (state == FormSheetPresentationState.DISMISSING) {
             state = FormSheetPresentationState.DISMISSED
+            onDismissalCompleted()
             appearanceEventEmitter?.emitOnDidDisappear()
 
             when (dismissalOrigin) {
