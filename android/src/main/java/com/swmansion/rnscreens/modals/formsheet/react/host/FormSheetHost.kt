@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.modals.formsheet.react.host
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
@@ -52,8 +51,6 @@ class FormSheetHost(
     private val contentFragment = FormSheetContentFragment(sheetContentView)
 
     private var isPresented = false
-
-    private var primaryNavigationFragmentToRestore: WeakReference<Fragment>? = null
 
     private val presentationObserver =
         object : FormSheetPresentationObserver {
@@ -114,7 +111,8 @@ class FormSheetHost(
             return
         }
 
-        primaryNavigationFragmentToRestore = fragmentManager.primaryNavigationFragment?.let { WeakReference(it) }
+        contentFragment.primaryNavigationFragmentToRestore =
+            fragmentManager.primaryNavigationFragment?.let { WeakReference(it) }
         fragmentManager
             .createTransactionWithReordering()
             .setPrimaryNavigationFragment(contentFragment)
@@ -123,21 +121,32 @@ class FormSheetHost(
     }
 
     private fun restorePrimaryNavigationIfNeeded() {
-        val fragmentToRestore = primaryNavigationFragmentToRestore?.get()?.takeIf { it.isAdded }
-        primaryNavigationFragmentToRestore = null
-
         if (!contentFragment.isAdded) {
             return
         }
 
         val fragmentManager = contentFragment.parentFragmentManager
-        if (fragmentManager.isDestroyed || fragmentManager.primaryNavigationFragment !== contentFragment) {
+        if (fragmentManager.isDestroyed) {
+            return
+        }
+
+        val fragmentToRestore = contentFragment.primaryNavigationFragmentToRestore
+        contentFragment.primaryNavigationFragmentToRestore = null
+
+        // A sheet presented above this one would restore this content fragment on its own dismissal.
+        // This sheet is gone by then, so the one above takes over its restore target instead.
+        fragmentManager.fragments
+            .filterIsInstance<FormSheetContentFragment>()
+            .filter { it.primaryNavigationFragmentToRestore?.get() === contentFragment }
+            .forEach { it.primaryNavigationFragmentToRestore = fragmentToRestore }
+
+        if (fragmentManager.primaryNavigationFragment !== contentFragment) {
             return
         }
 
         fragmentManager
             .createTransactionWithReordering()
-            .setPrimaryNavigationFragment(fragmentToRestore)
+            .setPrimaryNavigationFragment(fragmentToRestore?.get()?.takeIf { it.isAdded })
             .commitNowAllowingStateLoss()
         dialogManager.nestedBackCoordinator.invalidate()
     }
