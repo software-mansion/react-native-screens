@@ -56,6 +56,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  [self.headerCoordinator updateNavigationBarVisibilityAnimated:animated];
   [[self reactEventEmitter] emitOnWillAppear];
 }
 
