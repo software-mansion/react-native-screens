@@ -8,6 +8,7 @@ import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
+import androidx.activity.findViewTreeOnBackPressedDispatcherOwner
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.ReactContext
@@ -167,10 +168,12 @@ internal class StackHeaderCoordinatorLayout(
     private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private val onNavigationIconClick: () -> Unit = {
-        val activity =
-            (stackScreen.context as? ReactContext)?.currentActivity
-                as? OnBackPressedDispatcherOwner
-        activity?.onBackPressedDispatcher?.onBackPressed()
+        // The dispatcher owner of the window hosting the stack (e.g. a dialog) might take
+        // precedence over the activity.
+        val dispatcherOwner =
+            findViewTreeOnBackPressedDispatcherOwner()
+                ?: (stackScreen.context as? ReactContext)?.currentActivity as? OnBackPressedDispatcherOwner
+        dispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
     }
 
     private fun processUpdate(provider: StackHeaderConfigurationProviding) {

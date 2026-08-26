@@ -97,6 +97,8 @@ class FormSheetHost(
         if (isPresented) {
             takePrimaryNavigationIfNeeded()
         }
+
+        dialogManager.nestedBackCoordinator.attachNestedContent(contentFragment)
     }
 
     // FragmentManager enables back stack handling of a nested FragmentManager only when the parent
@@ -117,6 +119,7 @@ class FormSheetHost(
             .createTransactionWithReordering()
             .setPrimaryNavigationFragment(contentFragment)
             .commitNowAllowingStateLoss()
+        dialogManager.nestedBackCoordinator.invalidate()
     }
 
     private fun restorePrimaryNavigationIfNeeded() {
@@ -136,6 +139,7 @@ class FormSheetHost(
             .createTransactionWithReordering()
             .setPrimaryNavigationFragment(fragmentToRestore)
             .commitNowAllowingStateLoss()
+        dialogManager.nestedBackCoordinator.invalidate()
     }
 
     private fun detachContentFragmentIfNeeded() {
@@ -148,6 +152,7 @@ class FormSheetHost(
             return
         }
 
+        dialogManager.nestedBackCoordinator.detachNestedContent()
         restorePrimaryNavigationIfNeeded()
         fragmentManager
             .createTransactionWithReordering()

@@ -9,6 +9,7 @@ import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetAppe
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBehaviorController
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDimensionsCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetNativeDismissCoordinator
+import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetNestedBackCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetPresentationObserver
@@ -84,6 +85,8 @@ class FormSheetDialogManager(
             onDismissPrevented = { eventEmitter?.emitOnNativeDismissPreventedEvent() },
         )
 
+    internal val nestedBackCoordinator = FormSheetNestedBackCoordinator(dialog)
+
     internal var eventEmitter: FormSheetDialogEventEmitter? by Delegates.observable(null) { _, _, newValue ->
         presentationManager.appearanceEventEmitter = newValue
     }
@@ -96,6 +99,7 @@ class FormSheetDialogManager(
     init {
         presentationManager.setup()
         nativeDismissCoordinator.setup()
+        nestedBackCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
         behaviorController?.setup()
@@ -158,6 +162,7 @@ class FormSheetDialogManager(
 
     internal fun destroy() {
         behaviorController?.destroy()
+        nestedBackCoordinator.destroy()
         nativeDismissCoordinator.destroy()
         presentationManager.destroy()
         dimensionsCoordinator.destroy()

@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
@@ -12,6 +13,7 @@ import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
+    private val backPressedDispatcherOwner: OnBackPressedDispatcherOwner?,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -100,7 +102,9 @@ internal class StackScreenFragment(
     private fun setupPreventNativeDismissCallback() {
         preventNativeDismissBackPressedCallback =
             PreventNativeDismissCallback(this, stackScreen, canBeEnabled = false)
-        requireActivity().onBackPressedDispatcher.addCallback(
+        // The callback must be registered with the dispatcher owner of the window hosting the stack
+        // e.g., a dialog, not necessarily the activity.
+        (backPressedDispatcherOwner ?: requireActivity()).onBackPressedDispatcher.addCallback(
             requireNativeDismissBackPressedCallback,
         )
     }
