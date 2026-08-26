@@ -317,6 +317,9 @@ internal class StackHeaderCoordinatorLayout(
 
     override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
 
+    // No onConfigurationChanged override is needed: this view never sets its own colorScheme,
+    // so resolution always delegates to the parent provider, which does handle system changes.
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         colorSchemeCoordinator.setup(this) { applyUiNightMode(it) }
@@ -455,6 +458,8 @@ internal class StackHeaderCoordinatorLayout(
     // region Teardown
 
     internal fun tearDown() {
+        colorSchemeCoordinator.teardown()
+
         removeHeader()
 
         stackScreenWrapper.removeView(stackScreen)

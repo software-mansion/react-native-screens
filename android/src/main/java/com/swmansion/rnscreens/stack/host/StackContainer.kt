@@ -84,6 +84,10 @@ internal class StackContainer(
         parentContainerRegistry.attach(this)
         setupFragmentManger()
 
+        // StackContainer only provides container-level color scheme configuration for its screens
+        // but doesn't use any color scheme-dependent views, so we don't need the callback.
+        colorSchemeCoordinator.setup(this, null)
+
         // Following line works with a couple of assumptions.
         // First, that this view is laid out by our parent view, which is a component view.
         // Component views on new architecture receive their first layout after the view hierarchy is
@@ -96,10 +100,6 @@ internal class StackContainer(
         // We run container update to handle any pending updates requested before container was
         // attached to window.
         performContainerUpdateIfNeeded()
-
-        // StackContainer only provides container-level color scheme configuration for its screens
-        // but doesn't actually use any color scheme-dependent views so we don't need the callback.
-        colorSchemeCoordinator.setup(this, null)
     }
 
     override fun onDetachedFromWindow() {

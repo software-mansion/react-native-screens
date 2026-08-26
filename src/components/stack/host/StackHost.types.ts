@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HostInstance, ViewProps } from 'react-native';
 import { type NativeProps } from '../../../fabric/stack/StackHostNativeComponent';
-import { ColorScheme } from '../../shared/types';
+import type { ColorScheme } from '../../shared/types';
 
 export type StackHostColorScheme = ColorScheme | 'inherit';
 
@@ -24,8 +24,10 @@ export type StackHostProps = {
    * @remarks
    * Color scheme isn't currently supported on iOS.
    *
-   * On Android, when the effective color scheme changes, the header is rebuilt
-   * which restores initial selection and changes applied via view commands.
+   * On Android, changing the effective color scheme rebuilds the header. The
+   * toolbar menu is rebuilt from the `toolbarMenu` prop, so its initial
+   * selection is restored and any changes applied via the
+   * `updateToolbarMenuElements` view command are discarded.
    *
    * @default inherit
    *
