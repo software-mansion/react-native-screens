@@ -156,8 +156,8 @@ exercises.
     close the menu, then tap **Load remote icon (imperative)** and wait for
     the trees icon to be replaced by the downloaded image.
 
-- [ ] The **Last selection** line reflects both groups and the icon action
-      item shows the remote image.
+- [ ] The **Last selection** line reflects last group selection change and the
+      icon action item shows the remote image.
 
 14. Change the color scheme, then open the overflow menu.
 
