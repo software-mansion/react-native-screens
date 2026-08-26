@@ -23,12 +23,15 @@ internal class FormSheetPresentationManager(
     private val bottomSheetView: View?
         get() = currentPresentation?.bottomSheetView
 
+    private var dismissalWindowBelow: Window? = null
+
     internal fun windowBelow(): Window? =
-        FormSheetStackRegistry
-            .sheetBelow(this)
-            ?.currentPresentation
-            ?.dialog
-            ?.window
+        dismissalWindowBelow
+            ?: FormSheetStackRegistry
+                .sheetBelow(this)
+                ?.currentPresentation
+                ?.dialog
+                ?.window
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
@@ -117,6 +120,12 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        dismissalWindowBelow =
+            FormSheetStackRegistry
+                .sheetBelow(this)
+                ?.currentPresentation
+                ?.dialog
+                ?.window
         dismissSheetsAbove()
         // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
         // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
@@ -276,6 +285,7 @@ internal class FormSheetPresentationManager(
                     )
             }
             dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
+            dismissalWindowBelow = null
 
             // ensure state hasn't updated during dismissal
             resolvePresentationState()
@@ -284,6 +294,7 @@ internal class FormSheetPresentationManager(
 
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
+        dismissalWindowBelow = null
         dimmingManager.detachDimming()
         dimmingManager.detachFromSheet()
 
