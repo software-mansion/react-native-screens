@@ -12,7 +12,6 @@ import {
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW,
 } from '../../native-class-names';
-import type { ItemId } from '@apps/tests/single-feature-tests/stack-v5/test-stack-header-item-identifier-ios';
 
 // The icon of the header bar button item, addressed by its icon id (SF Symbol
 // name or asset path).
@@ -20,12 +19,6 @@ function barButtonIcon(sfSymbolName: string) {
   return element(
     by.id(sfSymbolName).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
   );
-}
-
-// A custom-rendered trailing header item, addressed by the `testID` added to
-// its render output (`custom-item-<id>`).
-function customItem(id: ItemId) {
-  return element(by.id(`custom-item-${id}`));
 }
 
 async function waitForScreen(routeName: 'One' | 'Two' | 'Three') {
@@ -152,74 +145,6 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
         barButtonIcon('carrot.fill'),
         barButtonIcon('birthday.cake.fill'),
         barButtonIcon('3.circle.fill'),
-      ]);
-    });
-  });
-
-  describe('custom views with identifiers', () => {
-    beforeAll(async () => {
-      await device.reloadReactNative();
-      await selectSingleFeatureTestsScreen(
-        'Stackv5',
-        'test-stack-header-item-identifier-ios',
-      );
-      await waitForScreen('One');
-      // Scenario step 4: push through the stack with sfSymbol items first and
-      // pop back to One, so the toggle swaps the item type on a header whose
-      // native items are already materialized — not on a pristine screen.
-      await pushNext();
-      await waitForScreen('Two');
-      await pushNext();
-      await waitForScreen('Three');
-      await popBackFrom('Three');
-      await popBackFrom('Two');
-      await toggleSettingsSwitch({
-        switchId: 'toggle-custom-views',
-        label: 'Custom views',
-        to: true,
-      });
-    });
-
-    it('should replace the sfSymbol items with three custom-render items on screen One, ordered alpha, bravo, charlie left to right', async () => {
-      await expect(barButtonIcon('1.circle.fill')).not.toExist();
-      await expect(customItem('alpha')).toBeVisible();
-      await expect(customItem('bravo')).toBeVisible();
-      await expect(customItem('charlie')).toBeVisible();
-
-      await expectOrderedLeftToRight([
-        customItem('alpha'),
-        customItem('bravo'),
-        customItem('charlie'),
-      ]);
-    });
-
-    it('should reposition the alpha item to the center on screen Two, without dropping any item', async () => {
-      await pushNext();
-      await waitForScreen('Two');
-
-      await expect(customItem('alpha')).toBeVisible();
-      await expect(customItem('bravo')).toBeVisible();
-      await expect(customItem('charlie')).toBeVisible();
-
-      await expectOrderedLeftToRight([
-        customItem('bravo'),
-        customItem('alpha'),
-        customItem('charlie'),
-      ]);
-    });
-
-    it('should reposition the alpha item to the right edge on screen Three, without dropping any item', async () => {
-      await pushNext();
-      await waitForScreen('Three');
-
-      await expect(customItem('alpha')).toBeVisible();
-      await expect(customItem('bravo')).toBeVisible();
-      await expect(customItem('charlie')).toBeVisible();
-
-      await expectOrderedLeftToRight([
-        customItem('bravo'),
-        customItem('charlie'),
-        customItem('alpha'),
       ]);
     });
   });

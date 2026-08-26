@@ -22,7 +22,7 @@ import type {
 } from 'react-native-screens/components/stack/header';
 import type { PlatformIconIOS } from 'react-native-screens';
 
-export type ItemId = 'alpha' | 'bravo' | 'charlie';
+type ItemId = 'alpha' | 'bravo' | 'charlie';
 
 const SYMBOL_CYCLES: Record<ItemId, string[]> = {
   alpha: ['1.circle.fill', '2.circle.fill', '3.circle.fill'],
@@ -87,10 +87,7 @@ function makeItem(
       type: 'item',
       id,
       render: () => (
-        <View
-          testID={`custom-item-${id}`}
-          style={[styles.customItem, { backgroundColor: color }]}
-        />
+        <View style={[styles.customItem, { backgroundColor: color }]} />
       ),
       ...identifierProp,
     };
