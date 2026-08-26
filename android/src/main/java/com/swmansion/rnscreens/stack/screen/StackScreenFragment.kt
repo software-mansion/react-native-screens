@@ -37,7 +37,7 @@ internal class StackScreenFragment(
         allowEnterTransitionOverlap = true
         allowReturnTransitionOverlap = true
 
-        enterTransition = Slide(Gravity.RIGHT)
+        enterTransition = if (canNavigateBack) Slide(Gravity.RIGHT) else null
         exitTransition = Slide(Gravity.LEFT)
         returnTransition = Slide(Gravity.RIGHT)
         reenterTransition = Slide(Gravity.LEFT)
