@@ -91,7 +91,7 @@ export interface FormSheetProps {
    * * `last` - there won't be a dimming view for any detent level.
    *
    * @default 'none'
-   * @platform ios
+   * @platform android, ios
    */
   largestUndimmedDetentIndex?: number | 'none' | 'last' | undefined;
 
@@ -103,7 +103,7 @@ export interface FormSheetProps {
    * This prop only applies when the sheet transitions from closed to open.
    *
    * @default 0
-   * @platform ios
+   * @platform android, ios
    */
   initialDetentIndex?: number | 'last' | undefined;
 
