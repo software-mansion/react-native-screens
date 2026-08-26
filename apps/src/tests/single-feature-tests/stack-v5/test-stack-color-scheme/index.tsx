@@ -291,6 +291,8 @@ function TestStackColorScheme() {
 
   useEffect(() => {
     Appearance.setColorScheme(reactColorScheme);
+
+    return () => Appearance.setColorScheme('auto');
   }, [reactColorScheme]);
 
   return (
