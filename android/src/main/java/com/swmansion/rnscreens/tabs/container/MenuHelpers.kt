@@ -11,11 +11,3 @@ internal fun Menu.getOrCreateMenuItemForFragment(fragment: TabsScreenFragment): 
         Menu.NONE,
         fragment.tabsScreen.tabTitle,
     )
-
-internal fun Menu.indexOfItem(item: MenuItem): Int {
-    // We can iterate because we know that there are a few items at most
-    for (i in 0 until size()) {
-        if (getItem(i) === item) return i
-    }
-    return -1
-}
