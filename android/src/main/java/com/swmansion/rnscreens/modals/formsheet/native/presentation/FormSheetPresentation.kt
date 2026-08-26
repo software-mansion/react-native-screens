@@ -2,7 +2,9 @@ package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetAppearanceCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBehaviorController
@@ -25,6 +27,8 @@ internal class FormSheetPresentation(
         fun onNativeDismissAllowed()
 
         fun onNativeDismissPrevented()
+
+        fun resolveWindowBelow(): Window?
     }
 
     internal val dialog =
@@ -64,7 +68,19 @@ internal class FormSheetPresentation(
             onDismissPrevented = callbacks::onNativeDismissPrevented,
         )
 
+    // On an undimmed sheet, the backdrop tap should be forwarded to the window
+    // below.
+    private val backdropTouchForwarder =
+        dialog.findViewById<View>(com.google.android.material.R.id.touch_outside)?.let { backdropView ->
+            FormSheetBackdropTouchForwarder(
+                backdropView = backdropView,
+                isBackdropDimmed = { dimmingManager.isDimmed },
+                resolveWindowBelow = callbacks::resolveWindowBelow,
+            )
+        }
+
     init {
+        backdropTouchForwarder?.setup()
         nativeDismissCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
@@ -144,6 +160,7 @@ internal class FormSheetPresentation(
 
     internal fun destroy() {
         behaviorController?.destroy()
+        backdropTouchForwarder?.destroy()
         nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
 

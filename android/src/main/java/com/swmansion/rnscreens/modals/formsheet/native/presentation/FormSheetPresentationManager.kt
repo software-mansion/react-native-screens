@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.util.Log
 import android.view.View
+import android.view.Window
 import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
@@ -21,6 +22,13 @@ internal class FormSheetPresentationManager(
 
     private val bottomSheetView: View?
         get() = currentPresentation?.bottomSheetView
+
+    internal fun windowBelow(): Window? =
+        FormSheetStackRegistry
+            .sheetBelow(this)
+            ?.currentPresentation
+            ?.dialog
+            ?.window
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false

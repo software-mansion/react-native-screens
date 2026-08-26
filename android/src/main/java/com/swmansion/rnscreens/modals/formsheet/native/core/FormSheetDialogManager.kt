@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.modals.formsheet.native.core
 import android.content.Context
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.Window
+import com.swmansion.rnscreens.helpers.findHostActivity
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
@@ -43,6 +45,10 @@ class FormSheetDialogManager(
             override fun onNativeDismissPrevented() {
                 eventEmitter?.emitOnNativeDismissPreventedEvent()
             }
+
+            override fun resolveWindowBelow(): Window? =
+                presentationManager.windowBelow()
+                    ?: context.findHostActivity()?.window
         }
 
     private val dimmingManager = FormSheetDimmingManager(context)

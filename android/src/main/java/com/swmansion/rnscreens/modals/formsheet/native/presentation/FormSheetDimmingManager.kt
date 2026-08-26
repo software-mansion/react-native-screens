@@ -1,14 +1,12 @@
 package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.View
-import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.swmansion.rnscreens.helpers.findHostActivity
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 import kotlin.math.roundToInt
 
@@ -61,6 +59,9 @@ internal class FormSheetDimmingManager(
                 updateDimmingForSheetPosition()
             }
         }
+
+    internal val isDimmed: Boolean
+        get() = dimmingAlpha > 0f
 
     internal var dimmingAlpha: Float = 0f
         set(value) {
@@ -178,19 +179,7 @@ internal class FormSheetDimmingManager(
         }
     }
 
-    private fun resolveActivityDecorView(): View? {
-        var current: Context? = context
-        while (current is ContextWrapper) {
-            if (current is Activity) {
-                return current.window?.decorView
-            }
-            if (current is ReactContext) {
-                return current.currentActivity?.window?.decorView
-            }
-            current = current.baseContext
-        }
-        return null
-    }
+    private fun resolveActivityDecorView(): View? = context.findHostActivity()?.window?.decorView
 
     companion object {
         const val TAG = "FormSheetDimmingManager"
