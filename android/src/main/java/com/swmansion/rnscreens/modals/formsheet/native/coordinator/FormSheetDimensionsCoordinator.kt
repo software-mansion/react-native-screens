@@ -60,6 +60,12 @@ internal class FormSheetDimensionsCoordinator(
             builder.setInsetsIgnoringVisibility(type, insets.getInsetsIgnoringVisibility(type).withoutVertical())
         }
 
+        // On Android versions prior to API level 30, setInsetsIgnoringVisibility(...) is not
+        // implemented, hence the stable insets are cleared through the previous API.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            builder.setStableInsets(insets.stableInsets.withoutVertical())
+        }
+
         val consumedInsets = builder.build()
         val displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
 
