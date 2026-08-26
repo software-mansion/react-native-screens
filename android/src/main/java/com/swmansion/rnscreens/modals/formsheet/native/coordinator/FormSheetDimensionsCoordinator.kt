@@ -1,7 +1,9 @@
 package com.swmansion.rnscreens.modals.formsheet.native.coordinator
 
+import android.os.Build
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
@@ -37,9 +39,40 @@ internal class FormSheetDimensionsCoordinator(
             lastTopInset = getTopInset(insets)
             lastBottomInset = getBottomInset(insets)
             updateNativeContainerHeight()
-            insets
+            consumeVerticalSystemInsets(insets)
         }
     }
+
+    /**
+     * The container is sized to fit within the vertical safe area (see [updateNativeContainerHeight]),
+     * so the content never overlaps the system bars nor the display cutout vertically. The insets
+     * are consumed before reaching the content, otherwise it would pad for them once again.
+     *
+     * TODO: @t0maboro - revisit while adding horizontal sheet support
+     */
+    private fun consumeVerticalSystemInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
+        val builder = WindowInsetsCompat.Builder(insets)
+
+        for (type in listOf(WindowInsetsCompat.Type.systemBars(), WindowInsetsCompat.Type.displayCutout())) {
+            builder.setInsets(type, insets.getInsets(type).withoutVertical())
+            // Deprecated `getSystemWindowInsetTop`, used by Material may read from the insets
+            // ignoring visibility, which `setInsets` does not affect.
+            builder.setInsetsIgnoringVisibility(type, insets.getInsetsIgnoringVisibility(type).withoutVertical())
+        }
+
+        val consumedInsets = builder.build()
+        val displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+
+        // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+        // does not work. We need to use previous API.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && displayCutout.left == 0 && displayCutout.right == 0) {
+            return consumedInsets.consumeDisplayCutout()
+        }
+
+        return consumedInsets
+    }
+
+    private fun Insets.withoutVertical(): Insets = Insets.of(left, 0, right, 0)
 
     /**
      * BottomSheetBehavior registers an internal `WindowInsetsAnimationCallback` on the
