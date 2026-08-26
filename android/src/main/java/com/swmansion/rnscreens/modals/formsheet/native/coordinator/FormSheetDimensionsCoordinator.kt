@@ -53,7 +53,16 @@ internal class FormSheetDimensionsCoordinator(
     private fun consumeVerticalSystemInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
         val builder = WindowInsetsCompat.Builder(insets)
 
-        for (type in listOf(WindowInsetsCompat.Type.systemBars(), WindowInsetsCompat.Type.displayCutout())) {
+        val types =
+            listOf(
+                WindowInsetsCompat.Type.statusBars(),
+                WindowInsetsCompat.Type.navigationBars(),
+                WindowInsetsCompat.Type.captionBar(),
+                WindowInsetsCompat.Type.systemOverlays(),
+                WindowInsetsCompat.Type.displayCutout(),
+            )
+
+        for (type in types) {
             builder.setInsets(type, insets.getInsets(type).withoutVertical())
             // Deprecated `getSystemWindowInsetTop`, used by Material may read from the insets
             // ignoring visibility, which `setInsets` does not affect.
