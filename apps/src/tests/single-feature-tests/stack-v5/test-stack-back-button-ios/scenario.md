@@ -75,6 +75,6 @@ compact state. This is confirmed native behavior.
 8. Tap `title` and `backTitle` once to reset. Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Second" and back button displays as "<"
-9. Under Next screen, ap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
+9. Under Next screen, tap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
   - A new screen is pushed
   - Back button displays as "< Custom title"
