@@ -764,10 +764,28 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
 {
-  if ((self.direction == UISemanticContentAttributeForceLeftToRight ||
-       self.direction == UISemanticContentAttributeForceRightToLeft) &&
-      // iOS 12 cancels swipe gesture when direction is changed. See #1091
-      navCtrl.view.semanticContentAttribute != self.direction) {
+  if (self.direction != UISemanticContentAttributeForceLeftToRight &&
+      self.direction != UISemanticContentAttributeForceRightToLeft) {
+    return;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    navCtrl.traitOverrides.layoutDirection = self.direction == UISemanticContentAttributeForceRightToLeft
+        ? UITraitEnvironmentLayoutDirectionRightToLeft
+        : UITraitEnvironmentLayoutDirectionLeftToRight;
+
+    // RNSScreenStack and its animator inspect this explicit value when
+    // resolving swipe and transition direction.
+    if (navCtrl.view.semanticContentAttribute != self.direction) {
+      navCtrl.view.semanticContentAttribute = self.direction;
+    }
+    return;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+
+  // iOS 12 cancels swipe gesture when direction is changed. See #1091
+  if (navCtrl.view.semanticContentAttribute != self.direction) {
     // This is needed for swipe back gesture direction
     navCtrl.view.semanticContentAttribute = self.direction;
 
