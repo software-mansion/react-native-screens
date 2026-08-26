@@ -25,6 +25,8 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
@@ -33,6 +35,7 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProvi
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
 import kotlin.math.roundToInt
@@ -453,6 +456,58 @@ internal class StackHeaderApplicator(
         appBar.isLiftOnScroll = enabled
         appBar.setLiftOnScrollTargetView(if (enabled) targetScrollView else null)
         appBar.requestLayout()
+    }
+
+    internal fun applyBackgroundColors(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        // Widget.Material3Expressive.AppBarLayout (an empty alias of Widget.Material3.AppBarLayout)
+        //   #android:background = @macro/m3_comp_app_bar_container_color.
+        val backgroundColor =
+            config.backgroundColor ?: resolveColorAttr(appBar.context, R.attr.colorSurface)
+
+        // Both header kinds default to the same token, from different places:
+        //   small — ...AppBarLayout#liftOnScrollColor
+        //     = @macro/m3_comp_app_bar_on_scroll_container_color;
+        //   collapsing — the M3 CollapsingToolbar styles set no contentScrim, so CTL installs its
+        //     own default for titleCollapseMode=fade (getDefaultContentScrimColorForTitleCollapseFadeMode).
+        val scrolledBackgroundColor =
+            config.scrolledBackgroundColor
+                ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
+
+        val background =
+            MaterialShapeDrawable().apply {
+                fillColor = ColorStateList.valueOf(backgroundColor)
+            }
+
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.background = background
+                appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
+
+                // The lift animation runs only on lifted-state changes; jump to the end
+                // state when colors change while already lifted. The end state is the
+                // scrolled color composited over the background (see Material's
+                // initializeLiftOnScrollWithColor), not the raw scrolled color — they
+                // differ when the scrolled color is not fully opaque.
+                if (appBar.isLifted) {
+                    background.fillColor =
+                        ColorStateList.valueOf(
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor),
+                        )
+                }
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                // Fade collapse mode disables liftOnScroll, but the lift animation only checks the
+                // lift color. We set it to null so the fill stays at backgroundColor under the
+                // transparent/translucent content scrim.
+                appBar.setLiftOnScrollColor(null)
+                appBar.background = background
+                appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
+            }
+        }
     }
 
     // endregion
