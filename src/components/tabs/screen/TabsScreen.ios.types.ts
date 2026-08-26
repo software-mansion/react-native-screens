@@ -233,14 +233,19 @@ export interface TabsScreenPropsIOS {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
+   * - `{ type: 'imageSource', imageSource, tinted? }`
+   *   Uses an image from the provided resource. By default the image renders
+   *   in its original colors; with `tinted: true` it is used as a template
+   *   image and follows the state-dependent icon color.
    * - `{ type: 'sfSymbol', name }`
-   *   Uses an SF Symbol with the specified name.
+   *   Uses an SF Symbol with the specified name. If no system symbol
+   *   matches, falls back to an asset with that name (e.g. a custom
+   *   SF Symbol from the app's asset catalog).
    * - `{ type: 'xcasset', name }`
    *   Uses asset from Xcassets.
    * - `{ type: 'templateSource', templateSource }`
-   *   Uses the provided image as a template image.
+   *   Deprecated: use `{ type: 'imageSource', imageSource, tinted: true }`
+   *   instead. Uses the provided image as a template image.
    *   The icon color will depend on the current state
    *   of the tab bar item and icon color-related props.
    *
