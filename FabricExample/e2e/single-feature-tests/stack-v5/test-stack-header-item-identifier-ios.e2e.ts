@@ -21,6 +21,31 @@ function barButtonIcon(sfSymbolName: string) {
   );
 }
 
+// Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
+// screen's index.tsx).
+const ALL_SYMBOLS = [
+  '1.circle.fill',
+  '2.circle.fill',
+  '3.circle.fill',
+  'fish.fill',
+  'carrot.fill',
+  'birthday.cake.fill',
+];
+
+// Asserts the bar shows exactly the `expected` symbols: each expected symbol
+// is visible and every other known symbol is absent, so a stale item left
+// over from the previous screen fails the test. A duplicated symbol also
+// fails, since `toBeVisible` rejects multiple matches.
+async function expectExactBarButtonSymbols(expected: string[]) {
+  for (const name of ALL_SYMBOLS) {
+    if (expected.includes(name)) {
+      await expect(barButtonIcon(name)).toBeVisible();
+    } else {
+      await expect(barButtonIcon(name)).not.toExist();
+    }
+  }
+}
+
 async function waitForScreen(routeName: 'One' | 'Two' | 'Three') {
   await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
     .toExist()
@@ -105,9 +130,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
     });
 
     it('should show three trailing items on screen One — 1.circle.fill, fish.fill, carrot.fill — ordered left to right', async () => {
-      await expect(barButtonIcon('1.circle.fill')).toBeVisible();
-      await expect(barButtonIcon('fish.fill')).toBeVisible();
-      await expect(barButtonIcon('carrot.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '1.circle.fill',
+        'fish.fill',
+        'carrot.fill',
+      ]);
 
       await expectOrderedLeftToRight([
         barButtonIcon('1.circle.fill'),
@@ -120,10 +147,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await pushNext();
       await waitForScreen('Two');
 
-      await expect(barButtonIcon('1.circle.fill')).not.toExist();
-      await expect(barButtonIcon('2.circle.fill')).toBeVisible();
-      await expect(barButtonIcon('birthday.cake.fill')).toBeVisible();
-      await expect(barButtonIcon('fish.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '2.circle.fill',
+        'birthday.cake.fill',
+        'fish.fill',
+      ]);
 
       await expectOrderedLeftToRight([
         barButtonIcon('birthday.cake.fill'),
@@ -136,10 +164,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await pushNext();
       await waitForScreen('Three');
 
-      await expect(barButtonIcon('2.circle.fill')).not.toExist();
-      await expect(barButtonIcon('3.circle.fill')).toBeVisible();
-      await expect(barButtonIcon('carrot.fill')).toBeVisible();
-      await expect(barButtonIcon('birthday.cake.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '3.circle.fill',
+        'carrot.fill',
+        'birthday.cake.fill',
+      ]);
 
       await expectOrderedLeftToRight([
         barButtonIcon('carrot.fill'),
@@ -174,9 +203,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
     });
 
     it('should give each of the three trailing items its own platter on screen One, ordered left to right', async () => {
-      await expect(barButtonIcon('1.circle.fill')).toBeVisible();
-      await expect(barButtonIcon('fish.fill')).toBeVisible();
-      await expect(barButtonIcon('carrot.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '1.circle.fill',
+        'fish.fill',
+        'carrot.fill',
+      ]);
 
       await expectItemsInOwnPlatters([
         '1.circle.fill',
@@ -189,7 +220,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await pushNext();
       await waitForScreen('Two');
 
-      await expect(barButtonIcon('2.circle.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '2.circle.fill',
+        'birthday.cake.fill',
+        'fish.fill',
+      ]);
       await expectItemsInOwnPlatters([
         'birthday.cake.fill',
         '2.circle.fill',
@@ -201,7 +236,11 @@ describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
       await pushNext();
       await waitForScreen('Three');
 
-      await expect(barButtonIcon('3.circle.fill')).toBeVisible();
+      await expectExactBarButtonSymbols([
+        '3.circle.fill',
+        'carrot.fill',
+        'birthday.cake.fill',
+      ]);
       await expectItemsInOwnPlatters([
         'carrot.fill',
         'birthday.cake.fill',
