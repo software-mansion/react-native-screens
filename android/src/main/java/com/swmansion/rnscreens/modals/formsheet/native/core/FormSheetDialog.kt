@@ -14,8 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
  * A custom BottomSheetDialog override used to render the FormSheet native component.
  *
  * We enforce edge-to-edge rendering, bypassing standard Material checks.
- * This enforcement is required because our custom dimming view must span the entire screen.
- * The FormSheetContainer is sized manually against the system insets.
+ * This is required because our custom dimming logic needs the Dialog to span
+ * the entire screen. The FormSheetContainer is sized manually against the system insets.
  */
 internal class FormSheetDialog(
     context: Context,
@@ -63,7 +63,8 @@ internal class FormSheetDialog(
      * `enableEdgeToEdge` attribute AND the navigation bar is translucent (see
      * `BottomSheetDialog#onAttachedToWindow`).
      *
-     * We force edge-to-edge on every API level so the custom dimming view covers the whole screen.
+     * We force edge-to-edge on every API level so the window content always spans the whole
+     * screen.
      */
     private fun forceEdgeToEdge() {
         val window = window ?: return

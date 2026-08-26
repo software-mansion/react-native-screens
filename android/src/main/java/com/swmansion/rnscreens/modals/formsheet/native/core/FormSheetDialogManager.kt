@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.FrameLayout
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetAppearanceCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBehaviorController
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDimensionsCoordinator
@@ -14,6 +13,7 @@ import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetConte
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetDialogEventEmitter
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
+import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetDimmingManager
 import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetPresentationManager
 import kotlin.properties.Delegates
 
@@ -36,7 +36,10 @@ class FormSheetDialogManager(
     private val dialog =
         FormSheetDialog(themedContext).apply {
             setContentView(container)
-            setCanceledOnTouchOutside(false)
+            // Backdrop taps are handled by Material's `touch_outside` view, which calls `cancel()`,
+            // intercepted by FormSheetDialog.cancelRequestInterceptor, that's responsible for
+            // preventNativeDismiss handling.
+            setCanceledOnTouchOutside(true)
         }
 
     private val bottomSheetView = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
@@ -46,7 +49,7 @@ class FormSheetDialogManager(
             FormSheetBehaviorController(it) { index -> eventEmitter?.emitOnDetentChanged(index) }
         }
 
-    private val dimmingManager = DimmingViewManager(context, dialog)
+    private val dimmingManager = FormSheetDimmingManager(context)
 
     private val appearanceCoordinator =
         FormSheetAppearanceCoordinator(
@@ -74,7 +77,6 @@ class FormSheetDialogManager(
         FormSheetNativeDismissCoordinator(
             dialog = dialog,
             behaviorController = behaviorController,
-            dimmingManager = dimmingManager,
             onDismissAllowed = { presentationManager.handleNativeDismiss() },
             onDismissPrevented = { eventEmitter?.emitOnNativeDismissPreventedEvent() },
         )

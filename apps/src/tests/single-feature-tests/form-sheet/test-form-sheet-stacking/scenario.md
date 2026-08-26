@@ -4,7 +4,7 @@
 
 **Description:** Verify the present/dismiss flow for stacked `FormSheet` components. The screen presents up to three sheets stacked on top of each other. Every sheet exposes buttons that dismiss any sheet in the stack.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
@@ -13,6 +13,7 @@ Other: Planned, but will be implemented separately.
 ## Prerequisites
 
 - iOS device or simulator: iPhone
+- Android emulator
 
 ## Steps - iPhone
 
