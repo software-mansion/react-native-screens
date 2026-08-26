@@ -794,6 +794,35 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrolledBackgroundColor?: ColorValue | undefined;
   /**
+   * @summary Color of the scrim drawn in the status-bar area, masking header
+   * content that scrolls under the status bar in edge-to-edge apps.
+   *
+   * @description
+   * For the `small` header, the scrim is a constant strip pinned to the top of
+   * the window, drawn above the toolbar content. When not provided, the strip
+   * follows the header's effective background color: {@link backgroundColor} at
+   * rest, animating together with the lift-on-scroll transition towards
+   * {@link scrolledBackgroundColor}. An explicit color is applied statically,
+   * without tracking.
+   *
+   * For `medium` / `large` headers, the scrim fades in and out together with
+   * the content scrim as the header collapses. When not provided, it matches
+   * the content scrim color ({@link scrolledBackgroundColor}).
+   *
+   * Set to `'transparent'` to disable the scrim entirely.
+   *
+   * @remarks
+   * The default scrim is installed only when the color it follows resolves to
+   * a fully opaque color; translucent headers stay see-through. An explicit
+   * translucent color is honored and composites over the header background in
+   * the status-bar area (for `medium` / `large` headers the content scrim is
+   * excluded from that area while a scrim is installed, so the two scrims
+   * never stack).
+   *
+   * @platform android
+   */
+  statusBarScrimColor?: ColorValue | undefined;
+  /**
    * @summary Toolbar menu configuration.
    *
    * @description

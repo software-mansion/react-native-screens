@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.stack.header
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -31,6 +32,7 @@ import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderContentScrimDrawable
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
@@ -505,10 +507,61 @@ internal class StackHeaderApplicator(
                 // transparent/translucent content scrim.
                 appBar.setLiftOnScrollColor(null)
                 appBar.background = background
-                appBar.collapsingToolbarLayout.setContentScrimColor(scrolledBackgroundColor)
+                appBar.collapsingToolbarLayout.contentScrim =
+                    StackHeaderContentScrimDrawable(scrolledBackgroundColor)
+            }
+        }
+
+        applyStatusBarScrim(appBar, config, backgroundColor, scrolledBackgroundColor)
+    }
+
+    private fun applyStatusBarScrim(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+        backgroundColor: Int,
+        scrolledBackgroundColor: Int,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                val scrimColor = resolveStatusBarScrimColor(config, drivingColor = backgroundColor)
+                val autoFollow = scrimColor != null && config.statusBarScrimColor == null
+                appBar.setStatusBarScrimSyncEnabled(autoFollow)
+                appBar.statusBarForeground?.setTint(
+                    when {
+                        scrimColor == null -> Color.TRANSPARENT
+                        // Same lifted jump as the background fill in applyBackgroundColors.
+                        autoFollow && appBar.isLifted ->
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor)
+                        else -> scrimColor
+                    },
+                )
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                // Defaulting to the content scrim color masks toolbar content passing
+                // through the status-bar area (scroll-only flags) and is a visual
+                // no-op in the opaque exitUntilCollapsed case. An invisible scrim is
+                // normalized to null so the content scrim exclusion can key on scrim
+                // presence alone.
+                val scrimColor =
+                    resolveStatusBarScrimColor(config, drivingColor = scrolledBackgroundColor)
+                        ?.takeIf { Color.alpha(it) > 0 }
+                if (scrimColor != null) {
+                    appBar.collapsingToolbarLayout.setStatusBarScrimColor(scrimColor)
+                } else {
+                    appBar.collapsingToolbarLayout.statusBarScrim = null
+                }
+                appBar.updateContentScrimExclusion()
             }
         }
     }
+
+    // The default scrim exists only for an opaque driving color — a translucent
+    // scrim would double-composite over the layer it covers.
+    private fun resolveStatusBarScrimColor(
+        config: StackHeaderConfigurationProviding,
+        drivingColor: Int,
+    ): Int? = config.statusBarScrimColor ?: drivingColor.takeIf { Color.alpha(it) == 0xFF }
 
     // endregion
 

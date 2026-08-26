@@ -30,6 +30,7 @@ import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifie
 import TestStackHeaderTitleAppearance from './test-stack-header-title-appearance-android';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
 import TestStackHeaderBackground from './test-stack-header-background-android';
+import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
@@ -61,6 +62,7 @@ export { default as TestStackToolbarMenuA11y } from './test-stack-toolbar-menu-a
 export { default as TestStackHeaderTitleAppearance } from './test-stack-header-title-appearance-android';
 export { default as TestStackHeaderContentInsets } from './test-stack-header-content-insets-android';
 export { default as TestStackHeaderBackground } from './test-stack-header-background-android';
+export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-status-bar-scrim-android';
 
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
@@ -91,6 +93,7 @@ const scenarios = {
   TestStackHeaderTitleAppearance,
   TestStackHeaderContentInsets,
   TestStackHeaderBackground,
+  TestStackHeaderStatusBarScrim,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
