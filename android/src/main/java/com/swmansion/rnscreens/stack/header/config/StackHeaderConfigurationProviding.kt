@@ -27,6 +27,8 @@ internal interface StackHeaderConfigurationProviding {
     val scrollFlagExitUntilCollapsed: Boolean
     val scrollFlagSnap: Boolean
     val liftOnScroll: Boolean
+    val backgroundColor: Int?
+    val scrolledBackgroundColor: Int?
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
@@ -41,6 +43,9 @@ internal interface StackHeaderConfigurationProviding {
     val collapsedTitleHorizontalGravity: Int
     val collapsedTitleVerticalGravity: Int
     val collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+
+    val contentInsetStart: Float?
+    val contentInsetEnd: Float?
 
     val titleAppearance: TextAppearance
     val subtitleAppearance: TextAppearance

@@ -53,6 +53,9 @@ export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
   ? describe
   : describe.skip;
 
+export const describeIfiPadOS26 =
+  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
+
 export type ScrollOptions = {
   /** Pixels per step. Smaller steps avoid overshooting a short row. */
   pixels?: number;

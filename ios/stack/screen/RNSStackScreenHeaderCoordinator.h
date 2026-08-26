@@ -42,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)clearHeaderConfiguration;
 
+- (void)updateNavigationBarVisibilityAnimated:(BOOL)animated;
+
 @end
 
 NS_ASSUME_NONNULL_END

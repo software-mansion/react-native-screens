@@ -125,6 +125,9 @@ export interface NativeProps extends ViewProps {
     'availableSpace'
   >;
 
+  contentInsetStart?: CT.WithDefault<CT.Float, -1.0>;
+  contentInsetEnd?: CT.WithDefault<CT.Float, -1.0>;
+
   titleColor?: ColorValue | undefined;
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.WithDefault<CT.Float, -1.0>;
@@ -175,6 +178,9 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   liftOnScroll?: CT.WithDefault<boolean, true>;
+
+  backgroundColor?: ColorValue | undefined;
+  scrolledBackgroundColor?: ColorValue | undefined;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
   toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;

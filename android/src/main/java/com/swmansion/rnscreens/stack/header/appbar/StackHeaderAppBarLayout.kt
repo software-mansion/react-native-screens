@@ -20,6 +20,9 @@ internal sealed class StackHeaderAppBarLayout(
 ) : AppBarLayout(context) {
     abstract val toolbar: MaterialToolbar
 
+    internal abstract val defaultContentInsetStart: Int
+    internal abstract val defaultContentInsetEnd: Int
+
     init {
         layoutParams =
             CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
@@ -39,6 +42,9 @@ internal sealed class StackHeaderAppBarLayout(
                 elevation = 0f
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
+
+        override val defaultContentInsetStart: Int = toolbar.contentInsetStart
+        override val defaultContentInsetEnd: Int = toolbar.contentInsetEnd
 
         // Setting text size and typeface separately (Toolbar exposes only a whole text appearance)
         // needs the title/subtitle TextViews, and Toolbar has no getter for them. Material locates
@@ -88,6 +94,9 @@ internal sealed class StackHeaderAppBarLayout(
                             collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
                         }
             }
+
+        override val defaultContentInsetStart: Int = toolbar.contentInsetStart
+        override val defaultContentInsetEnd: Int = toolbar.contentInsetEnd
 
         // collapsedTitleGravityMode is a construction-time-only attr (no public setter), so both
         // gravity modes are inflated from XML — differing only in that attribute — to stay 1:1.

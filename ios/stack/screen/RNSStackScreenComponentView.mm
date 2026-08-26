@@ -132,6 +132,11 @@ namespace react = facebook::react;
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
     _headerConfig = (RNSStackHeaderConfigComponentView *)childComponentView;
+    _headerConfig.headerCoordinator = _controller.headerCoordinator;
+    _controller.headerCoordinator.configDataProvider = _headerConfig;
+    _controller.headerCoordinator.frameChangeDelegate = _headerConfig;
+    _controller.headerCoordinator.eventsDelegate = _headerConfig;
+    _controller.headerCoordinator.imageLoader = _headerConfig;
   }
   [super mountChildComponentView:childComponentView index:index];
 }
@@ -140,6 +145,7 @@ namespace react = facebook::react;
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
     [_controller.headerCoordinator clearHeaderConfiguration];
+    _headerConfig.headerCoordinator = nil;
     _headerConfig = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];

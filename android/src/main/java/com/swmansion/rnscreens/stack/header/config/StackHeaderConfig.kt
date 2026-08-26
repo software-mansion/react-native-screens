@@ -137,6 +137,12 @@ internal class StackHeaderConfig(
     override var liftOnScroll: Boolean by invalidatingProperty(true, StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
         internal set
 
+    override var backgroundColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+        internal set
+
+    override var scrolledBackgroundColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+        internal set
+
     override var toolbarMenu: StackHeaderToolbarMenuConfig
         by invalidatingProperty(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
@@ -167,6 +173,14 @@ internal class StackHeaderConfig(
 
     override var collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
         by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
+        internal set
+
+    override var contentInsetStart: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
+        internal set
+
+    override var contentInsetEnd: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
         internal set
 
     override val titleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)

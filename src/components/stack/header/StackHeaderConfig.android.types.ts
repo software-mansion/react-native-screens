@@ -745,7 +745,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
    * installs its own content scrim and disables the app bar's lift-on-scroll,
    * so this prop has no effect there. The collapsed appearance of those headers
-   * is instead controlled by that content scrim, which is not exposed yet.
+   * is instead controlled by that content scrim — see
+   * {@link scrolledBackgroundColor}.
    *
    * Has no effect while the header is `transparent` (there is no scrolling
    * content behavior installed in that mode).
@@ -755,6 +756,43 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   liftOnScroll?: boolean | undefined;
+  /**
+   * @summary Background color of the header.
+   *
+   * @description
+   * Applies to all header types. For `medium` / `large` headers this is the
+   * color of the expanded state — the collapsed state color is controlled by
+   * {@link scrolledBackgroundColor}.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Background color of the header when content is scrolled beneath
+   * it.
+   *
+   * @description
+   * For the `small` header, this is the lift-on-scroll target color: when
+   * content is scrolled beneath the app bar, the background animates from
+   * {@link backgroundColor} to this color. Requires {@link liftOnScroll}.
+   *
+   * For `medium` / `large` headers, this is the color of the content scrim
+   * that fades in as the header collapses. The scrim is drawn above the
+   * header background (and the `backgroundSubview`, if any) but below the
+   * toolbar content.
+   *
+   * @remarks
+   * A translucent color is composited over the header background instead of
+   * replacing it.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  scrolledBackgroundColor?: ColorValue | undefined;
   /**
    * @summary Toolbar menu configuration.
    *
@@ -912,6 +950,42 @@ export interface StackHeaderConfigPropsAndroid {
    * @platform android
    */
   maxLines?: number | undefined;
+  /**
+   * @summary Start inset of the toolbar.
+   *
+   * @description
+   * The inset is a minimum: the navigation icon is positioned before it is
+   * applied and is not bounded by it, so the content area starts at whichever
+   * reaches further from the edge — the navigation icon's trailing edge or this
+   * inset. A back button usually wins, which makes this prop inert while one is
+   * visible.
+   *
+   * @remarks
+   * Applies to all header types. On `medium` / `large` it affects the collapsed
+   * title only.
+   *
+   * By default, native platform applies non-zero inset which makes centered
+   * collapsed title look off-center when `collapsedTitleGravityMode:
+   * 'availableSpace'` is used.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetStart?: number | undefined;
+  /**
+   * @summary End inset of the toolbar content area.
+   *
+   * @remarks
+   * The end-side counterpart of `contentInsetStart`. Applies to all header
+   * types. Like its start-side counterpart it is a minimum, so it is inert
+   * while the toolbar menu shows items that already reach further in.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetEnd?: number | undefined;
   /**
    * @summary Color of the title text. Applies to `small` header only.
    *
