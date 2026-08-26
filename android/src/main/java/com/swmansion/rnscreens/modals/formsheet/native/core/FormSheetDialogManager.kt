@@ -68,7 +68,7 @@ class FormSheetDialogManager(
         }
 
     private fun createPresentation(): FormSheetPresentation =
-        FormSheetPresentation(themedContext, container, presentationCallbacks).also {
+        FormSheetPresentation(themedContext, container, dimmingManager, presentationCallbacks).also {
             it.applyInitialConfig(formSheetConfig, lastContentHeight)
         }
 

@@ -146,7 +146,7 @@ internal class FormSheetBehaviorController(
         peekHeight = detents.firstHeight(sheetAvailableSpace)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
         if (applyInitialDetent) {
-            state = resolveStateFromIndex(initialDetentIndex, detents.count)
+            state = resolveStateFromIndex(detents, initialDetentIndex)
         }
     }
 
@@ -163,22 +163,21 @@ internal class FormSheetBehaviorController(
         expandedOffset = detents.expandedOffsetFromTop(sheetAvailableSpace)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
         if (applyInitialDetent) {
-            state = resolveStateFromIndex(initialDetentIndex, detents.count)
+            state = resolveStateFromIndex(detents, initialDetentIndex)
         }
     }
 
     private fun resolveStateFromIndex(
-        index: Int,
-        detentsCount: Int,
+        detents: FormSheetDetents,
+        requestedIndex: Int,
     ): Int {
-        val resolvedIndex = if (index == FORM_SHEET_LAST_DETENT_INDEX) detentsCount - 1 else index
-        val safeIndex = resolvedIndex.coerceIn(0, detentsCount - 1)
+        val index = detents.resolveDetentIndex(requestedIndex)
 
-        return when (detentsCount) {
+        return when (detents.count) {
             1 -> BottomSheetBehavior.STATE_EXPANDED
-            2 -> if (safeIndex == 0) BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_EXPANDED
+            2 -> if (index == 0) BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_EXPANDED
             3 ->
-                when (safeIndex) {
+                when (index) {
                     0 -> BottomSheetBehavior.STATE_COLLAPSED
                     1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
                     else -> BottomSheetBehavior.STATE_EXPANDED
@@ -208,6 +207,5 @@ internal class FormSheetBehaviorController(
 
     companion object {
         private const val FORM_SHEET_UNKNOWN_DETENT_INDEX = -1
-        private const val FORM_SHEET_LAST_DETENT_INDEX = -1
     }
 }

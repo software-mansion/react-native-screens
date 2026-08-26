@@ -85,7 +85,7 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.PRESENTING
         val presentation = presentationFactory().also { currentPresentation = it }
-        presentation.sheetBehavior?.let(dimmingManager::attachToBehavior)
+        presentation.bottomSheetView?.let(dimmingManager::attachToSheet)
 
         FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
@@ -238,6 +238,7 @@ internal class FormSheetPresentationManager(
     private fun performDismiss() {
         shouldSkipExitAnimation = false
         dimmingManager.detachDimming()
+        dimmingManager.detachFromSheet()
         currentPresentation?.destroy()
         currentPresentation = null
         onDismissComplete()
@@ -276,6 +277,7 @@ internal class FormSheetPresentationManager(
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
         dimmingManager.detachDimming()
+        dimmingManager.detachFromSheet()
 
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
