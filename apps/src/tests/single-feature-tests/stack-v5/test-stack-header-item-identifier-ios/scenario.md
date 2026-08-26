@@ -22,8 +22,8 @@ Not automated:
 
 - Transition quality (steps 2–4, 7): flashing / blur / crossfade — Detox
   samples settled state, not animation frames.
-- Step 4 (custom views): intentionally left manual-only — it exercises the
-  test screen's rendering more than the identifier matching itself.
+- Step 4 (custom views): automating it would only check that the custom views
+  render, not the real identifier-matching functionality.
 - Step 5 (identifiers off): end state is identical, only the transition
   differs — Detox can't assert it.
 
