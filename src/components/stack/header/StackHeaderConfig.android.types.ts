@@ -800,7 +800,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @description
    * For the `small` header, the scrim is a constant strip pinned to the top of
    * the window, drawn above the toolbar content. When not provided, the strip
-   * follows the bar's effective background color: {@link backgroundColor} at
+   * follows the header's effective background color: {@link backgroundColor} at
    * rest, animating together with the lift-on-scroll transition towards
    * {@link scrolledBackgroundColor}. An explicit color is applied statically,
    * without tracking.
