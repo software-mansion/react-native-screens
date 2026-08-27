@@ -8,6 +8,22 @@ const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 const SCREENS_VERSION_HELP = `'${CURRENT_SCREENS_VERSION}', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'`;
 const EMPTY_EXAMPLE_APP = 'empty';
 
+function parseBooleanFlag(value) {
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['false'].includes(normalized)) {
+      return false;
+    }
+    if (['true'].includes(normalized)) {
+      return true;
+    }
+    fatal(
+      `Invalid boolean value '${value}'. Use a flag by itself, or '=true' / '=false'.`,
+    );
+  }
+  return Boolean(value);
+}
+
 function parseScreensVersion(screensVersion) {
   if (screensVersion === CURRENT_SCREENS_VERSION) {
     return { type: CURRENT_SCREENS_VERSION, target: CURRENT_SCREENS_VERSION };
@@ -100,6 +116,10 @@ function getConfig() {
     },
     strict: false,
   });
+
+  config.help = parseBooleanFlag(config.help);
+  config['from-origin'] = parseBooleanFlag(config['from-origin']);
+  config.run = parseBooleanFlag(config.run);
 
   if (config.help) {
     console.log(`
@@ -231,7 +251,7 @@ function getConfig() {
     );
   }
 
-  const run = Boolean(config.run);
+  const run = config.run;
 
   const argvHasFlag = (...flags) =>
     flags.some(flag => process.argv.includes(flag));
