@@ -111,12 +111,6 @@
 
   for (RNSPushOperation *op in _pendingPushOperations) {
     RNSStackScreenController *controller = op.stackScreen.controller;
-    // Wire the current top screen as the receiver of the pushed screen's
-    // back button config before UIKit triggers the header coordinator
-    // (via didMoveToWindow) during the push.
-    controller.backButtonDelegate = [self.topViewController isKindOfClass:RNSStackScreenController.class]
-        ? static_cast<RNSStackScreenController *>(self.topViewController)
-        : nil;
     [self pushViewController:controller animated:YES];
   }
 

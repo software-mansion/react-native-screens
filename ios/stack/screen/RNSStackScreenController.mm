@@ -23,17 +23,6 @@
   return self;
 }
 
-#pragma mark - RNSStackBackButtonDelegate
-
-- (void)applyBackButtonConfigWithTitle:(nullable NSString *)backTitle
-                           displayMode:(UINavigationItemBackButtonDisplayMode)displayMode
-{
-#if !TARGET_OS_TV
-  self.navigationItem.backButtonTitle = backTitle;
-  self.navigationItem.backButtonDisplayMode = displayMode;
-#endif // !TARGET_OS_TV
-}
-
 #pragma mark - RNSContainerItem
 
 - (void)registerNestedContainer:(id<RNSContainer>)container
@@ -95,6 +84,11 @@
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
+    // The screen has been removed from the stack & the pop transition has
+    // completed. Clear the back button config this screen has applied onto
+    //  the screen below, so it does not leak onto a subsequently pushed screen.
+    [_headerCoordinator clearAppliedBackButtonConfig];
+
     if (_screenView.activityMode == RNSStackScreenActivityModeDetached) {
       [[self reactEventEmitter] emitOnDismiss];
     } else {

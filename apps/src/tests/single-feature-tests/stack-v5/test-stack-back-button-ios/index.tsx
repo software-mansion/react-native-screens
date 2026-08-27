@@ -108,6 +108,12 @@ function TestStackBackButtonIOS() {
           headerConfig: buildHeaderConfig('Second', nextConfig),
         },
       },
+      {
+        // Intentionally no headerConfig — exercises clearing of back button
+        // configuration left on the previous screen by an earlier push.
+        name: 'Bare',
+        element: <BareScreen />,
+      },
     ],
     [nextConfig],
   );
@@ -216,6 +222,23 @@ function FirstScreen() {
         onChange={setNextConfig}
       />
       <Button title="Push Second" onPress={() => push('Second')} />
+      <Button title="Push Bare (no header config)" onPress={() => push('Bare')} />
+      <Button title="Pop" onPress={() => pop(routeKey)} />
+    </CenteredLayoutView>
+  );
+}
+
+function BareScreen() {
+  const { routeKey, pop } = useStackNavigationContext();
+
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.RedLight80 }}>
+      <StackRouteInformation routeName="Bare" />
+      <Text style={styles.note}>
+        This screen has no header config. The back button must fall back to
+        system defaults, not retain configuration from a previously pushed
+        screen.
+      </Text>
       <Button title="Pop" onPress={() => pop(routeKey)} />
     </CenteredLayoutView>
   );

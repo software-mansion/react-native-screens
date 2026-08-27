@@ -54,6 +54,10 @@ compact state. This is confirmed native behavior.
 10. Under Next screen, tap `Pop` to pop the screen. Tap `title` to set "Custom title". Tap `backTitle` twice to set "Longer custom title". Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Custom title" and back button displays as "< Back"
+11. Tap the back button to pop. Tap `Push Bare (no header config)`.
+  - A new screen without a header config is pushed
+  - Back button displays as "< First" (system default), NOT the back title
+    configured for the previously pushed Second screen
 
 ### iOS 26
 
@@ -78,3 +82,7 @@ compact state. This is confirmed native behavior.
 9. Under Next screen, tap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
   - A new screen is pushed
   - Back button displays as "< Custom title"
+10. Tap the back button to pop. Tap `Push Bare (no header config)`.
+  - A new screen without a header config is pushed
+  - Back button displays as "<" (system default), NOT "< Custom title"
+    configured for the previously pushed Second screen

@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateNavigationBarVisibilityAnimated:(BOOL)animated;
 
+- (void)clearAppliedBackButtonConfig;
+
 @end
 
 NS_ASSUME_NONNULL_END
