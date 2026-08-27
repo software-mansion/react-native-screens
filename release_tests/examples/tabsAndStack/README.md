@@ -4,10 +4,10 @@ Tabs + Stack v5 from the main `react-native-screens` export.
 
 ## Requirements
 
-|         |                                                                                                         |
-| ------- | ------------------------------------------------------------------------------------------------------- |
-| **RNS** | 5.x                                                                                                     |
-| **RN**  | Fabric required (RN ≥ 0.76). Match the RNS ↔ RN matrix from the library README for the release you use. |
+|         |                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------- |
+| **RNS** | 5.x                                                                                         |
+| **RN**  | Fabric required. Match the RNS ↔ RN matrix from the library README for the release you use. |
 
 ## Imports
 
