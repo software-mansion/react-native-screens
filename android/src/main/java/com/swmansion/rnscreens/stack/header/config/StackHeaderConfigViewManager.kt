@@ -591,7 +591,7 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: Boolean,
     ) {
-        view.toolbarMenuGroupDividerEnabled = value
+        view.setToolbarMenuGroupDividerEnabledFromProps(value)
     }
 
     override fun setToolbarMenu(
@@ -599,8 +599,7 @@ internal open class StackHeaderConfigViewManager :
         value: Dynamic,
     ) {
         val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(view.context, value)
-        view.toolbarMenu = menu
-        view.toolbarMenuItemIconSourceMap = iconSources
+        view.setToolbarMenuFromProps(menu, iconSources)
     }
 
     override fun updateToolbarMenuElements(

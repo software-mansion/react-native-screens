@@ -81,6 +81,7 @@ function ColorSchemePickers() {
 
 function buildToolbarMenu(
   onGroupChange: (groupId: string, selectedIds: string[]) => void,
+  textActionTitle: string,
 ): StackHeaderToolbarMenuBaseAndroid {
   return {
     groups: [
@@ -98,7 +99,7 @@ function buildToolbarMenu(
       {
         type: 'menuItem',
         id: 'textAction',
-        title: 'Text',
+        title: textActionTitle,
         showAsAction: 'always',
         onPress: () => {},
       },
@@ -147,6 +148,8 @@ function ConfigScreen() {
   const { push, setRouteOptions, routeKey } = useStackNavigationContext();
 
   const [headerType, setHeaderType] = useState<StackHeaderTypeAndroid>('small');
+  const [headerHidden, setHeaderHidden] = useState(false);
+  const [menuPropVersion, setMenuPropVersion] = useState(1);
   const [lastSelection, setLastSelection] = useState<string | null>(null);
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
@@ -164,16 +167,27 @@ function ConfigScreen() {
       headerConfig: {
         title: 'Config',
         subtitle: 'Color scheme test',
+        hidden: headerHidden,
         android: {
           type: headerType,
           scrollFlagScroll: true,
           scrollFlagExitUntilCollapsed: true,
-          toolbarMenu: buildToolbarMenu(handleGroupChange),
+          toolbarMenu: buildToolbarMenu(
+            handleGroupChange,
+            menuPropVersion === 1 ? 'Text' : `Text v${menuPropVersion}`,
+          ),
         },
       },
       headerConfigRef,
     });
-  }, [setRouteOptions, routeKey, headerType, handleGroupChange]);
+  }, [
+    setRouteOptions,
+    routeKey,
+    headerType,
+    headerHidden,
+    menuPropVersion,
+    handleGroupChange,
+  ]);
 
   const loadRemoteIcon = useCallback(() => {
     iconSeedRef.current += 1;
@@ -187,6 +201,13 @@ function ConfigScreen() {
           },
         },
       },
+    });
+  }, []);
+
+  const checkFilterB = useCallback(() => {
+    headerConfigRef.current?.android?.updateToolbarMenuElements({
+      id: 'filterB',
+      options: { checked: true },
     });
   }, []);
 
@@ -231,8 +252,9 @@ function ConfigScreen() {
         <Text style={styles.heading}>Toolbar menu (Android)</Text>
         <Text style={styles.text}>
           Change checkbox/radio selection in the overflow menu, load a remote
-          icon, then change the color scheme and observe what the toolbar menu
-          keeps.
+          icon, then rebuild the header (color scheme, header type, hide/show)
+          and observe that the toolbar menu keeps its state. Only the
+          toolbarMenu prop change button resets it.
         </Text>
         <Text style={styles.text}>
           Last selection: {lastSelection ?? 'none yet'}
@@ -240,6 +262,17 @@ function ConfigScreen() {
         <Button
           title="Load remote icon (imperative)"
           onPress={loadRemoteIcon}
+        />
+        <Button title="Check Filter B (imperative)" onPress={checkFilterB} />
+        <Button
+          title={`Change toolbarMenu prop (v${menuPropVersion} → v${
+            menuPropVersion + 1
+          })`}
+          onPress={() => setMenuPropVersion(version => version + 1)}
+        />
+        <Button
+          title={headerHidden ? 'Show header' : 'Hide header'}
+          onPress={() => setHeaderHidden(hidden => !hidden)}
         />
       </View>
 

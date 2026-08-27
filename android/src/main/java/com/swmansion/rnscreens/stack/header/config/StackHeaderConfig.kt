@@ -19,6 +19,8 @@ import com.swmansion.rnscreens.helpers.resolveImage
 import com.swmansion.rnscreens.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewType
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuController
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuDelegate
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
@@ -35,6 +37,7 @@ internal class StackHeaderConfig(
 ) : ReactViewGroup(reactContext),
     StackHeaderConfigurationProviding,
     StackHeaderDelegate,
+    StackHeaderToolbarMenuDelegate,
     OnStackHeaderSubviewChangeListener,
     UIManagerListener {
     init {
@@ -146,12 +149,27 @@ internal class StackHeaderConfig(
     override var statusBarScrimColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
         internal set
 
-    override var toolbarMenu: StackHeaderToolbarMenuConfig
-        by invalidatingProperty(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        internal set
+    override val toolbarMenuController =
+        StackHeaderToolbarMenuController().also { it.delegate = WeakReference(this) }
 
-    override var toolbarMenuGroupDividerEnabled: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        internal set
+    internal fun setToolbarMenuFromProps(
+        menu: StackHeaderToolbarMenuConfig,
+        iconSources: Map<String, StackHeaderToolbarMenuItemIconSource>,
+    ) {
+        toolbarMenuItemIconSourceMap = iconSources
+        if (toolbarMenuController.setMenu(menu, iconSources)) {
+            // Commands sent against the previous menu must not touch the new
+            // one, even those still waiting for an icon.
+            menuUpdateQueue.clearPending()
+            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
+        }
+    }
+
+    internal fun setToolbarMenuGroupDividerEnabledFromProps(enabled: Boolean) {
+        if (toolbarMenuController.setGroupDividerEnabled(enabled)) {
+            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
+        }
+    }
 
     override var titleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
@@ -276,13 +294,13 @@ internal class StackHeaderConfig(
 
     // region Toolbar menu item icon resolution
 
-    internal var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
+    private var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
 
     private var toolbarMenuItemIconResolvers = mapOf<String, PropIconResolver>()
 
     // Last resolved icon per menu item id, from the `toolbarMenu` prop path only
-    // (resolveToolbarMenuItemIconsIfNeeded). Command (`updateToolbarMenuElements`) icons are applied
-    // directly to the live toolbar and are intentionally NOT stored here.
+    // (resolveToolbarMenuItemIconsIfNeeded). Command (`updateToolbarMenuElements`) icons live in
+    // the controller's command overlay and are intentionally NOT stored here.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
@@ -306,26 +324,14 @@ internal class StackHeaderConfig(
                         }
                     }
 
-                applyToolbarMenuItemIcon(id, icon)
+                // Applied in place by the controller; no menu rebuild and no
+                // invalidation, so nothing to flush.
+                toolbarMenuController.setItemIcon(id, icon)
             }
         }
 
         toolbarMenuItemIconResolvers = nextResolvers
         toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in toolbarMenuItemIconSourceMap }
-    }
-
-    private fun applyToolbarMenuItemIcon(
-        id: String,
-        icon: Drawable?,
-    ) {
-        val currentMenu = toolbarMenu
-        val updated = currentMenu.updateItemIcon(id, icon)
-        if (updated !== currentMenu) {
-            toolbarMenu = updated
-            if (!isInsideMountTransaction) {
-                flushUpdates()
-            }
-        }
     }
 
     // endregion
@@ -407,17 +413,6 @@ internal class StackHeaderConfig(
         )
     }
 
-    override fun onMenuItemClicked(id: String) {
-        eventEmitter.emitOnToolbarMenuItemPress(id)
-    }
-
-    override fun onGroupSelectionChanged(
-        groupId: String,
-        selectedIds: List<String>,
-    ) {
-        eventEmitter.emitOnToolbarMenuGroupSelectionChange(groupId, selectedIds)
-    }
-
     override fun onSubviewOriginChanged(
         type: StackHeaderSubviewType,
         x: Int,
@@ -431,6 +426,21 @@ internal class StackHeaderConfig(
                 StackHeaderSubviewType.TRAILING -> trailingSubview
             }
         subview?.updateContentOriginOffset(x, y)
+    }
+
+    // endregion
+
+    // region StackHeaderToolbarMenuDelegate
+
+    override fun onMenuItemClicked(id: String) {
+        eventEmitter.emitOnToolbarMenuItemPress(id)
+    }
+
+    override fun onGroupSelectionChanged(
+        groupId: String,
+        selectedIds: List<String>,
+    ) {
+        eventEmitter.emitOnToolbarMenuGroupSelectionChange(groupId, selectedIds)
     }
 
     // endregion
@@ -478,7 +488,7 @@ internal class StackHeaderConfig(
     private val menuUpdateQueue =
         StackHeaderToolbarMenuUpdateQueue(
             iconResolver = commandIconResolver,
-            delegate = { updates -> configObserver?.onMenuElementsUpdated(updates) },
+            delegate = { updates -> toolbarMenuController.applyElementUpdates(updates) },
         )
 
     /**
@@ -520,6 +530,7 @@ internal class StackHeaderConfig(
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
         menuUpdateQueue.tearDown()
+        toolbarMenuController.detach()
         invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
     }

@@ -479,12 +479,15 @@ export interface StackHeaderConfigCommandsAndroid {
    * overtaken by an earlier one whose icon happened to load late.
    *
    * @remarks
-   * Updates are applied to the live toolbar: they take effect only while the
-   * header is shown, and are discarded whenever the menu is rebuilt from the
-   * `toolbarMenu` prop — whether by a prop change, a structural change such
-   * as hiding and re-showing the header, or an effective color scheme change.
-   * They persist across unrelated re-renders. An update whose `id` is not in
-   * the current menu is ignored.
+   * Updates persist for the lifetime of the current `toolbarMenu`
+   * configuration: they survive native header rebuilds (an effective color
+   * scheme change, a header `type` change, hiding and re-showing the header)
+   * and unrelated re-renders. Updates sent while the header is hidden are
+   * recorded — and emit their selection events — as usual, and take effect
+   * when the header is next shown. Only a `toolbarMenu` prop change resets
+   * them (see its docs). An update whose `id` is not in the current menu is
+   * ignored. An `icon` set via this command takes precedence over the icon
+   * declared in `toolbarMenu` until the next `toolbarMenu` change.
    *
    * @param updates A single update object or an array of updates.
    */
@@ -831,8 +834,13 @@ export interface StackHeaderConfigPropsAndroid {
    * want to change some property in runtime, use `updateToolbarMenuElements`
    * view command.
    *
-   * Changing this prop in runtime will result in full toolbar menu rebuild.
-   * Any prior changes applied via `updateToolbarMenuElements` will be lost.
+   * Changing this prop at runtime rebuilds the toolbar menu and resets all
+   * of its runtime state: checkbox/radio selections return to their
+   * `initialToggleState` and every change applied via
+   * `updateToolbarMenuElements` is discarded, including batches still
+   * waiting in the queue (e.g. for an icon download). Any real change
+   * counts, even one only swapping an item's icon; re-sending an identical
+   * menu is a no-op and preserves the state.
    *
    * @platform android
    */

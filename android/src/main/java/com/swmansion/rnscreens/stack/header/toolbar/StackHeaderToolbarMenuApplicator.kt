@@ -53,7 +53,17 @@ internal object StackHeaderToolbarMenuApplicator {
         )
     }
 
-    internal fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
+    /**
+     * Validates constraints not already enforced by the map/metadata
+     * generators. Together with them this covers the whole menu shape, so the
+     * build path can assume a valid config.
+     */
+    internal fun validate(menuConfig: StackHeaderToolbarMenuConfig) {
+        validateRadioInitialSelection(menuConfig)
+        validateItemTypes(menuConfig)
+    }
+
+    private fun validateRadioInitialSelection(menuConfig: StackHeaderToolbarMenuConfig) {
         for (group in menuConfig.groups) {
             if (!group.singleSelection) continue
             var count = 0
@@ -70,6 +80,28 @@ internal object StackHeaderToolbarMenuApplicator {
         for (element in menuConfig.children) {
             if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
                 validateRadioInitialSelection(element.menu)
+            }
+        }
+    }
+
+    private fun validateItemTypes(menuConfig: StackHeaderToolbarMenuConfig) {
+        for (element in menuConfig.children) {
+            val item = element.item
+            when (item.itemType) {
+                StackHeaderToolbarMenuItemType.TOGGLE ->
+                    require(item.groupId != null) {
+                        "[RNScreens] Menu item '${item.id}' has itemType=TOGGLE but no groupId. " +
+                            "Toggle items must belong to a group."
+                    }
+                StackHeaderToolbarMenuItemType.ACTION ->
+                    require(item.groupId == null) {
+                        "[RNScreens] Menu item '${item.id}' has itemType=ACTION " +
+                            "and belongs to a group. Action items cannot belong to groups."
+                    }
+                StackHeaderToolbarMenuItemType.AUTOMATIC -> Unit
+            }
+            if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
+                validateItemTypes(element.menu)
             }
         }
     }
@@ -170,18 +202,16 @@ internal object StackHeaderToolbarMenuApplicator {
         reverseIdMap: Map<Int, String>,
         forwardGroupIdMap: Map<String, Int>,
         groupDividerEnabled: Boolean,
-        onItemClicked: (id: String, menuItem: MenuItem) -> Unit,
+        optionsForItem: (id: String) -> StackHeaderToolbarMenuElementOptions,
+        onItemClicked: (id: String) -> Unit,
     ) {
         toolbar.menu.clear()
-        addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap)
+        addElements(toolbar, toolbar.menu, menuConfig, forwardIdMap, forwardGroupIdMap, optionsForItem)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             toolbar.menu.setGroupDividerEnabled(groupDividerEnabled)
         }
         toolbar.setOnMenuItemClickListener { menuItem ->
-            val stringId = reverseIdMap[menuItem.itemId]
-            if (stringId != null) {
-                onItemClicked(stringId, menuItem)
-            }
+            reverseIdMap[menuItem.itemId]?.let(onItemClicked)
             true
         }
     }
@@ -192,6 +222,7 @@ internal object StackHeaderToolbarMenuApplicator {
         menuConfig: StackHeaderToolbarMenuConfig,
         forwardIdMap: Map<String, Int>,
         forwardGroupIdMap: Map<String, Int>,
+        optionsForItem: (id: String) -> StackHeaderToolbarMenuElementOptions,
     ) {
         menuConfig.children.forEachIndexed { index, element ->
             val itemId =
@@ -205,14 +236,16 @@ internal object StackHeaderToolbarMenuApplicator {
             when (element) {
                 is StackHeaderToolbarMenuElementConfig.MenuItem -> {
                     val menuItem = menu.add(groupIntId, itemId, index, null)
-                    applyMenuElementOptions(toolbar, menuItem, element.item.toOptions())
+                    applyMenuElementOptions(toolbar, menuItem, optionsForItem(element.item.id))
                     applyCheckability(menuItem, element.item)
                 }
                 is StackHeaderToolbarMenuElementConfig.Submenu -> {
                     val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
-                    applyMenuElementOptions(toolbar, subMenu.item, element.item.toOptions())
+                    // Config header first, so an imperative menuTitle in the
+                    // element's options can override it.
                     element.menuTitle?.let { subMenu.setHeaderTitle(it) }
-                    addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap)
+                    applyMenuElementOptions(toolbar, subMenu.item, optionsForItem(element.item.id))
+                    addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap, optionsForItem)
                 }
             }
         }
@@ -234,25 +267,9 @@ internal object StackHeaderToolbarMenuApplicator {
         menuItem: MenuItem,
         itemConfig: StackHeaderToolbarMenuItemConfig,
     ) {
-        val shouldBeCheckable =
-            when (itemConfig.itemType) {
-                StackHeaderToolbarMenuItemType.TOGGLE -> {
-                    require(itemConfig.groupId != null) {
-                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=TOGGLE but no groupId. " +
-                            "Toggle items must belong to a group."
-                    }
-                    true
-                }
-                StackHeaderToolbarMenuItemType.AUTOMATIC -> itemConfig.groupId != null
-                StackHeaderToolbarMenuItemType.ACTION -> {
-                    require(itemConfig.groupId == null) {
-                        "[RNScreens] Menu item '${itemConfig.id}' has itemType=ACTION " +
-                            "and belongs to a group. Action items cannot belong to groups."
-                    }
-                    false
-                }
-            }
-        if (shouldBeCheckable) {
+        // Configs are validated up front (see validate), so checkability
+        // reduces to group membership.
+        if (itemConfig.groupId != null) {
             menuItem.isCheckable = true
             menuItem.isChecked = itemConfig.initialToggleState
         }
@@ -292,9 +309,9 @@ internal object StackHeaderToolbarMenuApplicator {
         options.hidden?.let { menuItem.isVisible = !it }
         options.disabled?.let { menuItem.isEnabled = !it }
 
-        // checked is intentionally not handled here. The coordinator layout manages it in
-        // applyGroupItemStateChange because toggling checked state requires group metadata
-        // (radio vs checkbox) and may emit onGroupSelectionChanged events.
+        // checked is intentionally not handled here. StackHeaderToolbarMenuController
+        // manages it, because toggling requires group semantics (radio vs checkbox)
+        // and may emit onGroupSelectionChanged events.
 
         options.icon?.let {
             when (it) {
@@ -304,8 +321,11 @@ internal object StackHeaderToolbarMenuApplicator {
             }
         }
 
+        // The tint list is built absolutely from the given fields, so whenever
+        // this branch runs the caller must pass all four tint slots resolved
+        // (Set/Reset) — see StackHeaderToolbarMenuController.effectiveOptions.
         if (options.requiresIconTintColorUpdate || options.icon != null) {
-            MenuItemCompat.setIconTintList(menuItem, getResolvedIconTintList(menuItem, options))
+            MenuItemCompat.setIconTintList(menuItem, buildIconTintList(options))
         }
 
         options.menuTitle?.let { update ->
@@ -325,93 +345,30 @@ internal object StackHeaderToolbarMenuApplicator {
         options.showAsAction?.let { menuItem.setShowAsAction(it.toNativeShowAsAction()) }
     }
 
-    private fun StackHeaderToolbarMenuItemConfig.toOptions() =
-        StackHeaderToolbarMenuElementOptions(
-            title = StackHeaderToolbarFieldUpdate.from(title),
-            titleCondensed = StackHeaderToolbarFieldUpdate.from(titleCondensed),
-            tooltipText = StackHeaderToolbarFieldUpdate.from(tooltipText),
-            accessibilityLabel = StackHeaderToolbarFieldUpdate.from(accessibilityLabel),
-            hidden = hidden,
-            disabled = disabled,
-            showAsAction = showAsAction,
-            icon = StackHeaderToolbarFieldUpdate.from(icon),
-            iconTintColorNormal = StackHeaderToolbarFieldUpdate.from(iconTintColorNormal),
-            iconTintColorPressed = StackHeaderToolbarFieldUpdate.from(iconTintColorPressed),
-            iconTintColorFocused = StackHeaderToolbarFieldUpdate.from(iconTintColorFocused),
-            iconTintColorDisabled = StackHeaderToolbarFieldUpdate.from(iconTintColorDisabled),
-        )
-
     // endregion
 
     // region Icon tint
 
-    private fun getResolvedIconTintList(
-        menuItem: MenuItem,
-        options: StackHeaderToolbarMenuElementOptions,
-    ): ColorStateList? {
-        val currentTintList = MenuItemCompat.getIconTintList(menuItem)
-        // The currently-applied normal (catch-all) color, if any. Used both as the "leave
-        // unchanged" value for normal and to dedup read-back overrides: when a normal entry
-        // exists every override probe also matches it, so an override equal to the current
-        // normal is the catch-all leaking through rather than an explicit override.
-        val currentNormal = currentTintList?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled))
-
-        val finalNormal =
-            when (val update = options.iconTintColorNormal) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null -> currentNormal
-            }
-
-        val finalDisabled =
-            when (val update = options.iconTintColorDisabled) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(-android.R.attr.state_enabled))
-                        ?.takeIf { it != currentNormal }
-            }
-
-        val finalPressed =
-            when (val update = options.iconTintColorPressed) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed))
-                        ?.takeIf { it != currentNormal }
-            }
-
-        val finalFocused =
-            when (val update = options.iconTintColorFocused) {
-                StackHeaderToolbarFieldUpdate.Reset -> null
-                is StackHeaderToolbarFieldUpdate.Set -> update.value
-                null ->
-                    currentTintList
-                        ?.resolvedColorOrNull(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_focused))
-                        ?.takeIf { it != currentNormal }
-            }
-
+    private fun buildIconTintList(options: StackHeaderToolbarMenuElementOptions): ColorStateList? {
         val states = mutableListOf<IntArray>()
         val colors = mutableListOf<Int>()
 
-        finalDisabled?.let {
+        options.iconTintColorDisabled?.valueOrNull()?.let {
             states.add(intArrayOf(-android.R.attr.state_enabled))
             colors.add(it)
         }
 
-        finalPressed?.let {
+        options.iconTintColorPressed?.valueOrNull()?.let {
             states.add(intArrayOf(android.R.attr.state_pressed))
             colors.add(it)
         }
 
-        finalFocused?.let {
+        options.iconTintColorFocused?.valueOrNull()?.let {
             states.add(intArrayOf(android.R.attr.state_focused))
             colors.add(it)
         }
 
-        finalNormal?.let {
+        options.iconTintColorNormal?.valueOrNull()?.let {
             states.add(intArrayOf())
             colors.add(it)
         }
@@ -423,28 +380,7 @@ internal object StackHeaderToolbarMenuApplicator {
         }
     }
 
-    /**
-     * Resolves the color the receiver applies to [stateSet], or `null` when no state spec
-     * matches it.
-     *
-     * `getColorForState` returns the caller-supplied fallback when nothing matches, so we
-     * probe twice with two distinct sentinels: equal results mean a real spec matched (the
-     * actual color), differing results mean the slot is absent. This is robust for any color
-     * value and keeps the read-back stateless — see [getResolvedIconTintList].
-     */
-    private fun ColorStateList.resolvedColorOrNull(stateSet: IntArray): Int? {
-        val a = getColorForState(stateSet, SENTINEL_A)
-        val b = getColorForState(stateSet, SENTINEL_B)
-        return if (a == b) a else null
-    }
-
     // endregion
 
     private const val TAG = "StackHeaderToolbarMenuApplicator"
-
-    // Two distinct sentinel fallbacks used to detect whether a ColorStateList actually
-    // defines a color for a given state. Their concrete values are irrelevant as long as
-    // they differ — see resolvedColorOrNull.
-    private const val SENTINEL_A = 0x00000001
-    private const val SENTINEL_B = 0x00000002
 }

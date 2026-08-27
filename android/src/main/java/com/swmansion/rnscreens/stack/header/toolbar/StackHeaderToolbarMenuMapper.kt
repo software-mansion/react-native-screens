@@ -172,7 +172,6 @@ internal object StackHeaderToolbarMenuMapper {
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readBoolean("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
-            icon = null,
             iconTintColorNormal =
                 map.readColor(
                     context,

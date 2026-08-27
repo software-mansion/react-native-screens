@@ -24,10 +24,10 @@ export type StackHostProps = {
    * @remarks
    * Color scheme isn't currently supported on iOS.
    *
-   * On Android, changing the effective color scheme rebuilds the header. The
-   * toolbar menu is rebuilt from the `toolbarMenu` prop, so its initial
-   * selection is restored and any changes applied via the
-   * `updateToolbarMenuElements` view command are discarded.
+   * On Android, changing the effective color scheme rebuilds the header.
+   * Toolbar menu state survives the rebuild: checkbox/radio selections and
+   * changes applied via the `updateToolbarMenuElements` view command are
+   * reapplied to the new toolbar.
    *
    * @default inherit
    *
