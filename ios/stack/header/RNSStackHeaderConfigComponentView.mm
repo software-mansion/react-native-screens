@@ -1,6 +1,7 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
+#import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -43,6 +44,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
   RCTImageLoader *_imageLoader;
+  // Scroll edge appearance inherits from the standard one, so the raw prop
+  // is kept around to rebuild the appearance when either prop changes.
+  NSDictionary *_Nullable _scrollEdgeAppearanceDict;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -71,6 +75,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
   _titleMenu = nil;
+  _standardAppearance = nil;
+  _scrollEdgeAppearance = nil;
+  _scrollEdgeAppearanceDict = nil;
 }
 
 - (NSArray<id> *)children
@@ -452,6 +459,25 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
   }
 
+  BOOL standardAppearanceDidChange = oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance;
+  BOOL scrollEdgeAppearanceDidChange = oldHeaderProps.scrollEdgeAppearance != newHeaderProps.scrollEdgeAppearance;
+
+  if (standardAppearanceDidChange) {
+    _standardAppearance = [RNSStackHeaderAppearanceMapper
+        appearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.standardAppearance]];
+  }
+
+  if (scrollEdgeAppearanceDidChange) {
+    _scrollEdgeAppearanceDict = [self dictionaryFromAppearanceProp:newHeaderProps.scrollEdgeAppearance];
+  }
+
+  if (standardAppearanceDidChange || scrollEdgeAppearanceDidChange) {
+    // Scroll edge appearance inherits from the standard one, so it must be
+    // rebuilt when either prop changes.
+    _scrollEdgeAppearance = [RNSStackHeaderAppearanceMapper appearanceFromDictionary:_scrollEdgeAppearanceDict
+                                                                      inheritingFrom:_standardAppearance];
+  }
+
   if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {
     _titleMenu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.titleMenu)];
@@ -489,6 +515,26 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 }
 
 #pragma mark - Private
+
+- (nullable NSDictionary *)dictionaryFromAppearanceProp:(const folly::dynamic &)appearanceProp
+{
+  if (appearanceProp.type() != folly::dynamic::OBJECT) {
+    return nil;
+  }
+
+  return rnscreens::conversion::RNSConvertFollyDynamicToId(appearanceProp);
+}
+
+- (nullable RNSStackScreenHeaderCoordinator *)headerCoordinator
+{
+  if (self.superview == nil) {
+    return nil;
+  }
+  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
+  RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
+  return screen.controller.headerCoordinator;
+}
 
 - (RNSStackNavigationController *)requireNavigationController
 {

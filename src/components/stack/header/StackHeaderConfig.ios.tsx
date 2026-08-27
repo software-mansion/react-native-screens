@@ -14,6 +14,7 @@ import type {
 } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   Commands as StackHeaderConfigIOSNativeCommands,
+  HeaderAppearance,
   MenuItemPressEvent,
   MenuSelectionChangeEvent,
   NativeMenuElementOptionsIOS,
@@ -22,8 +23,9 @@ import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
-import { NativeSyntheticEvent, StyleSheet } from 'react-native';
+import { NativeSyntheticEvent, StyleSheet, processColor } from 'react-native';
 import type {
+  StackHeaderAppearanceIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderMenuItemOptionsIOS,
@@ -59,6 +61,8 @@ function StackHeaderConfig(
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
+    standardAppearance,
+    scrollEdgeAppearance,
   } = ios ?? {};
 
   const nativeRef =
@@ -162,6 +166,8 @@ function StackHeaderConfig(
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       prompt={prompt}
+      standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
+      scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       titleMenu={resolvedTitleMenu}
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}
@@ -174,6 +180,36 @@ function StackHeaderConfig(
       {trailingItems?.map(item => makeItemViewFromItem(item, 'trailing'))}
     </StackHeaderConfigIOSNativeComponent>
   );
+}
+
+function mapAppearanceToNativeProp(
+  appearance?: StackHeaderAppearanceIOS,
+): HeaderAppearance | undefined {
+  if (!appearance) return undefined;
+
+  const {
+    titleFontColor,
+    titleFontWeight,
+    largeTitleFontColor,
+    largeTitleFontWeight,
+    subtitleFontColor,
+    subtitleFontWeight,
+  } = appearance;
+
+  return {
+    ...appearance,
+    titleFontColor: processColor(titleFontColor),
+    titleFontWeight:
+      titleFontWeight !== undefined ? String(titleFontWeight) : undefined,
+    largeTitleFontColor: processColor(largeTitleFontColor),
+    largeTitleFontWeight:
+      largeTitleFontWeight !== undefined
+        ? String(largeTitleFontWeight)
+        : undefined,
+    subtitleFontColor: processColor(subtitleFontColor),
+    subtitleFontWeight:
+      subtitleFontWeight !== undefined ? String(subtitleFontWeight) : undefined,
+  };
 }
 
 function makeItemViewFromItem(
