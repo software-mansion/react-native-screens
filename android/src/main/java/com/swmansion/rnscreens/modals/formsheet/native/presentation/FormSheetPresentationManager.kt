@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.util.Log
 import android.view.View
+import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
 
@@ -88,6 +89,7 @@ internal class FormSheetPresentationManager(
 
         FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
+        presentation.bottomSheetView?.let(::keepOffscreenUntilEnterAnimation)
         presentation.dialog.setOnShowListener {
             presentation.dialog.setOnShowListener(null)
 
@@ -155,6 +157,24 @@ internal class FormSheetPresentationManager(
         currentSheetAnimator = null
 
         performDismiss()
+    }
+
+    /**
+     * `Dialog.show()` **posts** the show message behind the sync barrier of the traversal scheduled while
+     * adding the decor to the window, so the Dialog always draws its first frame before `OnShowListener`
+     * (with our custom enter animation) runs. A freshly created sheet rests at `translationY = 0`, so that
+     * frame would show it at its final position and the enter animator would then snap it back
+     * off-screen.
+     *
+     * Applying the translation on the first pre-draw - after the layout, when the sheet height is
+     * already known, but before anything is drawn - keeps the sheet off-screen from the very first frame.
+     */
+    private fun keepOffscreenUntilEnterAnimation(view: View) {
+        view.doOnPreDraw {
+            if (currentSheetAnimator == null) {
+                view.translationY = view.height.toFloat()
+            }
+        }
     }
 
     private fun startEnterAnimation() {
