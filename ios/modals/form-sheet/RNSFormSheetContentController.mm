@@ -20,12 +20,9 @@
 
 @implementation RNSFormSheetContentController {
   RNSFormSheetUpdateCoordinator *_Nonnull _updateCoordinator;
-  RNSFormSheetConfigurationApplicator *_Nonnull _configurationApplicator;
   RNSFormSheetPresentationManager *_Nonnull _presentationManager;
 
   UITapGestureRecognizer *_Nullable _backdropTapGestureRecognizer;
-
-  BOOL _needsInitialDetentReset;
 }
 
 - (instancetype)init
@@ -34,10 +31,7 @@
     self.modalPresentationStyle = UIModalPresentationFormSheet;
 
     _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
-    _configurationApplicator = [RNSFormSheetConfigurationApplicator new];
     _presentationManager = [RNSFormSheetPresentationManager new];
-
-    _needsInitialDetentReset = NO;
   }
   return self;
 }
@@ -142,7 +136,7 @@
   // We must force a full configuration update for this new instance.
   [self setNeedsAppearanceUpdate];
   [self setNeedsBehaviorUpdate];
-  [self setNeedsInitialDetentReset];
+  [self setNeedsInitialDetentUpdate];
   [self updateConfigurationIfNeeded];
 }
 
@@ -160,15 +154,10 @@
     return;
   }
 
-  if (_needsInitialDetentReset) {
-    _needsInitialDetentReset = NO;
-    [_configurationApplicator resetInitialDetent];
-  }
-
-  [_configurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
-                                                            behaviorProvider:behaviorProvider
-                                                                  controller:self
-                                                                 coordinator:_updateCoordinator];
+  [RNSFormSheetConfigurationApplicator applyConfigurationIfNeededWithAppearanceProvider:appearanceProvider
+                                                                       behaviorProvider:behaviorProvider
+                                                                             controller:self
+                                                                            coordinator:_updateCoordinator];
 }
 
 #pragma mark - Signals
@@ -188,9 +177,9 @@
   [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsBehavior];
 }
 
-- (void)setNeedsInitialDetentReset
+- (void)setNeedsInitialDetentUpdate
 {
-  _needsInitialDetentReset = YES;
+  [_updateCoordinator setNeeds:RNSFormSheetUpdateFlagsInitialDetent];
 }
 
 #pragma mark - Updates
