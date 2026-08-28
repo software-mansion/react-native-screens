@@ -604,6 +604,16 @@ RNS_IGNORE_SUPER_CALL_END
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
           navitem.searchController = searchBar.controller;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+          if (@available(iOS 17.0, *)) {
+            if (config.direction == UISemanticContentAttributeForceRightToLeft) {
+              // Overriding the navigation controller's layout direction makes UIKit drop the default search icon.
+              // Keep the search field's existing left-to-right content layout while the navigation bar is mirrored.
+              searchBar.controller.searchBar.searchTextField.semanticContentAttribute =
+                  UISemanticContentAttributeForceLeftToRight;
+            }
+          }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {
@@ -769,27 +779,31 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  UITraitEnvironmentLayoutDirection layoutDirection = self.direction == UISemanticContentAttributeForceRightToLeft
+      ? UITraitEnvironmentLayoutDirectionRightToLeft
+      : UITraitEnvironmentLayoutDirectionLeftToRight;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   if (@available(iOS 17.0, *)) {
-    navCtrl.traitOverrides.layoutDirection = self.direction == UISemanticContentAttributeForceRightToLeft
-        ? UITraitEnvironmentLayoutDirectionRightToLeft
-        : UITraitEnvironmentLayoutDirectionLeftToRight;
-
-    // RNSScreenStack and its animator inspect this explicit value when
-    // resolving swipe and transition direction.
-    if (navCtrl.view.semanticContentAttribute != self.direction) {
-      navCtrl.view.semanticContentAttribute = self.direction;
+    if (navCtrl.traitCollection.layoutDirection != layoutDirection) {
+      navCtrl.traitOverrides.layoutDirection = layoutDirection;
     }
     return;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 
-  // iOS 12 cancels swipe gesture when direction is changed. See #1091
-  if (navCtrl.view.semanticContentAttribute != self.direction) {
-    // This is needed for swipe back gesture direction
-    navCtrl.view.semanticContentAttribute = self.direction;
+  UIViewController *parentViewController = navCtrl.parentViewController;
+  if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
+    [parentViewController
+        setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
+            forChildViewController:navCtrl];
+    return;
+  }
 
-    // This is responsible for the direction of the navigationBar and its contents
+  // A detached navigation controller has no parent that can override its traits yet.
+  // Preserve the legacy fallback until the next configuration pass after attachment.
+  if (parentViewController == nil && navCtrl.view.semanticContentAttribute != self.direction) {
+    navCtrl.view.semanticContentAttribute = self.direction;
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
     [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
         setSemanticContentAttribute:self.direction];

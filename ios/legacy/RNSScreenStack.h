@@ -10,6 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NS_INLINE BOOL RNSNavigationControllerIsRTL(UINavigationController *navigationController)
+{
+  UISemanticContentAttribute semanticContentAttribute = navigationController.view.semanticContentAttribute;
+  if (semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+    return YES;
+  }
+  if (semanticContentAttribute == UISemanticContentAttributeForceLeftToRight) {
+    return NO;
+  }
+  return navigationController.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft;
+}
+
 @interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate,
                                                              RNSTabsSpecialEffectsSupporting
 #if !TARGET_OS_TV
