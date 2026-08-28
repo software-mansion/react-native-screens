@@ -276,10 +276,11 @@ export interface StackHeaderTitleCustomItemIOS {
  * @summary Controls how the back button title is displayed.
  *
  * @description
- * - `default`: the system chooses the title (previous screen's title, or
- *   shortened to "Back" when there is not enough space).
- * - `generic`: the system uses a generic "Back" title when there is not enough
- *   space for the previous screen's title.
+ * - `default`: the system chooses the title depending on available space.
+ *   On iOS < 26 options include: custom title (defaults to previous screen title),
+ *   generic "Back", no title; on iOS >= 26 it's either custom title (if set) or no title.
+ * - `generic`: on iOS < 26, the system uses a generic "Back" title or no title;
+ *   on iOS >= 26 it's the same as `minimal`.
  * - `minimal`: no title is displayed next to the back button chevron.
  *
  * @platform iOS
