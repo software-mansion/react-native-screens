@@ -8,7 +8,7 @@ template <>
 RNSStackScreenActivityMode convert(react::RNSStackScreenActivityMode mode)
 {
   return static_cast<RNSStackScreenActivityMode>(mode);
-};
+}
 
 template <>
 RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement)
@@ -25,7 +25,7 @@ RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement)
     case react::RNSStackHeaderItemIOSPlacement::LargeSubtitle:
       return RNSHeaderItemPlacementLargeSubtitle;
   }
-};
+}
 
 template <>
 RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement placement)
@@ -36,7 +36,7 @@ RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement
     case react::RNSStackHeaderItemSpacerIOSPlacement::Trailing:
       return RNSHeaderItemSpacerPlacementTrailing;
   }
-};
+}
 
 template <>
 UINavigationItemBackButtonDisplayMode convert(react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode)
@@ -49,6 +49,6 @@ UINavigationItemBackButtonDisplayMode convert(react::RNSStackHeaderConfigIOSBack
     case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Minimal:
       return UINavigationItemBackButtonDisplayModeMinimal;
   }
-};
+}
 
 }; // namespace rnscreens::conversion
