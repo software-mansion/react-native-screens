@@ -109,7 +109,12 @@ function isMetroRespondingOnPort(port) {
       { encoding: 'utf8' },
     );
     return response.includes('packager-status:running');
-  } catch {
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
+      throw new Error(
+        `Cannot check Metro status on port ${port}: 'curl' is not installed.`,
+      );
+    }
     return false;
   }
 }
