@@ -31,7 +31,7 @@ import {
 const { getIOSVersionNumber } = require('../../scripts/e2e/ios-devices.js');
 
 /** Default for waits Detox's idle sync already mostly covers. */
-const DEFAULT_TIMEOUT_MS = 3000;
+export const DEFAULT_TIMEOUT_MS = 3000;
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -208,8 +208,10 @@ export async function selectPickerOption(
 ) {
   const expected = `${label}: ${option}`;
 
-  const current = await getTopmostMatch(by.id(pickerId));
-  if ((current.text ?? current.label) === expected) {
+  // Already set. Asserted collapsed: one left open by an earlier failure would
+  // collide with later `by.text` matchers.
+  if (textOf(await getTopmostMatch(by.id(pickerId))) === expected) {
+    await expect(element(by.id(pickerOptionId(label, option)))).not.toExist();
     return;
   }
 
@@ -299,19 +301,21 @@ export async function forceSelectTabByLabel(label: string) {
 // iOS 26 tab bar bottom accessory
 // ---------------------------------------------------------------------------
 
-/** The accessory host view; a single match is asserted by `getSingleMatch`. */
-export const getBottomAccessoryAttributes = () =>
-  getSingleMatch(
-    by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY),
-    'the bottom accessory',
-  ) as Promise<IosElementAttributes>;
+/**
+ * The first match — UIKit can keep more than one host view / tab bar in the
+ * hierarchy (an accessory mid-transition, a sidebar and tab bar pair on iPad).
+ */
+async function getFirstMatch(matcher: NativeMatcher) {
+  return (await getMatches(matcher))[0] as IosElementAttributes;
+}
 
-/** The `UITabBar`; a single match is asserted by `getSingleMatch`. */
+/** The accessory host view. */
+export const getBottomAccessoryAttributes = () =>
+  getFirstMatch(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY));
+
+/** The `UITabBar`. */
 export const getTabBarAttributes = () =>
-  getSingleMatch(
-    by.type(CLASS_NAME_UI_TAB_BAR),
-    'the UITabBar',
-  ) as Promise<IosElementAttributes>;
+  getFirstMatch(by.type(CLASS_NAME_UI_TAB_BAR));
 
 /** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
 export async function expectBottomAccessoryAboveTabBar() {
@@ -379,8 +383,7 @@ export async function countMatches(
 
 /**
  * Attributes of `matcher`'s only match; throws when it resolves to several.
- * A Detox matcher does not stringify, so pass `description` (e.g. the testID)
- * to name the target in that error.
+ * `description` names the target in that error — a matcher does not stringify.
  */
 export async function getSingleMatch(
   matcher: NativeMatcher,
@@ -408,10 +411,17 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
-/** Trimmed text of the topmost screen's copy of `testID` (`''` when unset). */
+/**
+ * The value of an RN `Text`, which Detox reports as `text` on Android and as
+ * `label` on iOS (`''` when unset).
+ */
+export function textOf(attributes: ElementAttributes): string {
+  return (attributes.text ?? attributes.label ?? '').trim();
+}
+
+/** Text of the topmost screen's copy of `testID`. */
 export async function readTopmostText(testID: string): Promise<string> {
-  const topmost = await getTopmostMatch(by.id(testID));
-  return (topmost.text ?? topmost.label ?? '').trim();
+  return textOf(await getTopmostMatch(by.id(testID)));
 }
 
 /** Scrolls `id` into view and returns its text (`''` when unset). */
@@ -420,7 +430,7 @@ export async function readText(
   { scrollViewId, ...scroll }: SettingsControlOptions,
 ): Promise<string> {
   await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
-  return (await getSingleMatch(by.id(id), `id "${id}"`)).text ?? '';
+  return textOf(await getSingleMatch(by.id(id), `id "${id}"`));
 }
 
 /** Taps the last match (topmost stacked screen). Pass a fresh matcher: `atIndex` mutates it on Android. */
@@ -446,14 +456,15 @@ const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
  * so this pins the route, not the instance.
  */
 const routeKeyPattern = (routeName: string) =>
-  new RegExp(`^Key: r-${routeName}-\\d+$`);
+  new RegExp(`^Key: r-${escapeRegExp(routeName)}-\\d+$`);
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * Waits until the topmost screen is `routeName` and returns its route key. The
- * key identifies the route *and* the instance, so one read settles continuity
- * (same key) or a push (new key). Polled rather than `waitFor(...)`: Detox
- * intersects a view only with its parents, never with an occluding sibling, so
- * `toBeVisible()` on a buried screen passes at once and would not gate a pop.
+ * Waits until the topmost screen is `routeName` and returns its route key,
+ * which pins the instance too (same key: preserved; new key: pushed). Polled:
+ * `toBeVisible()` passes on a buried screen, so `waitFor` would not gate a pop.
  */
 export async function waitForTopmostRoute(routeName: string): Promise<string> {
   const pattern = routeKeyPattern(routeName);
@@ -488,11 +499,12 @@ export async function expectTopmostButtons(titles: string[]): Promise<void> {
   }
 }
 
-/** Only "no match yet" / "not visible yet" are worth retrying. */
+/** Only "no match yet" (Espresso / iOS wording) and "not visible yet" retry. */
 function isTransientMatchError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return (
     message.includes('No views in hierarchy found matching') ||
+    message.includes('No elements found') ||
     message.includes('not visible')
   );
 }
@@ -510,8 +522,6 @@ export async function expectTopmostVisible(
 
   await waitUntil(
     async () => {
-      // Fresh per attempt: `countMatches` reads it before `atIndex` mutates it,
-      // and it is discarded before the next poll.
       const matcher = buildMatcher();
       try {
         const count = await countMatches(matcher);
@@ -568,24 +578,10 @@ export async function waitUntil(
 }
 
 // ---------------------------------------------------------------------------
-// Android toolbar overflow menu (Stack v5 header)
-// ---------------------------------------------------------------------------
-
-/**
- * Detox's idle sync does not cover popup window animations, so waits that
- * straddle the overflow menu opening or dismissing must be explicit.
- */
-export const MENU_ANIMATION_TIMEOUT_MS = 5000;
-
-/** Probes an already-settled popup: by now it is either up or was never opened. */
-export const MENU_PRESENCE_TIMEOUT_MS = 250;
-
-// ---------------------------------------------------------------------------
 // Android Stack v5 header (toolbar) matchers
 // ---------------------------------------------------------------------------
 //
-// Factories, built fresh per call: on Android `atIndex` rewrites a matcher in
-// place (see `tapTopmost`), so a shared one would stay pinned to an index.
+// Factories: on Android `atIndex` rewrites a matcher in place (see `tapTopmost`).
 
 /**
  * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
@@ -604,11 +600,9 @@ export const stackV5AppBar = (): NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_APP_BAR_LAYOUT).withDescendant(stackV5Toolbar());
 
 /**
- * The header's back chevron — the toolbar's navigation icon. A covered screen
- * keeps its toolbar but loses its navigation icon, so while a headered screen
- * is on top this resolves to that screen's chevron alone. Absence is not
- * reliable: under a headerless top screen the covered screen's chevron is
- * still there and still reads visible.
+ * The header's back chevron. A covered screen keeps its toolbar but loses its
+ * chevron, so under a headered top screen this is that screen's alone; under a
+ * headerless one the covered screen's chevron is still there and visible.
  */
 export const stackV5BackButton = (): NativeMatcher =>
   by
@@ -626,32 +620,31 @@ export const stackV5HeaderTitle = (title: string): NativeMatcher =>
 export const TOOLBAR_UPDATE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
 /**
- * Asserts `title` is promoted to the toolbar as an icon-only button. Asserted
- * positively through the cleared text — on Android a negated matcher passes on
- * a missing view. Which icon it is cannot be asserted through Detox.
+ * Asserts `title`'s action button is up and renders `text`. Asserted
+ * positively — on Android a negated matcher passes on a missing view.
  */
-export async function expectIconActionItem(title: string) {
+async function expectActionItemText(title: string, text: string) {
   await waitFor(element(actionMenuItem(title)))
     .toBeVisible()
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
   await waitFor(element(actionMenuItem(title)))
-    .toHaveText('')
+    .toHaveText(text)
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
 }
 
 /**
- * Asserts `title` is promoted to the toolbar with its title as text — no icon
- * set, or WITH_TEXT put the title beside the icon. Whether an icon sits next
- * to the text is not assertable: it is a compound drawable, not a view.
+ * Asserts `title` is promoted to the toolbar as an icon-only button, whose
+ * text AppCompat clears. Which icon it is cannot be asserted through Detox.
  */
-export async function expectTextActionItem(title: string) {
-  await waitFor(element(actionMenuItem(title)))
-    .toBeVisible()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
-  await waitFor(element(actionMenuItem(title)))
-    .toHaveText(title)
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
-}
+export const expectIconActionItem = (title: string) =>
+  expectActionItemText(title, '');
+
+/**
+ * Asserts `title` is promoted to the toolbar as a text button (no icon, or
+ * WITH_TEXT). An icon beside the text is a compound drawable — not assertable.
+ */
+export const expectTextActionItem = (title: string) =>
+  expectActionItemText(title, title);
 
 /** Asserts `title` is not promoted: the button is in neither form. */
 export async function expectNoActionItem(title: string) {
@@ -663,6 +656,15 @@ export async function expectNoActionItem(title: string) {
 // ---------------------------------------------------------------------------
 // Android toolbar overflow menu (Stack v5 header)
 // ---------------------------------------------------------------------------
+
+/**
+ * Detox's idle sync does not cover popup window animations, so waits that
+ * straddle the overflow menu opening or dismissing must be explicit.
+ */
+export const MENU_ANIMATION_TIMEOUT_MS = 5000;
+
+/** Probes an already-settled popup: by now it is either up or was never opened. */
+export const MENU_PRESENCE_TIMEOUT_MS = 250;
 
 /** The accessibility label AppCompat gives the overflow button. */
 export const OVERFLOW_MENU_LABEL = 'More options';
@@ -710,6 +712,16 @@ export function overflowMenuText(title: string): NativeMatcher {
 }
 
 /**
+ * Any row of the focused popup — the only handle on an entry with no title.
+ * Built per call: `atIndex` rewrites the matcher it is given on Android.
+ */
+export function overflowMenuRow(): NativeMatcher {
+  return by
+    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
+    .withAncestor(overflowMenuMatcher());
+}
+
+/**
  * A toolbar action button, matched by label in both forms; icon-only buttons
  * have empty text, text buttons show `title`.
  */
@@ -724,15 +736,15 @@ export async function expectOverflowMenuOrder(
   const rows: { title: string; top: number }[] = [];
 
   for (const title of titles) {
-    const matches = await getMatches(overflowMenuText(title));
-    if (matches.length !== 1) {
-      throw new Error(`Expected a single menu row titled "${title}".`);
-    }
-    rows.push({ title, top: matches[0].frame.y });
+    const { frame } = await getSingleMatch(
+      overflowMenuText(title),
+      `menu row "${title}"`,
+    );
+    rows.push({ title, top: frame.y });
   }
 
-  const topToBottom = [...rows].sort((a, b) => a.top - b.top).map(r => r.title);
-  jestExpect(topToBottom).toEqual([...titles]);
+  rows.sort((a, b) => a.top - b.top);
+  jestExpect(rows.map(row => row.title)).toEqual(titles);
 }
 
 /** Asserts `title`'s row hosts a check box (multi-toggle group), not a radio. */
@@ -791,16 +803,19 @@ export function createOverflowMenuHelpers({
   scrollViewId,
   maxMenuDepth = 3,
 }: OverflowMenuControl) {
-  /**
-   * Detox searches one window: while a popup holds focus nothing behind it is
-   * in the hierarchy, so the popup going away is not enough — the screen
-   * itself has to become addressable again.
-   */
+  /** Detox searches the focused window only: the screen itself must be back. */
   const waitForScreen = async () => {
     await waitFor(element(by.id(scrollViewId)))
       .toBeVisible()
       .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
   };
+
+  /** `waitForScreen` reported rather than thrown — a stacked popup keeps it false. */
+  const isScreenAddressable = () =>
+    waitForScreen().then(
+      () => true,
+      () => false,
+    );
 
   /**
    * Back only ever goes to an open popup: with no menu up the activity takes
@@ -818,6 +833,12 @@ export function createOverflowMenuHelpers({
       }
       await device.pressBack();
       pressCount++;
+
+      // A popup lingers while animating out and would read as a second menu;
+      // the screen coming back settles it. If it does not, a parent popup is up.
+      if (await isScreenAddressable()) {
+        return;
+      }
     }
 
     if (pressCount > 0) {
@@ -825,11 +846,7 @@ export function createOverflowMenuHelpers({
     }
   };
 
-  /**
-   * Closes the menu even on failure: a leaked popup is never a local problem —
-   * every later matcher would resolve against the popup window instead of the
-   * activity, failing the rest of the suite on views that are plainly there.
-   */
+  /** Closes the menu even on failure — a leaked popup fails every later case. */
   const closingMenuAfter = async (assertions: () => Promise<void>) => {
     let assertionFailed = false;
 
@@ -930,6 +947,13 @@ export function barButtonIcon(iconId: string) {
  */
 export const CONTEXT_MENU_ANIMATION_TIMEOUT_MS = 2000;
 
+/**
+ * Tap point on the dismiss overlay, as a fraction of its width: the leading
+ * edge is clear of a trailing- or title-anchored platter (a platter tap only
+ * pops one level).
+ */
+const CONTEXT_MENU_DISMISS_X_FRACTION = 0.1;
+
 /** The list hosting the rows of the presented menu (or submenu). */
 export const contextMenu = () =>
   element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
@@ -981,7 +1005,7 @@ export function chevronFor(title: string) {
   return element(by.id('chevron.forward').withAncestor(menuRowMatcher(title)));
 }
 
-/** A menu row's icon by icon id; addressed by row title, since parent rows stay attached under a submenu. */
+/** A row's icon by id, scoped to its row: parent rows stay attached under a submenu. */
 export function menuRowIcon(iconId: string, title: string) {
   return element(
     by
@@ -1026,7 +1050,7 @@ export async function dismissContextMenu(
       by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW),
       'the context menu platter',
     ),
-    0.1,
+    CONTEXT_MENU_DISMISS_X_FRACTION,
   );
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
 }

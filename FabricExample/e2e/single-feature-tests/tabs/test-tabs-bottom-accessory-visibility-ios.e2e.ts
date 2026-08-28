@@ -1,5 +1,6 @@
 import { device, expect, element, by, waitFor } from 'detox';
 import {
+  DEFAULT_TIMEOUT_MS,
   describeIfiOS26,
   expectBottomAccessoryAboveTabBar,
   selectSingleFeatureTestsScreen,
@@ -20,7 +21,7 @@ const ACCESSORY_TEXT = 'bottom-accessory-text';
 const ACCESSORY_CONTENT = 'Bottom Accessory';
 
 // Grace period for the animated `setBottomAccessory:` attach / detach.
-const TRANSITION_TIMEOUT_MS = 3000;
+const TRANSITION_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
 const SETTINGS_CONTROL = { scrollViewId: SCROLL_VIEW };
 

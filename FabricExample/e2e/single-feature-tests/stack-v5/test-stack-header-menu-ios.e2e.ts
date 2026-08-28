@@ -1,29 +1,30 @@
 import { device, expect, element, by } from 'detox';
 import {
+  checkmarkFor,
+  CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+  contextMenu,
   describeIfiOS,
+  dismissContextMenu,
   dismissToast,
+  forceTapByLabeliOS,
+  headerItem,
+  menuRow,
+  menuRowIcon,
+  openContextMenu,
   scrollToAndTap,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { CLASS_NAME_UI_LABEL } from '../../native-class-names';
-import { IosElementAttributes } from 'detox/detox';
-import {
-  checkmarkFor,
-  contextMenu,
-  dismissContextMenu,
-  menuRow,
-  menuRowIcon,
-  openContextMenu,
-} from '../../e2e-utils';
-import { headerItem } from '../../e2e-utils';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
 const menuOneBarButton = headerItem('Menu 1', { control: true });
 
+const HEADER_TITLE = 'Header Menu';
+
 const headerTitle = element(
-  by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu')),
+  by.type(CLASS_NAME_UI_LABEL).and(by.text(HEADER_TITLE)),
 );
 
 // Small steps keep a short picker row from being scrolled past; the Detox
@@ -55,11 +56,10 @@ async function openMenuOne() {
  * visibility threshold, so the title label is tapped by coordinates.
  */
 async function openTitleMenu() {
-  const titleAttributes =
-    (await headerTitle.getAttributes()) as IosElementAttributes;
-  const { x, y, width, height } = titleAttributes.frame;
-  await device.tap({ x: x + width / 2, y: y + height / 2 });
-  await waitFor(contextMenu()).toBeVisible().withTimeout(2000);
+  await forceTapByLabeliOS(HEADER_TITLE);
+  await waitFor(contextMenu())
+    .toBeVisible()
+    .withTimeout(CONTEXT_MENU_ANIMATION_TIMEOUT_MS);
 }
 
 describeIfiOS('Stack Header Menu (iOS)', () => {

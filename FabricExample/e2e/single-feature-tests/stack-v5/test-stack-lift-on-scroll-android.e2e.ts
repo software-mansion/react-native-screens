@@ -3,6 +3,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes } from 'detox/detox';
 import {
   countMatches,
+  DEFAULT_TIMEOUT_MS,
   describeIfAndroid,
   getFrame,
   getSingleMatch,
@@ -37,7 +38,7 @@ const LIFT_PICKER = 'liftonscroll-picker';
 
 // Espresso's idle sync does not cover the app bar's elevation animation, so the
 // lifted state has to be polled rather than read once.
-const LIFT_TIMEOUT_MS = 3000;
+const LIFT_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
 const appBarAttributes = () =>
   getSingleMatch(

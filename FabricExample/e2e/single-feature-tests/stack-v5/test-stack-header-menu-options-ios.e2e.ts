@@ -1,5 +1,13 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  chevronFor,
+  describeIfiOS,
+  dismissContextMenu,
+  headerItem,
+  menuRow,
+  openContextMenu,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import { expect as jestExpect } from '@jest/globals';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
@@ -7,13 +15,6 @@ import {
   CLASS_NAME_UI_IMAGE_VIEW,
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
-import {
-  chevronFor,
-  dismissContextMenu,
-  menuRow,
-  openContextMenu,
-} from '../../e2e-utils';
-import { headerItem } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
 
 /**

@@ -1,6 +1,8 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import {
+  getSingleMatch,
+  textOf,
   describeIfAndroid,
   describeIfiOS,
   readTopmostText,
@@ -40,9 +42,10 @@ describeIfiOS('Stack v5: simple navigation', () => {
    * Reads the currently-visible route's `Key` label. Because
    * react-native-screens detaches covered screens, only the top screen's
    * `stack-route-key` element is in the hierarchy, so this resolves
-   * unambiguously to the current screen.
+   * unambiguously to the current screen — asserted by `getSingleMatch`.
    */
-  const readRouteKey = () => readTopmostText('stack-route-key');
+  const readRouteKey = async () =>
+    textOf(await getSingleMatch(by.id('stack-route-key'), 'stack-route-key'));
 
   async function waitForRoute(routeName: 'Home' | 'A' | 'B'): Promise<void> {
     await waitFor(element(by.text(`Name: ${routeName}`)))

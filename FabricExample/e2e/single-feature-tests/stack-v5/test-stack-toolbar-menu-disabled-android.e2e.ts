@@ -56,7 +56,7 @@ const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 
 // The row, not its title `TextView`: `View.setEnabled` does not propagate to
 // children, so only the row reflects a disabled element.
-const menuRow = (title: RowTitle): NativeMatcher => menuItemRow(title);
+const popupRow = (title: RowTitle): NativeMatcher => menuItemRow(title);
 
 const attributesOf = (matcher: NativeMatcher, description?: string) =>
   getSingleMatch(matcher, description) as Promise<AndroidElementAttributes>;
@@ -73,7 +73,7 @@ const { withOverflowMenu } = createOverflowMenuHelpers({
 });
 
 async function waitForMenuRow(title: RowTitle) {
-  await waitFor(element(menuRow(title)))
+  await waitFor(element(popupRow(title)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
@@ -81,7 +81,7 @@ async function waitForMenuRow(title: RowTitle) {
 // Only where it is expected to open; a disabled **More** has nothing to wait for.
 async function openSubmenu() {
   await waitForMenuRow('More');
-  await element(menuRow('More')).tap();
+  await element(popupRow('More')).tap();
   await waitForMenuRow('Sub Item');
 }
 
@@ -91,13 +91,13 @@ async function openSubmenu() {
 // would pass before a submenu that did open is up.
 async function expectSubmenuStayedClosed() {
   await expectRowEnabled('More', false);
-  await expect(element(menuRow('Sub Item'))).not.toExist();
+  await expect(element(popupRow('Sub Item'))).not.toExist();
 }
 
 async function expectRowEnabled(title: RowTitle, enabled: boolean) {
   await waitForMenuRow(title);
   jestExpect(
-    (await attributesOf(menuRow(title), `row "${title}"`)).enabled,
+    (await attributesOf(popupRow(title), `row "${title}"`)).enabled,
   ).toBe(enabled);
 }
 
@@ -105,7 +105,7 @@ async function expectRowEnabled(title: RowTitle, enabled: boolean) {
 async function expectRowChecked(title: RowTitle, checked: boolean) {
   await waitForMenuRow(title);
   const attributes = await attributesOf(
-    by.type(CLASS_NAME_ANDROID_CHECK_BOX).withAncestor(menuRow(title)),
+    by.type(CLASS_NAME_ANDROID_CHECK_BOX).withAncestor(popupRow(title)),
   );
   jestExpect(attributes.value).toBe(checked);
 }
@@ -251,7 +251,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await expectLastEventUnchanged(async () => {
         await withOverflowMenu(async () => {
           await waitForMenuRow('Action Overflow');
-          await element(menuRow('Action Overflow')).tap();
+          await element(popupRow('Action Overflow')).tap();
         });
       });
     });
@@ -260,7 +260,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await setDisabledViaProps('action-overflow', false);
       await withOverflowMenu(async () => {
         await expectRowEnabled('Action Overflow', true);
-        await element(menuRow('Action Overflow')).tap();
+        await element(popupRow('Action Overflow')).tap();
       });
       await expectLastEvent('Pressed: action-overflow');
     });
@@ -279,7 +279,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await expectLastEventUnchanged(async () => {
         await withOverflowMenu(async () => {
           await waitForMenuRow('Option A');
-          await element(menuRow('Option A')).tap();
+          await element(popupRow('Option A')).tap();
           await expectRowChecked('Option A', true);
         });
       });
@@ -297,7 +297,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await expectLastEventUnchanged(async () => {
         await withOverflowMenu(async () => {
           await waitForMenuRow('Option B');
-          await element(menuRow('Option B')).tap();
+          await element(popupRow('Option B')).tap();
           await expectRowChecked('Option B', false);
         });
       });
@@ -318,7 +318,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
     it('reports both opt-a and opt-b in the "options" selection when opt-b is checked', async () => {
       await withOverflowMenu(async () => {
         await waitForMenuRow('Option B');
-        await element(menuRow('Option B')).tap();
+        await element(popupRow('Option B')).tap();
       });
       await expectLastSelection('options', ['opt-a', 'opt-b']);
     });
@@ -326,7 +326,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
     it('drops opt-a from the selection when opt-a is unchecked', async () => {
       await withOverflowMenu(async () => {
         await waitForMenuRow('Option A');
-        await element(menuRow('Option A')).tap();
+        await element(popupRow('Option A')).tap();
       });
       await expectLastSelection('options', ['opt-b']);
     });
@@ -348,7 +348,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await setDisabledViaProps('submenu', true);
       await withOverflowMenu(async () => {
         await expectRowEnabled('More', false);
-        await element(menuRow('More')).tap();
+        await element(popupRow('More')).tap();
         await expectSubmenuStayedClosed();
       });
     });
@@ -375,7 +375,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await expectLastEventUnchanged(async () => {
         await withOverflowMenu(async () => {
           await openSubmenu();
-          await element(menuRow('Sub Item')).tap();
+          await element(popupRow('Sub Item')).tap();
         });
       });
     });
@@ -385,7 +385,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await withOverflowMenu(async () => {
         await openSubmenu();
         await expectRowEnabled('Sub Item', true);
-        await element(menuRow('Sub Item')).tap();
+        await element(popupRow('Sub Item')).tap();
       });
       await expectLastEvent('Pressed: sub-item');
     });
@@ -405,7 +405,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await sendCommand({ target: 'submenu', disabled: 'true' });
       await withOverflowMenu(async () => {
         await expectRowEnabled('More', false);
-        await element(menuRow('More')).tap();
+        await element(popupRow('More')).tap();
         await expectSubmenuStayedClosed();
       });
     });
@@ -416,7 +416,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
         await withOverflowMenu(async () => {
           await expectRowEnabled('Option A', false);
           await expectRowChecked('Option A', true);
-          await element(menuRow('Option A')).tap();
+          await element(popupRow('Option A')).tap();
           await expectRowChecked('Option A', true);
         });
       });

@@ -50,9 +50,8 @@ type MenuText = Exclude<
   'undefined' | 'no change'
 >;
 
-// The screen assigns each picker `testID` from its label, replacing spaces with
-// dashes and lowercasing; renaming a label on the screen breaks the ids built
-// below. Option ids come from `pickerOptionId` inside `selectPickerOption`.
+// The screen derives picker `testID`s from their labels (slug + `-picker`);
+// renaming a label on the screen breaks the ids built here.
 const pickerId = (label: string) =>
   `${label.split(' ').join('-')}-picker`.toLowerCase();
 

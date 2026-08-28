@@ -2,6 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import {
+  barButtonIcon,
   describeIfiOS26,
   getMatches,
   selectSingleFeatureTestsScreen,
@@ -11,7 +12,6 @@ import {
   CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW,
 } from '../../native-class-names';
-import { barButtonIcon } from '../../e2e-utils';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).

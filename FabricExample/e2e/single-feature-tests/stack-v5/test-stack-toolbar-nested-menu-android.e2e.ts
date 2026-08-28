@@ -5,12 +5,12 @@ import {
   countMatches,
   createOverflowMenuHelpers,
   describeIfAndroid,
-  expectLastClicked as expectLastClickedText,
+  expectLastClicked,
   getMatches,
   MENU_ANIMATION_TIMEOUT_MS,
   menuItemImage,
   openOverflowMenu,
-  overflowMenuMatcher,
+  overflowMenuRow,
   overflowMenuText,
   rewindAndScrollUntilVisible,
   selectPickerOption,
@@ -18,7 +18,6 @@ import {
   toggleSettingsSwitch,
   waitUntil,
 } from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW } from '../../native-class-names';
 import type {
   AllIds,
   CmdHiddenOption,
@@ -53,20 +52,12 @@ const ALL_MENU_TEXTS = [
 
 type MenuText = (typeof ALL_MENU_TEXTS)[number];
 
-// Espresso only searches the focused window, so parent popups behind a submenu
-// are out of reach of anything anchored here.
-const focusedPopup = overflowMenuMatcher();
+// Espresso only searches the focused window, so parent popups behind a
+// submenu are out of reach of anything anchored to the focused popup.
 
 // A row or header in the focused popup.
 const menuText = (text: MenuText): Detox.NativeMatcher =>
   overflowMenuText(text);
-
-// Any row of the focused popup — the only handle on an entry with no title.
-// Built per call, never hoisted to a const: Detox's `atIndex` rewrites the
-// matcher it is given, so a shared one would stay pinned to the index it was
-// last tapped at.
-const menuRow = (): Detox.NativeMatcher =>
-  by.type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW).withAncestor(focusedPopup);
 
 // The caret marking an entry as a submenu. It shares its class with the row's
 // `group_divider` and icon slot, which differ only by resource id (unmatchable
@@ -282,9 +273,11 @@ async function expectUntitledSubmenu(
   await openTopLevelMenu();
 
   await closingMenuAfter(async () => {
-    jestExpect(await countMatches(menuRow(), { orEmpty: true })).toBe(rowCount);
+    jestExpect(await countMatches(overflowMenuRow(), { orEmpty: true })).toBe(
+      rowCount,
+    );
 
-    await element(menuRow()).atIndex(UNTITLED_SUBMENU_ROW_INDEX).tap();
+    await element(overflowMenuRow()).atIndex(UNTITLED_SUBMENU_ROW_INDEX).tap();
 
     const gate = expected[0];
     await waitForMenuTextCount(gate, countOf(expected, gate));
@@ -301,10 +294,6 @@ async function tapMenuItem(path: readonly MenuText[], item: MenuText) {
 
   // Selecting an item dismisses every popup in the chain.
   await waitForScreen();
-}
-
-async function expectLastClicked(id: AllIds) {
-  await expectLastClickedText(id, SETTINGS_CONTROL);
 }
 
 describeIfAndroid('Stack Toolbar Nested Menu', () => {
@@ -349,31 +338,31 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     it('reports item-top as last clicked', async () => {
       await tapMenuItem([], 'Top Item');
 
-      await expectLastClicked('item-top');
+      await expectLastClicked('item-top', SETTINGS_CONTROL);
     });
 
     it('reports sub-1-1 for the first item of submenu-1 as last clicked', async () => {
       await tapMenuItem(['Submenu A'], 'Sub A.1');
 
-      await expectLastClicked('sub-1-1');
+      await expectLastClicked('sub-1-1', SETTINGS_CONTROL);
     });
 
     it('reports sub-1-2 for the second item of submenu-1 as last clicked', async () => {
       await tapMenuItem(['Submenu A'], 'Sub A.2');
 
-      await expectLastClicked('sub-1-2');
+      await expectLastClicked('sub-1-2', SETTINGS_CONTROL);
     });
 
     it('reports sub-2-1 for the item of submenu-2 as last clicked', async () => {
       await tapMenuItem(['Submenu B'], 'Sub B.1');
 
-      await expectLastClicked('sub-2-1');
+      await expectLastClicked('sub-2-1', SETTINGS_CONTROL);
     });
 
     it('reports deep-1 for the item of the doubly nested submenu as last clicked', async () => {
       await tapMenuItem(['Submenu B', 'Deep'], 'Deep.1');
 
-      await expectLastClicked('deep-1');
+      await expectLastClicked('deep-1', SETTINGS_CONTROL);
     });
   });
 
@@ -387,7 +376,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     it('keeps the id stable across the title change', async () => {
       await tapMenuItem(['Submenu A'], 'Title X');
 
-      await expectLastClicked('sub-1-1');
+      await expectLastClicked('sub-1-1', SETTINGS_CONTROL);
     });
 
     it('hides sub-1-2 when hidden = true', async () => {
@@ -602,7 +591,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     it('keeps the id of the deeply nested item stable', async () => {
       await tapMenuItem(['Submenu B', 'Deep'], 'Title X');
 
-      await expectLastClicked('deep-1');
+      await expectLastClicked('deep-1', SETTINGS_CONTROL);
     });
 
     it('retitles the nested submenu container itself', async () => {

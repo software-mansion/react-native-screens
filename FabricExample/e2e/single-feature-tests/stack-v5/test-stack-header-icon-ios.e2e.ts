@@ -1,12 +1,15 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  barButtonIcon,
+  describeIfiOS,
+  menuRowIcon,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
-import { menuRowIcon } from '../../e2e-utils';
-import { barButtonIcon } from '../../e2e-utils';
 
 // Number of rows in the header item menu that render an icon:
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
@@ -43,10 +46,8 @@ const expectAllMenuRowIconsToBeVisible = async (
 // Titles of the rows inside the nested submenu.
 const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 
-// Asserts that every submenu row renders the icon carrying `iconId`. Rows are
-// addressed by title rather than by position: the parent menu's cells stay in
-// the hierarchy while the submenu is open, so an index-based matcher would
-// happily match a parent row instead.
+// Asserts every submenu row renders `iconId`. Addressed by title, not index:
+// the parent menu's cells stay attached while the submenu is open.
 const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
   for (const rowTitle of SUBMENU_ROWS) {
     await expect(menuRowIcon(iconId, rowTitle)).toBeVisible();

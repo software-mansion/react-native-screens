@@ -2,7 +2,7 @@ import { device, expect, element, by } from 'detox';
 import {
   createOverflowMenuHelpers,
   describeIfAndroid,
-  expectLastClicked as expectLastClickedText,
+  expectLastClicked,
   expectOverflowMenuOrder,
   openOverflowMenu,
   overflowMenuText,
@@ -118,10 +118,6 @@ async function expectMenuItems(
   });
 }
 
-async function expectLastClicked(id: string) {
-  await expectLastClickedText(id, SETTINGS_CONTROL);
-}
-
 describeIfAndroid('Stack Toolbar Menu Commands', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -150,7 +146,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
 
       await expect(element(by.text('Title B'))).not.toExist();
       await expect(element(by.text('Title C'))).not.toExist();
-      await expectLastClicked('item-1');
+      await expectLastClicked('item-1', SETTINGS_CONTROL);
     });
 
     it('reports item-3 when tapping "Title C"', async () => {
@@ -158,7 +154,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       await tapMenuItem('Title C');
 
       await expect(element(by.text('Title A'))).not.toExist();
-      await expectLastClicked('item-3');
+      await expectLastClicked('item-3', SETTINGS_CONTROL);
     });
   });
 
@@ -171,7 +167,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       });
 
       await expectMenuItems(['Title A', 'Title B', 'Title C']);
-      await expectLastClicked('item-3');
+      await expectLastClicked('item-3', SETTINGS_CONTROL);
     });
   });
 
@@ -191,7 +187,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       await tapMenuItem('Changed');
 
       await expect(element(by.text('Title A'))).not.toExist();
-      await expectLastClicked('item-2');
+      await expectLastClicked('item-2', SETTINGS_CONTROL);
     });
   });
 

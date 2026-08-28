@@ -4,7 +4,7 @@ import {
   createOverflowMenuHelpers,
   describeIfAndroid,
   expectIconActionItem,
-  expectLastClicked as expectLastClickedText,
+  expectLastClicked,
   expectNoActionItem,
   expectOverflowMenuOrder,
   expectTextActionItem,
@@ -166,10 +166,6 @@ async function expectNoActionItems() {
   }
 }
 
-async function expectLastClicked(id: IdOption) {
-  await expectLastClickedText(id, SCROLL);
-}
-
 describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -200,14 +196,14 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
       await openOverflowMenu();
       await tapMenuItem('I1');
 
-      await expectLastClicked('item-1');
+      await expectLastClicked('item-1', SCROLL);
     });
 
     it('reports item-3 when tapping "Item Number Three"', async () => {
       await openOverflowMenu();
       await tapMenuItem('Item Number Three');
 
-      await expectLastClicked('item-3');
+      await expectLastClicked('item-3', SCROLL);
     });
   });
 
@@ -238,7 +234,7 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     it('reports item-1 when tapping the action button', async () => {
       await actionItem('I1').tap();
 
-      await expectLastClicked('item-1');
+      await expectLastClicked('item-1', SCROLL);
     });
   });
 

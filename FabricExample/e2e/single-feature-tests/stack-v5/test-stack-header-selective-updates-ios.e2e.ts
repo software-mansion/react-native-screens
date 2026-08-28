@@ -1,12 +1,13 @@
 import { device, expect, element, by } from 'detox';
 import {
+  checkmarkFor,
   describeIfiOS,
   dismissToast,
+  headerItem as textItem,
+  openContextMenu,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { checkmarkFor, openContextMenu } from '../../e2e-utils';
-import { headerItem as textItem } from '../../e2e-utils';
 
 // `SettingsPicker` derives its option testIDs from the label only, not the item
 // index (`title-foo`, `menu-single`, …), so those IDs are duplicated across

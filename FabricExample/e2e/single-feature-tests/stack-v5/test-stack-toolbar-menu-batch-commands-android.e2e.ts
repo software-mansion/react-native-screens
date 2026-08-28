@@ -9,7 +9,8 @@ import {
   expectRadioButton,
   expectTextActionItem,
   menuItemRow,
-  readText as readTextIn,
+  DEFAULT_TIMEOUT_MS,
+  readText,
   rewindAndScrollUntilVisible,
   scrollToAndTap,
   selectSingleFeatureTestsScreen,
@@ -25,7 +26,7 @@ const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
 const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
-const EVENT_TIMEOUT_MS = 3000;
+const EVENT_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 // Generous on purpose: a slow image download must not read as a failed batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
@@ -50,8 +51,6 @@ const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
   scrollViewId: SCROLLVIEW_ID,
 });
 
-const readText = (id: string) => readTextIn(id, SETTINGS_CONTROL);
-
 async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
   await scrollIntoView('events-count-text');
   await waitFor(element(by.id('events-count-text')))
@@ -60,7 +59,7 @@ async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
 }
 
 async function expectEventCountUnchanged(action: () => Promise<void>) {
-  const before = await readText('events-count-text');
+  const before = await readText('events-count-text', SETTINGS_CONTROL);
   jestExpect(before).toMatch(/^Events received: \d+$/);
   await action();
   await scrollIntoView('events-count-text');
@@ -87,7 +86,7 @@ function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
 
 // Compares ids sorted — order-insensitive, duplicates still fail.
 async function expectLogEntry(index: number, groupId: string, ids: string[]) {
-  const raw = await readText(`event-log-entry-${index}`);
+  const raw = await readText(`event-log-entry-${index}`, SETTINGS_CONTROL);
   const entry = parseLogEntry(raw);
   jestExpect(entry.groupId).toBe(groupId);
   jestExpect([...entry.ids].sort()).toEqual([...ids].sort());
