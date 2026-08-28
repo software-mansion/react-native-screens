@@ -129,12 +129,17 @@ function freePort(port = METRO_PORT) {
       .split(/\s+/)
       .filter(Boolean);
   } catch (error) {
+    // lsof exits 1 with empty stderr when the listen address is not found
     if (error?.code === 'ENOENT') {
       throw new Error(
         `Cannot free port ${port}: 'lsof' is not installed (required to detect Metro).`,
       );
     }
-    if (typeof error?.status === 'number' && error.status === 1) {
+    if (
+      typeof error?.status === 'number' &&
+      error.status === 1 &&
+      error.stderr?.toString()?.trim() === ''
+    ) {
       return; // nothing listening on the port
     }
     throw error;
