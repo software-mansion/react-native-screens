@@ -797,12 +797,10 @@ RNS_IGNORE_SUPER_CALL_END
     [parentViewController
         setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
             forChildViewController:navCtrl];
-    return;
   }
 
-  // A detached navigation controller has no parent that can override its traits yet.
-  // Preserve the legacy fallback until the next configuration pass after attachment.
-  if (parentViewController == nil && navCtrl.view.semanticContentAttribute != self.direction) {
+  // Keep the explicit legacy value synchronized because stack gestures and animations inspect it before traits.
+  if (navCtrl.view.semanticContentAttribute != self.direction) {
     navCtrl.view.semanticContentAttribute = self.direction;
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
     [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]

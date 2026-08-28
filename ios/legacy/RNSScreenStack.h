@@ -10,8 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_INLINE BOOL RNSNavigationControllerIsRTL(UINavigationController *navigationController)
+/**
+ * Returns whether the navigation controller currently uses right-to-left layout.
+ */
+NS_INLINE BOOL RNSNavigationControllerIsRTL(UINavigationController *_Nullable navigationController)
 {
+  if (navigationController == nil) {
+    return NO;
+  }
+
   UISemanticContentAttribute semanticContentAttribute = navigationController.view.semanticContentAttribute;
   if (semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
     return YES;
