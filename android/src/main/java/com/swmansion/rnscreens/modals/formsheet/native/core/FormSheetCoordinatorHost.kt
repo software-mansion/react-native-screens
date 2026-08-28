@@ -6,9 +6,9 @@ import android.widget.FrameLayout
 /**
  * Transparent host inserted between Material's dialog `container` and its `CoordinatorLayout`.
  *
- * Every metric we hand to `BottomSheetBehavior` and the height of [FormSheetContainer] is derived from 
+ * Every metric we hand to `BottomSheetBehavior` and the height of [FormSheetContainer] is derived from
  * the height of the coordinator. The measure pass is the only point where the height is known *before*
- * the sheet gets measured, so reporting it from here keeps those values in sync with window resizes, 
+ * the sheet gets measured, so reporting it from here keeps those values in sync with window resizes,
  * e.g., orientation change in the same traversal, ensuring no stale frame is incoming.
  */
 internal class FormSheetCoordinatorHost(

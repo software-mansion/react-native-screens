@@ -4,7 +4,7 @@
 
 **Description:** Verify that a presented `FormSheet` keeps a correct size and position, and that its React content is laid out to the sheet's surface, after the device orientation changes.
 
-**OS test creation version:** iOS: 26.5; Android: API Level 36.
+**OS test creation version:** iOS: 26.5, iPadOS 26.5; Android: API Level 36.
 
 ## E2E test
 
