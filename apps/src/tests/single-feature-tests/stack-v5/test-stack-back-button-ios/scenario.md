@@ -27,14 +27,12 @@ it is compacted to either "< Back" or "<" (this depends on what displayMode is s
 When the header changes content again, the button title doesn't adjust and is left in
 compact state. This is confirmed native behavior.
 
-On iOS <= 18, a back button that is BUILT (during a push or pop transition)
-while `backButtonDisplayMode` is `minimal` becomes frozen: subsequent changes
-to the back button configuration are ignored until the next push/pop rebuilds
-it in a non-minimal state. E.g. set displayMode to minimal on First, push
-Second, pop Second — First's back button is rebuilt as minimal during the pop
-and further config changes appear dead. This is confirmed native behavior
-(reproduced in a pure UIKit app with no react-native-screens involved);
-iOS 26 is not affected.
+On iOS <= 18 after `displayMode: "minimal"` is set and next screen is pushed,
+then popped, the config may break on iOS 18.6 and no longer change.
+It breaks iff next screen has navigation bar visible; then it also fixes itself
+iff `displayMode` is changed and next screen that has navigation bar visible is pushed/popped.
+It neither will break nor fix the broken one if the next screen doesn't have navigation bar.
+IOS 26 is not affected.
 
 ## Steps
 
