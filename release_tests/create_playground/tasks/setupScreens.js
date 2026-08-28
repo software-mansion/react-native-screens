@@ -80,7 +80,7 @@ function setupScreensFromRef(config, utils) {
           );
         } else {
           console.log(
-            `\n☁️ Fetching version '${target}' (${refType}) from the network (${remoteUrl})...`,
+            `\n☁️ Fetching version '${target}' (${refType}) from the network.`,
           );
         }
 
