@@ -17,7 +17,7 @@ Tabs + Stack v5 from the main `react-native-screens` export.
 ## Setup
 
 ```bash
-node create_playground.js -s current -e tabsAndStack
+node release_tests/create_playground.js -s current -e tabsAndStack
 # or
-node create_playground.js -s tag:5.0.0-alpha.1 -r 0.84.0 -e tabsAndStack
+node release_tests/create_playground.js -s tag:5.0.0-alpha.1 -r 0.84.0 -e tabsAndStack
 ```
