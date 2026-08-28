@@ -33,11 +33,23 @@ function buildAndPackScreens(sourceDir, packFile, config, { runCommand }) {
   const [{ filename: rawPackFile }] = JSON.parse(output);
   const packedPath = path.join(sourceDir, rawPackFile);
 
-  fs.renameSync(packedPath, packFile);
-  logger.append(
-    config.paths.log,
-    `Moved packed file from ${packedPath} to ${packFile}\n`,
-  );
+  try {
+    fs.renameSync(packedPath, packFile);
+    logger.append(
+      config.paths.log,
+      `Moved packed file from ${packedPath} to ${packFile}\n`,
+    );
+  } catch (error) {
+    if (error?.code !== 'EXDEV') {
+      throw error;
+    }
+    fs.copyFileSync(packedPath, packFile);
+    fs.unlinkSync(packedPath);
+    logger.append(
+      config.paths.log,
+      `Copied packed file from ${packedPath} to ${packFile} (EXDEV rename fallback)\n`,
+    );
+  }
 }
 
 function setupScreensFromWorkingTree(config, utils) {
