@@ -48,7 +48,7 @@ function cloneScreensRef({
     try {
       cloneFromSource(screensPath);
     } catch {
-      fatal(
+      throw new Error(
         `Version '${refType}:${target}' was not found locally.\n` +
           `Hint: fetch it first, or pass -o to take it from origin.`,
       );
