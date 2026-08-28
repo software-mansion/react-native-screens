@@ -66,7 +66,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
             val updates = arrayOfNulls<StackHeaderToolbarMenuElementUpdate>(batch.size)
             var outstanding = batch.size
 
-            var isProcessingBatch = true
+            var inSyncDispatchLoop = true
 
             fun dispatchResolvedBatch() {
                 pendingBatches.removeFirst()
@@ -85,12 +85,12 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                     "[RNScreens] Unexpected duplicated element resolution."
                 }
 
-                updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options)
+                updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options, batch[index].checked)
                 outstanding -= 1
 
                 // A synchronous completion is applied by the loop below; only an asynchronous one
                 // advances the queue processing from here.
-                if (outstanding == 0 && !isProcessingBatch) {
+                if (outstanding == 0 && !inSyncDispatchLoop) {
                     dispatchResolvedBatch()
                     processNext()
                 }
@@ -106,7 +106,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                     }
                 }
             }
-            isProcessingBatch = false
+            inSyncDispatchLoop = false
 
             if (outstanding > 0) {
                 // An icon is still loading asynchronously; its callback will apply the batch

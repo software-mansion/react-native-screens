@@ -5,36 +5,40 @@ import android.util.Log
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
-import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuGroupMetadata
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuModel
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuIconResolver
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuUpdateQueue
 import com.swmansion.rnscreens.stack.header.toolbar.update.toOptions
 import java.lang.ref.WeakReference
 
 /**
- * Owns the toolbar menu: the parsed configuration and the runtime state
- * accumulated on top of it (imperative element updates, group selections,
- * resolved prop icons). The state is the source of truth and lives as long as
- * this controller; an attached toolbar is merely a projection of it, rebuilt
- * from scratch at every [attach]. Checked-state semantics run on the state, so
+ * Owns the toolbar menu: the parsed model and the runtime state accumulated on
+ * top of it (imperative element updates, group selections, resolved prop
+ * icons). The state is the source of truth and lives as long as this
+ * controller; an attached toolbar is merely a projection of it, rebuilt from
+ * scratch at every [attach]. Checked-state semantics run on the state, so
  * updates behave identically whether a toolbar is attached or not.
+ *
+ * Collaborators: [StackHeaderToolbarMenuMapper] parses React props/commands
+ * into the model types; StackHeaderConfig adapts React specifics (icon
+ * resolution, event emission, invalidation) and feeds this controller — the
+ * single entry point for every menu mutation; [StackHeaderToolbarMenuApplicator]
+ * writes onto the android Menu.
  */
-internal class StackHeaderToolbarMenuController {
+internal class StackHeaderToolbarMenuController(
+    iconResolver: StackHeaderToolbarMenuIconResolver,
+) {
     internal var delegate: WeakReference<StackHeaderToolbarMenuDelegate>? = null
 
     // region Model
 
-    private var menuConfig = StackHeaderToolbarMenuConfig(emptyList(), emptyList())
-    private var iconSources: Map<String, StackHeaderToolbarMenuItemIconSource> = emptyMap()
+    private var model = StackHeaderToolbarMenuModel.EMPTY
     private var groupDividerEnabled = false
-
-    private var forwardIdMap: Map<String, Int> = emptyMap()
-    private var reverseIdMap: Map<Int, String> = emptyMap()
-    private var forwardGroupIdMap: Map<String, Int> = emptyMap()
-    private var groupMetadata = StackHeaderToolbarMenuGroupMetadata.EMPTY
-    private var elementById: Map<String, StackHeaderToolbarMenuElementConfig> = emptyMap()
 
     // Set by a menu change and cleared by [attach]: until then a live toolbar
     // still shows the previous menu (with previous int ids), so in-place
@@ -42,42 +46,37 @@ internal class StackHeaderToolbarMenuController {
     private var modelDirty = false
 
     /**
-     * Replaces the menu configuration. Returns `true` when it actually changed;
-     * equality covers the icon sources too, so an icon-only prop change counts.
-     * A real change validates the new menu, resets all runtime state and
-     * re-initializes group selections from `initialToggleState`. Application to
+     * Replaces the menu configuration. Returns `true` when it actually
+     * changed; icon sources are part of the config, so an icon-source-only
+     * prop change counts. A real change validates the new menu, resets all
+     * runtime state, re-initializes group selections from
+     * `initialToggleState` and drops pending command batches. Application to
      * the toolbar is the caller's responsibility (via [attach]).
      */
-    internal fun setMenu(
-        menu: StackHeaderToolbarMenuConfig,
-        iconSources: Map<String, StackHeaderToolbarMenuItemIconSource>,
-    ): Boolean {
-        if (menu == menuConfig && iconSources == this.iconSources) {
+    internal fun setMenu(menu: StackHeaderToolbarMenuConfig): Boolean {
+        if (menu == model.config) {
             return false
         }
 
-        // Maps and validation both throw on an invalid menu; run them before
-        // any mutation so the previous, valid model stays intact.
-        val (forwardMap, reverseMap) = StackHeaderToolbarMenuApplicator.generateToolbarMenuItemMappings(menu)
-        val groupMap = StackHeaderToolbarMenuApplicator.generateToolbarMenuGroupMappings(menu)
-        val metadata = StackHeaderToolbarMenuApplicator.computeGroupMetadata(menu)
-        StackHeaderToolbarMenuApplicator.validate(menu)
+        // Throws on an invalid menu before any mutation, so the previous,
+        // valid model stays intact.
+        model = StackHeaderToolbarMenuModel.from(menu)
 
-        menuConfig = menu
-        this.iconSources = iconSources
-        forwardIdMap = forwardMap
-        reverseIdMap = reverseMap
-        forwardGroupIdMap = groupMap
-        groupMetadata = metadata
-        elementById = collectElementsById(menu)
-
-        commandOverlay.clear()
-        propIcons.keys.retainAll(forwardMap.keys)
+        commandOverrides.clear()
+        propIcons.keys.retainAll(model.forwardIdMap.keys)
         groupSelections =
-            groupMetadata.groupMemberItems
+            model.groupMetadata.groupMemberItems
                 .mapValues { (_, members) ->
-                    members.filterTo(mutableSetOf()) { isCheckable(it) && elementById.getValue(it).item.initialToggleState }
+                    members.filterTo(mutableSetOf()) {
+                        model.elementById
+                            .getValue(it)
+                            .item.initialToggleState
+                    }
                 }.toMutableMap()
+
+        // Commands sent against the previous menu must not touch the new one,
+        // even those still waiting for an icon.
+        updateQueue.clearPending()
 
         modelDirty = true
         return true
@@ -92,6 +91,9 @@ internal class StackHeaderToolbarMenuController {
         return true
     }
 
+    internal val iconSourcesById: Map<String, StackHeaderToolbarMenuItemIconSource>
+        get() = model.iconSourcesById
+
     // endregion
 
     // region State
@@ -99,10 +101,10 @@ internal class StackHeaderToolbarMenuController {
     // Resolved icons of prop-declared items, fed asynchronously by the owner.
     private val propIcons = mutableMapOf<String, Drawable>()
 
-    // Accumulated imperative element updates, merged field-wise (newer non-null
-    // wins). `checked` is never stored here — group selections are its single
-    // home.
-    private val commandOverlay = mutableMapOf<String, StackHeaderToolbarMenuElementOptions>()
+    // Accumulated imperative element updates, merged field-wise (newer
+    // non-null wins). `checked` never reaches here — it travels on the update
+    // envelope and group selections are its single home.
+    private val commandOverrides = mutableMapOf<String, StackHeaderToolbarMenuElementOptions>()
 
     // Fully materialized selection per group. Initialized from
     // `initialToggleState` at [setMenu], mutated by taps and command `checked`.
@@ -112,37 +114,51 @@ internal class StackHeaderToolbarMenuController {
 
     // region Imperative updates
 
+    // Serial, batch-atomic command ingestion; owned here so a menu change can
+    // drop stale batches locally (see setMenu).
+    private val updateQueue =
+        StackHeaderToolbarMenuUpdateQueue(iconResolver) { applyElementUpdates(it) }
+
+    /**
+     * Enqueues an `updateToolbarMenuElements` batch. Batches apply serially
+     * and atomically, once every icon in the batch has resolved — see
+     * [StackHeaderToolbarMenuUpdateQueue].
+     */
+    internal fun enqueueElementUpdates(batch: List<StackHeaderToolbarMenuElementRawUpdate>) {
+        updateQueue.enqueue(batch)
+    }
+
     /**
      * Applies a fully resolved `updateToolbarMenuElements` batch: records it,
      * runs checked-state transitions on the state, projects onto the live
      * toolbar when one is attached, and emits one coalesced selection event per
      * changed group — identically whether attached or not.
      */
-    internal fun applyElementUpdates(updates: List<StackHeaderToolbarMenuElementUpdate>) {
+    private fun applyElementUpdates(updates: List<StackHeaderToolbarMenuElementUpdate>) {
         val changedGroups = LinkedHashSet<String>()
         val toolbar = liveToolbar()
 
-        for ((id, options) in updates) {
-            if (id !in forwardIdMap) {
+        for (update in updates) {
+            val id = update.id
+            if (id !in model.forwardIdMap) {
                 Log.w(TAG, "[RNScreens] Ignoring toolbar menu update for unknown item id '$id'.")
                 continue
             }
 
-            val recorded = options.copy(checked = null)
-            if (!recorded.isEmpty) {
-                commandOverlay.merge(id, recorded) { older, newer -> older.mergedWith(newer) }
+            if (!update.options.isEmpty) {
+                commandOverrides.merge(id, update.options) { older, newer -> older.mergedWith(newer) }
             }
 
-            options.checked?.let { checked ->
+            update.checked?.let { checked ->
                 applyCheckedInState(id, checked)?.let(changedGroups::add)
             }
 
-            if (toolbar != null && !recorded.isEmpty) {
+            if (toolbar != null && !update.options.isEmpty) {
                 StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
                     toolbar,
-                    forwardIdMap,
+                    model.forwardIdMap,
                     id,
-                    resolveForLiveApplication(id, recorded),
+                    widenWithCoupledFields(id, update.options),
                 )
             }
         }
@@ -162,18 +178,18 @@ internal class StackHeaderToolbarMenuController {
         id: String,
         icon: Drawable?,
     ) {
-        if (id !in forwardIdMap) {
+        if (id !in model.forwardIdMap) {
             return
         }
         val previous = if (icon != null) propIcons.put(id, icon) else propIcons.remove(id)
-        if (previous === icon || commandOverlay[id]?.icon != null) {
+        if (previous === icon || commandOverrides[id]?.icon != null) {
             return
         }
         val toolbar = liveToolbar() ?: return
         val effective = effectiveOptions(id)
         StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
             toolbar,
-            forwardIdMap,
+            model.forwardIdMap,
             id,
             StackHeaderToolbarMenuElementOptions(
                 icon = effective.icon,
@@ -192,7 +208,7 @@ internal class StackHeaderToolbarMenuController {
     private var attachedToolbar: WeakReference<MaterialToolbar>? = null
 
     /**
-     * Projects the menu (config ⊕ prop icons ⊕ command overlay ⊕ selections)
+     * Projects the menu (model ⊕ prop icons ⊕ command overrides ⊕ selections)
      * onto [toolbar] and starts applying subsequent updates to it in place.
      * Emits no events — the projection is semantically a no-change.
      */
@@ -201,19 +217,22 @@ internal class StackHeaderToolbarMenuController {
         modelDirty = false
         StackHeaderToolbarMenuApplicator.rebuildToolbarMenu(
             toolbar,
-            menuConfig,
-            forwardIdMap,
-            reverseIdMap,
-            forwardGroupIdMap,
+            model,
             groupDividerEnabled,
             optionsForItem = ::effectiveOptions,
             onItemClicked = ::handleItemClick,
         )
-        groupMetadata.groupMemberItems.keys.forEach { applySelectionToToolbar(toolbar, it) }
+        model.groupMetadata.groupMemberItems.keys
+            .forEach { applySelectionToToolbar(toolbar, it) }
     }
 
     internal fun detach() {
         attachedToolbar = null
+    }
+
+    internal fun tearDown() {
+        updateQueue.tearDown()
+        detach()
     }
 
     private fun liveToolbar(): MaterialToolbar? = if (modelDirty) null else attachedToolbar?.get()
@@ -223,8 +242,8 @@ internal class StackHeaderToolbarMenuController {
         groupId: String,
     ) {
         val selected = groupSelections[groupId].orEmpty()
-        for (memberId in groupMetadata.groupMemberItems[groupId].orEmpty()) {
-            val item = forwardIdMap[memberId]?.let { toolbar.menu.findItem(it) } ?: continue
+        for (memberId in model.groupMetadata.groupMemberItems[groupId].orEmpty()) {
+            val item = model.forwardIdMap[memberId]?.let { toolbar.menu.findItem(it) } ?: continue
             val shouldBeChecked = memberId in selected
             if (item.isChecked != shouldBeChecked) {
                 // For a single-selection group setChecked(true) also fires the
@@ -247,8 +266,8 @@ internal class StackHeaderToolbarMenuController {
         itemId: String,
         explicitCheckedValue: Boolean?,
     ): String? {
-        val groupId = groupMetadata.itemGroupMap[itemId] ?: return null
-        val singleSelection = groupMetadata.groupSingleSelection[groupId] ?: return null
+        val groupId = model.groupMetadata.itemGroupMap[itemId] ?: return null
+        val singleSelection = model.groupMetadata.groupSingleSelection[groupId] ?: return null
         val selection = groupSelections.getOrPut(groupId) { mutableSetOf() }
 
         if (singleSelection) {
@@ -285,26 +304,30 @@ internal class StackHeaderToolbarMenuController {
 
     private fun emitGroupSelection(groupId: String) {
         val selection = groupSelections[groupId].orEmpty()
-        val selectedIds = groupMetadata.groupMemberItems[groupId].orEmpty().filter { it in selection }
+        val selectedIds =
+            model.groupMetadata.groupMemberItems[groupId]
+                .orEmpty()
+                .filter { it in selection }
         delegate?.get()?.onGroupSelectionChanged(groupId, selectedIds)
     }
 
-    // A grouped submenu item is a group member but is never rendered checkable
-    // (matching the menu build), so taps on it emit a press instead of toggling.
-    private fun isCheckable(id: String): Boolean {
-        val element = elementById[id] ?: return false
-        return element is StackHeaderToolbarMenuElementConfig.MenuItem && element.item.groupId != null
-    }
+    // Validation guarantees only plain menu items carry a groupId, so
+    // checkability reduces to group membership.
+    private fun isCheckable(id: String): Boolean = model.elementById[id]?.item?.groupId != null
 
     // endregion
 
     // region Effective values
 
     private fun effectiveOptions(id: String): StackHeaderToolbarMenuElementOptions {
-        val base = elementById.getValue(id).item.toOptions()
+        val base =
+            model.elementById
+                .getValue(id)
+                .item
+                .toOptions()
         val withPropIcon =
             propIcons[id]?.let { base.copy(icon = StackHeaderToolbarFieldUpdate.Set(it)) } ?: base
-        return commandOverlay[id]?.let(withPropIcon::mergedWith) ?: withPropIcon
+        return commandOverrides[id]?.let(withPropIcon::mergedWith) ?: withPropIcon
     }
 
     /**
@@ -315,7 +338,7 @@ internal class StackHeaderToolbarMenuController {
      * follow the title (`menuTitle: Reset`) must be re-resolved when the title
      * changes.
      */
-    private fun resolveForLiveApplication(
+    private fun widenWithCoupledFields(
         id: String,
         delta: StackHeaderToolbarMenuElementOptions,
     ): StackHeaderToolbarMenuElementOptions {
@@ -332,8 +355,8 @@ internal class StackHeaderToolbarMenuController {
         }
         if (delta.title != null &&
             delta.menuTitle == null &&
-            elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu &&
-            commandOverlay[id]?.menuTitle == StackHeaderToolbarFieldUpdate.Reset
+            model.elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu &&
+            commandOverrides[id]?.menuTitle == StackHeaderToolbarFieldUpdate.Reset
         ) {
             resolved = resolved.copy(menuTitle = StackHeaderToolbarFieldUpdate.Reset)
         }
@@ -341,21 +364,6 @@ internal class StackHeaderToolbarMenuController {
     }
 
     // endregion
-
-    private fun collectElementsById(menu: StackHeaderToolbarMenuConfig): Map<String, StackHeaderToolbarMenuElementConfig> {
-        val elements = mutableMapOf<String, StackHeaderToolbarMenuElementConfig>()
-
-        fun visit(config: StackHeaderToolbarMenuConfig) {
-            for (element in config.children) {
-                elements[element.item.id] = element
-                if (element is StackHeaderToolbarMenuElementConfig.Submenu) {
-                    visit(element.menu)
-                }
-            }
-        }
-        visit(menu)
-        return elements
-    }
 
     companion object {
         private const val TAG = "StackHeaderToolbarMenuController"

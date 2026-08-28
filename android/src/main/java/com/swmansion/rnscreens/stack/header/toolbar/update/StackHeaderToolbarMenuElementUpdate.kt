@@ -7,4 +7,5 @@ package com.swmansion.rnscreens.stack.header.toolbar.update
 internal data class StackHeaderToolbarMenuElementUpdate(
     val id: String,
     val options: StackHeaderToolbarMenuElementOptions,
+    val checked: Boolean?,
 )

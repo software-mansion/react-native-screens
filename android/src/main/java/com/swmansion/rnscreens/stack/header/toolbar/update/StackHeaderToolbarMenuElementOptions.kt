@@ -17,12 +17,11 @@ internal data class StackHeaderToolbarMenuElementOptions(
     val hidden: Boolean? = null,
     val disabled: Boolean? = null,
     val showAsAction: StackHeaderToolbarMenuItemShowAsAction? = null,
-    val icon: StackHeaderToolbarFieldUpdate<Drawable>?,
-    val iconTintColorNormal: StackHeaderToolbarFieldUpdate<Int>?,
-    val iconTintColorPressed: StackHeaderToolbarFieldUpdate<Int>?,
-    val iconTintColorFocused: StackHeaderToolbarFieldUpdate<Int>?,
-    val iconTintColorDisabled: StackHeaderToolbarFieldUpdate<Int>?,
-    val checked: Boolean? = null,
+    val icon: StackHeaderToolbarFieldUpdate<Drawable>? = null,
+    val iconTintColorNormal: StackHeaderToolbarFieldUpdate<Int>? = null,
+    val iconTintColorPressed: StackHeaderToolbarFieldUpdate<Int>? = null,
+    val iconTintColorFocused: StackHeaderToolbarFieldUpdate<Int>? = null,
+    val iconTintColorDisabled: StackHeaderToolbarFieldUpdate<Int>? = null,
     val menuTitle: StackHeaderToolbarFieldUpdate<String>? = null,
 ) {
     val requiresIconTintColorUpdate: Boolean
@@ -33,7 +32,7 @@ internal data class StackHeaderToolbarMenuElementOptions(
                 iconTintColorDisabled != null
 
     val isEmpty: Boolean
-        get() = this == EMPTY
+        get() = this == DEFAULT
 
     /** Field-wise merge where [newer]'s non-null fields win. */
     internal fun mergedWith(newer: StackHeaderToolbarMenuElementOptions) =
@@ -50,19 +49,11 @@ internal data class StackHeaderToolbarMenuElementOptions(
             iconTintColorPressed = newer.iconTintColorPressed ?: iconTintColorPressed,
             iconTintColorFocused = newer.iconTintColorFocused ?: iconTintColorFocused,
             iconTintColorDisabled = newer.iconTintColorDisabled ?: iconTintColorDisabled,
-            checked = newer.checked ?: checked,
             menuTitle = newer.menuTitle ?: menuTitle,
         )
 
-    companion object {
-        val EMPTY =
-            StackHeaderToolbarMenuElementOptions(
-                icon = null,
-                iconTintColorNormal = null,
-                iconTintColorPressed = null,
-                iconTintColorFocused = null,
-                iconTintColorDisabled = null,
-            )
+    private companion object {
+        val DEFAULT = StackHeaderToolbarMenuElementOptions()
     }
 }
 

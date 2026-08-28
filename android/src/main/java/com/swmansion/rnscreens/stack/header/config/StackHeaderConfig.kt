@@ -22,11 +22,8 @@ import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuController
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuDelegate
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
-import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
-import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuIconResolver
-import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuUpdateQueue
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -149,28 +146,6 @@ internal class StackHeaderConfig(
     override var statusBarScrimColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
         internal set
 
-    override val toolbarMenuController =
-        StackHeaderToolbarMenuController().also { it.delegate = WeakReference(this) }
-
-    internal fun setToolbarMenuFromProps(
-        menu: StackHeaderToolbarMenuConfig,
-        iconSources: Map<String, StackHeaderToolbarMenuItemIconSource>,
-    ) {
-        toolbarMenuItemIconSourceMap = iconSources
-        if (toolbarMenuController.setMenu(menu, iconSources)) {
-            // Commands sent against the previous menu must not touch the new
-            // one, even those still waiting for an icon.
-            menuUpdateQueue.clearPending()
-            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        }
-    }
-
-    internal fun setToolbarMenuGroupDividerEnabledFromProps(enabled: Boolean) {
-        if (toolbarMenuController.setGroupDividerEnabled(enabled)) {
-            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        }
-    }
-
     override var titleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
         internal set
 
@@ -292,21 +267,53 @@ internal class StackHeaderConfig(
 
     // endregion
 
-    // region Toolbar menu item icon resolution
+    // region Toolbar menu
 
-    private var toolbarMenuItemIconSourceMap = mapOf<String, StackHeaderToolbarMenuItemIconSource>()
+    // The command-icon resolver uses the always-completing resolveImage rather
+    // than the stateful PropIconResolver: the queue requires exactly-once
+    // completion (a drop-stale guard could stall it) and already guarantees
+    // ordering across commands. A failed or empty source resolves to null ->
+    // Reset (the icon is cleared) rather than stalling the queue.
+    override val toolbarMenuController =
+        StackHeaderToolbarMenuController(iconResolver = { iconSource, onResolved ->
+            resolveImage(
+                reactContext,
+                iconSource.drawableIconResourceName,
+                iconSource.imageIconUri,
+            ) { drawable ->
+                onResolved(StackHeaderToolbarFieldUpdate.from(drawable))
+            }
+        }).also { it.delegate = WeakReference(this) }
+
+    internal fun setToolbarMenuFromProps(menu: StackHeaderToolbarMenuConfig) {
+        if (toolbarMenuController.setMenu(menu)) {
+            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
+        }
+    }
+
+    internal fun setToolbarMenuGroupDividerEnabledFromProps(enabled: Boolean) {
+        if (toolbarMenuController.setGroupDividerEnabled(enabled)) {
+            invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
+        }
+    }
+
+    internal fun dispatchMenuElementUpdates(updates: List<StackHeaderToolbarMenuElementRawUpdate>) {
+        toolbarMenuController.enqueueElementUpdates(updates)
+    }
 
     private var toolbarMenuItemIconResolvers = mapOf<String, PropIconResolver>()
 
     // Last resolved icon per menu item id, from the `toolbarMenu` prop path only
-    // (resolveToolbarMenuItemIconsIfNeeded). Command (`updateToolbarMenuElements`) icons live in
-    // the controller's command overlay and are intentionally NOT stored here.
+    // (resolveToolbarMenuItemIconsIfNeeded). Command (`updateToolbarMenuElements`)
+    // icons live in the controller's command overrides and are intentionally NOT
+    // stored here.
     private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
 
     internal fun resolveToolbarMenuItemIconsIfNeeded() {
+        val iconSources = toolbarMenuController.iconSourcesById
         val nextResolvers = mutableMapOf<String, PropIconResolver>()
 
-        toolbarMenuItemIconSourceMap.forEach { (id, source) ->
+        iconSources.forEach { (id, source) ->
             val resolver = toolbarMenuItemIconResolvers[id] ?: PropIconResolver()
             nextResolvers[id] = resolver
 
@@ -319,7 +326,11 @@ internal class StackHeaderConfig(
                     when (result) {
                         IconResolution.Unchanged -> toolbarMenuItemIcons[id]
                         is IconResolution.Resolved -> {
-                            toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                            // An async resolve may outlive a menu change that
+                            // removed the item; never re-add a pruned id.
+                            if (id in toolbarMenuController.iconSourcesById) {
+                                toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
+                            }
                             result.drawable
                         }
                     }
@@ -331,7 +342,20 @@ internal class StackHeaderConfig(
         }
 
         toolbarMenuItemIconResolvers = nextResolvers
-        toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in toolbarMenuItemIconSourceMap }
+        toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in iconSources }
+    }
+
+    // StackHeaderToolbarMenuDelegate -> JS events
+
+    override fun onMenuItemClicked(id: String) {
+        eventEmitter.emitOnToolbarMenuItemPress(id)
+    }
+
+    override fun onGroupSelectionChanged(
+        groupId: String,
+        selectedIds: List<String>,
+    ) {
+        eventEmitter.emitOnToolbarMenuGroupSelectionChange(groupId, selectedIds)
     }
 
     // endregion
@@ -430,21 +454,6 @@ internal class StackHeaderConfig(
 
     // endregion
 
-    // region StackHeaderToolbarMenuDelegate
-
-    override fun onMenuItemClicked(id: String) {
-        eventEmitter.emitOnToolbarMenuItemPress(id)
-    }
-
-    override fun onGroupSelectionChanged(
-        groupId: String,
-        selectedIds: List<String>,
-    ) {
-        eventEmitter.emitOnToolbarMenuGroupSelectionChange(groupId, selectedIds)
-    }
-
-    // endregion
-
     // region Event emitter
 
     internal lateinit var eventEmitter: StackHeaderConfigEventEmitter
@@ -452,52 +461,6 @@ internal class StackHeaderConfig(
     internal fun onViewManagerAddEventEmitters() {
         check(id != NO_ID) { "[RNScreens] StackHeaderConfig must have its tag set when registering event emitters" }
         eventEmitter = StackHeaderConfigEventEmitter(reactContext, id)
-    }
-
-    // endregion
-
-    // region Imperative menu item commands
-
-    /**
-     * Resolves a single command's icon. Unlike the `toolbarMenu` prop path,
-     * this does NOT go through the stateful per-id [PropIconResolver] (whose
-     * drop-stale async guard could leave the queue waiting forever - the queue
-     * requires that [StackHeaderToolbarMenuIconResolver.resolve] always calls
-     * [onResolved] even if the image loading results in failure; see
-     * [StackHeaderToolbarMenuIconResolver] and
-     * [StackHeaderToolbarMenuUpdateQueue] for more details) and does NOT touch
-     * the prop icon cache: it resolves the source with an always-completing
-     * [resolveImage] and forwards the result to the queue, which applies it to
-     * the live toolbar. Ordering across commands is guaranteed by the queue, so
-     * no drop-stale is needed here; a failed or empty source resolves to `null`
-     * -> Reset (the icon is cleared) rather than stalling the queue.
-     */
-    private val commandIconResolver =
-        StackHeaderToolbarMenuIconResolver { iconSource, onResolved ->
-            resolveImage(
-                reactContext,
-                iconSource.drawableIconResourceName,
-                iconSource.imageIconUri,
-            ) { drawable ->
-                onResolved(StackHeaderToolbarFieldUpdate.from(drawable))
-            }
-        }
-
-    // Serializes `updateToolbarMenuElements` batches and waits for every icon in a batch to
-    // resolve before applying it, so each batch is applied atomically and in order.
-    private val menuUpdateQueue =
-        StackHeaderToolbarMenuUpdateQueue(
-            iconResolver = commandIconResolver,
-            delegate = { updates -> toolbarMenuController.applyElementUpdates(updates) },
-        )
-
-    /**
-     * Enqueues a batch of toolbar menu element view commands. The batch is processed only
-     * after any earlier batch has been fully applied, and is applied atomically once all of
-     * its icons (if any) have resolved — see [StackHeaderToolbarMenuUpdateQueue].
-     */
-    internal fun dispatchMenuElementUpdates(updates: List<StackHeaderToolbarMenuElementRawUpdate>) {
-        menuUpdateQueue.enqueue(updates)
     }
 
     // endregion
@@ -529,8 +492,7 @@ internal class StackHeaderConfig(
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
-        menuUpdateQueue.tearDown()
-        toolbarMenuController.detach()
+        toolbarMenuController.tearDown()
         invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
     }
