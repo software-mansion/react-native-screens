@@ -803,12 +803,6 @@ RNS_IGNORE_SUPER_CALL_END
   if (navCtrl.view.semanticContentAttribute != self.direction) {
     navCtrl.view.semanticContentAttribute = self.direction;
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
-    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
-    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
   }
 }
 
