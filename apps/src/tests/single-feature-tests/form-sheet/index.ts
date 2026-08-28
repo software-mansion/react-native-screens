@@ -12,6 +12,7 @@ import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-u
 import TestFormSheetLifecycleEvents from './test-form-sheet-lifecycle-events';
 import TestFormSheetNativeContainerStyle from './test-form-sheet-native-container-style';
 import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed';
+import TestFormSheetOrientationChange from './test-form-sheet-orientation-change';
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
@@ -29,6 +30,7 @@ export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-
 export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events';
 export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style';
 export { default as TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed';
+export { default as TestFormSheetOrientationChange } from './test-form-sheet-orientation-change';
 export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius';
 export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
 export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
@@ -45,6 +47,7 @@ const scenarios = {
   TestFormSheetLifecycleEvents,
   TestFormSheetNativeContainerStyle,
   TestFormSheetOnDetentChanged,
+  TestFormSheetOrientationChange,
   TestFormSheetPreferredCornerRadius,
   TestFormSheetPresentationState,
   TestFormSheetPreventNativeDismiss,
