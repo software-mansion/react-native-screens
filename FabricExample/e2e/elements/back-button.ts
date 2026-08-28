@@ -1,7 +1,6 @@
 import { device, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
 import {
-  DEFAULT_TIMEOUT_MS,
   expectTopmostVisible,
   isIOSVersionAtLeast,
   tapTopmost,
@@ -11,8 +10,6 @@ import {
   CLASS_NAME_ANDROID_TOOLBAR,
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
 } from '../native-class-names';
-
-const BACK_BUTTON_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
 /** UIKit's `BackButton` id; ambiguous on iOS 26, so narrowed to the container. */
 const iosBackButtonMatcher = (): NativeMatcher =>
@@ -43,8 +40,6 @@ function backButtonMatcher(): NativeMatcher {
  * headers attached (a nested stack), the last match is tapped.
  */
 export async function tapBarBackButton() {
-  await expectTopmostVisible(backButtonMatcher, {
-    timeout: BACK_BUTTON_TIMEOUT_MS,
-  });
+  await expectTopmostVisible(backButtonMatcher);
   await tapTopmost(backButtonMatcher());
 }
