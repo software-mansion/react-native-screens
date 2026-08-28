@@ -114,7 +114,7 @@ function getConfig() {
         type: 'string',
       },
     },
-    strict: false,
+    strict: true,
   });
 
   config.help = parseBooleanFlag(config.help);
