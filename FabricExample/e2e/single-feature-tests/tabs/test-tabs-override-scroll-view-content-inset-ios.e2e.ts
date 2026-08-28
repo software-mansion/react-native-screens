@@ -11,7 +11,7 @@ import {
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
 
 const getScrollViewSafeAreaInsetsTop = async (testID: string) => ({
-  top: ((await getSingleMatch(by.id(testID))) as IosElementAttributes)
+  top: ((await getSingleMatch(by.id(testID), testID)) as IosElementAttributes)
     .safeAreaInsets.top,
 });
 
@@ -22,8 +22,9 @@ function isAboveSaveAreaInset(
   return itemFrame.y + itemFrame.height <= scrollViewSAVInsetTop;
 }
 
-const getTabBarFrame = () => getFrame(by.type(CLASS_NAME_UI_TAB_BAR));
-const getElementFrame = (testID: string) => getFrame(by.id(testID));
+const getTabBarFrame = () =>
+  getFrame(by.type(CLASS_NAME_UI_TAB_BAR), 'the UITabBar');
+const getElementFrame = (testID: string) => getFrame(by.id(testID), testID);
 
 function isAboveTabBar(
   itemFrame: { y: number; height: number },

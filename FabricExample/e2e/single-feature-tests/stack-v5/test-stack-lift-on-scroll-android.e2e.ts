@@ -40,9 +40,12 @@ const LIFT_PICKER = 'liftonscroll-picker';
 const LIFT_TIMEOUT_MS = 3000;
 
 const appBarAttributes = () =>
-  getSingleMatch(stackV5AppBar()) as Promise<AndroidElementAttributes>;
+  getSingleMatch(
+    stackV5AppBar(),
+    'the Stack v5 app bar',
+  ) as Promise<AndroidElementAttributes>;
 
-const contentFrame = () => getFrame(by.id(SCROLL_VIEW));
+const contentFrame = () => getFrame(by.id(SCROLL_VIEW), SCROLL_VIEW);
 
 async function appBarElevation(): Promise<number> {
   return (await appBarAttributes()).elevation;

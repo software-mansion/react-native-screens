@@ -282,7 +282,9 @@ async function tapWithinFrame({ x, y, width, height }: Frame, xFraction = 0.5) {
 
 /** Coordinate tap (iOS) — bypasses Detox's visibility check. */
 export async function forceTapByLabeliOS(testLabel: string) {
-  await tapWithinFrame(await getFrame(by.label(testLabel)));
+  await tapWithinFrame(
+    await getFrame(by.label(testLabel), `label "${testLabel}"`),
+  );
 }
 
 export async function forceSelectTabByLabel(label: string) {
@@ -301,12 +303,14 @@ export async function forceSelectTabByLabel(label: string) {
 export const getBottomAccessoryAttributes = () =>
   getSingleMatch(
     by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY),
+    'the bottom accessory',
   ) as Promise<IosElementAttributes>;
 
 /** The `UITabBar`; a single match is asserted by `getSingleMatch`. */
 export const getTabBarAttributes = () =>
   getSingleMatch(
     by.type(CLASS_NAME_UI_TAB_BAR),
+    'the UITabBar',
   ) as Promise<IosElementAttributes>;
 
 /** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
@@ -373,21 +377,27 @@ export async function countMatches(
   return (await getMatches(matcher, options)).length;
 }
 
-/** Attributes of `matcher`'s only match; throws when it resolves to several. */
+/**
+ * Attributes of `matcher`'s only match; throws when it resolves to several.
+ * A Detox matcher does not stringify, so pass `description` (e.g. the testID)
+ * to name the target in that error.
+ */
 export async function getSingleMatch(
   matcher: NativeMatcher,
+  description = 'matcher',
 ): Promise<ElementAttributes> {
   const matches = await getMatches(matcher);
   if (matches.length > 1) {
     throw new Error(
-      `Matcher resolved to ${matches.length} elements, expected exactly one.`,
+      `${description} resolved to ${matches.length} elements, expected exactly one. ` +
+        'Narrow the matcher, or the view hierarchy changed.',
     );
   }
   return matches[0];
 }
 
-export async function getFrame(matcher: NativeMatcher) {
-  return (await getSingleMatch(matcher)).frame;
+export async function getFrame(matcher: NativeMatcher, description?: string) {
+  return (await getSingleMatch(matcher, description)).frame;
 }
 
 /** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
@@ -410,7 +420,7 @@ export async function readText(
   { scrollViewId, ...scroll }: SettingsControlOptions,
 ): Promise<string> {
   await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
-  return (await getSingleMatch(by.id(id))).text ?? '';
+  return (await getSingleMatch(by.id(id), `id "${id}"`)).text ?? '';
 }
 
 /** Taps the last match (topmost stacked screen). Pass a fresh matcher: `atIndex` mutates it on Android. */
@@ -1012,7 +1022,10 @@ export async function dismissContextMenu(
   timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
 ) {
   await tapWithinFrame(
-    await getFrame(by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW)),
+    await getFrame(
+      by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW),
+      'the context menu platter',
+    ),
     0.1,
   );
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);

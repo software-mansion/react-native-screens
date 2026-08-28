@@ -293,6 +293,7 @@ describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
     await expect(element(by.id('config-scrollview'))).toBeVisible();
     configScrollView = (await getSingleMatch(
       by.id('config-scrollview'),
+      'config-scrollview',
     )) as IosElementAttributes;
   });
 

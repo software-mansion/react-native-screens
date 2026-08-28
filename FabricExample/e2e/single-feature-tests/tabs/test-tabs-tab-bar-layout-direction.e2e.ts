@@ -31,8 +31,14 @@ async function selectDirection(direction: 'inherit' | 'rtl' | 'ltr') {
 }
 
 async function expectTab1ToBeLeftOfTab2(shouldBeLeft: boolean) {
-  const t1 = await getFrame(by.label('tab-bar-item-1-label'));
-  const t2 = await getFrame(by.label('tab-bar-item-2-label'));
+  const t1 = await getFrame(
+    by.label('tab-bar-item-1-label'),
+    'tab-bar-item-1-label',
+  );
+  const t2 = await getFrame(
+    by.label('tab-bar-item-2-label'),
+    'tab-bar-item-2-label',
+  );
   if (shouldBeLeft) {
     jestExpect(t2.x).toBeGreaterThan(t1.x);
   } else {

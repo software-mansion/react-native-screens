@@ -7,9 +7,15 @@ import {
 } from '../../e2e-utils';
 
 const getTabBarItemY = async () =>
-  (await getFrame(by.id('ime-insets-config-tab-item'))).y;
+  (
+    await getFrame(
+      by.id('ime-insets-config-tab-item'),
+      'ime-insets-config-tab-item',
+    )
+  ).y;
 const getTextY = async () =>
-  (await getFrame(by.id('tabs-screen-bottom-text'))).y;
+  (await getFrame(by.id('tabs-screen-bottom-text'), 'tabs-screen-bottom-text'))
+    .y;
 
 describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
   beforeAll(async () => {

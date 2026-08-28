@@ -58,8 +58,8 @@ const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 // children, so only the row reflects a disabled element.
 const menuRow = (title: RowTitle): NativeMatcher => menuItemRow(title);
 
-const attributesOf = (matcher: NativeMatcher) =>
-  getSingleMatch(matcher) as Promise<AndroidElementAttributes>;
+const attributesOf = (matcher: NativeMatcher, description?: string) =>
+  getSingleMatch(matcher, description) as Promise<AndroidElementAttributes>;
 
 // Targets sit either side of the current offset, hence the rewind.
 async function scrollIntoView(id: string) {
@@ -96,7 +96,9 @@ async function expectSubmenuStayedClosed() {
 
 async function expectRowEnabled(title: RowTitle, enabled: boolean) {
   await waitForMenuRow(title);
-  jestExpect((await attributesOf(menuRow(title))).enabled).toBe(enabled);
+  jestExpect(
+    (await attributesOf(menuRow(title), `row "${title}"`)).enabled,
+  ).toBe(enabled);
 }
 
 // The checkbox AppCompat inflates carries the toggle state in `value`.
@@ -109,7 +111,9 @@ async function expectRowChecked(title: RowTitle, checked: boolean) {
 }
 
 async function expectActionBarEnabled(enabled: boolean) {
-  jestExpect((await attributesOf(actionBarButton)).enabled).toBe(enabled);
+  jestExpect(
+    (await attributesOf(actionBarButton, 'the toolbar action button')).enabled,
+  ).toBe(enabled);
 }
 
 const readLastEvent = () => readText('last-event-text', SETTINGS_CONTROL);
