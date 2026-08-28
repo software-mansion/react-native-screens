@@ -63,7 +63,7 @@ class FormSheetDialogManager(
         object : FormSheetContentSizeChangeDelegate {
             override fun onContentHeightChanged(newHeight: Int) {
                 lastContentHeight = newHeight
-                presentationManager.presentation?.onContentHeightChanged(newHeight)
+                presentationManager.currentPresentation?.onContentHeightChanged(newHeight)
             }
         }
 
@@ -76,7 +76,7 @@ class FormSheetDialogManager(
         val oldConfig = formSheetConfig
         formSheetConfig = newConfig
 
-        presentationManager.presentation?.applyConfigUpdate(oldConfig, newConfig)
+        presentationManager.currentPresentation?.applyConfigUpdate(oldConfig, newConfig)
 
         if (oldConfig.isOpen != newConfig.isOpen) {
             presentationManager.requestProgrammaticStateUpdate(newConfig.isOpen)
