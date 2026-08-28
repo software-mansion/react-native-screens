@@ -1,4 +1,4 @@
-# Test Scenario: Sheet Grabber Visibility
+# Test Scenario: Grabber Visibility
 
 ## Details
 
@@ -19,7 +19,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Grabber visibility** screen.
+1. Launch the app and navigate to the **Grabber Visibility** screen.
 
 - [ ] Content with the "prefersGrabberVisible" toggle (switched off by default) and the "Open FormSheet" button is shown.
 

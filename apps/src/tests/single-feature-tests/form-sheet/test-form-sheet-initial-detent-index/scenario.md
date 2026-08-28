@@ -1,4 +1,4 @@
-# Test Scenario: Sheet initial detent index
+# Test Scenario: Initial Detent Index
 
 ## Details
 
@@ -19,7 +19,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline & Default (Index 0)
 
-1. Launch the app and navigate to the **Sheet initial detent index** screen.
+1. Launch the app and navigate to the **Initial Detent Index** screen.
 2. Ensure "Selected Initial Detent: 0" is displayed.
 3. Tap the "Open FormSheet" button.
 

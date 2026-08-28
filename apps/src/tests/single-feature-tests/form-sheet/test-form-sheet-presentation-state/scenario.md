@@ -1,4 +1,4 @@
-# Test Scenario: Presentation state
+# Test Scenario: Presentation State
 
 ## Details
 
@@ -19,7 +19,7 @@ Other: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Presentation state** screen.
+1. Launch the app and navigate to the **Presentation State** screen.
 
 - [ ] Content with the button "Open FormSheet" is shown.
 

@@ -1,4 +1,4 @@
-# Test Scenario: PreventNativeDismiss
+# Test Scenario: Prevent Native Dismiss
 
 ## Details
 
@@ -19,7 +19,7 @@ Other: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **PreventNativeDismiss** screen.
+1. Launch the app and navigate to the **Prevent Native Dismiss** screen.
 
 - [ ] A status text indicating the current prop value (e.g., "Prevent Native Dismiss: ON"), a switch component, and an "Open FormSheet" button are shown.
 

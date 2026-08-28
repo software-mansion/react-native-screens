@@ -1,4 +1,4 @@
-# Test Scenario: Native container style
+# Test Scenario: Native Container Style
 
 ## Details
 
@@ -19,7 +19,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Native container style** screen.
+1. Launch the app and navigate to the **Native Container Style** screen.
 
 - [ ] Content with the button "Open FormSheet" and color selection controls is shown. The default selected color is "NAVY".
 

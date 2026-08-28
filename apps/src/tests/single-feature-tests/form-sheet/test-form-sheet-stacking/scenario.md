@@ -1,27 +1,33 @@
-# Test Scenario: Stacking FormSheets
+# Test Scenario: Stacked Sheets
 
 ## Details
 
-**Description:** Verify the present/dismiss flow for stacked `FormSheet` components. The screen presents up to three sheets stacked on top of each other. Every sheet exposes buttons that dismiss any sheet in the stack.
+**Description:** Verify the present / dismiss flow of several standalone `FormSheet` components presented on top of each other. The host screen owns three sheets (First – blue, Second – green, Third – yellow), each with detents `[0.4, 1.0]`. Every sheet exposes buttons that dismiss any sheet in the stack, so the scenario covers dismissing the top, the middle and the bottom sheet – dismissing a sheet must also dismiss every sheet presented above it.
 
 **OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
 
 ## E2E test
 
-Other: Planned, but will be implemented separately.
+TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone
-- Android emulator
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: phone device or emulator.
+
+## Note
+
+- On Android the content of each sheet is anchored to the top, so the title and the buttons are reachable at the 0.4 detent (the content box is laid out to the largest detent); on iOS the content is centered within the current detent.
+- **iPad:** every sheet is presented as a centered floating panel with a fixed width.
 
 ## Steps - iPhone
 
 ### Baseline
 
-1. Launch the app and navigate to the **Stacking FormSheets** screen.
+1. Launch the app and navigate to the **Stacked Sheets** screen.
 
-- [ ] Content with the button "Open First FormSheet" is shown.
+- [ ] The host screen shows the "Open First FormSheet" button.
 
 ---
 
@@ -29,23 +35,23 @@ Other: Planned, but will be implemented separately.
 
 2. Tap "Open First FormSheet".
 
-- [ ] The First (blue) FormSheet opens at the initial lower detent (0.4). The "Open Second FormSheet" and "Dismiss First FormSheet" buttons are visible.
+- [ ] The blue First sheet presents at 0.4. Its title reads "First FormSheet" and the "Open Second FormSheet" / "Dismiss First FormSheet" buttons are visible.
 
-3. Grab the top edge of the First FormSheet and swipe up to its maximum detent (1.0).
+3. Drag the First sheet up to 1.0.
 
-- [ ] The First FormSheet expands smoothly to the maximum available height.
+- [ ] The First sheet expands to the maximum available height.
 
 4. Tap "Open Second FormSheet".
 
-- [ ] The Second (green) FormSheet opens over the first at its initial detent (0.4). The First FormSheet remains visible in the background, keeping its expanded 1.0 detent.
+- [ ] The green Second sheet presents over the First one at 0.4. The First sheet stays visible behind it, still at 1.0.
 
-5. Grab the top edge of the Second FormSheet and swipe up to its maximum detent (1.0).
+5. Drag the Second sheet up to 1.0.
 
-- [ ] The Second FormSheet expands smoothly.
+- [ ] The Second sheet expands to the maximum available height.
 
 6. Tap "Open Third FormSheet".
 
-- [ ] The Third (yellow) FormSheet opens over the second at its initial detent (0.4). The Second and First FormSheets remain in the background at their previous detents.
+- [ ] The yellow Third sheet presents over the Second one at 0.4. The Second and First sheets stay behind it at their previous detents.
 
 ---
 
@@ -53,16 +59,16 @@ Other: Planned, but will be implemented separately.
 
 7. Tap "Dismiss Third FormSheet" inside the Third sheet.
 
-- [ ] Only the Third FormSheet dismisses. The Second FormSheet returns and its expanded 1.0 detent. Its buttons are pressable.
-- [ ] The First FormSheet is still present behind the Second.
+- [ ] Only the Third sheet dismisses. The Second sheet is on top again, still at 1.0, and its buttons are pressable.
+- [ ] The First sheet is still present behind the Second one.
 
-8. Swipe the Second FormSheet (now the top sheet) down to fully dismiss it via native gesture.
+8. Swipe the Second sheet (now the top one) down past its lower detent.
 
-- [ ] The Second FormSheet dismisses. The First FormSheet returns and its expanded 1.0 detent. Its buttons are pressable.
+- [ ] The Second sheet dismisses natively. The First sheet is on top again, still at 1.0, and its buttons are pressable.
 
 9. Tap "Dismiss First FormSheet" inside the First sheet.
 
-- [ ] The First FormSheet dismisses, returning to the underlying main screen. Main-screen pressables work normally.
+- [ ] The First sheet dismisses and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
 ---
 
@@ -70,38 +76,210 @@ Other: Planned, but will be implemented separately.
 
 10. Rebuild the stack: tap "Open First FormSheet", then "Open Second FormSheet", then "Open Third FormSheet".
 
-- [ ] All three sheets are stacked, Third on top.
+- [ ] All three sheets are stacked, the yellow Third one on top.
 
-11. Tap "Dismiss Second FormSheet" inside the Third sheet. This dismisses the middle sheet while the Third sheet is still on top of it.
+11. Tap "Dismiss Second FormSheet" inside the Third sheet.
 
-- [ ] The Second **and** Third FormSheets both dismiss. The user is returned to the First FormSheet.
-- [ ] The First FormSheet remains present and interactive.
+- [ ] The Second **and** the Third sheet dismiss together. The blue First sheet is on top again and its buttons are pressable.
 
 12. Tap "Open Second FormSheet" inside the First sheet, then "Open Third FormSheet" inside the Second sheet.
 
-- [ ] Both sheets re-present correctly.
+- [ ] Both sheets present again, in order, on top of the First one.
 
 ---
 
 ### Bottom dismissal
 
-13. With all three sheets stacked, tap "Dismiss First FormSheet" inside the Third sheet. This dismisses the bottom-most sheet while the entire stack is open.
+13. With all three sheets stacked, tap "Dismiss First FormSheet" inside the Third sheet.
 
-- [ ] All three FormSheets dismiss together, returning directly to the underlying main screen.
-- [ ] Main-screen pressables work normally.
-
-14. Tap "Open First FormSheet" again.
-
-- [ ] The First FormSheet opens.
+- [ ] All three sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
 ---
 
-### Mid-stack dismissal from a two-sheet stack
+### Bottom dismissal from a two-sheet stack
 
-15. With the First FormSheet open, tap "Open Second FormSheet".
+14. Tap "Open First FormSheet", then "Open Second FormSheet".
 
-- [ ] First and Second are stacked, Second on top.
+- [ ] The First and the Second sheet are stacked, the green Second one on top.
 
-16. Tap "Dismiss First FormSheet" inside the Second sheet.
+15. Tap "Dismiss First FormSheet" inside the Second sheet.
 
-- [ ] Both the First and Second FormSheets dismiss, returning to the underlying main screen.
+- [ ] Both sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+## Steps - iPad
+
+### Baseline
+
+1. Launch the app and navigate to the **Stacked Sheets** screen.
+
+- [ ] The host screen shows the "Open First FormSheet" button.
+
+---
+
+### Build the full stack
+
+2. Tap "Open First FormSheet".
+
+- [ ] The blue First sheet presents as a centered floating panel at 0.4. Its title reads "First FormSheet" and the "Open Second FormSheet" / "Dismiss First FormSheet" buttons are visible.
+
+3. Drag the First panel up to 1.0.
+
+- [ ] The First panel grows vertically to the maximum available height; its width stays fixed.
+
+4. Tap "Open Second FormSheet".
+
+- [ ] The green Second panel presents over the First one at 0.4. The First panel stays visible behind it, still at 1.0.
+
+5. Drag the Second panel up to 1.0.
+
+- [ ] The Second panel grows vertically to the maximum available height.
+
+6. Tap "Open Third FormSheet".
+
+- [ ] The yellow Third panel presents over the Second one at 0.4. The Second and First panels stay behind it at their previous detents.
+
+---
+
+### Top dismissal
+
+7. Tap "Dismiss Third FormSheet" inside the Third panel.
+
+- [ ] Only the Third panel dismisses. The Second panel is on top again, still at 1.0, and its buttons are pressable.
+- [ ] The First panel is still present behind the Second one.
+
+8. Swipe the Second panel (now the top one) down past its lower detent.
+
+- [ ] The Second panel dismisses natively. The First panel is on top again, still at 1.0, and its buttons are pressable.
+
+9. Tap "Dismiss First FormSheet" inside the First panel.
+
+- [ ] The First panel dismisses and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+---
+
+### Middle dismissal
+
+10. Rebuild the stack: tap "Open First FormSheet", then "Open Second FormSheet", then "Open Third FormSheet".
+
+- [ ] All three panels are stacked, the yellow Third one on top.
+
+11. Tap "Dismiss Second FormSheet" inside the Third panel.
+
+- [ ] The Second **and** the Third panel dismiss together. The blue First panel is on top again and its buttons are pressable.
+
+12. Tap "Open Second FormSheet" inside the First panel, then "Open Third FormSheet" inside the Second panel.
+
+- [ ] Both panels present again, in order, on top of the First one.
+
+---
+
+### Bottom dismissal
+
+13. With all three panels stacked, tap "Dismiss First FormSheet" inside the Third panel.
+
+- [ ] All three panels dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+---
+
+### Bottom dismissal from a two-sheet stack
+
+14. Tap "Open First FormSheet", then "Open Second FormSheet".
+
+- [ ] The First and the Second panel are stacked, the green Second one on top.
+
+15. Tap "Dismiss First FormSheet" inside the Second panel.
+
+- [ ] Both panels dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+## Steps - Android
+
+### Baseline
+
+1. Launch the app and navigate to the **Stacked Sheets** screen.
+
+- [ ] The host screen shows the "Open First FormSheet" button.
+
+---
+
+### Build the full stack
+
+2. Tap "Open First FormSheet".
+
+- [ ] The blue First sheet presents at 0.4 and the host screen is dimmed. Its title reads "First FormSheet" and the "Open Second FormSheet" / "Dismiss First FormSheet" buttons are visible.
+
+3. Drag the First sheet up to 1.0.
+
+- [ ] The First sheet expands to the maximum available height (below the status bar).
+
+4. Tap "Open Second FormSheet".
+
+- [ ] The green Second sheet presents over the First one at 0.4. The First sheet stays visible behind it, still at 1.0, and is dimmed.
+
+5. Drag the Second sheet up to 1.0.
+
+- [ ] The Second sheet expands to the maximum available height.
+
+6. Tap "Open Third FormSheet".
+
+- [ ] The yellow Third sheet presents over the Second one at 0.4. The Second and First sheets stay behind it at their previous detents.
+
+---
+
+### Top dismissal
+
+7. Tap "Dismiss Third FormSheet" inside the Third sheet.
+
+- [ ] Only the Third sheet dismisses. The Second sheet is on top again, still at 1.0, no longer dimmed, and its buttons are pressable.
+- [ ] The First sheet is still present behind the Second one.
+
+8. Swipe the Second sheet (now the top one) down past its lower detent.
+
+- [ ] The Second sheet dismisses natively. The First sheet is on top again, still at 1.0, and its buttons are pressable.
+
+9. Tap "Dismiss First FormSheet" inside the First sheet.
+
+- [ ] The First sheet dismisses and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+---
+
+### Middle dismissal
+
+10. Rebuild the stack: tap "Open First FormSheet", then "Open Second FormSheet", then "Open Third FormSheet".
+
+- [ ] All three sheets are stacked, the yellow Third one on top.
+
+11. Tap "Dismiss Second FormSheet" inside the Third sheet.
+
+- [ ] The Second **and** the Third sheet dismiss together. The blue First sheet is on top again and its buttons are pressable.
+
+12. Tap "Open Second FormSheet" inside the First sheet, then "Open Third FormSheet" inside the Second sheet.
+
+- [ ] Both sheets present again, in order, on top of the First one.
+
+---
+
+### Bottom dismissal
+
+13. With all three sheets stacked, tap "Dismiss First FormSheet" inside the Third sheet.
+
+- [ ] All three sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+---
+
+### Bottom dismissal from a two-sheet stack
+
+14. Tap "Open First FormSheet", then "Open Second FormSheet".
+
+- [ ] The First and the Second sheet are stacked, the green Second one on top.
+
+15. Tap "Dismiss First FormSheet" inside the Second sheet.
+
+- [ ] Both sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
+
+---
+
+### System back
+
+16. Tap "Open First FormSheet", then "Open Second FormSheet", then use the system back gesture (or the back button).
+
+- [ ] Only the Second (top) sheet dismisses; the First sheet stays presented and its buttons are pressable.

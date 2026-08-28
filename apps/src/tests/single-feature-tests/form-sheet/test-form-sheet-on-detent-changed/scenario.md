@@ -1,4 +1,4 @@
-# Test Scenario: onDetentChanged
+# Test Scenario: Detent Changed Event
 
 ## Details
 
@@ -18,9 +18,9 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **OnDetentChanged** screen.
+1. Launch the app and navigate to the **Detent Changed Event** screen.
 
-- [ ] A status text "Current Detent Index: 0" and an "Open FormSheet" button are shown.
+- [ ] An "Open FormSheet" button is shown.
 
 ### Track Detent Changes
 

@@ -1,4 +1,4 @@
-# Test Scenario: prefersScrollingExpandsWhenScrolledToEdge
+# Test Scenario: Expand On Scroll To Edge (iOS)
 
 ## Details
 
@@ -24,9 +24,9 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Expand when scrolled to edge** screen.
+1. Launch the app and navigate to the **Expand On Scroll To Edge (iOS)** screen.
 
-- [ ] A status text indicating the current prop value ("Expands on edge scroll: ON"), a switch, and an "Open FormSheet" button are shown.
+- [ ] A status text indicating the current prop value ("Expands on scroll: ON"), a switch, and an "Open FormSheet" button are shown.
 
 ### Expansion enabled (Default)
 
@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Expansion disabled
 
-5. Tap the switch so the status reads "Expands on edge scroll: OFF".
+5. Tap the switch so the status reads "Expands on scroll: OFF".
 
 6. Tap the "Open FormSheet" button.
 

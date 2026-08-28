@@ -1,4 +1,4 @@
-# Test Scenario: Sheet corner radius
+# Test Scenario: Corner Radius
 
 ## Details
 
@@ -28,7 +28,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
+1. Launch the app and navigate to the **Corner Radius** screen.
 
 - [ ] Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 
@@ -68,7 +68,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Sheet preferred corner radius** screen.
+1. Launch the app and navigate to the **Corner Radius** screen.
 
 - [ ] Content with the button "Open FormSheet" and current radius text ("systemDefault") is shown.
 

@@ -1,4 +1,4 @@
-# Test Scenario: Sheet largest undimmed detent index
+# Test Scenario: Largest Undimmed Detent Index (iOS)
 
 ## Details
 
@@ -18,7 +18,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Sheet largest undimmed detent index** screen.
+1. Launch the app and navigate to the **Largest Undimmed Detent Index (iOS)** screen.
 2. Tap the "Increment Background Counter" button at the top of the screen a few times.
 
 - [ ] The counter increases successfully.
@@ -29,21 +29,21 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap the "Open FormSheet" button.
 
-- [ ] The FormSheet opens at the first detent (0.3). The background behind the sheet immediately becomes dimmed. 
+- [ ] The FormSheet opens at the first detent (0.5). The background behind the sheet immediately becomes dimmed. 
 - [ ] Tapping the "Increment Background Counter" button does **not** work (the tap is intercepted by the dimming view and it dismisses the sheet).
 
 ---
 
 ### Dynamic Updates: Index 0 Validation
 
-4. Inside the sheet, tap the "Set 0 (0.3 height)" button.
+4. Inside the sheet, tap the "Set 0 (0.5 height)" button.
 
 - [ ] The background is undimmed immediately.
-- [ ] Tapping the "Increment Background Counter" button successfully increases the counter while the sheet remains open at 0.3.
+- [ ] Tapping the "Increment Background Counter" button successfully increases the counter while the sheet remains open at 0.5.
 
-5. Grab the top of the sheet and drag it up to the middle detent (0.6).
+5. Grab the top of the sheet and drag it up to the middle detent (0.65).
 
-- [ ] As the sheet transitions to index 1 (0.6), the background is dimmed again. The background counter button is no longer pressable.
+- [ ] As the sheet transitions to index 1 (0.65), the background is dimmed again. The background counter button is no longer pressable.
 
 ---
 
@@ -51,7 +51,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Inside the sheet, tap the "Set 'last'" button.
 
-- [ ] The background is undimmed for lower detents (0.3 and 0.6).
+- [ ] The background is undimmed for lower detents (0.5 and 0.65).
 - [ ] Dragging the sheet to its maximum height (0.8) keeps the background undimmed. 
 - [ ] Tapping the background counter button at the top of the screen successfully increments the count regardless of which detent the sheet is resting at.
 

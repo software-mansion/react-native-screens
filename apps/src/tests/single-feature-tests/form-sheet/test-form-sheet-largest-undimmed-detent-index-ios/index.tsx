@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Platform, StyleSheet, Text, View } from 'react-native';
 import { FormSheet, type FormSheetProps } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -39,7 +39,7 @@ function TestFormSheetLargestUndimmedDetentIndex() {
         isOpen={isOpen}
         onNativeDismiss={() => setIsOpen(false)}
         largestUndimmedDetentIndex={undimmedIndex}
-        detents={[0.3, 0.6, 0.8]}>
+        detents={[0.5, 0.65, 0.8]}>
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>
             Undimmed Index: {String(undimmedIndex)}
@@ -51,11 +51,11 @@ function TestFormSheetLargestUndimmedDetentIndex() {
               onPress={() => setUndimmedIndex('none')}
             />
             <Button
-              title="Set 0 (0.3 height)"
+              title="Set 0 (0.5 height)"
               onPress={() => setUndimmedIndex(0)}
             />
             <Button
-              title="Set 1 (0.6 height)"
+              title="Set 1 (0.65 height)"
               onPress={() => setUndimmedIndex(1)}
             />
             <Button
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     padding: 24,
-    justifyContent: 'center',
+    justifyContent: Platform.OS === 'ios' ? 'center' : 'flex-start',
     alignItems: 'center',
   },
   sheetTitle: {
