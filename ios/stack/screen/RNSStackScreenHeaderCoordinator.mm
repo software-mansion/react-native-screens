@@ -427,7 +427,7 @@
 
   UINavigationItem *prevItem = viewControllers[index - 1].navigationItem;
   _backButtonConfigTargetItem = prevItem;
-  prevItem.backButtonTitle = _configDataProvider.backTitle;
+  prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
   prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
 }
 #endif // !TARGET_OS_TV

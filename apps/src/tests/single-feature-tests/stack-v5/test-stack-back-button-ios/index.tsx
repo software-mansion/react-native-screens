@@ -25,14 +25,14 @@ const MAX_TRAILING_ITEMS_COUNT = 3;
 
 interface BackButtonConfig {
   title: string | undefined;
-  backTitle: string | undefined;
+  backButtonTitle: string | undefined;
   displayMode: StackHeaderBackButtonDisplayModeIOS;
   trailingItemsCount: number;
 }
 
 const INITIAL_CONFIG: BackButtonConfig = {
   title: undefined,
-  backTitle: undefined,
+  backButtonTitle: undefined,
   displayMode: 'default',
   trailingItemsCount: 0,
 };
@@ -62,7 +62,7 @@ function buildHeaderConfig(
   return {
     title: config.title ?? defaultTitle,
     ios: {
-      backTitle: config.backTitle,
+      backButtonTitle: config.backButtonTitle,
       backButtonDisplayMode: config.displayMode,
       trailingItems: Array.from(
         { length: config.trailingItemsCount },
@@ -152,9 +152,9 @@ function BackButtonConfigSection(props: {
   const cycleBackTitle = () =>
     onChange(prev => ({
       ...prev,
-      backTitle:
+      backButtonTitle:
         BACK_TITLES[
-          (BACK_TITLES.indexOf(prev.backTitle) + 1) % BACK_TITLES.length
+          (BACK_TITLES.indexOf(prev.backButtonTitle) + 1) % BACK_TITLES.length
         ],
     }));
 
@@ -182,7 +182,7 @@ function BackButtonConfigSection(props: {
         onPress={cycleTitle}
       />
       <Button
-        title={`backTitle: ${config.backTitle ?? 'undefined'}`}
+        title={`backButtonTitle: ${config.backButtonTitle ?? 'undefined'}`}
         onPress={cycleBackTitle}
       />
       <Button

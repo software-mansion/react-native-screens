@@ -301,7 +301,7 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @platform iOS
    */
-  backTitle?: string | undefined;
+  backButtonTitle?: string | undefined;
   /**
    * @summary Controls how the back button title is displayed.
    *
