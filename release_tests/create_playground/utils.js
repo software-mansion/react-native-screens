@@ -117,14 +117,22 @@ function isMetroRespondingOnPort(port) {
 function freePort(port = METRO_PORT) {
   let pids;
   try {
-    pids = execFileSync(`lsof`, [`-tiTCP:${port}`, '-sTCP:LISTEN'], {
+    pids = execFileSync('lsof', [`-tiTCP:${port}`, '-sTCP:LISTEN'], {
       encoding: 'utf8',
     })
       .trim()
       .split(/\s+/)
       .filter(Boolean);
-  } catch {
-    return; // nothing listening on the port
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
+      throw new Error(
+        `Cannot free port ${port}: 'lsof' is not installed (required to detect Metro).`,
+      );
+    }
+    if (typeof error?.status === 'number' && error.status === 1) {
+      return; // nothing listening on the port
+    }
+    throw error;
   }
 
   if (pids.length === 0) {
