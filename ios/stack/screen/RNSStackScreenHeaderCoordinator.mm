@@ -10,7 +10,6 @@
 #import "RNSStackHeaderMenuTrackerRegistry.h"
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
-#import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 
 @implementation RNSStackScreenHeaderCoordinator {
@@ -318,6 +317,7 @@
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
 #endif // !TARGET_OS_TV
 
+  [self clearAppliedBackButtonConfig];
   [self updateNavigationBarVisibilityAnimated:YES];
 }
 
@@ -377,12 +377,6 @@
 {
   RCTAssert(_screenController != nil, @"[RNScreens] Screen Controller cannot be nil");
   return _screenController;
-}
-
-- (BOOL)isScreenDetached
-{
-  auto *screenView = static_cast<RNSStackScreenComponentView *>([self requireScreenController].view);
-  return screenView.activityMode == RNSStackScreenActivityModeDetached;
 }
 
 - (nullable RNSStackNavigationController *)getNavigationController

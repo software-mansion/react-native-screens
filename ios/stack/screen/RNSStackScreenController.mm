@@ -84,9 +84,10 @@
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
-    // The screen has been removed from the stack & the pop transition has
-    // completed. Clear the back button config this screen has applied onto
-    //  the screen below, so it does not leak onto a subsequently pushed screen.
+    // The pop transition has completed. Clear the back button config this
+    // screen has applied onto the screen below. UIKit seems to serialize
+    // navigation transitions (undocumented, internal, but seems to work on 18 and 26),
+    // so this runs before a queued push applies its own config.
     [_headerCoordinator clearAppliedBackButtonConfig];
 
     if (_screenView.activityMode == RNSStackScreenActivityModeDetached) {
