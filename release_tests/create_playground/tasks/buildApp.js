@@ -92,7 +92,7 @@ function buildAndRun(config, utils) {
   const runAndroid = platform === 'android' || platform === 'both';
 
   runTask('Freeing Metro port 8081', paths.log, () => {
-    freePort(8081);
+    freePort();
   });
 
   if (runAndroid) {
