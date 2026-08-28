@@ -37,7 +37,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Android, iPad: Drag the sheet up to the 1.0 detent.
 
-- [ ] The sheet expands to the top of the screen and the content follows.
+- [ ] The sheet expands to take up the maximum available height (respecting the top inset) and the content follows.
 
 5. Rotate the device back to portrait.
 
