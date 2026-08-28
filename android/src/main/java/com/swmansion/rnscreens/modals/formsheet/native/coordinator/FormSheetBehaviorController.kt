@@ -69,6 +69,9 @@ internal class FormSheetBehaviorController(
     }
 
     /**
+     * Expected to be called from the measure pass, before the sheet is measured (see
+     * `FormSheetCoordinatorHost`), so the metrics below are consumed by the ongoing traversal.
+     *
      * @param detents - parsed detents configuration.
      * @param sheetAvailableSpace - the full window height that detent fractions are measured against.
      * Using the full height lets a BottomSheet with large detent configured to slide
@@ -108,11 +111,6 @@ internal class FormSheetBehaviorController(
                 )
             }
         }
-
-        // Metrics were mutated on an already-measured sheet; force a fresh layout
-        // pass so the behavior re-settles to the new detent instead of keeping its
-        // stale height.
-        sheetView.requestLayout()
     }
 
     private fun configureFitToContents(

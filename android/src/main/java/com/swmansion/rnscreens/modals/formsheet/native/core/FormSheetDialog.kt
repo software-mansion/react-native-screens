@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.modals.formsheet.native.core
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -33,6 +34,12 @@ internal class FormSheetDialog(
 
     internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
+    /**
+     * Wraps Material's `CoordinatorLayout` once the dialog is created. Reports the height the sheet
+     * is measured against so the sheet metrics can be resolved before the sheet itself is measured.
+     */
+    internal val coordinatorHost = FormSheetCoordinatorHost(context)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +47,7 @@ internal class FormSheetDialog(
         disableNativeWindowAnimation(window)
 
         setupBottomSheetHeight()
+        installCoordinatorHost()
     }
 
     override fun onAttachedToWindow() {
@@ -80,5 +88,30 @@ internal class FormSheetDialog(
     private fun setupBottomSheetHeight() {
         val bottomSheetView = findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+    }
+
+    private fun installCoordinatorHost() {
+        val coordinator = findViewById<View>(com.google.android.material.R.id.coordinator)
+        val parent = coordinator?.parent as? ViewGroup
+        if (coordinator == null || parent == null) {
+            Log.e(TAG, "[RNScreens] Material coordinator not found; the sheet dimensions won't be resolved.")
+            return
+        }
+        if (parent === coordinatorHost) {
+            return
+        }
+
+        val index = parent.indexOfChild(coordinator)
+        val layoutParams = coordinator.layoutParams
+        parent.removeViewAt(index)
+        coordinatorHost.addView(
+            coordinator,
+            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT),
+        )
+        parent.addView(coordinatorHost, index, layoutParams)
+    }
+
+    companion object {
+        private const val TAG = "FormSheetDialog"
     }
 }
