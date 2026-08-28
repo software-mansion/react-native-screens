@@ -4,7 +4,7 @@
 
 **Description:** Verify the layout and state persistence of a `StackContainer` nested within a `FormSheet`. This test ensures that the Stack layout correctly fills the `FormSheet` container, that content remains properly centered, that the layout smoothly adapts when the FormSheet height changes, and that the Stack's navigation state is preserved when the sheet is dismissed and reopened.
 
-**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5.
 
 ## E2E test
 
@@ -12,12 +12,14 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone and iPad
-- On iPad: Ensure the device is in full-screen mode, regular width, regular height size class
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
 
 ## Note
 
-- On iPad: The FormSheet is presented as a **centered floating panel** with a fixed width, not as a full-width bottom sheet as on iPhone.
+- iOS only – the scenario covers the iOS layout of a nested Stack v5; the Android counterpart will be added separately.
+- The nested stack fills the sheet with `flex: 1`; each screen paints its own background (Home – light blue, A – light yellow), so the covered area is what shows how the sheet sizes its content.
+- **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
 ## Steps - iPhone
 
@@ -25,7 +27,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Stack v5 In FormSheet (iOS)** screen.
 
-- [ ] Content with the button "Open FormSheet" is shown
+- [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 
@@ -34,7 +36,6 @@ TBD: Planned, but will be implemented separately.
 2. Tap the "Open FormSheet" button.
 
 - [ ] The FormSheet opens at the initial lower detent (0.6). The "Home Screen" text is visible and centered within the sheet. The light blue background completely covers the FormSheet content area.
-
 
 3. Tap the "Push A" button to push Screen A.
 
@@ -70,7 +71,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Stack v5 In FormSheet (iOS)** screen.
 
-- [ ] Content with the button "Open FormSheet" is shown.
+- [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 

@@ -115,8 +115,10 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   buttonGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: 12,
-    alignItems: 'center',
   },
   spacing: {
     height: 32,

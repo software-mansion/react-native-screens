@@ -4,7 +4,7 @@
 
 **Description:** Verify that a standalone `FormSheet` emits its lifecycle events (`onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`) in the order matching the native presentation transitions, for both programmatic and native dismissal. The host screen keeps a timestamped event log; the sheet has a single detent (`[0.4]`).
 
-**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
 ## E2E test
 

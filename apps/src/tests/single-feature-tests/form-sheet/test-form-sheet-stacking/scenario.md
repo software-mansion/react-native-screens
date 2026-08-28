@@ -4,7 +4,7 @@
 
 **Description:** Verify the present / dismiss flow of several standalone `FormSheet` components presented on top of each other. The host screen owns three sheets (First – blue, Second – green, Third – yellow), each with detents `[0.4, 1.0]`. Every sheet exposes buttons that dismiss any sheet in the stack, so the scenario covers dismissing the top, the middle and the bottom sheet – dismissing a sheet must also dismiss every sheet presented above it.
 
-**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
